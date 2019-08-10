@@ -9,7 +9,7 @@ namespace SS.Units
 	/// <summary>
 	/// A class that represents a basic Unit.
 	/// </summary>
-	public class Unit : Damageable, IFactionMember, IDefinableBy<UnitDefinition>
+	public class Unit : Damageable, IFactionMember, IDefinableBy<UnitDefinition>, ISelectable
 	{
 		private string id;
 		public int factionId { get; private set; }
@@ -52,7 +52,7 @@ namespace SS.Units
 			gfxTransform = this.transform.GetChild( 0 );
 			this.meshFilter = gfxTransform.GetComponent<MeshFilter>();
 			this.meshRenderer = gfxTransform.GetComponent<MeshRenderer>();
-			this.navMeshAgent = GetComponent<NavMeshAgent>();
+			this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 		}
 
 		void Start()
@@ -159,9 +159,8 @@ namespace SS.Units
 
 			container.transform.position = pos;
 
-			Unit unitComponent = container.AddComponent<Unit>();
-			unitComponent.AssignDefinition( def );
-			unitComponent.SetFaction( factionId );
+			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
+			rigidbody.isKinematic = true;
 
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
 			navMeshAgent.radius = def.radius;
@@ -169,6 +168,10 @@ namespace SS.Units
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 			navMeshAgent.stoppingDistance = 0.125f;
+
+			Unit unitComponent = container.AddComponent<Unit>();
+			unitComponent.AssignDefinition( def );
+			unitComponent.SetFaction( factionId );
 
 			RangedComponent ranged = container.AddComponent<RangedComponent>();
 

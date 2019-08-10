@@ -51,7 +51,8 @@ namespace SS
 
 		public Texture2D unitNormal;
 
-		//[SerializeField] private Camera cam = null;
+		new public static Camera camera = null;
+		[SerializeField] private Camera cam = null;
 
 		[SerializeField] private ResourcePanel resourcePanel = null;
 
@@ -89,6 +90,8 @@ namespace SS
 				throw new Exception( "Found 2 or more 'Main' scripts at one time." );
 			}
 			instance = this;
+
+			camera = this.cam;
 
 			if( !Directory.Exists( DataManager.dirPath ) )
 				Directory.CreateDirectory( DataManager.dirPath );
@@ -164,6 +167,25 @@ namespace SS
 		void Update()
 		{
 			//ToolTip.MoveTo( Input.mousePosition, true );
+
+			if( Input.GetMouseButtonDown( 1 ) )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					foreach( ISelectable obj in SelectionManager.selected )
+					{
+						if( obj == null )
+						{
+							continue;
+						}
+						if( obj is Unit )
+						{
+							((Unit)obj).SetDestination( hitInfo.point );
+						}
+					}
+				}
+			}
 		}
 	}
 }
