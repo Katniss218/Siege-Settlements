@@ -3,6 +3,7 @@ using SS.DataStructures;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS
 {
@@ -93,7 +94,11 @@ namespace SS
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.material = ResourceDepositUtils.CreateMaterial( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
-			
+
+			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
+			obstacle.size = Vector3.one * 0.3f;
+			obstacle.carving = true;
+
 			container.transform.SetPositionAndRotation( pos, rot );
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
