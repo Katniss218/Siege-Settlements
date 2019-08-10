@@ -21,9 +21,13 @@ namespace Katniss.Utils
 			bytes = File.ReadAllBytes( path );
 			Texture2D tex = null;
 			if( type == TextureType.Normal )
+			{
 				tex = new Texture2D( 2, 2, TextureFormat.RGB24, true, true );
+			}
 			else
+			{
 				tex = new Texture2D( 2, 2 );
+			}
 			tex.LoadImage( bytes );
 			return tex;
 		}

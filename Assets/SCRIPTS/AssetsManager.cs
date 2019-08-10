@@ -12,12 +12,7 @@ namespace SS
 		{
 			get
 			{
-//#if UNITY_EDITOR
 				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "GameAssets";
-/*
-#else
-				return Application.dataPath + System.IO.Path.DirectorySeparatorChar + "GameAssets";
-#endif*/
 			}
 		}
 
