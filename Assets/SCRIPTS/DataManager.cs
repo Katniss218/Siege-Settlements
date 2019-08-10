@@ -14,12 +14,12 @@ namespace SS
 		{
 			get
 			{
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "GameData";
-
+				/*
 #else
 				return Application.dataPath + System.IO.Path.DirectorySeparatorChar + "GameData";
-#endif
+#endif*/
 			}
 		}
 
