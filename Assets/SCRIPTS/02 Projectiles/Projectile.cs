@@ -9,15 +9,16 @@ namespace SS.Projectiles
 {
 	public class Projectile : MonoBehaviour, IFactionMember, IDefinableBy<ProjectileDefinition>
 	{
-		private string id;
+		public string id { get; private set; }
+
 		public int factionId { get; private set; }
 
 		public DamageType damageType { get; private set; }
 		public float damage { get; private set; }
 		public float armorPenetration { get; private set; }
 
+		private Transform graphicsTransform;
 		new private Rigidbody rigidbody;
-		private Transform gfxTransform;
 		private MeshFilter meshFilter;
 		private MeshRenderer meshRenderer;
 
@@ -50,10 +51,10 @@ namespace SS.Projectiles
 
 		void Awake()
 		{
-			gfxTransform = this.transform.GetChild( 0 );
+			this.graphicsTransform = this.transform.GetChild( 0 );
 			this.rigidbody = this.GetComponent<Rigidbody>();
-			this.meshFilter = gfxTransform.GetComponent<MeshFilter>();
-			this.meshRenderer = gfxTransform.GetComponent<MeshRenderer>();
+			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
+			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
 		}
 		
 		void Start()

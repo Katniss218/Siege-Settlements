@@ -1,7 +1,5 @@
 ﻿using KFF;
 using SS.DataStructures;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,13 +7,14 @@ namespace SS
 {
 	public class ResourceDeposit : MonoBehaviour, IDefinableBy<ResourceDepositDefinition>
 	{
-		string id;
-		string resourceId; // the id of the resource extracted by mining this deposit.
+		public string id { get; private set; }
 
-		private int amt; // the amt still left.
-		private int amtMax; // the max amt.
+		public string resourceId { get; private set; } // the id of the resource extracted by mining this deposit.
 
-		bool isTypeExtracted; // if true, the resource doesn't take time to mine.
+		public int amt { get; private set; } // the amt still left.
+		public int amtMax { get; private set; } // the max amt.
+
+		public bool isTypeExtracted { get; private set; } // if true, the resource doesn't take time to mine.
 
 		Transform graphicsTransform;
 		

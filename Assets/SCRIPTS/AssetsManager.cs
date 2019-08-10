@@ -8,6 +8,9 @@ namespace SS
 {
 	public static class AssetsManager
 	{
+		/// <summary>
+		/// Returns the path to the "GameAssets" directory (Read Only).
+		/// </summary>
 		public static string dirPath
 		{
 			get
@@ -16,6 +19,10 @@ namespace SS
 			}
 		}
 
+		/// <summary>
+		/// Converts relative path into a full system path.
+		/// </summary>
+		/// <param name="assetsPath">The path starting at GameAssets directory.</param>
 		public static string GetFullPath( string assetsPath )
 		{
 			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;

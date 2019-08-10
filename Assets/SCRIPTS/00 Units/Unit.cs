@@ -11,14 +11,15 @@ namespace SS.Units
 	/// </summary>
 	public class Unit : Damageable, IFactionMember, IDefinableBy<UnitDefinition>, ISelectable
 	{
-		private string id;
+		public string id { get; private set; }
+
 		public int factionId { get; private set; }
 
 		public void SetFaction( int id )
 		{
 			this.factionId = id;
 		}
-
+		// TODO! ----- New "data" struct that holds variables saved with the level.
 		public override float health { get; protected set; }
 
 		public override float healthMax { get; protected set; }
@@ -36,11 +37,14 @@ namespace SS.Units
 		/// </summary>
 		public float concussionArmor { get; private set; }
 
-
+		/// <summary>
+		/// Contains the items that the unit is currently holding (Read Only).
+		/// </summary>
 		public GenericUnitInventory inventory { get; private set; }
 
+		private Transform graphicsTransform;
+		new private Rigidbody rigidbody;
 		new private BoxCollider collider;
-		private Transform gfxTransform;
 		private MeshFilter meshFilter;
 		private MeshRenderer meshRenderer;
 		private NavMeshAgent navMeshAgent;
@@ -49,9 +53,10 @@ namespace SS.Units
 		void Awake()
 		{
 			this.collider = this.GetComponent<BoxCollider>();
-			gfxTransform = this.transform.GetChild( 0 );
-			this.meshFilter = gfxTransform.GetComponent<MeshFilter>();
-			this.meshRenderer = gfxTransform.GetComponent<MeshRenderer>();
+			this.graphicsTransform = this.transform.GetChild( 0 );
+			this.rigidbody = this.GetComponent<Rigidbody>();
+			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
+			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
 			this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 		}
 
@@ -104,6 +109,9 @@ namespace SS.Units
 			}
 		}
 
+		/// <summary>
+		/// Makes the unit move to the specified position.
+		/// </summary>
 		public void SetDestination( Vector3 position )
 		{
 			this.navMeshAgent.SetDestination( position );
@@ -137,6 +145,9 @@ namespace SS.Units
 			this.health -= amount;
 		}
 
+		/// <summary>
+		/// Makes the unit die.
+		/// </summary>
 		public override void Die()
 		{
 			Destroy( this.gameObject );
@@ -144,8 +155,6 @@ namespace SS.Units
 
 		public static GameObject Create( UnitDefinition def, Vector3 pos, int factionId )
 		{
-			// this should add respective classes for generic & custom units.
-
 			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
 
 			GameObject gfx = new GameObject( "graphics" );

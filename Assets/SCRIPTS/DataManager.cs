@@ -10,6 +10,9 @@ namespace SS
 {
 	public static class DataManager
 	{
+		/// <summary>
+		/// Returns the path to the "GameData" directory (Read Only).
+		/// </summary>
 		public static string dirPath
 		{
 			get
@@ -18,6 +21,10 @@ namespace SS
 			}
 		}
 
+		/// <summary>
+		/// Converts relative path into a full system path.
+		/// </summary>
+		/// <param name="assetsPath">The path starting at GameData directory.</param>
 		public static string GetFullPath( string assetsPath )
 		{
 			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;
@@ -25,6 +32,11 @@ namespace SS
 		
 		static List<Definition> registeredDefinitions = new List<Definition>();
 
+		/// <summary>
+		/// Registers a new Definition. Definitions must have a unique ID, even if they are of different definition type.
+		/// </summary>
+		/// <param name="d">The definition to register.</param>
+		/// <exception cref="System.Exception">Thrown when the definition has already been registered.</exception>
 		public static void RegisterDefinition( Definition d )
 		{
 			for( int i = 0; i < registeredDefinitions.Count; i++ )
@@ -38,6 +50,12 @@ namespace SS
 			registeredDefinitions.Add( d );
 		}
 
+		/// <summary>
+		/// Returns an already registered definition boxed as type T.
+		/// </summary>
+		/// <typeparam name="T">The type of definitino to return.</typeparam>
+		/// <param name="id">The id of the definition.</param>
+		/// <exception cref="System.Exception">Thrown when the definition is not registered or if the types don't match.</exception>
 		public static T FindDefinition<T>( string id ) where T : Definition
 		{
 			for( int i = 0; i < registeredDefinitions.Count; i++ )

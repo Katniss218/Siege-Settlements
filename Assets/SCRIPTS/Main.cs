@@ -14,11 +14,7 @@ namespace SS
 		{
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
-		// gamedata
-		// - data
-		// - assets
-		//    here the path for stuff is.
-
+		
 		private static Canvas __canvas = null;
 		public static Canvas canvas
 		{
@@ -100,9 +96,6 @@ namespace SS
 
 			DataManager.LoadDefaults();
 			AssetsManager.LoadDefaults();
-
-			//Mesh m = new Mesh();
-			//m.vertices = new Vector3[] { Vector3.one };
 		}
 
 
@@ -120,8 +113,6 @@ namespace SS
 			ResourceDepositDefinition def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.tree" );
 			for( int i = 0; i < 75; i++ )
 			{
-				//float s = UnityEngine.Random.Range( 0.75f, 1.25f );
-
 				float x = UnityEngine.Random.Range( -10f, 10f );
 				float z = UnityEngine.Random.Range( -10f, 10f );
 
@@ -133,8 +124,6 @@ namespace SS
 			def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.pine" );
 			for( int i = 0; i < 50; i++ )
 			{
-				//float s = UnityEngine.Random.Range( 0.75f, 1.25f );
-
 				float x = UnityEngine.Random.Range( -10f, 10f );
 				float z = UnityEngine.Random.Range( -10f, 10f );
 
@@ -161,13 +150,10 @@ namespace SS
 			source = this.gameObject.AddComponent<AudioSource>();
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
-			//source.Play();
 		}
 
 		void Update()
 		{
-			//ToolTip.MoveTo( Input.mousePosition, true );
-
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
 				RaycastHit hitInfo;

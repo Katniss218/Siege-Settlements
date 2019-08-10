@@ -11,7 +11,7 @@ namespace SS
 		public string resourceId { get; private set; }
 
 		public bool isExtracted { get; private set; }
-		
+
 		public Vector3 scale { get; private set; }
 
 		public Tuple<string, Mesh> mesh { get; private set; }
