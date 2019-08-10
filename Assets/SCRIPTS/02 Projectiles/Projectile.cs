@@ -104,7 +104,7 @@ namespace SS.Projectiles
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 
-			gfx.AddParticleSystem( 16, Main.instance.particleTex, Color.black, 0.1f, 0.025f, 0.02f, 0.5f );
+			gfx.AddParticleSystem( 32, Main.instance.particleTex, Color.black, 0.075f, 0.02f, 0.02f, 0.5f );
 
 			Rigidbody rb = container.AddComponent<Rigidbody>();
 			rb.velocity = velocity;

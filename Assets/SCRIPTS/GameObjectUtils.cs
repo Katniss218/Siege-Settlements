@@ -44,6 +44,7 @@ namespace SS
 
 			ParticleSystem.ShapeModule shape = particleSystem.shape;
 			shape.radius = emissionRadius;
+			shape.shapeType = ParticleSystemShapeType.Sphere;
 
 			ParticleSystem.SizeOverLifetimeModule sizeOverTime = particleSystem.sizeOverLifetime;
 			sizeOverTime.enabled = true;
