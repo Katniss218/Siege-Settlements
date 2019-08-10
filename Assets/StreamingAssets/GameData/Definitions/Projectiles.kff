@@ -1,0 +1,9 @@
+﻿Projectiles =
+[
+	{
+		Id = "projectile.arrow";
+		Mesh = "Models/Arrow.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	}
+];

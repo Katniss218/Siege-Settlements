@@ -1,0 +1,47 @@
+﻿Units =
+[
+	{
+		Id = "unit.light_infantry";
+		MaxHealth = 100.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.heavy_infantry";
+		MaxHealth = 100.0;
+		SlashArmor = 0.5;
+		PierceArmor = 0.5;
+		ConcussionArmor = 0.5;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.light_cavalry";
+		MaxHealth = 130.0;
+		SlashArmor = 0.5;
+		PierceArmor = 0.5;
+		ConcussionArmor = 0.5;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//light_cavalry_albedo";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.heavy_cavalry";
+		MaxHealth = 130.0;
+		SlashArmor = 0.5;
+		PierceArmor = 0.5;
+		ConcussionArmor = 0.5;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//heavy_cavalry_albedo";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	}
+];

@@ -1,0 +1,28 @@
+﻿Resources =
+[
+	{
+		Id = "resource.money";
+		DisplayName = "Money";
+		Icon = "Textures/Resources/money.png";
+	},
+	{
+		Id = "resource.wood";
+		DisplayName = "Wood";
+		Icon = "Textures/Resources/wood.png";
+	},
+	{
+		Id = "resource.stone";
+		DisplayName = "Stone";
+		Icon = "Textures/Resources/stone.png";
+	},
+	{
+		Id = "resource.iron";
+		DisplayName = "Iron";
+		Icon = "Textures/Resources/iron.png";
+	},
+	{
+		Id = "resource.sulphur";
+		DisplayName = "Sulphur";
+		Icon = "Textures/Resources/sulphur.png";
+	}
+];

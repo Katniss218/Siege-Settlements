@@ -1,0 +1,1664 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>KFF</name>
+    </assembly>
+    <members>
+        <member name="T:KFF.DataStructures.Object">
+            <summary>
+            An abstract class representing any object inside of the KFF file.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Object.parent">
+            <summary>
+            Contains the parent-object of this object (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Object.hasParent">
+            <summary>
+            Returns true if this object has a parent-object, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Object.type">
+            <summary>
+            Returns the data type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Object.isTag">
+            <summary>
+            Returns true if this object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Object.isPayload">
+            <summary>
+            Returns true if this object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.Object.#ctor">
+            <summary>
+            Creates a new object with the specified object as parent.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.Payload">
+            <summary>
+            Represents a generic payload.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.Payload.#ctor">
+            <summary>
+            Creates a new payload.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadBoolean">
+            <summary>
+            Represents a Payload that can hold 1-byte boolean values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadBoolean.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadBoolean.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadBoolean.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadBoolean.#ctor(System.Boolean)">
+            <summary>
+            Creates a Payload of type Boolean with the specified value.
+            </summary>
+            <param name="value">The value to hold.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadBoolean.op_Implicit(KFF.DataStructures.PayloadBoolean)~System.Boolean">
+            <summary>
+            Converts a Payload of type Boolean into a bool data type.
+            </summary>
+            <param name="other">The Payload to convert.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadBoolean.op_Implicit(System.Boolean)~KFF.DataStructures.PayloadBoolean">
+            <summary>
+            Convert a bool data type into a payload of type Boolean.
+            </summary>
+            <param name="other">The data type to convert.</param>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadClass">
+            <summary>
+            Represents a Payload that can hold other Tags.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadClass.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadClass.count">
+            <summary>
+            Returns the number of Tags currently in this class (Read only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadClass.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadClass.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.#ctor">
+            <summary>
+            Creates an empty payload of type Class.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.Has(System.String)">
+            <summary>
+            Checks if the class contains a tag with the specified name.
+            </summary>
+            <param name="name">The name to check.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.TryGet(System.String,KFF.DataStructures.Tag@)">
+            <summary>
+            Tries to get the tag with the specified name, as a generic Tag object. Returns true if the tag was found.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <param name="t">The variable to store the tag into. Is going to be null if the operation fails.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.Get(System.String)">
+            <summary>
+            Gets the tag with the specified name, as a generic Tag object.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the tag with the specified name isn't present in the class.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.GetAll">
+            <summary>
+            Gets all the tags in the class, as a generic Tag object array.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.Set(KFF.DataStructures.Tag[])">
+            <summary>
+            Sets the tags with the specified names. Replaces the tag if already present, adds a new tag otherwise.
+            </summary>
+            <param name="t">The new tags to add to the class.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.Remove(System.String)">
+            <summary>
+            Removes a tag with the specified name from the class.
+            </summary>
+            <param name="name">The name of the tag to remove.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadClass.Clear">
+            <summary>
+            Removes all tags from the class.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadDecimal">
+            <summary>
+            Represents a Payload that can hold 8-byte IEEE-754 floating-point values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadDecimal.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadDecimal.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadDecimal.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadDecimal.#ctor(System.Double)">
+            <summary>
+            Creates a payload of type Decimal with the specified value.
+            </summary>
+            <param name="value">The value to hold.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadDecimal.op_Implicit(KFF.DataStructures.PayloadDecimal)~System.Double">
+            <summary>
+            Converts a payload of type Decimal into a double data type.
+            </summary>
+            <param name="other">The payload to convert.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadDecimal.op_Implicit(System.Double)~KFF.DataStructures.PayloadDecimal">
+            <summary>
+            Convert a double data type into a payload of type Decimal.
+            </summary>
+            <param name="other">The data type to convert.</param>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadInteger">
+            <summary>
+            Represents a Payload that can hold 8-byte integer values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadInteger.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadInteger.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadInteger.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadInteger.#ctor(System.Int64)">
+            <summary>
+            Creates a payload of type Integer with the specified value.
+            </summary>
+            <param name="value">The value to hold.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadInteger.op_Implicit(KFF.DataStructures.PayloadInteger)~System.Int64">
+            <summary>
+            Converts a payload of type Integer into a long data type.
+            </summary>
+            <param name="other">The payload to convert.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadInteger.op_Implicit(System.Int64)~KFF.DataStructures.PayloadInteger">
+            <summary>
+            Convert a long data type into a payload of type Integer.
+            </summary>
+            <param name="other">The data type to convert.</param>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadList">
+            <summary>
+            Represents a Payload that can hold a list of Payloads (each of the same type).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadList.listType">
+            <summary>
+            Contains the type of values held by the list (Read only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadList.type">
+            <summary>
+            Returns the type of the Payload. NOT the type of values held by the list (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadList.count">
+            <summary>
+            Returns the number of Payloads currently in the list (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadList.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadList.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.#ctor">
+            <summary>
+            Creates an empty payload of type List.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.Has(System.Int32)">
+            <summary>
+            Checks if the list contains a payload at the specified index.
+            </summary>
+            <param name="index">The index to check.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.TryGet(System.Int32,KFF.DataStructures.Payload@)">
+            <summary>
+            Tries to get the payload at the specified index, as a generic Payload object. Returns true if the payload was found.
+            </summary>
+            <param name="index">The index of the payload to get.</param>
+            <param name="output">The variable to store the payload into. Is going to be null if the operation fails.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.Get(System.Int32)">
+            <summary>
+            Gets the payload at the specified index, as a generic Payload object.
+            </summary>
+            <param name="index">The index of the payload to get.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the index is outside of the list's bounds.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.GetAll">
+            <summary>
+            Gets all the payloads in the list, as a generic Payload object.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.Add(KFF.DataStructures.Payload[])">
+            <summary>
+            Adds an array of payloads to the end of the list.
+            </summary>
+            <param name="payload">The new payloads to add to the list.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the 'p' is null or 'p.Length' is 0.</exception>
+            <exception cref="T:System.InvalidCastException">Thrown when the payload's type doesn't match the list's type.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.Remove(System.Int32)">
+            <summary>
+            Removes a payload at the specified index from the list. Sets the content type to EmptyList, if there are no payloads left.
+            </summary>
+            <param name="index">The index to remove the payload from.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the index is outside of the list's bounds.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadList.Clear">
+            <summary>
+            Removes all payloads from the list. Sets the content type to EmptyList.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.PayloadString">
+            <summary>
+            Represents a Payload that can hold string values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadString.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadString.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.PayloadString.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadString.#ctor(System.String)">
+            <summary>
+            Creates a payload of type String with the specified value.
+            </summary>
+            <param name="value">The value to hold.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadString.op_Implicit(KFF.DataStructures.PayloadString)~System.String">
+            <summary>
+            Converts a payload of type String into a string data type.
+            </summary>
+            <param name="other">The payload to convert.</param>
+        </member>
+        <member name="M:KFF.DataStructures.PayloadString.op_Implicit(System.String)~KFF.DataStructures.PayloadString">
+            <summary>
+            Convert a string data type into a payload of type String.
+            </summary>
+            <param name="other">The data type to convert.</param>
+        </member>
+        <member name="T:KFF.DataStructures.DataType">
+            <summary>
+            Represents a KFF data type.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.Invalid">
+            <summary>
+            Special data type, used when the value can't be represented by any tag.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.EmptyList">
+            <summary>
+            Special data type, only used to indicate that a List is empty.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.Boolean">
+            <summary>
+            Boolean data type, can hold a boolean (true/false).
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.Integer">
+            <summary>
+            Numeric data type, can hold any 64-bit, signed integer.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.Decimal">
+            <summary>
+            Numeric data type, can hold any 64-bit, signed IEE 754 floating-point number.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.String">
+            <summary>
+            Text data type, can hold an arbitrarily large array of chars.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.Class">
+            <summary>
+            Compound data type, can hold a list of Tags.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.DataType.List">
+            <summary>
+            Compound data type, can hold a list of Payloads, each of the same type.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.IClass">
+            <summary>
+            All class types (types that hold tags as their payload), in KFF, implement this interface.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.IList">
+            <summary>
+            All list types (types that hold payloads of single type as their payload), in KFF, implement this interface.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.ObjectType">
+            <summary>
+            Represents either a tag or a payload.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.ObjectType.Tag">
+            <summary>
+            A tag, tags have names.
+            </summary>
+        </member>
+        <member name="F:KFF.DataStructures.ObjectType.Payload">
+            <summary>
+            A payload, payloads don't have names.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.Tag">
+            <summary>
+            Represents a generic tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.Tag.name">
+            <summary>
+            Contains the name (identifier) of this Tag.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.Tag.#ctor(System.String)">
+            <summary>
+            Creates a new tag.
+            </summary>
+            <param name="name">The name of the new tag.</param>
+        </member>
+        <member name="T:KFF.DataStructures.TagBoolean">
+            <summary>
+            Represents a tag that can hold 1-byte boolean values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagBoolean.payload">
+            <summary>
+            Contains the payload of this tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagBoolean.type">
+            <summary>
+            Returns the type of this tag (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagBoolean.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagBoolean.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagBoolean.#ctor(System.String,KFF.DataStructures.PayloadBoolean)">
+            <summary>
+            Creates a new tag of type Boolean with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="T:KFF.DataStructures.TagClass">
+            <summary>
+            Represents a Tag that can hold other Tags.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagClass.payload">
+            <summary>
+            Contains the payload of this Tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagClass.type">
+            <summary>
+            Returns the type of this tag (Read only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagClass.count">
+            <summary>
+            Returns the number of tags currently in this class (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagClass.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagClass.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.#ctor(System.String)">
+            <summary>
+            Creates a new tag of type Class with the specified name and an empty payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.#ctor(System.String,KFF.DataStructures.PayloadClass)">
+            <summary>
+            Creates a new tag of type Class with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.Has(System.String)">
+            <summary>
+            Checks if the class contains a tag with the specified name.
+            </summary>
+            <param name="name">The name to check.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.TryGet(System.String,KFF.DataStructures.Tag@)">
+            <summary>
+            Tries to get the tag with the specified name, as a generic Tag object. Returns true if the tag was found.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <param name="t">The variable to store the tag into. Is going to be null if the operation fails.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.Get(System.String)">
+            <summary>
+            Gets the tag with the specified name, as a generic Tag object.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the tag with the specified name isn't present in the class.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.GetAll">
+            <summary>
+            Gets all the tags in the class, as a generic Tag object array.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.Set(KFF.DataStructures.Tag[])">
+            <summary>
+            Sets the tags with the specified names. Replaces the tag if already present, adds a new tag otherwise.
+            </summary>
+            <param name="t">The new tags to add to the class.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.Remove(System.String)">
+            <summary>
+            Removes a tag with the specified name from the class.
+            </summary>
+            <param name="name">The name of the tag to remove.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagClass.Clear">
+            <summary>
+            Removes all tags from the class.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.TagDecimal">
+            <summary>
+            Represents a Tag that can hold 8-byte IEEE-754 floating-point values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagDecimal.payload">
+            <summary>
+            Contains the payload of this Tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagDecimal.type">
+            <summary>
+            Returns the type of this Tag (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagDecimal.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagDecimal.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagDecimal.#ctor(System.String,KFF.DataStructures.PayloadDecimal)">
+            <summary>
+            Creates a new tag of type Decimal with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="T:KFF.DataStructures.TagInteger">
+            <summary>
+            Represents a Tag that can hold 8-byte integer values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagInteger.payload">
+            <summary>
+            Contains the payload of this Tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagInteger.type">
+            <summary>
+            Returns the type of this Tag (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagInteger.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagInteger.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagInteger.#ctor(System.String,KFF.DataStructures.PayloadInteger)">
+            <summary>
+            Creates a new tag of type Integer with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="T:KFF.DataStructures.TagList">
+            <summary>
+            Represents a Tag that can hold a list of Payloads (each of the same type).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.payload">
+            <summary>
+            Contains the Payload of this tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.listType">
+            <summary>
+            Returns the type of values held by this list (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.type">
+            <summary>
+            Returns the type of this Tag (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.count">
+            <summary>
+            Returns the number of Payloads currently in this list (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagList.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.#ctor(System.String)">
+            <summary>
+            Creates a new tag of type List with the specified name and an empty payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.#ctor(System.String,KFF.DataStructures.PayloadList)">
+            <summary>
+            Creates a new tag of type List with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.Has(System.Int32)">
+            <summary>
+            Checks if the list contains a payload at the specified index.
+            </summary>
+            <param name="index">The index to check.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.TryGet(System.Int32,KFF.DataStructures.Payload@)">
+            <summary>
+            Tries to get the payload at the specified index, as a generic Payload object. Returns true if the payload was found.
+            </summary>
+            <param name="index">The index of the payload to get.</param>
+            <param name="p">The variable to store the payload into. Is going to be null if the operation fails.</param>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.Get(System.Int32)">
+            <summary>
+            Gets the payload at the specified index, as a generic Payload object.
+            </summary>
+            <param name="index">The index of the payload to get.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the index is outside of the list's bounds.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.GetAll">
+            <summary>
+            Gets all the payloads in the list, as a generic Payload object.
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.Add(KFF.DataStructures.Payload[])">
+            <summary>
+            Adds an array of payloads to the end of the list.
+            </summary>
+            <param name="p">The new payloads to add to the list.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the 'p' is null or 'p.Length' is 0.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.Remove(System.Int32)">
+            <summary>
+            Removes a payload at the specified index from the list. Sets the content type to EmptyList, if there are no payloads left.
+            </summary>
+            <param name="index">The index to remove the payload from.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the index is outside of the list's bounds.</exception>
+        </member>
+        <member name="M:KFF.DataStructures.TagList.Clear">
+            <summary>
+            Removes all payloads from the list. Sets the content type to EmptyList.
+            </summary>
+        </member>
+        <member name="T:KFF.DataStructures.TagString">
+            <summary>
+            Represents a Tag that can hold string values.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagString.payload">
+            <summary>
+            Contains the payload of this Tag.
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagString.type">
+            <summary>
+            Returns the type of this Tag (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagString.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.DataStructures.TagString.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.DataStructures.TagString.#ctor(System.String,KFF.DataStructures.PayloadString)">
+            <summary>
+            Creates a new tag of type String with the specified name and payload.
+            </summary>
+            <param name="name">The name of the new Tag.</param>
+            <param name="payload">The payload of the new Tag.</param>
+        </member>
+        <member name="T:KFF.KFFObjectPresenceException">
+            <summary>
+            Thrown when a tag or payload is present when it should not be, or is not present when it should be.
+            </summary>
+        </member>
+        <member name="T:KFF.KFFFile">
+            <summary>
+            Represents a parsed KFF file.
+            </summary>
+        </member>
+        <member name="P:KFF.KFFFile.tags">
+            <summary>
+            The tags contained directly in the file (nest = 0).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFFile.count">
+            <summary>
+            The amount of tags directly in the file (nest = 0).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFFile.type">
+            <summary>
+            Returns the type of this Payload (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFFile.isTag">
+            <summary>
+            Returns true if this Object is a Tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFFile.isPayload">
+            <summary>
+            Returns true if this Object is a Payload, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.KFFFile.#ctor">
+            <summary>
+            Creates a new KFF file with the specified tags inside.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFFile.Has(System.String)">
+            <summary>
+            Checks if the class contains a tag with the specified name.
+            </summary>
+            <param name="name">The name to check.</param>
+        </member>
+        <member name="M:KFF.KFFFile.TryGet(System.String,KFF.DataStructures.Tag@)">
+            <summary>
+            Tries to get the tag with the specified name, as a generic Tag object. Returns true if the tag was found.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <param name="t">The variable to store the tag into. Is going to be null if the operation fails.</param>
+        </member>
+        <member name="M:KFF.KFFFile.Get(System.String)">
+            <summary>
+            Gets the tag with the specified name, as a generic Tag object.
+            </summary>
+            <param name="name">The name of the tag to get.</param>
+            <exception cref="T:KFF.KFFObjectPresenceException">Thrown when the tag with the specified name isn't present in the class.</exception>
+        </member>
+        <member name="M:KFF.KFFFile.GetAll">
+            <summary>
+            Gets all the tags in the class, as a generic Tag object array.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFFile.Set(KFF.DataStructures.Tag[])">
+            <summary>
+            Sets the tags with the specified names. Replaces the tag if already present, adds a new tag otherwise.
+            </summary>
+            <param name="t">The new tags to add to the class.</param>
+        </member>
+        <member name="M:KFF.KFFFile.Remove(System.String)">
+            <summary>
+            Removes a tag with the specified name from the class.
+            </summary>
+            <param name="name">The name of the tag to remove.</param>
+        </member>
+        <member name="M:KFF.KFFFile.Clear">
+            <summary>
+            Removes all tags from the class.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFFile.PathFind(KFF.Path)">
+            <summary>
+            Returns a tag or payload at the specified path.
+            </summary>
+            <param name="path">The path to get the tag/payload at.</param>
+            <exception cref="T:KFF.KFFException">Thrown when the path can't be resolved.</exception>
+        </member>
+        <member name="T:KFF.KFFEndOfFileException">
+            <summary>
+            Represents an error during object serialization. Feel free to throw this in your IKFFSerializable objects.
+            </summary>
+        </member>
+        <member name="T:KFF.KFFException">
+            <summary>
+            Represents any KFF exception.
+            </summary>
+        </member>
+        <member name="T:KFF.KFFReadWriteException">
+            <summary>
+            Represents an error in the process of validation.
+            </summary>
+        </member>
+        <member name="T:KFF.KFFSerializationException">
+            <summary>
+            Represents an error during object serialization. Feel free to throw this in your IKFFSerializable objects when something bad happens.
+            </summary>
+        </member>
+        <member name="F:KFF.KFFSerializationException.objectThrowing">
+            <summary>
+            The object throwing the exception.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializationException.#ctor(KFF.IKFFSerializable)">
+            <summary>
+            Creates a new serialization exception.
+            </summary>
+            <param name="objectThrowing">Should be set to the object that is throwing the exception.</param>
+        </member>
+        <member name="M:KFF.KFFSerializationException.#ctor(KFF.IKFFSerializable,System.String)">
+            <summary>
+            Creates a new serialization exception with the specified message.
+            </summary>
+            <param name="objectThrowing">Should be set to the object that is throwing the exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:KFF.KFFSerializationException.#ctor(KFF.IKFFSerializable,System.String,System.Exception)">
+            <summary>
+            Creates a new serialization exception with the specified message and an inner exception.
+            </summary>
+            <param name="objectThrowing">Should be set to the object that is throwing the exception.</param>
+            <param name="message">The message.</param>
+            <param name="innerException">The inner exception.</param>
+        </member>
+        <member name="T:KFF.KFFParseException">
+            <summary>
+            Represents an error in the syntax.
+            </summary>
+        </member>
+        <member name="T:KFF.IKFFSerializable">
+            <summary>
+            Implement this if you want to create an object that can be serialized into KFF.
+            </summary>
+        </member>
+        <member name="M:KFF.IKFFSerializable.SerializeKFF(KFF.KFFSerializer)">
+            <summary>
+            Called when the KFFWriter serializes the object. Every object is serialized into it's own, separate class.
+            </summary>
+            <param name="serializer">The class that the object will be serialized into.</param>
+            the obj's scope is set to the class that you are writing to.
+        </member>
+        <member name="M:KFF.IKFFSerializable.DeserializeKFF(KFF.KFFSerializer)">
+            <summary>
+            Called when the KFFReader deserializes the object. Every object is serialized into it's own, separate class.
+            </summary>
+            <param name="serializer">The class thet the object will be separated into.</param>
+            the obj's scope is set to the class that you are reading from.
+        </member>
+        <member name="T:KFF.KFFParser">
+            <summary>
+            Parses a string into KFF file and vice versa.
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.namePayloadSeparatorNL">
+            <summary>
+            Should the writer add newlines around the Name/Payload Separator?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.namePayloadSeparatorSPC">
+            <summary>
+            Should the writer add a space around the Name/Payload Separator?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.tagEndNL">
+            <summary>
+            Should the writer add newlines around the Tag End?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.tagListElementSeparatorNL">
+            <summary>
+            Should the writer add newlines around the Tag End?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.classOpeningNL">
+            <summary>
+            Should the writer add newlines around Class Opening?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.classClosingNL">
+            <summary>
+            Should the writer add newlines around Class Closing?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.listOpeningNL">
+            <summary>
+            Should the writer add newlines around List Opening?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.listClosingNL">
+            <summary>
+            Should the writer add newlines around List Closing?
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.tabInsideClass">
+            <summary>
+            Should the writer add a TAB char for every tag/payload inside of a Class datatype.
+            </summary>
+        </member>
+        <member name="P:KFF.KFFParser.tabInsideList">
+            <summary>
+            Should the writer add a TAB char for every tag/payload inside of a List datatype.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFParser.Parse(System.String)">
+            <summary>
+            Parses a string representation into a KFF file. Throws an exception if the string is malformed.
+            </summary>
+            <param name="s">The string to parse.</param>
+        </member>
+        <member name="M:KFF.KFFParser.ToString(KFF.KFFFile)">
+            <summary>
+            Gets the string representation of the file in the writer.
+            </summary>
+        </member>
+        <member name="T:KFF.KFFSerializer">
+            <summary>
+            Serializes and deserializes C# objects of various types into a KFF's representation of them.
+            <para>
+            This class is intended to be used by the end-user.
+            </para>
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.scopeRoot">
+            <summary>
+            Contains the root object of the current scope. Either a tag or payload. You shouldn't mess with this, unless you know what you are doing.
+            <para>
+            This can, BY DESIGN, be set outside of the file, to be able read/write from objects, that are not in the file.
+            E.g.: To serialize into a Tag/Payload, that is not in the file (arbitrary Tag/Payload).
+            </para>
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.file">
+            <summary>
+            Contains the file that the serializer operates on. The scope is reset to this file upon calling the 'ResetScope()' method (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializer.#ctor(KFF.KFFFile)">
+            <summary>
+            Creates a new KFF serializer and assigns a KFF file to it.
+            </summary>
+            <param name="file">The KFF file to operate on.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.ReadFromFile(System.String,System.Text.Encoding)">
+            <summary>
+            Wrapper method for creating a new KFFSerializer with the contents of a text file.
+            </summary>
+            <param name="path">The path to the file.</param>
+            <param name="encoding">The encoding of the text file.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteToFile(System.String,System.Text.Encoding)">
+            <summary>
+            Wrapper method for writing the contents of this KFFSerializer (KFFSerializer.file) to a text file.
+            </summary>
+            <param name="path">The path to the file.</param>
+            <param name="encoding">The encoding of the text file.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.ResetScope">
+            <summary>
+            Resets the scope to the entire KFF file, and returns that file.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializer.MoveScope(KFF.Path,System.Boolean)">
+            <summary>
+            Moves the scope to the object at the end of the specified path, and returns that object. If the <paramref name="keepItThere"/> is set to true, the scope will be set to the object at end of the path.
+            <para>
+            Moving scope works relative to the scopeRoot. So if you set it to an object outside of the file, you can freely read/write from another data tree.
+            </para>
+            </summary>
+            <param name="path">The path along which to move the scope.</param>
+            <param name="keepItThere">If set to true, the scope will be set to the object at end of the path.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.ScopeChildCount">
+            <summary>
+            Returns the number of child tags/payloads of the current scope's root object.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializer.ScopeIsTag">
+            <summary>
+            Returns true if the current scope's root object is a tag, false otherwise.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializer.ScopeIsPayload">
+            <summary>
+            Returns true if the current scope's root object is a payload, false otherwise.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteBool(KFF.Path,System.String,System.Boolean)">
+            <summary>
+            Writes a bool value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteBoolArray(KFF.Path,System.String,System.Boolean[])">
+            <summary>
+            Writes an array of bool values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteSByte(KFF.Path,System.String,System.SByte)">
+            <summary>
+            Writes an sbyte value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteSByteArray(KFF.Path,System.String,System.SByte[])">
+            <summary>
+            Writes an array of sbyte values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteByte(KFF.Path,System.String,System.Byte)">
+            <summary>
+            Writes a byte value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteByteArray(KFF.Path,System.String,System.Byte[])">
+            <summary>
+            Writes an array of byte values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteShort(KFF.Path,System.String,System.Int16)">
+            <summary>
+            Writes a short value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteShortArray(KFF.Path,System.String,System.Int16[])">
+            <summary>
+            Writes an array of short values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteUShort(KFF.Path,System.String,System.UInt16)">
+            <summary>
+            Writes a ushort value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteUShortArray(KFF.Path,System.String,System.UInt16[])">
+            <summary>
+            Writes an array of ushort values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteInt(KFF.Path,System.String,System.Int32)">
+            <summary>
+            Writes an int value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteIntArray(KFF.Path,System.String,System.Int32[])">
+            <summary>
+            Writes an array of int values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteUInt(KFF.Path,System.String,System.UInt32)">
+            <summary>
+            Writes a uint value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteUIntArray(KFF.Path,System.String,System.UInt32[])">
+            <summary>
+            Writes an array of uint values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteLong(KFF.Path,System.String,System.Int64)">
+            <summary>
+            Writes a long value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteLongArray(KFF.Path,System.String,System.Int64[])">
+            <summary>
+            Writes an array of long values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteFloat(KFF.Path,System.String,System.Single)">
+            <summary>
+            Writes a float value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteFloatArray(KFF.Path,System.String,System.Single[])">
+            <summary>
+            Writes an array of float values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteDouble(KFF.Path,System.String,System.Double)">
+            <summary>
+            Writes a double value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteDoubleArray(KFF.Path,System.String,System.Double[])">
+            <summary>
+            Writes an array of double values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteString(KFF.Path,System.String,System.String)">
+            <summary>
+            Writes a string value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteStringArray(KFF.Path,System.String,System.String[])">
+            <summary>
+            Writes an array of string values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteChar(KFF.Path,System.String,System.Char)">
+            <summary>
+            Writes a char value at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteCharArray(KFF.Path,System.String,System.Char[])">
+            <summary>
+            Writes an array of char values at the specified path.
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="values">The values to write.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteClass(KFF.Path,System.String)">
+            <summary>
+            Writes a class at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new TagClass.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.AppendClass(KFF.Path)">
+            <summary>
+            Appends a Payload of type Class, to the list at the specified path.
+            </summary>
+            <param name="path">The path to the list.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.WriteList(KFF.Path,System.String)">
+            <summary>
+            Writes a list at the specified path.
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new TagList.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.AppendList(KFF.Path)">
+            <summary>
+            Appends a Payload of type List, to the list at the specified path.
+            </summary>
+            <param name="path">The path to the list.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.Serialize``1(KFF.Path,System.String,``0)">
+            <summary>
+            Writes a serializable value at the specified path (calls IKFFSerializable.SerializeKFF on the value).
+            </summary>
+            <param name="path">The path to write the Tag at (points to the container).</param>
+            <param name="name">The name of the new Tag.</param>
+            <param name="serializableObj">The value to serialize.</param>
+        </member>
+        <member name="M:KFF.KFFSerializer.SerializeArray``1(KFF.Path,System.String,``0[])">
+            <summary>
+            Writes an array of serializable values at the specified path (calls IKFFSerializable.SerializeKFF on each value).
+            </summary>
+            <param name="path">The path to write the TagList at (points to the container).</param>
+            <param name="containerName">The name of the TagList containing the values.</param>
+            <param name="serializableObjs">The values to serialize.</param>
+        </member>
+        <member name="T:KFF.KFFValidator">
+            <summary>
+            Class containing methods for checking validity of a kff-string.
+            </summary>
+        </member>
+        <member name="M:KFF.KFFValidator.#ctor(System.String)">
+            <summary>
+            Creates a validator using an unvalidated string.
+            </summary>
+            <param name="unvalidatedString">The string to validate.</param>
+        </member>
+        <member name="M:KFF.KFFValidator.Validate">
+            <summary>
+            Runs the validation process. Any errors will result in exceptions being thrown.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">Thrown when the string to validate is null.</exception>
+            <exception cref="T:KFF.KFFParseException">Thrown when the string is not a valid KFF representation.</exception>
+        </member>
+        <member name="M:KFF.KFFValidator.ValidateName(System.String)">
+            <summary>
+            Validates a tag's name.
+            </summary>
+            <param name="name">The string containing only the name.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the string is null or empty.</exception>
+            <exception cref="T:KFF.KFFParseException">Thrown when the string isn't a valid tag's name.</exception>
+        </member>
+        <member name="T:KFF.LineData">
+            <summary>
+            Used to represent line and collumn numbers.
+            </summary>
+        </member>
+        <member name="M:KFF.LineData.ToString">
+            <summary>
+            Converts the LineData object into a string representation.
+            </summary>
+        </member>
+        <member name="T:KFF.BeforeAfterMask">
+            <summary>
+            Used as a 2-bit mask to tell the KFFWriter whether or not it should place a whitespace/newline/etc. around a specified token.
+            </summary>
+        </member>
+        <member name="F:KFF.BeforeAfterMask.None">
+            <summary>
+            Don't place any characters.
+            </summary>
+        </member>
+        <member name="F:KFF.BeforeAfterMask.Before">
+            <summary>
+            Place the character only before the token.
+            </summary>
+        </member>
+        <member name="F:KFF.BeforeAfterMask.After">
+            <summary>
+            Place the character only after the token.
+            </summary>
+        </member>
+        <member name="F:KFF.BeforeAfterMask.Both">
+            <summary>
+            Place the character both before and after the token.
+            </summary>
+        </member>
+        <member name="T:KFF.Path">
+            <summary>
+            Used for selecting specific tags/payloads, inside of the KFFFile.
+            <para>
+            The Path consists of segments, each of which can be either a tag's name or an index to a list.
+            </para>
+            </summary>
+        </member>
+        <member name="F:KFF.Path.destination">
+            <summary>
+            Contains the type of object that the path points to (Tag/Payload) (Read only).
+            </summary>
+        </member>
+        <member name="P:KFF.Path.nestLevel">
+            <summary>
+            Returns the number of segments in the path (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.Path.isEmpty">
+            <summary>
+            Returns true if the path is empty (doesn't point to anything), false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="M:KFF.Path.#ctor(System.String)">
+            <summary>
+            Parses a new path from the string representation.
+            </summary>
+            <param name="s">The string to parse the path from.</param>
+        </member>
+        <member name="M:KFF.Path.ToString">
+            <summary>
+            Returns the string representation of this path.
+            </summary>
+        </member>
+        <member name="M:KFF.Path.op_Implicit(System.String)~KFF.Path">
+            <summary>
+            Converts a string into a path, using the 'new Path( string )' constructor.
+            </summary>
+        </member>
+        <member name="T:KFF.PathDirection">
+            <summary>
+            Represents a direction to take when traversing a path, either forward or back.
+            </summary>
+        </member>
+        <member name="F:KFF.PathDirection.Forward">
+            <summary>
+            The forwards direction moves deeper into the nested structure of the KFF data tree.
+            </summary>
+        </member>
+        <member name="F:KFF.PathDirection.Backward">
+            <summary>
+            The backwards direction moves back from the nested structure of the KFF data tree.
+            </summary>
+        </member>
+        <member name="T:KFF.PathSegment">
+            <summary>
+            Represents a segment of a KFFPath.
+            </summary>
+        </member>
+        <member name="T:KFF.Syntax">
+            <summary>
+            Is used to hold characters for tokens. Also has several methods related to them.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.NAME_PAYLOAD_SEPARATOR">
+            <summary>
+            The "Name/Payload Separator" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.TAG_END">
+            <summary>
+            The "Tag End" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.NEGATIVE_SIGN">
+            <summary>
+            The "Negative Sign" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.DECIMAL_SEPARATOR">
+            <summary>
+            The "Decimal Separator" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.STRING_CONTAINER">
+            <summary>
+            The "String Container" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.ESCAPE_CHAR">
+            <summary>
+            The "Escape Char" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.CLASS_OPENING">
+            <summary>
+            The "Class Opening" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.CLASS_CLOSING">
+            <summary>
+            The "Class Closing" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.LIST_OPENING">
+            <summary>
+            The "List Opening" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.LIST_CLOSING">
+            <summary>
+            The "List CLosing" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.LIST_ELEMENT_SEPARATOR">
+            <summary>
+            The "List Element Separator" token.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.PATH_SEGMENT_SEPARATOR">
+            <summary>
+            The char used to separate path segments in the string representation.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.PATH_BACKWARD">
+            <summary>
+            The char used to indicate a path segment going backward, instead of usual forward.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.TOKEN_TRUE">
+            <summary>
+            The keyword for 'true' Boolean value.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.TOKEN_FALSE">
+            <summary>
+            The keyword for 'false' Boolean value.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.TOKEN_NOT_A_NUMBER">
+            <summary>
+            The keyword for 'NaN' Decimal value.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.TOKEN_INFINITY">
+            <summary>
+            The keyword for the 'PositiveInfinity' and 'NegativeInfinity' Decimal values (prefixed with NEGATIVE_SIGN to form 'NegativeInfinity').
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.numberFormat">
+            <summary>
+            The format used to write numbers (decimal separator, negative sign and no groups).
+            </summary>
+        </member>
+        <member name="M:KFF.Syntax.IsEscapable(System.Char)">
+            <summary>
+            Checks whether or not the given character has to be escaped when converting the Payload to the string representation. To convert it, call 'KFFSyntax.GetEscaped( char )'.
+            </summary>
+            <returns>
+            Returns true if the character has be escaped, false otherwise.
+            </returns>
+            <param name="c">The character to check.</param>
+        </member>
+        <member name="M:KFF.Syntax.GetUnescaped(System.String)">
+            <summary>
+            Converts an escaped sequence of characters ('\\', '\"') into the real character that is being escaped by it.
+            </summary>
+            <param name="escapedSequence">The escaped sequence (must be exact, case sensitive).</param>
+            <exception cref="T:System.ArgumentException">Thrown when the escaped sequence is not valid.</exception>
+        </member>
+        <member name="M:KFF.Syntax.GetEscaped(System.Char)">
+            <summary>
+            Converts an unescaped character ('\', '"') into the escaped sequence, that can be used in string representation, to represent it.
+            </summary>
+            <param name="unescapedChar">The unescaped char (must be exact, case sensitive).</param>
+            <exception cref="T:System.ArgumentException">Thrown when the unescaped char is not escapable.</exception>
+        </member>
+        <member name="M:KFF.Syntax.IsDigit(System.Char)">
+            <summary>
+            Checks whether or not the given char is a number (0-9).
+            </summary>
+            <returns>
+            True if the char is a number (0-9), false otherwise.
+            </returns>
+            <param name="c">The char to check.</param>
+        </member>
+        <member name="M:KFF.Syntax.IsAlphabetical(System.Char)">
+            <summary>
+            Checks whether or not the given char is alphabetical (A-Z, a-z).
+            </summary>
+            <returns>
+            True if the char is a valid letter (A-Z, a-z), false otherwise.
+            </returns>
+            <param name="c">The char to check.</param>
+        </member>
+        <member name="M:KFF.Syntax.IsWhiteSpace(System.Char)">
+            <summary>
+            Checks whether or not the given char is a white space.
+            </summary>
+            <returns>
+            True if the char is a valid white space (HorizontalTabulation, LineFeed, CarriageReturn, Space), false otherwise
+            </returns>
+            <param name="c">The char to check</param>
+        </member>
+        <member name="M:KFF.Syntax.IsAlphaNumerical(System.Char)">
+            <summary>
+            Checks whether or not the given char is alphanumerical (A-Z, a-z, 0-9). 
+            </summary>
+            <returns>
+            True if the char is a valid letter (A-Z, a-z, 0-9), false otherwise.
+            </returns>
+            <param name="c">The char to check.</param>
+        </member>
+        <member name="M:KFF.Syntax.GetValidWhiteSpaces">
+            <summary>
+            Gets the valid white space characters.
+            </summary>
+            <returns>
+            A string containing every valid white space character.
+            </returns>
+        </member>
+        <member name="M:KFF.Syntax.GetValidStartingChars">
+            <summary>
+            Gets the valid chars that can be at the beginning of the tag's name.
+            </summary>
+            <returns>
+            A string containing every character that can be used at the beginning of a tag's name.
+            </returns>
+        </member>
+        <member name="M:KFF.Syntax.GetValidChars">
+            <summary>
+            Gets the valid chars that can be in the middle/end of the tag's name.
+            </summary>
+            <returns>
+            A string containing every character that can be used in the middle/end of a tag's name.
+            </returns>
+        </member>
+        <member name="M:KFF.Syntax.GetValidPathIndexers">
+            <summary>
+            Gets the valid chars that can be used to index the tag's position using a path.
+            </summary>
+            <returns>
+            A string containing every decimal digit (0-9).
+            </returns>
+        </member>
+        <member name="T:KFF.TagTester">
+            <summary>
+            Class containing methods for testing the KFF reader and KFF writer.
+            </summary>
+        </member>
+        <member name="T:KFF.TagTester.Output">
+            <summary>
+            An output of the tag tester.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.writeSpeedAvg">
+            <summary>
+            Average write speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.writeSpeedMin">
+            <summary>
+            Min write speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.writeSpeedMedian">
+            <summary>
+            Median write speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.writeSpeedMax">
+            <summary>
+            Max write speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.sortedWrites">
+            <summary>
+            All write speeds (reps).
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.readSpeedAvg">
+            <summary>
+            Average read speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.readSpeedMin">
+            <summary>
+            Min read speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.readSpeedMedian">
+            <summary>
+            Median read speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.readSpeedMax">
+            <summary>
+            Max read speed.
+            </summary>
+        </member>
+        <member name="F:KFF.TagTester.Output.sortedReads">
+            <summary>
+            All read speeds (reps).
+            </summary>
+        </member>
+        <member name="M:KFF.TagTester.Output.ToStringWrite">
+            <summary>
+            Converts the output into a string containing the write performance.
+            </summary>
+        </member>
+        <member name="M:KFF.TagTester.Output.ToStringRead">
+            <summary>
+            Converts the output into a string containing the read performance.
+            </summary>
+        </member>
+        <member name="M:KFF.TagTester.GetEfficiency(KFF.KFFSerializer,KFF.Path,System.Int32,System.Int32)">
+            <summary>
+            Tests the speeds of the KFFReader v6.0.
+            </summary>
+            <param name="serializer">The reader, containing the file to test.</param>
+            <param name="path">The path to read from.</param>
+            <param name="iterations">Number of iterations per test.</param>
+            <param name="repetitions">Number of repetitions (averaging).</param>
+        </member>
+    </members>
+</doc>
