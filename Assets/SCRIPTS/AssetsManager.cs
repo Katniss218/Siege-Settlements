@@ -90,13 +90,13 @@ namespace SS
 		public static void LoadAudioClip( string assetsPath )
 		{
 			AudioClip audioClip = WavImporter.Import( dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath );
-			
+
 			audioClips.Add( assetsPath, audioClip );
 		}
 
 		public static void LoadDefaults()
 		{
-			
+
 		}
 
 		public static void LoadFromLevel( string pathToLevel )

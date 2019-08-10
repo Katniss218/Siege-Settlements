@@ -30,6 +30,7 @@ namespace SS
 			}
 			instance = this;
 		}
+		// FIXME ----- change this to object pooling instead of creating new one every single fucking time.
 
 		void Update()
 		{
