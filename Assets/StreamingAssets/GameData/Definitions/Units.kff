@@ -6,6 +6,10 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
+		MovementSpeed = 0.3;
+		RotationSpeed = 150;
+		Radius = 0.375;
+		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
@@ -17,6 +21,10 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
+		MovementSpeed = 0.3;
+		RotationSpeed = 150;
+		Radius = 0.375;
+		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
@@ -28,6 +36,10 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
+		MovementSpeed = 0.3;
+		RotationSpeed = 150;
+		Radius = 0.375;
+		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//light_cavalry_albedo";
@@ -39,6 +51,10 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
+		MovementSpeed = 0.3;
+		RotationSpeed = 150;
+		Radius = 0.375;
+		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//heavy_cavalry_albedo";

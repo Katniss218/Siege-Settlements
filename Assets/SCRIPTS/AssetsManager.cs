@@ -94,16 +94,9 @@ namespace SS
 
 		public static void LoadAudioClip( string assetsPath )
 		{
-			byte[] rawData = System.IO.File.ReadAllBytes( dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath );
+			AudioClip audioClip = WavImporter.Import( dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath );
 			
-			WAV wav = new WAV( rawData );
-			AudioClip audioClip = AudioClip.Create( "testSound", wav.SampleCount, 1, wav.Frequency, false );
-			audioClip.SetData( wav.LeftChannel, 0 );
-			
-			//AudioClip audioClip = WavUtility.ToAudioClip( dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath );
 			audioClips.Add( assetsPath, audioClip );
-			//audio.clip = audioClip;
-			//audio.Play();
 		}
 
 		public static void LoadDefaults()
