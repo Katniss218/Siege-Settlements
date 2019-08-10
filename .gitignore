@@ -6,6 +6,8 @@
 Assets/AssetStoreTools*
 Executable/
 ProjectSettings/
+Packages/
+Logs/
 
 # Visual Studio cache directory
 .vs/
