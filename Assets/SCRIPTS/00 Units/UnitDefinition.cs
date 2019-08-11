@@ -78,6 +78,7 @@ namespace SS.Units
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
+			// FIXME! - Add an in-game debug system for loading definitions (exception handling).
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );

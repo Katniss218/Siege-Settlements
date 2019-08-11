@@ -101,6 +101,8 @@ namespace SS
 
 		void Start()
 		{
+			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0), 2 );
+
 			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
 			for( int i = 0; i < 4; i++ )
 			{

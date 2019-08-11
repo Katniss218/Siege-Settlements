@@ -79,8 +79,8 @@ namespace SS.Units
 			this.pierceArmor = def.pierceArmor;
 			this.concussionArmor = def.concussionArmor;
 			this.inventory = new GenericUnitInventory( def.inventorySize );
-			this.collider.size = new Vector3( 1f, 0.1875f, 0.5f );
-			this.collider.center = new Vector3( 0f, 0.1875f / 2f, 0f );
+			this.collider.size = new Vector3( def.radius * 2, def.height, def.radius * 2 );
+			this.collider.center = new Vector3( 0f, def.height / 2f, 0f );
 
 			this.meshFilter.mesh = def.mesh.Item2;
 			this.meshRenderer.material = UnitUtils.CreateMaterial( Color.red, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );

@@ -6,11 +6,11 @@ namespace SS
 {
 	public class DaylightCycleController : MonoBehaviour
 	{
-		private const int dayLength = 800;
-		private const int nightLength = 400;
+		private const int dayLength = 400;
+		private const int nightLength = 200;
 		private const int totalDayLen = dayLength + nightLength;
 
-		private const float startTime = 150;
+		private const float startTime = 80;
 
 		public float time { get; private set; }
 
