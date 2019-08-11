@@ -3,16 +3,18 @@
 	{
 		Id = "unit.light_infantry";
 		MaxHealth = 100.0;
-		SlashArmor = 0.0;
+		SlashArmor = 0.0; // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
+						  // so if you have 2.0 armor and attacker has 1.5 penetration, there will be 50% damage reduction.
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		MovementSpeed = 0.3;
-		RotationSpeed = 150;
+		IsRanged = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
-		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		AlbedoTexture = "Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
@@ -21,8 +23,22 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		MovementSpeed = 0.3;
-		RotationSpeed = 150;
+		IsRanged = true;
+		RangedData =
+		{
+			ProjectileId = "projectile.arrow";
+			ProjectileCount = 5;
+			DamageType = 1;
+			Damage = 3;
+			ArmorPenetration = 0.0;
+			AttackRange = 6;
+			AttackCooldown = 3;
+			Velocity = 4;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; };
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+		};
+		MovementSpeed = 0.25;
+		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
 		InventorySize = 45;
@@ -36,13 +52,14 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		MovementSpeed = 0.3;
-		RotationSpeed = 150;
+		IsRanged = false;
+		MovementSpeed = 0.45;
+		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
-		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//light_cavalry_albedo";
+		AlbedoTexture = "Textures/Units/light_cavalry_albedo.png";//light_cavalry_albedo";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
@@ -51,13 +68,14 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		MovementSpeed = 0.3;
-		RotationSpeed = 150;
+		IsRanged = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
-		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";//heavy_cavalry_albedo";
+		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";//heavy_cavalry_albedo";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	}
 ];

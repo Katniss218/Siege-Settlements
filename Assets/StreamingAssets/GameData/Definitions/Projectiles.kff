@@ -5,5 +5,14 @@
 		Mesh = "Models/Arrow.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		HasTrail = true;
+		TrailData =
+		{
+			Amount = 28;
+			Lifetime = 0.5;
+			StartSize = 0.05;
+			EndSize = 0.02;
+			Texture = "Textures/Particles/arrow_trail.png";
+		};
 	}
 ];

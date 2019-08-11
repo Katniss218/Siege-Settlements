@@ -105,7 +105,10 @@ namespace SS.Projectiles
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 
-			gfx.AddParticleSystem( 32, Main.instance.particleTex, Color.black, 0.075f, 0.02f, 0.02f, 0.5f );
+			if( def.hasTrail )
+			{
+				gfx.AddParticleSystem( def.trailAmt, def.trailTexture.Item2, Color.white, def.trailStartSize, def.trailEndSize, 0.02f, def.trailLifetime );
+			}
 
 			Rigidbody rb = container.AddComponent<Rigidbody>();
 			rb.velocity = velocity;

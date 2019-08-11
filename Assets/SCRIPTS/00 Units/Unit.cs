@@ -74,6 +74,7 @@ namespace SS.Units
 		{
 			this.id = def.id;
 			this.healthMax = def.healthMax;
+			this.Heal();
 			this.slashArmor = def.slashArmor;
 			this.pierceArmor = def.pierceArmor;
 			this.concussionArmor = def.concussionArmor;
@@ -129,20 +130,29 @@ namespace SS.Units
 			{
 				throw new System.Exception( "Can't take less than 0 damage" );
 			}
+			float mult = 0;
 			if( type == DamageType.Slash )
 			{
-				amount *= 1 - (this.slashArmor - armorPenetration);
+				mult = 1 - (this.slashArmor - armorPenetration);
 			}
 			if( type == DamageType.Pierce )
 			{
-				amount *= 1 - (this.pierceArmor - armorPenetration);
+				mult = 1 - (this.pierceArmor - armorPenetration);
 			}
 			if( type == DamageType.Concussion )
 			{
-				amount *= 1 - (this.concussionArmor - armorPenetration);
+				mult = 1 - (this.concussionArmor - armorPenetration);
+			}
+			if( mult > 1 )
+			{
+				mult = 1;
 			}
 			AudioManager.PlayNew( Main.instance.hit, 1.0f, 1.0f );
-			this.health -= amount;
+			this.health -= amount * mult;
+			if( this.health <= 0 )
+			{
+				this.Die();
+			}
 		}
 
 		/// <summary>
@@ -182,18 +192,20 @@ namespace SS.Units
 			unitComponent.AssignDefinition( def );
 			unitComponent.SetFaction( factionId );
 
-			RangedComponent ranged = container.AddComponent<RangedComponent>();
+			if( def.isRanged )
+			{
+				RangedComponent ranged = container.AddComponent<RangedComponent>();
 
-			ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( "projectile.arrow" );
-			ranged.armorPenetration = 0.0f;
-			ranged.damage = 0.1f;
-			ranged.localOffsetMin = new Vector3( -0.5f, 0.1875f, -0.25f );
-			ranged.localOffsetMax = new Vector3( 0.5f, 0.1875f, 0.25f );
-			ranged.attackRange = 6;
-			ranged.attackCooldown = 3;
-			ranged.projectileCount = 5;
-			ranged.velocity = 2.5f;
-
+				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
+				ranged.armorPenetration = def.rangedArmorPenetration;
+				ranged.damage = def.rangedDamage;
+				ranged.localOffsetMin = def.rangedLocalOffsetMin;//new Vector3( -0.5f, 0.1875f, -0.25f );
+				ranged.localOffsetMax = def.rangedLocalOffsetMax;// new Vector3( 0.5f, 0.1875f, 0.25f );
+				ranged.attackRange = def.rangedAttackRange;// 6;
+				ranged.attackCooldown = def.rangedAttackCooldown; //3;
+				ranged.projectileCount = def.rangedProjectileCount;// 5;
+				ranged.velocity = def.rangedVelocity;//2.5f;
+			}
 
 
 			return container;

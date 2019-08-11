@@ -101,15 +101,46 @@ namespace SS
 
 		void Start()
 		{
-			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_cavalry" );
-			for( int i = 0; i < 10; i++ )
+			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
+			for( int i = 0; i < 4; i++ )
 			{
 				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
 			}
-			for( int i = 0; i < 10; i++ )
+			for( int i = 0; i < 4; i++ )
 			{
 				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
 			}
+
+			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_infantry" );
+			for( int i = 0; i < 3; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+			}
+			for( int i = 0; i < 3; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+			}
+
+			defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_cavalry" );
+			for( int i = 0; i < 3; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+			}
+			for( int i = 0; i < 3; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+			}
+
+			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_cavalry" );
+			for( int i = 0; i < 2; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+			}
+			for( int i = 0; i < 2; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+			}
+
 			ResourceDepositDefinition def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.tree" );
 			for( int i = 0; i < 75; i++ )
 			{

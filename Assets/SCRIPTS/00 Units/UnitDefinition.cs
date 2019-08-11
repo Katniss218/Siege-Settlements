@@ -13,6 +13,18 @@ namespace SS.Units
 		public float pierceArmor { get; set; }
 		public float concussionArmor { get; set; }
 
+		public bool isRanged { get; set; }
+		public string rangedProjectileId { get; set; }
+		public int rangedProjectileCount { get; set; }
+		public DamageType rangedDamageType { get; set; }
+		public float rangedDamage { get; set; }
+		public float rangedArmorPenetration { get; set; }
+		public float rangedAttackRange { get; set; }
+		public float rangedAttackCooldown { get; set; }
+		public float rangedVelocity { get; set; }
+		public Vector3 rangedLocalOffsetMin { get; set; }
+		public Vector3 rangedLocalOffsetMax { get; set; }
+
 		public float movementSpeed { get; set; }
 		public float rotationSpeed { get; set; }
 
@@ -37,6 +49,20 @@ namespace SS.Units
 			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
 			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
 			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
+			this.isRanged = serializer.ReadBool( "IsRanged" );
+			if( this.isRanged )
+			{
+				this.rangedProjectileId = serializer.ReadString( "RangedData.ProjectileId" );
+				this.rangedProjectileCount = serializer.ReadInt( "RangedData.ProjectileCount" );
+				this.rangedDamageType = (DamageType)serializer.ReadByte( "RangedData.DamageType" );
+				this.rangedDamage = serializer.ReadFloat( "RangedData.Damage" );
+				this.rangedArmorPenetration = serializer.ReadFloat( "RangedData.ArmorPenetration" );
+				this.rangedAttackRange = serializer.ReadFloat( "RangedData.AttackRange" );
+				this.rangedAttackCooldown = serializer.ReadFloat( "RangedData.AttackCooldown" );
+				this.rangedVelocity = serializer.ReadFloat( "RangedData.Velocity" );
+				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedData.LocalOffsetMin" );
+				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedData.LocalOffsetMax" );
+			}
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
@@ -57,6 +83,21 @@ namespace SS.Units
 			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
 			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
+			serializer.WriteBool( "", "IsRanged", this.isRanged );
+			if( this.isRanged )
+			{
+				serializer.WriteClass( "", "RangedData" );
+				serializer.WriteString( "RangedData", "ProjectileId", this.rangedProjectileId );
+				serializer.WriteInt( "RangedData", "ProjectileCount", this.rangedProjectileCount );
+				serializer.WriteByte( "RangedData", "DamageType", (byte)this.rangedDamageType );
+				serializer.WriteFloat( "RangedData", "Damage", this.rangedDamage );
+				serializer.WriteFloat( "RangedData", "ArmorPenetration", this.rangedArmorPenetration );
+				serializer.WriteFloat( "RangedData", "AttackRange", this.rangedAttackRange );
+				serializer.WriteFloat( "RangedData", "AttackCooldown", this.rangedAttackCooldown );
+				serializer.WriteFloat( "RangedData", "Velocity", this.rangedVelocity );
+				serializer.WriteVector3( "RangedData", "LocalOffsetMin", this.rangedLocalOffsetMin );
+				serializer.WriteVector3( "RangedData", "LocalOffsetMax", this.rangedLocalOffsetMax );
+			}
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
