@@ -118,6 +118,20 @@ namespace SS.Units
 			this.navMeshAgent.SetDestination( position );
 		}
 
+		public override void Heal()
+		{
+			base.Heal();
+
+			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
+		}
+
+		public override void Heal( float amount )
+		{
+			base.Heal( amount );
+			
+			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
+		}
+
 		/// <summary>
 		/// Makes the Unit take damage.
 		/// </summary>
@@ -148,6 +162,7 @@ namespace SS.Units
 				mult = 1;
 			}
 			this.health -= amount * mult;
+			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
 			if( this.health <= 0 )
 			{
 				this.Die();
