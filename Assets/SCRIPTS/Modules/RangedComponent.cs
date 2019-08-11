@@ -108,7 +108,7 @@ namespace SS
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, vel );
 				}
 				this.lastAttackTimestamp = Time.time;
-				AudioManager.PlayNew( Main.instance.loose, 1.0f, 1.0f );
+				AudioManager.PlayNew( Main.loose, 1.0f, 1.0f );
 			}
 		}
 

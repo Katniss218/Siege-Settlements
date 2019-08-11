@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SS
 {
@@ -8,7 +6,7 @@ namespace SS
 	{
 		public static Material CreateMaterial( Texture2D albedo, Texture2D normal, Texture2D emission, float metallic, float smoothness )
 		{
-			Material mat = new Material( Main.instance.resourceDepositShader );
+			Material mat = new Material( Main.resourceDepositShader );
 			
 			mat.SetTexture( "_Albedo", albedo );
 			mat.SetTexture( "_Normal", normal );

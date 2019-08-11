@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SS.Units
 {
@@ -8,7 +6,7 @@ namespace SS.Units
 	{
 		public static Material CreateMaterial( Color factionColor, Texture2D albedo, Texture2D normal, Texture2D emission, float metallic, float smoothness )
 		{
-			Material mat = new Material( Main.instance.unitShader );
+			Material mat = new Material( Main.unitShader );
 
 			mat.SetColor( "_FactionColor", factionColor );
 			mat.SetTexture( "_Albedo", albedo );

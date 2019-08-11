@@ -41,7 +41,7 @@ namespace SS
 				if( this.target != null )
 				{
 					this.Attack();
-					AudioManager.PlayNew( Main.instance.hitmelee, 1.0f, 1.0f );
+					AudioManager.PlayNew( Main.hitmelee, 1.0f, 1.0f );
 				}
 			}
 		}

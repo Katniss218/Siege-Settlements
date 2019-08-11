@@ -92,7 +92,7 @@ namespace SS.Projectiles
 				}
 			}
 			od.TakeDamage( this.damageType, this.damage, this.armorPenetration );
-			AudioManager.PlayNew( Main.instance.hit, 1.0f, 1.0f );
+			AudioManager.PlayNew( Main.hit, 1.0f, 1.0f );
 			Destroy( this.gameObject );
 		}
 

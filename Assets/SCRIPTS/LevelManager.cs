@@ -14,6 +14,7 @@ namespace SS.Levels
 
 		public static void Load( string path )
 		{
+			// Load the default Siege Settlements data & assets.
 			DataManager.LoadDefaults();
 			AssetsManager.LoadDefaults();
 
@@ -39,13 +40,11 @@ namespace SS.Levels
 			SceneManager.LoadScene( "Map" );
 		}
 
-		public static void PostInitLoad()
+		public static void PostInitLoad() // called after the scene is loaded.
 		{
 			// FIXME @@@@@ Remove this lazy thing and replace it with other way to load this.
 
-			// Load the default Siege Settlements data & assets.
-			
-
+			// Spawn the GameObject to the scene.
 			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), 0 );
 
 			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );

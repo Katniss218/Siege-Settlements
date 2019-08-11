@@ -38,30 +38,68 @@ namespace SS
 			}
 		}
 
-		public Shader factionColorShader;
-		public Shader unitShader;
-		public Shader resourceDepositShader;
-		public Material particleMaterial;
+		private static Shader __factionColorShader = null;
+		public static Shader factionColorShader
+		{
+			get
+			{
+				if( __factionColorShader == null )
+				{
+					__factionColorShader = Resources.Load<Shader>( "Shaders/FactionColor" );
+				}
+				return __factionColorShader;
+			}
+		}
+		private static Shader __unitShader = null;
+		public static Shader unitShader
+		{
+			get
+			{
+				if( __unitShader == null )
+				{
+					__unitShader = Resources.Load<Shader>( "Shaders/GenericUnit" );
+				}
+				return __unitShader;
+			}
+		}
+		private static Shader __resourceDepositShader = null;
+		public static Shader resourceDepositShader
+		{
+			get
+			{
+				if( __resourceDepositShader == null )
+				{
+					__resourceDepositShader = Resources.Load<Shader>( "Shaders/ResourceDeposit" );
+				}
+				return __resourceDepositShader;
+			}
+		}
+		private static Material __particleMaterial = null;
+		public static Material particleMaterial
+		{
+			get
+			{
+				if( __particleMaterial == null )
+				{
+					__particleMaterial = Resources.Load<Material>( "ParticleMaterial" );
+				}
+				return __particleMaterial;
+			}
+		}
 
-		public Texture2D particleTex;
-
-		public AudioClip hit, loose, hitmelee;
-
-		public Texture2D unitNormal;
-
-		new public static Camera camera = null;
+		public static AudioClip hit, loose, hitmelee;
+		
+		new public static Camera camera { get; private set; }
 		[SerializeField] private Camera cam = null;
-
-		[SerializeField] private ResourcePanel resourcePanel = null;
-
-		public static TMP_FontAsset __mainFont = null;
+		
+		private static TMP_FontAsset __mainFont = null;
 		public static TMP_FontAsset mainFont
 		{
 			get
 			{
 				if( __mainFont == null )
 				{
-					__mainFont = FindObjectOfType<Main>().interface_mainFont;
+					__mainFont = Resources.Load<TMP_FontAsset>( "Chomsky SDF" );
 				}
 				return __mainFont;
 			}
@@ -70,17 +108,7 @@ namespace SS
 		public static Main instance { get; private set; }
 
 		[SerializeField] Sprite __toolTipBackground = null;
-
-		[SerializeField] TMP_FontAsset interface_mainFont = null;
-
-		public AudioSource source;
-		public Sprite b;
-		public Sprite money;
-		public Sprite wood;
-		public Sprite stone;
-		public Sprite iron;
-		public Sprite sulphur;
-
+		
 		private void Awake()
 		{
 			if( instance != null )
@@ -90,11 +118,6 @@ namespace SS
 			instance = this;
 
 			camera = this.cam;
-
-			if( !Directory.Exists( DataManager.dirPath ) )
-				Directory.CreateDirectory( DataManager.dirPath );
-			if( !Directory.Exists( AssetsManager.dirPath ) )
-				Directory.CreateDirectory( AssetsManager.dirPath );
 		}
 
 
@@ -102,7 +125,6 @@ namespace SS
 		{
 			LevelManager.PostInitLoad();
 			
-			source = this.gameObject.AddComponent<AudioSource>();
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
 			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );
