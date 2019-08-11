@@ -32,22 +32,16 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		IsMelee = false;
-		IsRanged = true; // if true, the unit will shoot projectiles.
-		RangedData = // May not exist, if IsRanged == false.
+		IsMelee = true;
+		MeleeData =
 		{
-			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
-			ProjectileCount = 5;
-			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 3.0;
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 6.0;
-			AttackCooldown = 3.0;
-			Velocity = 4.0;
-			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
-																   // To prevent randomization, set the specific coordinate in both fields to the same value.
-			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackRange = 1.0;
+			AttackCooldown = 0.2;
 		};
+		IsRanged = false;
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -105,6 +99,99 @@
 		InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.bowmen";
+		MaxHealth = 70.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = true;
+		RangedData = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 5;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 3.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 6.0;
+			AttackCooldown = 3.0;
+			Velocity = 4.0;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+		};
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/bowmen_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.crossbowmen";
+		MaxHealth = 70.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = true;
+		RangedData = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 4;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 4.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 6.0;
+			AttackCooldown = 3.0;
+			Velocity = 4.0;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+		};
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/crossbowmen_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.mounted_archers";
+		MaxHealth = 90.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = true;
+		RangedData = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 4;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 3.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 6.0;
+			AttackCooldown = 3.0;
+			Velocity = 4.0;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+		};
+		MovementSpeed = 0.45;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		InventorySize = 45;
+		Mesh = "Models/UnitRectangle.kff";
+		AlbedoTexture = "Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{

@@ -26,7 +26,12 @@ namespace SS
 		// Start is called before the first frame update
 		void Start()
 		{
+			List<ResourceDefinition> definedRes = DataManager.GetAllOfType<ResourceDefinition>();
 
+			for( int i = 0; i < definedRes.Count; i++ )
+			{
+				AddResourceEntry( definedRes[i] );
+			}
 		}
 
 		// Update is called once per frame

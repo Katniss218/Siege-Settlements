@@ -72,6 +72,20 @@ namespace SS
 			throw new System.Exception( "The definition with id '" + id + "' is not registered." );
 		}
 
+		public static List<T> GetAllOfType<T>() where T : Definition
+		{
+			List<T> ret = new List<T>();
+			for( int i = 0; i < registeredDefinitions.Count; i++ )
+			{
+				if( registeredDefinitions[i] is T )
+				{
+					ret.Add( (T)registeredDefinitions[i] );
+				}
+			}
+			return ret;
+
+		}
+
 		public static void ClearDefinitions()
 		{
 			registeredDefinitions.Clear();

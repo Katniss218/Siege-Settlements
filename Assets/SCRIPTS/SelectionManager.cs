@@ -48,7 +48,7 @@ namespace SS
 		private static ISelectable raycastSelect()
 		{
 			RaycastHit hitInfo;
-			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+			if( Physics.Raycast( Camera.main.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 			{
 				ISelectable sel = hitInfo.collider.GetComponent<ISelectable>();
 				if( sel == null )

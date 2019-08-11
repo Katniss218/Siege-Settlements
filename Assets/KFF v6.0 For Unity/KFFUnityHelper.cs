@@ -178,6 +178,37 @@ namespace KFF
 			serializer.scopeRoot = beginScope;
 		}
 
+		public static Color ReadColor( this KFFSerializer serializer, Path path )
+		{
+			Object beginScope = serializer.scopeRoot;
+			serializer.MoveScope( path, true );
+
+			float r = serializer.ReadFloat( "R" );
+			float g = serializer.ReadFloat( "G" );
+			float b = serializer.ReadFloat( "B" );
+			float a = serializer.ReadFloat( "A" );
+
+			serializer.scopeRoot = beginScope;
+			return new Color( r, g, b, a );
+		}
+
+		public static void WriteColor( this KFFSerializer serializer, Path path, string name, Color value )
+		{
+			Object beginScope = serializer.scopeRoot;
+
+			serializer.MoveScope( path, true );
+
+			serializer.WriteClass( "", name );
+			serializer.MoveScope( name, true );
+
+			serializer.WriteFloat( "", "R", value.r );
+			serializer.WriteFloat( "", "G", value.g );
+			serializer.WriteFloat( "", "B", value.b );
+			serializer.WriteFloat( "", "A", value.a );
+
+			serializer.scopeRoot = beginScope;
+		}
+
 		public static Bounds ReadBounds( this KFFSerializer serializer, Path path )
 		{
 			Object beginScope = serializer.scopeRoot;

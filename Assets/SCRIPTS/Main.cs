@@ -5,6 +5,8 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using Katniss.Utils;
+using SS.Levels;
+using KFF;
 
 namespace SS
 {
@@ -93,97 +95,18 @@ namespace SS
 				Directory.CreateDirectory( DataManager.dirPath );
 			if( !Directory.Exists( AssetsManager.dirPath ) )
 				Directory.CreateDirectory( AssetsManager.dirPath );
-
-			DataManager.LoadDefaults();
-			AssetsManager.LoadDefaults();
 		}
 
 
 		void Start()
 		{
-			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0), 2 );
-
-			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
-			}
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
-			}
-
-			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_infantry" );
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
-			}
-
-			defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_cavalry" );
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
-			}
-
-			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_cavalry" );
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
-			}
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
-			}
-
-			ResourceDepositDefinition def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.tree" );
-			for( int i = 0; i < 75; i++ )
-			{
-				float x = UnityEngine.Random.Range( -10f, 10f );
-				float z = UnityEngine.Random.Range( -10f, 10f );
-
-				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
-				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ) );
-				}
-			}
-			def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.pine" );
-			for( int i = 0; i < 50; i++ )
-			{
-				float x = UnityEngine.Random.Range( -10f, 10f );
-				float z = UnityEngine.Random.Range( -10f, 10f );
-
-				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
-				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ) );
-				}
-			}
-			ProjectileDefinition def2 = DataManager.FindDefinition<ProjectileDefinition>( "projectile.arrow" );
-			Projectile.Create( def2, new Vector3( 0, 2, 0 ), new Vector3( 3, 3, 3 ), 0, 0f, null );
-
-			ResourceDefinition _money = DataManager.FindDefinition<ResourceDefinition>( "resource.money" );
-			ResourceDefinition _wood = DataManager.FindDefinition<ResourceDefinition>( "resource.wood" );
-			ResourceDefinition _stone = DataManager.FindDefinition<ResourceDefinition>( "resource.stone" );
-			ResourceDefinition _iron = DataManager.FindDefinition<ResourceDefinition>( "resource.iron" );
-			ResourceDefinition _sulphur = DataManager.FindDefinition<ResourceDefinition>( "resource.sulphur" );
-
-			resourcePanel.AddResourceEntry( _money, 700 );
-			resourcePanel.AddResourceEntry( _wood, 400 );
-			resourcePanel.AddResourceEntry( _stone, 600 );
-			resourcePanel.AddResourceEntry( _iron, 100 );
-			resourcePanel.AddResourceEntry( _sulphur, 0 );
-
+			LevelManager.PostInitLoad();
+			
 			source = this.gameObject.AddComponent<AudioSource>();
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
 			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );
+
 		}
 
 		void Update()

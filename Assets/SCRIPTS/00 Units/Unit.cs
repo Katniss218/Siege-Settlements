@@ -83,7 +83,7 @@ namespace SS.Units
 			this.collider.center = new Vector3( 0f, def.height / 2f, 0f );
 
 			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = UnitUtils.CreateMaterial( Color.red, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );
+			this.meshRenderer.material = UnitUtils.CreateMaterial( FactionManager.factions[this.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );
 		}
 
 		public void SerializeData( KFFSerializer serializer )
@@ -203,8 +203,8 @@ namespace SS.Units
 			navMeshAgent.stoppingDistance = 0.125f;
 
 			Unit unitComponent = container.AddComponent<Unit>();
-			unitComponent.AssignDefinition( def );
 			unitComponent.SetFaction( factionId );
+			unitComponent.AssignDefinition( def );
 
 			if( def.isMelee )
 			{
