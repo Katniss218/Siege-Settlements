@@ -43,7 +43,7 @@ namespace SS
 
 		public Texture2D particleTex;
 
-		public AudioClip hit, loose;
+		public AudioClip hit, loose, hitmelee;
 
 		public Texture2D unitNormal;
 
@@ -183,6 +183,7 @@ namespace SS
 			source = this.gameObject.AddComponent<AudioSource>();
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
+			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );
 		}
 
 		void Update()

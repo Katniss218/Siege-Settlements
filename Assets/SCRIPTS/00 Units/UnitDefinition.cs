@@ -25,6 +25,13 @@ namespace SS.Units
 		public Vector3 rangedLocalOffsetMin { get; set; }
 		public Vector3 rangedLocalOffsetMax { get; set; }
 
+		public bool isMelee { get; set; }
+		public DamageType meleeDamageType { get; set; }
+		public float meleeDamage { get; set; }
+		public float meleeArmorPenetration { get; set; }
+		public float meleeAttackRange { get; set; }
+		public float meleeAttackCooldown { get; set; }
+
 		public float movementSpeed { get; set; }
 		public float rotationSpeed { get; set; }
 
@@ -49,6 +56,15 @@ namespace SS.Units
 			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
 			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
 			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
+			this.isMelee = serializer.ReadBool( "IsMelee" );
+			if( this.isMelee )
+			{
+				this.meleeDamageType = (DamageType)serializer.ReadByte( "MeleeData.DamageType" );
+				this.meleeDamage = serializer.ReadFloat( "MeleeData.Damage" );
+				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeData.ArmorPenetration" );
+				this.meleeAttackRange = serializer.ReadFloat( "MeleeData.AttackRange" );
+				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeData.AttackCooldown" );
+			}
 			this.isRanged = serializer.ReadBool( "IsRanged" );
 			if( this.isRanged )
 			{
@@ -84,6 +100,16 @@ namespace SS.Units
 			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
 			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
+			serializer.WriteBool( "", "IsMelee", this.isMelee );
+			if( this.isMelee )
+			{
+				serializer.WriteClass( "", "MeleeData" );
+				serializer.WriteByte( "MeleeData", "DamageType", (byte)this.meleeDamageType );
+				serializer.WriteFloat( "MeleeData", "Damage", this.meleeDamage );
+				serializer.WriteFloat( "MeleeData", "ArmorPenetration", this.meleeArmorPenetration );
+				serializer.WriteFloat( "MeleeData", "AttackRange", this.meleeAttackRange );
+				serializer.WriteFloat( "MeleeData", "AttackCooldown", this.meleeAttackCooldown );
+			}
 			serializer.WriteBool( "", "IsRanged", this.isRanged );
 			if( this.isRanged )
 			{

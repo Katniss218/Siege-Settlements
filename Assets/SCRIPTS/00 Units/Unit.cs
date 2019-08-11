@@ -69,7 +69,7 @@ namespace SS.Units
 		{
 
 		}
-		
+
 		public void AssignDefinition( UnitDefinition def )
 		{
 			this.id = def.id;
@@ -147,7 +147,6 @@ namespace SS.Units
 			{
 				mult = 1;
 			}
-			AudioManager.PlayNew( Main.instance.hit, 1.0f, 1.0f );
 			this.health -= amount * mult;
 			if( this.health <= 0 )
 			{
@@ -192,6 +191,17 @@ namespace SS.Units
 			unitComponent.AssignDefinition( def );
 			unitComponent.SetFaction( factionId );
 
+			if( def.isMelee )
+			{
+				MeleeComponent melee = container.AddComponent<MeleeComponent>();
+
+				melee.armorPenetration = def.meleeArmorPenetration;
+				melee.damage = def.meleeDamage;
+				melee.damageType = def.meleeDamageType;
+				melee.attackCooldown = def.meleeAttackCooldown;
+				melee.attackRange = def.meleeAttackRange;
+			}
+
 			if( def.isRanged )
 			{
 				RangedComponent ranged = container.AddComponent<RangedComponent>();
@@ -199,12 +209,12 @@ namespace SS.Units
 				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
 				ranged.armorPenetration = def.rangedArmorPenetration;
 				ranged.damage = def.rangedDamage;
-				ranged.localOffsetMin = def.rangedLocalOffsetMin;//new Vector3( -0.5f, 0.1875f, -0.25f );
-				ranged.localOffsetMax = def.rangedLocalOffsetMax;// new Vector3( 0.5f, 0.1875f, 0.25f );
-				ranged.attackRange = def.rangedAttackRange;// 6;
-				ranged.attackCooldown = def.rangedAttackCooldown; //3;
-				ranged.projectileCount = def.rangedProjectileCount;// 5;
-				ranged.velocity = def.rangedVelocity;//2.5f;
+				ranged.localOffsetMin = def.rangedLocalOffsetMin;
+				ranged.localOffsetMax = def.rangedLocalOffsetMax;
+				ranged.attackRange = def.rangedAttackRange;
+				ranged.attackCooldown = def.rangedAttackCooldown;
+				ranged.projectileCount = def.rangedProjectileCount;
+				ranged.velocity = def.rangedVelocity;
 			}
 
 
