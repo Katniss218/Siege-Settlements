@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Buildings;
 using SS.DataStructures;
+using SS.Extras;
 using SS.Projectiles;
 using SS.Units;
 using System.Collections.Generic;
@@ -177,6 +178,21 @@ namespace SS
 			for( int i = 0; i < deserializedP.Length; i++ )
 			{
 				DataManager.RegisterDefinition( deserializedP[i] );
+			}
+
+			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Extras.kff", Encoding.UTF8 );
+			serializer.Analyze( "Extras" );
+			ExtraDefinition[] deserializedE = new ExtraDefinition[serializer.aChildCount];
+
+			for( int i = 0; i < deserializedE.Length; i++ )
+			{
+				deserializedE[i] = new ExtraDefinition( "unset" );
+			}
+			serializer.DeserializeArray( "Extras", deserializedE );
+
+			for( int i = 0; i < deserializedE.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserializedE[i] );
 			}
 
 

@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Buildings;
+using SS.Extras;
 using SS.Projectiles;
 using SS.Units;
 using System.Collections;
@@ -48,6 +49,12 @@ namespace SS.Levels
 			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), 0 );
 
 			Building.Create( DataManager.FindDefinition<BuildingDefinition>( "building.house0" ), new Vector3( 5, 0, 5 ), Quaternion.identity, 0 );
+
+			ExtraDefinition defe = DataManager.FindDefinition<ExtraDefinition>( "extra.grass" );
+			for( int i = 0; i < 400; i++ )
+			{
+				Extra.Create( defe, new Vector3( UnityEngine.Random.Range( -15f, 15f ), 0, UnityEngine.Random.Range( -15f, 15f ) ), Quaternion.identity );
+			}
 
 			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
 			for( int i = 0; i < 4; i++ )

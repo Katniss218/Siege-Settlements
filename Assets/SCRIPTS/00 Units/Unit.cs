@@ -18,7 +18,7 @@ namespace SS.Units
 		public void SetFaction( int id )
 		{
 			this.factionId = id;
-			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[id].color );
+			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[this.factionId].color );
 		}
 
 		// TODO! ----- New "data" struct that holds variables saved with the level.
@@ -68,7 +68,14 @@ namespace SS.Units
 			this.navMeshAgent.angularSpeed = def.rotationSpeed;
 
 			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = UnitUtils.CreateMaterial( FactionManager.factions[this.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );
+			this.meshRenderer.material = Main.materialFactionColoredDestroyable;
+			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[this.factionId].color );
+			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+
+			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			this.meshRenderer.material.SetTexture( "_Emission", null );
+			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
+			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 		}
 		
 		/// <summary>

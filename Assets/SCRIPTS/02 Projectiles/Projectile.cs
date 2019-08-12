@@ -34,7 +34,13 @@ namespace SS.Projectiles
 			this.id = def.id;
 
 			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = UnitUtils.CreateMaterial( Color.black, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );
+			this.meshRenderer.material = Main.materialSolid;
+			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+
+			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			this.meshRenderer.material.SetTexture( "_Emission", null );
+			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
+			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 		}
 
 		public void SerializeData( KFFSerializer serializer )

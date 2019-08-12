@@ -88,7 +88,6 @@ namespace SS
 		public virtual void Die()
 		{
 			Destroy( this.gameObject );
-			Debug.LogWarning( "Killed: " + this.gameObject.name + ", " + this.health + "/" + this.healthMax );
 		}
 	}
 }

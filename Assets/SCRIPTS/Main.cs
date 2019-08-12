@@ -39,42 +39,68 @@ namespace SS
 			}
 		}
 
-		private static Shader __factionColorShader = null;
-		public static Shader factionColorShader
+		private static Material __materialFactionColored = null;
+		public static Material materialFactionColored
 		{
 			get
 			{
-				if( __factionColorShader == null )
+				if( __materialFactionColored == null )
 				{
-					__factionColorShader = Resources.Load<Shader>( "Shaders/FactionColor" );
+					__materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) );
 				}
-				return __factionColorShader;
+				return __materialFactionColored;
 			}
 		}
 
-		private static Shader __unitShader = null;
-		public static Shader unitShader
+		private static Material __materialFactionColoredDestroyable = null;
+		public static Material materialFactionColoredDestroyable
 		{
 			get
 			{
-				if( __unitShader == null )
+				if( __materialFactionColoredDestroyable == null )
 				{
-					__unitShader = Resources.Load<Shader>( "Shaders/GenericUnit" );
+					__materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) );
 				}
-				return __unitShader;
+				return __materialFactionColoredDestroyable;
 			}
 		}
 
-		private static Shader __resourceDepositShader = null;
-		public static Shader resourceDepositShader
+		private static Material __materialSolid = null;
+		public static Material materialSolid
 		{
 			get
 			{
-				if( __resourceDepositShader == null )
+				if( __materialSolid == null )
 				{
-					__resourceDepositShader = Resources.Load<Shader>( "Shaders/ResourceDeposit" );
+					__materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) );
 				}
-				return __resourceDepositShader;
+				return __materialSolid;
+			}
+		}
+
+		private static Material __materialPlantTransparent = null;
+		public static Material materialPlantTransparent
+		{
+			get
+			{
+				if( __materialPlantTransparent == null )
+				{
+					__materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) );
+				}
+				return __materialPlantTransparent;
+			}
+		}
+
+		private static Material __materialPlantSolid = null;
+		public static Material materialPlantSolid
+		{
+			get
+			{
+				if( __materialPlantSolid == null )
+				{
+					__materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) );
+				}
+				return __materialPlantSolid;
 			}
 		}
 
