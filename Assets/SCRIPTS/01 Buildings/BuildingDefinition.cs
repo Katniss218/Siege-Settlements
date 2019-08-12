@@ -4,22 +4,25 @@ using SS.DataStructures;
 using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Buildings
 {
-	public class ResourceDepositDefinition : Definition
+	public class BuildingDefinition : Definition
 	{
-		public string resourceId { get; private set; }
+		public string displayName { get; set; }
 
-		public bool isExtracted { get; private set; }
+		public float healthMax { get; set; }
+		public float slashArmor { get; set; }
+		public float pierceArmor { get; set; }
+		public float concussionArmor { get; set; }
 
-		public Vector3 size { get; private set; }
+		public Vector3 size { get; set; }
 
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
 
 
-		public ResourceDepositDefinition( string id ) : base( id )
+		public BuildingDefinition( string id ) : base( id )
 		{
 
 		}
@@ -27,8 +30,11 @@ namespace SS
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
-			this.resourceId = serializer.ReadString( "ResourceId" );
-			this.isExtracted = serializer.ReadBool( "IsExtracted" );
+			this.displayName = serializer.ReadString( "DisplayName" );
+			this.healthMax = serializer.ReadFloat( "MaxHealth" );
+			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
+			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
+			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
 			this.size = serializer.ReadVector3( "Size" );
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
@@ -41,8 +47,11 @@ namespace SS
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
-			serializer.WriteString( "", "ResourceId", this.resourceId );
-			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
+			serializer.WriteString( "", "DisplayName", this.displayName );
+			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
+			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
+			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
+			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );

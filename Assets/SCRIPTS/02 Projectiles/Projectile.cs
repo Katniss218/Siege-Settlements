@@ -98,6 +98,10 @@ namespace SS.Projectiles
 
 		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, float damage, Transform owner )
 		{
+			if( def == null )
+			{
+				throw new System.Exception( "Definition can't be null" );
+			}
 			GameObject container = new GameObject( "Projectile (\"" + def.id + "\"), (f: " + factionId + ")" );
 
 			GameObject gfx = new GameObject( "graphics" );

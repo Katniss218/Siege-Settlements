@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Buildings;
 using SS.Projectiles;
 using SS.Units;
 using System.Collections;
@@ -45,6 +46,8 @@ namespace SS.Levels
 
 			// Spawn the GameObject to the scene.
 			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), 0 );
+
+			Building.Create( DataManager.FindDefinition<BuildingDefinition>( "building.house0" ), new Vector3( 5, 0, 5 ), Quaternion.identity, 0 );
 
 			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
 			for( int i = 0; i < 4; i++ )

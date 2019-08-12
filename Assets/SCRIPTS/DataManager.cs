@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Buildings;
 using SS.DataStructures;
 using SS.Projectiles;
 using SS.Units;
@@ -142,6 +143,23 @@ namespace SS
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
 				DataManager.RegisterDefinition( deserialized[i] );
+			}
+
+
+
+			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Buildings.kff", Encoding.UTF8 );
+			serializer.Analyze( "Buildings" );
+			BuildingDefinition[] deserializedB = new BuildingDefinition[serializer.aChildCount];
+
+			for( int i = 0; i < deserializedB.Length; i++ )
+			{
+				deserializedB[i] = new BuildingDefinition( "unset" );
+			}
+			serializer.DeserializeArray( "Buildings", deserializedB );
+
+			for( int i = 0; i < deserializedB.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserializedB[i] );
 			}
 
 

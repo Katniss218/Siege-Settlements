@@ -8,7 +8,7 @@ namespace KFF
 	/// </summary>
 	public static class KFFUnityHelper
 	{
-		// FIXME ----- Add the rest of the methods to this helper class (total: Write, Append, WriteArray, AppendArray, Read, ReadArray)
+		// TODO ----- Add the rest of the methods to this helper class (total: Write, Append, WriteArray, AppendArray, Read, ReadArray)
 
 		public static Vector2 ReadVector2( this KFFSerializer serializer, Path path )
 		{

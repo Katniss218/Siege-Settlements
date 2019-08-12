@@ -2,6 +2,7 @@
 [
 	{
 		Id = "unit.light_infantry";
+		DisplayName = "Light Infantry";
 		MaxHealth = 100.0;
 		SlashArmor = 0.0; // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
 						  // so if you have 2.0 armor and attacker has 1.5 penetration, there will be 50% damage reduction.
@@ -21,13 +22,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;  // The physical size of the unit (hitbox)
 		Height = 0.1875; // The physical size of the unit (hitbox)
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.heavy_infantry";
+		DisplayName = "Heavy Infantry";
 		MaxHealth = 100.0;
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
@@ -46,13 +48,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.light_cavalry";
+		DisplayName = "Light Cavalry";
 		MaxHealth = 130.0;
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
@@ -71,13 +74,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.heavy_cavalry";
+		DisplayName = "Heavy Cavalry";
 		MaxHealth = 130.0;
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
@@ -96,13 +100,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.bowmen";
+		DisplayName = "Bowmen";
 		MaxHealth = 70.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
@@ -127,13 +132,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/bowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.crossbowmen";
+		DisplayName = "Crossbowmen";
 		MaxHealth = 70.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
@@ -158,13 +164,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/crossbowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.mounted_archers";
+		DisplayName = "Mounted Archers";
 		MaxHealth = 90.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
@@ -189,13 +196,14 @@
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
-		InventorySize = 45;
+		//InventorySize = 45;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 	},
 	{
 		Id = "unit.wolf";
+		DisplayName = "Wolf";
 		MaxHealth = 40.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
@@ -214,7 +222,7 @@
 		RotationSpeed = 120;
 		Radius = 0.25;
 		Height = 0.1875;
-		InventorySize = 0;
+		//InventorySize = 0;
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/wolf_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";

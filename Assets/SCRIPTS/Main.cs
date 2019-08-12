@@ -1,12 +1,8 @@
-﻿using SS.Projectiles;
-using SS.Units;
-using System;
-using System.IO;
+﻿using System;
 using TMPro;
 using UnityEngine;
-using Katniss.Utils;
 using SS.Levels;
-using KFF;
+using SS.Units;
 
 namespace SS
 {
@@ -16,7 +12,7 @@ namespace SS
 		{
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
-		
+
 		private static Canvas __canvas = null;
 		public static Canvas canvas
 		{
@@ -30,11 +26,16 @@ namespace SS
 			}
 		}
 
+		private static Sprite __tooltipBackground = null;
 		public static Sprite toolTipBackground
 		{
 			get
 			{
-				return FindObjectOfType<Main>().__toolTipBackground;
+				if( __tooltipBackground == null )
+				{
+					__tooltipBackground = FindObjectOfType<Main>().__tooltipBackgroundSprite;
+				}
+				return __tooltipBackground;
 			}
 		}
 
@@ -50,6 +51,7 @@ namespace SS
 				return __factionColorShader;
 			}
 		}
+
 		private static Shader __unitShader = null;
 		public static Shader unitShader
 		{
@@ -62,6 +64,7 @@ namespace SS
 				return __unitShader;
 			}
 		}
+
 		private static Shader __resourceDepositShader = null;
 		public static Shader resourceDepositShader
 		{
@@ -74,6 +77,7 @@ namespace SS
 				return __resourceDepositShader;
 			}
 		}
+
 		private static Material __particleMaterial = null;
 		public static Material particleMaterial
 		{
@@ -88,10 +92,10 @@ namespace SS
 		}
 
 		public static AudioClip hit, loose, hitmelee;
-		
+
 		new public static Camera camera { get; private set; }
 		[SerializeField] private Camera cam = null;
-		
+
 		private static TMP_FontAsset __mainFont = null;
 		public static TMP_FontAsset mainFont
 		{
@@ -107,8 +111,8 @@ namespace SS
 
 		public static Main instance { get; private set; }
 
-		[SerializeField] Sprite __toolTipBackground = null;
-		
+		[SerializeField] Sprite __tooltipBackgroundSprite = null;
+
 		private void Awake()
 		{
 			if( instance != null )
@@ -124,7 +128,7 @@ namespace SS
 		void Start()
 		{
 			LevelManager.PostInitLoad();
-			
+
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
 			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );

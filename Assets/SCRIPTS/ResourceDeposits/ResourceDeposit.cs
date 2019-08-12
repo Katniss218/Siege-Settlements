@@ -16,28 +16,14 @@ namespace SS
 
 		public bool isTypeExtracted { get; private set; } // if true, the resource doesn't take time to mine.
 
-		Transform graphicsTransform;
-		
-		public void AssignDefinition( ResourceDepositDefinition def )
-		{
-			this.id = def.id;
-			this.resourceId = def.resourceId;
-			this.isTypeExtracted = def.isExtracted;
-			this.graphicsTransform.localScale = def.scale;
-		}
-		
-		public void SerializeData( KFFSerializer serializer )
-		{
-			serializer.WriteInt( "", "Amount", this.amt );
-			serializer.WriteInt( "", "MaxAmount", this.amtMax );
-		}
+		private Transform graphicsTransform;
+		private MeshFilter meshFilter;
+		private MeshRenderer meshRenderer;
+		private NavMeshObstacle obstacle;
 
-		public void DeserializeData( KFFSerializer serializer )
-		{
-			this.amt = serializer.ReadInt( "Amount" );
-			this.amtMax = serializer.ReadInt( "MaxAmount" );
-		}
+
 		
+		/*
 		// amount that the miner wants to extract, the inventory of the miner.
 		public void ExtractResource( int desiredAmt, IInventory inventory )
 		{
@@ -68,40 +54,57 @@ namespace SS
 			}
 			Debug.LogWarning( "Tried to extract resource but can't hold any more of it." );
 		}
+		*/
 
-		// Start is called before the first frame update
+		void Awake()
+		{
+			this.graphicsTransform = this.transform.GetChild( 0 );
+			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
+			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
+			this.obstacle = this.GetComponent<NavMeshObstacle>();
+		}
+
 		void Start()
 		{
 
 		}
-
-		// Update is called once per frame
+		
 		void Update()
 		{
 
 		}
 
+		public void AssignDefinition( ResourceDepositDefinition def )
+		{
+			this.id = def.id;
+			this.resourceId = def.resourceId;
+			this.isTypeExtracted = def.isExtracted;
+			this.obstacle.size = def.size;
+			this.obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			this.meshFilter.mesh = def.mesh.Item2;
+			this.meshRenderer.material = ResourceDepositUtils.CreateMaterial( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.5f );
+		}
+
 		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot )
 		{
+			if( def == null )
+			{
+				throw new System.Exception( "Definition can't be null" );
+			}
 			GameObject container = new GameObject( "Resource Deposit (\"" + def.id + "\")" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
-
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = ResourceDepositUtils.CreateMaterial( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
 
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
-			obstacle.size = Vector3.one * 0.3f;
 			obstacle.carving = true;
 
 			container.transform.SetPositionAndRotation( pos, rot );
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
-			resourceDepositComponent.graphicsTransform = gfx.transform;
 			resourceDepositComponent.AssignDefinition( def );
 
 			return container;

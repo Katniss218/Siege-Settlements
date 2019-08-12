@@ -4,7 +4,7 @@
 		Id = "resource_deposit.tree";
 		ResourceId = "resource.wood";
 		IsExtracted = false;
-		Scale = { X = 1.0; Y = 1.0; Z = 1.0; };
+		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
 		Mesh = "Models/Tree.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/tree_albedo.png";
 		NormalTexture = "Textures/ResourceDeposits/tree_normal.png";
@@ -13,7 +13,7 @@
 		Id = "resource_deposit.pine";
 		ResourceId = "resource.wood";
 		IsExtracted = false;
-		Scale = { X = 1.5; Y = 1.5; Z = 1.5; };
+		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
 		Mesh = "Models/Pine.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/pine_albedo.png";
 		NormalTexture = "Textures/ResourceDeposits/pine_normal.png";

@@ -1,0 +1,15 @@
+﻿Buildings =
+[
+	{
+		Id = "building.house0";
+		DisplayName = "House";
+		MaxHealth = 1000.0;
+		SlashArmor = 0.5;
+		PierceArmor = 0.5;
+		ConcussionArmor = 0.5;
+		Size = { X = 0.8; Y = 0.7; Z = 0.5; };
+		Mesh = "Models/Buildings/House.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	}
+];

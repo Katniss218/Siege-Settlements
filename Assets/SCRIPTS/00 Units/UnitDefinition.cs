@@ -8,6 +8,8 @@ namespace SS.Units
 {
 	public class UnitDefinition : Definition
 	{
+		public string displayName { get; set; }
+
 		public float healthMax { get; set; }
 		public float slashArmor { get; set; }
 		public float pierceArmor { get; set; }
@@ -37,9 +39,7 @@ namespace SS.Units
 
 		public float radius { get; set; }
 		public float height { get; set; }
-
-		public int inventorySize { get; set; }
-
+		
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
@@ -52,6 +52,7 @@ namespace SS.Units
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
+			this.displayName = serializer.ReadString( "DisplayName" );
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
 			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
@@ -83,7 +84,6 @@ namespace SS.Units
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
-			this.inventorySize = serializer.ReadInt( "InventorySize" );
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
@@ -94,8 +94,8 @@ namespace SS.Units
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			// FIXME! - Add an in-game debug system for loading definitions (exception handling).
 			serializer.WriteString( "", "Id", this.id );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
 			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
@@ -129,7 +129,6 @@ namespace SS.Units
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
-			serializer.WriteInt( "", "InventorySize", this.inventorySize );
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
