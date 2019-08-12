@@ -130,9 +130,8 @@ namespace SS
 
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Units.kff", Encoding.UTF8 );
-			serializer.MoveScope( "Units", true );
-			UnitDefinition[] deserialized = new UnitDefinition[serializer.ScopeChildCount()];
-			serializer.MoveScope( "<", true );
+			serializer.Analyze( "Units" );
+			UnitDefinition[] deserialized = new UnitDefinition[serializer.aChildCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -148,9 +147,8 @@ namespace SS
 
 
 			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Projectiles.kff", Encoding.UTF8 );
-			serializer.MoveScope( "Projectiles", true );
-			ProjectileDefinition[] deserializedP = new ProjectileDefinition[serializer.ScopeChildCount()];
-			serializer.MoveScope( "<", true );
+			serializer.Analyze( "Projectiles" );
+			ProjectileDefinition[] deserializedP = new ProjectileDefinition[serializer.aChildCount];
 
 			for( int i = 0; i < deserializedP.Length; i++ )
 			{
@@ -166,9 +164,8 @@ namespace SS
 
 
 			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Resources.kff", Encoding.UTF8 );
-			serializer.MoveScope( "Resources", true );
-			ResourceDefinition[] deserializedR = new ResourceDefinition[serializer.ScopeChildCount()];
-			serializer.MoveScope( "<", true );
+			serializer.Analyze( "Resources" );
+			ResourceDefinition[] deserializedR = new ResourceDefinition[serializer.aChildCount];
 
 			for( int i = 0; i < deserializedR.Length; i++ )
 			{
@@ -183,9 +180,8 @@ namespace SS
 
 
 			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "ResourceDeposits.kff", Encoding.UTF8 );
-			serializer.MoveScope( "ResourceDeposits", true );
-			ResourceDepositDefinition[] deserializedRD = new ResourceDepositDefinition[serializer.ScopeChildCount()];
-			serializer.MoveScope( "<", true );
+			serializer.Analyze( "ResourceDeposits" );
+			ResourceDepositDefinition[] deserializedRD = new ResourceDepositDefinition[serializer.aChildCount];
 
 			for( int i = 0; i < deserializedRD.Length; i++ )
 			{

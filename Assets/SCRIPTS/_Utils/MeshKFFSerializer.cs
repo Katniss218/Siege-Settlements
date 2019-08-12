@@ -9,8 +9,9 @@ namespace Katniss.Utils
 		public static Mesh[] DeserializeKFF( KFFSerializer serializer )
 		{
 			KFF.DataStructures.Object array_root = serializer.MoveScope( "Objects", true );
-			
-			int numMeshes = serializer.ScopeChildCount();
+			serializer.Analyze( "" );
+
+			int numMeshes = serializer.aChildCount;
 			List<Mesh> meshes = new List<Mesh>();
 
 			// for each mesh.
@@ -24,38 +25,35 @@ namespace Katniss.Utils
 					Mesh newMesh = new Mesh();
 					newMesh.name = serializer.ReadString( "Name" );
 
-					serializer.MoveScope( "Vertices", true );
-					Vector3[] verts = new Vector3[serializer.ScopeChildCount()];
+					serializer.Analyze( "Vertices" );
+					Vector3[] verts = new Vector3[serializer.aChildCount];
 					for( int j = 0; j < verts.Length; j++ )
 					{
-						verts[j] = serializer.ReadVector3( j.ToString() );
+						verts[j] = serializer.ReadVector3( "Vertices." + j.ToString() );
 					}
-					serializer.MoveScope( "<", true );
 
-					serializer.MoveScope( "Normals", true );
-					Vector3[] normals = new Vector3[serializer.ScopeChildCount()];
+					serializer.Analyze( "Normals" );
+					Vector3[] normals = new Vector3[serializer.aChildCount];
 					for( int j = 0; j < normals.Length; j++ )
 					{
-						normals[j] = serializer.ReadVector3( j.ToString() );
+						normals[j] = serializer.ReadVector3( "Normals." + j.ToString() );
 					}
-					serializer.MoveScope( "<", true );
 
-					serializer.MoveScope( "UVs", true );
-					Vector2[] uvs = new Vector2[serializer.ScopeChildCount()];
+					serializer.Analyze( "UVs" );
+					Vector2[] uvs = new Vector2[serializer.aChildCount];
 					for( int j = 0; j < uvs.Length; j++ )
 					{
-						uvs[j] = serializer.ReadVector2( j.ToString() );
+						uvs[j] = serializer.ReadVector2( "UVs." + j.ToString() );
 					}
-					serializer.MoveScope( "<", true );
 
-					serializer.MoveScope( "Faces", true );
-					int numFaces = serializer.ScopeChildCount();
+					serializer.Analyze( "Faces" );
+					int numFaces = serializer.aChildCount;
 					int[] triangles = new int[numFaces * 3];
 					for( int j = 0; j < numFaces; j++ )
 					{
-						triangles[(j * 3)] = serializer.ReadInt( j.ToString() + ".0" ) - 1;
-						triangles[(j * 3) +1] = serializer.ReadInt( j.ToString() + ".1" ) - 1;
-						triangles[(j * 3) +2] = serializer.ReadInt( j.ToString() + ".2" ) - 1;
+						triangles[(j * 3)] = serializer.ReadInt( "Faces." + j.ToString() + ".0" ) - 1;
+						triangles[(j * 3) +1] = serializer.ReadInt( "Faces."+j.ToString() + ".1" ) - 1;
+						triangles[(j * 3) +2] = serializer.ReadInt( "Faces."+j.ToString() + ".2" ) - 1;
 					}
 					serializer.MoveScope( "<", true );
 

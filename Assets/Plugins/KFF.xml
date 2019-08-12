@@ -1026,19 +1026,29 @@
             <param name="path">The path along which to move the scope.</param>
             <param name="keepItThere">If set to true, the scope will be set to the object at end of the path.</param>
         </member>
-        <member name="M:KFF.KFFSerializer.ScopeChildCount">
+        <member name="M:KFF.KFFSerializer.Analyze(KFF.Path)">
             <summary>
-            Returns the number of child tags/payloads of the current scope's root object.
+            Analyzes an object at the end of the path. Returns true if a path is valid, and leads to a valid KFF object.
+            <para>
+            You can use this in conjunction with other methods to obtain information about objects inside a KFF file.
+            </para>
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="P:KFF.KFFSerializer.aChildCount">
+            <summary>
+            Returns the number of child tags/payloads of the analyzed object. Returns 0 if the object is primitive (Read Only).
             </summary>
         </member>
-        <member name="M:KFF.KFFSerializer.ScopeIsTag">
+        <member name="P:KFF.KFFSerializer.aIsTag">
             <summary>
-            Returns true if the current scope's root object is a tag, false otherwise.
+            Returns true if the current analyzed object is a tag, false otherwise.
             </summary>
         </member>
-        <member name="M:KFF.KFFSerializer.ScopeIsPayload">
+        <member name="P:KFF.KFFSerializer.aIsPayload">
             <summary>
-            Returns true if the current scope's root object is a payload, false otherwise.
+            Returns true if the current analyzed object is a payload, false otherwise.
             </summary>
         </member>
         <member name="M:KFF.KFFSerializer.WriteBool(KFF.Path,System.String,System.Boolean)">
