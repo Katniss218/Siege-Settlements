@@ -102,7 +102,7 @@ namespace SS.Projectiles
 			Destroy( this.gameObject );
 		}
 
-		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, float damage, Transform owner )
+		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, float damageOverride, Transform owner )
 		{
 			if( def == null )
 			{
@@ -131,8 +131,11 @@ namespace SS.Projectiles
 			container.transform.position = position;
 
 			Projectile projectileComponent = container.AddComponent<Projectile>();
-			projectileComponent.AssignDefinition( def );
 			projectileComponent.SetFaction( factionId );
+			projectileComponent.AssignDefinition( def );
+
+			projectileComponent.damage = damageOverride;
+			projectileComponent.owner = owner;
 
 			return container;
 		}

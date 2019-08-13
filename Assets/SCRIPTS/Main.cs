@@ -26,6 +26,32 @@ namespace SS
 			}
 		}
 
+		private static Sprite __switcherObjA = null;
+		public static Sprite switcherObjA
+		{
+			get
+			{
+				if( __switcherObjA == null )
+				{
+					__switcherObjA = Resources.Load<Sprite>( "Textures/selection_toggle" );
+				}
+				return __switcherObjA;
+			}
+		}
+
+		private static Sprite __switcherListA = null;
+		public static Sprite switcherListA
+		{
+			get
+			{
+				if( __switcherListA == null )
+				{
+					__switcherListA = Resources.Load<Sprite>( "Textures/selection_toggle_list" );
+				}
+				return __switcherListA;
+			}
+		}
+
 		private static Sprite __tooltipBackground = null;
 		public static Sprite toolTipBackground
 		{

@@ -1,6 +1,7 @@
 ﻿using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace SS
 {
@@ -16,18 +17,19 @@ namespace SS
 
 		void Update()
 		{
+			// if the click was over UI element, return.
+			if( EventSystem.current.IsPointerOverGameObject() )
+			{
+				return;
+			}
 			if( Input.GetMouseButtonDown( 0 ) )
 			{
 				if( Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
 				{
-					ISelectable obj = raycastSelect();
+					ISelectable obj = RaycastSelect();
 					if( obj != null )
 					{
-						if( selected.Contains( obj ) )
-						{
-							Deselect( obj );
-						}
-						else
+						if( !selected.Contains( obj ) )
 						{
 							Select( obj );
 						}
@@ -37,7 +39,7 @@ namespace SS
 				{
 					DeselectAll();
 
-					ISelectable obj = raycastSelect();
+					ISelectable obj = RaycastSelect();
 					if( obj != null )
 					{
 						Select( obj );
@@ -46,7 +48,7 @@ namespace SS
 			}
 		}
 
-		private static ISelectable raycastSelect()
+		private static ISelectable RaycastSelect()
 		{
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Camera.main.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )

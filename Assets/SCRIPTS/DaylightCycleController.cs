@@ -6,11 +6,10 @@ namespace SS
 {
 	public class DaylightCycleController : MonoBehaviour
 	{
-		private const int dayLength = 400;
-		private const int nightLength = 200;
-		private const int totalDayLen = dayLength + nightLength;
-
-		private const float startTime = 80;
+		[SerializeField] private int dayLength = 400;
+		[SerializeField] private int nightLength = 200;
+		private int totalDayLen;
+		[SerializeField] private float startTime = 80;
 
 		public float time { get; private set; }
 
@@ -25,14 +24,16 @@ namespace SS
 		Transform sunTransform = null;
 		Transform moonTransform = null;
 
-		private const float sunIntensity = 0.8f;
-		private const float moonIntensity = 0.1f;
+		[SerializeField] private float sunIntensity = 0.8f;
+		[SerializeField] private float moonIntensity = 0.1f;
 
-		private const float sunElevationAngle = 60;
-		private const float moonElevationAngle = 60;
+		[SerializeField] private float sunElevationAngle = 60;
+		[SerializeField] private float moonElevationAngle = 60;
 
 		void Awake()
 		{
+			totalDayLen = dayLength + nightLength;
+
 			this.time = startTime % totalDayLen;
 
 			this.sunTransform = this.sun.transform;

@@ -20,31 +20,55 @@ namespace SS.UI
 		{
 			if( mode == SelectionPanelMode.List )
 			{
-				mode = SelectionPanelMode.Object;
-
-				listTransform.gameObject.SetActive( false );
-				objectTransform.gameObject.SetActive( true );
+				ModeObject();
 			}
 			else
 			{
-				mode = SelectionPanelMode.List;
-
-				listTransform.gameObject.SetActive( false );
-				objectTransform.gameObject.SetActive( true );
+				ModeList();
 			}
+		}
+
+		private static void ModeObject()
+		{
+			mode = SelectionPanelMode.Object;
+
+			listTransform.gameObject.SetActive( false );
+			objectTransform.gameObject.SetActive( true );
+			switcherImage.sprite = Main.switcherObjA;
+		}
+
+		private static void ModeList()
+		{
+			mode = SelectionPanelMode.List;
+
+			listTransform.gameObject.SetActive( true );
+			objectTransform.gameObject.SetActive( false );
+			switcherImage.sprite = Main.switcherListA;
+		}
+
+		/// <summary>
+		/// Switches between the Object and List modes.
+		/// </summary>
+		public void _SwitchMode()
+		{
+			SwitchMode();
 		}
 
 		private static RectTransform panelTransform;
 
 		private static RectTransform objectTransform;
 		private static RectTransform listTransform;
+		private static Image switcherImage;
 
 
 		private void Awake()
 		{
 			panelTransform = this.GetComponent<RectTransform>();
-			objectTransform = this.transform.GetChild( 0 ).GetComponent<RectTransform>();
-			listTransform = this.transform.GetChild( 1 ).GetComponent<RectTransform>();
+			objectTransform = this.transform.Find( "Object" ).GetComponent<RectTransform>();
+			listTransform = this.transform.Find( "List" ).GetComponent<RectTransform>();
+			switcherImage = this.transform.Find( "Button" ).GetComponent<Image>();
+
+			ModeObject();
 		}
 
 		void Start()
