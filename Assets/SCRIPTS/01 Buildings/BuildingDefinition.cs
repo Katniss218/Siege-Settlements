@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using KFF;
 using SS.DataStructures;
+using SS.ResourceSystem;
 using System;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ namespace SS.Buildings
 		public float concussionArmor { get; set; }
 
 		public Vector3 size { get; set; }
+
+		public ResourceStack[] cost { get; private set; }
 
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
@@ -36,6 +39,15 @@ namespace SS.Buildings
 			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
 			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
 			this.size = serializer.ReadVector3( "Size" );
+
+			serializer.Analyze( "Cost" );
+			this.cost = new ResourceStack[serializer.aChildCount];
+			for( int i = 0; i< this.cost.Length; i++ )
+			{
+				this.cost[i] = new ResourceStack("unused", 0 );
+			}
+			serializer.DeserializeArray( "Cost", this.cost );
+
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
@@ -53,6 +65,7 @@ namespace SS.Buildings
 			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
 			serializer.WriteVector3( "", "Size", this.size );
+			serializer.SerializeArray( "", "Cost", this.cost );
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );

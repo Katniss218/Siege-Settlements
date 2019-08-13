@@ -117,6 +117,12 @@ namespace SS.Units
 		{
 			base.Die();
 
+			// for breakup make several meshes that are made up of the original one, attach physics to them.
+			// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
+			// when the scale reaches 0.x, remove the piece.
+
+			// also, play a poof from some particle system for smoke or something at the moment of death.
+
 			SelectionManager.Deselect( this );
 		}
 

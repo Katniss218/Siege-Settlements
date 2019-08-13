@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using SS.Levels;
 using SS.Units;
+using SS.Buildings;
 
 namespace SS
 {
@@ -73,6 +74,16 @@ namespace SS
 			{
 				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); }
 				return __materialFactionColoredDestroyable;
+			}
+		}
+
+		private static Material __materialFactionColoredConstructible = null;
+		public static Material materialFactionColoredConstructible
+		{
+			get
+			{
+				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); }
+				return __materialFactionColoredConstructible;
 			}
 		}
 
@@ -177,6 +188,22 @@ namespace SS
 							((Unit)obj).SetDestination( hitInfo.point );
 						}
 					}
+				}
+			}
+			if( Input.GetKeyDown( KeyCode.B ) )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					Building b = hitInfo.collider.GetComponent<Building>();
+					if( b != null )
+					{
+						if( b.isUnderConstruction )
+						{
+							b.AdvanceConstruction( new ResourceSystem.ResourceStack( "resource.wood", 10 ) );
+						}
+					}
+					
 				}
 			}
 		}
