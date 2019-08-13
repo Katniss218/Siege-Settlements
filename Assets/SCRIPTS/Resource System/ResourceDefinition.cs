@@ -2,11 +2,9 @@
 using KFF;
 using SS.DataStructures;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.ResourceSystem
 {
 	public class ResourceDefinition : Definition
 	{

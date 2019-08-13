@@ -6,6 +6,9 @@ using SS.Units;
 
 namespace SS
 {
+	/// <summary>
+	/// The main class, think of it like a Game Manager class.
+	/// </summary>
 	public class Main : MonoBehaviour
 	{
 		public static Color darkText
@@ -18,37 +21,28 @@ namespace SS
 		{
 			get
 			{
-				if( __canvas == null )
-				{
-					__canvas = FindObjectOfType<Main>().transform.Find( "Canvas" ).GetComponent<Canvas>();
-				}
+				if( __canvas == null ) { __canvas = FindObjectOfType<Main>().transform.Find( "Canvas" ).GetComponent<Canvas>(); }
 				return __canvas;
 			}
 		}
 
-		private static Sprite __switcherObjA = null;
-		public static Sprite switcherObjA
+		private static Sprite __switcherObj = null;
+		public static Sprite switcherObj
 		{
 			get
 			{
-				if( __switcherObjA == null )
-				{
-					__switcherObjA = Resources.Load<Sprite>( "Textures/selection_toggle" );
-				}
-				return __switcherObjA;
+				if( __switcherObj == null ) { __switcherObj = Resources.Load<Sprite>( "Textures/selection_toggle" ); }
+				return __switcherObj;
 			}
 		}
 
-		private static Sprite __switcherListA = null;
-		public static Sprite switcherListA
+		private static Sprite __switcherList = null;
+		public static Sprite switcherList
 		{
 			get
 			{
-				if( __switcherListA == null )
-				{
-					__switcherListA = Resources.Load<Sprite>( "Textures/selection_toggle_list" );
-				}
-				return __switcherListA;
+				if( __switcherList == null ) { __switcherList = Resources.Load<Sprite>( "Textures/selection_toggle_list" ); }
+				return __switcherList;
 			}
 		}
 
@@ -57,10 +51,7 @@ namespace SS
 		{
 			get
 			{
-				if( __tooltipBackground == null )
-				{
-					__tooltipBackground = Main.instance.__tooltipBackgroundSprite;
-				}
+				if( __tooltipBackground == null ) { __tooltipBackground = Resources.Load<Sprite>( "Textures/tooltip_background" ); }
 				return __tooltipBackground;
 			}
 		}
@@ -70,10 +61,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColored == null )
-				{
-					__materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) );
-				}
+				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); }
 				return __materialFactionColored;
 			}
 		}
@@ -83,10 +71,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredDestroyable == null )
-				{
-					__materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) );
-				}
+				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); }
 				return __materialFactionColoredDestroyable;
 			}
 		}
@@ -96,10 +81,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null )
-				{
-					__materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) );
-				}
+				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); }
 				return __materialSolid;
 			}
 		}
@@ -109,10 +91,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantTransparent == null )
-				{
-					__materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) );
-				}
+				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); }
 				return __materialPlantTransparent;
 			}
 		}
@@ -122,24 +101,18 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantSolid == null )
-				{
-					__materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) );
-				}
+				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); }
 				return __materialPlantSolid;
 			}
 		}
 
-		private static Material __particleMaterial = null;
-		public static Material particleMaterial
+		private static Material __materialParticle = null;
+		public static Material materialParticle
 		{
 			get
 			{
-				if( __particleMaterial == null )
-				{
-					__particleMaterial = Resources.Load<Material>( "ParticleMaterial" );
-				}
-				return __particleMaterial;
+				if( __materialParticle == null ) { __materialParticle = Resources.Load<Material>( "ParticleMaterial" ); }
+				return __materialParticle;
 			}
 		}
 
@@ -163,10 +136,9 @@ namespace SS
 
 		public static Main instance { get; private set; }
 
-		[SerializeField] Sprite __tooltipBackgroundSprite = null;
-
 		private void Awake()
 		{
+			// initialize the singleton
 			if( instance != null )
 			{
 				throw new Exception( "Found 2 or more 'Main' scripts at one time." );

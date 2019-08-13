@@ -143,6 +143,8 @@ namespace SS.Units
 			rigidbody.isKinematic = true;
 
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
+			navMeshAgent.acceleration = 8;
+			navMeshAgent.stoppingDistance = 0.125f;
 
 			Unit unitComponent = container.AddComponent<Unit>();
 			unitComponent.SetFaction( factionId );

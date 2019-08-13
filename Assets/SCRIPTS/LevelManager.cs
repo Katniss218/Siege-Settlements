@@ -51,79 +51,99 @@ namespace SS.Levels
 			Building.Create( DataManager.FindDefinition<BuildingDefinition>( "building.house0" ), new Vector3( 5, 0, 5 ), Quaternion.identity, 0 );
 
 			ExtraDefinition defe = DataManager.FindDefinition<ExtraDefinition>( "extra.grass" );
-			for( int i = 0; i < 400; i++ )
+			for( int i = 0; i < 600; i++ )
 			{
-				Extra.Create( defe, new Vector3( UnityEngine.Random.Range( -15f, 15f ), 0, UnityEngine.Random.Range( -15f, 15f ) ), Quaternion.identity );
+				Extra.Create( defe, new Vector3( UnityEngine.Random.Range( -25f, 25f ), 0, UnityEngine.Random.Range( -25f, 25f ) ), Quaternion.identity );
 			}
 
-			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
+			UnitDefinition defx = DataManager.FindDefinition<UnitDefinition>( "unit.civilian" );
+			for( int i = 0; i < 6; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -12f, -7f ) ), 1 );
+			}
+			for( int i = 0; i < 6; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 7f, 12f ) ), 0 );
+			}
+
+			defx = DataManager.FindDefinition<UnitDefinition>( "unit.civilian_employed" );
 			for( int i = 0; i < 4; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -12f, -7f ) ), 1 );
 			}
 			for( int i = 0; i < 4; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 7f, 12f ) ), 0 );
+			}
+
+			defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_infantry" );
+			for( int i = 0; i < 4; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), 1 );
+			}
+			for( int i = 0; i < 4; i++ )
+			{
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_infantry" );
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), 1 );
 			}
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.light_cavalry" );
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), 1 );
 			}
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.heavy_cavalry" );
 			for( int i = 0; i < 2; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), 1 );
 			}
 			for( int i = 0; i < 2; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.bowmen" );
 			for( int i = 0; i < 4; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), 1 );
 			}
 			for( int i = 0; i < 4; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.crossbowmen" );
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), 1 );
 			}
 			for( int i = 0; i < 3; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), 0 );
 			}
 
 			defx = DataManager.FindDefinition<UnitDefinition>( "unit.mounted_archers" );
 			for( int i = 0; i < 2; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 1 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), 1 );
 			}
 			for( int i = 0; i < 2; i++ )
 			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, 10f ) ), 0 );
+				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), 0 );
 			}
 
 			ResourceDepositDefinition def = DataManager.FindDefinition<ResourceDepositDefinition>( "resource_deposit.tree" );

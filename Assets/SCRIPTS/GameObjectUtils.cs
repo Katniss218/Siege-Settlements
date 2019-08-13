@@ -61,7 +61,7 @@ namespace SS
 
 		private static Material CreateMaterial( Texture2D tex, Color c )
 		{
-			Material mat = new Material( Main.particleMaterial );
+			Material mat = new Material( Main.materialParticle );
 			mat.SetTexture( "_BaseMap", tex );
 			mat.SetColor( "_BaseColor", c );
 

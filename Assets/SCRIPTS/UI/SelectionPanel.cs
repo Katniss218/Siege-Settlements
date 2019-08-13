@@ -34,7 +34,7 @@ namespace SS.UI
 
 			listTransform.gameObject.SetActive( false );
 			objectTransform.gameObject.SetActive( true );
-			switcherImage.sprite = Main.switcherObjA;
+			switcherImage.sprite = Main.switcherObj;
 		}
 
 		private static void ModeList()
@@ -43,7 +43,7 @@ namespace SS.UI
 
 			listTransform.gameObject.SetActive( true );
 			objectTransform.gameObject.SetActive( false );
-			switcherImage.sprite = Main.switcherListA;
+			switcherImage.sprite = Main.switcherList;
 		}
 
 		/// <summary>

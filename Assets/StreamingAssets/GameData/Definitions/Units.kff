@@ -1,6 +1,42 @@
 ﻿Units =
 [
 	{
+		Id = "unit.civilian";
+		DisplayName = "Civilian";
+		MaxHealth = 70.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Mesh = "Models/UnitSquare.kff";
+		AlbedoTexture = "Textures/Units/civilian_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
+		Id = "unit.civilian_employed";
+		DisplayName = "Employed Civilian";
+		MaxHealth = 70.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Mesh = "Models/UnitSquare.kff";
+		AlbedoTexture = "Textures/Units/civilian_employed_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+	},
+	{
 		Id = "unit.light_infantry";
 		DisplayName = "Light Infantry";
 		MaxHealth = 100.0;

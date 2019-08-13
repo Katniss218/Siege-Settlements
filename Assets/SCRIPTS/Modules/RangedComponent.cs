@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace SS
 {
-	// TODO! ----- some sort of base game object component core thing.
 	[RequireComponent( typeof( IFactionMember ) )]
 	public class RangedComponent : MonoBehaviour
 	{
