@@ -16,8 +16,7 @@ namespace SS.Projectiles
 		public DamageType damageType { get; private set; }
 		public float damage { get; private set; }
 		public float armorPenetration { get; private set; }
-
-		// TODO! ----- some sort of base game object component core thing.
+		
 		private Transform graphicsTransform;
 		new private Rigidbody rigidbody;
 		private MeshFilter meshFilter;

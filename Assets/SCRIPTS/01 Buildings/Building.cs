@@ -129,7 +129,6 @@ namespace SS.Buildings
 			}
 			else
 			{
-
 				this.meshRenderer.material.SetFloat( "_Progress", 1 );
 			}
 
