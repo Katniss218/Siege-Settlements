@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.UI
 {
 	public class SkirmishButton : MonoBehaviour
 	{

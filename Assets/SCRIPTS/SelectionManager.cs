@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.UI;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS
@@ -71,6 +72,7 @@ namespace SS
 				return;
 			}
 			selected.Add( obj );
+			SelectionPanel.ListAddIcon( obj, Main.toolTipBackground );
 		}
 
 		public static void Deselect( ISelectable obj )
@@ -83,11 +85,14 @@ namespace SS
 			{
 				selected.Remove( obj );
 			}
+			SelectionPanel.ListRemoveIcon( obj );
 		}
 
 		public static void DeselectAll()
 		{
 			selected.Clear();
+
+			SelectionPanel.ListClear();
 		}
 	}
 }

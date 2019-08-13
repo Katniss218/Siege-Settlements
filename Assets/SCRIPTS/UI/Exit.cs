@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace SS
+namespace SS.UI
 {
 	public class Exit : MonoBehaviour
 	{

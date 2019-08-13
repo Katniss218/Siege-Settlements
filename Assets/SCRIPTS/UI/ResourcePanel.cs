@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SS
+namespace SS.UI
 {
 	public class ResourcePanel : MonoBehaviour
 	{

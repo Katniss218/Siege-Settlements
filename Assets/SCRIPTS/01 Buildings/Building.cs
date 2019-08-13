@@ -45,6 +45,13 @@ namespace SS.Buildings
 
 		}
 
+		public override void Die()
+		{
+			base.Die();
+
+			SelectionManager.Deselect( this );
+		}
+
 		public void AssignDefinition( BuildingDefinition def )
 		{
 			this.id = def.id;

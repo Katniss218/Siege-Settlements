@@ -33,7 +33,7 @@ namespace SS
 			{
 				if( __tooltipBackground == null )
 				{
-					__tooltipBackground = FindObjectOfType<Main>().__tooltipBackgroundSprite;
+					__tooltipBackground = Main.instance.__tooltipBackgroundSprite;
 				}
 				return __tooltipBackground;
 			}

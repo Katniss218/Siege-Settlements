@@ -112,7 +112,14 @@ namespace SS.Units
 
 			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
 		}
-		
+
+		public override void Die()
+		{
+			base.Die();
+
+			SelectionManager.Deselect( this );
+		}
+
 		public static GameObject Create( UnitDefinition def, Vector3 pos, int factionId )
 		{
 			if( def == null )
