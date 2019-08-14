@@ -1,5 +1,4 @@
-﻿using KFF;
-using SS.DataStructures;
+﻿using SS.DataStructures;
 using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,7 +6,7 @@ using UnityEngine.AI;
 namespace SS.Units
 {
 	/// <summary>
-	/// A class that represents a basic Unit.
+	/// A class that represents a basic Unit (units can move, can be interacted with, and have a faction).
 	/// </summary>
 	public class Unit : Damageable, IFactionMember, ISelectable, IDefinableBy<UnitDefinition>
 	{
@@ -18,11 +17,12 @@ namespace SS.Units
 		public void SetFaction( int id )
 		{
 			this.factionId = id;
-			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[this.factionId].color );
+			Color color = FactionManager.factions[id].color;
+			this.ui.SetFactionColor( color );
+			this.meshRenderer.material.SetColor( "_FactionColor", color );
 		}
-
-		// TODO! ----- New "data" struct that holds variables saved with the level.
 		
+		private UnitUI ui;
 		
 		private Transform graphicsTransform;
 		new private Rigidbody rigidbody;
@@ -49,7 +49,10 @@ namespace SS.Units
 
 		void Update()
 		{
-
+			if( transform.hasChanged )
+			{
+				ui.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+			}
 		}
 
 		public void AssignDefinition( UnitDefinition def )
@@ -66,6 +69,36 @@ namespace SS.Units
 			this.navMeshAgent.height = def.height;
 			this.navMeshAgent.speed = def.movementSpeed;
 			this.navMeshAgent.angularSpeed = def.rotationSpeed;
+
+			if( def.isMelee )
+			{
+				MeleeComponent melee = this.GetComponent<MeleeComponent>();
+				if( melee == null )
+					melee = this.gameObject.AddComponent<MeleeComponent>();
+
+				melee.armorPenetration = def.meleeArmorPenetration;
+				melee.damage = def.meleeDamage;
+				melee.damageType = def.meleeDamageType;
+				melee.attackCooldown = def.meleeAttackCooldown;
+				melee.attackRange = def.meleeAttackRange;
+			}
+
+			if( def.isRanged )
+			{
+				RangedComponent ranged = this.GetComponent<RangedComponent>();
+				if( ranged == null )
+					ranged = this.gameObject.AddComponent<RangedComponent>();
+
+				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
+				ranged.armorPenetration = def.rangedArmorPenetration;
+				ranged.damage = def.rangedDamage;
+				ranged.localOffsetMin = def.rangedLocalOffsetMin;
+				ranged.localOffsetMax = def.rangedLocalOffsetMax;
+				ranged.attackRange = def.rangedAttackRange;
+				ranged.attackCooldown = def.rangedAttackCooldown;
+				ranged.projectileCount = def.rangedProjectileCount;
+				ranged.velocity = def.rangedVelocity;
+			}
 
 			this.meshFilter.mesh = def.mesh.Item2;
 			this.meshRenderer.material = Main.materialFactionColoredDestroyable;
@@ -91,6 +124,7 @@ namespace SS.Units
 			base.Heal();
 
 			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
+			this.ui.SetHealthFill( this.healthPercent );
 		}
 
 		public override void Heal( float amount )
@@ -98,6 +132,7 @@ namespace SS.Units
 			base.Heal( amount );
 			
 			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
+			this.ui.SetHealthFill( this.healthPercent );
 		}
 
 		/// <summary>
@@ -111,12 +146,14 @@ namespace SS.Units
 			base.TakeDamage( type, amount, armorPenetration );
 
 			this.meshRenderer.material.SetFloat( "_Dest", 1 - this.healthPercent );
+			this.ui.SetHealthFill( this.healthPercent );
 		}
 
 		public override void Die()
 		{
 			base.Die();
 
+			Destroy( this.ui.gameObject );
 			// for breakup make several meshes that are made up of the original one, attach physics to them.
 			// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
 			// when the scale reaches 0.x, remove the piece.
@@ -153,34 +190,13 @@ namespace SS.Units
 			navMeshAgent.stoppingDistance = 0.125f;
 
 			Unit unitComponent = container.AddComponent<Unit>();
+			unitComponent.ui = Instantiate( Main.unitUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnitUI>();
 			unitComponent.SetFaction( factionId );
-			unitComponent.AssignDefinition( def ); // FIXME! - melee & ranged are a part of the definition, yet are not changed by this method.
+			unitComponent.AssignDefinition( def );
 
-			if( def.isMelee )
-			{
-				MeleeComponent melee = container.AddComponent<MeleeComponent>();
+			
 
-				melee.armorPenetration = def.meleeArmorPenetration;
-				melee.damage = def.meleeDamage;
-				melee.damageType = def.meleeDamageType;
-				melee.attackCooldown = def.meleeAttackCooldown;
-				melee.attackRange = def.meleeAttackRange;
-			}
-
-			if( def.isRanged )
-			{
-				RangedComponent ranged = container.AddComponent<RangedComponent>();
-
-				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
-				ranged.armorPenetration = def.rangedArmorPenetration;
-				ranged.damage = def.rangedDamage;
-				ranged.localOffsetMin = def.rangedLocalOffsetMin;
-				ranged.localOffsetMax = def.rangedLocalOffsetMax;
-				ranged.attackRange = def.rangedAttackRange;
-				ranged.attackCooldown = def.rangedAttackCooldown;
-				ranged.projectileCount = def.rangedProjectileCount;
-				ranged.velocity = def.rangedVelocity;
-			}
+			
 
 
 			return container;

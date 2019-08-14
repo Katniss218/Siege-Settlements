@@ -54,7 +54,7 @@ namespace SS
 
 			ParticleSystem.EmissionModule emission = particleSystem.emission;
 			emission.rateOverTime = amountPerSec;
-
+			
 			ParticleSystemRenderer renderer = gameObject.GetComponent<ParticleSystemRenderer>();
 			renderer.material = CreateMaterial( tex, c );
 		}

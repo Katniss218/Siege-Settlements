@@ -17,12 +17,32 @@ namespace SS
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
 
+		private static GameObject __unitUI = null;
+		public static GameObject unitUI
+		{
+			get
+			{
+				if( __unitUI == null ) { __unitUI = Resources.Load<GameObject>( "Prefabs/unit_ui" ); }
+				return __unitUI;
+			}
+		}
+
+		private static Transform __worldUIs = null;
+		public static Transform worldUIs
+		{
+			get
+			{
+				if( __worldUIs == null ) { __worldUIs = FindObjectOfType<Canvas>().transform.Find( "_WorldUIs" ); }
+				return __worldUIs;
+			}
+		}
+
 		private static Canvas __canvas = null;
 		public static Canvas canvas
 		{
 			get
 			{
-				if( __canvas == null ) { __canvas = FindObjectOfType<Main>().transform.Find( "Canvas" ).GetComponent<Canvas>(); }
+				if( __canvas == null ) { __canvas = FindObjectOfType<Canvas>(); }
 				return __canvas;
 			}
 		}
@@ -203,7 +223,7 @@ namespace SS
 							b.AdvanceConstruction( new ResourceSystem.ResourceStack( "resource.wood", 10 ) );
 						}
 					}
-					
+
 				}
 			}
 		}

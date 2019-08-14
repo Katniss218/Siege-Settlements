@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 namespace SS.Buildings
 {
+	/// <summary>
+	/// Represents a building (buildings can't move, block other objects from moving, can be interacted with, and have a faction).
+	/// </summary>
 	public class Building : Damageable, IFactionMember, IDefinableBy<BuildingDefinition>, ISelectable
 	{
 		public string id { get; private set; }
@@ -19,6 +22,9 @@ namespace SS.Buildings
 
 		private ConstructionData constructionData;
 
+		/// <summary>
+		/// Checks if the building is currently under construction (Read Only).
+		/// </summary>
 		public bool isUnderConstruction { get { return this.constructionData != null; } }
 
 
@@ -86,6 +92,9 @@ namespace SS.Buildings
 			}
 		}
 
+		/// <summary>
+		/// Overrides the required resources and instantly finishes construction.
+		/// </summary>
 		public void FinishConstruction()
 		{
 			if( !this.isUnderConstruction )
@@ -166,8 +175,6 @@ namespace SS.Buildings
 			{
 				building.constructionData = null;
 			}
-			if( isUnderConstruction )
-				building.constructionData = new ConstructionData( def.cost );
 			building.AssignDefinition( def );
 
 
