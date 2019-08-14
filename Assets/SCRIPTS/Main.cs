@@ -27,6 +27,16 @@ namespace SS
 			}
 		}
 
+		private static GameObject __buildingUI = null;
+		public static GameObject buildingUI
+		{
+			get
+			{
+				if( __buildingUI == null ) { __buildingUI = Resources.Load<GameObject>( "Prefabs/building_ui" ); }
+				return __buildingUI;
+			}
+		}
+
 		private static Transform __worldUIs = null;
 		public static Transform worldUIs
 		{

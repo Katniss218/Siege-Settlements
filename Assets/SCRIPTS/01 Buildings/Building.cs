@@ -8,7 +8,7 @@ namespace SS.Buildings
 	/// <summary>
 	/// Represents a building (buildings can't move, block other objects from moving, can be interacted with, and have a faction).
 	/// </summary>
-	public class Building : Damageable, IFactionMember, IDefinableBy<BuildingDefinition>, ISelectable
+	public class Building : Damageable, IFactionMember, ISelectable, IDefinableBy<BuildingDefinition>
 	{
 		public string id { get; private set; }
 		
@@ -17,7 +17,9 @@ namespace SS.Buildings
 		public void SetFaction( int id )
 		{
 			this.factionId = id;
-			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[id].color );
+			Color color = FactionManager.factions[id].color;
+			this.ui.SetFactionColor( color );
+			this.meshRenderer.material.SetColor( "_FactionColor", color );
 		}
 
 		private ConstructionData constructionData;
@@ -26,6 +28,8 @@ namespace SS.Buildings
 		/// Checks if the building is currently under construction (Read Only).
 		/// </summary>
 		public bool isUnderConstruction { get { return this.constructionData != null; } }
+
+		private BuildingUI ui;
 
 
 		private Transform graphicsTransform;
@@ -53,7 +57,28 @@ namespace SS.Buildings
 		
 		void Update()
 		{
-			
+			if( transform.hasChanged )
+			{
+				ui.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+			}
+		}
+
+		public override void Heal()
+		{
+			base.Heal();
+			this.ui.SetHealthFill( this.healthPercent );
+		}
+
+		public override void Heal( float amount )
+		{
+			base.Heal( amount );
+			this.ui.SetHealthFill( this.healthPercent );
+		}
+
+		public override void TakeDamage( DamageType type, float amount, float armorPenetration )
+		{
+			base.TakeDamage( type, amount, armorPenetration );
+			this.ui.SetHealthFill( this.healthPercent );
 		}
 
 		public override void Die()
@@ -166,6 +191,7 @@ namespace SS.Buildings
 			navMeshObstacle.carving = true;
 
 			Building building = container.AddComponent<Building>();
+			building.ui = Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
 			building.SetFaction( factionId );
 			if( isUnderConstruction )
 			{
