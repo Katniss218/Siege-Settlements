@@ -1,4 +1,4 @@
-﻿using SS.DataStructures;
+﻿using SS.Data;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -53,8 +53,8 @@ namespace SS.Extras
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			gfx.AddComponent<MeshFilter>();
+			gfx.AddComponent<MeshRenderer>();
 
 			
 			container.transform.position = pos;

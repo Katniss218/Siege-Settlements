@@ -1,7 +1,7 @@
 ﻿
 using KFF;
 
-namespace SS.DataStructures
+namespace SS.Data
 {
 	/// <summary>
 	/// An abstract class for storing data, of objects, that doesn't change.

@@ -1,4 +1,4 @@
-﻿using SS.DataStructures;
+﻿using SS.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -131,13 +131,13 @@ namespace SS.Buildings
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			container.transform.SetPositionAndRotation( pos, rot );
+
+			gfx.AddComponent<MeshFilter>();
+			gfx.AddComponent<MeshRenderer>();
 
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-
-			container.transform.position = pos;
 			
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.carving = true;
@@ -150,9 +150,7 @@ namespace SS.Buildings
 				ConstructionSite csite = container.AddComponent<ConstructionSite>();
 			}
 			building.AssignDefinition( def );
-
-
-
+			
 			return building;
 		}
 	}

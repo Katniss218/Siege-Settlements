@@ -1,4 +1,5 @@
-﻿using SS.ResourceSystem;
+﻿using Katniss.Utils;
+using SS.ResourceSystem;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;

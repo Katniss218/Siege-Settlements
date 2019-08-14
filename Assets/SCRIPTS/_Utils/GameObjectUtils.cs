@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace SS
+namespace Katniss.Utils
 {
 	public static class GameObjectUtils
 	{
+		public const string GRAPHICS_GAMEOBJECT_NAME = "graphics";
+
 		public static void RectTransform( Transform parent, string name, Vector2 position, Vector2 size, Vector2 pivot, Vector2 anchorMin, Vector2 anchorMax, out GameObject gameObject, out RectTransform rectTransform )
 		{
 			GameObject go = new GameObject( name );
@@ -19,7 +21,7 @@ namespace SS
 			rectTransform = rt;
 
 		}
-
+		
 		public static Image AddImageSliced( this GameObject gameObject, Sprite sprite )
 		{
 			Image image = gameObject.AddComponent<Image>();
@@ -61,7 +63,7 @@ namespace SS
 
 		private static Material CreateMaterial( Texture2D tex, Color c )
 		{
-			Material mat = new Material( Main.materialParticle );
+			Material mat = new Material( SS.Main.materialParticle );
 			mat.SetTexture( "_BaseMap", tex );
 			mat.SetColor( "_BaseColor", c );
 

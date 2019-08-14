@@ -1,5 +1,6 @@
-﻿using KFF;
-using SS.DataStructures;
+﻿using Katniss.Utils;
+using KFF;
+using SS.Data;
 using UnityEngine;
 
 namespace SS.Projectiles

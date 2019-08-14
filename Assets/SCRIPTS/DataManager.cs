@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS.Buildings;
-using SS.DataStructures;
+using SS.Data;
 using SS.Extras;
 using SS.Projectiles;
 using SS.ResourceSystem;

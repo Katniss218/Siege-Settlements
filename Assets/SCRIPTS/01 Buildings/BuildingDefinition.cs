@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.DataStructures;
+using SS.Data;
 using SS.ResourceSystem;
 using System;
 using UnityEngine;

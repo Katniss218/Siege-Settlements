@@ -1,10 +1,11 @@
 ﻿using KFF;
-using SS.DataStructures;
+using SS.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS
 {
+	[RequireComponent(typeof( NavMeshObstacle ) )]
 	public class ResourceDeposit : MonoBehaviour, IDefinableBy<ResourceDepositDefinition>
 	{
 		public string id { get; private set; }
@@ -21,41 +22,7 @@ namespace SS
 		private MeshRenderer meshRenderer;
 		private NavMeshObstacle obstacle;
 
-
-
-		/*
-		// amount that the miner wants to extract, the inventory of the miner.
-		public void ExtractResource( int desiredAmt, IInventory inventory )
-		{
-			int amtMined = desiredAmt;
-			if( amtMined < this.amt )
-			{
-				amtMined = this.amt;
-			}
-
-
-			int spaceLeft = inventory.canHold( this.resourceId, (ushort)amtMined );
-
-
-			if( spaceLeft > 0 )
-			{
-				if( spaceLeft < amtMined )
-				{
-					amtMined = spaceLeft;
-				}
-
-				inventory.Add( this.resourceId, (ushort)amtMined );
-				this.amt -= amtMined;
-
-				if( this.amt <= 0 )
-				{
-					Destroy( this.gameObject );
-				}
-			}
-			Debug.LogWarning( "Tried to extract resource but can't hold any more of it." );
-		}
-		*/
-
+		
 		void Awake()
 		{
 			this.graphicsTransform = this.transform.GetChild( 0 );
@@ -102,13 +69,13 @@ namespace SS
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			container.transform.SetPositionAndRotation( pos, rot );
+
+			gfx.AddComponent<MeshFilter>();
+			gfx.AddComponent<MeshRenderer>();
 
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
 			obstacle.carving = true;
-
-			container.transform.SetPositionAndRotation( pos, rot );
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
 			resourceDepositComponent.AssignDefinition( def );

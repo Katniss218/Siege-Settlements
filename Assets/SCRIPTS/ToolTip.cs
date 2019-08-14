@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Katniss.Utils;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

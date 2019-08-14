@@ -1,4 +1,4 @@
-﻿using SS.DataStructures;
+﻿using SS.Data;
 using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;
@@ -176,7 +176,7 @@ namespace SS.Units
 			SelectionManager.Deselect( this );
 		}
 
-		public static GameObject Create( UnitDefinition def, Vector3 pos, int factionId )
+		public static GameObject Create( UnitDefinition def, Vector3 pos, Quaternion rot, int factionId )
 		{
 			if( def == null )
 			{
@@ -187,14 +187,14 @@ namespace SS.Units
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			container.transform.SetPositionAndRotation( pos, rot );
+
+			gfx.AddComponent<MeshFilter>();
+			gfx.AddComponent<MeshRenderer>();
 
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-
-			container.transform.position = pos;
-
+			
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
 
@@ -206,12 +206,7 @@ namespace SS.Units
 			unitComponent.ui = Instantiate( Main.unitUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnitUI>();
 			unitComponent.SetFaction( factionId );
 			unitComponent.AssignDefinition( def );
-
 			
-
-			
-
-
 			return container;
 		}
 	}

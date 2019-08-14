@@ -1,5 +1,5 @@
 ﻿
-namespace SS.DataStructures
+namespace SS.Data
 {
 	/// <summary>
 	/// Represents any object that can be defined in terms of a definition class.
