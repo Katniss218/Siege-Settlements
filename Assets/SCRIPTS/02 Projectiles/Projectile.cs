@@ -4,8 +4,15 @@ using UnityEngine;
 
 namespace SS.Projectiles
 {
+	/// <summary>
+	/// Represents a projectile, that follows a ballistic trajectory, and can damage objects.
+	/// </summary>
+	[RequireComponent( typeof( Rigidbody ) )]
 	public class Projectile : MonoBehaviour, IFactionMember, IDefinableBy<ProjectileDefinition>
 	{
+		/// <summary>
+		/// The definition's Id.
+		/// </summary>
 		public string id { get; private set; }
 
 		public int factionId { get; private set; }

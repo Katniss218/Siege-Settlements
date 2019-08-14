@@ -3,7 +3,7 @@
 namespace SS
 {
 	[RequireComponent( typeof( IFactionMember ) )]
-	public class MeleeComponent : MonoBehaviour
+	public class MeleeModule : MonoBehaviour
 	{
 		//public MeleeComponentDefinition definition { get; set; }
 		public Damageable target { get; set; }

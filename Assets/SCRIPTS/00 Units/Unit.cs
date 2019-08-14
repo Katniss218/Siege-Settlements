@@ -5,11 +5,17 @@ using UnityEngine.AI;
 
 namespace SS.Units
 {
+	[RequireComponent( typeof( BoxCollider ) )]
+	[RequireComponent( typeof( NavMeshAgent ) )]
+	[RequireComponent( typeof( Rigidbody ) )]
 	/// <summary>
 	/// A class that represents a basic Unit (units can move, can be interacted with, and have a faction).
 	/// </summary>
 	public class Unit : Damageable, IFactionMember, ISelectable, IDefinableBy<UnitDefinition>
 	{
+		/// <summary>
+		/// The definition's Id.
+		/// </summary>
 		public string id { get; private set; }
 
 		public int factionId { get; private set; }
@@ -70,11 +76,13 @@ namespace SS.Units
 			this.navMeshAgent.speed = def.movementSpeed;
 			this.navMeshAgent.angularSpeed = def.rotationSpeed;
 
+			// If the new unit is melee, setup the melee module.
 			if( def.isMelee )
 			{
-				MeleeComponent melee = this.GetComponent<MeleeComponent>();
+				// If the unit already has melee module (was melee before definition change).
+				MeleeModule melee = this.GetComponent<MeleeModule>();
 				if( melee == null )
-					melee = this.gameObject.AddComponent<MeleeComponent>();
+					melee = this.gameObject.AddComponent<MeleeModule>();
 
 				melee.armorPenetration = def.meleeArmorPenetration;
 				melee.damage = def.meleeDamage;
@@ -83,11 +91,13 @@ namespace SS.Units
 				melee.attackRange = def.meleeAttackRange;
 			}
 
+			// If the new unit is ranged, setup the ranged module.
 			if( def.isRanged )
 			{
-				RangedComponent ranged = this.GetComponent<RangedComponent>();
+				// If the unit already has ranged module (was ranged before definition change).
+				RangedModule ranged = this.GetComponent<RangedModule>();
 				if( ranged == null )
-					ranged = this.gameObject.AddComponent<RangedComponent>();
+					ranged = this.gameObject.AddComponent<RangedModule>();
 
 				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
 				ranged.armorPenetration = def.rangedArmorPenetration;
@@ -100,7 +110,10 @@ namespace SS.Units
 				ranged.velocity = def.rangedVelocity;
 			}
 
+			// Apply the mesh.
 			this.meshFilter.mesh = def.mesh.Item2;
+
+			// Apply the material's properties.
 			this.meshRenderer.material = Main.materialFactionColoredDestroyable;
 			this.meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[this.factionId].color );
 			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );

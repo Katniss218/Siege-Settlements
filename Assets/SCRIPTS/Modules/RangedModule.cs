@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SS
 {
 	[RequireComponent( typeof( IFactionMember ) )]
-	public class RangedComponent : MonoBehaviour
+	public class RangedModule : MonoBehaviour
 	{
 		public Damageable target { get; set; }
 

@@ -12,11 +12,13 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
+		// TODO ----- this isn't used, maybe move this somewhere else/remove entirely/start using.
 		public static Color darkText
 		{
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
 
+		// TODO ----- Move this fields somewhere else.
 		private static GameObject __unitUI = null;
 		public static GameObject unitUI
 		{

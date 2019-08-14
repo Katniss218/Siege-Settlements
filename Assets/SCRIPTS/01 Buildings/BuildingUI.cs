@@ -8,11 +8,6 @@ namespace SS.Buildings
 	/// </summary>
 	public class BuildingUI : MonoBehaviour
 	{
-		// when the health is 0, the image will be filled this much.
-		//private const float min = 0.08f;
-		// when the health is 1, the image will be filled this much.
-		//private const float max = 0.67f;
-
 		private Image background;
 		private Image healthBar;
 

@@ -1,15 +1,19 @@
 ﻿using SS.DataStructures;
-using SS.ResourceSystem;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Buildings
 {
+	[RequireComponent(typeof(BoxCollider))]
+	[RequireComponent( typeof( NavMeshObstacle ) )]
 	/// <summary>
 	/// Represents a building (buildings can't move, block other objects from moving, can be interacted with, and have a faction).
 	/// </summary>
 	public class Building : Damageable, IFactionMember, ISelectable, IDefinableBy<BuildingDefinition>
 	{
+		/// <summary>
+		/// The definition's Id.
+		/// </summary>
 		public string id { get; private set; }
 		
 		public int factionId { get; private set; }
@@ -95,8 +99,10 @@ namespace SS.Buildings
 			this.obstacle.size = def.size;
 			this.obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
 
+			// Apply the mesh.
 			this.meshFilter.mesh = def.mesh.Item2;
 
+			// Apply the material's properties.
 			this.meshRenderer.material = Main.materialFactionColoredConstructible;
 			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
 			this.meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
@@ -106,6 +112,7 @@ namespace SS.Buildings
 			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
+			// If the building was under construction, assign the new cost to the construction site and reset the progress.
 			ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
 			if( constructionSite  != null )
 			{
