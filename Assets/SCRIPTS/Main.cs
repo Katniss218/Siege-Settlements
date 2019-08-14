@@ -225,13 +225,11 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					Building b = hitInfo.collider.GetComponent<Building>();
+					ConstructionSite b = hitInfo.collider.GetComponent<ConstructionSite>();
 					if( b != null )
 					{
-						if( b.isUnderConstruction )
-						{
-							b.AdvanceConstruction( new ResourceSystem.ResourceStack( "resource.wood", 10 ) );
-						}
+						b.AdvanceConstruction( new ResourceSystem.ResourceStack( "resource.wood", 10 ) );
+						
 					}
 
 				}

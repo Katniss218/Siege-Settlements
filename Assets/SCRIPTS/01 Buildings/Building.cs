@@ -21,14 +21,7 @@ namespace SS.Buildings
 			this.ui.SetFactionColor( color );
 			this.meshRenderer.material.SetColor( "_FactionColor", color );
 		}
-
-		private ConstructionData constructionData;
-
-		/// <summary>
-		/// Checks if the building is currently under construction (Read Only).
-		/// </summary>
-		public bool isUnderConstruction { get { return this.constructionData != null; } }
-
+		
 		private BuildingUI ui;
 
 
@@ -88,48 +81,6 @@ namespace SS.Buildings
 			SelectionManager.Deselect( this );
 		}
 
-		public void AdvanceConstruction( ResourceStack stack )
-		{
-			if( !this.isUnderConstruction )
-			{
-				throw new System.Exception( "AdvanceConstruction: The building is not under construction." );
-			}
-			for( int i = 0; i < constructionData.resourceIds.Length; i++ )
-			{
-				if( constructionData.resourceIds[i] == stack.id )
-				{
-					if( constructionData.resourcesRemaining[i] - stack.amount < 0 )
-					{
-						Debug.LogWarning( "AdvanceConstruction: the amount of resource added was more than needed." );
-					}
-					constructionData.resourcesRemaining[i] -= stack.amount;
-
-					if( constructionData.IsCompleted() )
-					{
-						FinishConstruction();
-					}
-					else
-					{
-						this.meshRenderer.material.SetFloat( "_Progress", constructionData.GetPercentCompleted() );
-					}
-					break;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Overrides the required resources and instantly finishes construction.
-		/// </summary>
-		public void FinishConstruction()
-		{
-			if( !this.isUnderConstruction )
-			{
-				throw new System.Exception( "FinishConstruction: The building is not under construction." );
-			}
-			constructionData = null;
-			this.meshRenderer.material.SetFloat( "_Progress", 1 );
-		}
-		
 		public void AssignDefinition( BuildingDefinition def )
 		{
 			this.id = def.id;
@@ -154,18 +105,12 @@ namespace SS.Buildings
 			this.meshRenderer.material.SetTexture( "_Emission", null );
 			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-			
-			if( this.constructionData != null )
-			{
-				this.constructionData = new ConstructionData( def.cost );
 
-				this.meshRenderer.material.SetFloat( "_Progress", 0 );
-			}
-			else
+			ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
+			if( constructionSite  != null )
 			{
-				this.meshRenderer.material.SetFloat( "_Progress", 1 );
+				constructionSite.AssignResources( def.cost );
 			}
-
 		}
 		
 		public static Building Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
@@ -195,11 +140,7 @@ namespace SS.Buildings
 			building.SetFaction( factionId );
 			if( isUnderConstruction )
 			{
-				building.constructionData = new ConstructionData( def.cost );
-			}
-			else
-			{
-				building.constructionData = null;
+				ConstructionSite csite = container.AddComponent<ConstructionSite>();
 			}
 			building.AssignDefinition( def );
 
