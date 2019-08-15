@@ -65,7 +65,6 @@ namespace SS.Buildings
 			damageable.concussionArmor = def.concussionArmor;
 			damageable.onHealthChange.AddListener( ( Damageable obj ) =>
 			{
-				meshRenderer.material.SetFloat( "_Dest", 1 - obj.healthPercent );
 				ui.SetHealthFill( obj.healthPercent );
 			} );
 			damageable.onDeath.AddListener( ( Damageable obj ) =>
@@ -83,6 +82,10 @@ namespace SS.Buildings
 			{
 				ConstructionSite constructionSite = container.AddComponent<ConstructionSite>();
 				constructionSite.AssignResources( def.cost );
+			}
+			else
+			{
+				meshRenderer.material.SetFloat( "_Progress", 1 );
 			}
 
 			container.AddComponent<EveryFrameSingle>().everyFrame = () =>

@@ -21,6 +21,7 @@ namespace SS
 		private MeshFilter meshFilter;
 		private MeshRenderer meshRenderer;
 		private NavMeshObstacle obstacle;
+		new private BoxCollider collider;
 
 		
 		void Awake()
@@ -29,6 +30,7 @@ namespace SS
 			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
 			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
 			this.obstacle = this.GetComponent<NavMeshObstacle>();
+			this.collider = this.GetComponent<BoxCollider>();
 		}
 
 		void Start()
@@ -48,6 +50,8 @@ namespace SS
 			this.isTypeExtracted = def.isExtracted;
 			this.obstacle.size = def.size;
 			this.obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			this.collider.size = def.size;
+			this.collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
 			this.meshFilter.mesh = def.mesh.Item2;
 			this.meshRenderer.material = def.shaderType == ShaderType.PlantSolid ? Main.materialPlantSolid : Main.materialSolid;
 			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
@@ -73,6 +77,8 @@ namespace SS
 
 			gfx.AddComponent<MeshFilter>();
 			gfx.AddComponent<MeshRenderer>();
+
+			BoxCollider collider = container.AddComponent<BoxCollider>();
 
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
 			obstacle.carving = true;

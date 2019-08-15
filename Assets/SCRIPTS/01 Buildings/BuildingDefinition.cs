@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace SS.Buildings
 {
+	[Serializable]
 	public class BuildingDefinition : Definition
 	{
 		public string displayName { get; set; }

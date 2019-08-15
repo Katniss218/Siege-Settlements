@@ -13,7 +13,6 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
-		// TODO ----- this isn't used, maybe move this somewhere else/remove entirely/start using.
 		public static Color darkText
 		{
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
@@ -228,19 +227,19 @@ namespace SS
 					}
 				}
 			}
-			if( Input.GetKeyDown( KeyCode.B ) )
+			if( Input.GetKeyDown( KeyCode.U ) )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					ConstructionSite b = hitInfo.collider.GetComponent<ConstructionSite>();
-					if( b != null )
-					{
-						b.AdvanceConstruction( new ResourceSystem.ResourceStack( "resource.wood", 10 ) );
-						
-					}
+				GameObject obj = new GameObject();
+				BuildPreview prev = obj.AddComponent<BuildPreview>();
+				obj.AddComponent<BuildPreviewPositioner>();
 
-				}
+				prev.def = DataManager.FindDefinition<BuildingDefinition>( "building.house0" );
+				prev.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
+				
+				MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
+				meshFilter.mesh = prev.def.mesh.Item2;
+				MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+				mr.material = Main.materialFactionColored;
 			}
 		}
 	}

@@ -8,7 +8,6 @@ namespace SS.Buildings
 	/// </summary>
 	public class ConstructionSite : MonoBehaviour
 	{
-		// TODO ----- generalize this to be able to construct other things than buildings, maybe stationary ballistas or units being trained in barracks.
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
@@ -55,7 +54,8 @@ namespace SS.Buildings
 
 		void Update()
 		{
-
+			AdvanceConstruction( new ResourceStack("resource.wood", 1 ) );
+			
 		}
 
 		/// <summary>
