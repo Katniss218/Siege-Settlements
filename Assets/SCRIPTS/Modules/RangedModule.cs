@@ -5,22 +5,21 @@ using UnityEngine;
 namespace SS
 {
 	[RequireComponent( typeof( FactionMember ) )]
+	[RequireComponent( typeof( DamageSource ) )]
 	public class RangedModule : MonoBehaviour
 	{
-		public Damageable target { get; set; }
+		public Damageable currentTarget;
 
-		public ProjectileDefinition projectile { get; set; }
-		public int projectileCount { get; set; }
+		public ProjectileDefinition projectile;
+		public int projectileCount;
 
-		public DamageType damageType { get; set; }
-		public float damage { get; set; }
-		public float armorPenetration { get; set; }
+		public DamageSource damageSource;
 
-		public float attackRange { get; set; }
-		public float attackCooldown { get; set; }
-		public float velocity { get; set; }
-		public Vector3 localOffsetMin { get; set; }
-		public Vector3 localOffsetMax { get; set; }
+		public float attackRange;
+		public float attackCooldown;
+		public float velocity;
+		public Vector3 localOffsetMin;
+		public Vector3 localOffsetMax;
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
@@ -49,7 +48,7 @@ namespace SS
 			{
 				this.FindTarget();
 
-				if( this.target != null )
+				if( this.currentTarget != null )
 				{
 					this.Attack();
 				}
@@ -79,10 +78,10 @@ namespace SS
 						continue;
 					}
 				}
-				this.target = potentialTarget;
+				this.currentTarget = potentialTarget;
 				return;
 			}
-			this.target = null;
+			this.currentTarget = null;
 		}
 
 		/// <summary>
@@ -91,7 +90,7 @@ namespace SS
 		public void Attack()
 		{
 			Vector3 low, high;
-			if( BallisticSolver.Solve( this.transform.position, this.velocity, this.target.transform.position, -Physics.gravity.y, out low, out high ) > 0 )
+			if( BallisticSolver.Solve( this.transform.position, this.velocity, this.currentTarget.transform.position, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
 				Vector3 vel = low;
@@ -113,18 +112,18 @@ namespace SS
 
 		private void Shoot( Vector3 pos, Vector3 vel )
 		{
-			Projectile.Create( this.projectile, pos, vel, this.factionMember.factionId, this.damage, this.transform );
+			Projectile.Create( this.projectile, pos, vel, this.factionMember.factionId, this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration, this.transform );
 		}
 
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()
 		{
-			if( this.target != null )
+			if( this.currentTarget != null )
 			{
 				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.target.transform.position );
-				Gizmos.DrawSphere( this.target.transform.position, 0.125f );
+				Gizmos.DrawLine( this.transform.position, this.currentTarget.transform.position );
+				Gizmos.DrawSphere( this.currentTarget.transform.position, 0.125f );
 			}
 		}
 		private void OnDrawGizmosSelected()

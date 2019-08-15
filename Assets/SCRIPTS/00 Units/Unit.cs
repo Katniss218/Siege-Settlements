@@ -25,7 +25,7 @@ namespace SS.Units
 
 			MeshRenderer meshRenderer  = gfx.AddComponent<MeshRenderer>();
 			// Apply the material's properties.
-			meshRenderer.material = Main.materialFactionColoredDestroyable;
+			meshRenderer.sharedMaterial = Main.materialFactionColoredDestroyable;
 			meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[factionId].color );
 			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
 
@@ -89,12 +89,13 @@ namespace SS.Units
 			// If the new unit is melee, setup the melee module.
 			if( def.isMelee )
 			{
-				// If the unit already has melee module (was melee before definition change).
-				MeleeModule melee = container.AddComponent<MeleeModule>();
+				DamageSource meleeDamageSource = container.AddComponent<DamageSource>();
+				meleeDamageSource.damageType = def.rangedDamageType;
+				meleeDamageSource.damage = def.rangedDamage;
+				meleeDamageSource.armorPenetration = def.rangedArmorPenetration;
 
-				melee.armorPenetration = def.meleeArmorPenetration;
-				melee.damage = def.meleeDamage;
-				melee.damageType = def.meleeDamageType;
+				MeleeModule melee = container.AddComponent<MeleeModule>();
+				melee.DamageSource = meleeDamageSource;
 				melee.attackCooldown = def.meleeAttackCooldown;
 				melee.attackRange = def.meleeAttackRange;
 			}
@@ -102,18 +103,20 @@ namespace SS.Units
 			// If the new unit is ranged, setup the ranged module.
 			if( def.isRanged )
 			{
-				// If the unit already has ranged module (was ranged before definition change).
-				RangedModule ranged = container.AddComponent<RangedModule>();
+				DamageSource rangedDamageSource = container.AddComponent<DamageSource>();
+				rangedDamageSource.damageType = def.rangedDamageType;
+				rangedDamageSource.damage = def.rangedDamage;
+				rangedDamageSource.armorPenetration = def.rangedArmorPenetration;
 
+				RangedModule ranged = container.AddComponent<RangedModule>();
 				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
-				ranged.armorPenetration = def.rangedArmorPenetration;
-				ranged.damage = def.rangedDamage;
-				ranged.localOffsetMin = def.rangedLocalOffsetMin;
-				ranged.localOffsetMax = def.rangedLocalOffsetMax;
+				ranged.projectileCount = def.rangedProjectileCount;
+				ranged.damageSource = rangedDamageSource;
 				ranged.attackRange = def.rangedAttackRange;
 				ranged.attackCooldown = def.rangedAttackCooldown;
-				ranged.projectileCount = def.rangedProjectileCount;
 				ranged.velocity = def.rangedVelocity;
+				ranged.localOffsetMin = def.rangedLocalOffsetMin;
+				ranged.localOffsetMax = def.rangedLocalOffsetMax;
 			}
 
 			container.AddComponent<EveryFrameSingle>().everyFrame = () =>

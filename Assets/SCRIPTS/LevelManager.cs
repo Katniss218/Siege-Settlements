@@ -166,8 +166,6 @@ namespace SS.Levels
 					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ) );
 				}
 			}
-			ProjectileDefinition def2 = DataManager.FindDefinition<ProjectileDefinition>( "projectile.arrow" );
-			Projectile.Create( def2, new Vector3( 0, 2, 0 ), new Vector3( 3, 3, 3 ), 0, 0f, null );
 		}
 	}
 }

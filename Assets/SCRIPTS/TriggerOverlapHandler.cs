@@ -9,11 +9,11 @@ namespace SS
 	public sealed class TriggerOverlapHandler : MonoBehaviour
 	{
 		[Serializable]
-		public class _UnityEventCollider : UnityEvent<GameObject, Collider> { }
+		public class _UnityEvent_GameObject_Collider : UnityEvent<GameObject, Collider> { }
 
-		public _UnityEventCollider onTriggerEnter = new _UnityEventCollider();
-		public _UnityEventCollider onTriggerStay = new _UnityEventCollider();
-		public _UnityEventCollider onTriggerExit = new _UnityEventCollider();
+		public _UnityEvent_GameObject_Collider onTriggerEnter = new _UnityEvent_GameObject_Collider();
+		public _UnityEvent_GameObject_Collider onTriggerStay = new _UnityEvent_GameObject_Collider();
+		public _UnityEvent_GameObject_Collider onTriggerExit = new _UnityEvent_GameObject_Collider();
 
 		void OnTriggerEnter( Collider other )
 		{

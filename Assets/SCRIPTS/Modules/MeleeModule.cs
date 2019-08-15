@@ -5,15 +5,12 @@ namespace SS
 	[RequireComponent( typeof( FactionMember ) )]
 	public class MeleeModule : MonoBehaviour
 	{
-		//public MeleeComponentDefinition definition { get; set; }
-		public Damageable target { get; set; }
+		public Damageable currentTarget;
 
-		public DamageType damageType { get; set; }
-		public float damage { get; set; }
-		public float armorPenetration { get; set; }
+		public DamageSource DamageSource;
 
-		public float attackRange { get; set; }
-		public float attackCooldown { get; set; }
+		public float attackRange;
+		public float attackCooldown;
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
@@ -38,7 +35,7 @@ namespace SS
 			{
 				this.FindTarget();
 
-				if( this.target != null )
+				if( this.currentTarget != null )
 				{
 					this.Attack();
 					AudioManager.PlayNew( Main.hitmelee, 1.0f, 1.0f );
@@ -68,10 +65,10 @@ namespace SS
 					}
 				}
 				
-				this.target = d;
+				this.currentTarget = d;
 				return;
 			}
-			this.target = null;
+			this.currentTarget = null;
 		}
 
 		/// <summary>
@@ -79,7 +76,7 @@ namespace SS
 		/// </summary>
 		public void Attack()
 		{
-			this.target.TakeDamage( this.damageType, this.damage, this.armorPenetration );
+			this.currentTarget.TakeDamage( this.DamageSource.damageType, this.DamageSource.damage, this.DamageSource.armorPenetration );
 			this.lastAttackTimestamp = Time.time;
 		}
 
@@ -87,11 +84,11 @@ namespace SS
 
 		private void OnDrawGizmos()
 		{
-			if( this.target != null )
+			if( this.currentTarget != null )
 			{
 				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.target.transform.position );
-				Gizmos.DrawSphere( this.target.transform.position, 0.125f );
+				Gizmos.DrawLine( this.transform.position, this.currentTarget.transform.position );
+				Gizmos.DrawSphere( this.currentTarget.transform.position, 0.125f );
 			}
 		}
 

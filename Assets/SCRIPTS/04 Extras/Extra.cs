@@ -1,47 +1,9 @@
-﻿using SS.Data;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SS.Extras
 {
-	public class Extra : MonoBehaviour, IDefinableBy<ExtraDefinition>
+	public static class Extra
 	{
-		public string id { get; private set; }
-
-
-		private Transform graphicsTransform;
-		private MeshFilter meshFilter;
-		private MeshRenderer meshRenderer;
-
-
-		void Awake()
-		{
-			this.graphicsTransform = this.transform.GetChild( 0 );
-			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
-			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
-		}
-
-		void Start()
-		{
-
-		}
-
-		void Update()
-		{
-
-		}
-
-		public void AssignDefinition( ExtraDefinition def )
-		{
-
-			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = Main.materialPlantTransparent;
-			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			this.meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
-		}
-		
 		public static GameObject Create( ExtraDefinition def, Vector3 pos, Quaternion rot )
 		{
 			if( def == null )
@@ -53,17 +15,19 @@ namespace SS.Extras
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
 
-			gfx.AddComponent<MeshFilter>();
-			gfx.AddComponent<MeshRenderer>();
+			container.transform.SetPositionAndRotation( pos, rot );
 
+			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			meshFilter.mesh = def.mesh.Item2;
+
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			meshRenderer.sharedMaterial = Main.materialPlantTransparent;
+			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
+			meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
 			
-			container.transform.position = pos;
 			
-			Extra extra = container.AddComponent<Extra>();
-			extra.AssignDefinition( def );
-
-
-
 			return container;
 		}
 	}

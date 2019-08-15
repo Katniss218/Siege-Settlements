@@ -99,7 +99,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); }
+				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); __materialFactionColored.enableInstancing = true; }
 				return __materialFactionColored;
 			}
 		}
@@ -109,7 +109,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); }
+				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); __materialFactionColoredDestroyable.enableInstancing = true; }
 				return __materialFactionColoredDestroyable;
 			}
 		}
@@ -119,7 +119,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); }
+				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); __materialFactionColoredConstructible.enableInstancing = true; }
 				return __materialFactionColoredConstructible;
 			}
 		}
@@ -129,7 +129,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); }
+				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); __materialSolid.enableInstancing = true; }
 				return __materialSolid;
 			}
 		}
@@ -139,7 +139,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); }
+				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); __materialPlantTransparent.enableInstancing = true; }
 				return __materialPlantTransparent;
 			}
 		}
@@ -149,7 +149,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); }
+				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); __materialPlantSolid.enableInstancing = true; }
 				return __materialPlantSolid;
 			}
 		}

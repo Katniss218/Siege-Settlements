@@ -24,7 +24,7 @@ namespace SS.Buildings
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			// Apply the material's properties.
-			meshRenderer.material = Main.materialFactionColoredConstructible;
+			meshRenderer.sharedMaterial = Main.materialFactionColoredConstructible;
 			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
 			meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
 

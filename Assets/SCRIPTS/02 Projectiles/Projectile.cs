@@ -5,7 +5,7 @@ namespace SS.Projectiles
 {
 	public static class Projectile
 	{
-		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, float damageOverride, Transform owner )
+		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, DamageType damageType, float damageOverride, float armorPenetration, Transform owner )
 		{
 			if( def == null )
 			{
@@ -19,7 +19,7 @@ namespace SS.Projectiles
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = Main.materialSolid;
+			meshRenderer.sharedMaterial = Main.materialSolid;
 			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
 
 			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
@@ -49,7 +49,9 @@ namespace SS.Projectiles
 			f.factionId = factionId;
 
 			DamageSource dms = container.AddComponent<DamageSource>();
+			dms.damageType = damageType;
 			dms.damage = damageOverride;
+			dms.armorPenetration = armorPenetration;
 
 			container.AddComponent<RotateAlongVelocity>();
 
@@ -77,7 +79,7 @@ namespace SS.Projectiles
 					}
 				}
 				DamageSource projectileDamage = proj.GetComponent<DamageSource>();
-				od.TakeDamage( projectileDamage.type, projectileDamage.damage, projectileDamage.armorPenetration );
+				od.TakeDamage( projectileDamage.damageType, projectileDamage.damage, projectileDamage.armorPenetration );
 				AudioManager.PlayNew( Main.hit, 1.0f, 1.0f );
 				Object.Destroy( proj );
 			} );
