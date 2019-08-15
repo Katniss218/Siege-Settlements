@@ -93,6 +93,11 @@ namespace SS.Units
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 			} );
 
+			if( def.isMelee || def.isRanged )
+			{
+				container.AddComponent<TargetFinderModule>();
+			}
+
 			// If the new unit is melee, setup the melee module.
 			if( def.isMelee )
 			{

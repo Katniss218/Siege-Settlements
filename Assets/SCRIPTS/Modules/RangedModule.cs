@@ -6,6 +6,7 @@ namespace SS
 {
 	[RequireComponent( typeof( FactionMember ) )]
 	[RequireComponent( typeof( DamageSource ) )]
+	[RequireComponent( typeof( ITargetFinder ) )]
 	public class RangedModule : MonoBehaviour
 	{
 		public Damageable currentTarget;
@@ -23,6 +24,7 @@ namespace SS
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
+		private ITargetFinder targetFinder;
 
 		public bool isReadyToAttack
 		{
@@ -35,6 +37,7 @@ namespace SS
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
+			this.targetFinder = this.GetComponent<ITargetFinder>();
 		}
 
 		void Start()
@@ -46,44 +49,16 @@ namespace SS
 		{
 			if( this.isReadyToAttack )
 			{
-				this.FindTarget();
+				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
 
 				if( this.currentTarget != null )
 				{
 					this.Attack();
+					AudioManager.PlayNew( Main.loose, 1.0f, 1.0f );
 				}
 			}
 		}
-
-		/// <summary>
-		/// Forces the RangedComponent to seek for targets.
-		/// </summary>
-		public void FindTarget()
-		{
-			Collider[] col = Physics.OverlapSphere( this.transform.position, this.attackRange );
-			for( int i = 0; i < col.Length; i++ )
-			{
-				Damageable potentialTarget = col[i].GetComponent<Damageable>();
-				if( potentialTarget == null )
-				{
-					continue;
-				}
-				FactionMember f = potentialTarget.GetComponent<FactionMember>();
-				if( f != null )
-				{
-					if( f.factionId == this.factionMember.factionId )
-					{
-						//if( f.factionId == this.factionMember.factionId || Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
-
-						continue;
-					}
-				}
-				this.currentTarget = potentialTarget;
-				return;
-			}
-			this.currentTarget = null;
-		}
-
+		
 		/// <summary>
 		/// Forces RangedComponent to shoot at the target (assumes target != null).
 		/// </summary>
@@ -106,7 +81,6 @@ namespace SS
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, vel );
 				}
 				this.lastAttackTimestamp = Time.time;
-				AudioManager.PlayNew( Main.loose, 1.0f, 1.0f );
 			}
 		}
 

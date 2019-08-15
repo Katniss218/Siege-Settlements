@@ -3,6 +3,8 @@
 namespace SS
 {
 	[RequireComponent( typeof( FactionMember ) )]
+	[RequireComponent( typeof( DamageSource ) )]
+	[RequireComponent( typeof( ITargetFinder ) )]
 	public class MeleeModule : MonoBehaviour
 	{
 		public Damageable currentTarget;
@@ -14,6 +16,7 @@ namespace SS
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
+		private ITargetFinder targetFinder;
 
 		public bool isReadyToAttack
 		{
@@ -26,6 +29,7 @@ namespace SS
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
+			this.targetFinder = this.GetComponent<ITargetFinder>();
 			this.lastAttackTimestamp = Random.Range( 0.0f, this.attackCooldown );
 		}
 
@@ -33,7 +37,7 @@ namespace SS
 		{
 			if( this.isReadyToAttack )
 			{
-				this.FindTarget();
+				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
 
 				if( this.currentTarget != null )
 				{
@@ -43,33 +47,7 @@ namespace SS
 			}
 		}
 
-		/// <summary>
-		/// Forces the MeleeComponent to seek for targets.
-		/// </summary>
-		public void FindTarget()
-		{
-			Collider[] col = Physics.OverlapSphere( this.transform.position, this.attackRange );
-			for( int i = 0; i < col.Length; i++ )
-			{
-				Damageable d = col[i].GetComponent<Damageable>();
-				if( d == null )
-				{
-					continue;
-				}
-				FactionMember f = d.GetComponent<FactionMember>();
-				if( f != null )
-				{
-					if( f.factionId == this.factionMember.factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
-					{
-						continue;
-					}
-				}
-				
-				this.currentTarget = d;
-				return;
-			}
-			this.currentTarget = null;
-		}
+		
 
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
