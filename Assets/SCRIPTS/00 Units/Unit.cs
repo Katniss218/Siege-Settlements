@@ -93,9 +93,10 @@ namespace SS.Units
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 			} );
 
+			ITargetFinder finder = null;
 			if( def.isMelee || def.isRanged )
 			{
-				container.AddComponent<TargetFinderModule>();
+				finder = container.AddComponent<TargetFinderModule>();
 			}
 
 			// If the new unit is melee, setup the melee module.
@@ -107,7 +108,8 @@ namespace SS.Units
 				meleeDamageSource.armorPenetration = def.meleeArmorPenetration;
 				
 				MeleeModule melee = container.AddComponent<MeleeModule>();
-				melee.DamageSource = meleeDamageSource;
+				melee.damageSource = meleeDamageSource;
+				melee.targetFinder = finder;
 				melee.attackCooldown = def.meleeAttackCooldown;
 				melee.attackRange = def.meleeAttackRange;
 			}
@@ -124,6 +126,7 @@ namespace SS.Units
 				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
 				ranged.projectileCount = def.rangedProjectileCount;
 				ranged.damageSource = rangedDamageSource;
+				ranged.targetFinder = finder;
 				ranged.attackRange = def.rangedAttackRange;
 				ranged.attackCooldown = def.rangedAttackCooldown;
 				ranged.velocity = def.rangedVelocity;

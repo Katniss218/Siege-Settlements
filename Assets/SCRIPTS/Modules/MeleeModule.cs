@@ -9,14 +9,14 @@ namespace SS
 	{
 		public Damageable currentTarget;
 
-		public DamageSource DamageSource;
+		public DamageSource damageSource;
+		public ITargetFinder targetFinder;
 
 		public float attackRange;
 		public float attackCooldown;
 
-		private float lastAttackTimestamp;
+		private float lastAttackTimestamp; // TODO ----- maybe separate something like "PeriodicalTriggerWithCondition" from this (lastattack timestamp, etc.).
 		private FactionMember factionMember;
-		private ITargetFinder targetFinder;
 
 		public bool isReadyToAttack
 		{
@@ -29,8 +29,19 @@ namespace SS
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
-			this.targetFinder = this.GetComponent<ITargetFinder>();
-			this.lastAttackTimestamp = Random.Range( 0.0f, this.attackCooldown );
+		}
+
+		private void Start()
+		{
+			if( damageSource == null )
+			{
+				Debug.LogError( "There's no damage source hooked up to this melee module." );
+			}
+			if( targetFinder == null )
+			{
+				Debug.LogError( "There's no target finder hooked up to this melee module." );
+			}
+			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
 		}
 
 		void Update()
@@ -54,7 +65,7 @@ namespace SS
 		/// </summary>
 		public void Attack()
 		{
-			this.currentTarget.TakeDamage( this.DamageSource.damageType, this.DamageSource.damage, this.DamageSource.armorPenetration );
+			this.currentTarget.TakeDamage( this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration );
 			this.lastAttackTimestamp = Time.time;
 		}
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
-using SS.Levels;
-using SS.Units;
 using SS.Buildings;
 using UnityEngine.AI;
 
@@ -22,7 +20,7 @@ namespace SS
 		// onlevelload - when the level is loaded
 		// onpostlevelload - after definitions have been initialized.
 		// 
-		// TODO ----- Move this fields somewhere else.
+		// TODO ----- Move these fields somewhere else.
 		private static GameObject __unitUI = null;
 		public static GameObject unitUI
 		{

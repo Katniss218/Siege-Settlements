@@ -15,6 +15,7 @@ namespace SS
 		public int projectileCount;
 
 		public DamageSource damageSource;
+		public ITargetFinder targetFinder;
 
 		public float attackRange;
 		public float attackCooldown;
@@ -24,7 +25,6 @@ namespace SS
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
-		private ITargetFinder targetFinder;
 
 		public bool isReadyToAttack
 		{
@@ -37,11 +37,18 @@ namespace SS
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
-			this.targetFinder = this.GetComponent<ITargetFinder>();
 		}
 
 		void Start()
 		{
+			if( damageSource == null )
+			{
+				Debug.LogError( "There's no damage source hooked up to this ranged module." );
+			}
+			if( targetFinder == null )
+			{
+				Debug.LogError( "There's no target finder hooked up to this ranged module." );
+			}
 			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
 		}
 
@@ -49,6 +56,7 @@ namespace SS
 		{
 			if( this.isReadyToAttack )
 			{
+				// TODO ----- don't call this, targeter should setup the target on it's own, and when it's set, attack.
 				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
 
 				if( this.currentTarget != null )

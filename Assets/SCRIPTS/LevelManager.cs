@@ -31,7 +31,6 @@ namespace SS.Levels
 			{
 				fac[i] = new Faction();
 			}
-			// TODO ----- instantiable unit spawners for loading maps?
 
 			serializer.DeserializeArray<Faction>( "Factions", fac );
 
