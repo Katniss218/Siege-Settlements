@@ -1,13 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SS
 {
-	/// <summary>
-	/// Represents any object that can be damaged by other objects.
-	/// </summary>
-	public abstract class Damageable : MonoBehaviour
+	public class Damageable : MonoBehaviour
 	{
 		/// <summary>
 		/// Current health value of this damageable.

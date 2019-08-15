@@ -94,32 +94,32 @@ namespace SS
 			registeredDefinitions.Clear();
 		}
 
-		private static void LoadUnitDefinition( string path )
+		private static void LoadUnitDefinitions( string path )
 		{
 
 		}
 
-		private static void LoadBuildingDefinition( string path )
+		private static void LoadBuildingDefinitions( string path )
 		{
 
 		}
 
-		private static void LoadProjectileDefinition( string path )
+		private static void LoadProjectileDefinitions( string path )
 		{
 
 		}
 
-		private static void LoadResourceDefinition( string path )
+		private static void LoadResourceDefinitions( string path )
 		{
 
 		}
 
-		private static void LoadExtraDefinition( string path )
+		private static void LoadExtraDefinitions( string path )
 		{
 
 		}
 
-		private static void LoadResourceDepositDefinition( string path )
+		private static void LoadResourceDepositDefinitions( string path )
 		{
 
 		}

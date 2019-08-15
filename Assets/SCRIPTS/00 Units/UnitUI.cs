@@ -15,7 +15,7 @@ namespace SS.Units
 
 		private Image background;
 		private Image healthBar;
-
+		
 		/// <summary>
 		/// Sets the faction color tint to the specified color.
 		/// </summary>

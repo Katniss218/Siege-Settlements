@@ -1,112 +1,10 @@
 ﻿using Katniss.Utils;
-using KFF;
-using SS.Data;
 using UnityEngine;
 
 namespace SS.Projectiles
 {
-	/// <summary>
-	/// Represents a projectile, that follows a ballistic trajectory, and can damage objects.
-	/// </summary>
-	[RequireComponent( typeof( Rigidbody ) )]
-	public class Projectile : MonoBehaviour, IFactionMember, IDefinableBy<ProjectileDefinition>
+	public static class Projectile
 	{
-		/// <summary>
-		/// The definition's Id.
-		/// </summary>
-		public string id { get; private set; }
-
-		public int factionId { get; private set; }
-
-		public DamageType damageType { get; private set; }
-		public float damage { get; private set; }
-		public float armorPenetration { get; private set; }
-		
-		private Transform graphicsTransform;
-		new private Rigidbody rigidbody;
-		private MeshFilter meshFilter;
-		private MeshRenderer meshRenderer;
-
-		private Transform owner = null;
-
-		public void SetFaction( int id )
-		{
-			this.factionId = id;
-		}
-
-		public void AssignDefinition( ProjectileDefinition def )
-		{
-			this.id = def.id;
-
-			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = Main.materialSolid;
-			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-
-			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			this.meshRenderer.material.SetTexture( "_Emission", null );
-			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-		}
-
-		public void SerializeData( KFFSerializer serializer )
-		{
-			serializer.WriteInt( "", "FactionId", this.factionId );
-			serializer.WriteFloat( "", "Damage", this.damage );
-		}
-
-		public void DeserializeData( KFFSerializer serializer )
-		{
-			this.factionId = serializer.ReadInt( "FactionId" );
-			this.damage = serializer.ReadFloat( "Damage" );
-		}
-
-		void Awake()
-		{
-			this.graphicsTransform = this.transform.GetChild( 0 );
-			this.rigidbody = this.GetComponent<Rigidbody>();
-			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
-			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
-		}
-		
-		void Start()
-		{
-
-		}
-		
-		void Update()
-		{
-			this.transform.forward = this.rigidbody.velocity.normalized;
-		}
-
-		private void OnTriggerEnter( Collider other )
-		{
-			if(this.owner != null && other.transform == this.owner )
-			{
-				return;
-			}
-			if( other.GetComponent<Projectile>() != null )
-			{
-				return;
-			}
-			Damageable od = other.GetComponent<Damageable>();
-			if( od == null )
-			{
-				Destroy( this.gameObject );
-				return;
-			}
-			if( od is IFactionMember )
-			{
-				IFactionMember f = (IFactionMember)od;
-				if( f.factionId == this.factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
-				{
-					return;
-				}
-			}
-			od.TakeDamage( this.damageType, this.damage, this.armorPenetration );
-			AudioManager.PlayNew( Main.hit, 1.0f, 1.0f );
-			Destroy( this.gameObject );
-		}
-
 		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, float damageOverride, Transform owner )
 		{
 			if( def == null )
@@ -119,7 +17,15 @@ namespace SS.Projectiles
 			gfx.transform.SetParent( container.transform );
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			meshFilter.mesh = def.mesh.Item2;
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialSolid;
+			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+
+			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			meshRenderer.material.SetTexture( "_Emission", null );
+			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
+			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
 			if( def.hasTrail )
 			{
@@ -130,17 +36,49 @@ namespace SS.Projectiles
 			rb.velocity = velocity;
 
 			SphereCollider col = container.AddComponent<SphereCollider>();
-			col.radius = 0.0625f;
+			col.radius = 0.0625f; // hitbox size
 			col.isTrigger = true;
 
 			container.transform.position = position;
 
-			Projectile projectileComponent = container.AddComponent<Projectile>();
-			projectileComponent.SetFaction( factionId );
-			projectileComponent.AssignDefinition( def );
+			TimerHandler t = container.AddComponent<TimerHandler>();
+			t.duration = 15f; // lifetime
+			t.onTimerEnd.AddListener( () => Object.Destroy( container ) );
 
-			projectileComponent.damage = damageOverride;
-			projectileComponent.owner = owner;
+			FactionMember f = container.AddComponent<FactionMember>();
+			f.factionId = factionId;
+
+			DamageSource dms = container.AddComponent<DamageSource>();
+			dms.damage = damageOverride;
+
+			container.AddComponent<RotateAlongVelocity>();
+
+			TriggerOverlapHandler toh = container.AddComponent<TriggerOverlapHandler>();
+			toh.onTriggerEnter.AddListener( 
+			( GameObject proj, Collider other ) => {
+				if( other.GetComponent<TriggerOverlapHandler>() != null )
+				{
+					return;
+				}
+				Damageable od = other.GetComponent<Damageable>();
+				if( od == null )
+				{
+					Object.Destroy( proj );
+					return;
+				}
+				IFactionMember fac = other.GetComponent<IFactionMember>();
+				if( fac != null )
+				{
+					if( fac.factionId == proj.GetComponent<FactionMember>().factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
+					{
+						return;
+					}
+				}
+				DamageSource projectileDamage = proj.GetComponent<DamageSource>();
+				od.TakeDamage( projectileDamage.type, projectileDamage.damage, projectileDamage.armorPenetration );
+				AudioManager.PlayNew( Main.hit, 1.0f, 1.0f );
+				Object.Destroy( proj );
+			} );
 
 			return container;
 		}

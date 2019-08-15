@@ -9,7 +9,6 @@ namespace SS.UI
 	{
 		public void Click()
 		{
-
 			LevelManager.Load( Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar + "Tutorial" );
 		}
 		// Start is called before the first frame update

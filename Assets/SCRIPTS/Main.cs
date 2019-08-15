@@ -18,6 +18,10 @@ namespace SS
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
 
+
+		// onlevelload - when the level is loaded
+		// onpostlevelload - after definitions have been initialized.
+		// 
 		// TODO ----- Move this fields somewhere else.
 		private static GameObject __unitUI = null;
 		public static GameObject unitUI
@@ -178,8 +182,8 @@ namespace SS
 		}
 
 		public static Main instance { get; private set; }
-
-		private void Awake()
+		
+		void Awake()
 		{
 			// initialize the singleton
 			if( instance != null )
@@ -194,7 +198,7 @@ namespace SS
 
 		void Start()
 		{
-			LevelManager.PostInitLoad();
+			//LevelManager.OnLevelLoad();
 
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );

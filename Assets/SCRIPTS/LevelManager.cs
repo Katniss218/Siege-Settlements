@@ -10,10 +10,11 @@ using UnityEngine.SceneManagement;
 
 namespace SS.Levels
 {
-	public static class LevelManager
+	/// <summary>
+	/// Manages level-specific stuff. Exists only on a 'Map' scene.
+	/// </summary>
+	public class LevelManager : MonoBehaviour
 	{
-		private static string path;
-
 		public static void Load( string path )
 		{
 			// Load the default Siege Settlements data & assets.
@@ -30,21 +31,18 @@ namespace SS.Levels
 			{
 				fac[i] = new Faction();
 			}
+			// TODO ----- instantiable unit spawners for loading maps?
 
 			serializer.DeserializeArray<Faction>( "Factions", fac );
 
 			FactionManager.SetFactions( fac );
-
-
-			LevelManager.path = path;
+			
 			// Load the empty level scene.
 			SceneManager.LoadScene( "Map" );
 		}
 
-		public static void PostInitLoad() // called after the scene is loaded.
+		public void Start()
 		{
-			// FIXME @@@@@ Remove this lazy thing and replace it with other way to load this.
-
 			// Spawn the GameObject to the scene.
 			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0 );
 
