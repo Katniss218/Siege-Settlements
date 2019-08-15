@@ -1,11 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS
 {
 	public class Selectable : MonoBehaviour
 	{
-		
+		public class _UnityEvent_Selectable : UnityEvent<Selectable> { }
+
+		public _UnityEvent_Selectable onSelect = new _UnityEvent_Selectable();
+		public _UnityEvent_Selectable onDeselect = new _UnityEvent_Selectable();
 	}
 }

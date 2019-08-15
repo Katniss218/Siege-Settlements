@@ -7,14 +7,9 @@ namespace SS
 {
 	public class SelectionManager : MonoBehaviour
 	{
-		public static List<Selectable> selected = new List<Selectable>();
-		public static Selectable highlighted = null;
-
-		void Start()
-		{
-
-		}
-
+		public static List<Selectable> selectedObjs = new List<Selectable>();
+		public static Selectable highlightedObj = null;
+		
 		void Update()
 		{
 			// if the click was over UI element, return.
@@ -29,7 +24,7 @@ namespace SS
 					Selectable obj = RaycastSelect();
 					if( obj != null )
 					{
-						if( !selected.Contains( obj ) )
+						if( !selectedObjs.Contains( obj ) )
 						{
 							Select( obj );
 						}
@@ -63,17 +58,28 @@ namespace SS
 			return null;
 		}
 
+		public static bool IsHighlighted( Selectable obj )
+		{
+			return highlightedObj == obj;
+		}
+
+		public static bool IsSelected( Selectable obj )
+		{
+			return selectedObjs.Contains( obj );
+		}
+
 		public static void Select( Selectable obj )
 		{
 			if( obj == null )
 			{
 				return;
 			}
-			if( selected.Contains( obj ) )
+			if( selectedObjs.Contains( obj ) )
 			{
 				return;
 			}
-			selected.Add( obj );
+			selectedObjs.Add( obj );
+			obj.onSelect?.Invoke( obj );
 			SelectionPanel.ListAddIcon( obj, Main.toolTipBackground );
 		}
 
@@ -83,16 +89,21 @@ namespace SS
 			{
 				return;
 			}
-			if( selected.Contains( obj ) )
+			if( selectedObjs.Contains( obj ) )
 			{
-				selected.Remove( obj );
+				selectedObjs.Remove( obj );
 			}
+			obj.onDeselect?.Invoke( obj );
 			SelectionPanel.ListRemoveIcon( obj );
 		}
-
+		
 		public static void DeselectAll()
 		{
-			selected.Clear();
+			for( int i = 0; i < selectedObjs.Count; i++ )
+			{
+				selectedObjs[i].onDeselect?.Invoke( selectedObjs[i] );
+			}
+			selectedObjs.Clear();
 
 			SelectionPanel.ListClear();
 		}

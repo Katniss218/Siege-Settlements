@@ -213,7 +213,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					foreach( Selectable obj in SelectionManager.selected )
+					foreach( Selectable obj in SelectionManager.selectedObjs )
 					{
 						if( obj == null )
 						{
@@ -240,6 +240,11 @@ namespace SS
 				meshFilter.mesh = prev.def.mesh.Item2;
 				MeshRenderer mr = obj.AddComponent<MeshRenderer>();
 				mr.material = Main.materialFactionColored;
+				Texture2D t = new Texture2D( 1, 1 );
+				t.SetPixel( 0, 0, new Color( 1,1,1) );
+				mr.material.SetTexture( "_Albedo", t );
+				mr.material.SetTexture( "_Normal", null );
+				mr.material.SetTexture( "_Emission", null );
 			}
 		}
 	}

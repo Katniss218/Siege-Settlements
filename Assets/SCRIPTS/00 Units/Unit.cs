@@ -40,6 +40,13 @@ namespace SS.Units
 			collider.center = new Vector3( 0f, def.height / 2f, 0f );
 
 			Selectable selectable = container.AddComponent<Selectable>();
+			if( def.id == "unit.civilian" )
+			{
+				selectable.onSelect.AddListener( ( Selectable obj ) =>
+				{
+					Debug.Log( "Selected Civilian" );
+				} );
+			}
 
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
@@ -93,7 +100,7 @@ namespace SS.Units
 				meleeDamageSource.damageType = def.meleeDamageType;
 				meleeDamageSource.damage = def.meleeDamage;
 				meleeDamageSource.armorPenetration = def.meleeArmorPenetration;
-
+				
 				MeleeModule melee = container.AddComponent<MeleeModule>();
 				melee.DamageSource = meleeDamageSource;
 				melee.attackCooldown = def.meleeAttackCooldown;
