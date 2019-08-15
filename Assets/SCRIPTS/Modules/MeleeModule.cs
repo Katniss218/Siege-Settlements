@@ -2,7 +2,7 @@
 
 namespace SS
 {
-	[RequireComponent( typeof( IFactionMember ) )]
+	[RequireComponent( typeof( FactionMember ) )]
 	public class MeleeModule : MonoBehaviour
 	{
 		//public MeleeComponentDefinition definition { get; set; }
@@ -16,7 +16,7 @@ namespace SS
 		public float attackCooldown { get; set; }
 
 		private float lastAttackTimestamp;
-		private IFactionMember factionMember;
+		private FactionMember factionMember;
 
 		public bool isReadyToAttack
 		{
@@ -28,7 +28,7 @@ namespace SS
 
 		void Awake()
 		{
-			this.factionMember = this.GetComponent<IFactionMember>();
+			this.factionMember = this.GetComponent<FactionMember>();
 			this.lastAttackTimestamp = Random.Range( 0.0f, this.attackCooldown );
 		}
 
@@ -59,9 +59,9 @@ namespace SS
 				{
 					continue;
 				}
-				if( d is IFactionMember )
+				FactionMember f = d.GetComponent<FactionMember>();
+				if( f != null )
 				{
-					IFactionMember f = (IFactionMember)d;
 					if( f.factionId == this.factionMember.factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
 					{
 						continue;

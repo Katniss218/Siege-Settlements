@@ -1,126 +1,11 @@
-﻿using SS.Data;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Buildings
 {
-	[RequireComponent(typeof(BoxCollider))]
-	[RequireComponent( typeof( NavMeshObstacle ) )]
-	/// <summary>
-	/// Represents a building (buildings can't move, block other objects from moving, can be interacted with, and have a faction).
-	/// </summary>
-	public class Building : Damageable, IFactionMember, ISelectable, IDefinableBy<BuildingDefinition>
+	public static class Building
 	{
-		/// <summary>
-		/// The definition's Id.
-		/// </summary>
-		public string id { get; private set; }
-		
-		public int factionId { get; private set; }
-
-		public void SetFaction( int id )
-		{
-			this.factionId = id;
-			Color color = FactionManager.factions[id].color;
-			this.ui.SetFactionColor( color );
-			this.meshRenderer.material.SetColor( "_FactionColor", color );
-		}
-		
-		private BuildingUI ui;
-
-
-		private Transform graphicsTransform;
-		new private BoxCollider collider;
-		private MeshFilter meshFilter;
-		private MeshRenderer meshRenderer;
-		private NavMeshObstacle obstacle;
-
-
-
-		
-		void Awake()
-		{
-			this.collider = this.GetComponent<BoxCollider>();
-			this.graphicsTransform = this.transform.GetChild( 0 );
-			this.meshFilter = this.graphicsTransform.GetComponent<MeshFilter>();
-			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
-			this.obstacle = this.GetComponent<NavMeshObstacle>();
-		}
-
-		void Start()
-		{
-
-		}
-		
-		void Update()
-		{
-			if( transform.hasChanged )
-			{
-				ui.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
-			}
-		}
-
-		public override void Heal()
-		{
-			base.Heal();
-			this.ui.SetHealthFill( this.healthPercent );
-		}
-
-		public override void Heal( float amount )
-		{
-			base.Heal( amount );
-			this.ui.SetHealthFill( this.healthPercent );
-		}
-
-		public override void TakeDamage( DamageType type, float amount, float armorPenetration )
-		{
-			base.TakeDamage( type, amount, armorPenetration );
-			this.ui.SetHealthFill( this.healthPercent );
-		}
-
-		public override void Die()
-		{
-			base.Die();
-
-			SelectionManager.Deselect( this );
-		}
-
-		public void AssignDefinition( BuildingDefinition def )
-		{
-			this.id = def.id;
-			this.healthMax = def.healthMax;
-			this.Heal();
-			this.slashArmor = def.slashArmor;
-			this.pierceArmor = def.pierceArmor;
-			this.concussionArmor = def.concussionArmor;
-
-			this.collider.size = def.size;
-			this.collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
-			this.obstacle.size = def.size;
-			this.obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
-
-			// Apply the mesh.
-			this.meshFilter.mesh = def.mesh.Item2;
-
-			// Apply the material's properties.
-			this.meshRenderer.material = Main.materialFactionColoredConstructible;
-			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-			this.meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
-
-			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			this.meshRenderer.material.SetTexture( "_Emission", null );
-			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			this.meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-
-			// If the building was under construction, assign the new cost to the construction site and reset the progress.
-			ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
-			if( constructionSite  != null )
-			{
-				constructionSite.AssignResources( def.cost );
-			}
-		}
-		
-		public static Building Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
+		public static GameObject Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
 		{
 			if( def == null )
 			{
@@ -133,25 +18,83 @@ namespace SS.Buildings
 
 			container.transform.SetPositionAndRotation( pos, rot );
 
-			gfx.AddComponent<MeshFilter>();
-			gfx.AddComponent<MeshRenderer>();
+			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			// Apply the mesh.
+			meshFilter.mesh = def.mesh.Item2;
+
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			// Apply the material's properties.
+			meshRenderer.material = Main.materialFactionColoredConstructible;
+			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+			meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
+
+			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			meshRenderer.material.SetTexture( "_Emission", null );
+			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
+			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-			
+			collider.size = def.size;
+			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
+
+			Selectable selectable = container.AddComponent<Selectable>();
+
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
+			navMeshObstacle.size = def.size;
+			navMeshObstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
 			navMeshObstacle.carving = true;
 
-			Building building = container.AddComponent<Building>();
-			building.ui = Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
-			building.SetFaction( factionId );
+			BuildingUI ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
+
+			FactionMember factionMember = container.AddComponent<FactionMember>();
+			factionMember.onFactionChange.AddListener( ( FactionMember obj ) =>
+			{
+				Color color = FactionManager.factions[obj.factionId].color;
+				ui.SetFactionColor( color );
+				meshRenderer.material.SetColor( "_FactionColor", color );
+			} );
+			factionMember.factionId = factionId;
+
+
+			Damageable damageable = container.AddComponent<Damageable>();
+			damageable.healthMax = def.healthMax;
+			damageable.Heal();
+			damageable.slashArmor = def.slashArmor;
+			damageable.pierceArmor = def.pierceArmor;
+			damageable.concussionArmor = def.concussionArmor;
+			damageable.onHealthChange.AddListener( ( Damageable obj ) =>
+			{
+				meshRenderer.material.SetFloat( "_Dest", 1 - obj.healthPercent );
+				ui.SetHealthFill( obj.healthPercent );
+			} );
+			damageable.onDeath.AddListener( ( Damageable obj ) =>
+			{
+				Object.Destroy( ui.gameObject );
+				// for breakup make several meshes that are made up of the original one, attach physics to them.
+				// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
+				// when the scale reaches 0.x, remove the piece.
+
+				// also, play a poof from some particle system for smoke or something at the moment of death.
+				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+			} );
+
 			if( isUnderConstruction )
 			{
-				ConstructionSite csite = container.AddComponent<ConstructionSite>();
+				ConstructionSite constructionSite = container.AddComponent<ConstructionSite>();
+				constructionSite.AssignResources( def.cost );
 			}
-			building.AssignDefinition( def );
-			
-			return building;
+
+			container.AddComponent<EveryFrameSingle>().everyFrame = () =>
+			{
+				if( container.transform.hasChanged )
+				{
+					ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
+				}
+			};
+
+
+			return container;
 		}
 	}
 }

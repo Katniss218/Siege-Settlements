@@ -7,8 +7,8 @@ namespace SS
 {
 	public class SelectionManager : MonoBehaviour
 	{
-		public static List<ISelectable> selected = new List<ISelectable>();
-		public static ISelectable highlighted = null;
+		public static List<Selectable> selected = new List<Selectable>();
+		public static Selectable highlighted = null;
 
 		void Start()
 		{
@@ -26,7 +26,7 @@ namespace SS
 			{
 				if( Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
 				{
-					ISelectable obj = RaycastSelect();
+					Selectable obj = RaycastSelect();
 					if( obj != null )
 					{
 						if( !selected.Contains( obj ) )
@@ -39,7 +39,7 @@ namespace SS
 				{
 					DeselectAll();
 
-					ISelectable obj = RaycastSelect();
+					Selectable obj = RaycastSelect();
 					if( obj != null )
 					{
 						Select( obj );
@@ -48,12 +48,12 @@ namespace SS
 			}
 		}
 
-		private static ISelectable RaycastSelect()
+		private static Selectable RaycastSelect()
 		{
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Camera.main.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 			{
-				ISelectable sel = hitInfo.collider.GetComponent<ISelectable>();
+				Selectable sel = hitInfo.collider.GetComponent<Selectable>();
 				if( sel == null )
 				{
 					return null;
@@ -63,7 +63,7 @@ namespace SS
 			return null;
 		}
 
-		public static void Select( ISelectable obj )
+		public static void Select( Selectable obj )
 		{
 			if( obj == null )
 			{
@@ -77,7 +77,7 @@ namespace SS
 			SelectionPanel.ListAddIcon( obj, Main.toolTipBackground );
 		}
 
-		public static void Deselect( ISelectable obj )
+		public static void Deselect( Selectable obj )
 		{
 			if( obj == null )
 			{

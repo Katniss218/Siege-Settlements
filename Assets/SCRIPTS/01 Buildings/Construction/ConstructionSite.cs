@@ -6,7 +6,6 @@ namespace SS.Buildings
 	/// <summary>
 	/// Represents a building that's being constructed.
 	/// </summary>
-	[RequireComponent( typeof( Building ) )]
 	public class ConstructionSite : MonoBehaviour
 	{
 		// TODO ----- generalize this to be able to construct other things than buildings, maybe stationary ballistas or units being trained in barracks.

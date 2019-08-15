@@ -1,40 +1,47 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS
 {
 	public class Damageable : MonoBehaviour
 	{
+		public class _UnityEventDamageable : UnityEvent<Damageable> { }
+
+		public _UnityEventDamageable onHealthChange = new _UnityEventDamageable();
+		public _UnityEventDamageable onDeath = new _UnityEventDamageable();
+
 		/// <summary>
 		/// Current health value of this damageable.
 		/// </summary>
-		public float health { get; protected set; }
+		public float health;
 		/// <summary>
 		/// Maximum health of this damageable.
 		/// </summary>
-		public float healthMax { get; protected set; }
+		public float healthMax;
 
 		/// <summary>
 		/// Returns the percentage of the health of this damageable (Read only).
 		/// </summary>
 		public float healthPercent { get { return this.health / this.healthMax; } }
-		
+
 		/// <summary>
 		/// Percentage reduction of the slash-type damage.
 		/// </summary>
-		public float slashArmor { get; protected set; }
+		public float slashArmor;
 		/// <summary>
 		/// Percentage reduction of the pierce-type damage.
 		/// </summary>
-		public float pierceArmor { get; protected set; }
+		public float pierceArmor;
 		/// <summary>
 		/// Percentage reduction of the concussion-type damage.
 		/// </summary>
-		public float concussionArmor { get; protected set; }
+		public float concussionArmor;
 
 
 		public virtual void Heal()
 		{
 			this.health = this.healthMax;
+			this.onHealthChange?.Invoke( this );
 		}
 
 		public virtual void Heal( float amount )
@@ -48,6 +55,7 @@ namespace SS
 			{
 				this.health = this.healthMax;
 			}
+			this.onHealthChange?.Invoke( this );
 		}
 		
 		public virtual void TakeDamage( DamageType type, float amount, float armorPenetration )
@@ -78,11 +86,14 @@ namespace SS
 			{
 				this.Die();
 			}
+
+			this.onHealthChange?.Invoke( this );
 		}
 
 		public virtual void Die()
 		{
 			Destroy( this.gameObject );
+			this.onDeath?.Invoke( this );
 		}
 	}
 }

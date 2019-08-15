@@ -6,7 +6,7 @@ namespace SS.UI
 {
 	public class SelectionPanel : MonoBehaviour
 	{
-		private static Dictionary<ISelectable, GameObject> icons = new Dictionary<ISelectable, GameObject>();
+		private static Dictionary<Selectable, GameObject> icons = new Dictionary<Selectable, GameObject>();
 
 		/// <summary>
 		/// The current mode that the Selection Panel is in.
@@ -86,7 +86,7 @@ namespace SS.UI
 		/// </summary>
 		/// <param name="obj">The object to associate the icon with.</param>
 		/// <param name="icon">The icon to display.</param>
-		public static void ListAddIcon( ISelectable obj, Sprite icon )
+		public static void ListAddIcon( Selectable obj, Sprite icon )
 		{
 			if( obj == null )
 			{
@@ -107,7 +107,7 @@ namespace SS.UI
 		/// Removes an icon associated with the specified object. Also, un-associates the object with any icon.
 		/// </summary>
 		/// <param name="obj">The object whose icon to remove.</param>
-		public static void ListRemoveIcon( ISelectable obj )
+		public static void ListRemoveIcon( Selectable obj )
 		{
 			if( obj == null )
 			{

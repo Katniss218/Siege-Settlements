@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS
 {
-	public interface ISelectable
+	public class Selectable : MonoBehaviour
 	{
 		
 	}

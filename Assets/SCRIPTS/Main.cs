@@ -4,6 +4,7 @@ using UnityEngine;
 using SS.Levels;
 using SS.Units;
 using SS.Buildings;
+using UnityEngine.AI;
 
 namespace SS
 {
@@ -213,15 +214,16 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					foreach( ISelectable obj in SelectionManager.selected )
+					foreach( Selectable obj in SelectionManager.selected )
 					{
 						if( obj == null )
 						{
 							continue;
 						}
-						if( obj is Unit )
+						NavMeshAgent agent = obj.GetComponent<NavMeshAgent>();
+						if( agent != null )
 						{
-							((Unit)obj).SetDestination( hitInfo.point );
+							agent.SetDestination( hitInfo.point );
 						}
 					}
 				}

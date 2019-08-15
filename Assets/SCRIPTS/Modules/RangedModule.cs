@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS
 {
-	[RequireComponent( typeof( IFactionMember ) )]
+	[RequireComponent( typeof( FactionMember ) )]
 	public class RangedModule : MonoBehaviour
 	{
 		public Damageable target { get; set; }
@@ -23,7 +23,7 @@ namespace SS
 		public Vector3 localOffsetMax { get; set; }
 
 		private float lastAttackTimestamp;
-		private IFactionMember factionMember;
+		private FactionMember factionMember;
 
 		public bool isReadyToAttack
 		{
@@ -35,7 +35,7 @@ namespace SS
 
 		void Awake()
 		{
-			this.factionMember = this.GetComponent<IFactionMember>();
+			this.factionMember = this.GetComponent<FactionMember>();
 		}
 
 		void Start()
@@ -69,9 +69,9 @@ namespace SS
 				{
 					continue;
 				}
-				if( potentialTarget is IFactionMember )
+				FactionMember f = potentialTarget.GetComponent<FactionMember>();
+				if( f != null )
 				{
-					IFactionMember f = (IFactionMember)potentialTarget;
 					if( f.factionId == this.factionMember.factionId )
 					{
 						//if( f.factionId == this.factionMember.factionId || Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )

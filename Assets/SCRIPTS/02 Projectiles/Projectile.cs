@@ -56,7 +56,8 @@ namespace SS.Projectiles
 			TriggerOverlapHandler toh = container.AddComponent<TriggerOverlapHandler>();
 			toh.onTriggerEnter.AddListener( 
 			( GameObject proj, Collider other ) => {
-				if( other.GetComponent<TriggerOverlapHandler>() != null )
+				// If it hit other projectile, do nothing.
+				if( other.GetComponent<TriggerOverlapHandler>() != null ) // this can later be switched to a script editable by the player.
 				{
 					return;
 				}
@@ -66,7 +67,8 @@ namespace SS.Projectiles
 					Object.Destroy( proj );
 					return;
 				}
-				IFactionMember fac = other.GetComponent<IFactionMember>();
+				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.
+				FactionMember fac = other.GetComponent<FactionMember>();
 				if( fac != null )
 				{
 					if( fac.factionId == proj.GetComponent<FactionMember>().factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
