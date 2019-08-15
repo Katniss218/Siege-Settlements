@@ -56,8 +56,9 @@ namespace SS.Projectiles
 			container.AddComponent<RotateAlongVelocity>();
 
 			TriggerOverlapHandler toh = container.AddComponent<TriggerOverlapHandler>();
-			toh.onTriggerEnter.AddListener( 
-			( GameObject proj, Collider other ) => {
+			toh.onTriggerEnter.AddListener(
+			( GameObject proj, Collider other ) =>
+			{
 				// If it hit other projectile, do nothing.
 				if( other.GetComponent<TriggerOverlapHandler>() != null ) // this can later be switched to a script editable by the player.
 				{
@@ -66,7 +67,11 @@ namespace SS.Projectiles
 				Damageable od = other.GetComponent<Damageable>();
 				if( od == null )
 				{
-					Object.Destroy( proj );
+					// when the projectile hits non-damageable object, it sticks into it (like an arrow).
+					proj.isStatic = true;
+					Object.Destroy( proj.GetComponent<RotateAlongVelocity>() );
+					Object.Destroy( proj.GetComponent<Rigidbody>() );
+					Object.Destroy( proj.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
 					return;
 				}
 				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.

@@ -19,12 +19,12 @@ namespace SS.Units
 
 			container.transform.SetPositionAndRotation( pos, rot );
 
+			// Mesh
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			// Apply the mesh.
 			meshFilter.mesh = def.mesh.Item2;
 
+			// Material
 			MeshRenderer meshRenderer  = gfx.AddComponent<MeshRenderer>();
-			// Apply the material's properties.
 			meshRenderer.sharedMaterial = Main.materialFactionColoredDestroyable;
 			meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[factionId].color );
 			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );

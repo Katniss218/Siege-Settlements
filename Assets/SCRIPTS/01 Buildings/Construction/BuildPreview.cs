@@ -9,9 +9,10 @@ namespace SS.Buildings
 		public LayerMask groundMask;
 		
 		const float maxDeviation = 0.2f;
-		
+
 		public bool CanBePlacedHere()
 		{
+			// Check for the overlap.
 			Matrix4x4 localToWorld = this.transform.localToWorldMatrix;
 			Vector3 center = new Vector3( 0f, def.size.y / 2f, 0f );
 			center = localToWorld.MultiplyVector( center ) + this.transform.position + new Vector3( 0, maxDeviation + 0.01f, 0 ); // add 0.01 so the collider is slightly above the ground and collision doesn't pick it up when it shouldn't.
@@ -20,41 +21,31 @@ namespace SS.Buildings
 				return false;
 			}
 			float halfHeight = def.size.y / 2f;
-			Vector3 pos1 = new Vector3( -def.size.x, halfHeight, -def.size.z );
-			Vector3 pos2 = new Vector3( -def.size.x, halfHeight, def.size.z );
-			Vector3 pos3 = new Vector3( def.size.x, halfHeight, -def.size.z );
-			Vector3 pos4 = new Vector3( def.size.x, halfHeight, def.size.z );
-			pos1 = localToWorld.MultiplyVector( pos1 ) + this.transform.position;
-			pos2 = localToWorld.MultiplyVector( pos2 ) + this.transform.position;
-			pos3 = localToWorld.MultiplyVector( pos3 ) + this.transform.position;
-			pos4 = localToWorld.MultiplyVector( pos4 ) + this.transform.position;
 
+			// Check for the slope gradient.
+			Vector3[] pos = new Vector3[4]
+			{
+				new Vector3( -def.size.x, halfHeight, -def.size.z ),
+				new Vector3( -def.size.x, halfHeight, def.size.z ),
+				new Vector3( def.size.x, halfHeight, -def.size.z ),
+				new Vector3( def.size.x, halfHeight, def.size.z )
+			};
+			
 			float[] y = new float[4];
-			RaycastHit hitInfo1;
-			if( !Physics.Raycast( pos1, Vector3.down, out hitInfo1, halfHeight + maxDeviation, groundMask ) )
+			RaycastHit hitInfo;
+			for( int i = 0; i < 4; i++ )
 			{
-				return false;
+				pos[i] = localToWorld.MultiplyVector( pos[i] ) + this.transform.position;
+				if( !Physics.Raycast( pos[i], Vector3.down, out hitInfo, halfHeight + maxDeviation, groundMask ) )
+				{
+					return false;
+				}
+				y[i] = hitInfo.point.y;
 			}
-			y[0] = hitInfo1.point.y;
-			if( !Physics.Raycast( pos2, Vector3.down, out hitInfo1, halfHeight + maxDeviation, groundMask ) )
-			{
-				return false;
-			}
-			y[1] = hitInfo1.point.y;
-			if( !Physics.Raycast( pos3, Vector3.down, out hitInfo1, halfHeight + maxDeviation, groundMask ) )
-			{
-				return false;
-			}
-			y[2] = hitInfo1.point.y;
-			if( !Physics.Raycast( pos4, Vector3.down, out hitInfo1, halfHeight + maxDeviation, groundMask ) )
-			{
-				return false;
-			}
-			y[3] = hitInfo1.point.y;
-
+			
 			Array.Sort( y );
 
-			return Mathf.Abs( y[0] - y[3] ) < 0.2f; // max 0.2 of variation.
+			return Mathf.Abs( y[0] - y[3] ) < maxDeviation; // max 0.2 of variation.
 		}
 
 		private void Update()

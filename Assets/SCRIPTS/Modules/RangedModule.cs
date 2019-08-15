@@ -56,7 +56,7 @@ namespace SS
 		{
 			if( this.isReadyToAttack )
 			{
-				// TODO ----- don't call this, targeter should setup the target on it's own, and when it's set, attack.
+				// FIXME ----- don't call this, targeter should setup the target on it's own, and when it's set, attack.
 				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
 
 				if( this.currentTarget != null )

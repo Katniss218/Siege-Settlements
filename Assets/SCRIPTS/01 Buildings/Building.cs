@@ -21,12 +21,12 @@ namespace SS.Buildings
 
 			container.transform.SetPositionAndRotation( pos, rot );
 
+			// Mesh
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			// Apply the mesh.
 			meshFilter.mesh = def.mesh.Item2;
 
+			// Material
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			// Apply the material's properties.
 			meshRenderer.sharedMaterial = Main.materialFactionColoredConstructible;
 			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
 			meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
@@ -72,11 +72,6 @@ namespace SS.Buildings
 			damageable.onDeath.AddListener( ( Damageable obj ) =>
 			{
 				Object.Destroy( ui.gameObject );
-				// for breakup make several meshes that are made up of the original one, attach physics to them.
-				// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
-				// when the scale reaches 0.x, remove the piece.
-
-				// also, play a poof from some particle system for smoke or something at the moment of death.
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 			} );
 
@@ -90,7 +85,7 @@ namespace SS.Buildings
 					if( damageable.healthPercent > 1f ) damageable.healthPercent = 1f;
 					meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 				} );
-				constructionSite.isCompleted = () => damageable.healthPercent >= 1f; // the condition for completion of construction is 100% health. For repairing, it's 50%
+				constructionSite.isCompleted = () => damageable.healthPercent >= 1f; // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
 				damageable.healthPercent = 0.1f;
 			}
 			else

@@ -33,18 +33,17 @@ namespace SS.Buildings
 			return (float)resourceAmt / ((float)this.totalNeeded * 0.9f);
 		}
 
+		/// <summary>
+		/// This function checks if the construction has finished, override this for custom condition.
+		/// </summary>
 		public Func<bool> isCompleted;
-
-		// to build a building you need the health to reach 100%.
-		// to fix a building, you need the health to reach 50%.
-
-		// each building needs a certain set of resources in order to reach 100%.
-		// the amount of health gained is scaled according to the total amt needed (if the building reqs 100 stone and 900 wood, getting 500 wood will increase the health by 50%).
-		// get scaling factor per each resource.
-
+		
 		private Transform graphicsTransform;
 		private MeshRenderer meshRenderer;
 
+		/// <summary>
+		/// Is called when the construction progresses (resources are added).
+		/// </summary>
 		public _UnityEvent_ConstructionSite_ResourceStack onConstructionProgress = new _UnityEvent_ConstructionSite_ResourceStack();
 
 		/// <summary>
@@ -71,17 +70,14 @@ namespace SS.Buildings
 			this.graphicsTransform = this.transform.GetChild( 0 );
 			this.meshRenderer = this.graphicsTransform.GetComponent<MeshRenderer>();
 		}
-
-		void Start()
-		{
-
-		}
-
+		
+		// placeholder for auto-building until the proper build mechanic comes into the game.
 		void Update()
 		{
 			if( UnityEngine.Random.Range( 0, 4 ) == 1 )
-				AdvanceConstruction( new ResourceStack("resource.wood", 1 ) );
-			
+			{
+				AdvanceConstruction( new ResourceStack( "resource.wood", 1 ) );
+			}
 		}
 
 		/// <summary>
@@ -95,7 +91,7 @@ namespace SS.Buildings
 				{
 					if( this.resourcesRemaining[i] - stack.amount < 0 )
 					{
-						Debug.LogWarning( "AdvanceConstruction: the amount of resource added was more than needed." );
+						Debug.LogWarning( "AdvanceConstruction: Added more resource than needed (" + stack.amount + "/" + this.resourcesRemaining[i] + ")." );
 					}
 					this.resourcesRemaining[i] -= stack.amount;
 
@@ -110,41 +106,12 @@ namespace SS.Buildings
 		}
 
 		/// <summary>
-		/// Overrides the required resources and instantly finishes construction.
+		/// Overrides the required resources and instantly finishes construction. Removes the ConstructionSite script from the GameObject.
 		/// </summary>
 		public void FinishConstruction()
 		{
 			this.meshRenderer.material.SetFloat( "_Progress", 1 );
-			// remove the ConstructionSite script from gameObject.
 			Destroy( this );
-		}
-		/*
-		/// <summary>
-		/// Checks if there are no more resources needed.
-		/// </summary>
-		public bool IsCompleted()
-		{
-			for( int i = 0; i < resourcesRemaining.Length; i++ )
-			{
-				if( resourcesRemaining[i] != 0 )
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		*/
-		/// <summary>
-		/// Gets the percent of construction's completion.
-		/// </summary>
-		public float GetPercentCompleted()
-		{
-			float total = 0;
-			for( int i = 0; i < resourcesRemaining.Length; i++ )
-			{
-				total += (float)(resourcesTotal[i] - resourcesRemaining[i]) / (float)resourcesTotal[i];
-			}
-			return total / resourcesRemaining.Length;
 		}
 	}
 }

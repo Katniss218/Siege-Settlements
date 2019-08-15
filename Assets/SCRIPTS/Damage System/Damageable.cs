@@ -28,6 +28,7 @@ namespace SS
 			set { this.health = this.healthMax * value; onHealthChange?.Invoke( this ); }
 		}
 
+		// FIXME ----- Decouple the armor values so that you can easily add new damage types.
 		/// <summary>
 		/// Percentage reduction of the slash-type damage.
 		/// </summary>
