@@ -11,9 +11,11 @@ namespace SS.Extras
 				throw new System.Exception( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Extra (\"" + def.id + "\")" );
+			container.isStatic = true;
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
+			gfx.isStatic = true;
 
 			container.transform.SetPositionAndRotation( pos, rot );
 

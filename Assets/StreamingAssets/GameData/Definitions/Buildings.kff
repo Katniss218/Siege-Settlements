@@ -3,10 +3,10 @@
 	{
 		Id = "building.house0";
 		DisplayName = "House";
-		MaxHealth = 1000.0;
-		SlashArmor = 0.5;
-		PierceArmor = 0.5;
-		ConcussionArmor = 0.5;
+		MaxHealth = 100.0;
+		SlashArmor = 0.3;
+		PierceArmor = 0.3;
+		ConcussionArmor = 0.0;
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[

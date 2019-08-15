@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.ResourceSystem;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Buildings
@@ -61,7 +62,6 @@ namespace SS.Buildings
 
 			Damageable damageable = container.AddComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
-			damageable.Heal();
 			damageable.slashArmor = def.slashArmor;
 			damageable.pierceArmor = def.pierceArmor;
 			damageable.concussionArmor = def.concussionArmor;
@@ -84,9 +84,18 @@ namespace SS.Buildings
 			{
 				ConstructionSite constructionSite = container.AddComponent<ConstructionSite>();
 				constructionSite.AssignResources( def.cost );
+				constructionSite.onConstructionProgress.AddListener( ( ConstructionSite obj, ResourceStack stack ) =>
+				{
+					damageable.healthPercent += constructionSite.GetHealthPercentGained(stack.amount);
+					if( damageable.healthPercent > 1f ) damageable.healthPercent = 1f;
+					meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+				} );
+				constructionSite.isCompleted = () => damageable.healthPercent >= 1f; // the condition for completion of construction is 100% health. For repairing, it's 50%
+				damageable.healthPercent = 0.1f;
 			}
 			else
 			{
+				damageable.Heal();
 				meshRenderer.material.SetFloat( "_Progress", 1 );
 			}
 

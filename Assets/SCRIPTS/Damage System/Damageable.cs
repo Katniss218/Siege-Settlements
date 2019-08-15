@@ -22,7 +22,11 @@ namespace SS
 		/// <summary>
 		/// Returns the percentage of the health of this damageable (Read only).
 		/// </summary>
-		public float healthPercent { get { return this.health / this.healthMax; } }
+		public float healthPercent
+		{
+			get { return this.health / this.healthMax; }
+			set { this.health = this.healthMax * value; onHealthChange?.Invoke( this ); }
+		}
 
 		/// <summary>
 		/// Percentage reduction of the slash-type damage.

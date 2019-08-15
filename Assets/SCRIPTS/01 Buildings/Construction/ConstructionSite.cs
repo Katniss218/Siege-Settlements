@@ -1,5 +1,7 @@
 ﻿using SS.ResourceSystem;
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS.Buildings
 {
@@ -8,6 +10,8 @@ namespace SS.Buildings
 	/// </summary>
 	public class ConstructionSite : MonoBehaviour
 	{
+		public class _UnityEvent_ConstructionSite_ResourceStack : UnityEvent<ConstructionSite, ResourceStack> { }
+
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
@@ -21,14 +25,34 @@ namespace SS.Buildings
 		/// </summary>
 		public int[] resourcesTotal { get; private set; }
 
+		// the total amt of every resource needed for construction combined.
+		public int totalNeeded { get; private set; }
+
+		public float GetHealthPercentGained( int resourceAmt )
+		{
+			return (float)resourceAmt / ((float)this.totalNeeded * 0.9f);
+		}
+
+		public Func<bool> isCompleted;
+
+		// to build a building you need the health to reach 100%.
+		// to fix a building, you need the health to reach 50%.
+
+		// each building needs a certain set of resources in order to reach 100%.
+		// the amount of health gained is scaled according to the total amt needed (if the building reqs 100 stone and 900 wood, getting 500 wood will increase the health by 50%).
+		// get scaling factor per each resource.
+
 		private Transform graphicsTransform;
 		private MeshRenderer meshRenderer;
+
+		public _UnityEvent_ConstructionSite_ResourceStack onConstructionProgress = new _UnityEvent_ConstructionSite_ResourceStack();
 
 		/// <summary>
 		/// Assigns a cost (in resources) to construct the building.
 		/// </summary>
 		public void AssignResources( ResourceStack[] requiredResources )
 		{
+			this.totalNeeded = 0;
 			this.resourceIds = new string[requiredResources.Length];
 			this.resourcesRemaining = new int[requiredResources.Length];
 			this.resourcesTotal = new int[requiredResources.Length];
@@ -38,6 +62,7 @@ namespace SS.Buildings
 				this.resourceIds[i] = requiredResources[i].id;
 				this.resourcesRemaining[i] = requiredResources[i].amount;
 				this.resourcesTotal[i] = requiredResources[i].amount;
+				this.totalNeeded += requiredResources[i].amount;
 			}
 		}
 
@@ -54,7 +79,8 @@ namespace SS.Buildings
 
 		void Update()
 		{
-			AdvanceConstruction( new ResourceStack("resource.wood", 1 ) );
+			if( UnityEngine.Random.Range( 0, 4 ) == 1 )
+				AdvanceConstruction( new ResourceStack("resource.wood", 1 ) );
 			
 		}
 
@@ -65,22 +91,19 @@ namespace SS.Buildings
 		{
 			for( int i = 0; i < resourceIds.Length; i++ )
 			{
-				if( resourceIds[i] == stack.id )
+				if( this.resourceIds[i] == stack.id )
 				{
-					if( resourcesRemaining[i] - stack.amount < 0 )
+					if( this.resourcesRemaining[i] - stack.amount < 0 )
 					{
 						Debug.LogWarning( "AdvanceConstruction: the amount of resource added was more than needed." );
 					}
-					resourcesRemaining[i] -= stack.amount;
+					this.resourcesRemaining[i] -= stack.amount;
 
-					if( IsCompleted() )
+					if( this.isCompleted() )
 					{
-						FinishConstruction();
+						this.FinishConstruction();
 					}
-					else
-					{
-						this.meshRenderer.material.SetFloat( "_Progress", GetPercentCompleted() );
-					}
+					this.onConstructionProgress?.Invoke( this, stack );
 					break;
 				}
 			}
@@ -95,7 +118,7 @@ namespace SS.Buildings
 			// remove the ConstructionSite script from gameObject.
 			Destroy( this );
 		}
-
+		/*
 		/// <summary>
 		/// Checks if there are no more resources needed.
 		/// </summary>
@@ -110,7 +133,7 @@ namespace SS.Buildings
 			}
 			return true;
 		}
-
+		*/
 		/// <summary>
 		/// Gets the percent of construction's completion.
 		/// </summary>
