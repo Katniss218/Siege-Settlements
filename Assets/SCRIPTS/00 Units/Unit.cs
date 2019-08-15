@@ -90,9 +90,9 @@ namespace SS.Units
 			if( def.isMelee )
 			{
 				DamageSource meleeDamageSource = container.AddComponent<DamageSource>();
-				meleeDamageSource.damageType = def.rangedDamageType;
-				meleeDamageSource.damage = def.rangedDamage;
-				meleeDamageSource.armorPenetration = def.rangedArmorPenetration;
+				meleeDamageSource.damageType = def.meleeDamageType;
+				meleeDamageSource.damage = def.meleeDamage;
+				meleeDamageSource.armorPenetration = def.meleeArmorPenetration;
 
 				MeleeModule melee = container.AddComponent<MeleeModule>();
 				melee.DamageSource = meleeDamageSource;

@@ -155,7 +155,7 @@
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 5;
 			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 3.0;
+			Damage = 1.0;
 			ArmorPenetration = 0.0;
 			AttackRange = 6.0;
 			AttackCooldown = 3.0;
@@ -187,7 +187,7 @@
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 4;
 			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 4.0;
+			Damage = 1.5;
 			ArmorPenetration = 0.0;
 			AttackRange = 6.0;
 			AttackCooldown = 3.0;
@@ -219,7 +219,7 @@
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 4;
 			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 3.0;
+			Damage = 0.9;
 			ArmorPenetration = 0.0;
 			AttackRange = 6.0;
 			AttackCooldown = 3.0;
