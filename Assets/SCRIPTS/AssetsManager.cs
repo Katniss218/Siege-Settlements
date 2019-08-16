@@ -62,7 +62,7 @@ namespace SS
 			return sprites[assetsPath];
 		}
 
-		public static AudioClip getAudioClip( string assetsPath )
+		public static AudioClip GetAudioClip( string assetsPath )
 		{
 			if( !audioClips.ContainsKey( assetsPath ) )
 			{

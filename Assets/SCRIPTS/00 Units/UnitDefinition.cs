@@ -15,6 +15,14 @@ namespace SS.Units
 		public float pierceArmor { get; set; }
 		public float concussionArmor { get; set; }
 
+		public bool isMelee { get; set; }
+		public DamageType meleeDamageType { get; set; }
+		public float meleeDamage { get; set; }
+		public float meleeArmorPenetration { get; set; }
+		public float meleeAttackRange { get; set; }
+		public float meleeAttackCooldown { get; set; }
+		public Tuple<string, AudioClip> meleeAttackSoundEffect { get; private set; }
+
 		public bool isRanged { get; set; }
 		public string rangedProjectileId { get; set; }
 		public int rangedProjectileCount { get; set; }
@@ -26,13 +34,7 @@ namespace SS.Units
 		public float rangedVelocity { get; set; }
 		public Vector3 rangedLocalOffsetMin { get; set; }
 		public Vector3 rangedLocalOffsetMax { get; set; }
-
-		public bool isMelee { get; set; }
-		public DamageType meleeDamageType { get; set; }
-		public float meleeDamage { get; set; }
-		public float meleeArmorPenetration { get; set; }
-		public float meleeAttackRange { get; set; }
-		public float meleeAttackCooldown { get; set; }
+		public Tuple<string, AudioClip> rangedAttackSoundEffect { get; private set; }
 
 		public float movementSpeed { get; set; }
 		public float rotationSpeed { get; set; }
@@ -65,6 +67,9 @@ namespace SS.Units
 				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeData.ArmorPenetration" );
 				this.meleeAttackRange = serializer.ReadFloat( "MeleeData.AttackRange" );
 				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeData.AttackCooldown" );
+
+				string meleeSfxPath = serializer.ReadString( "MeleeData.AttackSound" );
+				this.meleeAttackSoundEffect = new Tuple<string, AudioClip>( meleeSfxPath, AssetsManager.GetAudioClip( meleeSfxPath ) );
 			}
 			this.isRanged = serializer.ReadBool( "IsRanged" );
 			if( this.isRanged )
@@ -79,15 +84,21 @@ namespace SS.Units
 				this.rangedVelocity = serializer.ReadFloat( "RangedData.Velocity" );
 				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedData.LocalOffsetMin" );
 				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedData.LocalOffsetMax" );
+
+				string rangedSfxPath = serializer.ReadString( "RangedData.AttackSound" );
+				this.rangedAttackSoundEffect = new Tuple<string, AudioClip>( rangedSfxPath, AssetsManager.GetAudioClip( rangedSfxPath ) );
 			}
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
+
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
+
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
 			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
+
 			string normalPath = serializer.ReadString( "NormalTexture" );
 			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
 		}
@@ -109,6 +120,7 @@ namespace SS.Units
 				serializer.WriteFloat( "MeleeData", "ArmorPenetration", this.meleeArmorPenetration );
 				serializer.WriteFloat( "MeleeData", "AttackRange", this.meleeAttackRange );
 				serializer.WriteFloat( "MeleeData", "AttackCooldown", this.meleeAttackCooldown );
+				serializer.WriteString( "MeleeData", "AttackSound", this.meleeAttackSoundEffect.Item1 );
 			}
 			serializer.WriteBool( "", "IsRanged", this.isRanged );
 			if( this.isRanged )
@@ -124,6 +136,7 @@ namespace SS.Units
 				serializer.WriteFloat( "RangedData", "Velocity", this.rangedVelocity );
 				serializer.WriteVector3( "RangedData", "LocalOffsetMin", this.rangedLocalOffsetMin );
 				serializer.WriteVector3( "RangedData", "LocalOffsetMax", this.rangedLocalOffsetMax );
+				serializer.WriteString( "RangedData", "AttackSound", this.rangedAttackSoundEffect.Item1 );
 			}
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );

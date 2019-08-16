@@ -24,6 +24,8 @@ namespace SS.Buildings
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public Tuple<string, AudioClip> buildSoundEffect { get; private set; }
+		public Tuple<string, AudioClip> deathSoundEffect { get; private set; }
 
 
 		public BuildingDefinition( string id ) : base( id )
@@ -51,10 +53,18 @@ namespace SS.Buildings
 
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
+
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
 			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
+
 			string normalPath = serializer.ReadString( "NormalTexture" );
 			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
+
+			string buildPath = serializer.ReadString( "BuildSound" );
+			this.buildSoundEffect = new Tuple<string, AudioClip>( buildPath, AssetsManager.GetAudioClip( buildPath ) );
+
+			string deathPath = serializer.ReadString( "DeathSound" );
+			this.deathSoundEffect = new Tuple<string, AudioClip>( deathPath, AssetsManager.GetAudioClip( deathPath ) );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -70,6 +80,8 @@ namespace SS.Buildings
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "BuildSound", this.buildSoundEffect.Item1 );
+			serializer.WriteString( "", "DeathSound", this.deathSoundEffect.Item1 );
 		}
 	}
 }

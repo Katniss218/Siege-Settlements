@@ -114,6 +114,7 @@ namespace SS.Units
 				melee.targetFinder = finder;
 				melee.attackCooldown = def.meleeAttackCooldown;
 				melee.attackRange = def.meleeAttackRange;
+				melee.attackSoundEffect = def.meleeAttackSoundEffect.Item2;
 			}
 
 			// If the new unit is ranged, setup the ranged module.
@@ -134,6 +135,7 @@ namespace SS.Units
 				ranged.velocity = def.rangedVelocity;
 				ranged.localOffsetMin = def.rangedLocalOffsetMin;
 				ranged.localOffsetMax = def.rangedLocalOffsetMax;
+				ranged.attackSoundEffect = def.rangedAttackSoundEffect.Item2;
 			}
 
 			container.AddComponent<EveryFrameSingle>().everyFrame = () =>

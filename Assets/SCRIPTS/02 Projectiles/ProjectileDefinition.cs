@@ -18,6 +18,8 @@ namespace SS.Projectiles
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public Tuple<string, AudioClip> hitSoundEffect { get; private set; }
+		public Tuple<string, AudioClip> missSoundEffect { get; private set; }
 
 		public ProjectileDefinition( string id ) : base( id )
 		{
@@ -37,12 +39,21 @@ namespace SS.Projectiles
 			}
 			string meshPath = serializer.ReadString( "Mesh" );
 			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
+
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
 			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
+
 			string normalPath = serializer.ReadString( "NormalTexture" );
 			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
+
 			string trailTexPath = serializer.ReadString( "TrailData.Texture" );
 			this.trailTexture = new Tuple<string, Texture2D>( trailTexPath, AssetsManager.GetTexture2D( trailTexPath, TextureType.Normal ) );
+
+			string hitPath = serializer.ReadString( "HitSound" );
+			this.hitSoundEffect = new Tuple<string, AudioClip>( hitPath, AssetsManager.GetAudioClip( hitPath ) );
+
+			string missPath = serializer.ReadString( "MissSound" );
+			this.missSoundEffect = new Tuple<string, AudioClip>( missPath, AssetsManager.GetAudioClip( missPath ) );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -51,6 +62,8 @@ namespace SS.Projectiles
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "HitSound", this.hitSoundEffect.Item1 );
+			serializer.WriteString( "", "MissSound", this.missSoundEffect.Item1 );
 			serializer.WriteClass( "", "TrailData" );
 			serializer.WriteBool( "", "HasTrail", this.hasTrail );
 			if( this.hasTrail )

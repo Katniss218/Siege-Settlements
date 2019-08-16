@@ -16,5 +16,7 @@
 		Mesh = "Models/Buildings/House.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		BuildSound = "Sounds/construction_site.wav";
+		DeathSound = "Sounds/building_dest_wood.wav";
 	}
 ];

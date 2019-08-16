@@ -15,6 +15,8 @@ namespace SS
 		public float attackRange;
 		public float attackCooldown;
 
+		public AudioClip attackSoundEffect;
+
 		private float lastAttackTimestamp; // TODO ----- maybe separate something like "PeriodicalTriggerWithCondition" from this (lastattack timestamp, etc.).
 		private FactionMember factionMember;
 
@@ -53,7 +55,7 @@ namespace SS
 				if( this.currentTarget != null )
 				{
 					this.Attack();
-					AudioManager.PlayNew( Main.hitmelee, 0.3f, 1.0f );
+					AudioManager.PlayNew( this.attackSoundEffect, 0.3f, 1.0f );
 				}
 			}
 		}

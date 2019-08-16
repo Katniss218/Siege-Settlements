@@ -52,6 +52,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
 			AttackCooldown = 0.75;
+			AttackSound = "Sounds/melee.wav";
 		};
 		IsRanged = false;
 		MovementSpeed = 0.35;
@@ -78,6 +79,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
 			AttackCooldown = 0.52;
+			AttackSound = "Sounds/melee.wav";
 		};
 		IsRanged = false;
 		MovementSpeed = 0.25;
@@ -104,6 +106,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
 			AttackCooldown = 0.65;
+			AttackSound = "Sounds/melee.wav";
 		};
 		IsRanged = false;
 		MovementSpeed = 0.45;
@@ -130,6 +133,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
 			AttackCooldown = 0.47;
+			AttackSound = "Sounds/melee.wav";
 		};
 		IsRanged = false;
 		MovementSpeed = 0.35;
@@ -163,6 +167,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "Sounds/loose.wav";
 		};
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
@@ -195,6 +200,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "Sounds/loose.wav";
 		};
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
@@ -227,6 +233,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "Sounds/loose.wav";
 		};
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
@@ -252,6 +259,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
 			AttackCooldown = 0.8;
+			AttackSound = "Sounds/melee.wav";
 		};
 		IsRanged = false;
 		MovementSpeed = 0.4;

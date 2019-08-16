@@ -76,7 +76,7 @@ namespace SS.Buildings
 			{
 				Object.Destroy( ui.gameObject );
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
-				AudioManager.PlayNew( Main.bldg_kill, 0.4f, 1.0f );
+				AudioManager.PlayNew( def.deathSoundEffect.Item2, 0.4f, 1.0f );
 			} );
 
 			if( isUnderConstruction )
@@ -124,21 +124,13 @@ namespace SS.Buildings
 				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 				ParticleSystem.MainModule main = Main.particleSystem.GetComponent<ParticleSystem>().main;
-				main.startLifetime = new ParticleSystem.MinMaxCurve( 0.15f, 0.3f );
-				ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = Main.particleSystem.GetComponent<ParticleSystem>().sizeOverLifetime;
-				AnimationCurve curve = new AnimationCurve();
-				curve.AddKey( 0.0f, 0.0f );
-				curve.AddKey( 0.2f, 1.0f );
-				curve.AddKey( 0.8f, 0.8f );
-				curve.AddKey( 1.0f, 0.0f );
-				sizeOverLifetime.size = new ParticleSystem.MinMaxCurve( 1.0f, curve );
-				sizeOverLifetime.enabled = true;
+				
 				shape.shapeType = ParticleSystemShapeType.Box;
 				BuildingDefinition def = DataManager.FindDefinition<BuildingDefinition>( objectBase.id );
 				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
 				shape.position = new Vector3( 0, 0.2f, 0 );
-				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 10 );
-				AudioManager.PlayNew( Main.construction, 0.5f, 1.0f );
+				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 20 );
+				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
 			} );
 			constructionSite.onConstructionComplete.AddListener( () =>
 			{

@@ -5,6 +5,8 @@
 		Mesh = "Models/Arrow.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		HitSound = "Sounds/arrow_hit.wav";
+		MissSound = "Sounds/arrow_miss.wav";
 		HasTrail = true;
 		TrailData =
 		{

@@ -44,9 +44,7 @@ namespace SS.Levels
 		{
 			// Spawn the GameObject to the scene.
 			Unit.Create( DataManager.FindDefinition<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0 );
-
-			Building.Create( DataManager.FindDefinition<BuildingDefinition>( "building.house0" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0, true );
-
+			
 			ExtraDefinition defe = DataManager.FindDefinition<ExtraDefinition>( "extra.grass" );
 			for( int i = 0; i < 600; i++ )
 			{

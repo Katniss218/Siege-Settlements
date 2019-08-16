@@ -23,6 +23,8 @@ namespace SS
 		public Vector3 localOffsetMin;
 		public Vector3 localOffsetMax;
 
+		public AudioClip attackSoundEffect;
+
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
 
@@ -62,7 +64,7 @@ namespace SS
 				if( this.currentTarget != null )
 				{
 					this.Attack();
-					AudioManager.PlayNew( Main.loose, 0.25f, 1.0f );
+					AudioManager.PlayNew( this.attackSoundEffect, 0.25f, 1.0f );
 				}
 			}
 		}
