@@ -74,9 +74,8 @@ namespace SS
 		public static void LoadMesh( string assetsPath )
 		{
 			string filePath = GetFullPath( assetsPath );
-
-			KFFSerializer s = KFFSerializer.ReadFromFile( filePath, Encoding.UTF8 );
-			Mesh[] m = MeshKFFSerializer.DeserializeKFF( s );
+			
+			Mesh[] m = KMKFFImporter.Import( filePath );
 			meshes.Add( assetsPath, m[0] );
 		}
 

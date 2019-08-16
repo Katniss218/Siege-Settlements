@@ -1,12 +1,20 @@
 ﻿using KFF;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Katniss.Utils
 {
-	public static class MeshKFFSerializer
+	public static class KMKFFImporter
 	{
-		public static Mesh[] DeserializeKFF( KFFSerializer serializer )
+		public static Mesh[] Import( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, Encoding.UTF8 );
+
+			return DeserializeKMKFF( serializer );
+		}
+
+		private static Mesh[] DeserializeKMKFF( KFFSerializer serializer )
 		{
 			KFF.DataStructures.Object array_root = serializer.MoveScope( "Objects", true );
 			serializer.Analyze( "" );
