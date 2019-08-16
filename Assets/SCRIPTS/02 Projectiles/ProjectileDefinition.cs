@@ -37,23 +37,12 @@ namespace SS.Projectiles
 				this.trailStartSize = serializer.ReadFloat( "TrailData.StartSize" );
 				this.trailEndSize = serializer.ReadFloat( "TrailData.EndSize" );
 			}
-			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
-
-			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
-
-			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
-
-			string trailTexPath = serializer.ReadString( "TrailData.Texture" );
-			this.trailTexture = new Tuple<string, Texture2D>( trailTexPath, AssetsManager.GetTexture2D( trailTexPath, TextureType.Normal ) );
-
-			string hitPath = serializer.ReadString( "HitSound" );
-			this.hitSoundEffect = new Tuple<string, AudioClip>( hitPath, AssetsManager.GetAudioClip( hitPath ) );
-
-			string missPath = serializer.ReadString( "MissSound" );
-			this.missSoundEffect = new Tuple<string, AudioClip>( missPath, AssetsManager.GetAudioClip( missPath ) );
+			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			this.trailTexture = serializer.ReadTexture2DFromAssets( "TrailData.Texture", TextureType.Albedo );
+			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
+			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

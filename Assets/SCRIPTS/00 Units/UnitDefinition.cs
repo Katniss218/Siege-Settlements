@@ -67,9 +67,8 @@ namespace SS.Units
 				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeData.ArmorPenetration" );
 				this.meleeAttackRange = serializer.ReadFloat( "MeleeData.AttackRange" );
 				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeData.AttackCooldown" );
-
-				string meleeSfxPath = serializer.ReadString( "MeleeData.AttackSound" );
-				this.meleeAttackSoundEffect = new Tuple<string, AudioClip>( meleeSfxPath, AssetsManager.GetAudioClip( meleeSfxPath ) );
+				
+				this.meleeAttackSoundEffect = serializer.ReadAudioClipFromAssets( "MeleeData.AttackSound" );
 			}
 			this.isRanged = serializer.ReadBool( "IsRanged" );
 			if( this.isRanged )
@@ -84,23 +83,17 @@ namespace SS.Units
 				this.rangedVelocity = serializer.ReadFloat( "RangedData.Velocity" );
 				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedData.LocalOffsetMin" );
 				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedData.LocalOffsetMax" );
-
-				string rangedSfxPath = serializer.ReadString( "RangedData.AttackSound" );
-				this.rangedAttackSoundEffect = new Tuple<string, AudioClip>( rangedSfxPath, AssetsManager.GetAudioClip( rangedSfxPath ) );
+				
+				this.rangedAttackSoundEffect = serializer.ReadAudioClipFromAssets( "RangedData.AttackSound" );
 			}
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
 
-			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
-
-			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
-
-			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
+			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -120,6 +113,7 @@ namespace SS.Units
 				serializer.WriteFloat( "MeleeData", "ArmorPenetration", this.meleeArmorPenetration );
 				serializer.WriteFloat( "MeleeData", "AttackRange", this.meleeAttackRange );
 				serializer.WriteFloat( "MeleeData", "AttackCooldown", this.meleeAttackCooldown );
+
 				serializer.WriteString( "MeleeData", "AttackSound", this.meleeAttackSoundEffect.Item1 );
 			}
 			serializer.WriteBool( "", "IsRanged", this.isRanged );
@@ -136,12 +130,14 @@ namespace SS.Units
 				serializer.WriteFloat( "RangedData", "Velocity", this.rangedVelocity );
 				serializer.WriteVector3( "RangedData", "LocalOffsetMin", this.rangedLocalOffsetMin );
 				serializer.WriteVector3( "RangedData", "LocalOffsetMax", this.rangedLocalOffsetMax );
+
 				serializer.WriteString( "RangedData", "AttackSound", this.rangedAttackSoundEffect.Item1 );
 			}
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
+
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );

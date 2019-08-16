@@ -51,20 +51,12 @@ namespace SS.Buildings
 			}
 			serializer.DeserializeArray( "Cost", this.cost );
 
-			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
-
-			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
-
-			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
-
-			string buildPath = serializer.ReadString( "BuildSound" );
-			this.buildSoundEffect = new Tuple<string, AudioClip>( buildPath, AssetsManager.GetAudioClip( buildPath ) );
-
-			string deathPath = serializer.ReadString( "DeathSound" );
-			this.deathSoundEffect = new Tuple<string, AudioClip>( deathPath, AssetsManager.GetAudioClip( deathPath ) );
+			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			
+			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );
+			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -77,9 +69,11 @@ namespace SS.Buildings
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.SerializeArray( "", "Cost", this.cost );
+
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+
 			serializer.WriteString( "", "BuildSound", this.buildSoundEffect.Item1 );
 			serializer.WriteString( "", "DeathSound", this.deathSoundEffect.Item1 );
 		}
