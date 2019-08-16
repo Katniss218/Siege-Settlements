@@ -50,7 +50,6 @@ namespace SS
 				Debug.LogError( "There's no target finder hooked up to this ranged module." );
 			}
 			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
-			Debug.Log( this.lastAttackTimestamp );
 		}
 
 		void Update()
@@ -87,7 +86,11 @@ namespace SS
 						Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
 					);
 
-					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, vel );
+					Vector3 ranVel = vel;
+					ranVel.x *= Random.Range( 0.9f, 1.1f );
+					ranVel.y *= Random.Range( 0.95f, 1.05f );
+					ranVel.z *= Random.Range( 0.9f, 1.1f );
+					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, ranVel );
 				}
 				this.lastAttackTimestamp = Time.time;
 			}

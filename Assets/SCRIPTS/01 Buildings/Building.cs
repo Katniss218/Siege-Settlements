@@ -76,6 +76,7 @@ namespace SS.Buildings
 			{
 				Object.Destroy( ui.gameObject );
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				AudioManager.PlayNew( Main.bldg_kill, 0.4f, 1.0f );
 			} );
 
 			if( isUnderConstruction )

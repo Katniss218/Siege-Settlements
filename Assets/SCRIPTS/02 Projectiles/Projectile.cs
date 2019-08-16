@@ -72,6 +72,7 @@ namespace SS.Projectiles
 					Object.Destroy( proj.GetComponent<RotateAlongVelocity>() );
 					Object.Destroy( proj.GetComponent<Rigidbody>() );
 					Object.Destroy( proj.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
+					AudioManager.PlayNew( Main.miss, 0.15f, 1.0f );
 					return;
 				}
 				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.
@@ -85,7 +86,7 @@ namespace SS.Projectiles
 				}
 				DamageSource projectileDamage = proj.GetComponent<DamageSource>();
 				od.TakeDamage( projectileDamage.damageType, projectileDamage.damage, projectileDamage.armorPenetration );
-				AudioManager.PlayNew( Main.hit, 1.0f, 1.0f );
+				AudioManager.PlayNew( Main.hit, 0.25f, 1.0f );
 				Object.Destroy( proj );
 			} );
 

@@ -173,7 +173,7 @@ namespace SS
 			}
 		}
 
-		public static AudioClip hit, loose, hitmelee, construction;
+		public static AudioClip hit, miss, loose, hitmelee, construction, bldg_kill;
 
 		new public static Camera camera { get; private set; }
 		[SerializeField] private Camera cam = null;
@@ -210,10 +210,12 @@ namespace SS
 		{
 			//LevelManager.OnLevelLoad();
 
-			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
+			hit = AssetsManager.getAudioClip( "Sounds/arrow_hit.wav" );
+			miss = AssetsManager.getAudioClip( "Sounds/arrow_miss.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
 			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );
 			construction = AssetsManager.getAudioClip( "Sounds/construction_site.wav" );
+			bldg_kill = AssetsManager.getAudioClip( "Sounds/building_dest_wood.wav" );
 
 		}
 
