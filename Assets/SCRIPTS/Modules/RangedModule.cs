@@ -50,6 +50,7 @@ namespace SS
 				Debug.LogError( "There's no target finder hooked up to this ranged module." );
 			}
 			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
+			Debug.Log( this.lastAttackTimestamp );
 		}
 
 		void Update()
@@ -62,7 +63,7 @@ namespace SS
 				if( this.currentTarget != null )
 				{
 					this.Attack();
-					AudioManager.PlayNew( Main.loose, 1.0f, 1.0f );
+					AudioManager.PlayNew( Main.loose, 0.25f, 1.0f );
 				}
 			}
 		}

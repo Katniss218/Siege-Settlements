@@ -87,12 +87,12 @@ namespace SS
 				mult = 1;
 			}
 			this.health -= amount * mult;
+			this.onHealthChange?.Invoke( this );
 			if( this.health <= 0 )
 			{
 				this.Die();
 			}
 
-			this.onHealthChange?.Invoke( this );
 		}
 
 		public virtual void Die()

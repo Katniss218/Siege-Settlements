@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using SS.Buildings;
 using UnityEngine.AI;
+using SS.ResourceSystem;
 
 namespace SS
 {
@@ -40,6 +41,17 @@ namespace SS
 				return __buildingUI;
 			}
 		}
+
+		private static GameObject __particleSystem = null;
+		new public static GameObject particleSystem
+		{
+			get
+			{
+				if( __particleSystem == null ) { __particleSystem = Instantiate( Resources.Load<GameObject>( "Prefabs/Particle System" ) ); }
+				return __particleSystem;
+			}
+		}
+
 
 		private static Transform __worldUIs = null;
 		public static Transform worldUIs
@@ -161,7 +173,7 @@ namespace SS
 			}
 		}
 
-		public static AudioClip hit, loose, hitmelee;
+		public static AudioClip hit, loose, hitmelee, construction;
 
 		new public static Camera camera { get; private set; }
 		[SerializeField] private Camera cam = null;
@@ -180,7 +192,7 @@ namespace SS
 		}
 
 		public static Main instance { get; private set; }
-		
+
 		void Awake()
 		{
 			// initialize the singleton
@@ -201,6 +213,7 @@ namespace SS
 			hit = AssetsManager.getAudioClip( "Sounds/roar.wav" );
 			loose = AssetsManager.getAudioClip( "Sounds/loose.wav" );
 			hitmelee = AssetsManager.getAudioClip( "Sounds/melee.wav" );
+			construction = AssetsManager.getAudioClip( "Sounds/construction_site.wav" );
 
 		}
 
@@ -233,16 +246,31 @@ namespace SS
 
 				prev.def = DataManager.FindDefinition<BuildingDefinition>( "building.house0" );
 				prev.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
-				
+
 				MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
 				meshFilter.mesh = prev.def.mesh.Item2;
 				MeshRenderer mr = obj.AddComponent<MeshRenderer>();
 				mr.material = Main.materialFactionColored;
 				Texture2D t = new Texture2D( 1, 1 );
-				t.SetPixel( 0, 0, new Color( 1,1,1) );
+				t.SetPixel( 0, 0, new Color( 1, 1, 1 ) );
 				mr.material.SetTexture( "_Albedo", t );
 				mr.material.SetTexture( "_Normal", null );
 				mr.material.SetTexture( "_Emission", null );
+			}
+			if( Input.GetKeyDown( KeyCode.L ) )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer("Buildings") )
+					{
+						return;
+					}
+					if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1f )
+						return;
+					// If it is a building, start repair.
+					Building.StartConstructionOrRepair( hitInfo.collider.gameObject );
+				}
 			}
 		}
 	}

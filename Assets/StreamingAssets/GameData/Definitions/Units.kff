@@ -48,10 +48,10 @@
 		MeleeData =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 1.0;
+			Damage = 2.0;
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
-			AttackCooldown = 0.2;
+			AttackCooldown = 0.75;
 		};
 		IsRanged = false;
 		MovementSpeed = 0.35;
@@ -74,10 +74,10 @@
 		MeleeData =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 2.0;
+			Damage = 4.0;
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
-			AttackCooldown = 0.2;
+			AttackCooldown = 0.52;
 		};
 		IsRanged = false;
 		MovementSpeed = 0.25;
@@ -100,10 +100,10 @@
 		MeleeData =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 1.0;
+			Damage = 2.0;
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
-			AttackCooldown = 0.2;
+			AttackCooldown = 0.65;
 		};
 		IsRanged = false;
 		MovementSpeed = 0.45;
@@ -126,10 +126,10 @@
 		MeleeData =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 2.0;
+			Damage = 4.0;
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
-			AttackCooldown = 0.2;
+			AttackCooldown = 0.47;
 		};
 		IsRanged = false;
 		MovementSpeed = 0.35;
@@ -248,10 +248,10 @@
 		MeleeData =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 1.0;
+			Damage = 2.5;
 			ArmorPenetration = 0.0;
 			AttackRange = 1.0;
-			AttackCooldown = 0.2;
+			AttackCooldown = 0.8;
 		};
 		IsRanged = false;
 		MovementSpeed = 0.4;

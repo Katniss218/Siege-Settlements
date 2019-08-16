@@ -13,6 +13,7 @@ namespace SS.Units
 				throw new System.Exception( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
+			container.layer = LayerMask.NameToLayer( "Units" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
@@ -91,6 +92,7 @@ namespace SS.Units
 
 				// also, play a poof from some particle system for smoke or something at the moment of death.
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				
 			} );
 
 			ITargetFinder finder = null;
@@ -136,10 +138,7 @@ namespace SS.Units
 
 			container.AddComponent<EveryFrameSingle>().everyFrame = () =>
 			{
-				if( container.transform.hasChanged )
-				{
-					ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
-				}
+				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
 
 

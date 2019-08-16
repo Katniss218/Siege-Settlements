@@ -10,7 +10,8 @@
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; }
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
 		];
 		Mesh = "Models/Buildings/House.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
