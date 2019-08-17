@@ -74,7 +74,7 @@ namespace SS
 		public static void LoadMesh( string assetsPath )
 		{
 			string filePath = GetFullPath( assetsPath );
-			
+
 			Mesh[] m = KMKFFImporter.Import( filePath );
 			meshes.Add( assetsPath, m[0] );
 		}

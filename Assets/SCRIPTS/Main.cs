@@ -4,6 +4,7 @@ using UnityEngine;
 using SS.Buildings;
 using UnityEngine.AI;
 using SS.ResourceSystem;
+using Katniss.Utils;
 
 namespace SS
 {

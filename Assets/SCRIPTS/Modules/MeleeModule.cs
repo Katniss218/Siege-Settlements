@@ -55,7 +55,7 @@ namespace SS
 				if( this.currentTarget != null )
 				{
 					this.Attack();
-					AudioManager.PlayNew( this.attackSoundEffect, 0.3f, 1.0f );
+					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
 				}
 			}
 		}
