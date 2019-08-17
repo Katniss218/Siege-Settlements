@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SS
+namespace SS.UI
 {
 	public class ToolTip
 	{
@@ -18,8 +18,8 @@ namespace SS
 		private const int topPadding = 5;
 		private const int bottomPadding = 5;
 
-		private const int labelInPadding = 5;
-		private const int labelOutPadding = 5;
+		private const int labelInPadding = 5;  // spacing between label and text (label's side)
+		private const int labelOutPadding = 5; // spacing between label and text (text's side)
 		// helper fields.
 		private const int totalHorizontalPadding = leftPadding + rightPadding;
 		private const int totalVerticalPadding = topPadding + bottomPadding;

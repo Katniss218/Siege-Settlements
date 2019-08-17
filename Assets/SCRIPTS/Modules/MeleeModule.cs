@@ -17,7 +17,7 @@ namespace SS
 
 		public AudioClip attackSoundEffect;
 
-		private float lastAttackTimestamp; // TODO ----- maybe separate something like "PeriodicalTriggerWithCondition" from this (lastattack timestamp, etc.).
+		private float lastAttackTimestamp;
 		private FactionMember factionMember;
 
 		public bool isReadyToAttack

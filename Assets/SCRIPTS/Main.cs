@@ -5,6 +5,7 @@ using SS.Buildings;
 using UnityEngine.AI;
 using SS.ResourceSystem;
 using Katniss.Utils;
+using SS.Data;
 
 namespace SS
 {
@@ -109,7 +110,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); __materialFactionColored.enableInstancing = true; }
+				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); }
 				return __materialFactionColored;
 			}
 		}
@@ -119,7 +120,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); __materialFactionColoredDestroyable.enableInstancing = true; }
+				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); }
 				return __materialFactionColoredDestroyable;
 			}
 		}
@@ -129,7 +130,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); __materialFactionColoredConstructible.enableInstancing = true; }
+				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); }
 				return __materialFactionColoredConstructible;
 			}
 		}
@@ -139,7 +140,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); __materialSolid.enableInstancing = true; }
+				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); }
 				return __materialSolid;
 			}
 		}
@@ -149,7 +150,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); __materialPlantTransparent.enableInstancing = true; }
+				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); }
 				return __materialPlantTransparent;
 			}
 		}
@@ -159,7 +160,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); __materialPlantSolid.enableInstancing = true; }
+				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); }
 				return __materialPlantSolid;
 			}
 		}
@@ -173,9 +174,19 @@ namespace SS
 				return __materialParticle;
 			}
 		}
-		
-		new public static Camera camera { get; private set; }
-		[SerializeField] private Camera cam = null;
+
+		private static Camera __camera = null;
+		new public static Camera camera
+		{
+			get
+			{
+				if( __camera == null )
+				{
+					__camera = FindObjectOfType<CameraController>().transform.GetChild( 0 ).GetComponent<Camera>();
+				}
+				return __camera;
+			}
+		}
 
 		private static TMP_FontAsset __mainFont = null;
 		public static TMP_FontAsset mainFont
@@ -190,41 +201,31 @@ namespace SS
 			}
 		}
 
-		public static Main instance { get; private set; }
-
-		void Awake()
+		private static Transform __main_transform = null;
+		public static Transform main_transform
 		{
-			// initialize the singleton
-			if( instance != null )
+			get
 			{
-				throw new Exception( "Found 2 or more 'Main' scripts at one time." );
+				if( __main_transform == null )
+				{
+					__main_transform = FindObjectOfType<Main>().transform;
+				}
+				return __main_transform;
 			}
-			instance = this;
-
-			camera = this.cam;
 		}
-
-
-		void Start()
-		{
-			//LevelManager.OnLevelLoad();
-			
-		}
-
+		
 		void Update()
 		{
+			// When LMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					foreach( Selectable obj in SelectionManager.selectedObjs )
+					Selectable[] selected = SelectionManager.selectedObjects;
+					for( int i = 0; i < selected.Length; i++ )
 					{
-						if( obj == null )
-						{
-							continue;
-						}
-						NavMeshAgent agent = obj.GetComponent<NavMeshAgent>();
+						NavMeshAgent agent = selected[i].GetComponent<NavMeshAgent>();
 						if( agent != null )
 						{
 							agent.SetDestination( hitInfo.point );
@@ -232,6 +233,7 @@ namespace SS
 					}
 				}
 			}
+			// Start building preview.
 			if( Input.GetKeyDown( KeyCode.U ) )
 			{
 				GameObject obj = new GameObject();
@@ -239,8 +241,10 @@ namespace SS
 				obj.AddComponent<BuildPreviewPositioner>();
 
 				prev.def = DataManager.FindDefinition<BuildingDefinition>( "building.house0" );
+
 				prev.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
-				prev.objectsMask = 
+
+				prev.overlapMask = 
 					1 << LayerMask.NameToLayer( "Terrain" ) |
 					1 << LayerMask.NameToLayer( "Units" ) |
 					1 << LayerMask.NameToLayer( "Buildings" ) |
@@ -257,6 +261,7 @@ namespace SS
 				mr.material.SetTexture( "_Normal", null );
 				mr.material.SetTexture( "_Emission", null );
 			}
+			// Try repair mouseovered building.
 			if( Input.GetKeyDown( KeyCode.L ) )
 			{
 				RaycastHit hitInfo;

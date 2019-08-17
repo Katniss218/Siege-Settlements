@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Data;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using TMPro;

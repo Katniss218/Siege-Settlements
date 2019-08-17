@@ -30,49 +30,81 @@ namespace SS
 			camera.orthographicSize = this.size;
 		}
 
+		private void ZoomIn()
+		{
+			size = Mathf.Clamp( --size, minSize, maxSize );
+			camera.orthographicSize = this.size;
+		}
+
+		private void ZoomOut()
+		{
+			size = Mathf.Clamp( ++size, minSize, maxSize );
+			camera.orthographicSize = this.size;
+		}
+
+		private void Rotate( float amount )
+		{
+			this.transform.Rotate( 0.0f, amount, 0.0f );
+		}
+
+		private void Translate( float x, float y, float z )
+		{
+			this.transform.Translate( x, y, z, Space.Self );
+		}
+
+		private void ResetCam()
+		{
+			size = defaultSize;
+			camera.orthographicSize = this.size;
+			this.transform.rotation = Quaternion.Euler( 0, 45, 0 );
+		}
+
 		void Update()
 		{
+			// Zoom
 			if( Input.mouseScrollDelta.y < 0 )
 			{
-				size = Mathf.Clamp( ++size, minSize, maxSize );
-				camera.orthographicSize = this.size;
-
+				ZoomOut();
 			}
 			else if( Input.mouseScrollDelta.y > 0 )
 			{
-				size = Mathf.Clamp( --size, minSize, maxSize );
-				camera.orthographicSize = this.size;
-
+				ZoomIn();
 			}
+
+			// Rotate CCW-CW
 			if( Input.GetKey( KeyCode.Q ) )
 			{
-				this.transform.Rotate( 0, -rotSpeed * Time.deltaTime, 0 );
+				Rotate( -rotSpeed * Time.deltaTime );
 			}
-			if( Input.GetKey( KeyCode.E ) )
+			else if( Input.GetKey( KeyCode.E ) )
 			{
-				this.transform.Rotate( 0, rotSpeed * Time.deltaTime, 0 );
+				Rotate( rotSpeed * Time.deltaTime );
 			}
+
+			// Move Left-Right
 			if( Input.GetKey( KeyCode.A ) || Input.mousePosition.x < scrollMargin )
 			{
-				this.transform.Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f, Space.Self );
+				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
 			}
 			else if( Input.GetKey( KeyCode.D ) || Input.mousePosition.x > Screen.currentResolution.width - scrollMargin )
 			{
-				this.transform.Translate( speed * Time.deltaTime * size, 0.0f, 0.0f, Space.Self );
+				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
 			}
+
+			// Move Up-Down
 			if( Input.GetKey( KeyCode.W ) || Input.mousePosition.y > Screen.currentResolution.height - scrollMargin )
 			{
-				this.transform.Translate( 0.0f, 0.0f, speed * Time.deltaTime * size, Space.Self );
+				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
 			}
 			else if( Input.GetKey( KeyCode.S ) || Input.mousePosition.y < scrollMargin )
 			{
-				this.transform.Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size, Space.Self );
+				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}
-			else if( Input.GetKey( KeyCode.Keypad5 ) )
+
+			// Reset
+			if( Input.GetKey( KeyCode.Keypad5 ) )
 			{
-				size = defaultSize;
-				camera.orthographicSize = this.size;
-				this.transform.rotation = Quaternion.Euler( 0, 45, 0 );
+				ResetCam();
 			}
 		}
 	}

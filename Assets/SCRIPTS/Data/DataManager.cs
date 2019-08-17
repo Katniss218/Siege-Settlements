@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace SS
+namespace SS.Data
 {
 	public static class DataManager
 	{

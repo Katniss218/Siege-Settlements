@@ -52,7 +52,7 @@
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 1.0;
+			AttackRange = 0.6;
 			AttackCooldown = 0.75;
 			AttackSound = "Sounds/melee.wav";
 		};
@@ -80,7 +80,7 @@
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 4.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 1.0;
+			AttackRange = 0.6;
 			AttackCooldown = 0.52;
 			AttackSound = "Sounds/melee.wav";
 		};
@@ -108,7 +108,7 @@
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 1.0;
+			AttackRange = 0.6;
 			AttackCooldown = 0.65;
 			AttackSound = "Sounds/melee.wav";
 		};
@@ -136,7 +136,7 @@
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 4.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 1.0;
+			AttackRange = 0.6;
 			AttackCooldown = 0.47;
 			AttackSound = "Sounds/melee.wav";
 		};
@@ -266,7 +266,7 @@
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.5;
 			ArmorPenetration = 0.0;
-			AttackRange = 1.0;
+			AttackRange = 0.6;
 			AttackCooldown = 0.8;
 			AttackSound = "Sounds/melee.wav";
 		};

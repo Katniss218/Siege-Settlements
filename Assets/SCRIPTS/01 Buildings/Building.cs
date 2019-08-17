@@ -1,4 +1,5 @@
-﻿using SS.ResourceSystem;
+﻿using SS.Data;
+using SS.ResourceSystem;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -42,22 +43,22 @@ namespace SS.Buildings
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
-			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 
 			Selectable selectable = container.AddComponent<Selectable>();
 			selectable.icon = def.icon.Item2;
 
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.size = def.size;
-			navMeshObstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
 			BuildingUI ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
 
 			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( ( FactionMember obj ) =>
+			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = FactionManager.factions[obj.factionId].color;
+				Color color = FactionManager.factions[factionMember.factionId].color;
 				ui.SetFactionColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
@@ -65,24 +66,24 @@ namespace SS.Buildings
 
 
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.healthMax = def.healthMax;
+			damageable.SetMaxHealth( def.healthMax, false );
 			damageable.slashArmor = def.slashArmor;
 			damageable.pierceArmor = def.pierceArmor;
 			damageable.concussionArmor = def.concussionArmor;
-			damageable.onHealthChange.AddListener( ( Damageable obj ) =>
+			damageable.onHealthChange.AddListener( () =>
 			{
-				ui.SetHealthFill( obj.healthPercent );
+				ui.SetHealthFill( damageable.healthPercent );
 			} );
-			damageable.onDeath.AddListener( ( Damageable obj ) =>
+			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( ui.gameObject );
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
-				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1f, 1.0f );
+				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
 			} );
 
 			if( isUnderConstruction )
 			{
-				damageable.healthPercent = 0.1f;
+				damageable.SetHealthPercent( 0.1f );
 				StartConstructionOrRepair( container ); // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
 			}
 			else
@@ -115,11 +116,8 @@ namespace SS.Buildings
 			constructionSite.AssignResources( DataManager.FindDefinition<BuildingDefinition>( objectBase.id ).cost );
 			constructionSite.onConstructionProgress.AddListener( ( ConstructionSite obj, ResourceStack stack ) =>
 			{
-				damageable.healthPercent += constructionSite.GetHealthPercentGained( stack.amount );
-				if( damageable.healthPercent > 1f )
-				{
-					damageable.healthPercent = 1f;
-				}
+				damageable.Heal( constructionSite.GetHealthPercentGained( stack.amount ) * damageable.healthMax );
+				
 				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 
 				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );

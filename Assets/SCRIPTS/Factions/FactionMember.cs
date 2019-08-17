@@ -4,9 +4,7 @@ using UnityEngine.Events;
 namespace SS
 {
 	public sealed class FactionMember : MonoBehaviour
-	{
-		public class _UnityEventFactionMember : UnityEvent<FactionMember> { }
-		
+	{		
 		[SerializeField] private int __factionId;
 		public int factionId
 		{
@@ -17,10 +15,10 @@ namespace SS
 			set
 			{
 				this.__factionId = value;
-				this.onFactionChange?.Invoke( this );
+				this.onFactionChange?.Invoke();
 			}
 		}
 
-		public _UnityEventFactionMember onFactionChange = new _UnityEventFactionMember();
+		public UnityEvent onFactionChange = new UnityEvent();
 	}
 }

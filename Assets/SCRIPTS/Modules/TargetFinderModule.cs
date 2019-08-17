@@ -4,9 +4,6 @@ namespace SS
 {
 	public class TargetFinderModule : MonoBehaviour, ITargetFinder
 	{
-		/// <summary>
-		/// Forces the MeleeComponent to seek for targets.
-		/// </summary>
 		public Damageable FindTarget( float searchRange )
 		{
 			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange );

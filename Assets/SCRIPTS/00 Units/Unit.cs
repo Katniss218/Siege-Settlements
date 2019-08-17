@@ -1,4 +1,6 @@
-﻿using SS.Projectiles;
+﻿using SS.Data;
+using SS.Projectiles;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -37,24 +39,25 @@ namespace SS.Units
 
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-			collider.size = new Vector3( def.radius * 2, def.height, def.radius * 2 );
-			collider.center = new Vector3( 0f, def.height / 2f, 0f );
+			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
+			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
 
 			Selectable selectable = container.AddComponent<Selectable>();
-			selectable.icon = def.icon.Item2;
 			if( def.id == "unit.civilian" )
 			{
-				selectable.onSelect.AddListener( ( Selectable obj ) =>
+				selectable.onSelect.AddListener( () =>
 				{
 					Debug.Log( "Selected Civilian" );
 				} );
 			}
+			selectable.icon = def.icon.Item2;
+			
 
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
 			
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
-			navMeshAgent.acceleration = 8;
+			navMeshAgent.acceleration = 8.0f;
 			navMeshAgent.stoppingDistance = 0.125f;
 			navMeshAgent.radius = def.radius;
 			navMeshAgent.height = def.height;
@@ -64,9 +67,9 @@ namespace SS.Units
 			UnitUI ui = Object.Instantiate( Main.unitUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnitUI>();
 
 			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( ( FactionMember obj ) =>
+			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = FactionManager.factions[obj.factionId].color;
+				Color color = FactionManager.factions[factionMember.factionId].color;
 				ui.SetFactionColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
@@ -74,17 +77,12 @@ namespace SS.Units
 
 
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.healthMax = def.healthMax;
-			damageable.Heal();
-			damageable.slashArmor = def.slashArmor;
-			damageable.pierceArmor = def.pierceArmor;
-			damageable.concussionArmor = def.concussionArmor;
-			damageable.onHealthChange.AddListener( ( Damageable obj ) =>
+			damageable.onHealthChange.AddListener( () =>
 			{
-				meshRenderer.material.SetFloat( "_Dest", 1 - obj.healthPercent );
-				ui.SetHealthFill( obj.healthPercent );
+				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+				ui.SetHealthFill( damageable.healthPercent );
 			} );
-			damageable.onDeath.AddListener( ( Damageable obj ) =>
+			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( ui.gameObject );
 				// for breakup make several meshes that are made up of the original one, attach physics to them.
@@ -93,8 +91,13 @@ namespace SS.Units
 
 				// also, play a poof from some particle system for smoke or something at the moment of death.
 				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
-				
+
 			} );
+			damageable.SetMaxHealth( def.healthMax, true );
+			damageable.slashArmor = def.slashArmor;
+			damageable.pierceArmor = def.pierceArmor;
+			damageable.concussionArmor = def.concussionArmor;
+			
 
 			ITargetFinder finder = null;
 			if( def.isMelee || def.isRanged )

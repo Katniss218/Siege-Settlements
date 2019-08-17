@@ -5,48 +5,99 @@ namespace SS.Buildings
 {
 	public class BuildPreview : MonoBehaviour
 	{
+		/// <summary>
+		/// The building that's being built.
+		/// </summary>
 		public BuildingDefinition def;
+
+		/// <summary>
+		/// The build preview will treat objects in this mask as ground.
+		/// </summary>
 		public LayerMask groundMask;
-		public LayerMask objectsMask;
 
-		const float maxDeviation = 0.2f;
+		/// <summary>
+		/// The build preview will treat objects in this mask as blocking the placement.
+		/// </summary>
+		public LayerMask overlapMask;
 
-		public bool CanBePlacedHere()
+		/// <summary>
+		/// The maximum difference between any 2 points underneath the building preview that will be still considered as valid placement spot.
+		/// </summary>
+		public float maxDeviation = 0.2f;
+
+		private Vector3 GetOverlapHitboxCenter()
 		{
-			// Check for the overlap.
-			Matrix4x4 localToWorld = this.transform.localToWorldMatrix;
-			Vector3 center = new Vector3( 0f, def.size.y / 2f, 0f );
-			center = localToWorld.MultiplyVector( center ) + this.transform.position + new Vector3( 0, maxDeviation + 0.01f, 0 ); // add 0.01 so the collider is slightly above the ground and collision doesn't pick it up when it shouldn't.
-			if( Physics.OverlapBox( center, def.size / 2, this.transform.rotation, objectsMask ).Length > 0 )
+			const float epsilon = 0.01f;
+			Matrix4x4 localToWorldMatrix = this.transform.localToWorldMatrix;
+
+			Vector3 center = new Vector3( 0.0f, (def.size.y / 2.0f), 0.0f );
+			center = localToWorldMatrix.MultiplyVector( center );
+			center += this.transform.position;
+			// Add maxDeviation, to make sure the overlap wouldn't block the (+) range of valid placement spots.
+			center.y += maxDeviation;
+			// Add epsilon to make sure the collider doesn't falsly collide at still valid placement spot.
+			center.y += epsilon;
+
+			return center;
+		}
+
+		private bool IsOverlappingObjects()
+		{
+			Vector3 center = GetOverlapHitboxCenter();
+			if( Physics.OverlapBox( center, def.size / 2.0f, this.transform.rotation, overlapMask ).Length > 0 )
 			{
-				return false;
+				return true;
 			}
+			return false;
+		}
+
+		private bool IsOnFlatGround()
+		{
 			float halfHeight = def.size.y / 2f;
 
-			// Check for the slope gradient.
+			// Setup the 4 corners for raycast.
 			Vector3[] pos = new Vector3[4]
 			{
-				new Vector3( -def.size.x, halfHeight, -def.size.z ),
-				new Vector3( -def.size.x, halfHeight, def.size.z ),
-				new Vector3( def.size.x, halfHeight, -def.size.z ),
-				new Vector3( def.size.x, halfHeight, def.size.z )
+				new Vector3( -def.size.x, maxDeviation, -def.size.z ),
+				new Vector3( -def.size.x, maxDeviation, def.size.z ),
+				new Vector3( def.size.x, maxDeviation, -def.size.z ),
+				new Vector3( def.size.x, maxDeviation, def.size.z )
 			};
-			
+
+			// Setup the outputs for the 4 corners.
 			float[] y = new float[4];
+
+			// Check the 4 corners (do the raycast).
+			Matrix4x4 localToWorldMatrix = this.transform.localToWorldMatrix;
 			RaycastHit hitInfo;
 			for( int i = 0; i < 4; i++ )
 			{
-				pos[i] = localToWorld.MultiplyVector( pos[i] ) + this.transform.position;
-				if( !Physics.Raycast( pos[i], Vector3.down, out hitInfo, halfHeight + maxDeviation, groundMask ) )
+				pos[i] = localToWorldMatrix.MultiplyVector( pos[i] ) + this.transform.position;
+				if( !Physics.Raycast( pos[i], Vector3.down, out hitInfo, 2.0f * maxDeviation, groundMask ) )
 				{
+					// If the raycast missed, that means there is a deep chasm at the checked position.
 					return false;
 				}
 				y[i] = hitInfo.point.y;
 			}
-			
-			Array.Sort( y );
 
-			return Mathf.Abs( y[0] - y[3] ) < maxDeviation; // max 0.2 of variation.
+			// Check if the y-positions of corners are within the allowed deviation from the building's y-position.
+			for( int i = 0; i < 4; i++ )
+			{
+				// the transform's position is always at the bottom of a building.
+				if( y[i] < this.transform.position.y - maxDeviation ) { return false; }
+				if( y[i] > this.transform.position.y + maxDeviation ) { return false; }
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Checks if the building preview's current position is a valid placement spot.
+		/// </summary>
+		public bool CanBePlacedHere()
+		{
+			return !IsOverlappingObjects() && IsOnFlatGround();
 		}
 
 		private void Update()

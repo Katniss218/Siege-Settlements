@@ -8,13 +8,16 @@ namespace SS.Units
 {
 	public class UnitDefinition : Definition
 	{
+		// Basic.
 		public string displayName { get; set; }
 
+		// Health-related
 		public float healthMax { get; set; }
 		public float slashArmor { get; set; }
 		public float pierceArmor { get; set; }
 		public float concussionArmor { get; set; }
 
+		// Melee-related
 		public bool isMelee { get; set; }
 		public DamageType meleeDamageType { get; set; }
 		public float meleeDamage { get; set; }
@@ -23,6 +26,7 @@ namespace SS.Units
 		public float meleeAttackCooldown { get; set; }
 		public Tuple<string, AudioClip> meleeAttackSoundEffect { get; private set; }
 
+		// Ranged-related
 		public bool isRanged { get; set; }
 		public string rangedProjectileId { get; set; }
 		public int rangedProjectileCount { get; set; }
@@ -36,12 +40,14 @@ namespace SS.Units
 		public Vector3 rangedLocalOffsetMax { get; set; }
 		public Tuple<string, AudioClip> rangedAttackSoundEffect { get; private set; }
 
+		// Movement-related
 		public float movementSpeed { get; set; }
 		public float rotationSpeed { get; set; }
 
 		public float radius { get; set; }
 		public float height { get; set; }
 		
+		// Display-related
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }

@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace SS
+namespace SS.UI
 {
 	/// <summary>
 	/// Counts the FPS and displays that to a text field (TextMesh Pro).
@@ -10,13 +10,16 @@ namespace SS
 	{
 		[SerializeField] private TMP_Text textField = null;
 
-		[SerializeField] private string format = "FPS: {0}";
+		public string format = "FPS: {0}";
+
+		private int GetFps()
+		{
+			return Mathf.CeilToInt( 1.0f / Time.deltaTime );
+		}
 
 		void Update()
 		{
-			int fps = Mathf.CeilToInt( 1.0f / Time.deltaTime );
-
-			textField.text = string.Format( format, fps );
+			textField.text = string.Format( format, GetFps() );
 		}
 	}
 }

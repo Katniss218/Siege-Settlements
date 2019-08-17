@@ -105,8 +105,8 @@ namespace SS
 					ranVel.z *= Random.Range( 0.9f, 1.1f );
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, ranVel );
 				}
-				this.lastAttackTimestamp = Time.time;
 			}
+			this.lastAttackTimestamp = Time.time;
 		}
 
 		private void Shoot( Vector3 pos, Vector3 vel )

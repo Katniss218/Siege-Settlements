@@ -1,14 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS
 {
-	public class AudioManager : MonoBehaviour
+	/// <summary>
+	/// Manages audio clips. Use it to play sounds.
+	/// </summary>
+	public static class AudioManager
 	{
-		public static AudioManager instance;
+		private static List<AudioSource> sources = new List<AudioSource>();
 
-		private List<AudioSource> players = new List<AudioSource>();
+		private static void AddNewAndPlay( AudioClip clip, float volume, float pitch )
+		{
+			GameObject gameObject = new GameObject( "AudioSource" );
+			gameObject.transform.SetParent( Main.main_transform );
+
+			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+			audioSource.volume = volume;
+			audioSource.pitch = pitch;
+			audioSource.clip = clip;
+			audioSource.Play();
+
+			TimerHandler timer = gameObject.AddComponent<TimerHandler>();
+			timer.duration = clip.length;
+			timer.onTimerEnd.AddListener( () =>
+			{
+				audioSource.Stop();
+			} );
+			sources.Add( audioSource );
+		}
 
 		/// <summary>
 		/// Plays a new sound.
@@ -18,45 +38,25 @@ namespace SS
 		/// <param name="pitch">The pitch.</param>
 		public static void PlayNew( AudioClip clip, float volume, float pitch )
 		{
-			foreach( AudioSource s in instance.players )
+			foreach( AudioSource source in sources )
 			{
-				if( s.isPlaying )
+				if( source.isPlaying )
 				{
 					continue;
 				}
-				s.clip = clip;
-				s.volume = volume;
-				s.pitch = pitch;
-				s.Play();
-				instance.StartCoroutine( instance.StopAfterEnd( s, clip.length ) );
+				source.clip = clip;
+				source.volume = volume;
+				source.pitch = pitch;
+				source.Play();
+				TimerHandler timer = source.GetComponent<TimerHandler>();
+				timer.duration = clip.length;
+				timer.onTimerEnd.AddListener( () =>
+				{
+					source.Stop();
+				} );
 				return;
 			}
-			GameObject player = new GameObject( "AudioSource" );
-			player.transform.SetParent( instance.transform );
-
-			AudioSource source = player.AddComponent<AudioSource>();
-			source.volume = volume;
-			source.pitch = pitch;
-			source.clip = clip;
-			source.Play();
-			instance.StartCoroutine( instance.StopAfterEnd( source, clip.length ) );
-			instance.players.Add( source );
-		}
-
-		void Awake()
-		{
-			if( instance != null )
-			{
-				Debug.LogError( "There is another AudioManager instance" );
-			}
-			instance = this;
-		}
-		
-		private IEnumerator StopAfterEnd( AudioSource s, float duration )
-		{
-			yield return new WaitForSeconds( duration );
-
-			s.Stop();
+			AddNewAndPlay( clip, volume, pitch );
 		}
 	}
 }

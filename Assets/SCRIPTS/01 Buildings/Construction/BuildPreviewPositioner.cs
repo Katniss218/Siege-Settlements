@@ -6,6 +6,7 @@ namespace SS.Buildings
 	{
 		private void FixedUpdate()
 		{
+			// Rotation.
 			if( Input.GetKey( KeyCode.T ) )
 			{
 				this.transform.Rotate( 0, -45f * Time.fixedDeltaTime, 0 );
@@ -14,6 +15,8 @@ namespace SS.Buildings
 			{
 				this.transform.Rotate( 0, 45f * Time.fixedDeltaTime, 0 );
 			}
+
+			// Position the preview at the mouse's position. Hide the preview if the raycast misses.
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, 1 << LayerMask.NameToLayer( "Terrain" ) ) )
 			{
