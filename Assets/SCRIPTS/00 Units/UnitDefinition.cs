@@ -45,6 +45,7 @@ namespace SS.Units
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public Tuple<string, Sprite> icon { get; private set; }
 
 		public UnitDefinition( string id ) : base( id )
 		{
@@ -94,6 +95,7 @@ namespace SS.Units
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -141,6 +143,7 @@ namespace SS.Units
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "Icon", this.icon.Item1 );
 		}
 	}
 }

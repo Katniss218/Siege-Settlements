@@ -41,6 +41,7 @@ namespace SS.Units
 			collider.center = new Vector3( 0f, def.height / 2f, 0f );
 
 			Selectable selectable = container.AddComponent<Selectable>();
+			selectable.icon = def.icon.Item2;
 			if( def.id == "unit.civilian" )
 			{
 				selectable.onSelect.AddListener( ( Selectable obj ) =>

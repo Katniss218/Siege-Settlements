@@ -11,6 +11,7 @@ namespace Katniss.Utils
 	public static class KFFAssetHelper
 	{
 		// Everything specific to Siege Settlements' implementation of KFF goes here.
+
 		/// <summary>
 		/// Loads a Texture2D from assets, using a KFF serializer.
 		/// </summary>
@@ -18,6 +19,15 @@ namespace Katniss.Utils
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new Tuple<string, Texture2D>( assetPath, AssetsManager.GetTexture2D( assetPath, type ) );
+		}
+		
+		/// <summary>
+		/// Loads a Sprite from assets, using a KFF serializer.
+		/// </summary>
+		public static Tuple<string, Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, string kffPath )
+		{
+			string assetPath = serializer.ReadString( kffPath );
+			return new Tuple<string, Sprite>( assetPath, AssetsManager.GetSprite( assetPath ) );
 		}
 
 		/// <summary>

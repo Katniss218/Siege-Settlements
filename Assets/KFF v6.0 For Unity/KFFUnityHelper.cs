@@ -9,6 +9,7 @@ namespace KFF
 	public static class KFFUnityHelper
 	{
 		// TODO ----- Add the rest of the methods to this helper class (total: Write, Append, WriteArray, AppendArray, Read, ReadArray)
+		// Everything specific to Unity's implementation of KFF goes here.
 
 		public static Vector2 ReadVector2( this KFFSerializer serializer, Path path )
 		{
@@ -242,6 +243,36 @@ namespace KFF
 			serializer.WriteFloat( "", "DY", value.size.y );
 			serializer.WriteFloat( "", "DZ", value.size.z );
 
+			serializer.scopeRoot = beginScope;
+		}
+
+		public static Rect ReadRect( this KFFSerializer serializer, Path path )
+		{
+			Object beginScope = serializer.scopeRoot;
+			serializer.MoveScope( path, true );
+
+			float x = serializer.ReadFloat( "X" );
+			float y = serializer.ReadFloat( "Y" );
+			float w = serializer.ReadFloat( "W" );
+			float h = serializer.ReadFloat( "H" );
+
+			serializer.scopeRoot = beginScope;
+			return new Rect( x, y, w, h );
+		}
+
+		public static void WriteRect( this KFFSerializer serializer, Path path, string name, Rect value )
+		{
+			Object beginScope = serializer.scopeRoot;
+			serializer.MoveScope( path, true );
+
+			serializer.WriteClass( "", name );
+			serializer.MoveScope( name, true );
+
+			serializer.WriteFloat( "", "X", value.x );
+			serializer.WriteFloat( "", "Y", value.y );
+			serializer.WriteFloat( "", "W", value.width );
+			serializer.WriteFloat( "", "H", value.height );
+			
 			serializer.scopeRoot = beginScope;
 		}
 

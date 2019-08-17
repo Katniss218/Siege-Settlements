@@ -80,7 +80,7 @@ namespace SS
 			}
 			selectedObjs.Add( obj );
 			obj.onSelect?.Invoke( obj );
-			SelectionPanel.ListAddIcon( obj, Main.toolTipBackground );
+			SelectionPanel.ListAddIcon( obj, obj.icon );
 		}
 
 		public static void Deselect( Selectable obj )

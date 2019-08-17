@@ -18,5 +18,6 @@
 		NormalTexture = "Textures/Units/unit_normal.png";
 		BuildSound = "Sounds/construction_site.wav";
 		DeathSound = "Sounds/building_dest_wood.wav";
+		Icon = "Textures/Buildings/house0_icon";
 	}
 ];

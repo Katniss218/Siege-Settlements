@@ -17,6 +17,7 @@
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/civilian_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "unit.civilian_employed";
@@ -35,6 +36,7 @@
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/civilian_employed_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "unit.light_infantry";
@@ -63,6 +65,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/light_infantry_icon";
 	},
 	{
 		Id = "unit.heavy_infantry";
@@ -90,6 +93,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/heavy_infantry_icon";
 	},
 	{
 		Id = "unit.light_cavalry";
@@ -117,6 +121,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/light_cavalry_icon";
 	},
 	{
 		Id = "unit.heavy_cavalry";
@@ -144,6 +149,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/heavy_cavalry_icon";
 	},
 	{
 		Id = "unit.bowmen";
@@ -177,6 +183,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/bowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/bowmen_icon";
 	},
 	{
 		Id = "unit.crossbowmen";
@@ -210,6 +217,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/crossbowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/crossbowmen_icon";
 	},
 	{
 		Id = "unit.mounted_archers";
@@ -243,6 +251,7 @@
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Units/mounted_archers_icon";
 	},
 	{
 		Id = "unit.wolf";
@@ -270,5 +279,6 @@
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/wolf_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Buildings/house0_icon";
 	}
 ];

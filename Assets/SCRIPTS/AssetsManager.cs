@@ -87,10 +87,31 @@ namespace SS
 			textures.Add( assetsPath, t );
 		}
 
-		public static void LoadSprite( string pngPath )
+		public static void LoadSprite( string assetsPathNoExt )
 		{
-			throw new System.Exception();
 			// sprites have a texture (path.png) and KFF data file (path.kff).
+
+			string filePathNoExt = GetFullPath( assetsPathNoExt );
+
+			Texture2D tex = PngImporter.Import( filePathNoExt + ".png", TextureType.Albedo );
+
+			string kffPath = filePathNoExt + ".kff";
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( kffPath, Encoding.UTF8 );
+			Rect rect = serializer.ReadRect( "Rect" );
+			string pivotUnitMode = serializer.ReadString( "PivotUnitMode" );
+			Vector2 pivot = serializer.ReadVector2( "Pivot" );
+
+			if( pivotUnitMode == "normalized" )
+			{
+				pivot.Scale( rect.size ); // if the pivot is given in range 0-1, scale it to the range 0-width/height
+			}
+			else if( pivotUnitMode != "pixels" )
+			{
+				throw new System.Exception( "Invalid value: '" + pivotUnitMode + "', expected 'pixels' or 'normalized'." );
+			}
+
+			Sprite s = Sprite.Create( tex, rect, pivot );
+			sprites.Add( assetsPathNoExt, s );
 		}
 
 		public static void LoadAudioClip( string assetsPath )

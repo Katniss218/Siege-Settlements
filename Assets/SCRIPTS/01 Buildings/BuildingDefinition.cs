@@ -26,6 +26,7 @@ namespace SS.Buildings
 		public Tuple<string, Texture2D> normal { get; private set; }
 		public Tuple<string, AudioClip> buildSoundEffect { get; private set; }
 		public Tuple<string, AudioClip> deathSoundEffect { get; private set; }
+		public Tuple<string, Sprite> icon { get; private set; }
 
 
 		public BuildingDefinition( string id ) : base( id )
@@ -57,6 +58,8 @@ namespace SS.Buildings
 			
 			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );
 			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
+
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -76,6 +79,7 @@ namespace SS.Buildings
 
 			serializer.WriteString( "", "BuildSound", this.buildSoundEffect.Item1 );
 			serializer.WriteString( "", "DeathSound", this.deathSoundEffect.Item1 );
+			serializer.WriteString( "", "Icon", this.icon.Item1 );
 		}
 	}
 }

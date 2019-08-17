@@ -7,6 +7,8 @@ namespace SS
 	{
 		public class _UnityEvent_Selectable : UnityEvent<Selectable> { }
 
+		public Sprite icon;
+
 		public _UnityEvent_Selectable onSelect = new _UnityEvent_Selectable();
 		public _UnityEvent_Selectable onDeselect = new _UnityEvent_Selectable();
 	}

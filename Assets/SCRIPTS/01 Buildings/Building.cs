@@ -45,6 +45,7 @@ namespace SS.Buildings
 			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
 
 			Selectable selectable = container.AddComponent<Selectable>();
+			selectable.icon = def.icon.Item2;
 
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.size = def.size;
