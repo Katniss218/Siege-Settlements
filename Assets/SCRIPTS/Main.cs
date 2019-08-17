@@ -240,6 +240,12 @@ namespace SS
 
 				prev.def = DataManager.FindDefinition<BuildingDefinition>( "building.house0" );
 				prev.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
+				prev.objectsMask = 
+					1 << LayerMask.NameToLayer( "Terrain" ) |
+					1 << LayerMask.NameToLayer( "Units" ) |
+					1 << LayerMask.NameToLayer( "Buildings" ) |
+					1 << LayerMask.NameToLayer( "Heroes" ) |
+					1 << LayerMask.NameToLayer( "Extras" );
 
 				MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
 				meshFilter.mesh = prev.def.mesh.Item2;

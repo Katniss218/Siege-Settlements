@@ -12,6 +12,7 @@ namespace SS.Projectiles
 				throw new System.Exception( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Projectile (\"" + def.id + "\"), (f: " + factionId + ")" );
+			container.layer = LayerMask.NameToLayer( "Projectiles" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );

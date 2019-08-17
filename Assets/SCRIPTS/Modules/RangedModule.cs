@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Projectiles;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS
 {
@@ -75,7 +76,17 @@ namespace SS
 		public void Attack()
 		{
 			Vector3 low, high;
-			if( BallisticSolver.Solve( this.transform.position, this.velocity, this.currentTarget.transform.position, -Physics.gravity.y, out low, out high ) > 0 )
+			Vector3 targetVel;
+			NavMeshAgent navmeshAgent = this.currentTarget.GetComponent<NavMeshAgent>();
+			if( navmeshAgent == null )
+			{
+				targetVel = Vector3.zero;
+			}
+			else
+			{
+				targetVel = navmeshAgent.velocity;
+			}
+			if( BallisticSolver.Solve( this.transform.position, this.velocity, this.currentTarget.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
 				Vector3 vel = low;

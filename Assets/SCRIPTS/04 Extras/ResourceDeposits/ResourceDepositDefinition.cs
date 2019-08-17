@@ -4,7 +4,7 @@ using SS.Data;
 using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Extras
 {
 	public class ResourceDepositDefinition : Definition
 	{

@@ -12,6 +12,7 @@ namespace SS.Extras
 			}
 			GameObject container = new GameObject( "Extra (\"" + def.id + "\")" );
 			container.isStatic = true;
+			container.layer = LayerMask.NameToLayer( "Extras" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );

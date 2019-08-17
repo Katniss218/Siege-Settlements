@@ -7,7 +7,8 @@ namespace SS.Buildings
 	{
 		public BuildingDefinition def;
 		public LayerMask groundMask;
-		
+		public LayerMask objectsMask;
+
 		const float maxDeviation = 0.2f;
 
 		public bool CanBePlacedHere()
@@ -16,7 +17,7 @@ namespace SS.Buildings
 			Matrix4x4 localToWorld = this.transform.localToWorldMatrix;
 			Vector3 center = new Vector3( 0f, def.size.y / 2f, 0f );
 			center = localToWorld.MultiplyVector( center ) + this.transform.position + new Vector3( 0, maxDeviation + 0.01f, 0 ); // add 0.01 so the collider is slightly above the ground and collision doesn't pick it up when it shouldn't.
-			if( Physics.OverlapBox( center, def.size / 2, this.transform.rotation ).Length > 0 )
+			if( Physics.OverlapBox( center, def.size / 2, this.transform.rotation, objectsMask ).Length > 0 )
 			{
 				return false;
 			}

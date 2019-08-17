@@ -129,7 +129,7 @@ namespace SS.Buildings
 				BuildingDefinition def = DataManager.FindDefinition<BuildingDefinition>( objectBase.id );
 				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
 				shape.position = new Vector3( 0, 0.2f, 0 );
-				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 20 );
+				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
 			} );
 			constructionSite.onConstructionComplete.AddListener( () =>

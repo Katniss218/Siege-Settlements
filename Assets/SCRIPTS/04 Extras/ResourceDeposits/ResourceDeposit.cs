@@ -1,9 +1,8 @@
-﻿using KFF;
-using SS.Data;
+﻿using SS.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace SS
+namespace SS.Extras
 {
 	[RequireComponent(typeof( NavMeshObstacle ) )]
 	public class ResourceDeposit : MonoBehaviour, IDefinableBy<ResourceDepositDefinition>
@@ -69,6 +68,7 @@ namespace SS
 				throw new System.Exception( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Resource Deposit (\"" + def.id + "\")" );
+			container.layer = LayerMask.NameToLayer( "Extras" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );

@@ -161,9 +161,9 @@
 			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 1.0;
 			ArmorPenetration = 0.0;
-			AttackRange = 6.0;
+			AttackRange = 5.0;
 			AttackCooldown = 3.0;
-			Velocity = 4.0;
+			Velocity = 2.5;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
@@ -196,7 +196,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 6.0;
 			AttackCooldown = 3.0;
-			Velocity = 4.0;
+			Velocity = 2.75;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
@@ -227,9 +227,9 @@
 			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 0.9;
 			ArmorPenetration = 0.0;
-			AttackRange = 6.0;
+			AttackRange = 4.5;
 			AttackCooldown = 3.0;
-			Velocity = 4.0;
+			Velocity = 2.5;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
