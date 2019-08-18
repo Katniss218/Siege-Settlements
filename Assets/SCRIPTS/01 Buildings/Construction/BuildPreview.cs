@@ -1,10 +1,24 @@
-﻿using System;
+﻿using katniss.Utils;
+using SS.Data;
+using System;
 using UnityEngine;
 
 namespace SS.Buildings
 {
 	public class BuildPreview : MonoBehaviour
 	{
+		public static bool isActive
+		{
+			get
+			{
+				return preview != null;
+			}
+		}
+
+		private static GameObject preview;
+
+
+
 		/// <summary>
 		/// The building that's being built.
 		/// </summary>
@@ -100,13 +114,23 @@ namespace SS.Buildings
 			return !IsOverlappingObjects() && IsOnFlatGround();
 		}
 
-		private void Update()
+		void Start()
 		{
+			// hook to the events to hide the preview.
+		}
+
+		void Update()
+		{
+			if( Input.GetMouseButtonDown( 1 ) ) // right mouse button
+			{
+				Destroy( this.gameObject );
+				return;
+			}
 			if( CanBePlacedHere() )
 			{
 				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.green );
 
-				if( Input.GetKeyDown( KeyCode.I ) )
+				if( Input.GetMouseButtonDown( 0 ) ) // left mouse button
 				{
 					Building.Create( this.def, this.transform.position, this.transform.rotation, 0, true );
 					Destroy( this.gameObject );
@@ -115,6 +139,45 @@ namespace SS.Buildings
 			else
 			{
 				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.red );
+			}
+		}
+		
+		public static GameObject Create( BuildingDefinition def )
+		{
+			GameObject gameObject = new GameObject();
+			BuildPreview buildPreview = gameObject.AddComponent<BuildPreview>();
+			gameObject.AddComponent<BuildPreviewPositioner>();
+
+			buildPreview.def = def;
+
+			buildPreview.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
+
+			buildPreview.overlapMask =
+				1 << LayerMask.NameToLayer( "Terrain" ) |
+				1 << LayerMask.NameToLayer( "Units" ) |
+				1 << LayerMask.NameToLayer( "Buildings" ) |
+				1 << LayerMask.NameToLayer( "Heroes" ) |
+				1 << LayerMask.NameToLayer( "Extras" );
+
+			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+			meshFilter.mesh = buildPreview.def.mesh.Item2;
+			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialFactionColored;
+
+			meshRenderer.material.SetTexture( "_Albedo", Texture2DUtils.CreateBlank() );
+			meshRenderer.material.SetTexture( "_Normal", null );
+			meshRenderer.material.SetTexture( "_Emission", null );
+
+			preview = gameObject;
+
+			return gameObject;
+		}
+
+		public static void Destroy()
+		{
+			if( preview != null )
+			{
+				Destroy( preview );
 			}
 		}
 	}

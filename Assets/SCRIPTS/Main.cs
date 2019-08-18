@@ -6,6 +6,8 @@ using UnityEngine.AI;
 using SS.ResourceSystem;
 using Katniss.Utils;
 using SS.Data;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace SS
 {
@@ -213,68 +215,51 @@ namespace SS
 				return __main_transform;
 			}
 		}
+
+
+		// TODO! - priority-based queue for processing input actions?
+		//    maybe you can define them as a list, beforehand, so you can add new inputs anywhere in the list w/o explicitly stating the priority value
+		//      (fixes the problem of having no priority space between actions, and having to move everything amove it to make space).
 		
 		void Update()
 		{
-			// When LMB is clicked - Move selected units to the cursor.
+			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
-					Selectable[] selected = SelectionManager.selectedObjects;
-					for( int i = 0; i < selected.Length; i++ )
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						NavMeshAgent agent = selected[i].GetComponent<NavMeshAgent>();
-						if( agent != null )
+						Selectable[] selected = SelectionManager.selectedObjects;
+						for( int i = 0; i < selected.Length; i++ )
 						{
-							agent.SetDestination( hitInfo.point );
+							NavMeshAgent agent = selected[i].GetComponent<NavMeshAgent>();
+							if( agent != null )
+							{
+								agent.SetDestination( hitInfo.point );
+							}
 						}
 					}
 				}
 			}
-			// Start building preview.
-			if( Input.GetKeyDown( KeyCode.U ) )
-			{
-				GameObject obj = new GameObject();
-				BuildPreview prev = obj.AddComponent<BuildPreview>();
-				obj.AddComponent<BuildPreviewPositioner>();
-
-				prev.def = DataManager.FindDefinition<BuildingDefinition>( "building.house0" );
-
-				prev.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
-
-				prev.overlapMask = 
-					1 << LayerMask.NameToLayer( "Terrain" ) |
-					1 << LayerMask.NameToLayer( "Units" ) |
-					1 << LayerMask.NameToLayer( "Buildings" ) |
-					1 << LayerMask.NameToLayer( "Heroes" ) |
-					1 << LayerMask.NameToLayer( "Extras" );
-
-				MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
-				meshFilter.mesh = prev.def.mesh.Item2;
-				MeshRenderer mr = obj.AddComponent<MeshRenderer>();
-				mr.material = Main.materialFactionColored;
-				Texture2D t = new Texture2D( 1, 1 );
-				t.SetPixel( 0, 0, new Color( 1, 1, 1 ) );
-				mr.material.SetTexture( "_Albedo", t );
-				mr.material.SetTexture( "_Normal", null );
-				mr.material.SetTexture( "_Emission", null );
-			}
 			// Try repair mouseovered building.
 			if( Input.GetKeyDown( KeyCode.L ) )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
-					if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer("Buildings") )
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						return;
+						if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer( "Buildings" ) )
+						{
+							return;
+						}
+						if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1f )
+							return;
+						// If it is a building, start repair.
+						ConstructionSite.StartConstructionOrRepair( hitInfo.collider.gameObject );
 					}
-					if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1f )
-						return;
-					// If it is a building, start repair.
-					Building.StartConstructionOrRepair( hitInfo.collider.gameObject );
 				}
 			}
 		}

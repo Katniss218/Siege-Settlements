@@ -61,14 +61,10 @@ namespace SS
 
 		void Update()
 		{
-			// Zoom
-			if( Input.mouseScrollDelta.y < 0 )
+
+			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
-				ZoomOut();
-			}
-			else if( Input.mouseScrollDelta.y > 0 )
-			{
-				ZoomIn();
+				return;
 			}
 
 			// Rotate CCW-CW
@@ -81,22 +77,49 @@ namespace SS
 				Rotate( rotSpeed * Time.deltaTime );
 			}
 
-			// Move Left-Right
-			if( Input.GetKey( KeyCode.A ) || Input.mousePosition.x < scrollMargin )
+			// Zoom
+			if( Input.mouseScrollDelta.y < 0 )
+			{
+				ZoomOut();
+			}
+			else if( Input.mouseScrollDelta.y > 0 )
+			{
+				ZoomIn();
+			}
+
+			if( Input.mousePosition.x < scrollMargin )
 			{
 				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
 			}
-			else if( Input.GetKey( KeyCode.D ) || Input.mousePosition.x > Screen.currentResolution.width - scrollMargin )
+			else if( Input.mousePosition.x > Screen.currentResolution.width - scrollMargin )
+			{
+				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
+			}
+			if( Input.mousePosition.y > Screen.currentResolution.height - scrollMargin )
+			{
+				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
+			}
+			else if( Input.mousePosition.y < scrollMargin )
+			{
+				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
+			}
+
+			// Move Left-Right
+			if( Input.GetKey( KeyCode.A ) )
+			{
+				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
+			}
+			else if( Input.GetKey( KeyCode.D ) )
 			{
 				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
 			}
 
 			// Move Up-Down
-			if( Input.GetKey( KeyCode.W ) || Input.mousePosition.y > Screen.currentResolution.height - scrollMargin )
+			if( Input.GetKey( KeyCode.W ) )
 			{
 				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
 			}
-			else if( Input.GetKey( KeyCode.S ) || Input.mousePosition.y < scrollMargin )
+			else if( Input.GetKey( KeyCode.S ) )
 			{
 				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}

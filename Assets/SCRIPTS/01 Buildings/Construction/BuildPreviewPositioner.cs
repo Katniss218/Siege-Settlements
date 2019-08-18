@@ -16,6 +16,10 @@ namespace SS.Buildings
 				this.transform.Rotate( 0, 45f * Time.fixedDeltaTime, 0 );
 			}
 
+			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
+			{
+				return;
+			}
 			// Position the preview at the mouse's position. Hide the preview if the raycast misses.
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, 1 << LayerMask.NameToLayer( "Terrain" ) ) )

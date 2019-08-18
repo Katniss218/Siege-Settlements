@@ -20,7 +20,44 @@ namespace SS
 		private static List<Selectable> selected = new List<Selectable>();
 		private static Selectable highlighted = null;
 		
-		
+		private static void __Highlight( Selectable obj )
+		{
+			// Clear the previous object's UI elements.
+			if( highlighted != null )
+			{
+				SelectionPanel.Object.Clear();
+			}
+			// Highlight the new object.
+			highlighted = obj;
+			// Allow the newly highlighted object to create it's own UI elements.
+			obj.onHighlight?.Invoke();
+		}
+
+		private static void __Select( Selectable obj )
+		{
+			// Add the selected object's icon to the SelectionPanel.List.
+			SelectionPanel.List.AddIcon( obj, obj.icon );
+			// Select the object.
+			selected.Add( obj );
+			// Notify the object that's being selected.
+			obj.onSelect?.Invoke();
+		}
+
+		private static void __Deselect( Selectable obj )
+		{
+			// Remove the deselected object's icon from the SelectionPanel.List.
+			SelectionPanel.List.RemoveIcon( obj );
+			// If the object is highlighted:
+			// - Un-highlight it.
+			if( IsHighlighted( obj ) )
+			{
+				SelectionPanel.Object.Clear();
+				highlighted = null;
+			}
+			// Notify the object that's being deselected.
+			obj.onDeselect?.Invoke();
+		}
+
 
 		/// <summary>
 		/// Checks if the object is currently highlighted.
@@ -41,10 +78,26 @@ namespace SS
 		}
 
 		/// <summary>
-		/// Selects an object.
+		/// Highlights the specified object. OBJECT NEEDS TO BE ALREADY SELECTED.
+		/// </summary>
+		/// <param name="obj">The selected object to highlight.</param>
+		public static void HighlightSelected( Selectable obj )
+		{
+			if( !selected.Contains( obj ) )
+			{
+				Debug.LogError( "Attempted to highlight object that is NOT selected." );
+			}
+			else
+			{
+				__Highlight( obj );
+			}
+		}
+
+		/// <summary>
+		/// Selects an object, and highlights it.
 		/// </summary>
 		/// <param name="obj">The object to select.</param>
-		public static void Select( Selectable obj )
+		public static void SelectAndHighlight( Selectable obj )
 		{
 			if( obj == null )
 			{
@@ -56,9 +109,8 @@ namespace SS
 			}
 			else
 			{
-				selected.Add( obj );
-				obj.onSelect?.Invoke();
-				SelectionPanel.ListAddIcon( obj, obj.icon );
+				__Select( obj );
+				__Highlight( obj );
 			}
 		}
 
@@ -75,10 +127,10 @@ namespace SS
 			if( !selected.Remove( obj ) )
 			{
 				Debug.LogWarning( "Attempted to deselect object that is not selected." );
+				return;
 			}
-			
-			obj.onDeselect?.Invoke();
-			SelectionPanel.ListRemoveIcon( obj );
+
+			__Deselect( obj );
 		}
 		
 		/// <summary>
@@ -86,13 +138,20 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
+			// Clear the SelectionPanel.Object, and SelectionPanel.List.
+			SelectionPanel.Object.Clear();
+			SelectionPanel.List.Clear();
+
+			// Notify every object that's being deselected of the fact.
 			for( int i = 0; i < selected.Count; i++ )
 			{
 				selected[i].onDeselect?.Invoke();
 			}
 
+			// Un-highlight the highlighted object.
+			highlighted = null;
+			// Deselect every object.
 			selected.Clear();
-			SelectionPanel.ListClear();
 		}
 	}
 }

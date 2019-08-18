@@ -7,6 +7,13 @@ namespace SS.Buildings
 {
 	public static class Building
 	{
+		// The amount of health that the building marked as being constructed is going to start with.
+		private static float STARTING_HEALTH_PERCENT = 0.1f;
+		// If a building drops below this value, it can't be used, and needs to be repaired.
+		private static float USABILITY_THRESHOLD = 0.5f;
+
+
+
 		public static GameObject Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
 		{
 			if( def == null )
@@ -38,6 +45,7 @@ namespace SS.Buildings
 			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
+			// Assign the definition to the building, so it can be accessed later.
 			ObjectBase objectBase = container.AddComponent<ObjectBase>();
 			objectBase.id = def.id;
 
@@ -55,6 +63,7 @@ namespace SS.Buildings
 
 			BuildingUI ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
 
+			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
@@ -65,15 +74,21 @@ namespace SS.Buildings
 			factionMember.factionId = factionId;
 
 
+			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
 			damageable.SetMaxHealth( def.healthMax, false );
 			damageable.slashArmor = def.slashArmor;
 			damageable.pierceArmor = def.pierceArmor;
 			damageable.concussionArmor = def.concussionArmor;
+			// When the health is changed, make the building update it's healthbar.
 			damageable.onHealthChange.AddListener( () =>
 			{
 				ui.SetHealthFill( damageable.healthPercent );
 			} );
+			// When the building dies:
+			// - Destroy the building's UI.
+			// - Deselect the building.
+			// - Play the death sound.
 			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( ui.gameObject );
@@ -81,18 +96,23 @@ namespace SS.Buildings
 				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
 			} );
 
+			// If the newly spawned building is marked as being constructed:
+			// - Set the health to 10% (construction's starting percent).
+			// - Start the construction process.
 			if( isUnderConstruction )
 			{
-				damageable.SetHealthPercent( 0.1f );
-				StartConstructionOrRepair( container ); // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
+				damageable.SetHealthPercent( Building.STARTING_HEALTH_PERCENT );
+				ConstructionSite.StartConstructionOrRepair( container ); // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
 			}
+			// If the newly spawned building is not marked as being constructed:
+			// - Set the health to max.
 			else
 			{
 				damageable.Heal();
-				meshRenderer.material.SetFloat( "_Progress", 1 );
 			}
 
-			container.AddComponent<EveryFrameSingle>().everyFrame = () =>
+			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).
+			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{
 				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
@@ -101,42 +121,5 @@ namespace SS.Buildings
 			return container;
 		}
 		
-		public static void StartConstructionOrRepair( GameObject building )
-		{
-			ObjectBase objectBase = building.GetComponent<ObjectBase>();
-			Damageable damageable = building.GetComponent<Damageable>();
-
-			// Repairing is mandatory once the building's health drops below 50%. Allowed anytime the health is below 100%.
-			if( damageable.health == damageable.healthMax )
-			{
-				Debug.LogError( "You can't start repairing a building that's full HP." );
-			}
-
-			ConstructionSite constructionSite = building.AddComponent<ConstructionSite>();
-			constructionSite.AssignResources( DataManager.FindDefinition<BuildingDefinition>( objectBase.id ).cost );
-			constructionSite.onConstructionProgress.AddListener( ( ConstructionSite obj, ResourceStack stack ) =>
-			{
-				damageable.Heal( constructionSite.GetHealthPercentGained( stack.amount ) * damageable.healthMax );
-				
-				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
-
-				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );
-				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
-				ParticleSystem.MainModule main = Main.particleSystem.GetComponent<ParticleSystem>().main;
-				
-				shape.shapeType = ParticleSystemShapeType.Box;
-				BuildingDefinition def = DataManager.FindDefinition<BuildingDefinition>( objectBase.id );
-				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
-				shape.position = new Vector3( 0, 0.2f, 0 );
-				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
-				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
-			} );
-			constructionSite.onConstructionComplete.AddListener( () =>
-			{
-				objectBase.meshRenderer.material.SetFloat( "_Progress", 1f );
-			} );
-			constructionSite.isCompleted = () => damageable.healthPercent >= 1f;
-			objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
-		}
 	}
 }

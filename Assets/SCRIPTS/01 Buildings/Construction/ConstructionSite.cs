@@ -1,4 +1,5 @@
-﻿using SS.ResourceSystem;
+﻿using SS.Data;
+using SS.ResourceSystem;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,41 +11,50 @@ namespace SS.Buildings
 	/// </summary>
 	public class ConstructionSite : MonoBehaviour
 	{
-		public class _UnityEvent_ConstructionSite_ResourceStack : UnityEvent<ConstructionSite, ResourceStack> { }
+		public class _UnityEvent_ResourceStack : UnityEvent<ResourceStack> { }
 
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
-		public string[] resourceIds { get; private set; }
+		private string[] resourceIds;
 		/// <summary>
 		/// An array of remaining resources, per resource type (use resourceIds[i] to get the Id) (Read Only).
 		/// </summary>
-		public int[] resourcesRemaining { get; private set; }
-		
+		private int[] resourcesRemaining;
+
 		/// <summary>
 		/// The total cost of the building's construction/repair (sum of every resource).
 		/// </summary>
-		public int totalNeeded { get; private set; }
+		private int totalResources;
 
 		/// <summary>
 		/// Calculates how much (%) should be added to the building's health given the specified amount of resources.
 		/// </summary>
 		/// <param name="resourceAmt"></param>
-		/// <returns></returns>
 		public float GetHealthPercentGained( int resourceAmt )
 		{
-			return (float)resourceAmt / ((float)this.totalNeeded * 0.9f);
+			return (float)resourceAmt / ((float)this.totalResources * 0.9f);
 		}
 
 		/// <summary>
-		/// This function checks if the construction has finished, override this for custom condition.
+		/// This method should return a value between 0 and 1. 0 when the construction is at 0% progress, and 1 when at 100% progress.
 		/// </summary>
-		public Func<bool> isCompleted;
-		
+		public Func<float> getPercentCompleted;
+
+		private bool IsCompleted()
+		{
+			return this.getPercentCompleted() >= 1.0f;
+		}
+
 		/// <summary>
 		/// Is called when the construction progresses (resources are added).
 		/// </summary>
-		public _UnityEvent_ConstructionSite_ResourceStack onConstructionProgress = new _UnityEvent_ConstructionSite_ResourceStack();
+		public UnityEvent onConstructionStart = new UnityEvent();
+
+		/// <summary>
+		/// Is called when the construction progresses (resources are added).
+		/// </summary>
+		public _UnityEvent_ResourceStack onConstructionProgress = new _UnityEvent_ResourceStack();
 
 		/// <summary>
 		/// Is called when the construction progresses (resources are added).
@@ -56,7 +66,7 @@ namespace SS.Buildings
 		/// </summary>
 		public void AssignResources( ResourceStack[] requiredResources )
 		{
-			this.totalNeeded = 0;
+			this.totalResources = 0;
 			this.resourceIds = new string[requiredResources.Length];
 			this.resourcesRemaining = new int[requiredResources.Length];
 
@@ -64,11 +74,16 @@ namespace SS.Buildings
 			{
 				this.resourceIds[i] = requiredResources[i].id;
 				this.resourcesRemaining[i] = requiredResources[i].amount;
-				this.totalNeeded += requiredResources[i].amount;
+				this.totalResources += requiredResources[i].amount;
 			}
 		}
-		
-		// placeholder for auto-building until the proper build mechanic comes into the game.
+
+		void Start()
+		{
+			onConstructionStart?.Invoke();
+		}
+
+		// placeholder for auto-building until the proper build mechanic comes into place.
 		void Update()
 		{
 			if( Input.GetKeyDown( KeyCode.B ) ) // wood
@@ -90,8 +105,8 @@ namespace SS.Buildings
 			{
 				if( this.resourceIds[i] == stack.id )
 				{
-					this.onConstructionProgress?.Invoke( this, stack );
-					if( this.isCompleted() )
+					this.onConstructionProgress?.Invoke( stack );
+					if( this.IsCompleted() )
 					{
 						this.FinishConstruction();
 					}
@@ -107,6 +122,62 @@ namespace SS.Buildings
 		{
 			this.onConstructionComplete?.Invoke();
 			Destroy( this );
+		}
+
+
+		/// <summary>
+		/// Starts the construction / repair of the specified building.
+		/// </summary>
+		public static void StartConstructionOrRepair( GameObject building )
+		{
+			ObjectBase objectBase = building.GetComponent<ObjectBase>();
+			Damageable damageable = building.GetComponent<Damageable>();
+
+			// Repairing is mandatory once the building's health drops below 50%.
+			// And allowed anytime the health is below 100%.
+			if( damageable.health == damageable.healthMax )
+			{
+				Debug.LogError( "You can't start repairing a building that's full HP." );
+			}
+
+			ConstructionSite constructionSite = building.AddComponent<ConstructionSite>();
+			constructionSite.AssignResources( DataManager.FindDefinition<BuildingDefinition>( objectBase.id ).cost );
+
+			// Set the method for checking progress of the construction.
+			// The construction is directly tied to the building's health.
+			constructionSite.getPercentCompleted = () => damageable.healthPercent;
+
+			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
+			constructionSite.onConstructionStart.AddListener( () =>
+			{
+				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+			} );
+
+			// Every time the construction progresses:
+			// - Heal the building depending on the amount of resources (100% health => total amount of resources as specified in the definition).
+			// - Emit particles.
+			// - Play sound
+			constructionSite.onConstructionProgress.AddListener( ( ResourceStack stack ) =>
+			{
+				damageable.Heal( constructionSite.GetHealthPercentGained( stack.amount ) * damageable.healthMax );
+
+				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+
+				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );
+				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
+
+				BuildingDefinition def = DataManager.FindDefinition<BuildingDefinition>( objectBase.id );
+				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
+				shape.position = Vector3.zero;
+				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
+				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
+			} );
+
+			// When the construction is completed, set the _Progress attribute to fully built.
+			constructionSite.onConstructionComplete.AddListener( () =>
+			{
+				objectBase.meshRenderer.material.SetFloat( "_Progress", 1f );
+			} );
 		}
 	}
 }
