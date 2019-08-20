@@ -216,11 +216,16 @@ namespace SS
 			}
 		}
 
+		private void Start()
+		{
+			UI.UIUtils.CreateScrollableList( canvas.transform, new UI.Elements.GenericUIData( new Vector2( 300, 300 ), new Vector2( 120, 220 ), Vector2.zero, Vector2.zero, Vector2.zero ), null );
+		}
+
 
 		// TODO! - priority-based queue for processing input actions?
 		//    maybe you can define them as a list, beforehand, so you can add new inputs anywhere in the list w/o explicitly stating the priority value
 		//      (fixes the problem of having no priority space between actions, and having to move everything amove it to make space).
-		
+
 		void Update()
 		{
 			// When RMB is clicked - Move selected units to the cursor.

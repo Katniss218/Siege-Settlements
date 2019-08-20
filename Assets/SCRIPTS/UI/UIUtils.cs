@@ -99,10 +99,10 @@ namespace SS.UI
 
 			GameObject gridGameObject = __CreateUIElement( container.transform, "Grid", new GenericUIData( Vector2.zero, new Vector2( -HANDLE_WIDTH, 0 ), Vector2.up, Vector2.up, Vector2.one ) );
 
-			GridLayoutGroup gridLayoutGroup = gridGameObject.AddComponent<GridLayoutGroup>();
-			gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
-			gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
-			specificData.ApplyTo( gridLayoutGroup );
+			GridLayoutGroup layoutGroup = gridGameObject.AddComponent<GridLayoutGroup>();
+			layoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
+			layoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
+			specificData.ApplyTo( layoutGroup );
 
 			ContentSizeFitter fitter = gridGameObject.AddComponent<ContentSizeFitter>();
 			fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -149,10 +149,70 @@ namespace SS.UI
 			return container;
 		}
 
-		/*public static GameObject CreateScrollableList( Transform parent, GenericUIData basicData, GameObject listContents )
+		public static GameObject CreateScrollableList( Transform parent, GenericUIData basicData, GameObject[] listContents )
 		{
+			const float HANDLE_WIDTH = 30.0f;
+			// scrolling top-bottom
 
-		}*/
+			GameObject container = __CreateUIElement( parent, "Scrollable List", basicData );
+
+			RectMask2D mask = container.AddComponent<RectMask2D>();
+
+			GameObject listGameObject = __CreateUIElement( container.transform, "List", new GenericUIData( Vector2.zero, new Vector2( -HANDLE_WIDTH, 0 ), Vector2.up, Vector2.up, Vector2.one ) );
+
+			VerticalLayoutGroup layoutGroup = listGameObject.AddComponent<VerticalLayoutGroup>();
+			layoutGroup.childForceExpandWidth = false;//
+			layoutGroup.childForceExpandHeight = false;
+			layoutGroup.childControlWidth = false;
+			layoutGroup.childControlHeight = false;//= GridLayoutGroup.Corner.UpperLeft;
+			//layoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
+			//specificData.ApplyTo( layoutGroup );
+
+			ContentSizeFitter fitter = listGameObject.AddComponent<ContentSizeFitter>();
+			fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+			fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+
+			// Add the scrolling
+			GameObject scrollbarGameObject = __CreateUIElement( container.transform, "Scrollbar - Vert", new GenericUIData( Vector2.zero, new Vector2( 30, 0 ), new Vector2( 1.0f, 0.5f ), Vector2.right, Vector2.one ) );
+
+			GameObject slidingAreaGameObject = __CreateUIElement( scrollbarGameObject.transform, "Sliding Area", new GenericUIData( Vector2.zero, new Vector2( -20, -20 ), new Vector2( 0.5f, 0.5f ), Vector2.zero, Vector2.one ) );
+
+			GameObject handleGameObject = __CreateUIElement( slidingAreaGameObject.transform, "Handle", new GenericUIData( Vector2.zero, new Vector2( 20, 20 ), new Vector2( 0.5f, 0.5f ), new Vector2( 0.0f, 0.5f ), new Vector2( 1.0f, 0.5f ) ) );
+
+			Image scrollbarImg = slidingAreaGameObject.AddComponent<Image>();
+			scrollbarImg.sprite = null;
+			scrollbarImg.color = Color.gray;
+
+			Image handleImg = handleGameObject.AddComponent<Image>();
+			handleImg.sprite = null;
+			handleImg.color = Color.white;
+
+			Scrollbar scrollbar = scrollbarGameObject.AddComponent<Scrollbar>();
+			scrollbar.handleRect = handleGameObject.GetComponent<RectTransform>();
+			scrollbar.direction = Scrollbar.Direction.BottomToTop;
+
+			ScrollRect scrollRect = listGameObject.AddComponent<ScrollRect>();
+			scrollRect.viewport = container.GetComponent<RectTransform>();
+			scrollRect.content = listGameObject.GetComponent<RectTransform>();
+			scrollRect.verticalScrollbar = scrollbar;
+			scrollRect.vertical = true;
+			scrollRect.horizontal = false;
+			scrollRect.scrollSensitivity = 15f;
+			scrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+
+			if( listContents == null )
+			{
+				return container;
+			}
+			for( int i = 0; i < listContents.Length; i++ )
+			{
+				listContents[i].transform.SetParent( listGameObject.transform );
+			}
+			return container;
+		}
+
 
 
 		//### Text
