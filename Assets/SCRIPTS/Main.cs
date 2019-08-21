@@ -218,7 +218,6 @@ namespace SS
 
 		private void Start()
 		{
-			UI.UIUtils.CreateScrollableList( canvas.transform, new UI.Elements.GenericUIData( new Vector2( 300, 300 ), new Vector2( 120, 220 ), Vector2.zero, Vector2.zero, Vector2.zero ), null );
 		}
 
 
