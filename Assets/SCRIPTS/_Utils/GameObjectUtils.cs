@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.UI;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Katniss.Utils
@@ -7,16 +8,23 @@ namespace Katniss.Utils
 	{
 		public const string GRAPHICS_GAMEOBJECT_NAME = "graphics";
 
-		public static void RectTransform( Transform parent, string name, Vector2 position, Vector2 size, Vector2 pivot, Vector2 anchorMin, Vector2 anchorMax, out GameObject gameObject, out RectTransform rectTransform )
+		public static void RectTransform( Transform parent, string name, Vector2 pos, Vector2 size, Vector2 piv, Vector2 amin, Vector2 amax, out GameObject gameObject, out RectTransform rectTransform )
 		{
 			GameObject go = new GameObject( name );
 			RectTransform rt = go.AddComponent<RectTransform>();
 			rt.SetParent( parent );
-			rt.anchorMin = anchorMin;
-			rt.anchorMax = anchorMax;
-			rt.pivot = pivot;
-			rt.anchoredPosition = position;
-			rt.sizeDelta = new Vector2( size.x, size.y );
+			rt.ApplyUIData( new GenericUIData( pos, size, piv, amin, amax ) );
+			gameObject = go;
+			rectTransform = rt;
+
+		}
+
+		public static void RectTransform( Transform parent, string name, GenericUIData data, out GameObject gameObject, out RectTransform rectTransform )
+		{
+			GameObject go = new GameObject( name );
+			RectTransform rt = go.AddComponent<RectTransform>();
+			rt.SetParent( parent );
+			rt.ApplyUIData( data );
 			gameObject = go;
 			rectTransform = rt;
 

@@ -70,7 +70,7 @@ namespace SS.Extras
 			this.meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
 		}
 
-		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot )
+		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, int amountOfResource )
 		{
 			if( def == null )
 			{
@@ -94,6 +94,8 @@ namespace SS.Extras
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
 			resourceDepositComponent.AssignDefinition( def );
+			resourceDepositComponent.amt = amountOfResource;
+			resourceDepositComponent.amtMax = amountOfResource;
 
 			return container;
 		}

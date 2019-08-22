@@ -273,6 +273,7 @@ namespace SS
 
 		private void Start()
 		{
+			
 		}
 
 
@@ -294,25 +295,28 @@ namespace SS
 						Selectable[] selected = SelectionManager.selectedObjects;
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							if( hitDeposit != null )
+							if( selected[i].gameObject.layer == LayerMask.NameToLayer("Units") )
 							{
-								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
-								if( goal != null )
+								if( hitDeposit != null )
 								{
-									DestroyImmediate( goal );
+									TAIGoal goal = selected[i].GetComponent<TAIGoal>();
+									if( goal != null )
+									{
+										DestroyImmediate( goal );
+									}
+									TAIGoal.PickUpResource pickUp = selected[i].gameObject.AddComponent<TAIGoal.PickUpResource>();
+									pickUp.depositToPickUp = hitDeposit;
 								}
-								TAIGoal.PickUpResource pickUp = selected[i].gameObject.AddComponent<TAIGoal.PickUpResource>();
-								pickUp.depositToPickUp = hitDeposit;
-							}
-							else
-							{
-								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
-								if( goal != null )
+								else
 								{
-									DestroyImmediate( goal );
+									TAIGoal goal = selected[i].GetComponent<TAIGoal>();
+									if( goal != null )
+									{
+										DestroyImmediate( goal );
+									}
+									TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
+									moveTo.destination = hitInfo.point;
 								}
-								TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
-								moveTo.destination = hitInfo.point;
 							}
 						}
 					}

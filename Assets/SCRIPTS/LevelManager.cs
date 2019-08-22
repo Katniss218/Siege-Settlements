@@ -146,7 +146,7 @@ namespace SS.Levels
 
 				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
 				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ) );
+					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ), 50 );
 				}
 			}
 			def = DataManager.Get<ResourceDepositDefinition>( "resource_deposit.pine" );
@@ -157,7 +157,7 @@ namespace SS.Levels
 
 				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
 				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ) );
+					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ), 10 );
 				}
 			}
 		}

@@ -2,7 +2,6 @@
 using SS.Data;
 using SS.Projectiles;
 using SS.UI;
-using SS.UI.Elements;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -193,7 +192,7 @@ namespace SS.Units
 			for( int i = 0; i < bdef.Count; i++ )
 			{
 				BuildingDefinition buildingDef = bdef[i];
-				gridElements[i] = UIUtils.CreateButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, new IconData( Color.white ), () =>
+				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, () =>
 				{
 					if( BuildPreview.isActive )
 					{
@@ -205,9 +204,8 @@ namespace SS.Units
 				} );
 			}
 			// Create the actual UI.
-			UIUtils.CreateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT, new TextData( Main.mainFont, 24, TMPro.FontStyles.Normal, TMPro.TextAlignmentOptions.Center, Color.white ) );
-			UIUtils.CreateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), new GridData( 72 ), gridElements );
-
+			UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+			UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 		}
 	}
 }

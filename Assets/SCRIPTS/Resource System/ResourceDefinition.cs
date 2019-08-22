@@ -12,7 +12,7 @@ namespace SS.ResourceSystem
 
 		public Tuple<string, Sprite> icon { get; private set; }
 
-#error needs default deposit type for dropping off resource.
+#warning needs default deposit type for dropping off resource.
 
 		public ResourceDefinition( string id ) : base( id )
 		{
