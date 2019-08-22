@@ -8,6 +8,8 @@ using Katniss.Utils;
 using SS.Data;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using SS.UI;
+using SS.Extras;
 
 namespace SS
 {
@@ -104,6 +106,46 @@ namespace SS
 			{
 				if( __tooltipBackground == null ) { __tooltipBackground = Resources.Load<Sprite>( "Textures/tooltip_background" ); }
 				return __tooltipBackground;
+			}
+		}
+
+		private static Sprite __uiButton = null;
+		public static Sprite uiButton
+		{
+			get
+			{
+				if( __uiButton == null ) { __uiButton = Resources.Load<Sprite>( "Textures/button" ); }
+				return __uiButton;
+			}
+		}
+
+		private static Sprite __uiKnob = null;
+		public static Sprite uiKnob
+		{
+			get
+			{
+				if( __uiKnob == null ) { __uiKnob = Resources.Load<Sprite>( "Textures/knob" ); }
+				return __uiKnob;
+			}
+		}
+
+		private static Sprite __uiScrollArea = null;
+		public static Sprite uiScrollArea
+		{
+			get
+			{
+				if( __uiScrollArea == null ) { __uiScrollArea = Resources.Load<Sprite>( "Textures/scroll_area" ); }
+				return __uiScrollArea;
+			}
+		}
+
+		private static Sprite __uiScrollHandle = null;
+		public static Sprite uiScrollHandle
+		{
+			get
+			{
+				if( __uiScrollHandle == null ) { __uiScrollHandle = Resources.Load<Sprite>( "Textures/scrollbar_handle" ); }
+				return __uiScrollHandle;
 			}
 		}
 
@@ -216,6 +258,19 @@ namespace SS
 			}
 		}
 
+		private static ResourcePanel __resourcePanel = null;
+		public static ResourcePanel resourcePanel
+		{
+			get
+			{
+				if( __resourcePanel == null )
+				{
+					__resourcePanel = FindObjectOfType<ResourcePanel>();
+				}
+				return __resourcePanel;
+			}
+		}
+
 		private void Start()
 		{
 		}
@@ -235,13 +290,29 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
+						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
 						Selectable[] selected = SelectionManager.selectedObjects;
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							NavMeshAgent agent = selected[i].GetComponent<NavMeshAgent>();
-							if( agent != null )
+							if( hitDeposit != null )
 							{
-								agent.SetDestination( hitInfo.point );
+								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
+								if( goal != null )
+								{
+									DestroyImmediate( goal );
+								}
+								TAIGoal.PickUpResource pickUp = selected[i].gameObject.AddComponent<TAIGoal.PickUpResource>();
+								pickUp.depositToPickUp = hitDeposit;
+							}
+							else
+							{
+								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
+								if( goal != null )
+								{
+									DestroyImmediate( goal );
+								}
+								TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
+								moveTo.destination = hitInfo.point;
 							}
 						}
 					}

@@ -1,5 +1,5 @@
 ﻿using SS.Data;
-using SS.ResourceSystem;
+using SS.Units;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -73,6 +73,8 @@ namespace SS.Buildings
 			} );
 			factionMember.factionId = factionId;
 
+			BarracksModule barracks = container.AddComponent<BarracksModule>();
+			barracks.availableUnits = DataManager.GetAllOfType<UnitDefinition>();
 
 			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();

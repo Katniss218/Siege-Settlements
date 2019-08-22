@@ -106,8 +106,29 @@ namespace SS.Units
 			damageable.slashArmor = def.slashArmor;
 			damageable.pierceArmor = def.pierceArmor;
 			damageable.concussionArmor = def.concussionArmor;
-			
 
+			InventoryModule inventory = container.AddComponent<InventoryModule>();
+			inventory.maxCapacity = 45;
+			inventory.onPickup.AddListener( () =>
+			{
+				Debug.Log( "Picked up something" );
+			} );
+			inventory.onDropOff.AddListener( () =>
+			{
+				Debug.Log( "Dropped off something" );
+			} );
+			if( factionId == 0 ) // If player, update the resource panel.
+			{
+				inventory.onPickup.AddListener( () =>
+				{
+					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
+				} );
+				inventory.onDropOff.AddListener( () =>
+				{
+					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
+				} );
+			}
+			
 			// If the unit has the capability to fight, add a target finder to it.
 			ITargetFinder finder = null;
 			if( def.isMelee || def.isRanged )
@@ -140,7 +161,7 @@ namespace SS.Units
 				rangedDamageSource.armorPenetration = def.rangedArmorPenetration;
 
 				RangedModule ranged = container.AddComponent<RangedModule>();
-				ranged.projectile = DataManager.FindDefinition<ProjectileDefinition>( def.rangedProjectileId );
+				ranged.projectile = DataManager.Get<ProjectileDefinition>( def.rangedProjectileId );
 				ranged.projectileCount = def.rangedProjectileCount;
 				ranged.damageSource = rangedDamageSource;
 				ranged.targetFinder = finder;
@@ -157,17 +178,18 @@ namespace SS.Units
 			{
 				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
-
-
+			
 			return container;
 		}
 
 		private static void CivilianOnSelect()
 		{
-			const string TEXT = "Select Building To Place";
+			const string TEXT = "Select building to place...";
 
 			List<BuildingDefinition> bdef = DataManager.GetAllOfType<BuildingDefinition>();
 			GameObject[] gridElements = new GameObject[bdef.Count];
+
+			// Initialize the grid elements' GameObjects.
 			for( int i = 0; i < bdef.Count; i++ )
 			{
 				BuildingDefinition buildingDef = bdef[i];
@@ -182,6 +204,7 @@ namespace SS.Units
 					// TODO ----- change this to priority-queue-based input handler.
 				} );
 			}
+			// Create the actual UI.
 			UIUtils.CreateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT, new TextData( Main.mainFont, 24, TMPro.FontStyles.Normal, TMPro.TextAlignmentOptions.Center, Color.white ) );
 			UIUtils.CreateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), new GridData( 72 ), gridElements );
 

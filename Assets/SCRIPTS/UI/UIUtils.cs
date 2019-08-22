@@ -90,7 +90,7 @@ namespace SS.UI
 
 		public static GameObject CreateScrollableGrid( Transform parent, GenericUIData basicData, GridData specificData, GameObject[] gridContents )
 		{
-			const float HANDLE_WIDTH = 30.0f;
+			const float HANDLE_WIDTH = 19.0f;
 			// scrolling top-bottom
 
 			GameObject container = __CreateUIElement( parent, "Scrollable Grid", basicData );
@@ -110,23 +110,26 @@ namespace SS.UI
 
 
 
-			GameObject scrollbarGameObject = __CreateUIElement( container.transform, "Scrollbar - Vert", new GenericUIData( Vector2.zero, new Vector2( 30, 0 ), new Vector2( 1.0f, 0.5f ), Vector2.right, Vector2.one ) );
+			GameObject scrollbarGameObject = __CreateUIElement( container.transform, "Scrollbar - Vert", new GenericUIData( Vector2.zero, new Vector2( HANDLE_WIDTH, 0 ), new Vector2( 1.0f, 0.5f ), Vector2.right, Vector2.one ) );
 
-			GameObject slidingAreaGameObject = __CreateUIElement( scrollbarGameObject.transform, "Sliding Area", new GenericUIData( Vector2.zero, new Vector2( -20, -20 ), new Vector2( 0.5f, 0.5f ), Vector2.zero, Vector2.one ) );
+			GameObject slidingAreaGameObject = __CreateUIElement( scrollbarGameObject.transform, "Sliding Area", new GenericUIData( Vector2.zero, new Vector2( -8, -8 ), new Vector2( 0.5f, 0.5f ), Vector2.zero, Vector2.one ) );
 
-			GameObject handleGameObject = __CreateUIElement( slidingAreaGameObject.transform, "Handle", new GenericUIData( Vector2.zero, new Vector2( 20, 20 ), new Vector2( 0.5f, 0.5f ), new Vector2( 0.0f, 0.5f ), new Vector2( 1.0f, 0.5f ) ) );
+			GameObject handleGameObject = __CreateUIElement( slidingAreaGameObject.transform, "Handle", new GenericUIData( Vector2.zero, new Vector2( 8, 8 ), new Vector2( 0.5f, 0.5f ), new Vector2( 0.0f, 0.5f ), new Vector2( 1.0f, 0.5f ) ) );
 
 			Image scrollbarImg = slidingAreaGameObject.AddComponent<Image>();
-			scrollbarImg.sprite = null;
-			scrollbarImg.color = Color.gray;
+			scrollbarImg.sprite = Main.uiScrollArea;
+			scrollbarImg.color = Color.white;
+			scrollbarImg.type = Image.Type.Sliced;
 
 			Image handleImg = handleGameObject.AddComponent<Image>();
-			handleImg.sprite = null;
+			handleImg.sprite = Main.uiScrollHandle;
 			handleImg.color = Color.white;
+			handleImg.type = Image.Type.Sliced;
 
 			Scrollbar scrollbar = scrollbarGameObject.AddComponent<Scrollbar>();
 			scrollbar.handleRect = handleGameObject.GetComponent<RectTransform>();
 			scrollbar.direction = Scrollbar.Direction.BottomToTop;
+			scrollbar.targetGraphic = scrollbarImg;
 
 			ScrollRect scrollRect = gridGameObject.AddComponent<ScrollRect>();
 			scrollRect.viewport = container.GetComponent<RectTransform>();

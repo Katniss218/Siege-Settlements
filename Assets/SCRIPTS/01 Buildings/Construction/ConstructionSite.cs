@@ -141,7 +141,7 @@ namespace SS.Buildings
 			}
 
 			ConstructionSite constructionSite = building.AddComponent<ConstructionSite>();
-			constructionSite.AssignResources( DataManager.FindDefinition<BuildingDefinition>( objectBase.id ).cost );
+			constructionSite.AssignResources( DataManager.Get<BuildingDefinition>( objectBase.id ).cost );
 
 			// Set the method for checking progress of the construction.
 			// The construction is directly tied to the building's health.
@@ -166,7 +166,7 @@ namespace SS.Buildings
 				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
-				BuildingDefinition def = DataManager.FindDefinition<BuildingDefinition>( objectBase.id );
+				BuildingDefinition def = DataManager.Get<BuildingDefinition>( objectBase.id );
 				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );

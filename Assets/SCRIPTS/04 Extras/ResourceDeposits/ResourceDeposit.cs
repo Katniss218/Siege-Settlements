@@ -42,6 +42,15 @@ namespace SS.Extras
 
 		}
 
+		public void PickUp( int amt )
+		{
+			this.amt -= amt;
+			if( this.amt <= 0 )
+			{
+				Destroy( this.gameObject );
+			}
+		}
+
 		public void AssignDefinition( ResourceDepositDefinition def )
 		{
 			this.id = def.id;

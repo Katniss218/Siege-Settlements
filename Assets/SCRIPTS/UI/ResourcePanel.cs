@@ -72,13 +72,17 @@ namespace SS.UI
 			
 			entries.Add( id, new ResourceListEntry() { container = containerTransform, text = textText } );
 		}
-
-		private void UpdateEntry( string id, int amount )
+		
+		public void UpdateResourceEntry( string id, int amount )
 		{
 			ResourceListEntry entry;
 			if( entries.TryGetValue( id, out entry ) )
 			{
 				entry.text.text = amount.ToString();
+			}
+			else
+			{
+				throw new System.Exception( "Didn't find resource " + id );
 			}
 		}
 

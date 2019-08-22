@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Buildings;
-using SS.Data;
 using SS.Extras;
 using SS.Projectiles;
 using SS.ResourceSystem;
@@ -13,6 +12,17 @@ namespace SS.Data
 {
 	public static class DataManager
 	{
+		private const string KFF_TNAME_UNITS_LIST = "Units";
+		private const string KFF_TNAME_BUILDINGS_LIST = "Buildings";
+		private const string KFF_TNAME_PROJECTILES_LIST = "Projectiles";
+		private const string KFF_TNAME_RESOURCES_LIST = "Resources";
+		private const string KFF_TNAME_EXTRAS_LIST = "Extras";
+		private const string KFF_TNAME_RESOURCEDEPOSITS_LIST = "ResourceDeposits";
+
+		private static readonly Encoding FILE_ENCODING = Encoding.UTF8;
+
+		private const string DEFINITION_DIRNAME = "Definitions";
+
 		/// <summary>
 		/// Returns the path to the "GameData" directory (Read Only).
 		/// </summary>
@@ -59,7 +69,7 @@ namespace SS.Data
 		/// <typeparam name="T">The type of definitino to return.</typeparam>
 		/// <param name="id">The id of the definition.</param>
 		/// <exception cref="System.Exception">Thrown when the definition is not registered or if the types don't match.</exception>
-		public static T FindDefinition<T>( string id ) where T : Definition
+		public static T Get<T>( string id ) where T : Definition
 		{
 			for( int i = 0; i < registeredDefinitions.Count; i++ )
 			{
@@ -74,7 +84,7 @@ namespace SS.Data
 			}
 			throw new System.Exception( "The definition with id '" + id + "' is not registered." );
 		}
-
+		
 		public static List<T> GetAllOfType<T>() where T : Definition
 		{
 			List<T> ret = new List<T>();
@@ -93,141 +103,135 @@ namespace SS.Data
 		{
 			registeredDefinitions.Clear();
 		}
-
+		
 		private static void LoadUnitDefinitions( string path )
 		{
-
-		}
-
-		private static void LoadBuildingDefinitions( string path )
-		{
-
-		}
-
-		private static void LoadProjectileDefinitions( string path )
-		{
-
-		}
-
-		private static void LoadResourceDefinitions( string path )
-		{
-
-		}
-
-		private static void LoadExtraDefinitions( string path )
-		{
-
-		}
-
-		private static void LoadResourceDepositDefinitions( string path )
-		{
-
-		}
-
-		public static void LoadDefaults()
-		{
-			DataManager.ClearDefinitions();
-
-			string definitionsPath = "Definitions";
-			string definitionsFullPath = GetFullPath( definitionsPath );
-
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Units.kff", Encoding.UTF8 );
-			serializer.Analyze( "Units" );
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_UNITS_LIST );
 			UnitDefinition[] deserialized = new UnitDefinition[serializer.aChildCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
 				deserialized[i] = new UnitDefinition( "unset" );
 			}
-			serializer.DeserializeArray( "Units", deserialized );
+			serializer.DeserializeArray( KFF_TNAME_UNITS_LIST, deserialized );
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserialized[i] );
+			}
+		}
+
+		private static void LoadBuildingDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_BUILDINGS_LIST );
+			BuildingDefinition[] deserialized = new BuildingDefinition[serializer.aChildCount];
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				deserialized[i] = new BuildingDefinition( "unset" );
+			}
+			serializer.DeserializeArray( KFF_TNAME_BUILDINGS_LIST, deserialized );
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserialized[i] );
+			}
+		}
+
+		private static void LoadProjectileDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_PROJECTILES_LIST );
+			ProjectileDefinition[] deserialized = new ProjectileDefinition[serializer.aChildCount];
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				deserialized[i] = new ProjectileDefinition( "unset" );
+			}
+			serializer.DeserializeArray( KFF_TNAME_PROJECTILES_LIST, deserialized );
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
 				DataManager.RegisterDefinition( deserialized[i] );
 			}
 
+		}
 
+		private static void LoadResourceDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_RESOURCES_LIST );
+			ResourceDefinition[] deserialized = new ResourceDefinition[serializer.aChildCount];
 
-			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Buildings.kff", Encoding.UTF8 );
-			serializer.Analyze( "Buildings" );
-			BuildingDefinition[] deserializedB = new BuildingDefinition[serializer.aChildCount];
-
-			for( int i = 0; i < deserializedB.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserializedB[i] = new BuildingDefinition( "unset" );
+				deserialized[i] = new ResourceDefinition( "unset" );
 			}
-			serializer.DeserializeArray( "Buildings", deserializedB );
+			serializer.DeserializeArray( KFF_TNAME_RESOURCES_LIST, deserialized );
 
-			for( int i = 0; i < deserializedB.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				DataManager.RegisterDefinition( deserializedB[i] );
+				DataManager.RegisterDefinition( deserialized[i] );
 			}
+		}
 
+		private static void LoadExtraDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_EXTRAS_LIST );
+			ExtraDefinition[] deserialized = new ExtraDefinition[serializer.aChildCount];
 
-
-			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Projectiles.kff", Encoding.UTF8 );
-			serializer.Analyze( "Projectiles" );
-			ProjectileDefinition[] deserializedP = new ProjectileDefinition[serializer.aChildCount];
-
-			for( int i = 0; i < deserializedP.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserializedP[i] = new ProjectileDefinition( "unset" );
+				deserialized[i] = new ExtraDefinition( "unset" );
 			}
-			serializer.DeserializeArray( "Projectiles", deserializedP );
+			serializer.DeserializeArray( KFF_TNAME_EXTRAS_LIST, deserialized );
 
-			for( int i = 0; i < deserializedP.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				DataManager.RegisterDefinition( deserializedP[i] );
+				DataManager.RegisterDefinition( deserialized[i] );
 			}
+		}
 
-			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Extras.kff", Encoding.UTF8 );
-			serializer.Analyze( "Extras" );
-			ExtraDefinition[] deserializedE = new ExtraDefinition[serializer.aChildCount];
+		private static void LoadResourceDepositDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_RESOURCEDEPOSITS_LIST );
+			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.aChildCount];
 
-			for( int i = 0; i < deserializedE.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserializedE[i] = new ExtraDefinition( "unset" );
+				deserialized[i] = new ResourceDepositDefinition( "unset" );
 			}
-			serializer.DeserializeArray( "Extras", deserializedE );
+			serializer.DeserializeArray( KFF_TNAME_RESOURCEDEPOSITS_LIST, deserialized );
 
-			for( int i = 0; i < deserializedE.Length; i++ )
+			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				DataManager.RegisterDefinition( deserializedE[i] );
+				DataManager.RegisterDefinition( deserialized[i] );
 			}
+		}
 
+		public static void LoadDefaults()
+		{
+			// Clear any residual definitions (if opening another level).
+			DataManager.ClearDefinitions();
 
+			string definitionsFullPath = GetFullPath( DEFINITION_DIRNAME );
+			
+			// Load each type of definition.
+			LoadUnitDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Units.kff" );
 
-			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Resources.kff", Encoding.UTF8 );
-			serializer.Analyze( "Resources" );
-			ResourceDefinition[] deserializedR = new ResourceDefinition[serializer.aChildCount];
+			LoadBuildingDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Buildings.kff" );
+			
+			LoadProjectileDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Projectiles.kff" );
+			
+			LoadResourceDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Resources.kff" );
 
-			for( int i = 0; i < deserializedR.Length; i++ )
-			{
-				deserializedR[i] = new ResourceDefinition( "unset" );
-			}
-			serializer.DeserializeArray( "Resources", deserializedR );
+			LoadExtraDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Extras.kff" );
 
-			for( int i = 0; i < deserializedR.Length; i++ )
-			{
-				DataManager.RegisterDefinition( deserializedR[i] );
-			}
-
-
-			serializer = KFFSerializer.ReadFromFile( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "ResourceDeposits.kff", Encoding.UTF8 );
-			serializer.Analyze( "ResourceDeposits" );
-			ResourceDepositDefinition[] deserializedRD = new ResourceDepositDefinition[serializer.aChildCount];
-
-			for( int i = 0; i < deserializedRD.Length; i++ )
-			{
-				deserializedRD[i] = new ResourceDepositDefinition( "unset" );
-			}
-			serializer.DeserializeArray( "ResourceDeposits", deserializedRD );
-
-			for( int i = 0; i < deserializedRD.Length; i++ )
-			{
-				DataManager.RegisterDefinition( deserializedRD[i] );
-			}
+			LoadResourceDepositDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "ResourceDeposits.kff" );
 		}
 
 		public static void LoadFromLevel( string pathToLevel )
