@@ -27,19 +27,19 @@ namespace SS
 		void Start()
 		{
 			this.size = defaultSize;
-			camera.orthographicSize = this.size;
+			this.camera.orthographicSize = this.size;
 		}
 
 		private void ZoomIn()
 		{
-			size = Mathf.Clamp( --size, minSize, maxSize );
-			camera.orthographicSize = this.size;
+			this.size = Mathf.Clamp( --size, minSize, maxSize );
+			this.camera.orthographicSize = this.size;
 		}
 
 		private void ZoomOut()
 		{
-			size = Mathf.Clamp( ++size, minSize, maxSize );
-			camera.orthographicSize = this.size;
+			this.size = Mathf.Clamp( ++size, minSize, maxSize );
+			this.camera.orthographicSize = this.size;
 		}
 
 		private void Rotate( float amount )
@@ -54,14 +54,13 @@ namespace SS
 
 		private void ResetCam()
 		{
-			size = defaultSize;
-			camera.orthographicSize = this.size;
+			this.size = defaultSize;
+			this.camera.orthographicSize = this.size;
 			this.transform.rotation = Quaternion.Euler( 0, 45, 0 );
 		}
 
 		void Update()
 		{
-
 			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
 				return;

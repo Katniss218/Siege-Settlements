@@ -1,6 +1,33 @@
 ﻿Buildings =
 [
 	{
+		Id = "building.town_center";
+		DisplayName = "Town Center";
+		MaxHealth = 600.0;
+		SlashArmor = 0.3;
+		PierceArmor = 0.3;
+		ConcussionArmor = 0.0;
+		Size = { X = 1.5; Y = 1.0; Z = 1.8; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		IsBarracks = true;
+		BarracksUnits =
+		[
+			"unit.civilian"
+		];
+		IsResearch = false;
+		TechsRequired = [];
+		Mesh = "Models/Buildings/TownCenter.kff";
+		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+		BuildSound = "Sounds/construction_site.wav";
+		DeathSound = "Sounds/building_dest_wood.wav";
+		Icon = "Textures/Buildings/house1_icon";
+	},
+	{
 		Id = "building.house0";
 		DisplayName = "House";
 		MaxHealth = 100.0;

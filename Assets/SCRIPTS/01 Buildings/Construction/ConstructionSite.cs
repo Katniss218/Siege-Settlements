@@ -163,11 +163,11 @@ namespace SS.Buildings
 
 				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 
-				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.2f, 0 );
+				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.125f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
 				BuildingDefinition def = DataManager.Get<BuildingDefinition>( objectBase.id );
-				shape.scale = new Vector3( def.size.x, 0.4f, def.size.z );
+				shape.scale = new Vector3( def.size.x, 0.25f, def.size.z );
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
