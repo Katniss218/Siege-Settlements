@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS
 {
-	[RequireComponent(typeof(FactionMember))]
+	[RequireComponent( typeof( FactionMember ) )]
 	public class ResearchModule : MonoBehaviour
 	{
 		public TechnologyDefinition tech { get; private set; }
@@ -42,8 +42,17 @@ namespace SS
 
 			if( selectable != null )
 			{
+
 				selectable.onSelect.AddListener( () =>
 				{
+					Damageable d = this.GetComponent<Damageable>();
+					// If the research facility is not usable.
+					if( d != null && !Buildings.Building.CheckUsable( d ) )
+					{
+						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Building is damaged (<50% HP)" );
+
+						return;
+					}
 					if( this.isResearching )
 					{
 						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Technology being researched: " + this.tech.displayName );
@@ -76,6 +85,7 @@ namespace SS
 						UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements.ToArray() );
 					}
 				} );
+
 			}
 		}
 

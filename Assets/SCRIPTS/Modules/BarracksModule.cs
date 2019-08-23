@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS
 {
-	[RequireComponent(typeof( FactionMember ) )]
+	[RequireComponent( typeof( FactionMember ) )]
 	public class BarracksModule : MonoBehaviour
 	{
 		public UnitDefinition[] spawnableUnits;
@@ -27,10 +27,19 @@ namespace SS
 
 			if( selectable != null )
 			{
+
 				selectable.onSelect.AddListener( () =>
 				{
+					Damageable d = this.GetComponent<Damageable>();
+					// If the barracks are not usable.
+					if( d != null && !Buildings.Building.CheckUsable( d ) )
+					{
+						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Building is damaged (<50% HP)" );
+
+						return;
+					}
 					const string TEXT = "Select unit to make...";
-					
+
 					GameObject[] gridElements = new GameObject[spawnableUnits.Length];
 					// Initialize the grid elements' GameObjects.
 					for( int i = 0; i < spawnableUnits.Length; i++ )
@@ -54,6 +63,7 @@ namespace SS
 					UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 
 				} );
+
 			}
 		}
 

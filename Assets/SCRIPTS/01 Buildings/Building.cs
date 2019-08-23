@@ -13,6 +13,16 @@ namespace SS.Buildings
 		private static float USABILITY_THRESHOLD = 0.5f;
 
 
+		public static bool CheckUsable( Damageable building )
+		{
+			// Building's can't be used when they are being constructed/repaired or in the state of not-usable (<USABILITY_THRESHOLD% HP).
+			if( building.GetComponent<ConstructionSite>() != null )
+			{
+				return false;
+			}
+			return building.healthPercent >= 0.5f;
+		}
+
 
 		public static GameObject Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
 		{
