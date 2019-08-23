@@ -18,7 +18,7 @@ namespace SS
 			this.name = "<missing>";
 			this.color = Color.black;
 			this.techs = new Dictionary<string, TechnologyResearchProgress>();
-			this.SetTechsUnresearched();
+			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 		}
 
 		public Faction( string name, Color color )
@@ -26,15 +26,15 @@ namespace SS
 			this.name = name;
 			this.color = color;
 			this.techs = new Dictionary<string, TechnologyResearchProgress>();
-			this.SetTechsUnresearched();
+			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 		}
 
-		private void SetTechsUnresearched()
+		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState )
 		{
 			List<TechnologyDefinition> technologiesLoaded = DataManager.GetAllOfType<TechnologyDefinition>();
 			for( int i = 0; i < technologiesLoaded.Count; i++ )
 			{
-				techs.Add( technologiesLoaded[i].id, TechnologyResearchProgress.Available );
+				techs.Add( technologiesLoaded[i].id, defaultState );
 			}
 		}
 		
@@ -42,6 +42,8 @@ namespace SS
 		{
 			this.name = serializer.ReadString( "Name" );
 			this.color = serializer.ReadColor( "Color" );
+
+			// TODO ----- serialize techs.
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
