@@ -24,16 +24,20 @@ namespace SS
 					Selectable obj = GetSelectableAtCursor();
 					if( obj != null )
 					{
-						if( SelectionManager.IsSelected( obj ) )
+						FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
+						if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
 						{
-							if( !SelectionManager.IsHighlighted( obj ) )
+							if( SelectionManager.IsSelected( obj ) )
 							{
-								SelectionManager.HighlightSelected( obj );
+								if( !SelectionManager.IsHighlighted( obj ) )
+								{
+									SelectionManager.HighlightSelected( obj );
+								}
 							}
-						}
-						else
-						{
-							SelectionManager.SelectAndHighlight( obj );
+							else
+							{
+								SelectionManager.SelectAndHighlight( obj );
+							}
 						}
 					}
 				}
@@ -45,7 +49,11 @@ namespace SS
 					Selectable obj = GetSelectableAtCursor();
 					if( obj != null )
 					{
-						SelectionManager.SelectAndHighlight( obj );
+						FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
+						if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
+						{
+							SelectionManager.SelectAndHighlight( obj );
+						}
 					}
 				}
 			}

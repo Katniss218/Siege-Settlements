@@ -1,13 +1,7 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using SS.Buildings;
-using UnityEngine.AI;
-using SS.ResourceSystem;
-using Katniss.Utils;
-using SS.Data;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using SS.UI;
 using SS.Extras;
 
@@ -27,7 +21,7 @@ namespace SS
 		// onlevelload - when the level is loaded
 		// onpostlevelload - after definitions have been initialized.
 		// 
-		// TODO ----- Move these fields somewhere else.
+		// TODO ----- Move these fields to AssetsManager.
 		private static GameObject __unitUI = null;
 		public static GameObject unitUI
 		{

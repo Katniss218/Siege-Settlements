@@ -1041,6 +1041,16 @@
             Returns the number of child tags/payloads of the analyzed object. Returns 0 if the object is primitive (Read Only).
             </summary>
         </member>
+        <member name="P:KFF.KFFSerializer.aSuccess">
+            <summary>
+            Checks if the analysis found a tag or payload at the specified path.
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.aFail">
+            <summary>
+            Checks if the analysis FAILED to find a tag or payload at the specified path.
+            </summary>
+        </member>
         <member name="P:KFF.KFFSerializer.aIsTag">
             <summary>
             Returns true if the current analyzed object is a tag, false otherwise.

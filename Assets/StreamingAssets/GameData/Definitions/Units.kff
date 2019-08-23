@@ -1,40 +1,37 @@
 ﻿Units =
 [
 	{
-		Id = "unit.civilian";
-		DisplayName = "Civilian";
-		MaxHealth = 70.0;
+		Id = "unit.wolf";
+		DisplayName = "Wolf";
+		MaxHealth = 40.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
+		IsMelee = true;
+		MeleeData =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.5;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.8;
+			AttackSound = "Sounds/melee.wav";
+		};
 		IsRanged = false;
-		MovementSpeed = 0.35;
+		MovementSpeed = 0.4;
 		RotationSpeed = 120;
-		Radius = 0.375;
+		Radius = 0.25;
 		Height = 0.1875;
-		//InventorySize = 45;
+		//InventorySize = 0;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitSquare.kff";
-		AlbedoTexture = "Textures/Units/civilian_albedo.png";
-		NormalTexture = "Textures/Units/unit_normal.png";
-		Icon = "Textures/Buildings/house0_icon";
-	},
-	{
-		Id = "unit.civilian_employed";
-		DisplayName = "Employed Civilian";
-		MaxHealth = 70.0;
-		SlashArmor = 0.0;
-		PierceArmor = 0.0;
-		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = false;
-		MovementSpeed = 0.35;
-		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
-		//InventorySize = 45;
-		Mesh = "Models/UnitSquare.kff";
-		AlbedoTexture = "Textures/Units/civilian_employed_albedo.png";
+		AlbedoTexture = "Textures/Units/wolf_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 		Icon = "Textures/Buildings/house0_icon";
 	},
@@ -62,6 +59,13 @@
 		Radius = 0.375;  // The physical size of the unit (hitbox)
 		Height = 0.1875; // The physical size of the unit (hitbox)
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -90,6 +94,13 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -118,6 +129,13 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/light_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -146,6 +164,13 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -180,6 +205,15 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/bowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -214,6 +248,15 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/crossbowmen_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -248,36 +291,69 @@
 		Radius = 0.375;
 		Height = 0.1875;
 		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitRectangle.kff";
 		AlbedoTexture = "Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 		Icon = "Textures/Units/mounted_archers_icon";
 	},
 	{
-		Id = "unit.wolf";
-		DisplayName = "Wolf";
-		MaxHealth = 40.0;
+		Id = "unit.civilian";
+		DisplayName = "Civilian";
+		MaxHealth = 70.0;
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = true;
-		MeleeData =
-		{
-			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
-			Damage = 2.5;
-			ArmorPenetration = 0.0;
-			AttackRange = 0.6;
-			AttackCooldown = 0.8;
-			AttackSound = "Sounds/melee.wav";
-		};
+		IsMelee = false;
 		IsRanged = false;
-		MovementSpeed = 0.4;
+		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.25;
+		Radius = 0.375;
 		Height = 0.1875;
-		//InventorySize = 0;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
 		Mesh = "Models/UnitSquare.kff";
-		AlbedoTexture = "Textures/Units/wolf_albedo.png";
+		AlbedoTexture = "Textures/Units/civilian_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Buildings/house0_icon";
+	},
+	{
+		Id = "unit.civilian_employed";
+		DisplayName = "Employed Civilian";
+		MaxHealth = 70.0;
+		SlashArmor = 0.0;
+		PierceArmor = 0.0;
+		ConcussionArmor = 0.0;
+		IsMelee = false;
+		IsRanged = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 300; },
+			{ Id = "resource.stone"; Amount = 200; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "Models/UnitSquare.kff";
+		AlbedoTexture = "Textures/Units/civilian_employed_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 		Icon = "Textures/Buildings/house0_icon";
 	}

@@ -11,6 +11,7 @@ namespace SS.UI
 	/// </summary>
 	public static class UIUtils
 	{
+		// TODO ----- Move these fields to AssetsManager.
 		private static GameObject __text = null;
 		private static GameObject text
 		{
@@ -124,6 +125,10 @@ namespace SS.UI
 
 			Button button = obj.GetComponent<Button>();
 			button.onClick.AddListener( onClick );
+			if( onClick == null )
+			{
+				button.interactable = false;
+			}
 
 			return obj;
 		}
@@ -139,6 +144,10 @@ namespace SS.UI
 
 			Button button = obj.GetComponent<Button>();
 			button.onClick.AddListener( onClick );
+			if( onClick == null )
+			{
+				button.interactable = false;
+			}
 
 			return obj;
 		}

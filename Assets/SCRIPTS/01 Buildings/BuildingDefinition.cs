@@ -2,13 +2,14 @@
 using KFF;
 using SS.Data;
 using SS.ResourceSystem;
+using SS.Technologies;
 using System;
 using UnityEngine;
 
 namespace SS.Buildings
 {
 	[Serializable]
-	public class BuildingDefinition : Definition
+	public class BuildingDefinition : Definition, ITechsRequired
 	{
 		public string displayName { get; set; }
 
@@ -20,6 +21,11 @@ namespace SS.Buildings
 		public Vector3 size { get; set; }
 
 		public ResourceStack[] cost { get; private set; }
+
+		public bool isBarracks { get; set; }
+		public string[] barracksUnits { get; set; }
+		public bool isResearch { get; set; }
+		public string[] techsRequired { get; private set; } // the default techs required to unlock.
 
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
@@ -46,16 +52,22 @@ namespace SS.Buildings
 
 			serializer.Analyze( "Cost" );
 			this.cost = new ResourceStack[serializer.aChildCount];
-			for( int i = 0; i< this.cost.Length; i++ )
+			for( int i = 0; i < this.cost.Length; i++ )
 			{
-				this.cost[i] = new ResourceStack("unused", 0 );
+				this.cost[i] = new ResourceStack( "unused", 0 );
 			}
 			serializer.DeserializeArray( "Cost", this.cost );
+
+			this.isBarracks = serializer.ReadBool( "IsBarracks" );
+			if( isBarracks )
+				this.barracksUnits = serializer.ReadStringArray( "BarracksUnits" );
+			this.isResearch = serializer.ReadBool( "IsResearch" );
+			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
-			
+
 			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );
 			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
 
@@ -72,6 +84,14 @@ namespace SS.Buildings
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.SerializeArray( "", "Cost", this.cost );
+
+			serializer.WriteBool( "", "IsBarracks", this.isBarracks );
+			if( isBarracks )
+			{
+				serializer.WriteStringArray( "", "BarracksUnits", barracksUnits );
+			}
+			serializer.WriteBool( "", "IsResearch", this.isResearch );
+			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );

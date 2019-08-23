@@ -98,7 +98,10 @@ namespace SS.Units
 				// when the scale reaches 0.x, remove the piece.
 
 				// also, play a poof from some particle system for smoke or something at the moment of death.
-				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				if( SelectionManager.IsSelected( selectable ) )
+				{
+					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				}
 
 			} );
 			damageable.SetMaxHealth( def.healthMax, true );
@@ -192,16 +195,25 @@ namespace SS.Units
 			for( int i = 0; i < bdef.Count; i++ )
 			{
 				BuildingDefinition buildingDef = bdef[i];
-				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, () =>
+
+				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
+				if( Technologies.TechLock.CheckLocked( buildingDef, FactionManager.factions[0].techs ) )
 				{
-					if( BuildPreview.isActive )
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, null );
+				}
+				else
+				{
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, () =>
 					{
-						return;
-					}
-					BuildPreview.Create( buildingDef );
-					SelectionManager.DeselectAll(); // deselect everything when the preview is active, to stop weird glitches from happening.
-					// TODO ----- change this to priority-queue-based input handler.
-				} );
+						if( BuildPreview.isActive )
+						{
+							return;
+						}
+						BuildPreview.Create( buildingDef );
+						SelectionManager.DeselectAll(); // deselect everything when the preview is active, to stop weird glitches from happening.
+														// TODO ----- change this to priority-queue-based input handler.
+					} );
+				}
 			}
 			// Create the actual UI.
 			UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );

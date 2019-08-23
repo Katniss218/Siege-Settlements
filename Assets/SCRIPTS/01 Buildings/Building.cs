@@ -73,8 +73,19 @@ namespace SS.Buildings
 			} );
 			factionMember.factionId = factionId;
 
-			BarracksModule barracks = container.AddComponent<BarracksModule>();
-			barracks.availableUnits = DataManager.GetAllOfType<UnitDefinition>();
+			if( def.isBarracks )
+			{
+				BarracksModule barracks = container.AddComponent<BarracksModule>();
+				barracks.spawnableUnits = new UnitDefinition[def.barracksUnits.Length];// DataManager.GetAllOfType<UnitDefinition>();
+				for( int i = 0; i < barracks.spawnableUnits.Length; i++ )
+				{
+					barracks.spawnableUnits[i] = DataManager.Get<UnitDefinition>( def.barracksUnits[i] );
+				}
+			}
+			if( def.isResearch )
+			{
+				ResearchModule research = container.AddComponent<ResearchModule>();
+			}
 
 			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
@@ -94,7 +105,10 @@ namespace SS.Buildings
 			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( ui.gameObject );
-				SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				if( SelectionManager.IsSelected( selectable ) )
+				{
+					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				}
 				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
 			} );
 

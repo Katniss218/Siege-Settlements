@@ -3,6 +3,7 @@ using SS.Buildings;
 using SS.Extras;
 using SS.Projectiles;
 using SS.ResourceSystem;
+using SS.Technologies;
 using SS.Units;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +19,7 @@ namespace SS.Data
 		private const string KFF_TNAME_RESOURCES_LIST = "Resources";
 		private const string KFF_TNAME_EXTRAS_LIST = "Extras";
 		private const string KFF_TNAME_RESOURCEDEPOSITS_LIST = "ResourceDeposits";
+		private const string KFF_TNAME_TECHNOLOGIES_LIST = "Technologies";
 
 		private static readonly Encoding FILE_ENCODING = Encoding.UTF8;
 
@@ -213,6 +215,25 @@ namespace SS.Data
 			}
 		}
 
+		private static void LoadTechnologyDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			serializer.Analyze( KFF_TNAME_TECHNOLOGIES_LIST );
+			TechnologyDefinition[] deserialized = new TechnologyDefinition[serializer.aChildCount];
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				deserialized[i] = new TechnologyDefinition( "unset" );
+			}
+			serializer.DeserializeArray( KFF_TNAME_TECHNOLOGIES_LIST, deserialized );
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserialized[i] );
+			}
+
+		}
+
 		public static void LoadDefaults()
 		{
 			// Clear any residual definitions (if opening another level).
@@ -232,6 +253,8 @@ namespace SS.Data
 			LoadExtraDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Extras.kff" );
 
 			LoadResourceDepositDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "ResourceDeposits.kff" );
+
+			LoadTechnologyDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Technologies.kff" );
 		}
 
 		public static void LoadFromLevel( string pathToLevel )

@@ -1,0 +1,33 @@
+﻿Technologies =
+[
+	{
+		Id = "technology.weaponry";
+		DisplayName = "Weaponry";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 50; }
+		];
+		Icon = "Textures/Buildings/house0_icon";
+	},
+	{
+		Id = "technology.horse_riding";
+		DisplayName = "Horse Riding";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 50; }
+		];
+		Icon = "Textures/Buildings/house1_icon";
+	},
+	{
+		Id = "technology.archery";
+		DisplayName = "Archery";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 50; }
+		];
+		Icon = "Textures/Buildings/house0_icon";
+	}
+];

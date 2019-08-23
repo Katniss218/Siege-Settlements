@@ -1,12 +1,14 @@
 ﻿using Katniss.Utils;
 using KFF;
 using SS.Data;
+using SS.ResourceSystem;
+using SS.Technologies;
 using System;
 using UnityEngine;
 
 namespace SS.Units
 {
-	public class UnitDefinition : Definition
+	public class UnitDefinition : Definition, ITechsRequired
 	{
 		// Basic.
 		public string displayName { get; set; }
@@ -46,7 +48,11 @@ namespace SS.Units
 
 		public float radius { get; set; }
 		public float height { get; set; }
-		
+
+		public ResourceStack[] cost { get; private set; }
+		public float buildTime { get; private set; }
+		public string[] techsRequired { get; private set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
+
 		// Display-related
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
@@ -98,6 +104,16 @@ namespace SS.Units
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
 
+			serializer.Analyze( "Cost" );
+			this.cost = new ResourceStack[serializer.aChildCount];
+			for( int i = 0; i < this.cost.Length; i++ )
+			{
+				this.cost[i] = new ResourceStack( "unused", 0 );
+			}
+			serializer.DeserializeArray( "Cost", this.cost );
+			this.buildTime = serializer.ReadFloat( "BuildTime" );
+			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
+
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
@@ -145,6 +161,10 @@ namespace SS.Units
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
+
+			serializer.SerializeArray( "", "Cost", this.cost );
+			serializer.WriteFloat( "", "BuildTime", this.buildTime );
+			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );

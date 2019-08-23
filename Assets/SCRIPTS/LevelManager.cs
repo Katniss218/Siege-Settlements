@@ -2,6 +2,7 @@
 using SS.Data;
 using SS.Extras;
 using SS.Units;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -39,125 +40,40 @@ namespace SS.Levels
 
 		public void Start()
 		{
-			// Spawn the GameObject to the scene.
-			Unit.Create( DataManager.Get<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0 );
-			
-			ExtraDefinition defe = DataManager.Get<ExtraDefinition>( "extra.grass" );
-			for( int i = 0; i < 600; i++ )
+			List<UnitDefinition> units = DataManager.GetAllOfType<UnitDefinition>();
+			for( int i = 0; i < units.Count; i++ )
 			{
-				Extra.Create( defe, new Vector3( UnityEngine.Random.Range( -25f, 25f ), 0, UnityEngine.Random.Range( -25f, 25f ) ), Quaternion.identity );
-			}
-
-			UnitDefinition defx = DataManager.Get<UnitDefinition>( "unit.civilian" );
-			for( int i = 0; i < 6; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -12f, -7f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 6; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 7f, 12f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.civilian_employed" );
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -12f, -7f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 7f, 12f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.light_infantry" );
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.heavy_infantry" );
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.light_cavalry" );
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.heavy_cavalry" );
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -7f, 0f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 0f, 7f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.bowmen" );
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 4; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.crossbowmen" );
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 3; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), Quaternion.identity, 0 );
-			}
-
-			defx = DataManager.Get<UnitDefinition>( "unit.mounted_archers" );
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( -10f, -3f ) ), Quaternion.identity, 1 );
-			}
-			for( int i = 0; i < 2; i++ )
-			{
-				Unit.Create( defx, new Vector3( UnityEngine.Random.Range( -10f, 10f ), 0, UnityEngine.Random.Range( 3f, 10f ) ), Quaternion.identity, 0 );
-			}
-
-			ResourceDepositDefinition def = DataManager.Get<ResourceDepositDefinition>( "resource_deposit.tree" );
-			for( int i = 0; i < 75; i++ )
-			{
-				float x = UnityEngine.Random.Range( -10f, 10f );
-				float z = UnityEngine.Random.Range( -10f, 10f );
-
-				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
+				for( int j = 0; j < 4; j++ )
 				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ), 50 );
+					Unit.Create( units[i], new Vector3( Random.Range( -10f, 10f ), 0, Random.Range( i, 2 * i ) ), Quaternion.identity, 0 );
+					Unit.Create( units[i], new Vector3( Random.Range( -10f, 10f ), 0, Random.Range( -2*i, -i ) ), Quaternion.identity, 1 );
 				}
 			}
-			def = DataManager.Get<ResourceDepositDefinition>( "resource_deposit.pine" );
-			for( int i = 0; i < 50; i++ )
-			{
-				float x = UnityEngine.Random.Range( -10f, 10f );
-				float z = UnityEngine.Random.Range( -10f, 10f );
+			// Spawn the GameObject to the scene.
+			//Unit.Create( DataManager.Get<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0 );
 
-				if( Physics.Raycast( new Vector3( x, 50, z ), Vector3.down, out RaycastHit hit, 100 ) )
+			List<ExtraDefinition> extras = DataManager.GetAllOfType<ExtraDefinition>();
+			for( int i = 0; i < extras.Count; i++ )
+			{
+				for( int j = 0; j < 400; j++ )
 				{
-					ResourceDeposit.Create( def, hit.point, Quaternion.Euler( 0f, UnityEngine.Random.Range( -180f, 180f ), 0f ), 10 );
+					Extra.Create( extras[i], new Vector3( Random.Range( -25f, 25f ), 0, Random.Range( -25f, 25f ) ), Quaternion.identity );
+					Extra.Create( extras[i], new Vector3( Random.Range( -25f, 25f ), 0, Random.Range( -25f, 25f ) ), Quaternion.identity );
+				}
+			}
+
+			List<ResourceDepositDefinition> deposits = DataManager.GetAllOfType<ResourceDepositDefinition>();
+			for( int i = 0; i < deposits.Count; i++ )
+			{
+				for( int j = 0; j < 100; j++ )
+				{
+					float x = Random.Range( -10f, 10f );
+					float z = Random.Range( -10f, 10f );
+
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
+					{
+						ResourceDeposit.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 50 );
+					}
 				}
 			}
 		}

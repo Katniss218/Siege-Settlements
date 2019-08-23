@@ -13,6 +13,9 @@
 			{ Id = "resource.wood"; Amount = 300; },
 			{ Id = "resource.stone"; Amount = 200; }
 		];
+		IsBarracks = false;
+		IsResearch = true;
+		TechsRequired = [];
 		Mesh = "Models/Buildings/House.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
@@ -21,9 +24,9 @@
 		Icon = "Textures/Buildings/house0_icon";
 	},
 	{
-		Id = "building.house1";
-		DisplayName = "Bigger House";
-		MaxHealth = 250.0;
+		Id = "building.barracks";
+		DisplayName = "Barracks";
+		MaxHealth = 350.0;
 		SlashArmor = 0.3;
 		PierceArmor = 0.3;
 		ConcussionArmor = 0.0;
@@ -32,6 +35,50 @@
 		[
 			{ Id = "resource.wood"; Amount = 500; },
 			{ Id = "resource.stone"; Amount = 450; }
+		];
+		IsBarracks = true;
+		BarracksUnits =
+		[
+			"unit.light_infantry",
+			"unit.heavy_infantry",
+			"unit.bowmen",
+			"unit.crossbowmen"
+		];
+		IsResearch = false;
+		TechsRequired = [
+			"technology.weaponry"
+		];
+		Mesh = "Models/Buildings/House.kff";
+		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+		BuildSound = "Sounds/construction_site.wav";
+		DeathSound = "Sounds/building_dest_wood.wav";
+		Icon = "Textures/Buildings/house1_icon";
+	},
+	{
+		Id = "building.stables";
+		DisplayName = "Stables";
+		MaxHealth = 400.0;
+		SlashArmor = 0.3;
+		PierceArmor = 0.3;
+		ConcussionArmor = 0.0;
+		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 500; },
+			{ Id = "resource.stone"; Amount = 450; }
+		];
+		IsBarracks = true;
+		BarracksUnits =
+		[
+			"unit.light_cavalry",
+			"unit.heavy_cavalry",
+			"unit.mounted_archers"
+		];
+		IsResearch = false;
+		TechsRequired =
+		[
+			"technology.horse_riding"
 		];
 		Mesh = "Models/Buildings/House.kff";
 		AlbedoTexture = "Textures/Units/heavy_cavalry_albedo.png";

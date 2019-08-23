@@ -8,7 +8,7 @@ namespace SS
 	[RequireComponent(typeof( FactionMember ) )]
 	public class BarracksModule : MonoBehaviour
 	{
-		public List<UnitDefinition> availableUnits = new List<UnitDefinition>();
+		public UnitDefinition[] spawnableUnits;
 
 		List<UnitDefinition> buildOrderDef = new List<UnitDefinition>();
 		List<float> buildOrderTimes = new List<float>();
@@ -31,15 +31,23 @@ namespace SS
 				{
 					const string TEXT = "Select unit to make...";
 					
-					GameObject[] gridElements = new GameObject[availableUnits.Count];
+					GameObject[] gridElements = new GameObject[spawnableUnits.Length];
 					// Initialize the grid elements' GameObjects.
-					for( int i = 0; i < availableUnits.Count; i++ )
+					for( int i = 0; i < spawnableUnits.Length; i++ )
 					{
-						UnitDefinition unitDef = this.availableUnits[i];
-						gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, () =>
+						UnitDefinition unitDef = this.spawnableUnits[i];
+						// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
+						if( Technologies.TechLock.CheckLocked( unitDef, FactionManager.factions[0].techs ) )
 						{
-							AddUnitToBuildOrder( unitDef, 3 );
-						} );
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, null );
+						}
+						else
+						{
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, () =>
+							{
+								AddUnitToBuildOrder( unitDef, 3 );
+							} );
+						}
 					}
 					// Create the actual UI.
 					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
