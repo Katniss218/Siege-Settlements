@@ -3,6 +3,7 @@ using SS.ResourceSystem;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Katniss.Utils;
 
 namespace SS.Buildings
 {
@@ -130,8 +131,9 @@ namespace SS.Buildings
 		/// </summary>
 		public static void StartConstructionOrRepair( GameObject building )
 		{
-			ObjectBase objectBase = building.GetComponent<ObjectBase>();
+			Building buildingComp = building.GetComponent<Building>();
 			Damageable damageable = building.GetComponent<Damageable>();
+			MeshRenderer meshRenderer = building.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
 			// Repairing is mandatory once the building's health drops below 50%.
 			// And allowed anytime the health is below 100%.
@@ -141,7 +143,7 @@ namespace SS.Buildings
 			}
 
 			ConstructionSite constructionSite = building.AddComponent<ConstructionSite>();
-			constructionSite.AssignResources( DataManager.Get<BuildingDefinition>( objectBase.id ).cost );
+			constructionSite.AssignResources( buildingComp.cachedDefinition.cost );
 
 			// Set the method for checking progress of the construction.
 			// The construction is directly tied to the building's health.
@@ -150,7 +152,7 @@ namespace SS.Buildings
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
 			constructionSite.onConstructionStart.AddListener( () =>
 			{
-				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 			} );
 
 			// Every time the construction progresses:
@@ -161,22 +163,22 @@ namespace SS.Buildings
 			{
 				damageable.Heal( constructionSite.GetHealthPercentGained( stack.amount ) * damageable.healthMax );
 
-				objectBase.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 
 				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.125f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
-				BuildingDefinition def = DataManager.Get<BuildingDefinition>( objectBase.id );
-				shape.scale = new Vector3( def.size.x, 0.25f, def.size.z );
+				//BuildingDefinition def = DataManager.Get<BuildingDefinition>( objectBase.id );
+				shape.scale = new Vector3( buildingComp.cachedDefinition.size.x, 0.25f, buildingComp.cachedDefinition.size.z );
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
-				AudioManager.PlayNew( def.buildSoundEffect.Item2, 0.5f, 1.0f );
+				AudioManager.PlayNew( buildingComp.cachedDefinition.buildSoundEffect.Item2, 0.5f, 1.0f );
 			} );
 
 			// When the construction is completed, set the _Progress attribute to fully built.
 			constructionSite.onConstructionComplete.AddListener( () =>
 			{
-				objectBase.meshRenderer.material.SetFloat( "_Progress", 1f );
+				meshRenderer.material.SetFloat( "_Progress", 1f );
 			} );
 		}
 	}

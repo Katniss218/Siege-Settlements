@@ -22,8 +22,8 @@ namespace SS.Levels
 			// Load the per-level data & assets.
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path + System.IO.Path.DirectorySeparatorChar + "level.kff", System.Text.Encoding.UTF8 );
 
-			serializer.Analyze( "Factions" );
-			Faction[] fac = new Faction[serializer.aChildCount];
+			var analysisData = serializer.Analyze( "Factions" );
+			Faction[] fac = new Faction[analysisData.childCount];
 
 			for( int i = 0; i < fac.Length; i++ )
 			{

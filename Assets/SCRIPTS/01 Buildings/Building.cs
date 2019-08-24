@@ -5,12 +5,17 @@ using UnityEngine.AI;
 
 namespace SS.Buildings
 {
-	public static class Building
+	public class Building : MonoBehaviour
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		private static float STARTING_HEALTH_PERCENT = 0.1f;
 		// If a building drops below this value, it can't be used, and needs to be repaired.
 		private static float USABILITY_THRESHOLD = 0.5f;
+
+		/// <summary>
+		/// Contains all of the original values for this building. Might be not accurate to the overriden values on GameObjects (Read Only).
+		/// </summary>
+		public BuildingDefinition cachedDefinition { get; private set; }
 
 
 		public static bool CheckUsable( Damageable building )
@@ -56,8 +61,8 @@ namespace SS.Buildings
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
 			// Assign the definition to the building, so it can be accessed later.
-			ObjectBase objectBase = container.AddComponent<ObjectBase>();
-			objectBase.id = def.id;
+			Building building = container.AddComponent<Building>();
+			building.cachedDefinition = def;
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
@@ -86,7 +91,7 @@ namespace SS.Buildings
 			if( def.isBarracks )
 			{
 				BarracksModule barracks = container.AddComponent<BarracksModule>();
-				barracks.spawnableUnits = new UnitDefinition[def.barracksUnits.Length];// DataManager.GetAllOfType<UnitDefinition>();
+				barracks.spawnableUnits = new UnitDefinition[def.barracksUnits.Length];
 				for( int i = 0; i < barracks.spawnableUnits.Length; i++ )
 				{
 					barracks.spawnableUnits[i] = DataManager.Get<UnitDefinition>( def.barracksUnits[i] );

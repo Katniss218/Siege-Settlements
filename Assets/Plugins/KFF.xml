@@ -977,6 +977,36 @@
             </para>
             </summary>
         </member>
+        <member name="T:KFF.KFFSerializer.AnalysisData">
+            <summary>
+            Contains the results of the analysis operation.
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.AnalysisData.isSuccess">
+            <summary>
+            True if the analysis found a tag or payload at the specified path (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.AnalysisData.isFail">
+            <summary>
+            Checks if the analysis DIDN'T found any tags or payloads at the specified path (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.AnalysisData.childCount">
+            <summary>
+            Contains the number of children (nested objects) of the analyzed object (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.AnalysisData.isTag">
+            <summary>
+            Is true if the current analyzed object is a tag, false otherwise (Read Only).
+            </summary>
+        </member>
+        <member name="P:KFF.KFFSerializer.AnalysisData.isPayload">
+            <summary>
+            Is true if the current analyzed object is a payload, false otherwise (Read Only).
+            </summary>
+        </member>
         <member name="P:KFF.KFFSerializer.scopeRoot">
             <summary>
             Contains the root object of the current scope. Either a tag or payload. You shouldn't mess with this, unless you know what you are doing.
@@ -1028,38 +1058,12 @@
         </member>
         <member name="M:KFF.KFFSerializer.Analyze(KFF.Path)">
             <summary>
-            Analyzes an object at the end of the path. Returns true if a path is valid, and leads to a valid KFF object.
+            Performs an Analysis operation on the object at the end of the path. Returns true if a path is valid, and leads to a valid KFF object.
             <para>
-            You can use this in conjunction with other methods to obtain information about objects inside a KFF file.
+            You can use this to obtain information about objects inside a KFF file.
             </para>
             </summary>
-            <param name="path"></param>
-            <returns></returns>
-        </member>
-        <member name="P:KFF.KFFSerializer.aChildCount">
-            <summary>
-            Returns the number of child tags/payloads of the analyzed object. Returns 0 if the object is primitive (Read Only).
-            </summary>
-        </member>
-        <member name="P:KFF.KFFSerializer.aSuccess">
-            <summary>
-            Checks if the analysis found a tag or payload at the specified path.
-            </summary>
-        </member>
-        <member name="P:KFF.KFFSerializer.aFail">
-            <summary>
-            Checks if the analysis FAILED to find a tag or payload at the specified path.
-            </summary>
-        </member>
-        <member name="P:KFF.KFFSerializer.aIsTag">
-            <summary>
-            Returns true if the current analyzed object is a tag, false otherwise.
-            </summary>
-        </member>
-        <member name="P:KFF.KFFSerializer.aIsPayload">
-            <summary>
-            Returns true if the current analyzed object is a payload, false otherwise.
-            </summary>
+            <param name="path">The path to the object to analyze.</param>
         </member>
         <member name="M:KFF.KFFSerializer.WriteBool(KFF.Path,System.String,System.Boolean)">
             <summary>

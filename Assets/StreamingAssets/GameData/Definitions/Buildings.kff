@@ -13,12 +13,17 @@
 			{ Id = "resource.wood"; Amount = 300; },
 			{ Id = "resource.stone"; Amount = 200; }
 		];
-		IsBarracks = true;
-		BarracksUnits =
-		[
-			"unit.civilian"
-		];
-		IsResearch = false;
+		// Controls the barracks module of the building. remove this to disable functionality.
+		BarracksModule =
+		{
+			CreatableUnits =
+			[
+				"unit.civilian"
+			];
+		};
+		// Controls the research module of the building. remove this to disable functionality.
+		// ResearchModule = { };
+		
 		TechsRequired = [];
 		Mesh = "Models/Buildings/TownCenter.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
@@ -40,8 +45,9 @@
 			{ Id = "resource.wood"; Amount = 300; },
 			{ Id = "resource.stone"; Amount = 200; }
 		];
-		IsBarracks = false;
-		IsResearch = true;
+		
+		ResearchModule = { };
+		
 		TechsRequired = [];
 		Mesh = "Models/Buildings/House.kff";
 		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
@@ -63,15 +69,16 @@
 			{ Id = "resource.wood"; Amount = 500; },
 			{ Id = "resource.stone"; Amount = 450; }
 		];
-		IsBarracks = true;
-		BarracksUnits =
-		[
-			"unit.light_infantry",
-			"unit.heavy_infantry",
-			"unit.bowmen",
-			"unit.crossbowmen"
-		];
-		IsResearch = false;
+		BarracksModule =
+		{
+			CreatableUnits =
+			[
+				"unit.light_infantry",
+				"unit.heavy_infantry",
+				"unit.bowmen",
+				"unit.crossbowmen"
+			];
+		};
 		TechsRequired = [
 			"technology.weaponry"
 		];
@@ -95,14 +102,15 @@
 			{ Id = "resource.wood"; Amount = 500; },
 			{ Id = "resource.stone"; Amount = 450; }
 		];
-		IsBarracks = true;
-		BarracksUnits =
-		[
-			"unit.light_cavalry",
-			"unit.heavy_cavalry",
-			"unit.mounted_archers"
-		];
-		IsResearch = false;
+		BarracksModule =
+		{
+			CreatableUnits =
+			[
+				"unit.light_cavalry",
+				"unit.heavy_cavalry",
+				"unit.mounted_archers"
+			];
+		};
 		TechsRequired =
 		[
 			"technology.horse_riding"

@@ -50,18 +50,25 @@ namespace SS.Buildings
 			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
 			this.size = serializer.ReadVector3( "Size" );
 
-			serializer.Analyze( "Cost" );
-			this.cost = new ResourceStack[serializer.aChildCount];
+			var analysisData = serializer.Analyze( "Cost" );
+			this.cost = new ResourceStack[analysisData.childCount];
 			for( int i = 0; i < this.cost.Length; i++ )
 			{
 				this.cost[i] = new ResourceStack( "unused", 0 );
 			}
 			serializer.DeserializeArray( "Cost", this.cost );
 
-			this.isBarracks = serializer.ReadBool( "IsBarracks" );
-			if( isBarracks )
-				this.barracksUnits = serializer.ReadStringArray( "BarracksUnits" );
-			this.isResearch = serializer.ReadBool( "IsResearch" );
+			analysisData = serializer.Analyze( "BarracksModule" );
+			if( analysisData.isSuccess )
+			{
+				this.isBarracks = true;
+				this.barracksUnits = serializer.ReadStringArray( "BarracksModule.CreatableUnits" );
+			}
+			analysisData = serializer.Analyze( "ResearchModule" );
+			if( analysisData.isSuccess )
+			{
+				this.isResearch = true;
+			}
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
@@ -85,12 +92,15 @@ namespace SS.Buildings
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.SerializeArray( "", "Cost", this.cost );
 
-			serializer.WriteBool( "", "IsBarracks", this.isBarracks );
-			if( isBarracks )
+			if( this.isBarracks )
 			{
-				serializer.WriteStringArray( "", "BarracksUnits", barracksUnits );
+				serializer.WriteClass( "", "BarracksModule" );
+				serializer.WriteStringArray( "BarracksModule", "CreatableUnits", barracksUnits );
 			}
-			serializer.WriteBool( "", "IsResearch", this.isResearch );
+			if( this.isResearch )
+			{
+				serializer.WriteClass( "", "ResearchModule" );
+			}
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );

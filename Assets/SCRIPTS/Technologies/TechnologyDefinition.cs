@@ -26,8 +26,8 @@ namespace SS.Technologies
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
 
-			serializer.Analyze( "Cost" );
-			this.cost = new ResourceStack[serializer.aChildCount];
+			var analysisData = serializer.Analyze( "Cost" );
+			this.cost = new ResourceStack[analysisData.childCount];
 			for( int i = 0; i < this.cost.Length; i++ )
 			{
 				this.cost[i] = new ResourceStack( "unused", 0 );

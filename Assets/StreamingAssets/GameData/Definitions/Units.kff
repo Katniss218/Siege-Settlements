@@ -7,8 +7,7 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = true;
-		MeleeData =
+		MeleeModule =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.5;
@@ -17,7 +16,6 @@
 			AttackCooldown = 0.8;
 			AttackSound = "Sounds/melee.wav";
 		};
-		IsRanged = false;
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
 		Radius = 0.25;
@@ -43,8 +41,7 @@
 						  // so if you have 2.0 armor and attacker has 1.5 penetration, there will be 50% damage reduction.
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = true;
-		MeleeData =
+		MeleeModule =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.0;
@@ -53,7 +50,6 @@
 			AttackCooldown = 0.75;
 			AttackSound = "Sounds/melee.wav";
 		};
-		IsRanged = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;  // The physical size of the unit (hitbox)
@@ -78,8 +74,7 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		IsMelee = true;
-		MeleeData =
+		MeleeModule =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 4.0;
@@ -88,7 +83,6 @@
 			AttackCooldown = 0.52;
 			AttackSound = "Sounds/melee.wav";
 		};
-		IsRanged = false;
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -113,8 +107,7 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		IsMelee = true;
-		MeleeData =
+		MeleeModule =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 2.0;
@@ -123,7 +116,6 @@
 			AttackCooldown = 0.65;
 			AttackSound = "Sounds/melee.wav";
 		};
-		IsRanged = false;
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -148,8 +140,7 @@
 		SlashArmor = 0.5;
 		PierceArmor = 0.5;
 		ConcussionArmor = 0.5;
-		IsMelee = true;
-		MeleeData =
+		MeleeModule =
 		{
 			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 			Damage = 4.0;
@@ -158,7 +149,6 @@
 			AttackCooldown = 0.47;
 			AttackSound = "Sounds/melee.wav";
 		};
-		IsRanged = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -183,9 +173,7 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = true;
-		RangedData = // May not exist, if IsRanged == false.
+		RangedModule = // May not exist, if IsRanged == false.
 		{
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 5;
@@ -226,9 +214,7 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = true;
-		RangedData = // May not exist, if IsRanged == false.
+		RangedModule = // May not exist, if IsRanged == false.
 		{
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 4;
@@ -269,9 +255,7 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = true;
-		RangedData = // May not exist, if IsRanged == false.
+		RangedModule = // May not exist, if IsRanged == false.
 		{
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 4;
@@ -312,8 +296,6 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -338,8 +320,6 @@
 		SlashArmor = 0.0;
 		PierceArmor = 0.0;
 		ConcussionArmor = 0.0;
-		IsMelee = false;
-		IsRanged = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;

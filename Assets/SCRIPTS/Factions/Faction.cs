@@ -43,13 +43,36 @@ namespace SS
 			this.name = serializer.ReadString( "Name" );
 			this.color = serializer.ReadColor( "Color" );
 
-			// TODO ----- serialize techs.
+			var analysisData = serializer.Analyze( "Techs" );
+			if( analysisData.isFail )
+			{
+				throw new System.Exception( "The level file was missing per-faction technology entries." );
+			}
+			this.techs = new Dictionary<string, TechnologyResearchProgress>( analysisData.childCount );
+			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
+			for( int i = 0; i < analysisData.childCount; i++ )
+			{
+				this.techs[serializer.ReadString( "Techs." + i.ToString() + ".Key" )] = (TechnologyResearchProgress)serializer.ReadSByte( "Techs." + i.ToString() + ".Value" );
+			}
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Name", this.name );
 			serializer.WriteColor( "", "Color", this.color );
+
+			serializer.WriteList( "", "Techs" );
+			int i = 0;
+			foreach( var value in this.techs )
+			{
+				if( value.Value != TechnologyResearchProgress.Available )
+				{
+					serializer.AppendClass( "Techs" );
+					serializer.WriteString( "Techs." + i, "Key", value.Key );
+					serializer.WriteSByte( "Techs." + i, "Value", (sbyte)value.Value );
+				}
+				i++;
+			}
 		}
 	}
 }

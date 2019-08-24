@@ -72,40 +72,42 @@ namespace SS.Units
 			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
 			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
 			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
-			this.isMelee = serializer.ReadBool( "IsMelee" );
-			if( this.isMelee )
+			var analysisData = serializer.Analyze( "MeleeModule" );
+			if( analysisData.isSuccess )
 			{
-				this.meleeDamageType = (DamageType)serializer.ReadByte( "MeleeData.DamageType" );
-				this.meleeDamage = serializer.ReadFloat( "MeleeData.Damage" );
-				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeData.ArmorPenetration" );
-				this.meleeAttackRange = serializer.ReadFloat( "MeleeData.AttackRange" );
-				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeData.AttackCooldown" );
+				this.isMelee = true;
+				this.meleeDamageType = (DamageType)serializer.ReadByte( "MeleeModule.DamageType" );
+				this.meleeDamage = serializer.ReadFloat( "MeleeModule.Damage" );
+				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeModule.ArmorPenetration" );
+				this.meleeAttackRange = serializer.ReadFloat( "MeleeModule.AttackRange" );
+				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeModule.AttackCooldown" );
 				
-				this.meleeAttackSoundEffect = serializer.ReadAudioClipFromAssets( "MeleeData.AttackSound" );
+				this.meleeAttackSoundEffect = serializer.ReadAudioClipFromAssets( "MeleeModule.AttackSound" );
 			}
-			this.isRanged = serializer.ReadBool( "IsRanged" );
-			if( this.isRanged )
+			analysisData = serializer.Analyze( "RangedModule" );
+			if( analysisData.isSuccess )
 			{
-				this.rangedProjectileId = serializer.ReadString( "RangedData.ProjectileId" );
-				this.rangedProjectileCount = serializer.ReadInt( "RangedData.ProjectileCount" );
-				this.rangedDamageType = (DamageType)serializer.ReadByte( "RangedData.DamageType" );
-				this.rangedDamage = serializer.ReadFloat( "RangedData.Damage" );
-				this.rangedArmorPenetration = serializer.ReadFloat( "RangedData.ArmorPenetration" );
-				this.rangedAttackRange = serializer.ReadFloat( "RangedData.AttackRange" );
-				this.rangedAttackCooldown = serializer.ReadFloat( "RangedData.AttackCooldown" );
-				this.rangedVelocity = serializer.ReadFloat( "RangedData.Velocity" );
-				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedData.LocalOffsetMin" );
-				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedData.LocalOffsetMax" );
+				this.isRanged = true;
+				this.rangedProjectileId = serializer.ReadString( "RangedModule.ProjectileId" );
+				this.rangedProjectileCount = serializer.ReadInt( "RangedModule.ProjectileCount" );
+				this.rangedDamageType = (DamageType)serializer.ReadByte( "RangedModule.DamageType" );
+				this.rangedDamage = serializer.ReadFloat( "RangedModule.Damage" );
+				this.rangedArmorPenetration = serializer.ReadFloat( "RangedModule.ArmorPenetration" );
+				this.rangedAttackRange = serializer.ReadFloat( "RangedModule.AttackRange" );
+				this.rangedAttackCooldown = serializer.ReadFloat( "RangedModule.AttackCooldown" );
+				this.rangedVelocity = serializer.ReadFloat( "RangedModule.Velocity" );
+				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedModule.LocalOffsetMin" );
+				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedModule.LocalOffsetMax" );
 				
-				this.rangedAttackSoundEffect = serializer.ReadAudioClipFromAssets( "RangedData.AttackSound" );
+				this.rangedAttackSoundEffect = serializer.ReadAudioClipFromAssets( "RangedModule.AttackSound" );
 			}
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
 
-			serializer.Analyze( "Cost" );
-			this.cost = new ResourceStack[serializer.aChildCount];
+			analysisData = serializer.Analyze( "Cost" );
+			this.cost = new ResourceStack[analysisData.childCount];
 			for( int i = 0; i < this.cost.Length; i++ )
 			{
 				this.cost[i] = new ResourceStack( "unused", 0 );
@@ -128,34 +130,32 @@ namespace SS.Units
 			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
 			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
 			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
-			serializer.WriteBool( "", "IsMelee", this.isMelee );
 			if( this.isMelee )
 			{
-				serializer.WriteClass( "", "MeleeData" );
-				serializer.WriteByte( "MeleeData", "DamageType", (byte)this.meleeDamageType );
-				serializer.WriteFloat( "MeleeData", "Damage", this.meleeDamage );
-				serializer.WriteFloat( "MeleeData", "ArmorPenetration", this.meleeArmorPenetration );
-				serializer.WriteFloat( "MeleeData", "AttackRange", this.meleeAttackRange );
-				serializer.WriteFloat( "MeleeData", "AttackCooldown", this.meleeAttackCooldown );
+				serializer.WriteClass( "", "MeleeModule" );
+				serializer.WriteByte( "MeleeModule", "DamageType", (byte)this.meleeDamageType );
+				serializer.WriteFloat( "MeleeModule", "Damage", this.meleeDamage );
+				serializer.WriteFloat( "MeleeModule", "ArmorPenetration", this.meleeArmorPenetration );
+				serializer.WriteFloat( "MeleeModule", "AttackRange", this.meleeAttackRange );
+				serializer.WriteFloat( "MeleeModule", "AttackCooldown", this.meleeAttackCooldown );
 
-				serializer.WriteString( "MeleeData", "AttackSound", this.meleeAttackSoundEffect.Item1 );
+				serializer.WriteString( "MeleeModule", "AttackSound", this.meleeAttackSoundEffect.Item1 );
 			}
-			serializer.WriteBool( "", "IsRanged", this.isRanged );
 			if( this.isRanged )
 			{
-				serializer.WriteClass( "", "RangedData" );
-				serializer.WriteString( "RangedData", "ProjectileId", this.rangedProjectileId );
-				serializer.WriteInt( "RangedData", "ProjectileCount", this.rangedProjectileCount );
-				serializer.WriteByte( "RangedData", "DamageType", (byte)this.rangedDamageType );
-				serializer.WriteFloat( "RangedData", "Damage", this.rangedDamage );
-				serializer.WriteFloat( "RangedData", "ArmorPenetration", this.rangedArmorPenetration );
-				serializer.WriteFloat( "RangedData", "AttackRange", this.rangedAttackRange );
-				serializer.WriteFloat( "RangedData", "AttackCooldown", this.rangedAttackCooldown );
-				serializer.WriteFloat( "RangedData", "Velocity", this.rangedVelocity );
-				serializer.WriteVector3( "RangedData", "LocalOffsetMin", this.rangedLocalOffsetMin );
-				serializer.WriteVector3( "RangedData", "LocalOffsetMax", this.rangedLocalOffsetMax );
+				serializer.WriteClass( "", "RangedModule" );
+				serializer.WriteString( "RangedModule", "ProjectileId", this.rangedProjectileId );
+				serializer.WriteInt( "RangedModule", "ProjectileCount", this.rangedProjectileCount );
+				serializer.WriteByte( "RangedModule", "DamageType", (byte)this.rangedDamageType );
+				serializer.WriteFloat( "RangedModule", "Damage", this.rangedDamage );
+				serializer.WriteFloat( "RangedModule", "ArmorPenetration", this.rangedArmorPenetration );
+				serializer.WriteFloat( "RangedModule", "AttackRange", this.rangedAttackRange );
+				serializer.WriteFloat( "RangedModule", "AttackCooldown", this.rangedAttackCooldown );
+				serializer.WriteFloat( "RangedModule", "Velocity", this.rangedVelocity );
+				serializer.WriteVector3( "RangedModule", "LocalOffsetMin", this.rangedLocalOffsetMin );
+				serializer.WriteVector3( "RangedModule", "LocalOffsetMax", this.rangedLocalOffsetMax );
 
-				serializer.WriteString( "RangedData", "AttackSound", this.rangedAttackSoundEffect.Item1 );
+				serializer.WriteString( "RangedModule", "AttackSound", this.rangedAttackSoundEffect.Item1 );
 			}
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );

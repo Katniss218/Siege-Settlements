@@ -17,9 +17,9 @@ namespace Katniss.Utils
 		private static Mesh[] DeserializeKMKFF( KFFSerializer serializer )
 		{
 			KFF.DataStructures.Object array_root = serializer.MoveScope( "Objects", true );
-			serializer.Analyze( "" );
+			var analysisData = serializer.Analyze( "" );
 
-			int numMeshes = serializer.aChildCount;
+			int numMeshes = analysisData.childCount;
 			List<Mesh> meshes = new List<Mesh>();
 
 			// for each mesh.
@@ -33,29 +33,29 @@ namespace Katniss.Utils
 					Mesh newMesh = new Mesh();
 					newMesh.name = serializer.ReadString( "Name" );
 
-					serializer.Analyze( "Vertices" );
-					Vector3[] verts = new Vector3[serializer.aChildCount];
+					analysisData = serializer.Analyze( "Vertices" );
+					Vector3[] verts = new Vector3[analysisData.childCount];
 					for( int j = 0; j < verts.Length; j++ )
 					{
 						verts[j] = serializer.ReadVector3( "Vertices." + j.ToString() );
 					}
 
-					serializer.Analyze( "Normals" );
-					Vector3[] normals = new Vector3[serializer.aChildCount];
+					analysisData = serializer.Analyze( "Normals" );
+					Vector3[] normals = new Vector3[analysisData.childCount];
 					for( int j = 0; j < normals.Length; j++ )
 					{
 						normals[j] = serializer.ReadVector3( "Normals." + j.ToString() );
 					}
 
-					serializer.Analyze( "UVs" );
-					Vector2[] uvs = new Vector2[serializer.aChildCount];
+					analysisData = serializer.Analyze( "UVs" );
+					Vector2[] uvs = new Vector2[analysisData.childCount];
 					for( int j = 0; j < uvs.Length; j++ )
 					{
 						uvs[j] = serializer.ReadVector2( "UVs." + j.ToString() );
 					}
 
-					serializer.Analyze( "Faces" );
-					int numFaces = serializer.aChildCount;
+					analysisData = serializer.Analyze( "Faces" );
+					int numFaces = analysisData.childCount;
 					int[] triangles = new int[numFaces * 3];
 					for( int j = 0; j < numFaces; j++ )
 					{

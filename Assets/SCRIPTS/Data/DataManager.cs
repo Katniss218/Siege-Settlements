@@ -109,8 +109,8 @@ namespace SS.Data
 		private static void LoadUnitDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_UNITS_LIST );
-			UnitDefinition[] deserialized = new UnitDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_UNITS_LIST );
+			UnitDefinition[] deserialized = new UnitDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -127,8 +127,8 @@ namespace SS.Data
 		private static void LoadBuildingDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_BUILDINGS_LIST );
-			BuildingDefinition[] deserialized = new BuildingDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_BUILDINGS_LIST );
+			BuildingDefinition[] deserialized = new BuildingDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -145,8 +145,8 @@ namespace SS.Data
 		private static void LoadProjectileDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_PROJECTILES_LIST );
-			ProjectileDefinition[] deserialized = new ProjectileDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_PROJECTILES_LIST );
+			ProjectileDefinition[] deserialized = new ProjectileDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -164,8 +164,8 @@ namespace SS.Data
 		private static void LoadResourceDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_RESOURCES_LIST );
-			ResourceDefinition[] deserialized = new ResourceDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_RESOURCES_LIST );
+			ResourceDefinition[] deserialized = new ResourceDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -182,8 +182,8 @@ namespace SS.Data
 		private static void LoadExtraDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_EXTRAS_LIST );
-			ExtraDefinition[] deserialized = new ExtraDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_EXTRAS_LIST );
+			ExtraDefinition[] deserialized = new ExtraDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -200,8 +200,8 @@ namespace SS.Data
 		private static void LoadResourceDepositDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_RESOURCEDEPOSITS_LIST );
-			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_RESOURCEDEPOSITS_LIST );
+			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
@@ -218,8 +218,8 @@ namespace SS.Data
 		private static void LoadTechnologyDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			serializer.Analyze( KFF_TNAME_TECHNOLOGIES_LIST );
-			TechnologyDefinition[] deserialized = new TechnologyDefinition[serializer.aChildCount];
+			var analysisData = serializer.Analyze( KFF_TNAME_TECHNOLOGIES_LIST );
+			TechnologyDefinition[] deserialized = new TechnologyDefinition[analysisData.childCount];
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{

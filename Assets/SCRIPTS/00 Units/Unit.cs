@@ -8,8 +8,13 @@ using UnityEngine.AI;
 
 namespace SS.Units
 {
-	public static class Unit
+	public class Unit : MonoBehaviour
 	{
+		/// <summary>
+		/// Contains all of the original values for this unit. Might be not accurate to the overriden values on GameObjects (Read Only).
+		/// </summary>
+		public UnitDefinition cachedDefinition { get; private set; }
+
 		public static GameObject Create( UnitDefinition def, Vector3 pos, Quaternion rot, int factionId )
 		{
 			if( def == null )
@@ -29,7 +34,7 @@ namespace SS.Units
 			meshFilter.mesh = def.mesh.Item2;
 
 			// Add a material to the unit.
-			MeshRenderer meshRenderer  = gfx.AddComponent<MeshRenderer>();
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.sharedMaterial = Main.materialFactionColoredDestroyable;
 			// Set the material's properties to the appropriate values.
 			meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[factionId].color );
@@ -40,8 +45,8 @@ namespace SS.Units
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 
 			// Assign the definition to the unit, so it can be accessed later.
-			ObjectBase objectBase = container.AddComponent<ObjectBase>();
-			objectBase.id = def.id;
+			Unit unit = container.AddComponent<Unit>();
+			unit.cachedDefinition = def;
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
@@ -55,11 +60,11 @@ namespace SS.Units
 			{
 				selectable.onHighlight.AddListener( CivilianOnSelect );
 			}
-			
+
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
-			
+
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
 			navMeshAgent.acceleration = 8.0f;
@@ -130,7 +135,7 @@ namespace SS.Units
 					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
 				} );
 			}
-			
+
 			// If the unit has the capability to fight, add a target finder to it.
 			ITargetFinder finder = null;
 			if( def.isMelee || def.isRanged )
@@ -145,7 +150,7 @@ namespace SS.Units
 				meleeDamageSource.damageType = def.meleeDamageType;
 				meleeDamageSource.damage = def.meleeDamage;
 				meleeDamageSource.armorPenetration = def.meleeArmorPenetration;
-				
+
 				MeleeModule melee = container.AddComponent<MeleeModule>();
 				melee.damageSource = meleeDamageSource;
 				melee.targetFinder = finder;
@@ -180,7 +185,7 @@ namespace SS.Units
 			{
 				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
-			
+
 			return container;
 		}
 
