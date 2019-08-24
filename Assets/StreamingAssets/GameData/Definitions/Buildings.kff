@@ -7,7 +7,7 @@
 		SlashArmor = 0.3;
 		PierceArmor = 0.3;
 		ConcussionArmor = 0.0;
-		Size = { X = 1.5; Y = 1.0; Z = 1.8; };
+		Size = { X = 1.6; Y = 1.0; Z = 1.7; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 300; },
@@ -26,7 +26,7 @@
 		
 		TechsRequired = [];
 		Mesh = "Models/Buildings/TownCenter.kff";
-		AlbedoTexture = "Textures/Units/heavy_infantry_albedo.png";
+		AlbedoTexture = "Textures/Buildings/town_center.png";
 		NormalTexture = "Textures/Units/unit_normal.png";
 		BuildSound = "Sounds/construction_site.wav";
 		DeathSound = "Sounds/building_dest_wood.wav";
