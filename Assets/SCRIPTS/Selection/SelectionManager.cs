@@ -18,19 +18,18 @@ namespace SS
 		}
 
 		private static List<Selectable> selected = new List<Selectable>();
+		// Highlighted objects are displayed on the SelectionPanel.Object.
 		private static Selectable highlighted = null;
 		
 		private static void __Highlight( Selectable obj )
 		{
-			// Clear the previous object's UI elements.
-			if( highlighted != null )
-			{
-				SelectionPanel.Object.Clear();
-			}
 			// Highlight the new object.
 			highlighted = obj;
-			// Allow the newly highlighted object to create it's own UI elements.
 			obj.onHighlight?.Invoke();
+
+			// Allow the newly highlighted object to create it's own UI elements.
+			// Also, this is going to clear the previous object's UI elements.
+			ForceSelectionUIRedraw( obj );
 		}
 
 		private static void __Select( Selectable obj )
@@ -56,6 +55,23 @@ namespace SS
 			}
 			// Notify the object that's being deselected.
 			obj.onDeselect?.Invoke();
+		}
+
+		/// <summary>
+		/// Checks if the object is currently selected.
+		/// Forces the UI elements on the SelectionPanel.Object to recalculate. Call it when relevant data might be changed.
+		/// </summary>
+		internal static void ForceSelectionUIRedraw( Selectable callingObj )
+		{
+			if( !IsHighlighted( callingObj ) )
+			{
+				//Debug.LogWarning( "ForceSelectionUIRedraw: Calling Object was not selected" );
+				return;
+			}
+			// Clear the current UI.
+			SelectionPanel.Object.Clear();
+			// Notify the listeners to redraw the UI in the (possibly) updated form.
+			callingObj.onSelectionUIRedraw?.Invoke();
 		}
 
 

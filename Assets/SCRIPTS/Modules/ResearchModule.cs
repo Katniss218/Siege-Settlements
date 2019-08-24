@@ -42,8 +42,10 @@ namespace SS
 
 			if( selectable != null )
 			{
-
-				selectable.onSelect.AddListener( () =>
+				//####
+				// Assign the UI redraw pass.
+				//####
+				selectable.onSelectionUIRedraw.AddListener( () =>
 				{
 					Damageable d = this.GetComponent<Damageable>();
 					// If the research facility is not usable.
@@ -55,7 +57,7 @@ namespace SS
 					}
 					if( this.isResearching )
 					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Technology being researched: " + this.tech.displayName );
+						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: " + this.tech.displayName + " - (" + (int)this.progress + ")." );
 					}
 					else
 					{
@@ -73,6 +75,8 @@ namespace SS
 								gridElements.Add( UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, () =>
 								{
 									StartResearching( techDef );
+									// Force the Object UI to update and show that now we are researching a tech.
+									SelectionManager.ForceSelectionUIRedraw( selectable );
 								} ) );
 							}
 							else
@@ -99,6 +103,13 @@ namespace SS
 				{
 					FactionManager.factions[this.factionMember.factionId].techs[this.tech.id] = TechnologyResearchProgress.Researched;
 					this.tech = null;
+				}
+
+				// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
+				Selectable selectable = this.GetComponent<Selectable>();
+				if( selectable != null )
+				{
+					SelectionManager.ForceSelectionUIRedraw( selectable ); // TODO ----- move this from Selectable to SelectionManager.
 				}
 			}
 		}

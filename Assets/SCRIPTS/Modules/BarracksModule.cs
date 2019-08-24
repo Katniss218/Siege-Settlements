@@ -27,8 +27,7 @@ namespace SS
 
 			if( selectable != null )
 			{
-
-				selectable.onSelect.AddListener( () =>
+				selectable.onSelectionUIRedraw.AddListener( () =>
 				{
 					Damageable d = this.GetComponent<Damageable>();
 					// If the barracks are not usable.

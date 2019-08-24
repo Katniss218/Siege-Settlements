@@ -58,7 +58,7 @@ namespace SS.Units
 			// If the unit's type is civilian, make it show the build menu, when highlighted.
 			if( def.id == "unit.civilian" )
 			{
-				selectable.onHighlight.AddListener( CivilianOnSelect );
+				selectable.onSelectionUIRedraw.AddListener( CivilianOnSelect );
 			}
 
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
