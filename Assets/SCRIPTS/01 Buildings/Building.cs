@@ -16,6 +16,7 @@ namespace SS.Buildings
 		/// Contains all of the original values for this building. Might be not accurate to the overriden values on GameObjects (Read Only).
 		/// </summary>
 		public BuildingDefinition cachedDefinition { get; private set; }
+		
 
 
 		public static bool CheckUsable( Damageable building )

@@ -57,8 +57,13 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < 400; j++ )
 				{
-					Extra.Create( extras[i], new Vector3( Random.Range( -25f, 25f ), 0, Random.Range( -25f, 25f ) ), Quaternion.identity );
-					Extra.Create( extras[i], new Vector3( Random.Range( -25f, 25f ), 0, Random.Range( -25f, 25f ) ), Quaternion.identity );
+					float x = Random.Range( -25, 25 );
+					float z = Random.Range( -25, 25 );
+
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
+					{
+						Extra.Create( extras[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ) );
+					}
 				}
 			}
 
