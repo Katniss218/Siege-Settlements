@@ -34,6 +34,7 @@ namespace SS
 
 		private static void __Select( Selectable obj )
 		{
+			// TODO ----- Add a visual indicator for selected objects.
 			// Add the selected object's icon to the SelectionPanel.List.
 			SelectionPanel.List.AddIcon( obj, obj.icon );
 			// Select the object.

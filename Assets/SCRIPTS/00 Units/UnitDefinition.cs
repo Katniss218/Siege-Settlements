@@ -15,9 +15,8 @@ namespace SS.Units
 
 		// Health-related
 		public float healthMax { get; set; }
-		public float slashArmor { get; set; }
-		public float pierceArmor { get; set; }
-		public float concussionArmor { get; set; }
+
+		public Armor armor { get; set; }
 
 		// Melee-related
 		public bool isMelee { get; set; }
@@ -69,9 +68,8 @@ namespace SS.Units
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
-			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
-			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
-			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
+			this.armor = new Armor();
+			serializer.Deserialize( "Armor", this.armor );
 			var analysisData = serializer.Analyze( "MeleeModule" );
 			if( analysisData.isSuccess )
 			{
@@ -127,9 +125,7 @@ namespace SS.Units
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
-			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
-			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
-			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
+			serializer.Serialize( "", "Armor", this.armor );
 			if( this.isMelee )
 			{
 				serializer.WriteClass( "", "MeleeModule" );

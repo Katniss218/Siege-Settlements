@@ -68,23 +68,23 @@ namespace SS
 				this.health = value * this.healthMax;
 			}
 		}
-
-
-		// TODO ----- Decouple armor values, so that new damage types can be added more easily 
-		//	Armor as an array with indices indexing specific armor type & enum for each type.
-
+		
+		/// <summary>
+		/// The armor of the damageable.
+		/// </summary>
+		public Armor armor;
 		/// <summary>
 		/// Percentage reduction of the slash-type damage.
 		/// </summary>
-		public float slashArmor;
+		//public float slashArmor;
 		/// <summary>
 		/// Percentage reduction of the pierce-type damage.
 		/// </summary>
-		public float pierceArmor;
+		//public float pierceArmor;
 		/// <summary>
 		/// Percentage reduction of the concussion-type damage.
 		/// </summary>
-		public float concussionArmor;
+		//public float concussionArmor;
 
 		/// <summary>
 		/// Sets the damageable's max health to the specified value.
@@ -206,24 +206,10 @@ namespace SS
 			{
 				throw new System.Exception( "Can't take 0 or less damage" );
 			}
-			float mult = 0;
-			if( type == DamageType.Slash )
-			{
-				mult = 1 - (this.slashArmor - armorPenetration);
-			}
-			if( type == DamageType.Pierce )
-			{
-				mult = 1 - (this.pierceArmor - armorPenetration);
-			}
-			if( type == DamageType.Concussion )
-			{
-				mult = 1 - (this.concussionArmor - armorPenetration);
-			}
-			if( mult > 1 )
-			{
-				mult = 1;
-			}
-			this.health -= amount * mult;
+
+			float reducedDamage = this.armor.CalculateReducedDamage( amount, type, armorPenetration ); 
+
+			this.health -= reducedDamage;
 			this.onHealthChange?.Invoke();
 			if( this.health <= 0 )
 			{

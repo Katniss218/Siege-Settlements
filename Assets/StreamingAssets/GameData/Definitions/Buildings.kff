@@ -4,9 +4,14 @@
 		Id = "building.town_center";
 		DisplayName = "Town Center";
 		MaxHealth = 600.0;
-		SlashArmor = 0.3;
-		PierceArmor = 0.3;
-		ConcussionArmor = 0.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
 		Size = { X = 1.6; Y = 1.0; Z = 1.7; };
 		Cost =
 		[
@@ -36,9 +41,14 @@
 		Id = "building.house0";
 		DisplayName = "House";
 		MaxHealth = 100.0;
-		SlashArmor = 0.3;
-		PierceArmor = 0.3;
-		ConcussionArmor = 0.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
@@ -60,9 +70,14 @@
 		Id = "building.barracks";
 		DisplayName = "Barracks";
 		MaxHealth = 350.0;
-		SlashArmor = 0.3;
-		PierceArmor = 0.3;
-		ConcussionArmor = 0.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
@@ -93,9 +108,14 @@
 		Id = "building.stables";
 		DisplayName = "Stables";
 		MaxHealth = 400.0;
-		SlashArmor = 0.3;
-		PierceArmor = 0.3;
-		ConcussionArmor = 0.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[

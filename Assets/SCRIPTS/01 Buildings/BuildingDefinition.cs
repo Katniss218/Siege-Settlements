@@ -14,9 +14,8 @@ namespace SS.Buildings
 		public string displayName { get; set; }
 
 		public float healthMax { get; set; }
-		public float slashArmor { get; set; }
-		public float pierceArmor { get; set; }
-		public float concussionArmor { get; set; }
+
+		public Armor armor { get; set; }
 
 		public Vector3 size { get; set; }
 
@@ -45,9 +44,8 @@ namespace SS.Buildings
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
-			this.slashArmor = serializer.ReadFloat( "SlashArmor" );
-			this.pierceArmor = serializer.ReadFloat( "PierceArmor" );
-			this.concussionArmor = serializer.ReadFloat( "ConcussionArmor" );
+			this.armor = new Armor();
+			serializer.Deserialize( "Armor", this.armor );
 			this.size = serializer.ReadVector3( "Size" );
 
 			var analysisData = serializer.Analyze( "Cost" );
@@ -86,9 +84,7 @@ namespace SS.Buildings
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
-			serializer.WriteFloat( "", "SlashArmor", this.slashArmor );
-			serializer.WriteFloat( "", "PierceArmor", this.pierceArmor );
-			serializer.WriteFloat( "", "ConcussionArmor", this.concussionArmor );
+			serializer.Serialize( "", "Armor", this.armor );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.SerializeArray( "", "Cost", this.cost );
 
