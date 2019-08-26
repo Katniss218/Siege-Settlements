@@ -105,7 +105,8 @@ namespace SS.Buildings
 
 			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.SetMaxHealth( def.healthMax, false );
+			//damageable.SetMaxHealth( def.healthMax, false );
+			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
 			// When the health is changed, make the building update it's healthbar.
 			damageable.onHealthChange.AddListener( () =>
@@ -131,7 +132,8 @@ namespace SS.Buildings
 			// - Start the construction process.
 			if( isUnderConstruction )
 			{
-				damageable.SetHealthPercent( Building.STARTING_HEALTH_PERCENT );
+				damageable.healthPercent = Building.STARTING_HEALTH_PERCENT;
+				//damageable.SetHealthPercent( Building.STARTING_HEALTH_PERCENT );
 				ConstructionSite.StartConstructionOrRepair( container ); // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
 			}
 			// If the newly spawned building is not marked as being constructed:

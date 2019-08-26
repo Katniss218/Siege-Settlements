@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace SS
@@ -20,25 +21,44 @@ namespace SS
 
 
 		/// <summary>
-		/// Current health value of this damageable (Read only).
+		/// Current health value of this damageable.
 		/// </summary>
 		[SerializeField]
 		private float __health;
+		/// <summary>
+		/// Gets or sets the health value. Calls 'onHealthChange'. If set to 0, the damageable will die, calling 'onDeath'.
+		/// </summary>
 		public float health
 		{
 			get
 			{
 				return this.__health;
 			}
-			private set
+			set
 			{
+				
+				if( value > this.healthMax )
+				{
+					throw new ArgumentOutOfRangeException( "Can't set the health to more than max health." );
+				}
+				// Make sure that health can't go below 0.
+				if( value < 0 )
+				{
+					value = 0;
+				}
 				this.__health = value;
-				//onHealthChange?.Invoke();
+				this.onHealthChange?.Invoke();
+
+				// If the health is 0, kill the damageable.
+				if( this.__health == 0 )
+				{
+					this.Die();
+				}
 			}
 		}
 
 		/// <summary>
-		/// Maximum health of this damageable (Read only).
+		/// Maximum health of this damageable.
 		/// </summary>
 		[SerializeField]
 		private float __healthMax;
@@ -48,14 +68,14 @@ namespace SS
 			{
 				return this.__healthMax;
 			}
-			private set
+			set
 			{
 				this.__healthMax = value;
 			}
 		}
 
 		/// <summary>
-		/// Returns the percentage of the health of this damageable (Read only).
+		/// Returns the percentage of the health of this damageable.
 		/// </summary>
 		public float healthPercent
 		{
@@ -63,8 +83,16 @@ namespace SS
 			{
 				return this.health / this.healthMax;
 			}
-			private set
+			set
 			{
+				if( value < 0 )
+				{
+					throw new ArgumentOutOfRangeException( "Can't set the health percentage to less than 0." );
+				}
+				if( value > 1 )
+				{
+					throw new ArgumentOutOfRangeException( "Can't set the health percentage to more than 1." );
+				}
 				this.health = value * this.healthMax;
 			}
 		}
@@ -72,87 +100,14 @@ namespace SS
 		/// <summary>
 		/// The armor of the damageable.
 		/// </summary>
-		public Armor armor;
-		/// <summary>
-		/// Percentage reduction of the slash-type damage.
-		/// </summary>
-		//public float slashArmor;
-		/// <summary>
-		/// Percentage reduction of the pierce-type damage.
-		/// </summary>
-		//public float pierceArmor;
-		/// <summary>
-		/// Percentage reduction of the concussion-type damage.
-		/// </summary>
-		//public float concussionArmor;
-
-		/// <summary>
-		/// Sets the damageable's max health to the specified value.
-		/// </summary>
-		/// <param name="value">The value to set the max health to.</param>
-		/// <param name="heal">If true, the damageable will get healed to full health.</param>
-		public virtual void SetMaxHealth( float value, bool heal )
-		{
-			this.healthMax = value;
-			if( heal )
-			{
-				this.Heal();
-			}
-		}
-
-		/// <summary>
-		/// Sets the health to the specified value. Kills the damageable if value == 0.
-		/// </summary>
-		/// <param name="value">The health (0-healthMax).</param>
-		public virtual void SetHealth( float value )
-		{
-			if( value < 0 )
-			{
-				throw new System.Exception( "Can't set the health to less than 0." );
-			}
-			if( value > this.healthMax )
-			{
-				throw new System.Exception( "Can't set the health to more than max health." );
-			}
-
-			this.health = value;
-			onHealthChange?.Invoke();
-			if( value == 0 )
-			{
-				this.Die();
-			}
-		}
-
-		/// <summary>
-		/// Sets the health percentage to the specified value. Kills the damageable if value == 0.
-		/// </summary>
-		/// <param name="value">The health percentage (0-1).</param>
-		public virtual void SetHealthPercent( float value )
-		{
-			if( value < 0 )
-			{
-				throw new System.Exception( "Can't set the health percentage to less than 0." );
-			}
-			if( value > 1 )
-			{
-				throw new System.Exception( "Can't set the health percentage to more than 1." );
-			}
-
-			this.healthPercent = value;
-			onHealthChange?.Invoke();
-			if( value == 0 )
-			{
-				this.Die();
-			}
-		}
-
+		public Armor armor { get; set; }
+		
 		/// <summary>
 		/// Heals this damageable to full health.
 		/// </summary>
 		public virtual void Heal()
 		{
 			this.health = this.healthMax;
-			this.onHealthChange?.Invoke();
 		}
 
 		/// <summary>
@@ -163,7 +118,7 @@ namespace SS
 		{
 			if( amount <= 0 )
 			{
-				throw new System.Exception( "Can't heal for less than 1 health." );
+				throw new ArgumentOutOfRangeException( "Can't heal for less than 1 health." );
 			}
 			if( this.health + amount > this.healthMax )
 			{
@@ -173,7 +128,6 @@ namespace SS
 			{
 				this.health += amount;
 			}
-			this.onHealthChange?.Invoke();
 		}
 
 		/// <summary>
@@ -184,14 +138,13 @@ namespace SS
 		{
 			if( amount <= 0 )
 			{
-				throw new System.Exception( "Can't take 0 or less damage" );
+				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
 			}
 			this.health -= amount;
-			this.onHealthChange?.Invoke();
-			if( this.health <= 0 )
+			/*if( this.health <= 0 )
 			{
 				this.Die();
-			}
+			}*/
 		}
 
 		/// <summary>
@@ -204,17 +157,16 @@ namespace SS
 		{
 			if( amount <= 0 )
 			{
-				throw new System.Exception( "Can't take 0 or less damage" );
+				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
 			}
 
 			float reducedDamage = this.armor.CalculateReducedDamage( amount, type, armorPenetration ); 
 
 			this.health -= reducedDamage;
-			this.onHealthChange?.Invoke();
-			if( this.health <= 0 )
+			/*if( this.health <= 0 )
 			{
 				this.Die();
-			}
+			}*/
 		}
 
 		/// <summary>

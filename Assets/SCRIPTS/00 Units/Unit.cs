@@ -109,7 +109,9 @@ namespace SS.Units
 				}
 
 			} );
-			damageable.SetMaxHealth( def.healthMax, true );
+			//damageable.SetMaxHealth( def.healthMax, true );
+			damageable.healthMax = def.healthMax;
+			damageable.Heal();
 			damageable.armor = def.armor;
 
 			InventoryModule inventory = container.AddComponent<InventoryModule>();
