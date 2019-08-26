@@ -4,7 +4,7 @@ using System.Linq;
 namespace SS
 {
 	/// <summary>
-	/// Represents each of possible damage types.
+	/// Represents every valid damage type.
 	/// </summary>
 	public enum DamageType : byte
 	{
@@ -15,7 +15,8 @@ namespace SS
 
 	public static class DamageTypeExtensions
 	{
-		static int? numTypesCache = null;
+		// Caches the number of distinct damage types (since it shouldn't change after compilation), for faster lookup.
+		private static int? numTypesCache = null;
 
 		/// <summary>
 		/// Returns the number of defined damage types.

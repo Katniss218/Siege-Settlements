@@ -11,12 +11,12 @@ namespace SS.TerrainCreation
 		/// <summary>
 		/// How big each segment is.
 		/// </summary>
-		public const float SEGMENT_SIZE = 16f;
+		public const int SEGMENT_SIZE = 16;
 
 		/// How many meshes per egde? (square it to get actual mesh count)
 		private int segments = 1;
 
-		public float stepSize { get { return SEGMENT_SIZE / (resolution-1); } }
+		public float stepSize { get { return (float)SEGMENT_SIZE / (float)(resolution-1); } }
 
 		private Texture2D[,] heightMaps;
 
@@ -68,7 +68,7 @@ namespace SS.TerrainCreation
 				triangles[triangleIndex++] = b;
 				triangles[triangleIndex++] = c;
 			};
-
+			
 			for( int x = 0; x < resolution; x++ )
 			{
 				for( int z = 0; z < resolution; z++ )
