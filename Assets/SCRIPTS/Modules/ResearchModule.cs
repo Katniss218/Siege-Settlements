@@ -109,7 +109,7 @@ namespace SS
 				Selectable selectable = this.GetComponent<Selectable>();
 				if( selectable != null )
 				{
-					SelectionManager.ForceSelectionUIRedraw( selectable ); // TODO ----- move this from Selectable to SelectionManager.
+					SelectionManager.ForceSelectionUIRedraw( selectable );
 				}
 			}
 		}

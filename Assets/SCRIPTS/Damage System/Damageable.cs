@@ -12,13 +12,15 @@ namespace SS
 		/// Fires when the 'health' value is changed.
 		/// </summary>
 		public UnityEvent onHealthChange = new UnityEvent();
+
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
 		public UnityEvent onDeath = new UnityEvent();
 
+
 		/// <summary>
-		/// Current health value of this damageable.
+		/// Current health value of this damageable (Read only).
 		/// </summary>
 		[SerializeField]
 		private float __health;
@@ -28,15 +30,15 @@ namespace SS
 			{
 				return this.__health;
 			}
-			set
+			private set
 			{
 				this.__health = value;
-				onHealthChange?.Invoke();
+				//onHealthChange?.Invoke();
 			}
 		}
 
 		/// <summary>
-		/// Maximum health of this damageable.
+		/// Maximum health of this damageable (Read only).
 		/// </summary>
 		[SerializeField]
 		private float __healthMax;
@@ -67,7 +69,10 @@ namespace SS
 			}
 		}
 
-		// FIXME ----- Decouple the armor values so that you can easily add new damage types.
+
+		// TODO ----- Decouple armor values, so that new damage types can be added more easily 
+		//	Armor as an array with indices indexing specific armor type & enum for each type.
+
 		/// <summary>
 		/// Percentage reduction of the slash-type damage.
 		/// </summary>

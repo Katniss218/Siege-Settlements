@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Data;
 using SS.Extras;
+using SS.TerrainCreation;
 using SS.Units;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,25 +41,44 @@ namespace SS.Levels
 
 		public void Start()
 		{
+			LevelTerrainCreator.terrainParent = this.transform;
+			Texture2D[,] color = new Texture2D[4, 4];
+			for( int i = 0; i < 4; i++ )
+			{
+				for( int j = 0; j < 4; j++ )
+				{
+					color[i, j] = Resources.Load<Texture2D>( "colormap/row-" + (4 - j) + "-col-" + (i + 1) );
+				}
+			}
+			Texture2D[,] height = new Texture2D[4, 4];
+			for( int i = 0; i < 4; i++ )
+			{
+				for( int j = 0; j < 4; j++ )
+				{
+					height[i, j] = Resources.Load<Texture2D>( "heightmap/row-" + (4 - j) + "-col-" + (i + 1) );
+				}
+			}
+			LevelTerrainCreator.SpawnMap( height, color, 6f );
+			LevelTerrainCreator.UpdateNavMesh();
+
+			Main.cameraPivot.position = new Vector3( 32, 0, 32 );
 			List<UnitDefinition> units = DataManager.GetAllOfType<UnitDefinition>();
 			for( int i = 0; i < units.Count; i++ )
 			{
 				for( int j = 0; j < 4; j++ )
 				{
-					Unit.Create( units[i], new Vector3( Random.Range( -10f, 10f ), 0, Random.Range( i, 2 * i ) ), Quaternion.identity, 0 );
-					Unit.Create( units[i], new Vector3( Random.Range( -10f, 10f ), 0, Random.Range( -2*i, -i ) ), Quaternion.identity, 1 );
+					Unit.Create( units[i], new Vector3( Random.Range( 22f, 42f ), 0, Random.Range( 32 + i, 32 + (2 * i) ) ), Quaternion.identity, 0 );
+					Unit.Create( units[i], new Vector3( Random.Range( 22f, 42f ), 0, Random.Range( 32 + (-2 * i), 32 + (-i) ) ), Quaternion.identity, 1 );
 				}
 			}
-			// Spawn the GameObject to the scene.
-			//Unit.Create( DataManager.Get<UnitDefinition>( "unit.wolf" ), new Vector3( 0, 0, 0 ), Quaternion.identity, 0 );
 
 			List<ExtraDefinition> extras = DataManager.GetAllOfType<ExtraDefinition>();
 			for( int i = 0; i < extras.Count; i++ )
 			{
 				for( int j = 0; j < 400; j++ )
 				{
-					float x = Random.Range( -25, 25 );
-					float z = Random.Range( -25, 25 );
+					float x = Random.Range( 12f, 52f );
+					float z = Random.Range( 12f, 52f );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
 					{
@@ -72,8 +92,8 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < 100; j++ )
 				{
-					float x = Random.Range( -10f, 10f );
-					float z = Random.Range( -10f, 10f );
+					float x = Random.Range( 22f, 42f );
+					float z = Random.Range( 22f, 42f );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
 					{

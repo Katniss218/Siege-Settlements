@@ -4,9 +4,6 @@ using SS.Buildings;
 using UnityEngine.EventSystems;
 using SS.UI;
 using SS.Extras;
-using SS.TerrainCreation;
-using UnityEngine.AI;
-using System.Collections.Generic;
 
 namespace SS
 {
@@ -211,8 +208,21 @@ namespace SS
 		{
 			get
 			{
-				if( __materialParticle == null ) { __materialParticle = Resources.Load<Material>( "ParticleMaterial" ); }
+				if( __materialParticle == null ) { __materialParticle = Resources.Load<Material>( "Materials/Particle" ); }
 				return __materialParticle;
+			}
+		}
+
+		private static Transform __cameraPivot = null;
+		public static Transform cameraPivot
+		{
+			get
+			{
+				if( __cameraPivot == null )
+				{
+					__cameraPivot = FindObjectOfType<CameraController>().transform;
+				}
+				return __cameraPivot;
 			}
 		}
 
@@ -223,7 +233,7 @@ namespace SS
 			{
 				if( __camera == null )
 				{
-					__camera = FindObjectOfType<CameraController>().transform.GetChild( 0 ).GetComponent<Camera>();
+					__camera = cameraPivot.GetChild( 0 ).GetComponent<Camera>();
 				}
 				return __camera;
 			}
@@ -267,41 +277,10 @@ namespace SS
 				return __resourcePanel;
 			}
 		}
-
-
-		[SerializeField] private Texture2D height;
-		[SerializeField] private Texture2D albedo;
-		NavMeshDataInstance navMeshDataInstance;
-
+		
 		private void Start()
 		{
-			//FindObjectOfType<NavMeshSurface>().;//.BuildNavMesh();
-			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
-
-			GameObject obj = new GameObject( "Mesh" );
-			obj.layer = LayerMask.NameToLayer( "Terrain" );
-			MeshFilter mf = obj.AddComponent<MeshFilter>();
-			mf.mesh = LevelTerrainCreator.CreateMeshSegment( height );
-			MeshRenderer r = obj.AddComponent<MeshRenderer>();
-			r.material = Resources.Load<Material>( "Materials/New Material" );
-			r.material.SetTexture( "_BaseMap", albedo );
-			obj.transform.position = new Vector3( -LevelTerrainCreator.terrainSize / 2, 0, -LevelTerrainCreator.terrainSize / 2 );
-
-			obj.AddComponent<MeshCollider>().sharedMesh = mf.mesh;
-
-			NavMeshBuilder.CollectSources( obj.transform, 1 << LayerMask.NameToLayer( "Terrain" ), NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
-
-			//GameObject waterPlane = new GameObject( "Water" );
-			//waterPlane.AddComponent<MeshFilter>().mesh = 
-
-			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
-				NavMesh.GetSettingsByID( 0 ),
-				buildSources,
-				new Bounds( Vector3.zero, new Vector3( 10000, 10000, 10000 ) ),
-				Vector3.down,
-				Quaternion.Euler( Vector3.up )
-			);
-			navMeshDataInstance = NavMesh.AddNavMeshData( navData );
+			
 		}
 
 

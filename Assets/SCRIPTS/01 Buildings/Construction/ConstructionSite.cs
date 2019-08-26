@@ -1,5 +1,4 @@
-﻿using SS.Data;
-using SS.ResourceSystem;
+﻿using SS.ResourceSystem;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -173,6 +172,7 @@ namespace SS.Buildings
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 				AudioManager.PlayNew( buildingComp.cachedDefinition.buildSoundEffect.Item2, 0.5f, 1.0f );
+				// FIXME ----- Only play new sound, when the previous one has ended (per-building basis).
 			} );
 
 			// When the construction is completed, set the _Progress attribute to fully built.

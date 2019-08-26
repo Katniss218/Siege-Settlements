@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 // 
 namespace SS.TerrainCreation
@@ -11,66 +11,64 @@ namespace SS.TerrainCreation
 		// The terrain consists of multiple terrain meshes, each with a single texture applied to it.
 		// Each texture is 4096x4096, and each mesh is 64x64 units.
 
-		private static int segmentResolution = 200;
+		static TerrainMeshCreator meshCreator;
+		public static Transform terrainParent;
 
-		/// How high the map is.
-		public static float terrainHeight = 6f;
-		/// How big the entire map is (all segments combined).
-		public static float terrainSize = 64;
-
-		/// How many meshes per egde? (square it to get actual mesh count)
-		private static int segments = 1;
-
-		/// <summary>
-		/// How big each segment is.
-		/// </summary>
-		private static float segmentSize { get { return terrainSize / segments; } }
-
-		private static float stepSize { get { return segmentSize / segmentResolution; } }
-
-		public static Mesh CreateMeshSegment( Texture2D heightMap )
+		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
-			// heightmap is this specific segment's heightmap.
-
-			Vector3[] verts = new Vector3[segmentResolution* segmentResolution];
-			Vector2[] uvs = new Vector2[segmentResolution * segmentResolution];
-			int[] triangles = new int[(segmentResolution-1) * (segmentResolution - 1) * 6];
-
-			int vertIndex = 0;
-			int triangleIndex = 0;
-
-			System.Action<int,int,int> AddTriangle = ( int a, int b, int c ) =>
+			int segments = heightMaps.GetLength( 0 );
+			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
 			{
-				triangles[triangleIndex++] = a;
-				triangles[triangleIndex++] = b;
-				triangles[triangleIndex++] = c;
-			};
-
-			for( int x = 0; x < segmentResolution; x++ )
+				throw new System.Exception( "The heightMaps array was of invalid dimensions. Expected size: [segments,segments]." );
+			}
+			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
 			{
-				for( int z = 0; z < segmentResolution; z++ )
-				{
-					uvs[vertIndex] = new Vector2( (float)x / (float)segmentResolution, (float)z / (float)segmentResolution );
-					verts[vertIndex] = new Vector3( x * stepSize, heightMap.GetPixelBilinear( uvs[vertIndex].x, uvs[vertIndex].y ).grayscale * terrainHeight, z * stepSize );
-					
-					if( x < segmentResolution - 1 && z < segmentResolution - 1 )
-					{
-						AddTriangle( vertIndex, vertIndex + segmentResolution + 1, vertIndex + segmentResolution );
-						AddTriangle( vertIndex + segmentResolution + 1, vertIndex, vertIndex + 1 );
-					}
-
-
-					vertIndex++;
-				}
+				throw new System.Exception( "The albedoMaps array was of invalid dimensions. Expected size: [segments,segments]." );
 			}
 
-			Mesh mesh = new Mesh();
-			mesh.vertices = verts;
-			mesh.uv = uvs;
-			mesh.triangles = triangles;
-			mesh.RecalculateNormals();
+			meshCreator = new TerrainMeshCreator( 241, segments, heightMaps, height );
+			Mesh[,] meshes = meshCreator.CreateMeshes();
 
-			return mesh;
+			for( int i = 0; i < segments; i++ )
+			{
+				for( int j = 0; j < segments; j++ )
+				{
+					GameObject terrainSegment = new GameObject( "Mesh" );
+					terrainSegment.layer = LayerMask.NameToLayer( "Terrain" );
+					terrainSegment.transform.SetParent( terrainParent );
+
+					MeshFilter meshFilter = terrainSegment.AddComponent<MeshFilter>();
+					meshFilter.mesh = meshes[i,j];
+					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
+					meshRenderer.material = Resources.Load<Material>( "Materials/Ground" );
+					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps[i,j] );
+					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
+
+					terrainSegment.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
+				}
+			}
+			
+
+			//GameObject waterPlane = new GameObject( "Water" );
+			//waterPlane.AddComponent<MeshFilter>().mesh = 
+		}
+
+		static NavMeshDataInstance navMeshDataInstance;
+
+		public static void UpdateNavMesh()
+		{
+			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
+			
+			NavMeshBuilder.CollectSources( terrainParent.transform, 1 << LayerMask.NameToLayer( "Terrain" ), NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
+
+			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
+				NavMesh.GetSettingsByID( 0 ),
+				buildSources,
+				new Bounds( Vector3.zero, new Vector3( 10000, 10000, 10000 ) ),
+				Vector3.down,
+				Quaternion.Euler( Vector3.up )
+			);
+			navMeshDataInstance = NavMesh.AddNavMeshData( navData );
 		}
 	}
 }
