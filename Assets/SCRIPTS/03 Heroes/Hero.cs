@@ -115,49 +115,49 @@ namespace SS.Heroes
 			damageable.healthMax = def.healthMax;
 			damageable.Heal();
 			damageable.armor = def.armor;
-			
+
 			// If the unit has the capability to fight, add a target finder to it.
 			ITargetFinder finder = null;
-			if( def.isMelee || def.isRanged )
+			if( def.melee != null || def.ranged != null )
 			{
 				finder = container.AddComponent<TargetFinderModule>();
 			}
 
 			// If the new unit is melee, setup the melee module.
-			if( def.isMelee )
+			if( def.melee != null )
 			{
 				DamageSource meleeDamageSource = container.AddComponent<DamageSource>();
-				meleeDamageSource.damageType = def.meleeDamageType;
-				meleeDamageSource.damage = def.meleeDamage;
-				meleeDamageSource.armorPenetration = def.meleeArmorPenetration;
+				meleeDamageSource.damageType = def.melee.damageType;
+				meleeDamageSource.damage = def.melee.damage;
+				meleeDamageSource.armorPenetration = def.melee.armorPenetration;
 
 				MeleeModule melee = container.AddComponent<MeleeModule>();
 				melee.damageSource = meleeDamageSource;
 				melee.targetFinder = finder;
-				melee.attackCooldown = def.meleeAttackCooldown;
-				melee.attackRange = def.meleeAttackRange;
-				melee.attackSoundEffect = def.meleeAttackSoundEffect.Item2;
+				melee.attackCooldown = def.melee.attackCooldown;
+				melee.attackRange = def.melee.attackRange;
+				melee.attackSoundEffect = def.melee.attackSoundEffect.Item2;
 			}
 
 			// If the new unit is ranged, setup the ranged module.
-			if( def.isRanged )
+			if( def.ranged != null )
 			{
 				DamageSource rangedDamageSource = container.AddComponent<DamageSource>();
-				rangedDamageSource.damageType = def.rangedDamageType;
-				rangedDamageSource.damage = def.rangedDamage;
-				rangedDamageSource.armorPenetration = def.rangedArmorPenetration;
+				rangedDamageSource.damageType = def.ranged.damageType;
+				rangedDamageSource.damage = def.ranged.damage;
+				rangedDamageSource.armorPenetration = def.ranged.armorPenetration;
 
 				RangedModule ranged = container.AddComponent<RangedModule>();
-				ranged.projectile = DataManager.Get<ProjectileDefinition>( def.rangedProjectileId );
-				ranged.projectileCount = def.rangedProjectileCount;
+				ranged.projectile = DataManager.Get<ProjectileDefinition>( def.ranged.projectileId );
+				ranged.projectileCount = def.ranged.projectileCount;
 				ranged.damageSource = rangedDamageSource;
 				ranged.targetFinder = finder;
-				ranged.attackRange = def.rangedAttackRange;
-				ranged.attackCooldown = def.rangedAttackCooldown;
-				ranged.velocity = def.rangedVelocity;
-				ranged.localOffsetMin = def.rangedLocalOffsetMin;
-				ranged.localOffsetMax = def.rangedLocalOffsetMax;
-				ranged.attackSoundEffect = def.rangedAttackSoundEffect.Item2;
+				ranged.attackRange = def.ranged.attackRange;
+				ranged.attackCooldown = def.ranged.attackCooldown;
+				ranged.velocity = def.ranged.velocity;
+				ranged.localOffsetMin = def.ranged.localOffsetMin;
+				ranged.localOffsetMax = def.ranged.localOffsetMax;
+				ranged.attackSoundEffect = def.ranged.attackSoundEffect.Item2;
 			}
 
 			// Make the unit update it's UI's position every frame.
