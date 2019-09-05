@@ -14,6 +14,10 @@ namespace SS.TerrainCreation
 		static TerrainMeshCreator meshCreator;
 		public static Transform terrainParent;
 
+		private const int RESOLUTION = 241;
+
+		// FIXME - multithread.
+
 		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
 			int segments = heightMaps.GetLength( 0 );
@@ -26,7 +30,7 @@ namespace SS.TerrainCreation
 				throw new System.Exception( "The albedoMaps array was of invalid dimensions. Expected size: [segments,segments]." );
 			}
 
-			meshCreator = new TerrainMeshCreator( 241, segments, heightMaps, height );
+			meshCreator = new TerrainMeshCreator( RESOLUTION, segments, heightMaps, height );
 			Mesh[,] meshes = meshCreator.CreateMeshes();
 
 			for( int i = 0; i < segments; i++ )
