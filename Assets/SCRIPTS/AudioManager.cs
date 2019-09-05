@@ -10,53 +10,65 @@ namespace SS
 	{
 		private static List<AudioSource> sources = new List<AudioSource>();
 
-		private static void AddNewAndPlay( AudioClip clip, float volume, float pitch )
+		private static Transform audioSourcesParent => Main.main_transform;
+
+		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch )
 		{
+			// Create a new source GameObject to hold the new AudioSource.
 			GameObject gameObject = new GameObject( "AudioSource" );
-			gameObject.transform.SetParent( Main.main_transform );
+			gameObject.transform.SetParent( audioSourcesParent );
 
+			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-			audioSource.volume = volume;
-			audioSource.pitch = pitch;
-			audioSource.clip = clip;
-			audioSource.Play();
+			TimerHandler timerHandler = gameObject.AddComponent<TimerHandler>();
 
-			TimerHandler timer = gameObject.AddComponent<TimerHandler>();
-			timer.duration = clip.length;
-			timer.onTimerEnd.AddListener( () =>
+			// Setup the timer.
+			timerHandler.onTimerEnd.AddListener( () =>
 			{
 				audioSource.Stop();
 			} );
-			sources.Add( audioSource );
+
+			// Setup the clip, volume, and pitch.
+			SetClipAndPlay( audioSource, timerHandler, clip, volume, pitch );
+			return audioSource;
 		}
 
 		/// <summary>
-		/// Plays a new sound.
+		/// Plays a new sound. Can specify the sound, volume and pitch.
 		/// </summary>
 		/// <param name="clip">The sound to play.</param>
 		/// <param name="volume">The volume (0-1)</param>
 		/// <param name="pitch">The pitch.</param>
-		public static void PlayNew( AudioClip clip, float volume, float pitch )
+		public static void PlayNew( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
 		{
-			foreach( AudioSource source in sources )
+			foreach( AudioSource audioSource in sources )
 			{
-				if( source.isPlaying )
+				// If the source is currently playing a sound, don't interrupt that, skip it.
+				if( audioSource.isPlaying )
 				{
 					continue;
 				}
-				source.clip = clip;
-				source.volume = volume;
-				source.pitch = pitch;
-				source.Play();
-				TimerHandler timer = source.GetComponent<TimerHandler>();
-				timer.duration = clip.length;
-				timer.onTimerEnd.AddListener( () =>
-				{
-					source.Stop();
-				} );
+				SetClipAndPlay( audioSource, audioSource.GetComponent<TimerHandler>(), clip, volume, pitch );
 				return;
 			}
-			AddNewAndPlay( clip, volume, pitch );
+			// If no source GameObject can be reused (every single one is playing at the moment):
+			AudioSource newAudioSource = CreateSourceAndPlay( clip, volume, pitch );
+			
+			sources.Add( newAudioSource );
+		}
+
+		private static void SetClipAndPlay( AudioSource source, TimerHandler timer, AudioClip clip, float volume, float pitch )
+		{
+			// Sets the source's clip, volume, and pitch.
+			// Also sets the timer's duration to the clip's length, as it should never be different.
+
+			source.volume = volume;
+			source.pitch = pitch;
+			source.clip = clip;
+
+			timer.duration = clip.length;
+
+			source.Play();
 		}
 	}
 }
