@@ -19,10 +19,7 @@ namespace SS
 		/// </summary>
 		public UnityEvent onDeath = new UnityEvent();
 
-
-		/// <summary>
-		/// Current health value of this damageable.
-		/// </summary>
+		
 		[SerializeField]
 		private float __health;
 		/// <summary>
@@ -57,11 +54,11 @@ namespace SS
 			}
 		}
 
-		/// <summary>
-		/// Maximum health of this damageable.
-		/// </summary>
 		[SerializeField]
 		private float __healthMax;
+		/// <summary>
+		/// Gets or sets the maximum health value of this damageable.
+		/// </summary>
 		public float healthMax
 		{
 			get
@@ -75,7 +72,7 @@ namespace SS
 		}
 
 		/// <summary>
-		/// Returns the percentage of the health of this damageable.
+		/// Gets or sets the percentage of health of this damageable.
 		/// </summary>
 		public float healthPercent
 		{
@@ -141,10 +138,6 @@ namespace SS
 				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
 			}
 			this.health -= amount;
-			/*if( this.health <= 0 )
-			{
-				this.Die();
-			}*/
 		}
 
 		/// <summary>
@@ -163,10 +156,6 @@ namespace SS
 			float reducedDamage = this.armor.CalculateReducedDamage( amount, type, armorPenetration ); 
 
 			this.health -= reducedDamage;
-			/*if( this.health <= 0 )
-			{
-				this.Die();
-			}*/
 		}
 
 		/// <summary>

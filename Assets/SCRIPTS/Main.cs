@@ -17,11 +17,10 @@ namespace SS
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
 
-
-		// onlevelload - when the level is loaded
-		// onpostlevelload - after definitions have been initialized.
-		// 
+		
 		// TODO ----- Move these fields to AssetsManager.
+		// Handle both file assets & resources.load assets in the AssetsManager class.
+
 		private static GameObject __unitUI = null;
 		public static GameObject unitUI
 		{
@@ -290,6 +289,8 @@ namespace SS
 
 		void Update()
 		{
+
+			
 			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{

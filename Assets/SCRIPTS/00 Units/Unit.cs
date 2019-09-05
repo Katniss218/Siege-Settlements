@@ -109,7 +109,6 @@ namespace SS.Units
 				}
 
 			} );
-			//damageable.SetMaxHealth( def.healthMax, true );
 			damageable.healthMax = def.healthMax;
 			damageable.Heal();
 			damageable.armor = def.armor;

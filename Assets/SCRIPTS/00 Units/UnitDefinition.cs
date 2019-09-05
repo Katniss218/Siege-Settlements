@@ -48,6 +48,7 @@ namespace SS.Units
 		public float radius { get; set; }
 		public float height { get; set; }
 
+		// Production-related.
 		public ResourceStack[] cost { get; private set; }
 		public float buildTime { get; private set; }
 		public string[] techsRequired { get; private set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
@@ -67,9 +68,11 @@ namespace SS.Units
 		{
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
+
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
+
 			var analysisData = serializer.Analyze( "MeleeModule" );
 			if( analysisData.isSuccess )
 			{
@@ -79,7 +82,7 @@ namespace SS.Units
 				this.meleeArmorPenetration = serializer.ReadFloat( "MeleeModule.ArmorPenetration" );
 				this.meleeAttackRange = serializer.ReadFloat( "MeleeModule.AttackRange" );
 				this.meleeAttackCooldown = serializer.ReadFloat( "MeleeModule.AttackCooldown" );
-				
+
 				this.meleeAttackSoundEffect = serializer.ReadAudioClipFromAssets( "MeleeModule.AttackSound" );
 			}
 			analysisData = serializer.Analyze( "RangedModule" );
@@ -96,9 +99,10 @@ namespace SS.Units
 				this.rangedVelocity = serializer.ReadFloat( "RangedModule.Velocity" );
 				this.rangedLocalOffsetMin = serializer.ReadVector3( "RangedModule.LocalOffsetMin" );
 				this.rangedLocalOffsetMax = serializer.ReadVector3( "RangedModule.LocalOffsetMax" );
-				
+
 				this.rangedAttackSoundEffect = serializer.ReadAudioClipFromAssets( "RangedModule.AttackSound" );
 			}
+
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
@@ -124,8 +128,10 @@ namespace SS.Units
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
+
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
+
 			if( this.isMelee )
 			{
 				serializer.WriteClass( "", "MeleeModule" );
@@ -153,6 +159,7 @@ namespace SS.Units
 
 				serializer.WriteString( "RangedModule", "AttackSound", this.rangedAttackSoundEffect.Item1 );
 			}
+
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );

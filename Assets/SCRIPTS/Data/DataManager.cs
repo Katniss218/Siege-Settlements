@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Buildings;
 using SS.Extras;
+using SS.Heroes;
 using SS.Projectiles;
 using SS.ResourceSystem;
 using SS.Technologies;
@@ -15,6 +16,7 @@ namespace SS.Data
 	{
 		private const string KFF_TNAME_UNITS_LIST = "Units";
 		private const string KFF_TNAME_BUILDINGS_LIST = "Buildings";
+		private const string KFF_TNAME_HEROES_LIST = "Heroes";
 		private const string KFF_TNAME_PROJECTILES_LIST = "Projectiles";
 		private const string KFF_TNAME_RESOURCES_LIST = "Resources";
 		private const string KFF_TNAME_EXTRAS_LIST = "Extras";
@@ -142,6 +144,24 @@ namespace SS.Data
 			}
 		}
 
+		private static void LoadHeroDefinitions( string path )
+		{
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			var analysisData = serializer.Analyze( KFF_TNAME_HEROES_LIST );
+			HeroDefinition[] deserialized = new HeroDefinition[analysisData.childCount];
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				deserialized[i] = new HeroDefinition( "unset" );
+			}
+			serializer.DeserializeArray( KFF_TNAME_HEROES_LIST, deserialized );
+
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				DataManager.RegisterDefinition( deserialized[i] );
+			}
+		}
+
 		private static void LoadProjectileDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
@@ -245,7 +265,9 @@ namespace SS.Data
 			LoadUnitDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Units.kff" );
 
 			LoadBuildingDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Buildings.kff" );
-			
+
+			LoadHeroDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Heroes.kff" );
+
 			LoadProjectileDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Projectiles.kff" );
 			
 			LoadResourceDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Resources.kff" );
