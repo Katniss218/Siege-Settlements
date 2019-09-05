@@ -1,0 +1,39 @@
+﻿Heroes =
+[
+	{
+		Id = "hero.ari";
+		DisplayName = "Ari";
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		RangedModule = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 2;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 5.0;
+			AttackCooldown = 3.0;
+			Velocity = 2.5;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "Sounds/loose.wav";
+		};
+		MovementSpeed = 0.35;
+		RotationSpeed = 200.0;
+		Radius = 0.25;
+		Height = 0.1875;
+		Mesh = "Models/Hero.kff";
+		AlbedoTexture = "Textures/Units/wolf_albedo.png";
+		NormalTexture = "Textures/Units/unit_normal.png";
+		Icon = "Textures/Buildings/house0_icon";
+	}
+];
