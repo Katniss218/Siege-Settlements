@@ -7,11 +7,11 @@ namespace SS
 	/// <summary>
 	/// Allows an object to hold resources in it's inventory.
 	/// </summary>
-	public class InventoryModule : MonoBehaviour
+	public class Inventory : MonoBehaviour
 	{
-		public ResourceStack resource = null;
+		public ResourceStack resource { get; private set; }
 
-		public int maxCapacity;
+		public int maxCapacity { get; set; }
 
 
 		public UnityEvent onPickup = new UnityEvent();

@@ -3,18 +3,21 @@ using SS.Units;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class BarracksModule : MonoBehaviour
+	public class BarracksModule : Module
 	{
-		public UnitDefinition[] spawnableUnits;
+		public UnitDefinition[] spawnableUnits { get; set; }
 
-		List<UnitDefinition> buildOrderDef = new List<UnitDefinition>();
-		List<float> buildOrderTimes = new List<float>();
+		public float constructionSpeed { get; set; }
 
 
-		void AddUnitToBuildOrder( UnitDefinition def, int buildTime )
+		private List<UnitDefinition> buildOrderDef = new List<UnitDefinition>();
+		private List<float> buildOrderTimes = new List<float>();
+
+
+		private void AddUnitToBuildOrder( UnitDefinition def, int buildTime )
 		{
 			this.buildOrderDef.Add( def );
 			this.buildOrderTimes.Add( buildTime );
@@ -73,7 +76,7 @@ namespace SS
 			if( buildOrderDef.Count > 0 )
 			{
 				// Advance the current build item.
-				buildOrderTimes[0] -= Time.deltaTime;
+				buildOrderTimes[0] -= this.constructionSpeed * Time.deltaTime;
 				if( buildOrderTimes[0] <= 0 )
 				{
 					Unit.Create( buildOrderDef[0], this.transform.position, Quaternion.identity, this.GetComponent<FactionMember>().factionId );

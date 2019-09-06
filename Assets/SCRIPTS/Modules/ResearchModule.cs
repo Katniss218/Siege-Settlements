@@ -4,13 +4,15 @@ using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class ResearchModule : MonoBehaviour
+	public class ResearchModule : Module
 	{
 		public TechnologyDefinition tech { get; private set; }
 		public float progress { get; private set; }
+
+		public float researchSpeed { get; set; }
 
 		public bool isResearching
 		{
@@ -98,7 +100,7 @@ namespace SS
 		{
 			if( this.isResearching )
 			{
-				this.progress -= Time.deltaTime;
+				this.progress -= this.researchSpeed * Time.deltaTime;
 				if( this.progress <= 0 )
 				{
 					FactionManager.factions[this.factionMember.factionId].techs[this.tech.id] = TechnologyResearchProgress.Researched;

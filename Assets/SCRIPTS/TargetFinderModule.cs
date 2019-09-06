@@ -2,7 +2,7 @@
 
 namespace SS
 {
-	public class TargetFinderModule : MonoBehaviour, ITargetFinder
+	public class TargetFinder : MonoBehaviour, ITargetFinder
 	{
 		public Damageable FindTarget( float searchRange )
 		{

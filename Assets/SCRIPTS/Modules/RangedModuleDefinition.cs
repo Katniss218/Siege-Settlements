@@ -1,11 +1,13 @@
 ﻿using Katniss.Utils;
 using KFF;
+using SS.Data;
+using SS.Projectiles;
 using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
-	public class RangedModuleDefinition : IKFFSerializable
+	public class RangedModuleDefinition : ModuleDefinition
 	{
 		public string projectileId { get; set; }
 		public int projectileCount { get; set; }
@@ -19,8 +21,33 @@ namespace SS
 		public Vector3 localOffsetMax { get; set; }
 		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
 
+		public override void AddTo( GameObject obj )
+		{
+			ITargetFinder finder = obj.GetComponent<ITargetFinder>();
+			if( finder == null )
+			{
+				throw new Exception( "RangedModule requires an ITargetFinder component." );
+			}
 
-		public void DeserializeKFF( KFFSerializer serializer )
+			DamageSource rangedDamageSource = obj.AddComponent<DamageSource>();
+			rangedDamageSource.damageType = damageType;
+			rangedDamageSource.damage = damage;
+			rangedDamageSource.armorPenetration = armorPenetration;
+
+			RangedModule ranged = obj.AddComponent<RangedModule>();
+			ranged.projectile = DataManager.Get<ProjectileDefinition>( projectileId );
+			ranged.projectileCount = projectileCount;
+			ranged.damageSource = rangedDamageSource;
+			ranged.targetFinder = finder;
+			ranged.attackRange = attackRange;
+			ranged.attackCooldown = attackCooldown;
+			ranged.velocity = velocity;
+			ranged.localOffsetMin = localOffsetMin;
+			ranged.localOffsetMax = localOffsetMax;
+			ranged.attackSoundEffect = attackSoundEffect.Item2;
+		}
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.projectileId = serializer.ReadString( "ProjectileId" );
 			this.projectileCount = serializer.ReadInt( "ProjectileCount" );
@@ -36,7 +63,7 @@ namespace SS
 			this.attackSoundEffect = serializer.ReadAudioClipFromAssets( "AttackSound" );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "ProjectileId", this.projectileId );
 			serializer.WriteInt( "", "ProjectileCount", this.projectileCount );

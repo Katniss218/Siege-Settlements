@@ -1,4 +1,5 @@
 ﻿using SS.Data;
+using SS.Modules;
 using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;
@@ -120,44 +121,19 @@ namespace SS.Heroes
 			ITargetFinder finder = null;
 			if( def.melee != null || def.ranged != null )
 			{
-				finder = container.AddComponent<TargetFinderModule>();
+				finder = container.AddComponent<TargetFinder>();
 			}
 
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				DamageSource meleeDamageSource = container.AddComponent<DamageSource>();
-				meleeDamageSource.damageType = def.melee.damageType;
-				meleeDamageSource.damage = def.melee.damage;
-				meleeDamageSource.armorPenetration = def.melee.armorPenetration;
-
-				MeleeModule melee = container.AddComponent<MeleeModule>();
-				melee.damageSource = meleeDamageSource;
-				melee.targetFinder = finder;
-				melee.attackCooldown = def.melee.attackCooldown;
-				melee.attackRange = def.melee.attackRange;
-				melee.attackSoundEffect = def.melee.attackSoundEffect.Item2;
+				def.melee.AddTo( container );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				DamageSource rangedDamageSource = container.AddComponent<DamageSource>();
-				rangedDamageSource.damageType = def.ranged.damageType;
-				rangedDamageSource.damage = def.ranged.damage;
-				rangedDamageSource.armorPenetration = def.ranged.armorPenetration;
-
-				RangedModule ranged = container.AddComponent<RangedModule>();
-				ranged.projectile = DataManager.Get<ProjectileDefinition>( def.ranged.projectileId );
-				ranged.projectileCount = def.ranged.projectileCount;
-				ranged.damageSource = rangedDamageSource;
-				ranged.targetFinder = finder;
-				ranged.attackRange = def.ranged.attackRange;
-				ranged.attackCooldown = def.ranged.attackCooldown;
-				ranged.velocity = def.ranged.velocity;
-				ranged.localOffsetMin = def.ranged.localOffsetMin;
-				ranged.localOffsetMax = def.ranged.localOffsetMax;
-				ranged.attackSoundEffect = def.ranged.attackSoundEffect.Item2;
+				def.ranged.AddTo( container );
 			}
 
 			// Make the unit update it's UI's position every frame.

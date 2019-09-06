@@ -3,9 +3,9 @@ using KFF;
 using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
-	public class MeleeModuleDefinition : IKFFSerializable
+	public class MeleeModuleDefinition : ModuleDefinition
 	{
 		public DamageType damageType { get; set; }
 		public float damage { get; set; }
@@ -15,8 +15,28 @@ namespace SS
 		public float attackCooldown { get; set; }
 		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
 
+		public override void AddTo( GameObject obj )
+		{
+			ITargetFinder finder = obj.GetComponent<ITargetFinder>();
+			if( finder == null )
+			{
+				throw new Exception( "MeleeModule requires an ITargetFinder component." );
+			}
 
-		public void DeserializeKFF( KFFSerializer serializer )
+			DamageSource meleeDamageSource = obj.AddComponent<DamageSource>();
+			meleeDamageSource.damageType = damageType;
+			meleeDamageSource.damage = damage;
+			meleeDamageSource.armorPenetration = armorPenetration;
+
+			MeleeModule melee = obj.AddComponent<MeleeModule>();
+			melee.damageSource = meleeDamageSource;
+			melee.targetFinder = finder;
+			melee.attackCooldown = attackCooldown;
+			melee.attackRange = attackRange;
+			melee.attackSoundEffect = attackSoundEffect.Item2;
+		}
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.damageType = (DamageType)serializer.ReadByte( "DamageType" );
 			this.damage = serializer.ReadFloat( "Damage" );
@@ -27,7 +47,7 @@ namespace SS
 			this.attackSoundEffect = serializer.ReadAudioClipFromAssets( "AttackSound" );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteByte( "", "DamageType", (byte)this.damageType );
 			serializer.WriteFloat( "", "Damage", this.damage );

@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using KFF;
 using SS.Data;
+using SS.Modules;
 using SS.ResourceSystem;
 using SS.Technologies;
 using System;

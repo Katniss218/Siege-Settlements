@@ -21,7 +21,8 @@
 		// Controls the barracks module of the building. remove this to disable functionality.
 		BarracksModule =
 		{
-			CreatableUnits =
+			ConstructionSpeed = 1.0;
+			SpawnableUnits =
 			[
 				"unit.civilian"
 			];
@@ -56,7 +57,10 @@
 			{ Id = "resource.stone"; Amount = 200; }
 		];
 		
-		ResearchModule = { };
+		ResearchModule =
+		{
+			ResearchSpeed = 1.0;
+		};
 		
 		TechsRequired = [];
 		Mesh = "Models/Buildings/House.kff";
@@ -86,7 +90,8 @@
 		];
 		BarracksModule =
 		{
-			CreatableUnits =
+			ConstructionSpeed = 1.0;
+			SpawnableUnits =
 			[
 				"unit.light_infantry",
 				"unit.heavy_infantry",
@@ -124,7 +129,8 @@
 		];
 		BarracksModule =
 		{
-			CreatableUnits =
+			ConstructionSpeed = 1.0;
+			SpawnableUnits =
 			[
 				"unit.light_cavalry",
 				"unit.heavy_cavalry",

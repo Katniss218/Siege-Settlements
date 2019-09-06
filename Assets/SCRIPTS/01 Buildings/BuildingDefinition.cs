@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using KFF;
 using SS.Data;
+using SS.Modules;
 using SS.ResourceSystem;
 using SS.Technologies;
 using System;
@@ -20,10 +21,9 @@ namespace SS.Buildings
 		public Vector3 size { get; set; }
 
 		public ResourceStack[] cost { get; private set; }
-
-		public bool isBarracks { get; set; }
-		public string[] barracksUnits { get; set; }
-		public bool isResearch { get; set; }
+		
+		public BarracksModuleDefinition barracks;
+		public ResearchModuleDefinition research;
 		public string[] techsRequired { get; private set; } // the default techs required to unlock.
 
 		public Tuple<string, Mesh> mesh { get; private set; }
@@ -43,6 +43,7 @@ namespace SS.Buildings
 		{
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
+
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
@@ -56,17 +57,20 @@ namespace SS.Buildings
 			}
 			serializer.DeserializeArray( "Cost", this.cost );
 
-			analysisData = serializer.Analyze( "BarracksModule" );
-			if( analysisData.isSuccess )
+			
+			if( serializer.Analyze( "BarracksModule" ).isSuccess )
 			{
-				this.isBarracks = true;
-				this.barracksUnits = serializer.ReadStringArray( "BarracksModule.CreatableUnits" );
+				this.barracks = new BarracksModuleDefinition();
+				serializer.Deserialize( "BarracksModule", this.barracks );
 			}
-			analysisData = serializer.Analyze( "ResearchModule" );
-			if( analysisData.isSuccess )
+			
+			if( serializer.Analyze( "ResearchModule" ).isSuccess )
 			{
-				this.isResearch = true;
+				this.research = new ResearchModuleDefinition();
+				serializer.Deserialize( "ResearchModule", this.research );
 			}
+
+
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
@@ -83,20 +87,21 @@ namespace SS.Buildings
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
+
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.SerializeArray( "", "Cost", this.cost );
 
-			if( this.isBarracks )
+			if( this.barracks != null )
 			{
-				serializer.WriteClass( "", "BarracksModule" );
-				serializer.WriteStringArray( "BarracksModule", "CreatableUnits", barracksUnits );
+				serializer.Serialize( "", "BarracksModule", this.barracks );
 			}
-			if( this.isResearch )
+			if( this.research != null )
 			{
-				serializer.WriteClass( "", "ResearchModule" );
+				serializer.Serialize( "", "ResearchModule", this.research );
 			}
+
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );

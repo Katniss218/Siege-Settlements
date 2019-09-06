@@ -3,12 +3,12 @@ using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace SS
+namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
 	[RequireComponent( typeof( DamageSource ) )]
 	[RequireComponent( typeof( ITargetFinder ) )]
-	public class RangedModule : MonoBehaviour
+	public class RangedModule : Module
 	{
 		public Damageable currentTarget;
 

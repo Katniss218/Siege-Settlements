@@ -29,7 +29,7 @@ namespace SS
 				}
 				if( Vector3.Distance( this.transform.position, this.depositToPickUp.transform.position ) < 1 )
 				{
-					this.GetComponent<InventoryModule>().PickupResource( new ResourceSystem.ResourceStack( depositToPickUp.resourceId, 1 ) );
+					this.GetComponent<Inventory>().PickupResource( new ResourceSystem.ResourceStack( depositToPickUp.resourceId, 1 ) );
 					depositToPickUp.PickUp( 1 );
 				}
 			}

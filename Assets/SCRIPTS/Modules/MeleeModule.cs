@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
 	[RequireComponent( typeof( DamageSource ) )]
 	[RequireComponent( typeof( ITargetFinder ) )]
-	public class MeleeModule : MonoBehaviour
+	public class MeleeModule : Module
 	{
 		public Damageable currentTarget;
 

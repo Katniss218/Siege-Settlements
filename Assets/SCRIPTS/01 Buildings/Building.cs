@@ -89,18 +89,13 @@ namespace SS.Buildings
 			} );
 			factionMember.factionId = factionId;
 
-			if( def.isBarracks )
+			if( def.barracks != null )
 			{
-				BarracksModule barracks = container.AddComponent<BarracksModule>();
-				barracks.spawnableUnits = new UnitDefinition[def.barracksUnits.Length];
-				for( int i = 0; i < barracks.spawnableUnits.Length; i++ )
-				{
-					barracks.spawnableUnits[i] = DataManager.Get<UnitDefinition>( def.barracksUnits[i] );
-				}
+				def.barracks.AddTo( container );
 			}
-			if( def.isResearch )
+			if( def.research != null )
 			{
-				ResearchModule research = container.AddComponent<ResearchModule>();
+				def.research.AddTo( container );
 			}
 
 			// Make the building damageable.
