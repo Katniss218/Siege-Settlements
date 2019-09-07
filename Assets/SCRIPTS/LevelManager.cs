@@ -74,14 +74,14 @@ namespace SS.Levels
 				for( int j = 0; j < 4; j++ )
 				{
 					float x = Random.Range( 22f, 42f );
-					float z = Random.Range( 32 + i, 32 + (2 * i) );
+					float z = Random.Range( 32f + i, 32f + (2f * i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
 					{
 						Unit.Create( units[i], hit.point, Quaternion.identity, 0 );
 					}
 					x = Random.Range( 22f, 42f );
-					z = Random.Range( 32 + (-2 * i), 32 + (-i) );
+					z = Random.Range( 32f + (-2f * i), 32f + (-i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f ) )
 					{
@@ -96,14 +96,14 @@ namespace SS.Levels
 				for( int j = 0; j < 4; j++ )
 				{
 					float x = Random.Range( 22f, 42f );
-					float z = Random.Range( 32 + i, 32 + (2 * i) );
+					float z = Random.Range( 32f + i, 32f + (2f * i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f ) )
 					{
 						Hero.Create( heroes[i], hit.point, Quaternion.identity, 0 );
 					}
 					x = Random.Range( 22f, 42f );
-					z = Random.Range( 32 + (-2 * i), 32 + (-i) );
+					z = Random.Range( 32f + (-2f * i), 32f + (-i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f ) )
 					{
