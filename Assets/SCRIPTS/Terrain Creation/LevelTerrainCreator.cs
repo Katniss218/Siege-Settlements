@@ -40,6 +40,7 @@ namespace SS.TerrainCreation
 					GameObject terrainSegment = new GameObject( "Mesh" );
 					terrainSegment.layer = LayerMask.NameToLayer( "Terrain" );
 					terrainSegment.transform.SetParent( terrainParent );
+					terrainSegment.isStatic = true;
 
 					MeshFilter meshFilter = terrainSegment.AddComponent<MeshFilter>();
 					meshFilter.mesh = meshes[i,j];
