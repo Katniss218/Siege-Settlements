@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.UI
 {
-	public class Exit : MonoBehaviour
+	public class ExitButton : MonoBehaviour
 	{
 		public void QuitGame()
 		{

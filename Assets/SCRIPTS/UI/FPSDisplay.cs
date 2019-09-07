@@ -6,7 +6,7 @@ namespace SS.UI
 	/// <summary>
 	/// Counts the FPS and displays that to a text field (TextMesh Pro).
 	/// </summary>
-	public class FPSCounter : MonoBehaviour
+	public class FPSDisplay : MonoBehaviour
 	{
 		[SerializeField] private TMP_Text textField = null;
 
