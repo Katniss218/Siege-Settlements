@@ -61,10 +61,26 @@ namespace SS
 
 		void Update()
 		{
-			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
+			// Move Left-Right
+			if( Input.GetKey( KeyCode.A ) )
 			{
-				return;
+				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
 			}
+			else if( Input.GetKey( KeyCode.D ) )
+			{
+				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
+			}
+
+			// Move Up-Down
+			if( Input.GetKey( KeyCode.W ) )
+			{
+				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
+			}
+			else if( Input.GetKey( KeyCode.S ) )
+			{
+				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
+			}
+
 
 			// Rotate CCW-CW
 			if( Input.GetKey( KeyCode.Q ) )
@@ -74,6 +90,12 @@ namespace SS
 			else if( Input.GetKey( KeyCode.E ) )
 			{
 				Rotate( rotSpeed * Time.deltaTime );
+			}
+
+
+			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
+			{
+				return;
 			}
 
 			// Zoom
@@ -99,26 +121,6 @@ namespace SS
 				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
 			}
 			else if( Input.mousePosition.y < scrollMargin )
-			{
-				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
-			}
-
-			// Move Left-Right
-			if( Input.GetKey( KeyCode.A ) )
-			{
-				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
-			}
-			else if( Input.GetKey( KeyCode.D ) )
-			{
-				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
-			}
-
-			// Move Up-Down
-			if( Input.GetKey( KeyCode.W ) )
-			{
-				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
-			}
-			else if( Input.GetKey( KeyCode.S ) )
 			{
 				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}
