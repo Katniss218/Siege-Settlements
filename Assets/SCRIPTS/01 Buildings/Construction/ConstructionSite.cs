@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Katniss.Utils;
+using Object = UnityEngine.Object;
 
 namespace SS.Buildings
 {
@@ -17,6 +18,7 @@ namespace SS.Buildings
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
 		private string[] resourceIds;
+
 		/// <summary>
 		/// An array of remaining resources, per resource type (use resourceIds[i] to get the Id) (Read Only).
 		/// </summary>
@@ -80,7 +82,7 @@ namespace SS.Buildings
 
 		void Start()
 		{
-			onConstructionStart?.Invoke();
+			this.onConstructionStart?.Invoke();
 		}
 
 		// placeholder for auto-building until the proper build mechanic comes into place.
@@ -88,11 +90,11 @@ namespace SS.Buildings
 		{
 			if( Input.GetKeyDown( KeyCode.B ) ) // wood
 			{
-				AdvanceConstructionBy( new ResourceStack( "resource.wood", 50 ) );
+				this.AdvanceConstructionBy( new ResourceStack( "resource.wood", 50 ) );
 			}
 			if( Input.GetKeyDown( KeyCode.N ) ) // stone
 			{
-				AdvanceConstructionBy( new ResourceStack( "resource.stone", 50 ) );
+				this.AdvanceConstructionBy( new ResourceStack( "resource.stone", 50 ) );
 			}
 		}
 
@@ -121,7 +123,7 @@ namespace SS.Buildings
 		public void FinishConstruction()
 		{
 			this.onConstructionComplete?.Invoke();
-			Destroy( this );
+			Object.Destroy( this );
 		}
 
 
@@ -154,34 +156,37 @@ namespace SS.Buildings
 				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 			} );
 
-			// TODO ----- When the building gets damaged, and it has construction site script, the construction site's '_Progress' should decrease.
-
 			// Every time the construction progresses:
 			// - Heal the building depending on the amount of resources (100% health => total amount of resources as specified in the definition).
 			// - Emit particles.
-			// - Play sound
+			// - Play sound.
 			constructionSite.onConstructionProgress.AddListener( ( ResourceStack stack ) =>
 			{
 				damageable.Heal( constructionSite.GetHealthPercentGained( stack.amount ) * damageable.healthMax );
 
-				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
-
 				Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.125f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
-				//BuildingDefinition def = DataManager.Get<BuildingDefinition>( objectBase.id );
 				shape.scale = new Vector3( buildingComp.cachedDefinition.size.x, 0.25f, buildingComp.cachedDefinition.size.z );
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
+
 				AudioManager.PlayNew( buildingComp.cachedDefinition.buildSoundEffect.Item2, 0.5f, 1.0f );
 				// FIXME ----- Only play new sound, when the previous one has ended (per-building basis).
 			} );
 
-			// When the construction is completed, set the _Progress attribute to fully built.
+			UnityAction onHealthChange_setProgress = () =>
+			{
+				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+			};
+
+			// The building shouldn't drop into the ground, when it's not "being constructed".
 			constructionSite.onConstructionComplete.AddListener( () =>
 			{
-				meshRenderer.material.SetFloat( "_Progress", 1f );
+				damageable.onHealthChange.RemoveListener( onHealthChange_setProgress );
 			} );
+
+			damageable.onHealthChange.AddListener( onHealthChange_setProgress );
 		}
 	}
 }

@@ -2,6 +2,9 @@
 
 namespace SS.Buildings
 {
+	/// <summary>
+	/// Component used to position the build preview in the scene.
+	/// </summary>
 	public class BuildPreviewPositioner : MonoBehaviour
 	{
 		private void FixedUpdate()
