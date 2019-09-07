@@ -6,13 +6,28 @@ using UnityEngine;
 
 namespace SS
 {
+	/// <summary>
+	/// Represents a faction.
+	/// </summary>
 	public class Faction : IKFFSerializable
 	{
+		/// <summary>
+		/// The diplomatic name of the faction.
+		/// </summary>
 		public string name { get; private set; }
+		/// <summary>
+		/// The team color of the faction.
+		/// </summary>
 		public Color color { get; private set; }
 
+		/// <summary>
+		/// The techs that are locked/researched/etc. for this specific faction.
+		/// </summary>
 		public Dictionary<string, TechnologyResearchProgress> techs { get; private set; }
 
+		/// <summary>
+		/// Creates a new, blank faction.
+		/// </summary>
 		public Faction()
 		{
 			this.name = "<missing>";
@@ -21,6 +36,11 @@ namespace SS
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 		}
 
+		/// <summary>
+		/// Creates a new faction with a diplomatic name, and a teamcolor.
+		/// </summary>
+		/// <param name="name">The diplomatic name to assign to this faction.</param>
+		/// <param name="color">The color to assign to this faction.</param>
 		public Faction( string name, Color color )
 		{
 			this.name = name;
@@ -29,6 +49,7 @@ namespace SS
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 		}
 
+		// Loads the registered technologies to the faction's cache.
 		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState )
 		{
 			List<TechnologyDefinition> technologiesLoaded = DataManager.GetAllOfType<TechnologyDefinition>();

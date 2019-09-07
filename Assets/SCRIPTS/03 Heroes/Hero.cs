@@ -125,6 +125,8 @@ namespace SS.Heroes
 			if( def.melee != null || def.ranged != null )
 			{
 				finder = container.AddComponent<TargetFinder>();
+				
+				finder.canTarget = FactionMember.CanTargetCheck;
 			}
 
 			// If the new unit is melee, setup the melee module.

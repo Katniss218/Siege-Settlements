@@ -1,13 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SS
+﻿namespace SS
 {
 	public static class FactionManager
 	{
-		public static Faction[] factions;
+		/// <summary>
+		/// The currently registered factions.
+		/// </summary>
+		public static Faction[] factions { get; private set; }
 
+		/// <summary>
+		/// Sets the factions.
+		/// </summary>
 		public static void SetFactions( Faction[] factions )
 		{
 			FactionManager.factions = factions;

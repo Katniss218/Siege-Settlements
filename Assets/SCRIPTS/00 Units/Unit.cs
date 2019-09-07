@@ -56,7 +56,7 @@ namespace SS.Units
 			selectable.icon = def.icon.Item2;
 			// If the unit's type is civilian, make it show the build menu, when highlighted.
 			if( def.id == "unit.civilian" )
-			{
+			{ // FIXME ----- Base this on a KFF def flag.
 				selectable.onSelectionUIRedraw.AddListener( CivilianOnSelect );
 			}
 
@@ -106,7 +106,6 @@ namespace SS.Units
 				{
 					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-
 			} );
 			damageable.healthMax = def.healthMax;
 			damageable.Heal();
@@ -139,6 +138,8 @@ namespace SS.Units
 			if( def.melee != null || def.ranged != null )
 			{
 				finder = container.AddComponent<TargetFinder>();
+
+				finder.canTarget = FactionMember.CanTargetCheck;
 			}
 
 			// If the new unit is melee, setup the melee module.
