@@ -9,7 +9,7 @@ namespace SS.Projectiles
 		{
 			if( def == null )
 			{
-				throw new System.Exception( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Projectile (\"" + def.id + "\"), (f: " + factionId + ")" );
 			container.layer = LayerMask.NameToLayer( "Projectiles" );
@@ -49,10 +49,7 @@ namespace SS.Projectiles
 			FactionMember f = container.AddComponent<FactionMember>();
 			f.factionId = factionId;
 
-			DamageSource dms = container.AddComponent<DamageSource>();
-			dms.damageType = damageType;
-			dms.damage = damageOverride;
-			dms.armorPenetration = armorPenetration;
+			DamageSource damageSource = new DamageSource( damageType, damageOverride, armorPenetration );
 
 			container.AddComponent<RotateAlongVelocity>();
 
@@ -76,17 +73,17 @@ namespace SS.Projectiles
 					AudioManager.PlayNew( def.missSoundEffect.Item2, 1f, 1.0f );
 					return;
 				}
+
 				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.
 				FactionMember fac = other.GetComponent<FactionMember>();
 				if( fac != null )
 				{
-					if( fac.factionId == proj.GetComponent<FactionMember>().factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
+					if( fac.factionId == proj.GetComponent<FactionMember>().factionId )
 					{
 						return;
 					}
 				}
-				DamageSource projectileDamage = proj.GetComponent<DamageSource>();
-				od.TakeDamage( projectileDamage.damageType, projectileDamage.damage, projectileDamage.armorPenetration );
+				od.TakeDamage( damageSource.damageType, damageSource.GetRandomizedDamage(), damageSource.armorPenetration );
 				AudioManager.PlayNew( def.hitSoundEffect.Item2, 1f, 1.0f );
 				Object.Destroy( proj );
 			} );

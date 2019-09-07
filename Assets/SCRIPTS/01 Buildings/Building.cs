@@ -33,7 +33,7 @@ namespace SS.Buildings
 		{
 			if( def == null )
 			{
-				throw new System.Exception( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Building (\"" + def.id + "\"), (f: " + factionId + ")" );
 			container.isStatic = true;

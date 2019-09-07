@@ -22,18 +22,6 @@ namespace SS
 			}
 		}
 
-		/// <summary>
-		/// Calculates reduced damage, based on the armor's current values and the parameters of the incoming damage.
-		/// </summary>
-		/// <param name="incomingDamage">The amount of incoming damage (the raw damage, before any reductions).</param>
-		/// <param name="damageType">The type of incoming damage.</param>
-		/// <param name="armorPenetration">The amount of armor penetration of the incoming damage.</param>
-		public float CalculateReducedDamage( float incomingDamage, DamageType damageType, float armorPenetration )
-		{
-
-			return incomingDamage * this.GetMultiplier( this.values[(int)damageType], armorPenetration);
-		}
-
 		private float GetMultiplier( float armor, float penetration )
 		{
 			// The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
@@ -50,6 +38,17 @@ namespace SS
 			return mult;
 		}
 
+		/// <summary>
+		/// Calculates reduced damage, based on the armor's current values and the parameters of the incoming damage.
+		/// </summary>
+		/// <param name="incomingDamage">The amount of incoming damage (the raw damage, before any reductions).</param>
+		/// <param name="damageType">The type of incoming damage.</param>
+		/// <param name="armorPenetration">The amount of armor penetration of the incoming damage.</param>
+		public float CalculateReducedDamage( float incomingDamage, DamageType damageType, float armorPenetration )
+		{
+			return incomingDamage * this.GetMultiplier( this.values[(int)damageType], armorPenetration);
+		}
+		
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
 			float[] values = serializer.ReadFloatArray( "ArmorValues" );

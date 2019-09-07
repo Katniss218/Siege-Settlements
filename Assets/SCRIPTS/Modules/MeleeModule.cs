@@ -3,7 +3,6 @@
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	[RequireComponent( typeof( DamageSource ) )]
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class MeleeModule : Module
 	{
@@ -67,7 +66,7 @@ namespace SS.Modules
 		/// </summary>
 		public void Attack()
 		{
-			this.currentTarget.TakeDamage( this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration );
+			this.currentTarget.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 			this.lastAttackTimestamp = Time.time;
 		}
 

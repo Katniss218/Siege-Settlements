@@ -6,7 +6,6 @@ using UnityEngine.AI;
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	[RequireComponent( typeof( DamageSource ) )]
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class RangedModule : Module
 	{

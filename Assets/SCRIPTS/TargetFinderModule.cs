@@ -25,7 +25,7 @@ namespace SS
 				FactionMember potentialFactionMember = potentialTarget.GetComponent<FactionMember>();
 				if( potentialFactionMember != null )
 				{
-					if( potentialFactionMember.factionId == factionMember.factionId )//|| Main.currentRelations[f.factionId, this.factionMember.factionId] != FactionRelation.Enemy )
+					if( potentialFactionMember.factionId == factionMember.factionId )
 					{
 						continue;
 					}

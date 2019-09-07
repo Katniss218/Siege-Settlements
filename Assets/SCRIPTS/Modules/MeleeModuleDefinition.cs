@@ -23,17 +23,14 @@ namespace SS.Modules
 				throw new Exception( "MeleeModule requires an ITargetFinder component." );
 			}
 
-			DamageSource meleeDamageSource = obj.AddComponent<DamageSource>();
-			meleeDamageSource.damageType = damageType;
-			meleeDamageSource.damage = damage;
-			meleeDamageSource.armorPenetration = armorPenetration;
+			DamageSource damageSource = new DamageSource( this.damageType, this.damage, this.armorPenetration );
 
 			MeleeModule melee = obj.AddComponent<MeleeModule>();
-			melee.damageSource = meleeDamageSource;
+			melee.damageSource = damageSource;
 			melee.targetFinder = finder;
-			melee.attackCooldown = attackCooldown;
-			melee.attackRange = attackRange;
-			melee.attackSoundEffect = attackSoundEffect.Item2;
+			melee.attackCooldown = this.attackCooldown;
+			melee.attackRange = this.attackRange;
+			melee.attackSoundEffect = this.attackSoundEffect.Item2;
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )

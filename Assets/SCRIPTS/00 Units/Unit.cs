@@ -18,7 +18,7 @@ namespace SS.Units
 		{
 			if( def == null )
 			{
-				throw new System.Exception( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
 			container.layer = LayerMask.NameToLayer( "Units" );

@@ -29,22 +29,19 @@ namespace SS.Modules
 				throw new Exception( "RangedModule requires an ITargetFinder component." );
 			}
 
-			DamageSource rangedDamageSource = obj.AddComponent<DamageSource>();
-			rangedDamageSource.damageType = damageType;
-			rangedDamageSource.damage = damage;
-			rangedDamageSource.armorPenetration = armorPenetration;
+			DamageSource damageSource = new DamageSource( this.damageType, this.damage, this.armorPenetration );
 
 			RangedModule ranged = obj.AddComponent<RangedModule>();
-			ranged.projectile = DataManager.Get<ProjectileDefinition>( projectileId );
-			ranged.projectileCount = projectileCount;
-			ranged.damageSource = rangedDamageSource;
+			ranged.projectile = DataManager.Get<ProjectileDefinition>( this.projectileId );
+			ranged.damageSource = damageSource;
 			ranged.targetFinder = finder;
-			ranged.attackRange = attackRange;
-			ranged.attackCooldown = attackCooldown;
-			ranged.velocity = velocity;
-			ranged.localOffsetMin = localOffsetMin;
-			ranged.localOffsetMax = localOffsetMax;
-			ranged.attackSoundEffect = attackSoundEffect.Item2;
+			ranged.projectileCount = this.projectileCount;
+			ranged.attackRange = this.attackRange;
+			ranged.attackCooldown = this.attackCooldown;
+			ranged.velocity = this.velocity;
+			ranged.localOffsetMin = this.localOffsetMin;
+			ranged.localOffsetMax = this.localOffsetMax;
+			ranged.attackSoundEffect = this.attackSoundEffect.Item2;
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )
