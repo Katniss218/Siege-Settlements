@@ -9,12 +9,18 @@ namespace SS.Extras
 	{
 		public string id { get; private set; }
 
-		public string resourceId { get; private set; } // the id of the resource extracted by mining this deposit.
+		/// <summary>
+		/// The id of the resource extracted by mining this deposit.
+		/// </summary>
+		public string resourceId { get; private set; }
 
-		public int amt { get; private set; } // the amt still left.
-		public int amtMax { get; private set; } // the max amt.
+		public int amount { get; private set; } // the amt still left.
+		public int amountMax { get; private set; } // the max amt.
 
-		public bool isTypeExtracted { get; private set; } // if true, the resource doesn't take time to mine.
+		/// <summary>
+		/// If true, the resource can be mined instantly.
+		/// </summary>
+		public bool isTypeExtracted { get; private set; } 
 
 		private Transform graphicsTransform;
 		private MeshFilter meshFilter;
@@ -44,8 +50,8 @@ namespace SS.Extras
 
 		public void PickUp( int amt )
 		{
-			this.amt -= amt;
-			if( this.amt <= 0 )
+			this.amount -= amt;
+			if( this.amount <= 0 )
 			{
 				Destroy( this.gameObject );
 			}
@@ -94,8 +100,8 @@ namespace SS.Extras
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
 			resourceDepositComponent.AssignDefinition( def );
-			resourceDepositComponent.amt = amountOfResource;
-			resourceDepositComponent.amtMax = amountOfResource;
+			resourceDepositComponent.amount = amountOfResource;
+			resourceDepositComponent.amountMax = amountOfResource;
 
 			return container;
 		}
