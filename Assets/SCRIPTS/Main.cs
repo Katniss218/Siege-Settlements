@@ -17,27 +17,37 @@ namespace SS
 			get { return new Color( 0.1f, 0.1f, 0.1f ); }
 		}
 
-		
+
 		// TODO ----- Move these fields to AssetsManager.
 		// Handle both file assets & resources.load assets in the AssetsManager class.
 
-		private static GameObject __unitUI = null;
-		public static GameObject unitUI
+		private static GameObject __unitHUD = null;
+		public static GameObject unitHUD
 		{
 			get
 			{
-				if( __unitUI == null ) { __unitUI = Resources.Load<GameObject>( "Prefabs/unit_ui" ); }
-				return __unitUI;
+				if( __unitHUD == null ) { __unitHUD = Resources.Load<GameObject>( "Prefabs/unit_hud" ); }
+				return __unitHUD;
 			}
 		}
 
-		private static GameObject __buildingUI = null;
-		public static GameObject buildingUI
+		private static GameObject __buildingHUD = null;
+		public static GameObject buildingHUD
 		{
 			get
 			{
-				if( __buildingUI == null ) { __buildingUI = Resources.Load<GameObject>( "Prefabs/building_ui" ); }
-				return __buildingUI;
+				if( __buildingHUD == null ) { __buildingHUD = Resources.Load<GameObject>( "Prefabs/building_hud" ); }
+				return __buildingHUD;
+			}
+		}
+
+		private static GameObject __heroHUD = null;
+		public static GameObject heroHUD
+		{
+			get
+			{
+				if( __heroHUD == null ) { __heroHUD = Resources.Load<GameObject>( "Prefabs/hero_hud" ); }
+				return __heroHUD;
 			}
 		}
 
@@ -276,10 +286,10 @@ namespace SS
 				return __resourcePanel;
 			}
 		}
-		
+
 		private void Start()
 		{
-			
+
 		}
 
 
@@ -290,7 +300,7 @@ namespace SS
 		void Update()
 		{
 
-			
+
 			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
@@ -303,7 +313,7 @@ namespace SS
 						Selectable[] selected = SelectionManager.selectedObjects;
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							if( selected[i].gameObject.layer == LayerMask.NameToLayer("Units") )
+							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Units" ) )
 							{
 								if( hitDeposit != null )
 								{
@@ -325,6 +335,16 @@ namespace SS
 									TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
 									moveTo.destination = hitInfo.point;
 								}
+							}
+							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Heroes" ) )
+							{
+								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
+								if( goal != null )
+								{
+									DestroyImmediate( goal );
+								}
+								TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
+								moveTo.destination = hitInfo.point;
 							}
 						}
 					}

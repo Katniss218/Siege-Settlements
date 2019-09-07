@@ -1,6 +1,7 @@
 ﻿using SS.Data;
 using SS.Modules;
 using SS.Projectiles;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -33,7 +34,7 @@ namespace SS.Heroes
 				throw new System.Exception( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Hero (\"" + def.id + "\"), (f: " + factionId + ")" );
-			container.layer = LayerMask.NameToLayer( "Units" );
+			container.layer = LayerMask.NameToLayer( "Heroes" );
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
@@ -79,13 +80,15 @@ namespace SS.Heroes
 			navMeshAgent.height = def.height;
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
-			
+
+			ScaledCHUD ui = Object.Instantiate( Main.heroHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<ScaledCHUD>();
+
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = FactionManager.factions[factionMember.factionId].color;
-				//ui.SetFactionColor( color );
+				ui.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
@@ -96,12 +99,12 @@ namespace SS.Heroes
 			damageable.onHealthChange.AddListener( () =>
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
-				//ui.SetHealthFill( damageable.healthPercent );
+				ui.SetHealthBarFill( damageable.healthPercent );
 			} );
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
 			{
-				//Object.Destroy( ui.gameObject );
+				Object.Destroy( ui.gameObject );
 				// for breakup make several meshes that are made up of the original one, attach physics to them.
 				// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
 				// when the scale reaches 0.x, remove the piece.
@@ -137,10 +140,10 @@ namespace SS.Heroes
 			}
 
 			// Make the unit update it's UI's position every frame.
-			/*container.AddComponent<EveryFrameSingle>().onUpdate = () =>
+			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{
 				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
-			};*/
+			};
 
 			return container;
 		}

@@ -154,6 +154,8 @@ namespace SS.Buildings
 				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 			} );
 
+			// TODO ----- When the building gets damaged, and it has construction site script, the construction site's '_Progress' should decrease.
+
 			// Every time the construction progresses:
 			// - Heal the building depending on the amount of resources (100% health => total amount of resources as specified in the definition).
 			// - Emit particles.

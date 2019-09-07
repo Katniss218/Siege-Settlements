@@ -1,5 +1,4 @@
-﻿using SS.Data;
-using SS.Units;
+﻿using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,9 +7,9 @@ namespace SS.Buildings
 	public class Building : MonoBehaviour
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
-		private static float STARTING_HEALTH_PERCENT = 0.1f;
+		private const float STARTING_HEALTH_PERCENT = 0.1f;
 		// If a building drops below this value, it can't be used, and needs to be repaired.
-		private static float USABILITY_THRESHOLD = 0.5f;
+		private const float USABILITY_THRESHOLD = 0.5f;
 
 		/// <summary>
 		/// Contains all of the original values for this building. Might be not accurate to the overriden values on GameObjects (Read Only).
@@ -77,14 +76,14 @@ namespace SS.Buildings
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			UnscaledCHUD ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnscaledCHUD>();
+			UnscaledCHUD ui = Object.Instantiate( Main.buildingHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnscaledCHUD>();
 
 			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = FactionManager.factions[factionMember.factionId].color;
-				ui.SetFactionColor( color );
+				ui.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			factionMember.factionId = factionId;
@@ -106,7 +105,7 @@ namespace SS.Buildings
 			// When the health is changed, make the building update it's healthbar.
 			damageable.onHealthChange.AddListener( () =>
 			{
-				ui.SetHealthFill( damageable.healthPercent );
+				ui.SetHealthBarFill( damageable.healthPercent );
 			} );
 			// When the building dies:
 			// - Destroy the building's UI.

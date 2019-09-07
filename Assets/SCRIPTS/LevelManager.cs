@@ -66,6 +66,8 @@ namespace SS.Levels
 
 			Main.cameraPivot.position = new Vector3( 32, 0, 32 );
 
+			// Units/Heroes can be spawned in the same place (random + pushing onto navmesh) what causes the Ranged damage dealer to break (target pos == shooter pos)
+
 			List<UnitDefinition> units = DataManager.GetAllOfType<UnitDefinition>();
 			for( int i = 0; i < units.Count; i++ )
 			{

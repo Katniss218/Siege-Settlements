@@ -1,11 +1,9 @@
 ﻿using SS.Buildings;
 using SS.Data;
-using SS.Projectiles;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using SS.Modules;
 
 namespace SS.Units
 {
@@ -75,14 +73,14 @@ namespace SS.Units
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			ScaledCHUD ui = Object.Instantiate( Main.unitUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<ScaledCHUD>();
+			ScaledCHUD ui = Object.Instantiate( Main.unitHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<ScaledCHUD>();
 
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = FactionManager.factions[factionMember.factionId].color;
-				ui.SetFactionColor( color );
+				ui.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
@@ -93,7 +91,7 @@ namespace SS.Units
 			damageable.onHealthChange.AddListener( () =>
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
-				ui.SetHealthFill( damageable.healthPercent );
+				ui.SetHealthBarFill( damageable.healthPercent );
 			} );
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
