@@ -6,9 +6,9 @@ namespace SS.Buildings
 	/// <summary>
 	/// Represents a UI, that's attached to a unit (displays health, etc.).
 	/// </summary>
-	public class BuildingUI : MonoBehaviour
+	public class UnscaledCHUD : MonoBehaviour
 	{
-		private Image background;
+		private Image resource;
 		private Image healthBar;
 
 		/// <summary>
@@ -16,8 +16,8 @@ namespace SS.Buildings
 		/// </summary>
 		public void SetFactionColor( Color c )
 		{
-			background.color = c;
-			healthBar.color = c;
+			this.resource.color = c;
+			this.healthBar.color = c;
 		}
 
 		/// <summary>
@@ -25,13 +25,13 @@ namespace SS.Buildings
 		/// </summary>
 		public void SetHealthFill( float percentHealth )
 		{
-			healthBar.fillAmount = percentHealth;
+			this.healthBar.fillAmount = percentHealth;
 		}
 
 		void Awake()
 		{
-			background = this.GetComponent<Image>();
-			healthBar = this.transform.GetChild( 0 ).GetComponent<Image>();
+			this.resource = this.transform.Find( "Resource" ).GetComponent<Image>();
+			this.healthBar = this.transform.Find( "Health Bar" ).GetComponent<Image>();
 		}
 	}
 }

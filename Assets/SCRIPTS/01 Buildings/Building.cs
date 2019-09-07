@@ -77,7 +77,7 @@ namespace SS.Buildings
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			BuildingUI ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<BuildingUI>();
+			UnscaledCHUD ui = Object.Instantiate( Main.buildingUI, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<UnscaledCHUD>();
 
 			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();

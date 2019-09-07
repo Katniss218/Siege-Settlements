@@ -6,14 +6,14 @@ namespace SS.Units
 	/// <summary>
 	/// Represents a UI, that's attached to a unit (displays health, etc.).
 	/// </summary>
-	public class UnitUI : MonoBehaviour
+	public class ScaledCHUD : MonoBehaviour
 	{
 		// when the health is 0, the image will be filled this much.
-		private const float min = 0.08f;
+		[SerializeField] private float min = 0.25f;
 		// when the health is 1, the image will be filled this much.
-		private const float max = 0.67f;
+		[SerializeField] private float max = 0.75f;
 
-		private Image background;
+		private Image resource;
 		private Image healthBar;
 		
 		/// <summary>
@@ -21,8 +21,8 @@ namespace SS.Units
 		/// </summary>
 		public void SetFactionColor( Color c )
 		{
-			background.color = c;
-			healthBar.color = c;
+			this.resource.color = c;
+			this.healthBar.color = c;
 		}
 
 		/// <summary>
@@ -30,17 +30,17 @@ namespace SS.Units
 		/// </summary>
 		public void SetHealthFill( float percentHealth )
 		{
-			float scale = max - min;
+			float scale = this.max - this.min;
 			float p = percentHealth * scale;
-			p += min;
+			p += this.min;
 
-			healthBar.fillAmount = p;
+			this.healthBar.fillAmount = p;
 		}
 
 		void Awake()
 		{
-			background = this.GetComponent<Image>();
-			healthBar = this.transform.GetChild( 0 ).GetComponent<Image>();
+			this.resource = this.transform.Find( "Resource" ).GetComponent<Image>();
+			this.healthBar = this.transform.Find( "Health Bar" ).GetComponent<Image>();
 		}
 	}
 }
