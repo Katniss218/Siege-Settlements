@@ -7,7 +7,7 @@ namespace SS
 	public abstract partial class TAIGoal
 	{
 		[RequireComponent( typeof( NavMeshAgent ) )]
-		public class PickUpResource : TAIGoal
+		public class CollectDeposit : TAIGoal
 		{
 			public ResourceDeposit depositToPickUp;
 
@@ -37,7 +37,7 @@ namespace SS
 			{
 				TAIGoal.ClearGoal( gameObject );
 
-				PickUpResource pickUpResource = gameObject.AddComponent<TAIGoal.PickUpResource>();
+				CollectDeposit pickUpResource = gameObject.AddComponent<TAIGoal.CollectDeposit>();
 
 				pickUpResource.depositToPickUp = depositToPickUp;
 			}

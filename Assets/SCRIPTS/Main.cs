@@ -315,7 +315,7 @@ namespace SS
 							{
 								if( hitDeposit != null )
 								{
-									TAIGoal.PickUpResource.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+									TAIGoal.CollectDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
 								}
 								else
 								{
