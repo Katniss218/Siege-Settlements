@@ -6,14 +6,10 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
+		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class PickUpResource : TAIGoal
 		{
 			public ResourceDeposit depositToPickUp;
-
-			public PickUpResource( ResourceDeposit depositToPickUp )
-			{
-				this.depositToPickUp = depositToPickUp;
-			}
 
 			void Start()
 			{
@@ -32,6 +28,18 @@ namespace SS
 					this.GetComponent<Inventory>().PickupResource( new ResourceSystem.ResourceStack( depositToPickUp.resourceId, 1 ) );
 					depositToPickUp.PickUp( 1 );
 				}
+			}
+
+			/// <summary>
+			/// Assigns a new PickUpResource TAI goal to the GameObject.
+			/// </summary>
+			public static void AssignTAIGoal( GameObject gameObject, ResourceDeposit depositToPickUp )
+			{
+				TAIGoal.ClearGoal( gameObject );
+
+				PickUpResource pickUpResource = gameObject.AddComponent<TAIGoal.PickUpResource>();
+
+				pickUpResource.depositToPickUp = depositToPickUp;
 			}
 		}
 	}

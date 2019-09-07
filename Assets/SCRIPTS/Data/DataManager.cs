@@ -89,6 +89,10 @@ namespace SS.Data
 			throw new System.Exception( "The definition with id '" + id + "' is not registered." );
 		}
 		
+		/// <summary>
+		/// Returns every registered definition of the specified type T.
+		/// </summary>
+		/// <typeparam name="T">The type of definitions to return.</typeparam>
 		public static List<T> GetAllOfType<T>() where T : Definition
 		{
 			List<T> ret = new List<T>();
@@ -103,6 +107,9 @@ namespace SS.Data
 
 		}
 
+		/// <summary>
+		/// Clears every registered definition.
+		/// </summary>
 		public static void ClearDefinitions()
 		{
 			registeredDefinitions.Clear();
@@ -116,7 +123,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new UnitDefinition( "unset" );
+				deserialized[i] = new UnitDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_UNITS_LIST, deserialized );
 
@@ -134,7 +141,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new BuildingDefinition( "unset" );
+				deserialized[i] = new BuildingDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_BUILDINGS_LIST, deserialized );
 
@@ -152,7 +159,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new HeroDefinition( "unset" );
+				deserialized[i] = new HeroDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_HEROES_LIST, deserialized );
 
@@ -170,7 +177,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new ProjectileDefinition( "unset" );
+				deserialized[i] = new ProjectileDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_PROJECTILES_LIST, deserialized );
 
@@ -189,7 +196,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new ResourceDefinition( "unset" );
+				deserialized[i] = new ResourceDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_RESOURCES_LIST, deserialized );
 
@@ -207,7 +214,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new ExtraDefinition( "unset" );
+				deserialized[i] = new ExtraDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_EXTRAS_LIST, deserialized );
 
@@ -225,7 +232,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new ResourceDepositDefinition( "unset" );
+				deserialized[i] = new ResourceDepositDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_RESOURCEDEPOSITS_LIST, deserialized );
 
@@ -243,7 +250,7 @@ namespace SS.Data
 
 			for( int i = 0; i < deserialized.Length; i++ )
 			{
-				deserialized[i] = new TechnologyDefinition( "unset" );
+				deserialized[i] = new TechnologyDefinition( "<missing>" );
 			}
 			serializer.DeserializeArray( KFF_TNAME_TECHNOLOGIES_LIST, deserialized );
 
@@ -281,7 +288,7 @@ namespace SS.Data
 
 		public static void LoadFromLevel( string pathToLevel )
 		{
-
+			// Loads the definitions from the level file, overriding any existing fields.
 		}
 	}
 }

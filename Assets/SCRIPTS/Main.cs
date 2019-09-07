@@ -299,8 +299,6 @@ namespace SS
 
 		void Update()
 		{
-
-
 			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
@@ -317,34 +315,16 @@ namespace SS
 							{
 								if( hitDeposit != null )
 								{
-									TAIGoal goal = selected[i].GetComponent<TAIGoal>();
-									if( goal != null )
-									{
-										DestroyImmediate( goal );
-									}
-									TAIGoal.PickUpResource pickUp = selected[i].gameObject.AddComponent<TAIGoal.PickUpResource>();
-									pickUp.depositToPickUp = hitDeposit;
+									TAIGoal.PickUpResource.AssignTAIGoal( selected[i].gameObject, hitDeposit );
 								}
 								else
 								{
-									TAIGoal goal = selected[i].GetComponent<TAIGoal>();
-									if( goal != null )
-									{
-										DestroyImmediate( goal );
-									}
-									TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
-									moveTo.destination = hitInfo.point;
+									TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
 								}
 							}
 							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Heroes" ) )
 							{
-								TAIGoal goal = selected[i].GetComponent<TAIGoal>();
-								if( goal != null )
-								{
-									DestroyImmediate( goal );
-								}
-								TAIGoal.MoveTo moveTo = selected[i].gameObject.AddComponent<TAIGoal.MoveTo>();
-								moveTo.destination = hitInfo.point;
+								TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
 							}
 						}
 					}
@@ -362,8 +342,10 @@ namespace SS
 						{
 							return;
 						}
-						if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1f )
+						if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1.0f )
+						{
 							return;
+						}
 						// If it is a building, start repair.
 						ConstructionSite.StartConstructionOrRepair( hitInfo.collider.gameObject );
 					}

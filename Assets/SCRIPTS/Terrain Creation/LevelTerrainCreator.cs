@@ -16,7 +16,7 @@ namespace SS.TerrainCreation
 
 		private const int RESOLUTION = 241;
 
-		// FIXME - multithread.
+		// TODO - multithread ASYNC.
 
 		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
