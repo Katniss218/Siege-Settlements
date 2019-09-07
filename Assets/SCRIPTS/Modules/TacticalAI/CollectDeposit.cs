@@ -9,24 +9,24 @@ namespace SS
 		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class CollectDeposit : TAIGoal
 		{
-			public ResourceDeposit depositToPickUp;
+			public ResourceDeposit depositToCollect { get; private set; }
 
 			void Start()
 			{
-				this.GetComponent<NavMeshAgent>().SetDestination( depositToPickUp.transform.position );
+				this.GetComponent<NavMeshAgent>().SetDestination( this.depositToCollect.transform.position );
 			}
 
 			void Update()
 			{
-				if( this.depositToPickUp == null )
+				if( this.depositToCollect == null )
 				{
-					Destroy( this ); // if the deposit was picked up, stop the AI.
+					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
 					return;
 				}
-				if( Vector3.Distance( this.transform.position, this.depositToPickUp.transform.position ) < 1 )
+				if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
 				{
-					this.GetComponent<Inventory>().PickupResource( new ResourceSystem.ResourceStack( depositToPickUp.resourceId, 1 ) );
-					depositToPickUp.PickUp( 1 );
+					this.GetComponent<Inventory>().PickupResource( new ResourceSystem.ResourceStack( this.depositToCollect.resourceId, 1 ) );
+					this.depositToCollect.PickUp( 1 );
 				}
 			}
 
@@ -39,7 +39,7 @@ namespace SS
 
 				CollectDeposit pickUpResource = gameObject.AddComponent<TAIGoal.CollectDeposit>();
 
-				pickUpResource.depositToPickUp = depositToPickUp;
+				pickUpResource.depositToCollect = depositToPickUp;
 			}
 		}
 	}

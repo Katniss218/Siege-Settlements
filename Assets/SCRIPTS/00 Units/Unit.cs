@@ -132,16 +132,7 @@ namespace SS.Units
 					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
 				} );
 			}
-
-			// If the unit has the capability to fight, add a target finder to it.
-			ITargetFinder finder = null;
-			if( def.melee != null || def.ranged != null )
-			{
-				finder = container.AddComponent<TargetFinder>();
-
-				finder.canTarget = FactionMember.CanTargetCheck;
-			}
-
+			
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{

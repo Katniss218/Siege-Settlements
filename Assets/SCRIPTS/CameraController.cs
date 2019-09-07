@@ -2,6 +2,9 @@
 
 namespace SS
 {
+	/// <summary>
+	/// Controls the camera, via user input.
+	/// </summary>
 	public class CameraController : MonoBehaviour
 	{
 		private int size;

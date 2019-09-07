@@ -9,7 +9,7 @@ namespace SS.Modules
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class RangedModule : Module
 	{
-		public Damageable currentTarget;
+		//public Damageable currentTarget;
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
@@ -43,11 +43,11 @@ namespace SS.Modules
 
 		void Start()
 		{
-			if( damageSource == null )
+			if( this.damageSource == null )
 			{
 				Debug.LogError( "There's no damage source hooked up to this ranged module." );
 			}
-			if( targetFinder == null )
+			if( this.targetFinder == null )
 			{
 				Debug.LogError( "There's no target finder hooked up to this ranged module." );
 			}
@@ -58,12 +58,11 @@ namespace SS.Modules
 		{
 			if( this.isReadyToAttack )
 			{
-				// TODO ----- Change this to independent targeter that periodically searches for targets and assigns them to a local variable.
-				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
+				Damageable target = this.targetFinder.GetTarget();
 
-				if( this.currentTarget != null )
+				if( target != null )
 				{
-					this.Attack();
+					this.Attack( target );
 					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
 				}
 			}
@@ -72,11 +71,11 @@ namespace SS.Modules
 		/// <summary>
 		/// Forces RangedComponent to shoot at the target (assumes target != null).
 		/// </summary>
-		public void Attack()
+		public void Attack( Damageable target )
 		{
 			Vector3 low, high;
 			Vector3 targetVel;
-			NavMeshAgent navmeshAgent = this.currentTarget.GetComponent<NavMeshAgent>();
+			NavMeshAgent navmeshAgent = target.GetComponent<NavMeshAgent>();
 			if( navmeshAgent == null )
 			{
 				targetVel = Vector3.zero;
@@ -85,7 +84,7 @@ namespace SS.Modules
 			{
 				targetVel = navmeshAgent.velocity;
 			}
-			if( BallisticSolver.Solve( this.transform.position, this.velocity, this.currentTarget.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
+			if( BallisticSolver.Solve( this.transform.position, this.velocity, target.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
 				Vector3 vel = low;
@@ -114,16 +113,7 @@ namespace SS.Modules
 		}
 
 #if UNITY_EDITOR
-
-		private void OnDrawGizmos()
-		{
-			if( this.currentTarget != null )
-			{
-				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.currentTarget.transform.position );
-				Gizmos.DrawSphere( this.currentTarget.transform.position, 0.125f );
-			}
-		}
+		
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.yellow;

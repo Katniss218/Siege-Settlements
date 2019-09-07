@@ -8,8 +8,14 @@ namespace SS.Modules
 	[RequireComponent( typeof( FactionMember ) )]
 	public class BarracksModule : Module
 	{
+		/// <summary>
+		/// Contains every unit that can be created in the barracks.
+		/// </summary>
 		public UnitDefinition[] spawnableUnits { get; set; }
 
+		/// <summary>
+		/// Contains the multiplier used as the construction speed.
+		/// </summary>
 		public float constructionSpeed { get; set; }
 
 

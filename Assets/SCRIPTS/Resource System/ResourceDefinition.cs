@@ -6,10 +6,19 @@ using UnityEngine;
 
 namespace SS.ResourceSystem
 {
+	/// <summary>
+	/// Defines a resource.
+	/// </summary>
 	public class ResourceDefinition : Definition
 	{
+		/// <summary>
+		/// The display name of this resource.
+		/// </summary>
 		public string displayName { get; private set; }
 
+		/// <summary>
+		/// The icon of this resource.
+		/// </summary>
 		public Tuple<string, Sprite> icon { get; private set; }
 
 		// TODO ----- needs default deposit type for dropping off resource.

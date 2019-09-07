@@ -23,11 +23,11 @@ namespace SS.Modules
 
 		public override void AddTo( GameObject obj )
 		{
-			ITargetFinder finder = obj.GetComponent<ITargetFinder>();
-			if( finder == null )
-			{
-				throw new Exception( "RangedModule requires an ITargetFinder component." );
-			}
+			TargetFinder finder = obj.AddComponent<TargetFinder>();
+
+			finder.canTarget = FactionMember.CanTargetCheck;
+			finder.searchRange = this.attackRange;
+
 
 			DamageSource damageSource = new DamageSource( this.damageType, this.damage, this.armorPenetration );
 

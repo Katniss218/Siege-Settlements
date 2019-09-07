@@ -1,7 +1,4 @@
 ﻿using KFF;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace SS.ResourceSystem
 {
@@ -14,6 +11,7 @@ namespace SS.ResourceSystem
 		/// The id of the resource in the stack.
 		/// </summary>
 		public string id { get; set; }
+
 		/// <summary>
 		/// The amount of the resource in the stack.
 		/// </summary>

@@ -9,21 +9,38 @@ namespace SS.Modules
 	[RequireComponent( typeof( FactionMember ) )]
 	public class ResearchModule : Module
 	{
-		public TechnologyDefinition tech { get; private set; }
-		public float progress { get; private set; }
+		/// <summary>
+		/// Contains the currently researched technology (Read only).
+		/// </summary>
+		public TechnologyDefinition technologyResearched { get; private set; }
 
+		/// <summary>
+		/// Contains the progress of the research (Read Only).
+		/// </summary>
+		public float researchProgress { get; private set; }
+
+		/// <summary>
+		/// Contains the multiplier used as the construction speed.
+		/// </summary>
 		public float researchSpeed { get; set; }
 
+		/// <summary>
+		/// returns true if the research module is currently researching a technology.
+		/// </summary>
 		public bool isResearching
 		{
 			get
 			{
-				return this.tech != null;
+				return this.technologyResearched != null;
 			}
 		}
 
 		private FactionMember factionMember;
 
+		/// <summary>
+		/// Begins researching a technology.
+		/// </summary>
+		/// <param name="def">The technology to research.</param>
 		public void StartResearching( TechnologyDefinition def )
 		{
 			if( this.isResearching )
@@ -31,8 +48,8 @@ namespace SS.Modules
 				Debug.LogWarning( "There is already technology being researched" );
 				return;
 			}
-			this.tech = def;
-			this.progress = 10;
+			this.technologyResearched = def;
+			this.researchProgress = 10.0f;
 		}
 
 		// Start is called before the first frame update
@@ -59,7 +76,7 @@ namespace SS.Modules
 					}
 					if( this.isResearching )
 					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: " + this.tech.displayName + " - (" + (int)this.progress + ")." );
+						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: " + this.technologyResearched.displayName + " - (" + (int)this.researchProgress + ")." );
 					}
 					else
 					{
@@ -100,11 +117,11 @@ namespace SS.Modules
 		{
 			if( this.isResearching )
 			{
-				this.progress -= this.researchSpeed * Time.deltaTime;
-				if( this.progress <= 0 )
+				this.researchProgress -= this.researchSpeed * Time.deltaTime;
+				if( this.researchProgress <= 0 )
 				{
-					FactionManager.factions[this.factionMember.factionId].techs[this.tech.id] = TechnologyResearchProgress.Researched;
-					this.tech = null;
+					FactionManager.factions[this.factionMember.factionId].techs[this.technologyResearched.id] = TechnologyResearchProgress.Researched;
+					this.technologyResearched = null;
 				}
 
 				// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.

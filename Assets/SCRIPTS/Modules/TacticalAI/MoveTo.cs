@@ -8,7 +8,7 @@ namespace SS
 		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class MoveTo : TAIGoal
 		{
-			public Vector3 destination;
+			public Vector3 destination { get; private set; }
 
 			void Start()
 			{

@@ -6,7 +6,7 @@ namespace SS.Modules
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class MeleeModule : Module
 	{
-		public Damageable currentTarget;
+		//public Damageable currentTarget;
 
 		public DamageSource damageSource;
 		public ITargetFinder targetFinder;
@@ -34,11 +34,11 @@ namespace SS.Modules
 
 		private void Start()
 		{
-			if( damageSource == null )
+			if( this.damageSource == null )
 			{
 				Debug.LogError( "There's no damage source hooked up to this melee module." );
 			}
-			if( targetFinder == null )
+			if( this.targetFinder == null )
 			{
 				Debug.LogError( "There's no target finder hooked up to this melee module." );
 			}
@@ -49,11 +49,11 @@ namespace SS.Modules
 		{
 			if( this.isReadyToAttack )
 			{
-				this.currentTarget = this.targetFinder.FindTarget( this.attackRange );
+				Damageable target = this.targetFinder.GetTarget();
 
-				if( this.currentTarget != null )
+				if( target != null )
 				{
-					this.Attack();
+					this.Attack( target );
 					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
 				}
 			}
@@ -64,23 +64,13 @@ namespace SS.Modules
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
 		/// </summary>
-		public void Attack()
+		public void Attack( Damageable target )
 		{
-			this.currentTarget.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 			this.lastAttackTimestamp = Time.time;
 		}
 
 #if UNITY_EDITOR
-
-		private void OnDrawGizmos()
-		{
-			if( this.currentTarget != null )
-			{
-				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.currentTarget.transform.position );
-				Gizmos.DrawSphere( this.currentTarget.transform.position, 0.125f );
-			}
-		}
 
 		private void OnDrawGizmosSelected()
 		{

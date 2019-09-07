@@ -2,6 +2,9 @@
 
 namespace SS
 {
+	/// <summary>
+	/// Controls the daylight cycle - time of day, and rotation of the sun/moon lights.
+	/// </summary>
 	public class DaylightCycleController : MonoBehaviour
 	{
 		[SerializeField] int dayLength = 400;
@@ -20,67 +23,77 @@ namespace SS
 		[SerializeField] float moonElevationAngle = 60;
 
 		/// <summary>
-		/// Current time, in range between 0-totalDaylength
-		/// </summary>
-		public float time { get; private set; }
-
-		public bool isDay { get { return this.time < dayLength; } } // day is <0, dayLength)
-		public bool isNight { get { return this.time >= dayLength; } } // night is <dayLength, totalDayLen)
-
-		/// <summary>
 		/// The total length of the day and night combined.
 		/// </summary>
 		public int totalDayLength { get; private set; }
+
+		/// <summary>
+		/// Contains the current time, in range between 0-totalDaylength (Read only).
+		/// </summary>
+		public float time { get; private set; }
+
+		/// <summary>
+		/// Returns true, it the current time is day, false otherwise (Read Only).
+		/// </summary>
+		// day is <0, dayLength)
+		public bool isDay { get { return this.time < dayLength; } }
+
+		/// <summary>
+		/// Returns true, it the current time is night, false otherwise (Read Only).
+		/// </summary>
+		// night is <dayLength, totalDayLen)
+		public bool isNight { get { return this.time >= dayLength; } }
+
 		private Transform sunTransform = null;
 		private Transform moonTransform = null;
 
 		void Awake()
 		{
-			totalDayLength = dayLength + nightLength;
+			this.totalDayLength = this.dayLength + this.nightLength;
 
-			this.time = startTime % totalDayLength;
+			this.time = this.startTime % this.totalDayLength;
 
 			this.sunTransform = this.sun.transform;
 			this.moonTransform = this.moon.transform;
 		}
-		
+
 		void Start()
 		{
-			this.sunPivot.rotation = Quaternion.Euler( 0, 0, sunElevationAngle );
-			this.moonPivot.rotation = Quaternion.Euler( 0, 0, moonElevationAngle );
+			this.sunPivot.rotation = Quaternion.Euler( 0, 0, this.sunElevationAngle );
+			this.moonPivot.rotation = Quaternion.Euler( 0, 0, this.moonElevationAngle );
 		}
 
-		private float getSunAngle( float time )
+		private float GetSunAngle( float time )
 		{
-			if( isNight )
+			if( this.isNight )
 			{
-				return 180 + (((this.time - dayLength) / nightLength) * 180);
+				return 180 + (((this.time - this.dayLength) / this.nightLength) * 180);
 			}
-			return (this.time / dayLength) * 180; // percentage of the full circle around.
+			return (this.time / this.dayLength) * 180; // percentage of the full circle around.
 		}
 		
 		void Update()
 		{
 			this.time += Time.deltaTime;
-			if( this.time > totalDayLength )
+			if( this.time > this.totalDayLength )
 			{
-				this.time %= totalDayLength;
+				this.time %= this.totalDayLength;
 			}
 
-			float sAngle = getSunAngle( this.time );
+			float sAngle = GetSunAngle( this.time );
 			float mAngle = sAngle + 180;
 			this.sunTransform.localRotation = Quaternion.Euler( 0, -sAngle, 0 );
 			this.moonTransform.localRotation = Quaternion.Euler( 0, -mAngle, 0 );
 
-			if( isDay )
+			if( this.isDay )
 			{
-				sun.intensity = sunIntensity;
-				moon.intensity = 0;
+				this.sun.intensity = this.sunIntensity;
+				this.moon.intensity = 0;
 			}
-			if( isNight )
+			if( this.isNight )
 			{
-				sun.intensity = 0;
-				moon.intensity = moonIntensity;
+				this.sun.intensity = 0;
+				this.moon.intensity = this.moonIntensity;
 			}
 		}
 	}
