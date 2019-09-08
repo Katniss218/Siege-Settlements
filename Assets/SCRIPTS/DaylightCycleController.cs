@@ -27,10 +27,21 @@ namespace SS
 		/// </summary>
 		public int totalDayLength { get; private set; }
 
+		[SerializeField] private float __time;
 		/// <summary>
 		/// Contains the current time, in range between 0-totalDaylength (Read only).
 		/// </summary>
-		public float time { get; private set; }
+		public float time
+		{
+			get
+			{
+				return this.__time;
+			}
+			set
+			{
+				this.__time = value;
+			}
+		}
 
 		/// <summary>
 		/// Returns true, it the current time is day, false otherwise (Read Only).
