@@ -39,6 +39,19 @@ namespace SS.UI
 		private const FontWeight titleFontWeight = FontWeight.Bold;
 		private const FontWeight textFontWeight = FontWeight.Thin;
 
+		private static void HideToolTip()
+		{
+			toolTip.anchoredPosition = new Vector2( -9999.0f, -9999.0f );
+		}
+
+		private static bool isHidden
+		{
+			get
+			{
+				return toolTip.anchoredPosition == new Vector2( -9999.0f, -9999.0f );
+			}
+		}
+		
 		/// <summary>
 		/// Returns the width of the tooltip (Read Only).
 		/// </summary>
@@ -120,9 +133,12 @@ namespace SS.UI
 		/// <param name="clampToScreen">Should the tooltip be always on the screen, even if the position os outside?</param>
 		public static void MoveTo( Vector2 screenPos, bool clampToScreen )
 		{
+			if( isHidden ) // if "hidden" - don't show.
+			{
+				return;
+			}
 			if( toolTip == null )
 				Init();
-#warning ----- hidden gameObjects not recalculating? (seems that it's only bugged when it's hidden).
 			if( clampToScreen )
 			{
 				if( screenPos.x + width > Screen.currentResolution.width )
@@ -165,7 +181,7 @@ namespace SS.UI
 		{
 			if( toolTip == null )
 				Init();
-			toolTip.GetComponent<RectTransform>().anchoredPosition = new Vector2( -9999, -9999 );
+			HideToolTip();
 		}
 
 		/// <summary>
