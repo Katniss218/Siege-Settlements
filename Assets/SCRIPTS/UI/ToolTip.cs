@@ -3,6 +3,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace SS.UI
 {
@@ -108,6 +109,7 @@ namespace SS.UI
 			titleText.enableWordWrapping = false;
 			titleText.raycastTarget = false;
 			titleTransform.sizeDelta = new Vector2( 0, 32 );
+
 			gameObject.SetActive( false );
 		}
 
@@ -120,7 +122,7 @@ namespace SS.UI
 		{
 			if( toolTip == null )
 				Init();
-
+			// FIXME ----- hidden gameObjects not recalculating? (seems that it's only bugged when it's hidden).
 			if( clampToScreen )
 			{
 				if( screenPos.x + width > Screen.currentResolution.width )
@@ -159,7 +161,7 @@ namespace SS.UI
 		/// Sets the visibility of the tooltip to true, and moves it to the specified screen coordinates.
 		/// </summary>
 		/// <param name="screenPos">The screen-space position to display the tooltip at.</param>
-		public static void Show( Vector2 screenPos )
+		public static void ShowAt( Vector2 screenPos )
 		{
 			if( toolTip == null )
 				Init();
@@ -178,6 +180,16 @@ namespace SS.UI
 		}
 
 		/// <summary>
+		/// Sets the visibility of the tooltip to false.
+		/// </summary>
+		public static void Remove()
+		{
+			if( toolTip == null )
+				return;
+			Object.Destroy( toolTip.gameObject );
+		}
+
+		/// <summary>
 		/// Creates a new tooltip. Hidden by default.
 		/// </summary>
 		/// <param name="newWidth">The width of the new tooltip.</param>
@@ -188,14 +200,14 @@ namespace SS.UI
 				Init();
 			for( int i = 1; i < toolTip.childCount; i++ )
 			{
-				UnityEngine.Object.Destroy( toolTip.GetChild( i ) );
+				Object.Destroy( toolTip.GetChild( i ).gameObject );
 			}
 			lastElement = null;
 			titleText.text = title ?? "";
 			titleText.color = FontManager.lightColor;
 			toolTip.sizeDelta = new Vector2( newWidth, toolTip.sizeDelta.y );
 		}
-
+		
 		// Adds a container element to the tooltip. container always expands the child to fit to size.
 		private static RectTransform AddContainer( string name )
 		{
@@ -212,6 +224,8 @@ namespace SS.UI
 			layout.childControlHeight = true;
 			layout.childForceExpandWidth = false;
 			layout.childForceExpandHeight = true;
+
+			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 
 			return transform;
 		}
@@ -245,6 +259,8 @@ namespace SS.UI
 			fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 			fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
 
+			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
+
 			lastElement = container;
 		}
 
@@ -277,6 +293,8 @@ namespace SS.UI
 			Image iconImage = spriteGameObject.AddComponent<Image>();
 			iconImage.sprite = icon;
 			iconImage.raycastTarget = false;
+			
+			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 
 			lastElement = container;
 		}
@@ -332,6 +350,8 @@ namespace SS.UI
 			textText.margin = new Vector4( labelOutPadding, 0, 0, 0 );
 			textText.raycastTarget = false;
 
+			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
+
 			lastElement = container;
 		}
 
@@ -386,6 +406,8 @@ namespace SS.UI
 			textText.enableWordWrapping = true;
 			textText.margin = new Vector4( labelOutPadding, 0, 0, 0 );
 			textText.raycastTarget = false;
+
+			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 
 			lastElement = container;
 		}

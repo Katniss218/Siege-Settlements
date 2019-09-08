@@ -1,4 +1,6 @@
 ﻿using SS.Data;
+using SS.ResourceSystem;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -47,6 +49,27 @@ namespace SS.Extras
 		void Update()
 		{
 
+		}
+
+#warning TODO! - Central input class, not this. this is vulnerable to Destroy( ... ).
+		void OnMouseEnter()
+		{
+			ResourceDefinition def = DataManager.Get<ResourceDefinition>( this.resourceId );
+			ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( this.id );
+			ToolTip.Create( 200, def2.displayName );
+			ToolTip.AddIcon( def.icon.Item2 );
+			ToolTip.AddText( "Amount", this.amount + "/" + this.amountMax );
+			ToolTip.ShowAt( Input.mousePosition );
+		}
+
+		void OnMouseOver()
+		{
+			ToolTip.MoveTo( Input.mousePosition, true );
+		}
+
+		void OnMouseExit()
+		{
+			ToolTip.Remove();
 		}
 
 		public void PickUp( int amt )

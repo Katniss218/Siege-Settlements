@@ -8,6 +8,7 @@ namespace SS.Extras
 {
 	public class ResourceDepositDefinition : Definition
 	{
+		public string displayName { get; set; }
 		public string resourceId { get; set; }
 
 		public bool isExtracted { get; set; }
@@ -31,6 +32,7 @@ namespace SS.Extras
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
+			this.displayName = serializer.ReadString( "DisplayName" );
 			this.resourceId = serializer.ReadString( "ResourceId" );
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );
 			this.size = serializer.ReadVector3( "Size" );
@@ -46,6 +48,7 @@ namespace SS.Extras
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "ResourceId", this.resourceId );
 			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
 			serializer.WriteVector3( "", "Size", this.size );
