@@ -3,26 +3,31 @@
 	{
 		Id = "resource.money";
 		DisplayName = "Money";
-		Icon = "Textures/Resources/money.png";
+		DefaultDeposit = "resource_deposit.tree";
+		Icon = "Textures/Resources/money";
 	},
 	{
 		Id = "resource.wood";
 		DisplayName = "Wood";
-		Icon = "Textures/Resources/wood.png";
+		DefaultDeposit = "resource_deposit.wood";
+		Icon = "Textures/Resources/wood";
 	},
 	{
 		Id = "resource.stone";
 		DisplayName = "Stone";
-		Icon = "Textures/Resources/stone.png";
+		DefaultDeposit = "resource_deposit.stone";
+		Icon = "Textures/Resources/stone";
 	},
 	{
 		Id = "resource.iron";
 		DisplayName = "Iron";
-		Icon = "Textures/Resources/iron.png";
+		DefaultDeposit = "resource_deposit.tree";
+		Icon = "Textures/Resources/iron";
 	},
 	{
 		Id = "resource.sulphur";
 		DisplayName = "Sulphur";
-		Icon = "Textures/Resources/sulphur.png";
+		DefaultDeposit = "resource_deposit.tree";
+		Icon = "Textures/Resources/sulphur";
 	}
 ];

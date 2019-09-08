@@ -1,0 +1,13 @@
+﻿Rect =
+{
+	X = 0;
+	Y = 0;
+	W = 28;
+	H = 28;
+};
+PivotUnitMode = "normalized"; // "normalized" or "pixels"
+Pivot =
+{
+	X = 0; // 0 to 1
+	Y = 0;
+};

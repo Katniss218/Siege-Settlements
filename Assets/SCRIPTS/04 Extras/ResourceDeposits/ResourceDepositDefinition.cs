@@ -19,6 +19,8 @@ namespace SS.Extras
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public bool isMetallic { get; set; }
+		public float smoothness { get; set; }
 
 
 		public ResourceDepositDefinition( string id ) : base( id )
@@ -33,12 +35,12 @@ namespace SS.Extras
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );
 			this.size = serializer.ReadVector3( "Size" );
 			this.shaderType = (ShaderType)serializer.ReadByte( "ShaderType" );
-			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
-			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
-			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
+
+			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			this.isMetallic = serializer.ReadBool( "IsMetallic" );
+			this.smoothness = serializer.ReadFloat( "Smoothness" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -48,9 +50,12 @@ namespace SS.Extras
 			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
+
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteBool( "", "IsMetallic", this.isMetallic );
+			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 		}
 	}
 }

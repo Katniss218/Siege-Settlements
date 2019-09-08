@@ -345,6 +345,25 @@ namespace SS
 					}
 				}
 			}
+
+			if( Input.GetKeyDown( KeyCode.P ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					Selectable[] selected = SelectionManager.selectedObjects;
+					for( int i = 0; i < selected.Length; i++ )
+					{
+						Inventory inv = selected[i].GetComponent<Inventory>();
+						if( inv != null )
+						{
+							if( inv.isCarryingResource )
+							{
+								inv.DropOffResource();
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -72,8 +72,8 @@ namespace SS.Extras
 
 			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
 			this.meshRenderer.material.SetTexture( "_Emission", null );
-			this.meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			this.meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
+			this.meshRenderer.material.SetFloat( "_Metallic", def.isMetallic ? 1.0f : 0.0f );
+			this.meshRenderer.material.SetFloat( "_Smoothness", def.smoothness );
 		}
 
 		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, int amountOfResource )
