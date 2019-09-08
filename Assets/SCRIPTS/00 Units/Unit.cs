@@ -121,7 +121,6 @@ namespace SS.Units
 			inventory.maxCapacity = 10;
 			inventory.onPickup.AddListener( () =>
 			{
-				Debug.Log( "Picked up something " + inventory.resource.amount );
 				hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( inventory.resource.id ).icon.Item2;
 				hudAmount.text = inventory.resource.amount.ToString();
 
@@ -130,8 +129,6 @@ namespace SS.Units
 			} );
 			inventory.onDropOff.AddListener( () =>
 			{
-				Debug.Log( "Dropped off something" );
-
 				hudResourceIcon.gameObject.SetActive( false );
 				hudAmount.gameObject.SetActive( false );
 			} );

@@ -172,7 +172,7 @@ namespace SS.Buildings
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
 				AudioManager.PlayNew( buildingComp.cachedDefinition.buildSoundEffect.Item2, 0.5f, 1.0f );
-				// FIXME ----- Only play new sound, when the previous one has ended (per-building basis).
+				// TODO ----- Only play new sound, when the previous one has ended (per-building basis).
 			} );
 
 			UnityAction onHealthChange_setProgress = () =>
