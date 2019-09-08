@@ -69,7 +69,7 @@ namespace SS.Extras
 
 		void OnMouseExit()
 		{
-			ToolTip.Remove();
+			ToolTip.Hide();
 		}
 
 		public void PickUp( int amt )

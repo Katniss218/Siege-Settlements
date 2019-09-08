@@ -110,7 +110,7 @@ namespace SS.UI
 			titleText.raycastTarget = false;
 			titleTransform.sizeDelta = new Vector2( 0, 32 );
 
-			gameObject.SetActive( false );
+			gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2( -9999, -9999 );
 		}
 
 		/// <summary>
@@ -122,7 +122,7 @@ namespace SS.UI
 		{
 			if( toolTip == null )
 				Init();
-			// FIXME ----- hidden gameObjects not recalculating? (seems that it's only bugged when it's hidden).
+#warning ----- hidden gameObjects not recalculating? (seems that it's only bugged when it's hidden).
 			if( clampToScreen )
 			{
 				if( screenPos.x + width > Screen.currentResolution.width )
@@ -146,17 +146,7 @@ namespace SS.UI
 			}
 			toolTip.anchoredPosition = screenPos;
 		}
-
-		/// <summary>
-		/// Sets the visibility of the tooltip to true.
-		/// </summary>
-		public static void Show()
-		{
-			if( toolTip == null )
-				Init();
-			toolTip.gameObject.SetActive( true );
-		}
-
+		
 		/// <summary>
 		/// Sets the visibility of the tooltip to true, and moves it to the specified screen coordinates.
 		/// </summary>
@@ -165,7 +155,6 @@ namespace SS.UI
 		{
 			if( toolTip == null )
 				Init();
-			toolTip.gameObject.SetActive( true );
 			toolTip.anchoredPosition = screenPos;
 		}
 
@@ -176,7 +165,7 @@ namespace SS.UI
 		{
 			if( toolTip == null )
 				Init();
-			toolTip.gameObject.SetActive( false );
+			toolTip.GetComponent<RectTransform>().anchoredPosition = new Vector2( -9999, -9999 );
 		}
 
 		/// <summary>
