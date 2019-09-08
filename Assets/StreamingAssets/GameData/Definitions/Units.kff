@@ -140,7 +140,7 @@
 			AttackSound = "Sounds/melee.wav";
 		};
 		IsConstructor = false;
-		MovementSpeed = 0.45;
+		MovementSpeed = 0.5;
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
@@ -179,7 +179,7 @@
 			AttackSound = "Sounds/melee.wav";
 		};
 		IsConstructor = false;
-		MovementSpeed = 0.35;
+		MovementSpeed = 0.4;
 		RotationSpeed = 120;
 		Radius = 0.375;
 		Height = 0.1875;
