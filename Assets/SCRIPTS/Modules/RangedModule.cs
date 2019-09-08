@@ -73,6 +73,10 @@ namespace SS.Modules
 		/// </summary>
 		public void Attack( Damageable target )
 		{
+			if( target.transform.position == this.transform.position )
+			{
+				return;
+			}
 			Vector3 low, high;
 			Vector3 targetVel;
 			NavMeshAgent navmeshAgent = target.GetComponent<NavMeshAgent>();
