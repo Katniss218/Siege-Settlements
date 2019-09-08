@@ -21,6 +21,7 @@
 			AttackCooldown = 0.8;
 			AttackSound = "Sounds/melee.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
 		Radius = 0.25;
@@ -60,6 +61,7 @@
 			AttackCooldown = 0.75;
 			AttackSound = "Sounds/melee.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;  // The physical size of the unit (hitbox)
@@ -98,6 +100,7 @@
 			AttackCooldown = 0.52;
 			AttackSound = "Sounds/melee.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -136,6 +139,7 @@
 			AttackCooldown = 0.65;
 			AttackSound = "Sounds/melee.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -174,6 +178,7 @@
 			AttackCooldown = 0.47;
 			AttackSound = "Sounds/melee.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -218,6 +223,7 @@
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 			AttackSound = "Sounds/loose.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -264,6 +270,7 @@
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 			AttackSound = "Sounds/loose.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -310,6 +317,7 @@
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 			AttackSound = "Sounds/loose.wav";
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -341,6 +349,7 @@
 				0.0  // Concussion
 			];
 		};
+		IsConstructor = true;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;
@@ -370,6 +379,7 @@
 				0.0  // Concussion
 			];
 		};
+		IsConstructor = false;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
 		Radius = 0.375;

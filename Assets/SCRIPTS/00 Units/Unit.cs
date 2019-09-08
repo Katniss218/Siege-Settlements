@@ -1,9 +1,12 @@
 ﻿using SS.Buildings;
 using SS.Data;
+using SS.ResourceSystem;
 using SS.UI;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace SS.Units
 {
@@ -54,10 +57,10 @@ namespace SS.Units
 			// Mask the unit as selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
 			selectable.icon = def.icon.Item2;
-			// If the unit's type is civilian, make it show the build menu, when highlighted.
-			if( def.id == "unit.civilian" )
-			{ // FIXME ----- Base this on a KFF def flag.
-				selectable.onSelectionUIRedraw.AddListener( CivilianOnSelect );
+			// If the unit is constructor (civilian), make it show the build menu, when highlighted.
+			if( def.isConstructor )
+			{
+				selectable.onSelectionUIRedraw.AddListener( ConstructorOnSelect );
 			}
 
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
@@ -73,7 +76,10 @@ namespace SS.Units
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			ScaledCHUD ui = Object.Instantiate( Main.unitHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<ScaledCHUD>();
+			HUDScaled ui = Object.Instantiate( Main.unitHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
+			Image hudResourceIcon = ui.transform.Find( "Resource" ).Find("Icon").GetComponent<Image>();
+			TextMeshProUGUI hudAmount = ui.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+
 
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
@@ -112,14 +118,22 @@ namespace SS.Units
 			damageable.armor = def.armor;
 
 			Inventory inventory = container.AddComponent<Inventory>();
-			inventory.maxCapacity = 45;
+			inventory.maxCapacity = 10;
 			inventory.onPickup.AddListener( () =>
 			{
-				Debug.Log( "Picked up something" );
+				Debug.Log( "Picked up something " + inventory.resource.amount );
+				hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( inventory.resource.id ).icon.Item2;
+				hudAmount.text = inventory.resource.amount.ToString();
+
+				hudResourceIcon.gameObject.SetActive( true );
+				hudAmount.gameObject.SetActive( true );
 			} );
 			inventory.onDropOff.AddListener( () =>
 			{
 				Debug.Log( "Dropped off something" );
+
+				hudResourceIcon.gameObject.SetActive( false );
+				hudAmount.gameObject.SetActive( false );
 			} );
 			if( factionId == 0 ) // If player, update the resource panel.
 			{
@@ -155,7 +169,7 @@ namespace SS.Units
 			return container;
 		}
 
-		private static void CivilianOnSelect()
+		private static void ConstructorOnSelect()
 		{
 			const string TEXT = "Select building to place...";
 

@@ -1,4 +1,5 @@
 ﻿using SS.Extras;
+using SS.ResourceSystem;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -25,8 +26,22 @@ namespace SS
 				}
 				if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
 				{
-					this.GetComponent<Inventory>().PickupResource( new ResourceSystem.ResourceStack( this.depositToCollect.resourceId, 1 ) );
-					this.depositToCollect.PickUp( 1 );
+					Inventory inventory = this.GetComponent<Inventory>();
+
+					if( inventory == null )
+					{
+						Destroy( this );
+						throw new System.Exception( "TAIGoal.CollectDeposit was added to an object that doesn't have inventory." );
+					}
+
+					const int AMOUNT = 1;
+
+					ResourceStack resStack = new ResourceStack( this.depositToCollect.resourceId, AMOUNT );
+					if( inventory.CanPickupResource( resStack ) )
+					{
+						this.GetComponent<Inventory>().PickupResource( resStack );
+						this.depositToCollect.PickUp( AMOUNT );
+					}
 				}
 			}
 

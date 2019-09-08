@@ -12,11 +12,6 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
-		public static Color darkText
-		{
-			get { return new Color( 0.1f, 0.1f, 0.1f ); }
-		}
-
 
 		// TODO ----- Move these fields to AssetsManager.
 		// Handle both file assets & resources.load assets in the AssetsManager class.
@@ -248,19 +243,6 @@ namespace SS
 			}
 		}
 
-		private static TMP_FontAsset __mainFont = null;
-		public static TMP_FontAsset mainFont
-		{
-			get
-			{
-				if( __mainFont == null )
-				{
-					__mainFont = Resources.Load<TMP_FontAsset>( "Chomsky SDF" );
-				}
-				return __mainFont;
-			}
-		}
-
 		private static Transform __main_transform = null;
 		public static Transform main_transform
 		{
@@ -350,15 +332,17 @@ namespace SS
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
-					Selectable[] selected = SelectionManager.selectedObjects;
-					for( int i = 0; i < selected.Length; i++ )
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						Inventory inv = selected[i].GetComponent<Inventory>();
-						if( inv != null )
+						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
+						Selectable[] selected = SelectionManager.selectedObjects;
+						for( int i = 0; i < selected.Length; i++ )
 						{
-							if( inv.isCarryingResource )
+							Inventory inv = selected[i].GetComponent<Inventory>();
+							if( inv != null )
 							{
-								inv.DropOffResource();
+								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
 							}
 						}
 					}

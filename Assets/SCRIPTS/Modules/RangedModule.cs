@@ -62,6 +62,10 @@ namespace SS.Modules
 
 				if( target != null )
 				{
+					if( target.transform.position == this.transform.position )
+					{
+						return;
+					}
 					this.Attack( target );
 					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
 				}
@@ -73,10 +77,6 @@ namespace SS.Modules
 		/// </summary>
 		public void Attack( Damageable target )
 		{
-			if( target.transform.position == this.transform.position )
-			{
-				return;
-			}
 			Vector3 low, high;
 			Vector3 targetVel;
 			NavMeshAgent navmeshAgent = target.GetComponent<NavMeshAgent>();

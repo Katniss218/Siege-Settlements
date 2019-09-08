@@ -61,8 +61,8 @@ namespace SS.UI
 			
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.text = amount.ToString();
-			textText.font = Main.mainFont;
-			textText.color = Main.darkText;
+			textText.font = FontManager.uiFont;
+			textText.color = FontManager.darkColor;
 			textText.fontSize = 14;
 			textText.alignment = TextAlignmentOptions.Right;
 			textText.enableWordWrapping = true;

@@ -81,7 +81,7 @@ namespace SS.Heroes
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			ScaledCHUD ui = Object.Instantiate( Main.heroHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<ScaledCHUD>();
+			HUDScaled ui = Object.Instantiate( Main.heroHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
 
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();

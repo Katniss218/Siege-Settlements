@@ -131,7 +131,7 @@ namespace SS.Levels
 			}
 
 			List<ResourceDepositDefinition> deposits = DataManager.GetAllOfType<ResourceDepositDefinition>();
-			for( int i = 0; i < deposits.Count; i++ )
+			for( int i = 0; i < (deposits.Count < 2 ? deposits.Count : 2); i++ )
 			{
 				for( int j = 0; j < 100; j++ )
 				{
@@ -140,7 +140,7 @@ namespace SS.Levels
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
 					{
-						ResourceDeposit.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 50 );
+						ResourceDeposit.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 5 );
 					}
 				}
 			}

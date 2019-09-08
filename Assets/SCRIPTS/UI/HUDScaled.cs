@@ -6,11 +6,16 @@ namespace SS.UI
 	/// <summary>
 	/// Represents a UI, that's attached to a unit (displays health, etc.).
 	/// </summary>
-	public class UnscaledCHUD : MonoBehaviour
+	public class HUDScaled : MonoBehaviour
 	{
+		// when the health is 0, the image will be filled this much.
+		[SerializeField] private float min = 0.25f;
+		// when the health is 1, the image will be filled this much.
+		[SerializeField] private float max = 0.75f;
+
 		public Image[] colored;
 		public Image healthBar;
-
+		
 		/// <summary>
 		/// Sets the faction color tint to the specified color.
 		/// </summary>
@@ -27,7 +32,11 @@ namespace SS.UI
 		/// </summary>
 		public void SetHealthBarFill( float percentHealth )
 		{
-			this.healthBar.fillAmount = percentHealth;
+			float scale = this.max - this.min;
+			float p = percentHealth * scale;
+			p += this.min;
+
+			this.healthBar.fillAmount = p;
 		}
 	}
 }

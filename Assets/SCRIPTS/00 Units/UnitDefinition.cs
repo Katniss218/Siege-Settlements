@@ -24,6 +24,7 @@ namespace SS.Units
 
 		public RangedModuleDefinition ranged;
 		
+		public bool isConstructor { get; set; }
 
 		// Movement-related
 		public float movementSpeed { get; set; }
@@ -70,6 +71,8 @@ namespace SS.Units
 				serializer.Deserialize( "RangedModule", this.ranged );
 			}
 
+			this.isConstructor = serializer.ReadBool( "IsConstructor" );
+
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
@@ -107,6 +110,8 @@ namespace SS.Units
 			{
 				serializer.Serialize( "", "RangedModule", this.ranged );
 			}
+
+			serializer.WriteBool( "", "IsConstructor", this.isConstructor );
 
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );

@@ -21,13 +21,13 @@
 	{
 		Id = "resource.iron";
 		DisplayName = "Iron";
-		DefaultDeposit = "resource_deposit.tree";
+		DefaultDeposit = "resource_deposit.iron";
 		Icon = "Textures/Resources/iron";
 	},
 	{
 		Id = "resource.sulphur";
 		DisplayName = "Sulphur";
-		DefaultDeposit = "resource_deposit.tree";
+		DefaultDeposit = "resource_deposit.sulphur";
 		Icon = "Textures/Resources/sulphur";
 	}
 ];

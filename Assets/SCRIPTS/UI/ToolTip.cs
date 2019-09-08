@@ -100,7 +100,8 @@ namespace SS.UI
 			GameObjectUtils.RectTransform( toolTip, "Title", Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, out title, out titleTransform );
 			titleText = title.AddComponent<TextMeshProUGUI>();
 			titleText.text = "";
-			titleText.font = Main.mainFont;
+			titleText.font = FontManager.uiFont;
+			titleText.color = FontManager.lightColor;
 			titleText.fontSize = titleFontSize;
 			titleText.fontWeight = titleFontWeight;
 			titleText.alignment = TextAlignmentOptions.Center;
@@ -191,6 +192,7 @@ namespace SS.UI
 			}
 			lastElement = null;
 			titleText.text = title ?? "";
+			titleText.color = FontManager.lightColor;
 			toolTip.sizeDelta = new Vector2( newWidth, toolTip.sizeDelta.y );
 		}
 
@@ -232,7 +234,8 @@ namespace SS.UI
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.raycastTarget = false;
 			textText.text = text ?? "";
-			textText.font = Main.mainFont;
+			textText.font = FontManager.uiFont;
+			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = textFontWeight;
 			textText.enableWordWrapping = true;
@@ -296,7 +299,8 @@ namespace SS.UI
 
 			TextMeshProUGUI labelText = labelGameObject.AddComponent<TextMeshProUGUI>();
 			labelText.text = label ?? "";
-			labelText.font = Main.mainFont;
+			labelText.font = FontManager.uiFont;
+			labelText.color = FontManager.lightColor;
 			labelText.fontSize = textFontSize;
 			labelText.fontWeight = FontWeight.Thin;
 			labelText.alignment = TextAlignmentOptions.TopRight;
@@ -318,7 +322,8 @@ namespace SS.UI
 
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.text = text ?? "";
-			textText.font = Main.mainFont;
+			textText.font = FontManager.uiFont;
+			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = FontWeight.Thin;
 			textText.alignment = TextAlignmentOptions.Justified;
@@ -373,7 +378,8 @@ namespace SS.UI
 
 			TextMeshProUGUI textText = textGO.AddComponent<TextMeshProUGUI>();
 			textText.text = text ?? "";
-			textText.font = Main.mainFont;
+			textText.font = FontManager.uiFont;
+			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = FontWeight.Thin;
 			textText.alignment = TextAlignmentOptions.Justified;

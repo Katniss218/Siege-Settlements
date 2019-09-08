@@ -27,7 +27,7 @@
 	{
 		Id = "resource_deposit.wood";
 		ResourceId = "resource.wood";
-		IsExtracted = false;
+		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.25; Z = 0.5; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Wood.kff";
@@ -39,7 +39,7 @@
 	{
 		Id = "resource_deposit.stone";
 		ResourceId = "resource.stone";
-		IsExtracted = false;
+		IsExtracted = true;
 		Size = { X = 0.3; Y = 0.25; Z = 0.4; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Stone.kff";
@@ -51,7 +51,7 @@
 	{
 		Id = "resource_deposit.iron";
 		ResourceId = "resource.iron";
-		IsExtracted = false;
+		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Iron.kff";
@@ -63,7 +63,7 @@
 	{
 		Id = "resource_deposit.sulphur";
 		ResourceId = "resource.sulphur";
-		IsExtracted = false;
+		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Sulphur.kff";

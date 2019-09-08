@@ -17,6 +17,7 @@ namespace SS.Extras
 		public int amount { get; private set; } // the amt still left.
 		public int amountMax { get; private set; } // the max amt.
 
+#warning TODO! - Not-extracted deposits should take time to collect.
 		/// <summary>
 		/// If true, the resource can be mined instantly.
 		/// </summary>
