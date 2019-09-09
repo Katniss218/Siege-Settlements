@@ -99,7 +99,6 @@ namespace SS.Buildings
 
 			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-			//damageable.SetMaxHealth( def.healthMax, false );
 			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
 			// When the health is changed, make the building update it's healthbar.

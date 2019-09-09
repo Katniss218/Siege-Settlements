@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace SS.UI
 {
+	/// <summary>
+	/// Used to create and manipulate the procedural "ToolTip" info box.
+	/// </summary>
 	public class ToolTip
 	{
 		private static RectTransform toolTip = null;
@@ -19,13 +22,11 @@ namespace SS.UI
 		private const int topPadding = 5;
 		private const int bottomPadding = 5;
 
-		private const int labelInPadding = 5;  // spacing between label and text (label's side)
-		private const int labelOutPadding = 5; // spacing between label and text (text's side)
-		// helper fields.
+		private const int labelLPadding = 5;  // spacing between label and text (Label's side)
+		private const int labelEPadding = 5; // spacing between label and text (text's - Element's - side)
 		private const int totalHorizontalPadding = leftPadding + rightPadding;
 		private const int totalVerticalPadding = topPadding + bottomPadding;
-
-		// Some defaults.
+		
 		private static float defaultLabelWidth
 		{
 			get
@@ -133,12 +134,14 @@ namespace SS.UI
 		/// <param name="clampToScreen">Should the tooltip be always on the screen, even if the position os outside?</param>
 		public static void MoveTo( Vector2 screenPos, bool clampToScreen )
 		{
-			if( isHidden ) // if "hidden" - don't show.
+			if( isHidden )
 			{
 				return;
 			}
 			if( toolTip == null )
+			{
 				Init();
+			}
 			if( clampToScreen )
 			{
 				if( screenPos.x + width > Screen.currentResolution.width )
@@ -170,7 +173,9 @@ namespace SS.UI
 		public static void ShowAt( Vector2 screenPos )
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 			toolTip.anchoredPosition = screenPos;
 		}
 
@@ -180,7 +185,9 @@ namespace SS.UI
 		public static void Hide()
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 			HideToolTip();
 		}
 
@@ -190,7 +197,9 @@ namespace SS.UI
 		public static void Remove()
 		{
 			if( toolTip == null )
+			{
 				return;
+			}
 			Object.Destroy( toolTip.gameObject );
 		}
 
@@ -202,7 +211,9 @@ namespace SS.UI
 		public static void Create( float newWidth, string title )
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 			for( int i = 1; i < toolTip.childCount; i++ )
 			{
 				Object.Destroy( toolTip.GetChild( i ).gameObject );
@@ -242,8 +253,9 @@ namespace SS.UI
 		public static void AddText( string text )
 		{
 			if( toolTip == null )
+			{
 				Init();
-
+			}
 			RectTransform container = AddContainer( "Text" );
 
 			GameObject textGameObject;
@@ -276,7 +288,9 @@ namespace SS.UI
 		public static void AddIcon( Sprite icon )
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 
 			RectTransform container = AddContainer( "Icon" );
 
@@ -312,7 +326,9 @@ namespace SS.UI
 		public static void AddText( string label, string text )
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 
 			RectTransform container = AddContainer( "Labeled Text" );
 
@@ -330,7 +346,7 @@ namespace SS.UI
 			labelText.color = new Color( 0.85f, 0.85f, 0.85f );
 			labelText.characterSpacing = 0;
 			labelText.enableWordWrapping = true;
-			labelText.margin = new Vector4( 0, 0, labelInPadding, 0 );
+			labelText.margin = new Vector4( 0, 0, labelLPadding, 0 );
 			labelText.raycastTarget = false;
 			labelTransform.sizeDelta = new Vector2( defaultLabelWidth, 0 );
 
@@ -352,7 +368,7 @@ namespace SS.UI
 			textText.alignment = TextAlignmentOptions.Justified;
 			textText.characterSpacing = 0;
 			textText.enableWordWrapping = true;
-			textText.margin = new Vector4( labelOutPadding, 0, 0, 0 );
+			textText.margin = new Vector4( labelEPadding, 0, 0, 0 );
 			textText.raycastTarget = false;
 
 			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
@@ -368,7 +384,9 @@ namespace SS.UI
 		public static void AddText( Sprite label, string text )
 		{
 			if( toolTip == null )
+			{
 				Init();
+			}
 
 			RectTransform container = AddContainer( "Labeled Text" );
 
@@ -382,7 +400,7 @@ namespace SS.UI
 			layoutLabelWrapper.childForceExpandWidth = false;
 			layoutLabelWrapper.childForceExpandHeight = true;
 			layoutLabelWrapper.childAlignment = TextAnchor.UpperRight;
-			layoutLabelWrapper.padding = new RectOffset( 0, labelInPadding, 0, 0 );
+			layoutLabelWrapper.padding = new RectOffset( 0, labelLPadding, 0, 0 );
 
 			LayoutElement labelLayoutElement = labelGameObject.AddComponent<LayoutElement>();
 			labelLayoutElement.minWidth = defaultLabelWidth;
@@ -409,7 +427,7 @@ namespace SS.UI
 			textText.fontWeight = FontWeight.Thin;
 			textText.alignment = TextAlignmentOptions.Justified;
 			textText.enableWordWrapping = true;
-			textText.margin = new Vector4( labelOutPadding, 0, 0, 0 );
+			textText.margin = new Vector4( labelEPadding, 0, 0, 0 );
 			textText.raycastTarget = false;
 
 			LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
@@ -453,6 +471,8 @@ namespace SS.UI
 					throw new Exception( "The last element is null." );
 				}
 				lastElement.GetComponent<HorizontalOrVerticalLayoutGroup>().padding = new RectOffset( left, right, 0, 0 );
+
+				LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 			}
 
 			/// <summary>
@@ -471,6 +491,8 @@ namespace SS.UI
 			public static void SetLabelStyle( FontStyles style )
 			{
 				lastElement.GetChild( 0 ).GetComponent<TextMeshProUGUI>().fontStyle = style;
+
+				LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 			}
 
 			/// <summary>
@@ -503,6 +525,8 @@ namespace SS.UI
 				{
 					lastElement.GetChild( 0 ).GetComponent<TextMeshProUGUI>().fontStyle = style;
 				}
+
+				LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 			}
 
 			/// <summary>
@@ -518,6 +542,8 @@ namespace SS.UI
 				LayoutElement e = lastElement.GetChild( 0 ).GetComponent<LayoutElement>();
 				e.minWidth = width;
 				e.preferredWidth = width;
+
+				LayoutRebuilder.ForceRebuildLayoutImmediate( toolTip );
 			}
 		}
 	}

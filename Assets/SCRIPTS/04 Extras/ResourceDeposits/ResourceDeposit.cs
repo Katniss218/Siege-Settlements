@@ -41,37 +41,6 @@ namespace SS.Extras
 			this.collider = this.GetComponent<BoxCollider>();
 		}
 
-		void Start()
-		{
-
-		}
-
-		void Update()
-		{
-
-		}
-
-#warning TODO! - Central input class, not this. this is vulnerable to Destroy( ... ).
-		void OnMouseEnter()
-		{
-			ResourceDefinition def = DataManager.Get<ResourceDefinition>( this.resourceId );
-			ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( this.id );
-			ToolTip.Create( 200, def2.displayName );
-			ToolTip.AddIcon( def.icon.Item2 );
-			ToolTip.AddText( "Amount", this.amount + "/" + this.amountMax );
-			ToolTip.ShowAt( Input.mousePosition );
-		}
-
-		void OnMouseOver()
-		{
-			ToolTip.MoveTo( Input.mousePosition, true );
-		}
-
-		void OnMouseExit()
-		{
-			ToolTip.Hide();
-		}
-
 		public void PickUp( int amt )
 		{
 			this.amount -= amt;
