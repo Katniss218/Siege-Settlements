@@ -339,7 +339,7 @@ namespace SS
 						Selectable[] selected = SelectionManager.selectedObjects;
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							Inventory inv = selected[i].GetComponent<Inventory>();
+							InventorySingle inv = selected[i].GetComponent<InventorySingle>();
 							if( inv != null )
 							{
 								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );

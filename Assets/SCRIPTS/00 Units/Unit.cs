@@ -117,32 +117,33 @@ namespace SS.Units
 			damageable.Heal();
 			damageable.armor = def.armor;
 
-			Inventory inventory = container.AddComponent<Inventory>();
+			InventorySingle inventory = container.AddComponent<InventorySingle>();
 			inventory.maxCapacity = 10;
-			inventory.onPickup.AddListener( () =>
+			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
 			{
-				hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( inventory.resource.id ).icon.Item2;
-				hudAmount.text = inventory.resource.amount.ToString();
+				List<ResourceStack> res = inventory.GetAll(); // res[0] is guaranteed to be the contained value in the InventorySingle (if List is not null).
+				hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( res[0].id ).icon.Item2;
+				hudAmount.text = res[0].amount.ToString();
 
 				hudResourceIcon.gameObject.SetActive( true );
 				hudAmount.gameObject.SetActive( true );
 			} );
-			inventory.onDropOff.AddListener( () =>
+			inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
 			{
 				hudResourceIcon.gameObject.SetActive( false );
 				hudAmount.gameObject.SetActive( false );
 			} );
-			if( factionId == 0 ) // If player, update the resource panel.
+			/*if( factionId == 0 ) // If player, update the resource panel.
 			{
-				inventory.onPickup.AddListener( () =>
+				inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
 				{
-					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
+					Main.resourcePanel.UpdateResourceEntry( inventory.resourceId, inventory.resourceAmount );
 				} );
-				inventory.onDropOff.AddListener( () =>
+				inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
 				{
-					Main.resourcePanel.UpdateResourceEntry( inventory.resource.id, inventory.resource.amount );
+					Main.resourcePanel.UpdateResourceEntry( inventory.resourceId, inventory.resourceAmount );
 				} );
-			}
+			}*/
 			
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
