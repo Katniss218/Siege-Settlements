@@ -31,6 +31,7 @@ namespace SS.Extras
 
 		public const float MINING_SPEED = 2.0f;
 
+
 		private Transform graphicsTransform;
 		private MeshFilter meshFilter;
 		private MeshRenderer meshRenderer;

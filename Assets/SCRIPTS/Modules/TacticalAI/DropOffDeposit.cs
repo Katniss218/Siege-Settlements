@@ -12,11 +12,39 @@ namespace SS
 		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class DropOffDeposit : TAIGoal
 		{
+			/// <summary>
+			/// The spot at which to drop off the deposit.
+			/// </summary>
 			public Vector3 destination { get; private set; }
+
+			private NavMeshAgent navMeshAgent;
+
+
+			private void DropOff( IInventory inventory, Vector3 direction )
+			{
+				// Creates deposit(s) from the inventory's items.
+				// Clears the inventory.
+				// Stops the agent.
+
+				if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+				{
+					List<ResourceStack> resourcesCarried = inventory.GetAll();
+					if( hitInfo.collider.gameObject.layer == LayerMask.NameToLayer( "Terrain" ) )
+					{
+						foreach( ResourceStack stack in resourcesCarried )
+						{
+							ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( stack.id ).defaultDeposit ), hitInfo.point, Quaternion.identity, stack.amount );
+						}
+					}
+					inventory.Clear();
+					this.navMeshAgent.ResetPath();
+				}
+			}
 
 			void Start()
 			{
-				this.GetComponent<NavMeshAgent>().SetDestination( this.destination );
+				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
+				this.navMeshAgent.SetDestination( this.destination );
 			}
 
 			void Update()
@@ -27,29 +55,18 @@ namespace SS
 
 					if( inventory == null )
 					{
-						Destroy( this );
+						Object.Destroy( this );
 						throw new System.Exception( "TAIGoal.DropOffDeposit was added to an object that doesn't have inventory." );
 					}
-
-					List<ResourceStack> resourcesCarried = inventory.GetAll();
-
-					if( resourcesCarried != null )
+					
+					if( !inventory.isEmpty )
 					{
 						Vector3 direction = (destination - this.transform.position).normalized;
-						if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
-						{
-							// Create the dropped deposit in the world.
-							if( hitInfo.collider.gameObject.layer == LayerMask.NameToLayer( "Terrain" ) )
-							{
-								foreach( ResourceStack stack in resourcesCarried )
-									ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( stack.id ).defaultDeposit ), hitInfo.point, Quaternion.identity, stack.amount );
-							}
-							inventory.Clear();
-						}
+						this.DropOff( inventory, direction );
 					}
 					else
 					{
-						Destroy( this );
+						Object.Destroy( this );
 					}
 				}
 			}

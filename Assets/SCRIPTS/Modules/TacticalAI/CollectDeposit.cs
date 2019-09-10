@@ -13,9 +13,12 @@ namespace SS
 
 			private float amtCollected = 0;
 
+			private NavMeshAgent navMeshAgent;
+
 			void Start()
 			{
-				this.GetComponent<NavMeshAgent>().SetDestination( this.depositToCollect.transform.position );
+				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
+				this.navMeshAgent.SetDestination( this.depositToCollect.transform.position );
 			}
 
 			void Update()
@@ -25,6 +28,7 @@ namespace SS
 					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
 					return;
 				}
+#warning TODO ----- make it so the unit can pick up deposit even if the deposit itself is big enough to be above 2 units in size.
 				if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
 				{
 					IInventory inventory = this.GetComponent<IInventory>();
@@ -34,6 +38,9 @@ namespace SS
 						Destroy( this );
 						throw new System.Exception( "TAIGoal.CollectDeposit was added to an object that doesn't have IInventory." );
 					}
+
+					// Clear the path, when it's in range of the deposit.
+					this.navMeshAgent.ResetPath();
 
 					int amountPickedUp = 0;
 					if( this.depositToCollect.isTypeExtracted )
@@ -52,7 +59,9 @@ namespace SS
 					}
 
 					if( amountPickedUp != 0 )
+					{
 						this.depositToCollect.PickUp( amountPickedUp );
+					}
 				}
 			}
 
