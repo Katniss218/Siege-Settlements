@@ -88,7 +88,7 @@ namespace SS
 			}
 			if( amount < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			int total = 0;
 			for( int i = 0; i < this.slots; i++ )
@@ -109,7 +109,7 @@ namespace SS
 			}
 			if( amount < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			int remainingTotal = 0;
 			for( int i = 0; i < this.slots; i++ )
@@ -134,7 +134,7 @@ namespace SS
 			}
 			if( amountPref < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			int totalAdded = 0;
 			int totalLeftToAdd = amountPref;
@@ -167,7 +167,7 @@ namespace SS
 			}
 			if( amountPref < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			int totalRemoved = 0;
 			int totalLeftToRemove = amountPref;

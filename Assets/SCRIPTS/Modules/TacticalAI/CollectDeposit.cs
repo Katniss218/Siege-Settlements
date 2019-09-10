@@ -11,6 +11,8 @@ namespace SS
 		{
 			public ResourceDeposit depositToCollect { get; private set; }
 
+			private float amtCollected = 0;
+
 			void Start()
 			{
 				this.GetComponent<NavMeshAgent>().SetDestination( this.depositToCollect.transform.position );
@@ -33,7 +35,22 @@ namespace SS
 						throw new System.Exception( "TAIGoal.CollectDeposit was added to an object that doesn't have IInventory." );
 					}
 
-					int amountPickedUp = inventory.Add( this.depositToCollect.resourceId, 1 );
+					int amountPickedUp = 0;
+					if( this.depositToCollect.isTypeExtracted )
+					{
+						amountPickedUp = inventory.Add( this.depositToCollect.resourceId, 1 );
+					}
+					else
+					{
+						amtCollected += ResourceDeposit.MINING_SPEED * Time.deltaTime;
+						int amtFloored = Mathf.FloorToInt( amtCollected );
+						if( amtFloored >= 1 )
+						{
+							amountPickedUp = inventory.Add( this.depositToCollect.resourceId, amtFloored );
+							amtCollected -= amtFloored;
+						}
+					}
+
 					if( amountPickedUp != 0 )
 						this.depositToCollect.PickUp( amountPickedUp );
 				}

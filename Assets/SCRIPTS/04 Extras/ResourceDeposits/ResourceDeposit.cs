@@ -1,6 +1,4 @@
 ﻿using SS.Data;
-using SS.ResourceSystem;
-using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,14 +14,22 @@ namespace SS.Extras
 		/// </summary>
 		public string resourceId { get; private set; }
 
+		/// <summary>
+		/// The amount of resource in the deposit.
+		/// </summary>
 		public int amount { get; private set; } // the amt still left.
-		public int amountMax { get; private set; } // the max amt.
 
-#warning TODO! - Not-extracted deposits should take time to collect.
+		/// <summary>
+		/// The capacity of the deposit.
+		/// </summary>
+		public int amountMax { get; private set; } // the max amt.
+		
 		/// <summary>
 		/// If true, the resource can be mined instantly.
 		/// </summary>
-		public bool isTypeExtracted { get; private set; } 
+		public bool isTypeExtracted { get; private set; }
+
+		public const float MINING_SPEED = 2.0f;
 
 		private Transform graphicsTransform;
 		private MeshFilter meshFilter;

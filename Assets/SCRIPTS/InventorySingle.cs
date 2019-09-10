@@ -71,7 +71,7 @@ namespace SS
 			}
 			if( amount < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			if( this.isEmpty )
 			{
@@ -92,7 +92,7 @@ namespace SS
 			}
 			if( amount < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			if( this.isEmpty )
 			{
@@ -113,7 +113,7 @@ namespace SS
 			}
 			if( amountPref < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 			if( !this.isEmpty && this.resourceId != id )
 			{
@@ -137,7 +137,7 @@ namespace SS
 			}
 			if( amountPref < 1 )
 			{
-				throw new System.ArgumentNullException( "Amount can't be less than 1." );
+				throw new System.ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 
 			if( !this.isEmpty && this.resourceId != id )
