@@ -3,10 +3,11 @@
 	{
 		Id = "resource_deposit.tree";
 		DisplayName = "Tree";
-		ResourceId = "resource.wood";
-		IsExtracted = false;
-		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
-		ShaderType = 1;
+		ResourceId = "resource.wood"; // Id of the resource that's given by mining this deposit.
+		IsExtracted = false; // If true, the deposit will be 'mined' instantly.
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		// ##### \/ RENDERING \/ #####
+		ShaderType = 1; // 0 - solid, 1 - plants (wavy).
 		Mesh = "Models/ResourceDeposits/Tree.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/tree_albedo.png";
 		NormalTexture = "Textures/ResourceDeposits/tree_normal.png";
@@ -18,7 +19,7 @@
 		DisplayName = "Tree (Pine)";
 		ResourceId = "resource.wood";
 		IsExtracted = false;
-		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 1;
 		Mesh = "Models/ResourceDeposits/Pine.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/pine_albedo.png";
@@ -31,7 +32,7 @@
 		DisplayName = "Wood";
 		ResourceId = "resource.wood";
 		IsExtracted = true;
-		Size = { X = 0.25; Y = 0.25; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Wood.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/wood_albedo.png";
@@ -44,7 +45,7 @@
 		DisplayName = "Stone";
 		ResourceId = "resource.stone";
 		IsExtracted = true;
-		Size = { X = 0.3; Y = 0.25; Z = 0.4; };
+		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Stone.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/stone_albedo.png";
@@ -57,7 +58,7 @@
 		DisplayName = "Iron";
 		ResourceId = "resource.iron";
 		IsExtracted = true;
-		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Iron.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/iron_albedo.png";
@@ -70,7 +71,7 @@
 		DisplayName = "Sulphur";
 		ResourceId = "resource.sulphur";
 		IsExtracted = true;
-		Size = { X = 0.25; Y = 0.25; Z = 0.25; };
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 0;
 		Mesh = "Models/ResourceDeposits/Sulphur.kff";
 		AlbedoTexture = "Textures/ResourceDeposits/sulphur_albedo.png";
