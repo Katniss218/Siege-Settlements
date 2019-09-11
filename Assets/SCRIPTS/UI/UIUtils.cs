@@ -10,7 +10,6 @@ namespace SS.UI
 	/// </summary>
 	public static class UIUtils
 	{
-		// TODO ----- Move these fields to AssetsManager?
 		private static GameObject __text = null;
 		private static GameObject text
 		{
