@@ -119,14 +119,19 @@ namespace SS.Buildings
 				}
 				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
 			} );
-
+			selectable.onSelectionUIRedraw.AddListener( () =>
+			{
+				if( !Building.CheckUsable( damageable ) )
+				{
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
+				}
+			} );
 			// If the newly spawned building is marked as being constructed:
 			// - Set the health to 10% (construction's starting percent).
 			// - Start the construction process.
 			if( isUnderConstruction )
 			{
 				damageable.healthPercent = Building.STARTING_HEALTH_PERCENT;
-				//damageable.SetHealthPercent( Building.STARTING_HEALTH_PERCENT );
 				ConstructionSite.StartConstructionOrRepair( container ); // the condition for completion of construction is 100% health. Repairing is needed once the building's health drops below 50%. Allowed anytime the health is below 100%.
 			}
 			// If the newly spawned building is not marked as being constructed:

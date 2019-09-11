@@ -40,10 +40,9 @@ namespace SS.Modules
 				{
 					Damageable d = this.GetComponent<Damageable>();
 					// If the barracks are not usable.
+					// FIXME  ----- What if the thing is not building and might not be unusable by then?
 					if( d != null && !Buildings.Building.CheckUsable( d ) )
 					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Building is damaged (<50% HP)" );
-
 						return;
 					}
 					const string TEXT = "Select unit to make...";
