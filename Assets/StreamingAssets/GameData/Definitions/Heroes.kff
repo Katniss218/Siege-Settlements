@@ -12,7 +12,7 @@
 				0.0  // Concussion
 			];
 		};
-		RangedModule = // May not exist, if IsRanged == false.
+		RangedModule = // May not exist.
 		{
 			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 			ProjectileCount = 2;
