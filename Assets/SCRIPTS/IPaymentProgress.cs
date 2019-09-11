@@ -7,7 +7,9 @@ namespace SS
 		/// <summary>
 		/// Returns the progress of whatever is being done.
 		/// </summary>
-		Func<float> progress { get; }
+		//Func<float> progress { get; }
+
+		Func<bool> IsDone { get; }
 
 		/// <summary>
 		/// Returns the maximum amount of specific resource, that the progress wants.

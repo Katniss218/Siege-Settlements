@@ -17,16 +17,17 @@ namespace SS.Buildings
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
-		private string[] resourceIds;
+		[SerializeField] private string[] resourceIds;
 
 		/// <summary>
 		/// An array of remaining resources, per resource type (use resourceIds[i] to get the Id) (Read Only).
 		/// </summary>
-		private float[] resourcesRemaining;
+		[SerializeField] private float[] resourcesRemaining;
 
-		private float[] healthToResourcesConv;
+		[SerializeField] private float[] healthToResourcesConv;
 
-		public Func<float> progress { get; private set; }
+		//public Func<float> progress { get; private set; }
+		public Func<bool> IsDone { get; private set; }
 
 		public int GetWantedAmount( string resourceId )
 		{
@@ -55,6 +56,7 @@ namespace SS.Buildings
 			}
 		}
 
+		// Rounds down if the decimal is <=0.5, up when >0.5
 		private static int SpecialRound( float remainingResAmt )
 		{
 			int floored = Mathf.FloorToInt( remainingResAmt );
@@ -97,11 +99,22 @@ namespace SS.Buildings
 			}
 
 			// Set the method for checking progress of the construction.
-			// The construction is directly tied to the building's health.
-			constructionSite.progress = () => damageable.healthPercent;
+			constructionSite.IsDone = () =>
+			{
+				for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
+				{
+					int roundedAmount = SpecialRound( constructionSite.resourcesRemaining[i] );
+
+					if( roundedAmount != 0 )
+					{
+						return false;
+					}
+				}
+				return true;
+			};
 
 			// cache the function listener so we can reference it to remove it when the construction is complete.
-			UnityAction<float> onHealthChange_setProgress = ( float deltaHP ) =>
+			UnityAction<float> onHealthChange_setRemaining = ( float deltaHP ) =>
 			{
 				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 				if( deltaHP < 0 )
@@ -113,7 +126,7 @@ namespace SS.Buildings
 				}
 			};
 
-			damageable.onHealthChange.AddListener( onHealthChange_setProgress );
+			damageable.onHealthChange.AddListener( onHealthChange_setRemaining );
 
 			PaymentReceiver paymentReceiver = building.AddComponent<PaymentReceiver>();
 			paymentReceiver.paymentProgress = constructionSite;
@@ -129,24 +142,34 @@ namespace SS.Buildings
 					// Check if we even want the received resources.
 					if( constructionSite.resourceIds[i] == resource.id )
 					{
-						int roundedResourceAmount = SpecialRound( constructionSite.resourcesRemaining[i] );
-						if( roundedResourceAmount == 0 )
+						int roundedRemaining = SpecialRound( constructionSite.resourcesRemaining[i] );
+						if( roundedRemaining == 0 )
 						{
 							break;
 						}
-						if( roundedResourceAmount < resource.amount )
+						// Received more than was needed (invalid behavior).
+						if( roundedRemaining < resource.amount )
 						{
-							// invalid behavior.
-							throw new Exception( "Received amount of '" + resource.id + "' (" + resource.amount + ") was more than the required amount (" + roundedResourceAmount + ")." );
+							throw new Exception( "Received amount of '" + resource.id + "' (" + resource.amount + ") was more than the required amount (" + roundedRemaining + ")." );
 						}
-#warning TODO - can get below 0, if the amount is rounded up by SpecialRound. also can get funky, if the payment receiver receives invalid payment amount.
-						// we need to check if the value given is rounded up or down.
-						// we also need to properly handle receiving too much resources. (with a warning, but none exceptions).
+
+						float healAmt = ((damageable.healthMax * (1 - 0.1f)) / cost[i].amount) * constructionSite.healthToResourcesConv[i] * resource.amount;
+						// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
+						// Otherwise, heal it normally.
+						if( damageable.health + healAmt > damageable.healthMax )
+						{
+							damageable.health = damageable.healthMax;
+						}
+						else
+						{
+							damageable.health += healAmt;
+						}
 
 						constructionSite.resourcesRemaining[i] -= resource.amount;
-
-#warning If the rounded amount is above float amount, this will overshoot the maxHealth and break (since the payment receiver gives the rounded up amount, and it's rounded up, so it's above what it really needs).
-						damageable.health += ((damageable.healthMax * (1 - 0.1f)) / cost[i].amount) * constructionSite.healthToResourcesConv[i] * resource.amount;
+						if( constructionSite.resourcesRemaining[i] < 0 )
+						{
+							constructionSite.resourcesRemaining[i] = 0;
+						}
 
 						Main.particleSystem.transform.position = building.transform.position + new Vector3( 0, 0.125f, 0 );
 						ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
@@ -167,7 +190,7 @@ namespace SS.Buildings
 			paymentReceiver.onProgressComplete.AddListener( () =>
 			{
 				// The building shouldn't drop into the ground, when it's not "being constructed".
-				damageable.onHealthChange.RemoveListener( onHealthChange_setProgress );
+				damageable.onHealthChange.RemoveListener( onHealthChange_setRemaining );
 				Object.Destroy( constructionSite );
 			} );
 

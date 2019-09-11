@@ -26,6 +26,10 @@ namespace SS
 		/// <param name="resources">The list of resources to check.</param>
 		public bool IsSuitable( List<ResourceStack> resources )
 		{
+			if( resources == null )
+			{
+				return false;
+			}
 			foreach( ResourceStack stack in resources )
 			{
 				if( this.GetWantedAmount( stack.id ) == 0 )
@@ -50,7 +54,7 @@ namespace SS
 
 			this.onPaymentMade?.Invoke( resources );
 
-			if( this.paymentProgress.progress() >= 1 )
+			if( this.paymentProgress.IsDone() )
 			{
 				this.onProgressComplete?.Invoke();
 				Object.Destroy( this );
