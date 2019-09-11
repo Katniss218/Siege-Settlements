@@ -9,10 +9,11 @@ namespace SS
 	/// </summary>
 	public class Damageable : MonoBehaviour
 	{
+		public class _UnityEvent_float : UnityEvent<float> { }
 		/// <summary>
 		/// Fires when the 'health' value is changed.
 		/// </summary>
-		public UnityEvent onHealthChange = new UnityEvent();
+		public _UnityEvent_float onHealthChange = new _UnityEvent_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
@@ -33,7 +34,6 @@ namespace SS
 			}
 			set
 			{
-				
 				if( value > this.healthMax )
 				{
 					throw new ArgumentOutOfRangeException( "Can't set the health to more than max health." );
@@ -43,8 +43,9 @@ namespace SS
 				{
 					value = 0;
 				}
+				float diff = value - this.__health; // if new value is bigger, diff should be positive.
 				this.__health = value;
-				this.onHealthChange?.Invoke();
+				this.onHealthChange?.Invoke( diff );
 
 				// If the health is 0, kill the damageable.
 				if( this.__health == 0 )

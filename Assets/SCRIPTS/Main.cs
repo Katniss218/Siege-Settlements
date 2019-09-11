@@ -1,5 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 using SS.Buildings;
 using UnityEngine.EventSystems;
 using SS.UI;
@@ -12,10 +11,6 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
-
-		// TODO ----- Move these fields to AssetsManager.
-		// Handle both file assets & resources.load assets in the AssetsManager class.
-
 		private static GameObject __unitHUD = null;
 		public static GameObject unitHUD
 		{
@@ -284,18 +279,34 @@ namespace SS
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
 						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
+						PaymentReceiver paymentReceiver = hitInfo.collider.GetComponent<PaymentReceiver>();
 						Selectable[] selected = SelectionManager.selectedObjects;
 						for( int i = 0; i < selected.Length; i++ )
 						{
 							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Units" ) )
 							{
-								if( hitDeposit != null )
+								if( paymentReceiver != null )
 								{
-									TAIGoal.CollectDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+									IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+									if( inv != null )
+									{
+										// Assign the makePayment TAIGoal only if the selected object contains wanted resource in the inv.
+										if( paymentReceiver.IsSuitable( inv.GetAll() ) )
+										{
+											TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, paymentReceiver );
+										}
+									}
 								}
 								else
 								{
-									TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+									if( hitDeposit != null )
+									{
+										TAIGoal.CollectDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+									}
+									else
+									{
+										TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+									}
 								}
 							}
 							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Heroes" ) )

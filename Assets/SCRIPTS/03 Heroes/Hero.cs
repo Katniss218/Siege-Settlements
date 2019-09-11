@@ -96,7 +96,7 @@ namespace SS.Heroes
 
 			// Make the unit damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.onHealthChange.AddListener( () =>
+			damageable.onHealthChange.AddListener( (float deltaHP) =>
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				ui.SetHealthBarFill( damageable.healthPercent );

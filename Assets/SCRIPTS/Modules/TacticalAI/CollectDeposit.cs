@@ -28,7 +28,7 @@ namespace SS
 					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
 					return;
 				}
-#warning TODO ----- make it so the unit can pick up deposit even if the deposit itself is big enough to be above 2 units in size.
+				// TODO ----- make it so the unit can pick up deposit even if the deposit itself is big enough to be above 2 units in size.
 				if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
 				{
 					IInventory inventory = this.GetComponent<IInventory>();

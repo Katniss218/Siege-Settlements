@@ -94,7 +94,7 @@ namespace SS.Units
 
 			// Make the unit damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.onHealthChange.AddListener( () =>
+			damageable.onHealthChange.AddListener( (float deltaHP) =>
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				ui.SetHealthBarFill( damageable.healthPercent );
@@ -130,8 +130,17 @@ namespace SS.Units
 			} );
 			inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
 			{
-				hudResourceIcon.gameObject.SetActive( false );
-				hudAmount.gameObject.SetActive( false );
+				if( inventory.isEmpty )
+				{
+					hudResourceIcon.gameObject.SetActive( false );
+					hudAmount.gameObject.SetActive( false );
+				}
+				else
+				{
+					List<ResourceStack> res = inventory.GetAll(); // res[0] is guaranteed to be the contained value in the InventorySingle (if List is not null).
+					hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( res[0].id ).icon.Item2;
+					hudAmount.text = res[0].amount.ToString();
+				}
 			} );
 			/*if( factionId == 0 ) // If player, update the resource panel.
 			{

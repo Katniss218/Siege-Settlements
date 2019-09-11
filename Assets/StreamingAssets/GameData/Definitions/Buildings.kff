@@ -15,8 +15,8 @@
 		Size = { X = 1.6; Y = 1.0; Z = 1.7; };
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 30; }
 		];
 		// Controls the barracks module of the building. remove this to disable functionality.
 		BarracksModule =
@@ -53,8 +53,7 @@
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 30; }
 		];
 		
 		ResearchModule =
@@ -85,8 +84,8 @@
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 500; },
-			{ Id = "resource.stone"; Amount = 450; }
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 45; }
 		];
 		BarracksModule =
 		{
@@ -124,8 +123,8 @@
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 500; },
-			{ Id = "resource.stone"; Amount = 450; }
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 45; }
 		];
 		BarracksModule =
 		{

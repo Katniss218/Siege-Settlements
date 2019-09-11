@@ -70,6 +70,7 @@ namespace SS.Modules
 					// If the research facility is not usable.
 					if( d != null && !Buildings.Building.CheckUsable( d ) )
 					{
+						// TODO ----- move this from modules to general building code (also move from barracks module).
 						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Building is damaged (<50% HP)" );
 
 						return;

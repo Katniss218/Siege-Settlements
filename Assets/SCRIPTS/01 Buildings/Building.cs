@@ -102,7 +102,7 @@ namespace SS.Buildings
 			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
 			// When the health is changed, make the building update it's healthbar.
-			damageable.onHealthChange.AddListener( () =>
+			damageable.onHealthChange.AddListener( (float deltaHP) =>
 			{
 				ui.SetHealthBarFill( damageable.healthPercent );
 			} );
