@@ -15,9 +15,7 @@ namespace SS.TerrainCreation
 		public static Transform terrainParent;
 
 		private const int RESOLUTION = 241;
-
-		// TODO - multithread ASYNC.
-
+		
 		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
 			int segments = heightMaps.GetLength( 0 );

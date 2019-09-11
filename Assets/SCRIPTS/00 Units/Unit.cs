@@ -203,7 +203,6 @@ namespace SS.Units
 						}
 						BuildPreview.Create( buildingDef );
 						SelectionManager.DeselectAll(); // deselect everything when the preview is active, to stop the player from performing other left-mouse-button input actions.
-														// TODO ----- change this to priority-queue-based input handler.
 					} );
 				}
 			}

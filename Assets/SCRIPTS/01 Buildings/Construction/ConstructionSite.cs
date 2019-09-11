@@ -179,7 +179,6 @@ namespace SS.Buildings
 						Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
 						AudioManager.PlayNew( buildingComp.cachedDefinition.buildSoundEffect.Item2, 1.0f, 1.0f );
-						// TODO ----- Only play new sound, when the previous one has ended (per-building basis).
 
 
 						break;
