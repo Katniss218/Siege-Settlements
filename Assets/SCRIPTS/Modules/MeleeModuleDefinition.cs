@@ -15,24 +15,6 @@ namespace SS.Modules
 		public float attackCooldown { get; set; }
 		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
 
-		public override void AddTo( GameObject obj )
-		{
-			TargetFinder finder = obj.AddComponent<TargetFinder>();
-
-			finder.canTarget = FactionMember.CanTargetCheck;
-			finder.searchRange = this.attackRange;
-
-
-			DamageSource damageSource = new DamageSource( this.damageType, this.damage, this.armorPenetration );
-
-			MeleeModule melee = obj.AddComponent<MeleeModule>();
-			melee.damageSource = damageSource;
-			melee.targetFinder = finder;
-			melee.attackCooldown = this.attackCooldown;
-			melee.attackRange = this.attackRange;
-			melee.attackSoundEffect = this.attackSoundEffect.Item2;
-		}
-
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.damageType = (DamageType)serializer.ReadByte( "DamageType" );

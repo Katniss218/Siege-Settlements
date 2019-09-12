@@ -1,4 +1,5 @@
-﻿using SS.Extras;
+﻿using Katniss.Utils;
+using SS.Extras;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -28,7 +29,8 @@ namespace SS
 					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
 					return;
 				}
-				if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
+				if( RaycastDistance.IsInRange( this.depositToCollect.gameObject, this.depositToCollect.transform.position, this.transform.position, 0.75f ) )
+				//	if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
 				{
 					IInventory inventory = this.GetComponent<IInventory>();
 

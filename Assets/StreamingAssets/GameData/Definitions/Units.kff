@@ -29,8 +29,7 @@
 		//InventorySize = 0;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -69,8 +68,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -108,8 +106,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -147,8 +144,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -186,8 +182,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -231,8 +226,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [
 			"technology.archery"
@@ -278,8 +272,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [
 			"technology.archery"
@@ -325,8 +318,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [
 			"technology.archery"
@@ -357,8 +349,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -387,8 +378,7 @@
 		//InventorySize = 45;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 300; },
-			{ Id = "resource.stone"; Amount = 200; }
+			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;

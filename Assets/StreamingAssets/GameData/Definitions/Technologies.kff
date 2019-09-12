@@ -5,8 +5,8 @@
 		DisplayName = "Weaponry";
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 50; },
-			{ Id = "resource.stone"; Amount = 50; }
+			{ Id = "resource.wood"; Amount = 5; },
+			{ Id = "resource.stone"; Amount = 5; }
 		];
 		Icon = "Textures/Buildings/house0_icon";
 	},
@@ -15,8 +15,8 @@
 		DisplayName = "Horse Riding";
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 50; },
-			{ Id = "resource.stone"; Amount = 50; }
+			{ Id = "resource.wood"; Amount = 5; },
+			{ Id = "resource.stone"; Amount = 5; }
 		];
 		Icon = "Textures/Buildings/house1_icon";
 	},
@@ -25,8 +25,8 @@
 		DisplayName = "Archery";
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 50; },
-			{ Id = "resource.stone"; Amount = 50; }
+			{ Id = "resource.wood"; Amount = 6; },
+			{ Id = "resource.stone"; Amount = 4; }
 		];
 		Icon = "Textures/Buildings/house0_icon";
 	}

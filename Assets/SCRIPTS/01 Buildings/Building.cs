@@ -1,4 +1,5 @@
-﻿using SS.UI;
+﻿using SS.Modules;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -87,14 +88,16 @@ namespace SS.Buildings
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			factionMember.factionId = factionId;
+			
 
 			if( def.barracks != null )
 			{
-				def.barracks.AddTo( container );
+				BarracksModule.AddTo( container, def.barracks );
 			}
+			
 			if( def.research != null )
 			{
-				def.research.AddTo( container );
+				ResearchModule.AddTo( container, def.research );
 			}
 
 			// Make the building damageable.
@@ -104,6 +107,7 @@ namespace SS.Buildings
 			// When the health is changed, make the building update it's healthbar.
 			damageable.onHealthChange.AddListener( (float deltaHP) =>
 			{
+
 				ui.SetHealthBarFill( damageable.healthPercent );
 			} );
 			// When the building dies:
@@ -139,6 +143,7 @@ namespace SS.Buildings
 			else
 			{
 				damageable.Heal();
+				meshRenderer.material.SetFloat( "_Progress", 1.0f );
 			}
 
 			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).

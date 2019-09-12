@@ -8,12 +8,6 @@ namespace SS.Modules
 		public float researchSpeed { get; set; }
 
 
-		public override void AddTo( GameObject obj )
-		{
-			ResearchModule research = obj.AddComponent<ResearchModule>();
-
-			research.researchSpeed = this.researchSpeed;
-		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Data;
 using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,42 +37,6 @@ namespace SS.Modules
 			}
 		}
 
-		void Awake()
-		{
-			this.factionMember = this.GetComponent<FactionMember>();
-		}
-
-		void Start()
-		{
-			if( this.damageSource == null )
-			{
-				Debug.LogError( "There's no damage source hooked up to this ranged module." );
-			}
-			if( this.targetFinder == null )
-			{
-				Debug.LogError( "There's no target finder hooked up to this ranged module." );
-			}
-			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
-		}
-
-		void Update()
-		{
-			if( this.isReadyToAttack )
-			{
-				Damageable target = this.targetFinder.GetTarget();
-
-				if( target != null )
-				{
-					if( target.transform.position == this.transform.position )
-					{
-						return;
-					}
-					this.Attack( target );
-					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
-				}
-			}
-		}
-		
 		/// <summary>
 		/// Forces RangedComponent to shoot at the target (assumes target != null).
 		/// </summary>
@@ -116,8 +81,67 @@ namespace SS.Modules
 			Projectile.Create( this.projectile, pos, vel, this.factionMember.factionId, this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration, this.transform );
 		}
 
-#if UNITY_EDITOR
+		void Awake()
+		{
+			this.factionMember = this.GetComponent<FactionMember>();
+		}
+
+		void Start()
+		{
+			if( this.damageSource == null )
+			{
+				Debug.LogError( "There's no damage source hooked up to this ranged module." );
+			}
+			if( this.targetFinder == null )
+			{
+				Debug.LogError( "There's no target finder hooked up to this ranged module." );
+			}
+			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
+		}
+
+		void Update()
+		{
+			if( this.isReadyToAttack )
+			{
+				Damageable target = this.targetFinder.GetTarget();
+
+				if( target != null )
+				{
+					if( target.transform.position == this.transform.position )
+					{
+						return;
+					}
+					this.Attack( target );
+					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
+				}
+			}
+		}
 		
+		public static void AddTo( GameObject obj, RangedModuleDefinition def )
+		{
+			TargetFinder finder = obj.AddComponent<TargetFinder>();
+
+			finder.canTarget = FactionMember.CanTargetCheck;
+			finder.searchRange = def.attackRange;
+
+
+			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
+
+			RangedModule ranged = obj.AddComponent<RangedModule>();
+			ranged.projectile = DataManager.Get<ProjectileDefinition>( def.projectileId );
+			ranged.damageSource = damageSource;
+			ranged.targetFinder = finder;
+			ranged.projectileCount = def.projectileCount;
+			ranged.attackRange = def.attackRange;
+			ranged.attackCooldown = def.attackCooldown;
+			ranged.velocity = def.velocity;
+			ranged.localOffsetMin = def.localOffsetMin;
+			ranged.localOffsetMax = def.localOffsetMax;
+			ranged.attackSoundEffect = def.attackSoundEffect.Item2;
+		}
+
+#if UNITY_EDITOR
+
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.yellow;

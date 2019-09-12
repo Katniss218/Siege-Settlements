@@ -21,29 +21,6 @@ namespace SS.Modules
 		public Vector3 localOffsetMax { get; set; }
 		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
 
-		public override void AddTo( GameObject obj )
-		{
-			TargetFinder finder = obj.AddComponent<TargetFinder>();
-
-			finder.canTarget = FactionMember.CanTargetCheck;
-			finder.searchRange = this.attackRange;
-
-
-			DamageSource damageSource = new DamageSource( this.damageType, this.damage, this.armorPenetration );
-
-			RangedModule ranged = obj.AddComponent<RangedModule>();
-			ranged.projectile = DataManager.Get<ProjectileDefinition>( this.projectileId );
-			ranged.damageSource = damageSource;
-			ranged.targetFinder = finder;
-			ranged.projectileCount = this.projectileCount;
-			ranged.attackRange = this.attackRange;
-			ranged.attackCooldown = this.attackCooldown;
-			ranged.velocity = this.velocity;
-			ranged.localOffsetMin = this.localOffsetMin;
-			ranged.localOffsetMax = this.localOffsetMax;
-			ranged.attackSoundEffect = this.attackSoundEffect.Item2;
-		}
-
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.projectileId = serializer.ReadString( "ProjectileId" );

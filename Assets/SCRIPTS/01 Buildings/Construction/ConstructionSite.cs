@@ -184,6 +184,7 @@ namespace SS.Buildings
 						break;
 					}
 				}
+				Debug.LogError( "Received resource was not wanted." );
 			} );
 
 			paymentReceiver.onProgressComplete.AddListener( () =>

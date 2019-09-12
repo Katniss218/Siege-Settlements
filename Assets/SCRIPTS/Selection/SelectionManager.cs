@@ -63,6 +63,7 @@ namespace SS
 		/// </summary>
 		internal static void ForceSelectionUIRedraw( Selectable callingObj )
 		{
+			// don't use this with buttons if it's updating every frame they will get bugged and unclickable.
 			if( !IsHighlighted( callingObj ) )
 			{
 				//Debug.LogWarning( "ForceSelectionUIRedraw: Calling Object was not selected" );

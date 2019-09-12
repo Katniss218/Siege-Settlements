@@ -3,6 +3,7 @@ using SS.Buildings;
 using UnityEngine.EventSystems;
 using SS.UI;
 using SS.Extras;
+using SS.Data;
 
 namespace SS
 {
@@ -266,6 +267,24 @@ namespace SS
 		
 		void Update()
 		{
+			if( Input.GetKeyDown( KeyCode.B ) )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					Building.Create( DataManager.Get<BuildingDefinition>( "building.barracks" ), hitInfo.point, Quaternion.identity, 0, false );
+				}
+			}
+
+			if( Input.GetKeyDown( KeyCode.N ) )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					Building.Create( DataManager.Get<BuildingDefinition>( "building.house0" ), hitInfo.point, Quaternion.identity, 0, false );
+				}
+			}
+
 			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{

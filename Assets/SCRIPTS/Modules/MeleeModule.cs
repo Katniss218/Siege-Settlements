@@ -59,7 +59,26 @@ namespace SS.Modules
 			}
 		}
 
-		
+
+		public static void AddTo( GameObject obj, MeleeModuleDefinition def )
+		{
+			TargetFinder finder = obj.AddComponent<TargetFinder>();
+
+			finder.canTarget = FactionMember.CanTargetCheck;
+			finder.searchRange = def.attackRange;
+
+
+			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
+
+			MeleeModule melee = obj.AddComponent<MeleeModule>();
+			melee.damageSource = damageSource;
+			melee.targetFinder = finder;
+			melee.attackCooldown = def.attackCooldown;
+			melee.attackRange = def.attackRange;
+			melee.attackSoundEffect = def.attackSoundEffect.Item2;
+		}
+
+
 
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).

@@ -1,4 +1,5 @@
-﻿using SS.ResourceSystem;
+﻿using Katniss.Utils;
+using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -51,7 +52,8 @@ namespace SS
 					Object.Destroy( this );
 					return;
 				}
-				if( Vector3.Distance( this.transform.position, this.receiver.transform.position ) < 2 )
+				if( RaycastDistance.IsInRange( this.receiver.gameObject, this.receiver.transform.position, this.transform.position, 0.75f ) )
+				//if( Vector3.Distance( this.transform.position, this.receiver.transform.position ) < 2 )
 				{
 					this.navMeshAgent.ResetPath();
 

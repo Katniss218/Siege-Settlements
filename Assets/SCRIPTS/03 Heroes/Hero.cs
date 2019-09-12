@@ -119,18 +119,19 @@ namespace SS.Heroes
 			damageable.healthMax = def.healthMax;
 			damageable.Heal();
 			damageable.armor = def.armor;
-			
+
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				def.melee.AddTo( container );
+				MeleeModule.AddTo( container, def.melee );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				def.ranged.AddTo( container );
+				RangedModule.AddTo( container, def.ranged );
 			}
+
 
 			// Make the unit update it's UI's position every frame.
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>

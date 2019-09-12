@@ -1,13 +1,15 @@
 ﻿using SS.Data;
+using SS.ResourceSystem;
 using SS.Technologies;
 using SS.UI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class ResearchModule : Module
+	public class ResearchModule : Module, IPaymentProgress
 	{
 		/// <summary>
 		/// Contains the currently researched technology (Read only).
@@ -35,7 +37,40 @@ namespace SS.Modules
 			}
 		}
 
+		public Func<bool> IsDone { get; private set; }
+
+
+		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
+
 		private FactionMember factionMember;
+
+
+		private void AwaitForPayment()
+		{
+			if( this.GetComponent<PaymentReceiver>() == null )
+			{
+				PaymentReceiver paymentReceiver = this.gameObject.AddComponent<PaymentReceiver>();
+
+				paymentReceiver.paymentProgress = this;
+				paymentReceiver.onPaymentMade.AddListener( ( ResourceStack payment ) =>
+				{
+					if( this.resourcesRemaining.ContainsKey( payment.id ) )
+					{
+						this.resourcesRemaining[payment.id] -= payment.amount;
+						if( this.resourcesRemaining[payment.id] < 0 )
+						{
+							this.resourcesRemaining[payment.id] = 0;
+						}
+					}
+				} );
+			}
+		}
+
+		public int GetWantedAmount( string resourceId )
+		{
+			int value = 0;
+			return resourcesRemaining.TryGetValue( resourceId, out value ) ? value : 0;
+		}
 
 		/// <summary>
 		/// Begins researching a technology.
@@ -45,11 +80,19 @@ namespace SS.Modules
 		{
 			if( this.isResearching )
 			{
-				Debug.LogWarning( "There is already technology being researched" );
+				Debug.LogWarning( "There is already technology being researched." );
 				return;
 			}
 			this.technologyResearched = def;
 			this.researchProgress = 10.0f;
+
+			this.resourcesRemaining.Clear();
+			for( int i = 0; i < def.cost.Length; i++ )
+			{
+				this.resourcesRemaining.Add( this.technologyResearched.cost[i].id, this.technologyResearched.cost[i].amount );
+			}
+
+			AwaitForPayment();
 		}
 
 		// Start is called before the first frame update
@@ -68,19 +111,23 @@ namespace SS.Modules
 				{
 					Damageable d = this.GetComponent<Damageable>();
 					// If the research facility is not usable.
-					// FIXME  ----- What if the thing is not building and might not be unusable by then?
-					if( d != null && !Buildings.Building.CheckUsable( d ) )
+					if( selectable.gameObject.layer == LayerMask.NameToLayer( "Buildings" ) && d != null && !Buildings.Building.CheckUsable( d ) )
 					{
 						return;
 					}
 					if( this.isResearching )
 					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: " + this.technologyResearched.displayName + " - (" + (int)this.researchProgress + ")." );
+						if( this.GetComponent<PaymentReceiver>() != null )
+						{
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '"+ this.technologyResearched.displayName+"'." );
+						}
+						else
+						{
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.technologyResearched.displayName + "' - " + (int)this.researchProgress + " s." );
+						}
 					}
 					else
 					{
-						const string TEXT = "Select tech to research...";
-
 						List<TechnologyDefinition> techDefs = DataManager.GetAllOfType<TechnologyDefinition>();
 						List<GameObject> gridElements = new List<GameObject>();
 						// Add every available technology to the list.
@@ -103,7 +150,7 @@ namespace SS.Modules
 							}
 						}
 						// Create the actual UI.
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select tech to research..." );
 						UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements.ToArray() );
 					}
 				} );
@@ -116,20 +163,48 @@ namespace SS.Modules
 		{
 			if( this.isResearching )
 			{
-				this.researchProgress -= this.researchSpeed * Time.deltaTime;
-				if( this.researchProgress <= 0 )
+				if( this.GetComponent<PaymentReceiver>() == null )
 				{
-					FactionManager.factions[this.factionMember.factionId].techs[this.technologyResearched.id] = TechnologyResearchProgress.Researched;
-					this.technologyResearched = null;
-				}
+					this.researchProgress -= this.researchSpeed * Time.deltaTime;
+					if( this.researchProgress <= 0 )
+					{
+						FactionManager.factions[this.factionMember.factionId].techs[this.technologyResearched.id] = TechnologyResearchProgress.Researched;
+						this.technologyResearched = null;
+					}
 
-				// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
-				Selectable selectable = this.GetComponent<Selectable>();
-				if( selectable != null )
-				{
-					SelectionManager.ForceSelectionUIRedraw( selectable );
+					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
+					Selectable selectable = this.GetComponent<Selectable>();
+					if( selectable != null )
+					{
+						SelectionManager.ForceSelectionUIRedraw( selectable );
+					}
 				}
 			}
+		}
+
+		public static void AddTo( GameObject obj, ResearchModuleDefinition def )
+		{
+			ResearchModule research = obj.AddComponent<ResearchModule>();
+
+			research.researchSpeed = def.researchSpeed;
+
+			// Set the method for checking progress of the construction.
+			research.IsDone = () =>
+			{
+				foreach( var kvp in research.resourcesRemaining )
+				{
+					if( kvp.Value != 0 )
+					{
+						return false;
+					}
+				}
+				return true;
+			};
+
+			//paymentReceiver.onProgressComplete.AddListener( () =>
+			//{
+			//	
+			//} );
 		}
 	}
 }

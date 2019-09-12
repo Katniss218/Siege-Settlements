@@ -1,5 +1,6 @@
 ﻿using SS.Buildings;
 using SS.Data;
+using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;
 using System.Collections.Generic;
@@ -157,13 +158,13 @@ namespace SS.Units
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				def.melee.AddTo( container );
+				MeleeModule.AddTo( container, def.melee );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				def.ranged.AddTo( container );
+				RangedModule.AddTo( container, def.ranged );
 			}
 
 
