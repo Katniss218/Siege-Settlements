@@ -21,21 +21,6 @@ namespace SS
 			private IInventory inventory;
 
 
-			private void PayFromInventory( string id, int maxAmountPossible )
-			{
-				int amtWanted = this.receiver.paymentProgress.GetWantedAmount( id );
-
-				if( amtWanted == 0 )
-				{
-					return;
-				}
-
-				int amountPayed = maxAmountPossible > amtWanted ? amtWanted : maxAmountPossible;
-
-				this.receiver.ReceivePayment( new ResourceStack( id, amountPayed ) );
-				this.inventory.Remove( id, amountPayed );
-			}
-
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
@@ -53,16 +38,24 @@ namespace SS
 					return;
 				}
 				if( RaycastDistance.IsInRange( this.receiver.gameObject, this.receiver.transform.position, this.transform.position, 0.75f ) )
-				//if( Vector3.Distance( this.transform.position, this.receiver.transform.position ) < 2 )
 				{
 					this.navMeshAgent.ResetPath();
 
-					List<ResourceStack> inventoryItems = this.inventory.GetAll();
-					if( inventory != null )
+					if( this.inventory != null )
 					{
-						foreach( ResourceStack stack in inventoryItems )
+						Dictionary<string, int> inventoryItems = this.inventory.GetAll();
+						foreach( var kvp in inventoryItems )
 						{
-							PayFromInventory( stack.id, stack.amount );
+							int amtWanted = this.receiver.GetWantedAmount( kvp.Key );
+							if( amtWanted == 0 )
+							{
+								return;
+							}
+
+							int amountPayed = kvp.Value > amtWanted ? amtWanted : kvp.Value;
+
+							this.inventory.Remove( kvp.Key, amountPayed );
+							this.receiver.ReceivePayment( kvp.Key, amountPayed );
 						}
 					}
 					Object.Destroy( this );

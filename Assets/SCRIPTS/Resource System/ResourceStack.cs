@@ -2,7 +2,7 @@
 
 namespace SS.ResourceSystem
 {
-	/// <summary>
+	/*/// <summary>
 	/// A class representing an amount of specific resource.
 	/// </summary>
 	public class ResourceStack : IKFFSerializable
@@ -34,5 +34,5 @@ namespace SS.ResourceSystem
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteInt( "", "Amount", this.amount );
 		}
-	}
+	}*/
 }

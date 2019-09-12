@@ -20,6 +20,14 @@ namespace SS
 		private static List<Selectable> selected = new List<Selectable>();
 		// Highlighted objects are displayed on the SelectionPanel.Object.
 		private static Selectable highlighted = null;
+
+		public static Selectable highlightedObject
+		{
+			get
+			{
+				return highlighted;
+			}
+		}
 		
 		private static void __Highlight( Selectable obj )
 		{
@@ -59,20 +67,22 @@ namespace SS
 
 		/// <summary>
 		/// Checks if the object is currently selected.
-		/// Forces the UI elements on the SelectionPanel.Object to recalculate. Call it when relevant data might be changed.
+		/// Forces the UI elements on the SelectionPanel.Object to recalculate according to the specified object's parameters. Call it when relevant data might be changed.
 		/// </summary>
+		/// <param name="callingObj">The object whoose SelectionPanel.Object is to be recalculated. Can be null to specify any object.</param>
 		internal static void ForceSelectionUIRedraw( Selectable callingObj )
 		{
 			// don't use this with buttons if it's updating every frame they will get bugged and unclickable.
-			if( !IsHighlighted( callingObj ) )
+
+			// Check if the object even needs updating (if it's not highlighted, then not).
+			if( callingObj != null && !IsHighlighted( callingObj ) )
 			{
-				//Debug.LogWarning( "ForceSelectionUIRedraw: Calling Object was not selected" );
 				return;
 			}
 			// Clear the current UI.
 			SelectionPanel.Object.Clear();
 			// Notify the listeners to redraw the UI in the (possibly) updated form.
-			callingObj.onSelectionUIRedraw?.Invoke();
+			highlighted.onSelectionUIRedraw?.Invoke();
 		}
 
 

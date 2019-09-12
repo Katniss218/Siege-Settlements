@@ -8,7 +8,7 @@ namespace SS
 	[DisallowMultipleComponent]
 	public class PaymentReceiver : MonoBehaviour
 	{
-		public class _UnityEvent_ResourceStack : UnityEvent<ResourceStack> { }
+		public class _UnityEvent_string_int : UnityEvent<string, int> { }
 		
 		public IPaymentProgress paymentProgress { get; set; }
 
@@ -24,15 +24,15 @@ namespace SS
 		/// Checks if the list of resources contains any wanted ones.
 		/// </summary>
 		/// <param name="resources">The list of resources to check.</param>
-		public bool IsSuitable( List<ResourceStack> resources )
+		public bool IsSuitable( Dictionary<string, int> resources )
 		{
 			if( resources == null )
 			{
 				return false;
 			}
-			foreach( ResourceStack stack in resources )
+			foreach( var stack in resources )
 			{
-				if( this.GetWantedAmount( stack.id ) == 0 )
+				if( this.GetWantedAmount( stack.Key ) == 0 )
 				{
 					continue;
 				}
@@ -45,14 +45,14 @@ namespace SS
 		/// Gives certain amount of resources to the PaymentReceiver.
 		/// </summary>
 		/// <param name="resources">The resources to give to the PaymentReceiver.</param>
-		public void ReceivePayment( ResourceStack resources )
+		public void ReceivePayment( string id, int amount )
 		{
-			if( GetWantedAmount( resources.id ) < resources.amount )
+			if( GetWantedAmount( id ) < amount )
 			{
 				throw new System.ArgumentOutOfRangeException( "The PaymentReceiver doesn't want that many resources." );
 			}
 
-			this.onPaymentMade?.Invoke( resources );
+			this.onPaymentMade?.Invoke( id, amount );
 
 			if( this.paymentProgress.IsDone() )
 			{
@@ -64,7 +64,7 @@ namespace SS
 		/// <summary>
 		/// Fired when the payment is made.
 		/// </summary>
-		public _UnityEvent_ResourceStack onPaymentMade = new _UnityEvent_ResourceStack();
+		public _UnityEvent_string_int onPaymentMade = new _UnityEvent_string_int();
 
 		/// <summary>
 		/// Fired when the payment is fully completed.

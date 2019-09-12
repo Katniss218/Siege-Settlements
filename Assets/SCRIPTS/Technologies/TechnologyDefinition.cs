@@ -12,7 +12,7 @@ namespace SS.Technologies
 	{
 		public string displayName { get; set; }
 
-		public ResourceStack[] cost { get; private set; }
+		public Dictionary<string, int> cost { get; private set; }
 
 		public Tuple<string, Sprite> icon { get; private set; }
 
@@ -26,13 +26,14 @@ namespace SS.Technologies
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
 
+			// Cost
 			var analysisData = serializer.Analyze( "Cost" );
-			this.cost = new ResourceStack[analysisData.childCount];
-			for( int i = 0; i < this.cost.Length; i++ )
+			this.cost = new Dictionary<string, int>( analysisData.childCount );
+			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.cost[i] = new ResourceStack( "unused", 0 );
+				this.cost.Add( serializer.ReadString( "Cost." + i + ".Id" ), serializer.ReadInt( "Cost." + i + ".Amount" ) );
 			}
-			serializer.DeserializeArray( "Cost", this.cost );
+
 
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
@@ -42,7 +43,17 @@ namespace SS.Technologies
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 
-			serializer.SerializeArray( "", "Cost", this.cost );
+
+			// Cost
+			serializer.WriteClass( "", "Cost" );
+			int i = 0;
+			foreach( var kvp in this.cost )
+			{
+				serializer.AppendClass( "Cost" );
+				serializer.WriteString( "Cost." + i, "Id", kvp.Key );
+				i++;
+			}
+
 
 			serializer.WriteString( "", "Icon", this.icon.Item1 );
 		}

@@ -1,4 +1,4 @@
-﻿using SS.ResourceSystem;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
 
@@ -9,8 +9,9 @@ namespace SS
 		bool isEmpty { get; }
 
 		int Get( string id );
-		List<ResourceStack> GetAll();
+		Dictionary<string, int> GetAll();
 		bool Has( string id, int amount ); // returns true if the inv has more or equal to
+		bool CanHold( string id ); // returns true if the inv has slots that can hold specified res
 		bool CanHold( string id, int amount ); // returns true if the inv can have added to it more or equal to
 		int Add( string id, int amountPref ); // returns the actual amt aadded.
 		int Remove( string id, int amountPref ); // returns the actual amt removed.

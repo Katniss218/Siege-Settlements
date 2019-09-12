@@ -52,14 +52,14 @@ namespace SS.Modules
 				PaymentReceiver paymentReceiver = this.gameObject.AddComponent<PaymentReceiver>();
 
 				paymentReceiver.paymentProgress = this;
-				paymentReceiver.onPaymentMade.AddListener( ( ResourceStack payment ) =>
+				paymentReceiver.onPaymentMade.AddListener( ( string id, int amount ) =>
 				{
-					if( this.resourcesRemaining.ContainsKey( payment.id ) )
+					if( this.resourcesRemaining.ContainsKey( id ) )
 					{
-						this.resourcesRemaining[payment.id] -= payment.amount;
-						if( this.resourcesRemaining[payment.id] < 0 )
+						this.resourcesRemaining[id] -= amount;
+						if( this.resourcesRemaining[id] < 0 )
 						{
-							this.resourcesRemaining[payment.id] = 0;
+							this.resourcesRemaining[id] = 0;
 						}
 					}
 				} );
@@ -87,9 +87,9 @@ namespace SS.Modules
 			this.researchProgress = 10.0f;
 
 			this.resourcesRemaining.Clear();
-			for( int i = 0; i < def.cost.Length; i++ )
+			foreach( var kvp in this.technologyResearched.cost )
 			{
-				this.resourcesRemaining.Add( this.technologyResearched.cost[i].id, this.technologyResearched.cost[i].amount );
+				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
 			}
 
 			AwaitForPayment();
@@ -170,6 +170,8 @@ namespace SS.Modules
 					{
 						FactionManager.factions[this.factionMember.factionId].techs[this.technologyResearched.id] = TechnologyResearchProgress.Researched;
 						this.technologyResearched = null;
+						
+						SelectionManager.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
 					}
 
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.

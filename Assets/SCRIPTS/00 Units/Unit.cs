@@ -3,11 +3,13 @@ using SS.Data;
 using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace SS.Units
 {
@@ -125,16 +127,24 @@ namespace SS.Units
 			damageable.Heal();
 			damageable.armor = def.armor;
 
-			InventorySingle inventory = container.AddComponent<InventorySingle>();
-			inventory.maxCapacity = 10;
+			InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
+			inventory.SetSlots( 1, 10 );
 			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
 			{
-				List<ResourceStack> res = inventory.GetAll(); // res[0] is guaranteed to be the contained value in the InventorySingle (if List is not null).
-				hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( res[0].id ).icon.Item2;
-				hudAmount.text = res[0].amount.ToString();
+				// Set the icon to the first slot that contains a resource.
+				foreach( var kvp in inventory.GetAll() )
+				{
+					if( kvp.Key == "" )
+					{
+						continue;
+					}
+					hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
+					hudAmount.text = kvp.Value.ToString();
 
-				hudResourceIcon.gameObject.SetActive( true );
-				hudAmount.gameObject.SetActive( true );
+					hudResourceIcon.gameObject.SetActive( true );
+					hudAmount.gameObject.SetActive( true );
+					break;
+				}
 			} );
 			inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
 			{
@@ -145,9 +155,17 @@ namespace SS.Units
 				}
 				else
 				{
-					List<ResourceStack> res = inventory.GetAll(); // res[0] is guaranteed to be the contained value in the InventorySingle (if List is not null).
-					hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( res[0].id ).icon.Item2;
-					hudAmount.text = res[0].amount.ToString();
+					// Set the icon to the first slot that contains a resource.
+					foreach( var kvp in inventory.GetAll() )
+					{
+						if( kvp.Key == "" )
+						{
+							continue;
+						}
+						hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
+						hudAmount.text = kvp.Value.ToString();
+						break;
+					}
 				}
 			} );
 			/*if( factionId == 0 ) // If player, update the resource panel.

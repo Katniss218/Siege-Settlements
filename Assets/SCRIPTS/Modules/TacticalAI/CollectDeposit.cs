@@ -46,6 +46,7 @@ namespace SS
 					int amountPickedUp = 0;
 					if( this.depositToCollect.isTypeExtracted )
 					{
+						if( inventory.CanHold( this.depositToCollect.resourceId ) )
 						amountPickedUp = inventory.Add( this.depositToCollect.resourceId, 1 );
 					}
 					else

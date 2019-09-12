@@ -37,8 +37,6 @@ namespace SS.Modules
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-#warning TODO - change the resource costs from array to dict. Remove resource stack (won't be needed).
-
 		private void StartTraining( UnitDefinition def )
 		{
 			if( this.isTraining )
@@ -50,9 +48,9 @@ namespace SS.Modules
 			this.buildTime = def.buildTime;
 
 			this.resourcesRemaining.Clear();
-			for( int i = 0; i < def.cost.Length; i++ )
+			foreach( var kvp in this.buildingUnit.cost )
 			{
-				this.resourcesRemaining.Add( this.buildingUnit.cost[i].id, this.buildingUnit.cost[i].amount );
+				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
 			}
 
 			AwaitForPayment();
@@ -65,14 +63,14 @@ namespace SS.Modules
 			{
 				PaymentReceiver paymentReceiver = this.gameObject.AddComponent<PaymentReceiver>();
 				paymentReceiver.paymentProgress = this;
-				paymentReceiver.onPaymentMade.AddListener( ( ResourceStack payment ) =>
+				paymentReceiver.onPaymentMade.AddListener( ( string id, int amount ) =>
 				{
-					if( this.resourcesRemaining.ContainsKey( payment.id ) )
+					if( this.resourcesRemaining.ContainsKey( id ) )
 					{
-						this.resourcesRemaining[payment.id] -= payment.amount;
-						if( this.resourcesRemaining[payment.id] < 0 )
+						this.resourcesRemaining[id] -= amount;
+						if( this.resourcesRemaining[id] < 0 )
 						{
-							this.resourcesRemaining[payment.id] = 0;
+							this.resourcesRemaining[id] = 0;
 						}
 					}
 				} );

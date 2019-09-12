@@ -5,6 +5,7 @@ using SS.Modules;
 using SS.ResourceSystem;
 using SS.Technologies;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Units
@@ -34,7 +35,8 @@ namespace SS.Units
 		public float height { get; set; }
 
 		// Production-related.
-		public ResourceStack[] cost { get; private set; }
+		public Dictionary<string, int> cost { get; private set; }
+
 		public float buildTime { get; private set; }
 		public string[] techsRequired { get; private set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
 
@@ -78,13 +80,14 @@ namespace SS.Units
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
 
+			// Cost
 			analysisData = serializer.Analyze( "Cost" );
-			this.cost = new ResourceStack[analysisData.childCount];
-			for( int i = 0; i < this.cost.Length; i++ )
+			this.cost = new Dictionary<string, int>( analysisData.childCount );
+			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.cost[i] = new ResourceStack( "unused", 0 );
+				this.cost.Add( serializer.ReadString( "Cost." + i + ".Id" ), serializer.ReadInt( "Cost." + i + ".Amount" ) );
 			}
-			serializer.DeserializeArray( "Cost", this.cost );
+
 			this.buildTime = serializer.ReadFloat( "BuildTime" );
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
@@ -118,7 +121,16 @@ namespace SS.Units
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
 
-			serializer.SerializeArray( "", "Cost", this.cost );
+			// Cost
+			serializer.WriteClass( "", "Cost" );
+			int i = 0;
+			foreach( var kvp in this.cost )
+			{
+				serializer.AppendClass( "Cost" );
+				serializer.WriteString( "Cost." + i, "Id", kvp.Key );
+				i++;
+			}
+
 			serializer.WriteFloat( "", "BuildTime", this.buildTime );
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
