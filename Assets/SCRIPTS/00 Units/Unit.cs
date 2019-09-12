@@ -99,6 +99,8 @@ namespace SS.Units
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				ui.SetHealthBarFill( damageable.healthPercent );
+
+				SelectionManager.ForceSelectionUIRedraw( selectable );
 			} );
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
@@ -113,6 +115,11 @@ namespace SS.Units
 				{
 					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
+			} );
+			selectable.onSelectionUIRedraw.AddListener( () =>
+			{
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), def.displayName );
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
 			} );
 			damageable.healthMax = def.healthMax;
 			damageable.Heal();

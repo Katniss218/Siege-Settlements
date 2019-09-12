@@ -109,6 +109,7 @@ namespace SS.Buildings
 			{
 
 				ui.SetHealthBarFill( damageable.healthPercent );
+				SelectionManager.ForceSelectionUIRedraw( selectable );
 			} );
 			// When the building dies:
 			// - Destroy the building's UI.
@@ -125,9 +126,11 @@ namespace SS.Buildings
 			} );
 			selectable.onSelectionUIRedraw.AddListener( () =>
 			{
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), def.displayName );
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
 				if( !Building.CheckUsable( damageable ) )
 				{
-					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 				}
 			} );
 			// If the newly spawned building is marked as being constructed:

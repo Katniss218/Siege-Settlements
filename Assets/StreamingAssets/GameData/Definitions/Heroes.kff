@@ -3,6 +3,7 @@
 	{
 		Id = "hero.ari";
 		DisplayName = "Ari";
+		DisplayTitle = "The Bandit Queen";
 		MaxHealth = 100.0;
 		Armor =
 		{

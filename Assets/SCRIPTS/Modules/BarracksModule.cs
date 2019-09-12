@@ -37,7 +37,7 @@ namespace SS.Modules
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-#warning TODO - change the resource costs from array to dict.
+#warning TODO - change the resource costs from array to dict. Remove resource stack (won't be needed).
 
 		private void StartTraining( UnitDefinition def )
 		{
@@ -106,11 +106,11 @@ namespace SS.Modules
 					{
 						if( this.GetComponent<PaymentReceiver>() != null )
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 250.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.buildingUnit.displayName + "'." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.buildingUnit.displayName + "'." );
 						}
 						else
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 250.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.buildingUnit.displayName + "' - " + (int)this.buildTime + " s." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.buildingUnit.displayName + "' - " + (int)this.buildTime + " s." );
 						}
 					}
 					else

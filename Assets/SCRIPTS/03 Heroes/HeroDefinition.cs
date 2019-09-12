@@ -10,6 +10,7 @@ namespace SS.Heroes
 	public class HeroDefinition : Definition
 	{
 		public string displayName { get; set; }
+		public string displayTitle { get; set; }
 
 
 		// Health-related
@@ -45,6 +46,7 @@ namespace SS.Heroes
 		{
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
+			this.displayTitle = serializer.ReadString( "DisplayTitle" );
 
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.armor = new Armor();
@@ -80,6 +82,7 @@ namespace SS.Heroes
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
+			serializer.WriteString( "", "DisplayTitle", this.displayTitle );
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
