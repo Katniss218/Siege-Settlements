@@ -71,24 +71,7 @@ namespace SS
 				return true;
 			}
 		}
-
-		public int Get( string id )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == id )
-				{
-					return this.resources[i].amount;
-				}
-			}
-			throw new Exception( "The inventory doens't contain any slots that can hold '" + id + "'." );
-		}
-
+		
 		public Dictionary<string, int> GetAll()
 		{
 			if( this.isEmpty )
