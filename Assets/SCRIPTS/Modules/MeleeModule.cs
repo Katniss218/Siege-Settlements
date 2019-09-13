@@ -6,11 +6,10 @@ namespace SS.Modules
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class MeleeModule : Module
 	{
-		//public Damageable currentTarget;
-
 		public DamageSource damageSource;
 		public ITargetFinder targetFinder;
 
+		// TODO - this is not used anywhere except target finder.
 		public float attackRange;
 		public float attackCooldown;
 

@@ -17,11 +17,17 @@ namespace SS
 
 		public Damageable GetTarget()
 		{
+			// If the target is null, try to find new one.
 			if( this.__target == null )
 			{
-				this.__target = FindTarget( this.searchRange );
+				this.__target = this.FindTarget( this.searchRange );
 			}
-			return this.__target ?? null;
+			// If it's not null, but can no longer be targeted, try to find new one.
+			else if( Vector3.Distance( this.__target.transform.position, this.transform.position ) > this.searchRange )
+			{
+				this.__target = this.FindTarget( this.searchRange );
+			}
+			return this.__target;
 		}
 
 		private Damageable FindTarget( float searchRange )
@@ -44,6 +50,7 @@ namespace SS
 				}
 				
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
+
 				// Check if the overlapped object can be targeted by this finder.
 				if( !this.canTarget.Invoke( selfFactionMember, targetFactionMember ) )
 				{

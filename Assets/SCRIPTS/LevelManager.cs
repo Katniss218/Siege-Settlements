@@ -95,17 +95,17 @@ namespace SS.Levels
 			List<HeroDefinition> heroes = DataManager.GetAllOfType<HeroDefinition>();
 			for( int i = 0; i < heroes.Count; i++ )
 			{
-				for( int j = 0; j < 4; j++ )
+				for( int j = 0; j < 2; j++ )
 				{
 					float x = Random.Range( 22f, 42f );
-					float z = Random.Range( 32f + i, 32f + (2f * i) );
+					float z = Random.Range( 32f + i, 32f + (4f * i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
 					{
 						Hero.Create( heroes[i], hit.point, Quaternion.identity, 0 );
 					}
 					x = Random.Range( 22f, 42f );
-					z = Random.Range( 32f + (-2f * i), 32f + (-i) );
+					z = Random.Range( 32f + (-4f * i), 32f + (-i) );
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f, terrainlayerMaskRaycast ) )
 					{
