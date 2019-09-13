@@ -6,7 +6,6 @@ namespace SS.UI
 {
 	public class SelectionPanel : MonoBehaviour
 	{
-
 		/// <summary>
 		/// The current mode that the Selection Panel is in.
 		/// </summary>
@@ -31,18 +30,18 @@ namespace SS.UI
 		{
 			mode = SelectionPanelMode.Object;
 
+			switcherImage.sprite = Main.switcherObj;
 			listTransform.gameObject.SetActive( false );
 			objectTransform.gameObject.SetActive( true );
-			switcherImage.sprite = Main.switcherObj;
 		}
 
 		private static void SetModeList()
 		{
 			mode = SelectionPanelMode.List;
 
+			switcherImage.sprite = Main.switcherList;
 			listTransform.gameObject.SetActive( true );
 			objectTransform.gameObject.SetActive( false );
-			switcherImage.sprite = Main.switcherList;
 		}
 
 		/// <summary>
@@ -65,7 +64,7 @@ namespace SS.UI
 			panelTransform = this.GetComponent<RectTransform>();
 			objectTransform = this.transform.Find( "Object" ).GetComponent<RectTransform>();
 			listTransform = this.transform.Find( "List" ).GetComponent<RectTransform>();
-			switcherImage = this.transform.Find( "Button" ).GetComponent<Image>();
+			switcherImage = this.transform.Find( "Switcher Button" ).GetComponent<Image>();
 
 			SetModeObject();
 		}

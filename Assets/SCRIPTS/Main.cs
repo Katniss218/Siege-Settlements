@@ -78,7 +78,7 @@ namespace SS
 		{
 			get
 			{
-				if( __switcherObj == null ) { __switcherObj = Resources.Load<Sprite>( "Textures/selection_toggle" ); }
+				if( __switcherObj == null ) { __switcherObj = Resources.Load<Sprite>( "Textures/obj_lst" ); }
 				return __switcherObj;
 			}
 		}
@@ -88,7 +88,7 @@ namespace SS
 		{
 			get
 			{
-				if( __switcherList == null ) { __switcherList = Resources.Load<Sprite>( "Textures/selection_toggle_list" ); }
+				if( __switcherList == null ) { __switcherList = Resources.Load<Sprite>( "Textures/lst_obj" ); }
 				return __switcherList;
 			}
 		}

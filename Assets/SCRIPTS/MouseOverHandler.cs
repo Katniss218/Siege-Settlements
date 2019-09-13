@@ -4,6 +4,7 @@ using SS.ResourceSystem;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace SS
 {
@@ -45,6 +46,13 @@ namespace SS
 
 		void Update()
 		{
+			// If the pointer is over raycastable UI elements - stop mouseovering, and return.
+			if( EventSystem.current.IsPointerOverGameObject() )
+			{
+				onMouseExit?.Invoke( null );
+				
+				return;
+			}
 			GameObject pointerOver = null;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{

@@ -43,6 +43,10 @@ namespace SS
 		{
 			foreach( AudioSource audioSource in sources )
 			{
+				if( audioSource == null )
+				{
+					throw new System.Exception( "Null audio source found." );
+				}
 				// If the source is currently playing a sound, don't interrupt that, skip it.
 				if( audioSource.isPlaying )
 				{
