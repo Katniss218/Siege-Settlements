@@ -17,8 +17,7 @@ namespace SS.Modules
 
 		public DamageSource damageSource;
 		public ITargetFinder targetFinder;
-
-		public float attackRange;
+		
 		public float attackCooldown;
 		public float velocity;
 		public Vector3 localOffsetMin;
@@ -132,7 +131,6 @@ namespace SS.Modules
 			ranged.damageSource = damageSource;
 			ranged.targetFinder = finder;
 			ranged.projectileCount = def.projectileCount;
-			ranged.attackRange = def.attackRange;
 			ranged.attackCooldown = def.attackCooldown;
 			ranged.velocity = def.velocity;
 			ranged.localOffsetMin = def.localOffsetMin;
@@ -144,9 +142,6 @@ namespace SS.Modules
 
 		private void OnDrawGizmosSelected()
 		{
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawWireSphere( this.transform.position, this.attackRange );
-
 			Gizmos.color = new Color( 1.0f, 0.4f, 0.0f );
 			Gizmos.DrawWireSphere( this.transform.position, BallisticSolver.GetMaxRange( this.velocity, -Physics.gravity.y, 0.0f ) );
 

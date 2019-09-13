@@ -8,9 +8,7 @@ namespace SS.Modules
 	{
 		public DamageSource damageSource;
 		public ITargetFinder targetFinder;
-
-		// TODO - this is not used anywhere except target finder.
-		public float attackRange;
+		
 		public float attackCooldown;
 
 		public AudioClip attackSoundEffect;
@@ -73,7 +71,6 @@ namespace SS.Modules
 			melee.damageSource = damageSource;
 			melee.targetFinder = finder;
 			melee.attackCooldown = def.attackCooldown;
-			melee.attackRange = def.attackRange;
 			melee.attackSoundEffect = def.attackSoundEffect.Item2;
 		}
 
@@ -87,14 +84,5 @@ namespace SS.Modules
 			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 			this.lastAttackTimestamp = Time.time;
 		}
-
-#if UNITY_EDITOR
-
-		private void OnDrawGizmosSelected()
-		{
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawWireSphere( this.transform.position, this.attackRange );
-		}
-#endif
 	}
 }

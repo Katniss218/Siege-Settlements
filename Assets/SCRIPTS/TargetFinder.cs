@@ -73,6 +73,12 @@ namespace SS
 				Gizmos.DrawSphere( this.__target.transform.position, 0.125f );
 			}
 		}
+
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.yellow;
+			Gizmos.DrawWireSphere( this.transform.position, this.searchRange );
+		}
 #endif
 	}
 }
