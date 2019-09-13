@@ -83,6 +83,9 @@ namespace SS.Heroes
 
 			HUDScaled ui = Object.Instantiate( Main.heroHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
 
+			ui.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
+			ui.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;
+
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>

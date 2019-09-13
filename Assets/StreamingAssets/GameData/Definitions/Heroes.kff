@@ -1,9 +1,9 @@
 ﻿Heroes =
 [
 	{
-		Id = "hero.ari";
-		DisplayName = "Ari";
-		DisplayTitle = "The Bandit Queen";
+		Id = "hero.cerberos";
+		DisplayName = "Cerberos";
+		DisplayTitle = "The King of Darkness";
 		MaxHealth = 100.0;
 		Armor =
 		{
