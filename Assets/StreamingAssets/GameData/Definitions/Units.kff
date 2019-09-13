@@ -35,7 +35,7 @@
 		BuildTime = 3.0;
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/wolf_albedo.png";
-		NormalTexture = "Textures/Units/unit_normal.png";
+		NormalTexture = "Textures/Units/unit_normal_square.png";
 		Icon = "Textures/Buildings/house0_icon";
 	},
 	{
@@ -355,7 +355,7 @@
 		BuildTime = 3.0;
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/civilian_albedo.png";
-		NormalTexture = "Textures/Units/unit_normal.png";
+		NormalTexture = "Textures/Units/unit_normal_square.png";
 		Icon = "Textures/Buildings/house0_icon";
 	},
 	{
@@ -384,7 +384,7 @@
 		BuildTime = 3.0;
 		Mesh = "Models/UnitSquare.kff";
 		AlbedoTexture = "Textures/Units/civilian_employed_albedo.png";
-		NormalTexture = "Textures/Units/unit_normal.png";
+		NormalTexture = "Textures/Units/unit_normal_square.png";
 		Icon = "Textures/Buildings/house0_icon";
 	}
 ];

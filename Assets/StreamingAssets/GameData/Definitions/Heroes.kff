@@ -34,7 +34,7 @@
 		Height = 0.1875;
 		Mesh = "Models/Hero.kff";
 		AlbedoTexture = "Textures/heroes/hero_albedo.png";
-		NormalTexture = "Textures/Units/unit_normal.png";
+		NormalTexture = "Textures/Heroes/hero_normal.png";
 		Icon = "Textures/Buildings/house0_icon";
 	}
 ];
