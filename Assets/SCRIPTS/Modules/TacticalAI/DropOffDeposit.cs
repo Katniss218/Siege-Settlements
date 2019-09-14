@@ -35,8 +35,8 @@ namespace SS
 						{
 							ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
 						}
+						inventory.Clear();
 					}
-					inventory.Clear();
 					this.navMeshAgent.ResetPath();
 				}
 			}
