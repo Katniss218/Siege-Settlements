@@ -63,7 +63,11 @@ namespace SS
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
 				for( int i = 0; i < this.resources.Length; i++ )
 				{
-					if( this.resources[i].id == "" || this.resources[i].amount != 0 )
+					if( this.resources[i].id == "" )
+					{
+						continue;
+					}
+					if( this.resources[i].amount != 0 )
 					{
 						return false;
 					}
