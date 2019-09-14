@@ -14,8 +14,15 @@ namespace SS.Levels
 	/// </summary>
 	public class LevelManager
 	{
+		/// <summary>
+		/// The time stamp of when the last level was loaded (in units of time elapsed since the game's launch) (Read only).
+		/// </summary>
 		public static float lastLoadTime { get; private set; }
 
+		/// <summary>
+		/// Loads a level, at the specified path.
+		/// </summary>
+		/// <param name="path">The path to the level's directory (contains a 'level.kff' file inside).</param>
 		public static void Load( string path )
 		{
 			// Load the default Siege Settlements data & assets.
@@ -37,13 +44,15 @@ namespace SS.Levels
 
 			FactionManager.SetFactions( fac );
 
-			DeleteMainMenu();
 
+
+			DeleteMainMenu();
+			
 			LoadScenePrefabs( out GameObject environment );
 
-			Load( path, environment );
+			OnLevelLoad( path, environment );
 
-			PostLoad();
+			OnPostlevelLoad();
 		}
 
 		private static void DeleteMainMenu()
@@ -68,7 +77,7 @@ namespace SS.Levels
 			environment = Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
 		}
 
-		private static void Load( string path, GameObject env )
+		private static void OnLevelLoad( string path, GameObject env )
 		{
 			const int size = 4; // the size of the map (in chunks).
 
@@ -172,7 +181,7 @@ namespace SS.Levels
 			}
 		}
 
-		private static void PostLoad()
+		private static void OnPostlevelLoad()
 		{
 			lastLoadTime = Time.time;
 		}
