@@ -26,7 +26,7 @@ namespace SS
 
 			// Shift - add to the current selection.
 			// If the object is already selected, but is not highlighted, highlight it.
-			// (allows for switching of highlighted object within the pool of already selected objects).
+			// - (allows for switching of highlighted object within the pool of already selected objects).
 			if( Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
 			{
 				if( obj != null )
@@ -50,7 +50,7 @@ namespace SS
 					}
 				}
 			}
-			// No Shift - deselect all and select at cursor.
+			// No Shift - deselect all and select at cursor (if possible).
 			else
 			{
 				int numSelected = SelectionManager.selectedObjects.Length;
@@ -64,18 +64,17 @@ namespace SS
 				}
 				else
 				{
-					// If the object is selected, keep it selected.
-					if( SelectionManager.IsSelected( obj ) )
-					{
-						return;
-					}
 					SelectionManager.DeselectAll();
-
+					
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
 					if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
 					{
 						SelectionManager.SelectAndHighlight( obj );
 						AudioManager.PlayNew( Main.selectSound );
+					}
+					else
+					{
+						AudioManager.PlayNew( Main.deselectSound );
 					}
 				}
 			}

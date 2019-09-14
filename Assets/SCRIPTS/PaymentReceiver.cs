@@ -24,9 +24,16 @@ namespace SS
 		/// Checks if the list of resources contains any wanted ones.
 		/// </summary>
 		/// <param name="resources">The list of resources to check.</param>
-		public bool IsSuitable( Dictionary<string, int> resources )
+		/// <returns>
+		/// True if the inventory contains wanted resources.
+		/// </returns>
+		public bool ContainsWantedResource( Dictionary<string, int> resources )
 		{
 			if( resources == null )
+			{
+				return false;
+			}
+			if( resources.Count == 0 )
 			{
 				return false;
 			}

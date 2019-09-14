@@ -327,7 +327,7 @@ namespace SS
 									if( inv != null )
 									{
 										// Assign the makePayment TAIGoal only if the selected object contains wanted resource in the inv.
-										if( paymentReceiver.IsSuitable( inv.GetAll() ) )
+										if( paymentReceiver.ContainsWantedResource( inv.GetAll() ) )
 										{
 											TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, paymentReceiver );
 										}
@@ -337,7 +337,14 @@ namespace SS
 								{
 									if( hitDeposit != null )
 									{
-										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+										IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+										if( inv != null )
+										{
+											if( inv.CanHold( hitDeposit.resourceId ) )
+											{
+												TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+											}
+										}
 									}
 									else
 									{
