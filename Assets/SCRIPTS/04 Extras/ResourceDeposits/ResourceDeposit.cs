@@ -52,17 +52,18 @@ namespace SS.Extras
 
 		void Start()
 		{
-			AudioManager.PlayNew( dropoffSound );
+			
 		}
 
-		public void PickUp( int amt )
+		public bool PickUp( int amt )
 		{
 			this.amount -= amt;
-			AudioManager.PlayNew( pickupSound );
 			if( this.amount <= 0 )
 			{
 				Destroy( this.gameObject );
+				return true;
 			}
+			return false;
 		}
 		
 		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, int amountOfResource )

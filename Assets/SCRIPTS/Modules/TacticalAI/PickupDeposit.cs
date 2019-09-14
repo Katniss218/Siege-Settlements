@@ -66,6 +66,7 @@ namespace SS
 					if( amountPickedUp != 0 )
 					{
 						this.depositToCollect.PickUp( amountPickedUp );
+						AudioManager.PlayNew( this.depositToCollect.pickupSound );
 					}
 				}
 			}

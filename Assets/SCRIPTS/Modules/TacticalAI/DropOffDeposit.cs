@@ -34,7 +34,8 @@ namespace SS
 					{
 						foreach( var kvp in resourcesCarried )
 						{
-							ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
+							GameObject obj = ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
+							AudioManager.PlayNew( obj.GetComponent<ResourceDeposit>().dropoffSound );
 						}
 						inventory.Clear();
 					}
