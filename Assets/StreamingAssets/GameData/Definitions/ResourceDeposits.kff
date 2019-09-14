@@ -28,7 +28,7 @@
 		NormalTexture = "Textures/ResourceDeposits/stone_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.2;
-		PickupSound = "Sounds/ResourceDeposits/stone_dropoff.wav";
+		PickupSound = "Sounds/ResourceDeposits/stone_pickup.wav";
 		DropoffSound = "Sounds/ResourceDeposits/stone_dropoff.wav";
 	},
 	{
@@ -88,7 +88,7 @@
 		NormalTexture = "Textures/ResourceDeposits/sulphur_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.1;
-		PickupSound = "Sounds/silence.wav";
+		PickupSound = "Sounds/ResourceDeposits/sulphur_pickup.wav";
 		DropoffSound = "Sounds/ResourceDeposits/sulphur_dropoff.wav";
 	}
 ];
