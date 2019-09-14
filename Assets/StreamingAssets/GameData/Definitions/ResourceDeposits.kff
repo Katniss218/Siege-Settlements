@@ -13,6 +13,8 @@
 		NormalTexture = "Textures/ResourceDeposits/tree_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.3;
+		PickupSound = "Sounds/ResourceDeposits/tree_chop.wav";
+		DropoffSound = "Sounds/silence.wav";
 	},
 	{
 		Id = "resource_deposit.stone";
@@ -26,6 +28,8 @@
 		NormalTexture = "Textures/ResourceDeposits/stone_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.2;
+		PickupSound = "Sounds/ResourceDeposits/stone_dropoff.wav";
+		DropoffSound = "Sounds/ResourceDeposits/stone_dropoff.wav";
 	},
 	{
 		Id = "resource_deposit.pine";
@@ -39,6 +43,8 @@
 		NormalTexture = "Textures/ResourceDeposits/pine_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.3;
+		PickupSound = "Sounds/ResourceDeposits/tree_chop.wav";
+		DropoffSound = "Sounds/silence.wav";
 	},
 	{
 		Id = "resource_deposit.wood";
@@ -52,6 +58,8 @@
 		NormalTexture = "Textures/ResourceDeposits/wood_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.2;
+		PickupSound = "Sounds/ResourceDeposits/wood_dropoff.wav";
+		DropoffSound = "Sounds/ResourceDeposits/wood_dropoff.wav";
 	},
 	{
 		Id = "resource_deposit.iron";
@@ -65,6 +73,8 @@
 		NormalTexture = "Textures/ResourceDeposits/iron_normal.png";
 		IsMetallic = true;
 		Smoothness = 0.4;
+		PickupSound = "Sounds/silence.wav";
+		DropoffSound = "Sounds/silence.wav";
 	},
 	{
 		Id = "resource_deposit.sulphur";
@@ -78,5 +88,7 @@
 		NormalTexture = "Textures/ResourceDeposits/sulphur_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.1;
+		PickupSound = "Sounds/silence.wav";
+		DropoffSound = "Sounds/ResourceDeposits/sulphur_dropoff.wav";
 	}
 ];

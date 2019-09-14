@@ -14,7 +14,7 @@ namespace SS
 			}
 
 			// If the left mouse button was pressed.
-			if( UnityEngine.Input.GetMouseButtonDown( 0 ) )
+			if( Input.GetMouseButtonDown( 0 ) )
 			{
 				HandleSelecting();
 			}
@@ -22,12 +22,13 @@ namespace SS
 
 		internal static void HandleSelecting()
 		{
+			Selectable obj = GetSelectableAtCursor();
+
 			// Shift - add to the current selection.
 			// If the object is already selected, but is not highlighted, highlight it.
 			// (allows for switching of highlighted object within the pool of already selected objects).
-			if( UnityEngine.Input.GetKey( KeyCode.LeftShift ) || UnityEngine.Input.GetKey( KeyCode.RightShift ) )
+			if( Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
 			{
-				Selectable obj = GetSelectableAtCursor();
 				if( obj != null )
 				{
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
@@ -38,11 +39,13 @@ namespace SS
 							if( !SelectionManager.IsHighlighted( obj ) )
 							{
 								SelectionManager.HighlightSelected( obj );
+								AudioManager.PlayNew( Main.selectSound );
 							}
 						}
 						else
 						{
 							SelectionManager.SelectAndHighlight( obj );
+							AudioManager.PlayNew( Main.selectSound );
 						}
 					}
 				}
@@ -50,15 +53,29 @@ namespace SS
 			// No Shift - deselect all and select at cursor.
 			else
 			{
-				SelectionManager.DeselectAll();
-
-				Selectable obj = GetSelectableAtCursor();
-				if( obj != null )
+				int numSelected = SelectionManager.selectedObjects.Length;
+				if( obj == null )
 				{
+					if( numSelected > 0 )
+					{
+						SelectionManager.DeselectAll();
+						AudioManager.PlayNew( Main.deselectSound );
+					}
+				}
+				else
+				{
+					// If the object is selected, keep it selected.
+					if( SelectionManager.IsSelected( obj ) )
+					{
+						return;
+					}
+					SelectionManager.DeselectAll();
+
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
 					if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
 					{
 						SelectionManager.SelectAndHighlight( obj );
+						AudioManager.PlayNew( Main.selectSound );
 					}
 				}
 			}
@@ -66,7 +83,7 @@ namespace SS
 
 		private static Selectable GetSelectableAtCursor()
 		{
-			if( Physics.Raycast( Main.camera.ScreenPointToRay( UnityEngine.Input.mousePosition ), out RaycastHit hitInfo ) )
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{
 				// Returns null if the mouse is over non-selectable object.
 				return hitInfo.collider.GetComponent<Selectable>();

@@ -12,6 +12,26 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
+		private static AudioClip __selectSound = null;
+		public static AudioClip selectSound
+		{
+			get
+			{
+				if( __selectSound == null ) { __selectSound = Resources.Load<AudioClip>( "Sounds/select" ); }
+				return __selectSound;
+			}
+		}
+
+		private static AudioClip __deselectSound = null;
+		public static AudioClip deselectSound
+		{
+			get
+			{
+				if( __deselectSound == null ) { __deselectSound = Resources.Load<AudioClip>( "Sounds/deselect" ); }
+				return __deselectSound;
+			}
+		}
+
 		private static GameObject __unitHUD = null;
 		public static GameObject unitHUD
 		{
@@ -316,7 +336,7 @@ namespace SS
 								{
 									if( hitDeposit != null )
 									{
-										TAIGoal.CollectDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
 									}
 									else
 									{

@@ -1,11 +1,10 @@
-﻿using SS.Data;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Extras
 {
 	[RequireComponent(typeof( NavMeshObstacle ) )]
-	public class ResourceDeposit : MonoBehaviour, IDefinableBy<ResourceDepositDefinition>
+	public class ResourceDeposit : MonoBehaviour
 	{
 		public string id { get; private set; }
 
@@ -29,6 +28,9 @@ namespace SS.Extras
 		/// </summary>
 		public bool isTypeExtracted { get; private set; }
 
+		public AudioClip pickupSound { get; private set; }
+		public AudioClip dropoffSound { get; private set; }
+
 		public const float MINING_SPEED = 2.0f;
 
 
@@ -48,34 +50,21 @@ namespace SS.Extras
 			this.collider = this.GetComponent<BoxCollider>();
 		}
 
+		void Start()
+		{
+			AudioManager.PlayNew( dropoffSound );
+		}
+
 		public void PickUp( int amt )
 		{
 			this.amount -= amt;
+			AudioManager.PlayNew( pickupSound );
 			if( this.amount <= 0 )
 			{
 				Destroy( this.gameObject );
 			}
 		}
-
-		public void AssignDefinition( ResourceDepositDefinition def )
-		{
-			this.id = def.id;
-			this.resourceId = def.resourceId;
-			this.isTypeExtracted = def.isExtracted;
-			this.obstacle.size = def.size;
-			this.obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
-			this.collider.size = def.size;
-			this.collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
-			this.meshFilter.mesh = def.mesh.Item2;
-			this.meshRenderer.material = def.shaderType == ShaderType.PlantSolid ? Main.materialPlantSolid : Main.materialSolid;
-			this.meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-
-			this.meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			this.meshRenderer.material.SetTexture( "_Emission", null );
-			this.meshRenderer.material.SetFloat( "_Metallic", def.isMetallic ? 1.0f : 0.0f );
-			this.meshRenderer.material.SetFloat( "_Smoothness", def.smoothness );
-		}
-
+		
 		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, int amountOfResource )
 		{
 			if( def == null )
@@ -90,18 +79,36 @@ namespace SS.Extras
 
 			container.transform.SetPositionAndRotation( pos, rot );
 
-			gfx.AddComponent<MeshFilter>();
-			gfx.AddComponent<MeshRenderer>();
+			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			meshFilter.mesh = def.mesh.Item2;
+
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			meshRenderer.material = def.shaderType == ShaderType.PlantSolid ? Main.materialPlantSolid : Main.materialSolid;
+			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
+
+			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			meshRenderer.material.SetTexture( "_Emission", null );
+			meshRenderer.material.SetFloat( "_Metallic", def.isMetallic ? 1.0f : 0.0f );
+			meshRenderer.material.SetFloat( "_Smoothness", def.smoothness );
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
+			collider.size = def.size;
+			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
 
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
+			obstacle.size = def.size;
+			obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
 			obstacle.carving = true;
 
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
-			resourceDepositComponent.AssignDefinition( def );
+			resourceDepositComponent.id = def.id;
+			resourceDepositComponent.resourceId = def.resourceId;
+			resourceDepositComponent.isTypeExtracted = def.isExtracted;
 			resourceDepositComponent.amount = amountOfResource;
 			resourceDepositComponent.amountMax = amountOfResource;
+
+			resourceDepositComponent.pickupSound = def.pickupSoundEffect.Item2;
+			resourceDepositComponent.dropoffSound = def.dropoffSoundEffect.Item2;
 
 			return container;
 		}

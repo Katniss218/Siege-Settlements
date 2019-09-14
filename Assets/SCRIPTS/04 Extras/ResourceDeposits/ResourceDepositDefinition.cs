@@ -23,6 +23,9 @@ namespace SS.Extras
 		public bool isMetallic { get; set; }
 		public float smoothness { get; set; }
 
+		public Tuple<string, AudioClip> pickupSoundEffect { get; private set; }
+		public Tuple<string, AudioClip> dropoffSoundEffect { get; private set; }
+
 
 		public ResourceDepositDefinition( string id ) : base( id )
 		{
@@ -43,6 +46,10 @@ namespace SS.Extras
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.isMetallic = serializer.ReadBool( "IsMetallic" );
 			this.smoothness = serializer.ReadFloat( "Smoothness" );
+
+			this.pickupSoundEffect = serializer.ReadAudioClipFromAssets( "PickupSound" );
+			this.dropoffSoundEffect = serializer.ReadAudioClipFromAssets( "DropoffSound" );
+
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -59,6 +66,9 @@ namespace SS.Extras
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
 			serializer.WriteBool( "", "IsMetallic", this.isMetallic );
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
+
+			serializer.WriteString( "", "PickupSound", this.pickupSoundEffect.Item1 );
+			serializer.WriteString( "", "DropoffSound", this.dropoffSoundEffect.Item1 );
 		}
 	}
 }
