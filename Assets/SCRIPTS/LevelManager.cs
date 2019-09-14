@@ -35,16 +35,28 @@ namespace SS.Levels
 			serializer.DeserializeArray<Faction>( "Factions", fac );
 
 			FactionManager.SetFactions( fac );
-			
-			// Load the empty level scene.
-			SceneManager.LoadScene( "Map" );
+
+			GameObject[] gos = Object.FindObjectsOfType<GameObject>();
+			for( int i = 0; i < gos.Length; i++ )
+			{
+				if( gos[i].CompareTag( "Menu" ) )
+					Destroy( gos[i] );
+			}
+
+			// Load the level "scene".
+			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
+			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Canvas __" ), Vector3.zero, Quaternion.identity );
+			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
+			GameObject env = Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
+
+			Load( env );
 		}
 
-		public void Start()
+		static void Load( GameObject env )
 		{
 			const int size = 4; // the size of the map (in chunks).
 
-			LevelTerrainCreator.terrainParent = this.transform;
+			LevelTerrainCreator.terrainParent = env.transform;
 			Texture2D[,] color = new Texture2D[size, size];
 			for( int i = 0; i < size; i++ )
 			{

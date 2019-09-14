@@ -7,20 +7,25 @@ namespace SS
 	/// </summary>
 	public class CameraController : MonoBehaviour
 	{
-		private int size;
+		public const float defaultRotX = 0.0f;
+		public const float defaultRotY = 45.0f;
+		public const float defaultRotZ = 0.0f;
 
 		[SerializeField] private int defaultSize = 10;
 
 		[SerializeField] private int minSize = 5;
 		[SerializeField] private int maxSize = 30;
 
+		[SerializeField] private float speed = 1.0f;
+		[SerializeField] private float rotSpeed = 60.0f;
+
 		[SerializeField] private float scrollMargin = 80.0f;
+
+		private int size;
 
 		new private Camera camera;
 
 
-		[SerializeField] private float speed = 1.0f;
-		[SerializeField] private float rotSpeed = 60.0f;
 
 		void Awake()
 		{
@@ -59,7 +64,7 @@ namespace SS
 		{
 			this.size = defaultSize;
 			this.camera.orthographicSize = this.size;
-			this.transform.rotation = Quaternion.Euler( 0, 45, 0 );
+			this.transform.rotation = Quaternion.Euler( defaultRotX, defaultRotY, defaultRotZ );
 		}
 
 		void Update()
