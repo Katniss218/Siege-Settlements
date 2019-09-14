@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.Inventories
 {
 	/// <summary>
-	/// Allows an object to hold resources in it's inventory.
+	/// An inventory that has slots constrained to single resource ID.
 	/// </summary>
 	public class InventoryConstrained : MonoBehaviour, IInventory
 	{
@@ -13,13 +13,13 @@ namespace SS
 		{
 			public readonly string id;
 			public int amount;
-			public readonly int capacity;
+			public readonly int slotCapacity;
 
 			public SlotGroup( string id, int amount, int capacity )
 			{
 				this.id = id;
 				this.amount = amount;
-				this.capacity = capacity;
+				this.slotCapacity = capacity;
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace SS
 
 		private SlotGroup[] resources;
 		
-		public int slots
+		public int slotCount
 		{
 			get
 			{
@@ -53,10 +53,22 @@ namespace SS
 		}
 
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
-		public _UnityEvent_string_int onAdd { get { return this.__onAdd; } }
+		public _UnityEvent_string_int onAdd
+		{
+			get { return this.__onAdd; }
+		}
+
 		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
-		public _UnityEvent_string_int onRemove { get { return this.__onRemove; } }
-		
+		public _UnityEvent_string_int onRemove
+		{
+			get { return this.__onRemove; }
+		}
+
+
+
+		/// <summary>
+		/// Sets the slots of the inventory.
+		/// </summary>
 		public void SetSlots( params SlotInfo[] slots )
 		{
 			this.resources = new SlotGroup[slots.Length];
@@ -73,10 +85,7 @@ namespace SS
 				this.resources[i] = new SlotGroup( slots[i].id, 0, slots[i].capacity );
 			}
 		}
-
-		/// <summary>
-		/// Returns true, if the inventory is currently holding a resource.
-		/// </summary>
+		
 		public bool isEmpty
 		{
 			get
@@ -106,7 +115,7 @@ namespace SS
 			}
 			return ret;
 		}
-		
+
 		public bool Has( string id, int amount )
 		{
 			if( string.IsNullOrEmpty( id ) )
@@ -160,19 +169,19 @@ namespace SS
 			{
 				if( this.resources[i].id == id )
 				{
-					return this.resources[i].amount + amount <= this.resources[i].capacity;
+					return this.resources[i].amount + amount <= this.resources[i].slotCapacity;
 				}
 			}
 			return false;
 		}
 
-		public int Add( string id, int amountPref )
+		public int Add( string id, int amountMax )
 		{
 			if( string.IsNullOrEmpty( id ) )
 			{
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
-			if( amountPref < 1 )
+			if( amountMax < 1 )
 			{
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
@@ -182,31 +191,31 @@ namespace SS
 			{
 				if( this.resources[i].id == id )
 				{
-					int spaceLeft = this.resources[i].capacity - this.resources[i].amount;
-					if( spaceLeft < amountPref )
+					int spaceLeft = this.resources[i].slotCapacity - this.resources[i].amount;
+					if( spaceLeft < amountMax )
 					{
-						this.resources[i].amount = this.resources[i].capacity;
+						this.resources[i].amount = this.resources[i].slotCapacity;
 						this.onAdd?.Invoke( id, spaceLeft );
 						return spaceLeft;
 					}
 					else
 					{
-						this.resources[i].amount += amountPref;
-						this.onAdd?.Invoke( id, amountPref );
-						return amountPref;
+						this.resources[i].amount += amountMax;
+						this.onAdd?.Invoke( id, amountMax );
+						return amountMax;
 					}
 				}
 			}
 			throw new Exception( "The inventory doesn't contain any slots that can hold '" + id + "'." );
 		}
 
-		public int Remove( string id, int amountPref )
+		public int Remove( string id, int amountMax )
 		{
 			if( string.IsNullOrEmpty( id ) )
 			{
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
-			if( amountPref < 1 )
+			if( amountMax < 1 )
 			{
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
@@ -216,7 +225,7 @@ namespace SS
 				if( this.resources[i].id == id )
 				{
 					int spaceOccupied = this.resources[i].amount;
-					if( spaceOccupied < amountPref )
+					if( spaceOccupied < amountMax )
 					{
 						this.resources[i].amount = 0;
 						this.onRemove?.Invoke( id, spaceOccupied );
@@ -224,9 +233,9 @@ namespace SS
 					}
 					else
 					{
-						this.resources[i].amount -= amountPref;
-						this.onRemove?.Invoke( id, amountPref );
-						return amountPref;
+						this.resources[i].amount -= amountMax;
+						this.onRemove?.Invoke( id, amountMax );
+						return amountMax;
 					}
 				}
 			}

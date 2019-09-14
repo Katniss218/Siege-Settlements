@@ -1,5 +1,6 @@
 ﻿using SS.Buildings;
 using SS.Data;
+using SS.Inventories;
 using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;

@@ -2,18 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.Inventories
 {
 	/// <summary>
-	/// Allows an object to hold resources in it's inventory.
+	/// An inventory that can hold arbitrary resource in each of the slots (as long as there are no duplicate ids).
 	/// </summary>
 	public class InventoryUnconstrained : MonoBehaviour, IInventory
 	{
-		// this is a resource that can hold N different resource types, which types are not specified, and can change. No two slots can have the same resource type however.
-
-		// The capacity is constant - no matter the slot, the capacity doesn't change.
-		// (we want this so the capacity per resource stays constant).
-
 		private struct SlotGroup
 		{
 			public string id;
@@ -25,12 +20,12 @@ namespace SS
 				this.amount = amount;
 			}
 		}
-		
+
+		private int slotCapacity;
+
 		private SlotGroup[] resources;
-
-		private int capacity;
-
-		public int slots
+		
+		public int slotCount
 		{
 			get
 			{
@@ -39,23 +34,34 @@ namespace SS
 		}
 
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
-		public _UnityEvent_string_int onAdd { get { return this.__onAdd; } }
-		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
-		public _UnityEvent_string_int onRemove { get { return this.__onRemove; } }
+		public _UnityEvent_string_int onAdd
+		{
+			get { return this.__onAdd; }
+		}
 
-		public void SetSlots( int slots, int capacity )
+		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
+		public _UnityEvent_string_int onRemove
+		{
+			get { return this.__onRemove; }
+		}
+
+
+
+		/// <summary>
+		/// Sets the slots of the inventory.
+		/// </summary>
+		/// <param name="slots">The number of slots.</param>
+		/// <param name="slotCapacity">Capacity per slot.</param>
+		public void SetSlots( int slots, int slotCapacity )
 		{
 			this.resources = new SlotGroup[slots];
 			for( int i = 0; i < this.resources.Length; i++ )
 			{
 				this.resources[i] = new SlotGroup( "", 0 );
 			}
-			this.capacity = capacity;
+			this.slotCapacity = slotCapacity;
 		}
 
-		/// <summary>
-		/// Returns true, if the inventory is currently holding a resource.
-		/// </summary>
 		public bool isEmpty
 		{
 			get
@@ -75,7 +81,7 @@ namespace SS
 				return true;
 			}
 		}
-		
+	
 		public Dictionary<string, int> GetAll()
 		{
 			if( this.isEmpty )
@@ -94,7 +100,7 @@ namespace SS
 			}
 			return ret;
 		}
-		
+
 		public bool Has( string id, int amount )
 		{
 			if( string.IsNullOrEmpty( id ) )
@@ -148,7 +154,7 @@ namespace SS
 			{
 				if( this.resources[i].id == id )
 				{
-					return this.resources[i].amount + amount <= this.capacity;
+					return this.resources[i].amount + amount <= this.slotCapacity;
 				}
 			}
 			return false;
@@ -170,10 +176,10 @@ namespace SS
 			{
 				if( this.resources[i].id == id )
 				{
-					int spaceLeft = this.capacity - this.resources[i].amount;
+					int spaceLeft = this.slotCapacity - this.resources[i].amount;
 					if( spaceLeft < amountPref )
 					{
-						this.resources[i].amount = this.capacity;
+						this.resources[i].amount = this.slotCapacity;
 						this.onAdd?.Invoke( id, spaceLeft );
 						return spaceLeft;
 					}
@@ -193,10 +199,10 @@ namespace SS
 				if( this.resources[i].id == "" )
 				{
 					this.resources[i].id = id;
-					int spaceLeft = this.capacity - this.resources[i].amount;
+					int spaceLeft = this.slotCapacity - this.resources[i].amount;
 					if( spaceLeft < amountPref )
 					{
-						this.resources[i].amount = this.capacity;
+						this.resources[i].amount = this.slotCapacity;
 						this.onAdd?.Invoke( id, spaceLeft );
 						return spaceLeft;
 					}

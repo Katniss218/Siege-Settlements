@@ -1,5 +1,6 @@
 ﻿using SS.Data;
 using SS.Extras;
+using SS.Inventories;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;

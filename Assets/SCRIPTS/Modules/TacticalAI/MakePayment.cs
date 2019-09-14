@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Inventories;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;

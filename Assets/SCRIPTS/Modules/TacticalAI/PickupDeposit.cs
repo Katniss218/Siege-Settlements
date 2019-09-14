@@ -1,5 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Extras;
+using SS.Inventories;
 using UnityEngine;
 using UnityEngine.AI;
 
