@@ -64,13 +64,17 @@ namespace SS
 				}
 				else
 				{
+					bool flag = SelectionManager.IsSelected( obj );
 					SelectionManager.DeselectAll();
 					
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
 					if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
 					{
 						SelectionManager.SelectAndHighlight( obj );
-						AudioManager.PlayNew( Main.selectSound );
+						if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
+						{
+							AudioManager.PlayNew( Main.selectSound );
+						}
 					}
 					else
 					{
