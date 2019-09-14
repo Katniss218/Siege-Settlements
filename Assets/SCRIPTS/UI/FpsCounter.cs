@@ -6,11 +6,11 @@ namespace SS.UI
 	/// <summary>
 	/// Counts the FPS and displays that to a text field (TextMesh Pro).
 	/// </summary>
-	public class FPSDisplay : MonoBehaviour
+	public class FpsCounter : MonoBehaviour
 	{
 		[SerializeField] private TMP_Text textField = null;
 
-		public string format = "FPS: {0}";
+		public string format = "Fps: {0}";
 
 		private int GetFps()
 		{
@@ -19,7 +19,7 @@ namespace SS.UI
 
 		void Update()
 		{
-			textField.text = string.Format( format, GetFps() );
+			this.textField.text = string.Format( this.format, this.GetFps() );
 		}
 	}
 }

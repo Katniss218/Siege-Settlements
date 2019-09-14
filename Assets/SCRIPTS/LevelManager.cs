@@ -6,15 +6,16 @@ using SS.TerrainCreation;
 using SS.Units;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace SS.Levels
 {
 	/// <summary>
 	/// Manages level-specific stuff. Exists only on a 'Map' scene.
 	/// </summary>
-	public class LevelManager : MonoBehaviour
+	public class LevelManager
 	{
+		public static float lastLoadTime { get; private set; }
+
 		public static void Load( string path )
 		{
 			// Load the default Siege Settlements data & assets.
@@ -36,23 +37,38 @@ namespace SS.Levels
 
 			FactionManager.SetFactions( fac );
 
+			DeleteMainMenu();
+
+			LoadScenePrefabs( out GameObject environment );
+
+			Load( path, environment );
+
+			PostLoad();
+		}
+
+		private static void DeleteMainMenu()
+		{
+			// Find every gameObject in the scene.
 			GameObject[] gos = Object.FindObjectsOfType<GameObject>();
+			// If it's the main menu object, destroy it.
 			for( int i = 0; i < gos.Length; i++ )
 			{
 				if( gos[i].CompareTag( "Menu" ) )
-					Destroy( gos[i] );
+				{
+					Object.Destroy( gos[i] );
+				}
 			}
-
-			// Load the level "scene".
-			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Canvas __" ), Vector3.zero, Quaternion.identity );
-			Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
-			GameObject env = Instantiate<GameObject>( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
-
-			Load( env );
 		}
 
-		static void Load( GameObject env )
+		private static void LoadScenePrefabs( out GameObject environment )
+		{
+			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Canvas __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
+			environment = Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
+		}
+
+		private static void Load( string path, GameObject env )
 		{
 			const int size = 4; // the size of the map (in chunks).
 
@@ -78,10 +94,8 @@ namespace SS.Levels
 
 			Main.cameraPivot.position = new Vector3( 32, 0, 32 );
 
-			// Units/Heroes can be spawned in the same place (random + pushing onto navmesh) what causes the Ranged damage dealer to break (target pos == shooter pos)
-
 			int terrainlayerMaskRaycast = 1 << LayerMask.NameToLayer( "Terrain" );
-			
+
 			List<UnitDefinition> units = DataManager.GetAllOfType<UnitDefinition>();
 			for( int i = 0; i < units.Count; i++ )
 			{
@@ -156,6 +170,11 @@ namespace SS.Levels
 					}
 				}
 			}
+		}
+
+		private static void PostLoad()
+		{
+			lastLoadTime = Time.time;
 		}
 	}
 }
