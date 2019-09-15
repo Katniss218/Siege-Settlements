@@ -13,6 +13,16 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
+		private static AudioClip __aiResponse = null;
+		public static AudioClip aiResponse
+		{
+			get
+			{
+				if( __aiResponse == null ) { __aiResponse = Resources.Load<AudioClip>( "Sounds/ai_response" ); }
+				return __aiResponse;
+			}
+		}
+
 		private static AudioClip __selectSound = null;
 		public static AudioClip selectSound
 		{
@@ -288,24 +298,6 @@ namespace SS
 		
 		void Update()
 		{
-			if( Input.GetKeyDown( KeyCode.B ) )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					Building.Create( DataManager.Get<BuildingDefinition>( "building.barracks" ), hitInfo.point, Quaternion.identity, 0, false );
-				}
-			}
-
-			if( Input.GetKeyDown( KeyCode.N ) )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					Building.Create( DataManager.Get<BuildingDefinition>( "building.house0" ), hitInfo.point, Quaternion.identity, 0, false );
-				}
-			}
-
 			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
@@ -330,6 +322,7 @@ namespace SS
 										if( paymentReceiver.ContainsWantedResource( inv.GetAll() ) )
 										{
 											TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, paymentReceiver );
+											AudioManager.PlayNew( aiResponse );
 										}
 									}
 								}
@@ -343,18 +336,21 @@ namespace SS
 											if( inv.CanHold( hitDeposit.resourceId ) )
 											{
 												TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+												AudioManager.PlayNew( aiResponse );
 											}
 										}
 									}
 									else
 									{
 										TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+										AudioManager.PlayNew( aiResponse );
 									}
 								}
 							}
 							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Heroes" ) )
 							{
 								TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+								AudioManager.PlayNew( aiResponse );
 							}
 						}
 					}
@@ -378,6 +374,7 @@ namespace SS
 						}
 						// If it is a building, start repair.
 						ConstructionSite.StartConstructionOrRepair( hitInfo.collider.gameObject );
+						AudioManager.PlayNew( aiResponse );
 					}
 				}
 			}
@@ -397,6 +394,7 @@ namespace SS
 							if( inv != null )
 							{
 								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+								AudioManager.PlayNew( aiResponse );
 							}
 						}
 					}
