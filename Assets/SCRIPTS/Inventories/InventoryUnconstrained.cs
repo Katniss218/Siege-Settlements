@@ -233,7 +233,7 @@ namespace SS.Inventories
 				if( this.resources[i].id == id )
 				{
 					int spaceOccupied = this.resources[i].amount;
-					if( spaceOccupied < amountPref )
+					if( spaceOccupied <= amountPref )
 					{
 						this.resources[i].id = "";
 						this.resources[i].amount = 0;

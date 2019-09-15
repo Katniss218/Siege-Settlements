@@ -225,7 +225,7 @@ namespace SS.Inventories
 				if( this.resources[i].id == id )
 				{
 					int spaceOccupied = this.resources[i].amount;
-					if( spaceOccupied < amountMax )
+					if( spaceOccupied <= amountMax )
 					{
 						this.resources[i].amount = 0;
 						this.onRemove?.Invoke( id, spaceOccupied );
