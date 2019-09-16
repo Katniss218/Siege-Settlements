@@ -1,5 +1,5 @@
 ﻿using SS.Data;
-using SS.ResourceSystem;
+using SS.ResourceSystem.Payment;
 using SS.UI;
 using SS.Units;
 using System;

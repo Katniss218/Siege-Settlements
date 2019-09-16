@@ -1,10 +1,10 @@
-﻿using SS.ResourceSystem;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Katniss.Utils;
+using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
-using System.Collections.Generic;
 
 namespace SS.Buildings
 {

@@ -1,9 +1,8 @@
-﻿using SS.ResourceSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace SS
+namespace SS.ResourceSystem.Payment
 {
 	[DisallowMultipleComponent]
 	public class PaymentReceiver : MonoBehaviour

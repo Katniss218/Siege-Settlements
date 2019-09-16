@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SS
+namespace SS.ResourceSystem.Payment
 {
 	public interface IPaymentProgress
 	{

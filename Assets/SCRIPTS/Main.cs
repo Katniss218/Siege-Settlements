@@ -3,8 +3,8 @@ using SS.Buildings;
 using UnityEngine.EventSystems;
 using SS.UI;
 using SS.Extras;
-using SS.Data;
 using SS.Inventories;
+using SS.ResourceSystem.Payment;
 
 namespace SS
 {

@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Inventories;
-using SS.ResourceSystem;
+using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
