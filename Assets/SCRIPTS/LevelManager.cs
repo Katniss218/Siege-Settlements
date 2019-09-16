@@ -72,7 +72,7 @@ namespace SS.Levels
 		private static void LoadScenePrefabs( out GameObject environment )
 		{
 			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Canvas __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );
 			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
 			environment = Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
 		}

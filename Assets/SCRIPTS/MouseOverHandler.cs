@@ -12,7 +12,7 @@ namespace SS
 	{
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
-		private GameObject curr;
+		private GameObject currentObjectMouseOver;
 
 		public static _UnityEvent_GameObject onMouseEnter = new _UnityEvent_GameObject();
 		public static _UnityEvent_GameObject onMouseStay = new _UnityEvent_GameObject();
@@ -57,16 +57,16 @@ namespace SS
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{
 				pointerOver = hitInfo.collider.gameObject;
-				if( pointerOver != curr )
+				if( pointerOver != currentObjectMouseOver )
 				{
-					onMouseExit?.Invoke( curr );
+					onMouseExit?.Invoke( currentObjectMouseOver );
 					onMouseEnter?.Invoke( pointerOver );
 				}
 				else
 				{
-					if( curr != null )
+					if( currentObjectMouseOver != null )
 					{
-						onMouseStay?.Invoke( curr );
+						onMouseStay?.Invoke( currentObjectMouseOver );
 					}
 				}
 			}
@@ -74,7 +74,7 @@ namespace SS
 			{
 				onMouseExit?.Invoke( null );
 			}
-			curr = pointerOver;
+			currentObjectMouseOver = pointerOver;
 		}
 	}
 }
