@@ -440,11 +440,7 @@ namespace SS
 						{
 							return;
 						}
-						if( hitInfo.collider.GetComponent<ConstructionSite>() != null )
-						{
-							return;
-						}
-						if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1.0f )
+						if( Building.IsRepairable( hitInfo.collider.GetComponent<Damageable>() ) )
 						{
 							return;
 						}
@@ -463,14 +459,9 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						if( hitInfo.collider.gameObject.layer != ObjectLayer.BUILDINGS )
-						{
-							return;
-						}
 						PaymentReceiver pr = hitInfo.collider.GetComponent<PaymentReceiver>();
 						if( pr != null )
 						{
-
 							// If it is a building, start repair.
 							List<ResourceDefinition> ress = Data.DataManager.GetAllOfType<ResourceDefinition>();
 
@@ -478,7 +469,9 @@ namespace SS
 							{
 								int amt = pr.GetWantedAmount( res.id );
 								if( amt != 0 )
+								{
 									pr.ReceivePayment( res.id, amt );
+								}
 							}
 						}
 					}

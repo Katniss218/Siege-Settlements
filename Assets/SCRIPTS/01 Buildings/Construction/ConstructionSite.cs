@@ -75,8 +75,12 @@ namespace SS.Buildings
 		/// </summary>
 		public static void BeginConstructionOrRepair( GameObject gameObject )
 		{
-			Building building = gameObject.GetComponent<Building>();
 			Damageable damageable = gameObject.GetComponent<Damageable>();
+			if( !Building.IsRepairable( damageable ) )
+			{
+				Debug.LogError( gameObject.name + " - Building is not repairable." );
+			}
+			Building building = gameObject.GetComponent<Building>();
 			MeshRenderer meshRenderer = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
 			// Repairing is mandatory once the building's health drops below 50%.

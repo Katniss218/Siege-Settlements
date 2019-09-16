@@ -19,7 +19,6 @@ namespace SS.Buildings
 		/// <summary>
 		/// Checks if the building is in a 'usable' state (not under construction/repair and not below 50% health).
 		/// </summary>
-		/// <param name="building">The building whoose health to check.</param>
 		public static bool IsUsable( Damageable building )
 		{
 			// If not under construction/repair.
@@ -31,6 +30,20 @@ namespace SS.Buildings
 			return false;
 		}
 		
+		/// <summary>
+		/// Checks if the building can be repaired (repair hasn't started already).
+		/// </summary>
+		public static bool IsRepairable( Damageable building )
+		{
+			// If the construction/repair is currently being done.
+			if( building.GetComponent<ConstructionSite>() != null )
+			{
+				return false;
+			}
+			// If the construction/repair is NOT being done.
+			return building.health < building.healthMax;
+		}
+
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()
