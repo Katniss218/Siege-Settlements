@@ -33,7 +33,7 @@ namespace SS.Buildings
 		public LayerMask overlapMask;
 
 		/// <summary>
-		/// The maximum difference between any 2 points underneath the building preview that will be still considered as valid placement spot.
+		/// The maximum difference between any 2 points (+- maxDeviation) underneath the building preview, and the position of the building preview, that will be still considered as valid placement spot.
 		/// </summary>
 		public float maxDeviation = 0.2f;
 

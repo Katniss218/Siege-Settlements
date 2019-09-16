@@ -62,59 +62,60 @@ namespace SS.Buildings
 
 			// Position the preview at the mouse's position. Hide the preview if the raycast misses.
 			this.MoveToPointer();
-			Vector3 cursorOnTerrain = this.transform.position; // since we are moving the obj to the cursor's position on the terrain.
-			
-			Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation );
 
-			float nodePairMinDst = float.MaxValue;
-			Vector3? nodeSelf = null; // if null, no nodes found.
-			Vector3? nodeTarget = null; // if null, no nodes found.
-
-			float searchlength = this.nodesSearchRange.magnitude;
-
-			for( int i = 0; i < colliders.Length; i++ )
+			// If not pressing SHIFT.
+			// Snap the preview to placement nodes.
+			if( !(Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) )
 			{
-				Building building = colliders[i].GetComponent<Building>();
+				Vector3 cursorOnTerrain = this.transform.position; // since we are moving the obj to the cursor's position on the terrain.
 
-				if( building == null )
-				{
-					continue;
-				}
-				Vector3[] targetNodes = building.cachedDefinition.placementNodes;
+				Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation );
 
-				for( int j = 0; j < this.placementNodes.Length; j++ )
+				float nodePairMinDst = float.MaxValue;
+				Vector3? nodeSelf = null; // if null, no nodes found.
+				Vector3? nodeTarget = null; // if null, no nodes found.
+
+				float searchlength = this.nodesSearchRange.magnitude;
+
+				for( int i = 0; i < colliders.Length; i++ )
 				{
-					for( int k = 0; k < targetNodes.Length; k++ )
+					Building building = colliders[i].GetComponent<Building>();
+
+					if( building == null )
 					{
-						Matrix4x4 toWorldSelf = this.transform.localToWorldMatrix;
-						Vector3 globalSelf = toWorldSelf.MultiplyVector( this.placementNodes[j] ) + this.transform.position;
+						continue;
+					}
+					Vector3[] targetNodes = building.cachedDefinition.placementNodes;
 
-						Matrix4x4 toWorldTarget = colliders[i].transform.localToWorldMatrix;
-						Vector3 globalTarget = toWorldTarget.MultiplyVector( targetNodes[k] ) + colliders[i].transform.position;
-
-						float dst = Vector3.Distance( globalSelf, globalTarget );
-						if( dst <= searchlength && dst < nodePairMinDst )
+					for( int j = 0; j < this.placementNodes.Length; j++ )
+					{
+						for( int k = 0; k < targetNodes.Length; k++ )
 						{
-							nodeSelf = globalSelf;
-							nodeTarget = globalTarget;
-							nodePairMinDst = dst;
+							Matrix4x4 toWorldSelf = this.transform.localToWorldMatrix;
+							Vector3 globalSelf = toWorldSelf.MultiplyVector( this.placementNodes[j] ) + this.transform.position;
+
+							Matrix4x4 toWorldTarget = colliders[i].transform.localToWorldMatrix;
+							Vector3 globalTarget = toWorldTarget.MultiplyVector( targetNodes[k] ) + colliders[i].transform.position;
+
+							float dst = Vector3.Distance( globalSelf, globalTarget );
+							if( dst <= searchlength && dst < nodePairMinDst )
+							{
+								nodeSelf = globalSelf;
+								nodeTarget = globalTarget;
+								nodePairMinDst = dst;
+							}
 						}
 					}
 				}
-			}
 
-			if( nodeTarget.HasValue )
-			{
-				// If not pressing SHIFT.
-				// rotate the preview to face the mouse.
-
-				if( !(Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) )
+				if( nodeTarget.HasValue )
 				{
 					// Move the preview to overlap the 2 nodes.
 					Vector3 diff = nodeTarget.Value - nodeSelf.Value;
 
 					this.transform.Translate( diff, Space.World );
 
+					// rotate the preview to face the mouse.
 					Vector3 dirNodeToCursor = cursorOnTerrain - nodeTarget.Value;
 					dirNodeToCursor.y = 0;
 					Vector3 dirNodeToSelf = this.transform.position - nodeTarget.Value;
