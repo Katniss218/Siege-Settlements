@@ -63,9 +63,8 @@ namespace SS.Buildings
 			// Position the preview at the mouse's position. Hide the preview if the raycast misses.
 			this.MoveToPointer();
 			Vector3 cursorOnTerrain = this.transform.position; // since we are moving the obj to the cursor's position on the terrain.
-
-			// FIXME ---- size of the box needs to be bigger than the size of the building. (preferably big enough to encapsulate furthest node)
-			Collider[] colliders = Physics.OverlapBox( this.transform.position + this.nodesSearchRange * 0.5f, this.nodesSearchRange * 1.5f, this.transform.rotation );
+			
+			Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation );
 
 			float nodePairMinDst = float.MaxValue;
 			Vector3? nodeSelf = null; // if null, no nodes found.
@@ -106,20 +105,24 @@ namespace SS.Buildings
 
 			if( nodeTarget.HasValue )
 			{
-				// Move the preview to overlap the 2 nodes.
-				Vector3 diff = nodeTarget.Value - nodeSelf.Value;
-
-				this.transform.Translate( diff, Space.World );
-
+				// If not pressing SHIFT.
 				// rotate the preview to face the mouse.
 
-				Vector3 dirNodeToCursor = cursorOnTerrain - nodeTarget.Value;
-				dirNodeToCursor.y = 0;
-				Vector3 dirNodeToSelf = this.transform.position - nodeTarget.Value;
-				dirNodeToSelf.y = 0;
+				if( !(Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) )
+				{
+					// Move the preview to overlap the 2 nodes.
+					Vector3 diff = nodeTarget.Value - nodeSelf.Value;
 
-				Quaternion rot = Quaternion.FromToRotation( dirNodeToSelf.normalized, dirNodeToCursor.normalized );
-				this.transform.RotateAround( nodeTarget.Value, Vector3.up, rot.eulerAngles.y );
+					this.transform.Translate( diff, Space.World );
+
+					Vector3 dirNodeToCursor = cursorOnTerrain - nodeTarget.Value;
+					dirNodeToCursor.y = 0;
+					Vector3 dirNodeToSelf = this.transform.position - nodeTarget.Value;
+					dirNodeToSelf.y = 0;
+
+					Quaternion rot = Quaternion.FromToRotation( dirNodeToSelf.normalized, dirNodeToCursor.normalized );
+					this.transform.RotateAround( nodeTarget.Value, Vector3.up, rot.eulerAngles.y );
+				}
 
 				// snap the preview to ground.
 				SnapToGround();
