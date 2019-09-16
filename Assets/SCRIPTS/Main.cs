@@ -5,6 +5,8 @@ using SS.UI;
 using SS.Extras;
 using SS.Inventories;
 using SS.ResourceSystem.Payment;
+using System.Collections.Generic;
+using UnityEngine.AI;
 
 namespace SS
 {
@@ -295,6 +297,21 @@ namespace SS
 				return __resourcePanel;
 			}
 		}
+
+		private Vector3 GridToWorld( Vector2Int grid, Vector3 gridCenter, float gridSpacing )
+		{
+			float camRotY = Main.cameraPivot.rotation.eulerAngles.y;
+
+			Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - new Vector3( gridSpacing / 2f, 0, gridSpacing / 2f );
+			
+			Vector3 gridRelativeToCenterLocalRotated = Quaternion.Euler( 0, camRotY, 0 ) * (gridRelativeToCenterLocal);
+
+			Vector3 global = gridRelativeToCenterLocalRotated * gridSpacing + gridCenter;
+			
+			// calculate each node's world position (add the grid's center to it).
+
+			return global;
+		}
 		
 		void Update()
 		{
@@ -303,59 +320,131 @@ namespace SS
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					RaycastHit[] raycastHits = Physics.RaycastAll( Main.camera.ScreenPointToRay( Input.mousePosition ) );
+
+					Vector3? terrainHitPos = null;
+
+					ResourceDeposit hitDeposit = null;
+					PaymentReceiver hitPayment = null;
+
+					int terrainLayer = LayerMask.NameToLayer( "Terrain" );
+
+					for( int i = 0; i < raycastHits.Length; i++ )
 					{
-						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
-						PaymentReceiver paymentReceiver = hitInfo.collider.GetComponent<PaymentReceiver>();
-						Selectable[] selected = SelectionManager.selectedObjects;
+						if( raycastHits[i].collider.gameObject.layer == terrainLayer )
+						{
+							terrainHitPos = raycastHits[i].point;
+						}
+						else
+						{
+							ResourceDeposit deposit = raycastHits[i].collider.GetComponent<ResourceDeposit>();
+							if( deposit != null )
+							{
+								hitDeposit = deposit;
+							}
+							PaymentReceiver payment = raycastHits[i].collider.GetComponent<PaymentReceiver>();
+							if( payment != null )
+							{
+								hitPayment = payment;
+							}
+
+						}
+					}
+
+
+					
+					Selectable[] selected = SelectionManager.selectedObjects;
+
+					if( hitDeposit == null && hitPayment == null && terrainHitPos.HasValue )
+					{
+						//
+						// MOVE.
+						//
+
+						// Get the selected object as array of GameObjects.
+						GameObject[] selectedGameObjects = new GameObject[selected.Length];
+						float biggestRadius = float.MinValue;
+
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Units" ) )
+							selectedGameObjects[i] = selected[i].gameObject;
+
+
+							NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
+							if( navMeshAgent != null )
 							{
-								if( paymentReceiver != null )
+								if( navMeshAgent.radius > biggestRadius )
 								{
-									IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
-									if( inv != null )
-									{
-										// Assign the makePayment TAIGoal only if the selected object contains wanted resource in the inv.
-										if( paymentReceiver.ContainsWantedResource( inv.GetAll() ) )
-										{
-											TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, paymentReceiver );
-											AudioManager.PlayNew( aiResponse );
-										}
-									}
-								}
-								else
-								{
-									if( hitDeposit != null )
-									{
-										IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
-										if( inv != null )
-										{
-											if( inv.CanHold( hitDeposit.resourceId ) )
-											{
-												TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
-												AudioManager.PlayNew( aiResponse );
-											}
-										}
-									}
-									else
-									{
-										TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
-										AudioManager.PlayNew( aiResponse );
-									}
+									biggestRadius = navMeshAgent.radius;
 								}
 							}
-							if( selected[i].gameObject.layer == LayerMask.NameToLayer( "Heroes" ) )
+						}
+
+						//Calculate the grid position.
+						TAIGoal.MoveTo.GridPositionInfo grid = TAIGoal.MoveTo.GetGridPositions( selectedGameObjects );
+
+						foreach( var kvp in grid.positions )
+						{
+							const float GRID_SPACING = 0.125f;
+
+							Vector3 newV = GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_SPACING );
+														
+							RaycastHit gridHit;
+							Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
+							if( Physics.Raycast( r, out gridHit, 100, 1 << LayerMask.NameToLayer( "Terrain" ) ) )
 							{
-								TAIGoal.MoveTo.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+								TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, newV );
 								AudioManager.PlayNew( aiResponse );
 							}
 						}
 					}
+					else
+					{						
+						if( hitDeposit != null )
+						{
+							//
+							// PICKUP DEPOSIT.
+							//
+
+							for( int i = 0; i < selected.Length; i++ )
+							{
+								IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+								if( inv != null )
+								{
+									if( inv.CanHold( hitDeposit.resourceId ) )
+									{
+										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+										AudioManager.PlayNew( aiResponse );
+									}
+								}
+							}
+						}
+						
+						if( hitPayment != null )
+						{
+							//
+							// PAY.
+							//
+
+							for( int i = 0; i < selected.Length; i++ )
+							{
+								IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+								if( inv != null )
+								{
+									// Assign the makePayment TAIGoal only if the selected object contains wanted resource in the inv.
+									if( hitPayment.ContainsWantedResource( inv.GetAll() ) )
+									{
+										TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, hitPayment );
+										AudioManager.PlayNew( aiResponse );
+									}
+								}
+							}
+						}
+
+					}
 				}
 			}
+
 			// Try repair mouseovered building.
 			if( Input.GetKeyDown( KeyCode.L ) )
 			{
