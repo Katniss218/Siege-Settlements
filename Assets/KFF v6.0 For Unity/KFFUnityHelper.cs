@@ -1,5 +1,6 @@
 ﻿using Object = KFF.DataStructures.Object;
 using UnityEngine;
+using static KFF.KFFSerializer;
 
 namespace KFF
 {
@@ -21,7 +22,30 @@ namespace KFF
 			serializer.scopeRoot = beginScope;
 			return new Vector2( x, y );
 		}
-		
+
+		public static Vector2[] ReadVector2Array( this KFFSerializer serializer, Path path )
+		{
+			Object beginScope = serializer.scopeRoot;
+
+			serializer.MoveScope( path, true );
+			Object arrayScope = serializer.scopeRoot;
+			
+			int length = serializer.Analyze( "" ).childCount;
+
+			Vector2[] ret = new Vector2[length];
+			for( int i = 0; i < length; i++ )
+			{
+				serializer.MoveScope( i.ToString(), true );
+				float x = serializer.ReadFloat( "X" );
+				float y = serializer.ReadFloat( "Y" );
+				serializer.scopeRoot = arrayScope;
+				ret[i] = new Vector2( x, y );
+			}
+
+			serializer.scopeRoot = beginScope;
+			return ret;
+		}
+
 		public static void WriteVector2( this KFFSerializer serializer, Path path, string name, Vector2 value )
 		{
 			Object beginScope = serializer.scopeRoot;
@@ -35,7 +59,31 @@ namespace KFF
 
 			serializer.scopeRoot = beginScope;
 		}
-		
+
+		public static void WriteVector2Array( this KFFSerializer serializer, Path path, string name, Vector2[] values )
+		{
+			Object beginScope = serializer.scopeRoot;
+			serializer.MoveScope( path, true );
+
+			serializer.WriteClass( "", name );
+			serializer.MoveScope( name, true );
+
+			Object arrayScope = serializer.scopeRoot;
+
+			for( int i = 0; i < values.Length; i++ )
+			{
+
+				serializer.AppendClass( "" );
+				serializer.MoveScope( i.ToString(), true );
+
+				serializer.WriteFloat( "", "X", values[i].x );
+				serializer.WriteFloat( "", "Y", values[i].y );
+
+				serializer.scopeRoot = arrayScope;
+			}
+			serializer.scopeRoot = beginScope;
+		}
+
 		public static Vector2Int ReadVector2Int( this KFFSerializer serializer, Path path )
 		{
 			Object beginScope = serializer.scopeRoot;
@@ -75,6 +123,30 @@ namespace KFF
 			return new Vector3( x, y, z );
 		}
 
+		public static Vector3[] ReadVector3Array( this KFFSerializer serializer, Path path )
+		{
+			Object beginScope = serializer.scopeRoot;
+
+			serializer.MoveScope( path, true );
+			Object arrayScope = serializer.scopeRoot;
+
+			int length = serializer.Analyze( "" ).childCount;
+
+			Vector3[] ret = new Vector3[length];
+			for( int i = 0; i < length; i++ )
+			{
+				serializer.MoveScope( i.ToString(), true );
+				float x = serializer.ReadFloat( "X" );
+				float y = serializer.ReadFloat( "Y" );
+				float z = serializer.ReadFloat( "Z" );
+				serializer.scopeRoot = arrayScope;
+				ret[i] = new Vector3( x, y, z );
+			}
+
+			serializer.scopeRoot = beginScope;
+			return ret;
+		}
+
 		public static void WriteVector3( this KFFSerializer serializer, Path path, string name, Vector3 value )
 		{
 			Object beginScope = serializer.scopeRoot;
@@ -87,6 +159,30 @@ namespace KFF
 			serializer.WriteFloat( "", "Y", value.y );
 			serializer.WriteFloat( "", "Z", value.z );
 
+			serializer.scopeRoot = beginScope;
+		}
+
+		public static void WriteVector3Array( this KFFSerializer serializer, Path path, string name, Vector3[] values )
+		{
+			Object beginScope = serializer.scopeRoot;
+			serializer.MoveScope( path, true );
+
+			serializer.WriteList( "", name );
+			serializer.MoveScope( name, true );
+
+			Object arrayScope = serializer.scopeRoot;
+
+			for( int i = 0; i < values.Length; i++ )
+			{
+				serializer.AppendClass( "" );
+				serializer.MoveScope( i.ToString(), true );
+
+				serializer.WriteFloat( "", "X", values[i].x );
+				serializer.WriteFloat( "", "Y", values[i].y );
+				serializer.WriteFloat( "", "Z", values[i].z );
+
+				serializer.scopeRoot = arrayScope;
+			}
 			serializer.scopeRoot = beginScope;
 		}
 
