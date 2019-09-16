@@ -1,32 +1,12 @@
-﻿using SS.Data;
-using SS.Modules;
-using SS.Projectiles;
+﻿using SS.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Heroes
 {
-	public class Hero : MonoBehaviour
+	public static class HeroCreator
 	{
-		/// <summary>
-		/// Contains all of the original values for this hero. Might be not accurate to the overriden values on GameObjects (Read Only).
-		/// </summary>
-		public HeroDefinition cachedDefinition { get; private set; }
-
-
-		// Start is called before the first frame update
-		void Start()
-		{
-
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
-		}
-
 		public static GameObject Create( HeroDefinition def, Vector3 pos, Quaternion rot, int factionId )
 		{
 			if( def == null )
@@ -34,7 +14,7 @@ namespace SS.Heroes
 				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Hero (\"" + def.id + "\"), (f: " + factionId + ")" );
-			container.layer = LayerMask.NameToLayer( "Heroes" );
+			container.layer = ObjectLayer.HEROES;
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
@@ -55,11 +35,7 @@ namespace SS.Heroes
 			meshRenderer.material.SetTexture( "_Emission", null );
 			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-
-			// Assign the definition to the unit, so it can be accessed later.
-			Hero hero = container.AddComponent<Hero>();
-			hero.cachedDefinition = def;
-
+			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );

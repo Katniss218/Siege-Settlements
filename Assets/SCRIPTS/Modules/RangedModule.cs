@@ -75,7 +75,7 @@ namespace SS.Modules
 
 		private void Shoot( Vector3 pos, Vector3 vel )
 		{
-			Projectile.Create( this.projectile, pos, vel, this.factionMember.factionId, this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration, this.transform );
+			ProjectileCreator.Create( this.projectile, pos, vel, this.factionMember.factionId, this.damageSource.damageType, this.damageSource.damage, this.damageSource.armorPenetration, this.transform );
 		}
 
 		void Awake()

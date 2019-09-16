@@ -30,11 +30,11 @@ namespace SS
 				if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 				{
 					Dictionary<string,int> resourcesCarried = inventory.GetAll();
-					if( hitInfo.collider.gameObject.layer == LayerMask.NameToLayer( "Terrain" ) )
+					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 					{
 						foreach( var kvp in resourcesCarried )
 						{
-							GameObject obj = ResourceDeposit.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
+							GameObject obj = ResourceDepositCreator.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
 							AudioManager.PlayNew( obj.GetComponent<ResourceDeposit>().dropoffSound );
 						}
 						inventory.Clear();

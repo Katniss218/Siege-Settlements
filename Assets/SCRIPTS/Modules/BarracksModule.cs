@@ -15,51 +15,49 @@ namespace SS.Modules
 		/// <summary>
 		/// Contains every unit that can be created in the barracks.
 		/// </summary>
-		public UnitDefinition[] spawnableUnits { get; set; }
+		public UnitDefinition[] trainableUnits { get; set; }
+
+		/// <summary>
+		/// Contains the currently trained unit (Read only).
+		/// </summary>
+		public UnitDefinition trainedUnit { get; private set; }
+		
+		/// <summary>
+		/// Contains the progress of the training (Read Only).
+		/// </summary>
+		public float trainProgress { get; private set; }
 
 		/// <summary>
 		/// Contains the multiplier used as the construction speed.
 		/// </summary>
-		public float constructionSpeed { get; set; }
+		public float trainSpeed { get; set; }
 
-		public Func<bool> IsDone { get; private set; }
-
-		public Func<Vector3> GetSpawnPosition { get; private set; }
-
-		public Vector3 rallyPoint { get; set; }
-
-		private UnitDefinition buildingUnit;
-		private float buildTime;
-
+		/// <summary>
+		/// returns true if the barracks module is currently training a unit.
+		/// </summary>
 		public bool isTraining
 		{
 			get
 			{
-				return this.buildingUnit != null;
+				return this.trainedUnit != null;
 			}
 		}
 
+		/// <summary>
+		/// Contains the local-space position, where the units are created.
+		/// </summary>
+		public Vector3 spawnPosition { get; private set; }
+
+		/// <summary>
+		/// Contains the local-space position, the units move towards, after creation.
+		/// </summary>
+		public Vector3 rallyPoint { get; set; }
+
+
+		public Func<bool> IsDone { get; private set; }
+		
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-		private void StartTraining( UnitDefinition def )
-		{
-			if( this.isTraining )
-			{
-				Debug.LogWarning( "There is already unit being trained." );
-				return;
-			}
-			this.buildingUnit = def;
-			this.buildTime = def.buildTime;
-
-			this.resourcesRemaining.Clear();
-			foreach( var kvp in this.buildingUnit.cost )
-			{
-				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
-			}
-
-			AwaitForPayment();
-
-		}
 
 		private void AwaitForPayment()
 		{
@@ -86,7 +84,27 @@ namespace SS.Modules
 			int value = 0;
 			return resourcesRemaining.TryGetValue( resourceId, out value ) ? value : 0;
 		}
-		
+
+		private void StartTraining( UnitDefinition def )
+		{
+			if( this.isTraining )
+			{
+				Debug.LogWarning( "There is already unit being trained." );
+				return;
+			}
+			this.trainedUnit = def;
+			this.trainProgress = def.buildTime;
+
+			this.resourcesRemaining.Clear();
+			foreach( var kvp in this.trainedUnit.cost )
+			{
+				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
+			}
+
+			AwaitForPayment();
+
+		}
+
 		// Start is called before the first frame update
 		void Start()
 		{
@@ -96,11 +114,18 @@ namespace SS.Modules
 			{
 				selectable.onSelectionUIRedraw.AddListener( () =>
 				{
-					Damageable d = this.GetComponent<Damageable>();
-					// If the barracks are not usable.
-					if( selectable.gameObject.layer == LayerMask.NameToLayer( "Buildings" ) && d != null && !Buildings.Building.CheckUsable( d ) )
+					// If the barracks are on a building, that is not usable.
+					if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
 					{
-						return;
+						Damageable damageable = this.GetComponent<Damageable>();
+
+						if( damageable != null )
+						{
+							if( !Building.IsUsable( damageable ) )
+							{
+								return;
+							}
+						}
 					}
 
 					// Create the actual UI
@@ -108,20 +133,20 @@ namespace SS.Modules
 					{
 						if( this.GetComponent<PaymentReceiver>() != null )
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.buildingUnit.displayName + "'." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.trainedUnit.displayName + "'." );
 						}
 						else
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.buildingUnit.displayName + "' - " + (int)this.buildTime + " s." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
 						}
 					}
 					else
 					{
-						GameObject[] gridElements = new GameObject[spawnableUnits.Length];
+						GameObject[] gridElements = new GameObject[trainableUnits.Length];
 						// Initialize the grid elements' GameObjects.
-						for( int i = 0; i < spawnableUnits.Length; i++ )
+						for( int i = 0; i < trainableUnits.Length; i++ )
 						{
-							UnitDefinition unitDef = this.spawnableUnits[i];
+							UnitDefinition unitDef = this.trainableUnits[i];
 							// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
 							if( Technologies.TechLock.CheckLocked( unitDef, FactionManager.factions[0].techs ) )
 							{
@@ -155,40 +180,34 @@ namespace SS.Modules
 
 				if( this.GetComponent<PaymentReceiver>() == null )
 				{
-					this.buildTime -= this.constructionSpeed * Time.deltaTime;
-					if( this.buildTime <= 0 )
+					this.trainProgress -= this.trainSpeed * Time.deltaTime;
+					if( this.trainProgress <= 0 )
 					{
 						// Calculate world-space spawn position.
 						Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-						Vector3 spawnPos = toWorld.MultiplyVector( this.GetSpawnPosition() ) + this.transform.position;
+						Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
 
 						// Calculate world-space spawn rotation.
 						Quaternion spawnRot = Quaternion.Euler( this.transform.position - spawnPos );
 
 						RaycastHit hitInfo;
 						GameObject obj;
-						if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0, 50, 0 ), Vector3.down ), out hitInfo, 100f, 1 << LayerMask.NameToLayer( "Terrain" ) ) )//( new Ray( spawnPos, Vector3.down ), out hitInfo, 100f, 1 < LayerMask.NameToLayer( "Terrain" ) ) )
+						if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0, 50, 0 ), Vector3.down ), out hitInfo, 100f, ObjectLayer.TERRAIN_MASK ) )
 						{
-							obj = Unit.Create( this.buildingUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
+							obj = UnitCreator.Create( this.trainedUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
 						}
 						else
 						{
-							// FIXME ----- add method for raycasting top-down
-							// FIXME ----- add method for getting layers of the specified object type (unit/bldg/terrain/etc)
-							// convert vector to ray
-							// default ray length
-							// layer of the terrain.
-
 							Debug.LogWarning( "No suitable position for spawning was found." );
 							
-							obj = Unit.Create( this.buildingUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
+							obj = UnitCreator.Create( this.trainedUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
 						}
 
 						// Move the newly spawned unit to the rally position.
 						Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
 						TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPos );
 
-						this.buildingUnit = null;
+						this.trainedUnit = null;
 					}
 					
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
@@ -203,27 +222,21 @@ namespace SS.Modules
 		public static void AddTo( GameObject obj, BarracksModuleDefinition def )
 		{
 			BarracksModule barracks = obj.AddComponent<BarracksModule>();
-			barracks.constructionSpeed = def.constructionSpeed;
-			barracks.spawnableUnits = new UnitDefinition[def.spawnableUnits.Length];
-			for( int i = 0; i < barracks.spawnableUnits.Length; i++ )
+			barracks.trainSpeed = def.constructionSpeed;
+			barracks.trainableUnits = new UnitDefinition[def.spawnableUnits.Length];
+			for( int i = 0; i < barracks.trainableUnits.Length; i++ )
 			{
-				barracks.spawnableUnits[i] = DataManager.Get<UnitDefinition>( def.spawnableUnits[i] );
+				barracks.trainableUnits[i] = DataManager.Get<UnitDefinition>( def.spawnableUnits[i] );
 			}
 
 			Building building = obj.GetComponent<Building>();
 			if( building == null )
 			{
-				barracks.GetSpawnPosition = () =>
-				{
-					return Vector3.zero;
-				};
+				barracks.spawnPosition = Vector3.zero;
 			}
 			else
 			{
-				barracks.GetSpawnPosition = () =>
-				{
-					return building.entrance;
-				};
+				barracks.spawnPosition = building.entrance;
 			}
 
 			// Set the method for checking progress of the construction.
@@ -252,7 +265,7 @@ namespace SS.Modules
 			Gizmos.color = Color.blue;
 
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-			Vector3 spawnPos = toWorld.MultiplyVector( this.GetSpawnPosition() ) + this.transform.position;
+			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
 
 			Gizmos.DrawSphere( spawnPos, 0.1f );
 
@@ -261,7 +274,6 @@ namespace SS.Modules
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawSphere( rallyPos, 0.15f );
 		}
-
 #endif
 	}
 }

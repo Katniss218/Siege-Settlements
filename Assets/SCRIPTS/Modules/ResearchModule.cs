@@ -1,4 +1,5 @@
-﻿using SS.Data;
+﻿using SS.Buildings;
+using SS.Data;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
 using SS.UI;
@@ -14,7 +15,7 @@ namespace SS.Modules
 		/// <summary>
 		/// Contains the currently researched technology (Read only).
 		/// </summary>
-		public TechnologyDefinition technologyResearched { get; private set; }
+		public TechnologyDefinition researchedTechnology { get; private set; }
 
 		/// <summary>
 		/// Contains the progress of the research (Read Only).
@@ -33,7 +34,7 @@ namespace SS.Modules
 		{
 			get
 			{
-				return this.technologyResearched != null;
+				return this.researchedTechnology != null;
 			}
 		}
 
@@ -83,11 +84,11 @@ namespace SS.Modules
 				Debug.LogWarning( "There is already technology being researched." );
 				return;
 			}
-			this.technologyResearched = def;
+			this.researchedTechnology = def;
 			this.researchProgress = 10.0f;
 
 			this.resourcesRemaining.Clear();
-			foreach( var kvp in this.technologyResearched.cost )
+			foreach( var kvp in this.researchedTechnology.cost )
 			{
 				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
 			}
@@ -109,31 +110,38 @@ namespace SS.Modules
 				//####
 				selectable.onSelectionUIRedraw.AddListener( () =>
 				{
-					Damageable d = this.GetComponent<Damageable>();
-					// If the research facility is not usable.
-					if( selectable.gameObject.layer == LayerMask.NameToLayer( "Buildings" ) && d != null && !Buildings.Building.CheckUsable( d ) )
+					// If the research facility is on a building, that is not usable.
+					if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
 					{
-						return;
+						Damageable damageable = this.GetComponent<Damageable>();
+
+						if( damageable != null )
+						{
+							if( !Building.IsUsable( damageable ) )
+							{
+								return;
+							}
+						}
 					}
 					if( this.isResearching )
 					{
 						if( this.GetComponent<PaymentReceiver>() != null )
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '"+ this.technologyResearched.displayName+"'." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '"+ this.researchedTechnology.displayName+"'." );
 						}
 						else
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.technologyResearched.displayName + "' - " + (int)this.researchProgress + " s." );
+							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgress + " s." );
 						}
 					}
 					else
 					{
-						List<TechnologyDefinition> techDefs = DataManager.GetAllOfType<TechnologyDefinition>();
+						List<TechnologyDefinition> registeredTechnologies = DataManager.GetAllOfType<TechnologyDefinition>();
 						List<GameObject> gridElements = new List<GameObject>();
 						// Add every available technology to the list.
-						for( int i = 0; i < techDefs.Count; i++ )
+						for( int i = 0; i < registeredTechnologies.Count; i++ )
 						{
-							TechnologyDefinition techDef = techDefs[i];
+							TechnologyDefinition techDef = registeredTechnologies[i];
 							// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
 							if( FactionManager.factions[this.factionMember.factionId].techs[techDef.id] == TechnologyResearchProgress.Available )
 							{
@@ -168,8 +176,8 @@ namespace SS.Modules
 					this.researchProgress -= this.researchSpeed * Time.deltaTime;
 					if( this.researchProgress <= 0 )
 					{
-						FactionManager.factions[this.factionMember.factionId].techs[this.technologyResearched.id] = TechnologyResearchProgress.Researched;
-						this.technologyResearched = null;
+						FactionManager.factions[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
+						this.researchedTechnology = null;
 						
 						SelectionManager.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
 					}

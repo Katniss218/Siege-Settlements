@@ -73,7 +73,7 @@ namespace SS.Buildings
 		/// <summary>
 		/// Starts the construction / repair of the specified building.
 		/// </summary>
-		public static void StartConstructionOrRepair( GameObject gameObject )
+		public static void BeginConstructionOrRepair( GameObject gameObject )
 		{
 			Building building = gameObject.GetComponent<Building>();
 			Damageable damageable = gameObject.GetComponent<Damageable>();
@@ -87,7 +87,7 @@ namespace SS.Buildings
 			}
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
-			Dictionary<string, int> cost = building.cachedDefinition.cost;
+			Dictionary<string, int> cost = building.StartToEndConstructionCost;
 			constructionSite.AssignResources( cost );
 
 			constructionSite.healthToResourcesConv = new float[cost.Count];
@@ -177,11 +177,12 @@ namespace SS.Buildings
 						Main.particleSystem.transform.position = gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
 						ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
-						shape.scale = new Vector3( building.cachedDefinition.size.x, 0.25f, building.cachedDefinition.size.z );
+						BoxCollider col = building.GetComponent<BoxCollider>();
+						shape.scale = new Vector3( col.size.x, 0.25f, col.size.z );
 						shape.position = Vector3.zero;
 						Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
-						AudioManager.PlayNew( building.cachedDefinition.buildSoundEffect.Item2, 1.0f, 1.0f );
+						AudioManager.PlayNew( building.buildSoundEffect, 1.0f, 1.0f );
 						
 						return;
 					}

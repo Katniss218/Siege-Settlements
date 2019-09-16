@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SS.Projectiles
 {
-	public static class Projectile
+	public static class ProjectileCreator
 	{
 		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, DamageType damageType, float damageOverride, float armorPenetration, Transform owner )
 		{
@@ -12,7 +12,7 @@ namespace SS.Projectiles
 				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Projectile (\"" + def.id + "\"), (f: " + factionId + ")" );
-			container.layer = LayerMask.NameToLayer( "Projectiles" );
+			container.layer = ObjectLayer.PROJECTILES;
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );

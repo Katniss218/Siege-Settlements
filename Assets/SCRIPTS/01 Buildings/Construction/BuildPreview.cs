@@ -130,7 +130,7 @@ namespace SS.Buildings
 
 				if( Input.GetMouseButtonDown( 0 ) ) // left mouse button
 				{
-					Building.Create( this.def, this.transform.position, this.transform.rotation, 0, true );
+					BuildingCreator.Create( this.def, this.transform.position, this.transform.rotation, 0, true );
 					Destroy( this.gameObject );
 				}
 			}
@@ -152,14 +152,14 @@ namespace SS.Buildings
 
 			buildPreview.def = def;
 
-			buildPreview.groundMask = 1 << LayerMask.NameToLayer( "Terrain" );
+			buildPreview.groundMask = ObjectLayer.TERRAIN_MASK;
 
 			buildPreview.overlapMask =
-				1 << LayerMask.NameToLayer( "Terrain" ) |
-				1 << LayerMask.NameToLayer( "Units" ) |
-				1 << LayerMask.NameToLayer( "Buildings" ) |
-				1 << LayerMask.NameToLayer( "Heroes" ) |
-				1 << LayerMask.NameToLayer( "Extras" );
+				ObjectLayer.TERRAIN_MASK |
+				ObjectLayer.UNITS_MASK |
+				ObjectLayer.BUILDINGS_MASK |
+				ObjectLayer.HEROES_MASK |
+				ObjectLayer.EXTRAS_MASK;
 
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 			meshFilter.mesh = buildPreview.def.mesh.Item2;

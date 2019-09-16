@@ -4,7 +4,6 @@ using SS.Inventories;
 using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,13 +13,8 @@ using Object = UnityEngine.Object;
 
 namespace SS.Units
 {
-	public class Unit : MonoBehaviour
+	public static class UnitCreator
 	{
-		/// <summary>
-		/// Contains all of the original values for this unit. Might be not accurate to the overriden values on GameObjects (Read Only).
-		/// </summary>
-		public UnitDefinition cachedDefinition { get; private set; }
-
 		public static GameObject Create( UnitDefinition def, Vector3 pos, Quaternion rot, int factionId )
 		{
 			if( def == null )
@@ -28,7 +22,7 @@ namespace SS.Units
 				throw new System.ArgumentNullException( "Definition can't be null" );
 			}
 			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
-			container.layer = LayerMask.NameToLayer( "Units" );
+			container.layer = ObjectLayer.UNITS;
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );
@@ -49,11 +43,7 @@ namespace SS.Units
 			meshRenderer.material.SetTexture( "_Emission", null );
 			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-
-			// Assign the definition to the unit, so it can be accessed later.
-			Unit unit = container.AddComponent<Unit>();
-			unit.cachedDefinition = def;
-
+			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );

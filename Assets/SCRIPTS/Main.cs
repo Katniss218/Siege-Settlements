@@ -311,12 +311,10 @@ namespace SS
 
 					ResourceDeposit hitDeposit = null;
 					PaymentReceiver hitPayment = null;
-
-					int terrainLayer = LayerMask.NameToLayer( "Terrain" );
-
+					
 					for( int i = 0; i < raycastHits.Length; i++ )
 					{
-						if( raycastHits[i].collider.gameObject.layer == terrainLayer )
+						if( raycastHits[i].collider.gameObject.layer == ObjectLayer.TERRAIN )
 						{
 							terrainHitPos = raycastHits[i].point;
 						}
@@ -376,7 +374,7 @@ namespace SS
 														
 							RaycastHit gridHit;
 							Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
-							if( Physics.Raycast( r, out gridHit, 100, 1 << LayerMask.NameToLayer( "Terrain" ) ) )
+							if( Physics.Raycast( r, out gridHit, 100, ObjectLayer.TERRAIN_MASK ) )
 							{
 								TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, newV );
 								AudioManager.PlayNew( aiResponse );
@@ -438,7 +436,7 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer( "Buildings" ) )
+						if( hitInfo.collider.gameObject.layer != ObjectLayer.BUILDINGS )
 						{
 							return;
 						}
@@ -451,7 +449,7 @@ namespace SS
 							return;
 						}
 						// If it is a building, start repair.
-						ConstructionSite.StartConstructionOrRepair( hitInfo.collider.gameObject );
+						ConstructionSite.BeginConstructionOrRepair( hitInfo.collider.gameObject );
 						AudioManager.PlayNew( aiResponse );
 					}
 				}
@@ -465,7 +463,7 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer( "Buildings" ) )
+						if( hitInfo.collider.gameObject.layer != ObjectLayer.BUILDINGS )
 						{
 							return;
 						}

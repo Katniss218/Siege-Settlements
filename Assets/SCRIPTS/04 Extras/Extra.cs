@@ -2,7 +2,7 @@
 
 namespace SS.Extras
 {
-	public static class Extra
+	public static class ExtraCreator
 	{
 		public static GameObject Create( ExtraDefinition def, Vector3 pos, Quaternion rot )
 		{
@@ -12,7 +12,7 @@ namespace SS.Extras
 			}
 			GameObject container = new GameObject( "Extra (\"" + def.id + "\")" );
 			container.isStatic = true;
-			container.layer = LayerMask.NameToLayer( "Extras" );
+			container.layer = ObjectLayer.EXTRAS;
 
 			GameObject gfx = new GameObject( "graphics" );
 			gfx.transform.SetParent( container.transform );

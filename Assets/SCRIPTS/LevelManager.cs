@@ -102,9 +102,7 @@ namespace SS.Levels
 			LevelTerrainCreator.UpdateNavMesh();
 
 			Main.cameraPivot.position = new Vector3( 32, 0, 32 );
-
-			int terrainlayerMaskRaycast = 1 << LayerMask.NameToLayer( "Terrain" );
-
+			
 			List<UnitDefinition> units = DataManager.GetAllOfType<UnitDefinition>();
 			for( int i = 0; i < units.Count; i++ )
 			{
@@ -113,16 +111,16 @@ namespace SS.Levels
 					float x = Random.Range( 22f, 42f );
 					float z = Random.Range( 32f + i, 32f + (2f * i) );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						Unit.Create( units[i], hit.point, Quaternion.identity, 0 );
+						UnitCreator.Create( units[i], hit.point, Quaternion.identity, 0 );
 					}
 					x = Random.Range( 22f, 42f );
 					z = Random.Range( 32f + (-2f * i), 32f + (-i) );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						Unit.Create( units[i], hit.point, Quaternion.identity, 1 );
+						UnitCreator.Create( units[i], hit.point, Quaternion.identity, 1 );
 					}
 				}
 			}
@@ -135,16 +133,16 @@ namespace SS.Levels
 					float x = Random.Range( 22f, 42f );
 					float z = Random.Range( 32f + i, 32f + (4f * i) );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						Hero.Create( heroes[i], hit.point, Quaternion.identity, 0 );
+						HeroCreator.Create( heroes[i], hit.point, Quaternion.identity, 0 );
 					}
 					x = Random.Range( 22f, 42f );
 					z = Random.Range( 32f + (-4f * i), 32f + (-i) );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						Hero.Create( heroes[i], hit.point, Quaternion.identity, 1 );
+						HeroCreator.Create( heroes[i], hit.point, Quaternion.identity, 1 );
 					}
 				}
 			}
@@ -158,9 +156,9 @@ namespace SS.Levels
 					float x = Random.Range( 12f, 52f );
 					float z = Random.Range( 12f, 52f );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						Extra.Create( extras[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ) );
+						ExtraCreator.Create( extras[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ) );
 					}
 				}
 			}
@@ -173,9 +171,9 @@ namespace SS.Levels
 					float x = Random.Range( 22f, 42f );
 					float z = Random.Range( 22f, 42f );
 
-					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, terrainlayerMaskRaycast ) )
+					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						ResourceDeposit.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 5 );
+						ResourceDepositCreator.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 5 );
 					}
 				}
 			}

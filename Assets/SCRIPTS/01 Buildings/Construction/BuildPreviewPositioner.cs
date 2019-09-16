@@ -25,7 +25,7 @@ namespace SS.Buildings
 		private void SnapToGround()
 		{
 			RaycastHit hitInfo;
-			if( Physics.Raycast( new Ray( this.transform.position, Vector3.down ), out hitInfo, float.MaxValue, 1 << LayerMask.NameToLayer( "Terrain" ) ) )
+			if( Physics.Raycast( new Ray( this.transform.position, Vector3.down ), out hitInfo, float.MaxValue, ObjectLayer.TERRAIN_MASK ) )
 			{
 				this.transform.position = hitInfo.point;
 			}
@@ -34,7 +34,7 @@ namespace SS.Buildings
 		private void MoveToPointer()
 		{
 			RaycastHit hitInfo;
-			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, 1 << LayerMask.NameToLayer( "Terrain" ) ) )
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, ObjectLayer.TERRAIN_MASK ) )
 			{
 				this.transform.position = hitInfo.point;
 			}
@@ -85,7 +85,7 @@ namespace SS.Buildings
 					{
 						continue;
 					}
-					Vector3[] targetNodes = building.cachedDefinition.placementNodes;
+					Vector3[] targetNodes = building.placementNodes;
 
 					for( int j = 0; j < this.placementNodes.Length; j++ )
 					{

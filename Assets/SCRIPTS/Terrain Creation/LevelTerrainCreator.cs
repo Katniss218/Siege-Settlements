@@ -36,7 +36,7 @@ namespace SS.TerrainCreation
 				for( int j = 0; j < segments; j++ )
 				{
 					GameObject terrainSegment = new GameObject( "Mesh" );
-					terrainSegment.layer = LayerMask.NameToLayer( "Terrain" );
+					terrainSegment.layer = ObjectLayer.TERRAIN;
 					terrainSegment.transform.SetParent( terrainParent );
 					terrainSegment.isStatic = true;
 
@@ -62,7 +62,7 @@ namespace SS.TerrainCreation
 		{
 			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
 			
-			NavMeshBuilder.CollectSources( terrainParent.transform, 1 << LayerMask.NameToLayer( "Terrain" ), NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
+			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
 
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
 				NavMesh.GetSettingsByID( 0 ),
