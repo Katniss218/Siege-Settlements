@@ -36,6 +36,21 @@ namespace SS
 				public int sizeZ;
 			}
 
+
+			public static Vector3 GridToWorld( Vector2Int grid, Vector3 gridCenter, float gridSpacing )
+			{
+				float camRotY = Main.cameraPivot.rotation.eulerAngles.y;
+
+				Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - new Vector3( gridSpacing / 2f, 0, gridSpacing / 2f );
+
+				Vector3 gridRelativeToCenterLocalRotated = Quaternion.Euler( 0, camRotY, 0 ) * (gridRelativeToCenterLocal);
+
+				Vector3 global = gridRelativeToCenterLocalRotated * gridSpacing + gridCenter;
+				
+				return global;
+			}
+
+
 			/// <summary>
 			/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 			/// </summary>

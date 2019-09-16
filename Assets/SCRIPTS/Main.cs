@@ -7,6 +7,7 @@ using SS.Inventories;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using SS.ResourceSystem;
 
 namespace SS
 {
@@ -298,24 +299,8 @@ namespace SS
 			}
 		}
 
-		private Vector3 GridToWorld( Vector2Int grid, Vector3 gridCenter, float gridSpacing )
-		{
-			float camRotY = Main.cameraPivot.rotation.eulerAngles.y;
-
-			Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - new Vector3( gridSpacing / 2f, 0, gridSpacing / 2f );
-			
-			Vector3 gridRelativeToCenterLocalRotated = Quaternion.Euler( 0, camRotY, 0 ) * (gridRelativeToCenterLocal);
-
-			Vector3 global = gridRelativeToCenterLocalRotated * gridSpacing + gridCenter;
-			
-			// calculate each node's world position (add the grid's center to it).
-
-			return global;
-		}
-		
 		void Update()
 		{
-			// When RMB is clicked - Move selected units to the cursor.
 			if( Input.GetMouseButtonDown( 1 ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
@@ -387,7 +372,7 @@ namespace SS
 						{
 							const float GRID_SPACING = 0.125f;
 
-							Vector3 newV = GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_SPACING );
+							Vector3 newV = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_SPACING );
 														
 							RaycastHit gridHit;
 							Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
@@ -457,6 +442,10 @@ namespace SS
 						{
 							return;
 						}
+						if( hitInfo.collider.GetComponent<ConstructionSite>() != null )
+						{
+							return;
+						}
 						if( hitInfo.collider.GetComponent<Damageable>().healthPercent == 1.0f )
 						{
 							return;
@@ -464,6 +453,36 @@ namespace SS
 						// If it is a building, start repair.
 						ConstructionSite.StartConstructionOrRepair( hitInfo.collider.gameObject );
 						AudioManager.PlayNew( aiResponse );
+					}
+				}
+			}
+
+			// Temporary resource payment speedup.
+			if( Input.GetKeyDown( KeyCode.K ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
+						if( hitInfo.collider.gameObject.layer != LayerMask.NameToLayer( "Buildings" ) )
+						{
+							return;
+						}
+						PaymentReceiver pr = hitInfo.collider.GetComponent<PaymentReceiver>();
+						if( pr != null )
+						{
+
+							// If it is a building, start repair.
+							List<ResourceDefinition> ress = Data.DataManager.GetAllOfType<ResourceDefinition>();
+
+							foreach( var res in ress )
+							{
+								int amt = pr.GetWantedAmount( res.id );
+								if( amt != 0 )
+									pr.ReceivePayment( res.id, amt );
+							}
+						}
 					}
 				}
 			}
