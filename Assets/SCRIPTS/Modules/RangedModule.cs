@@ -10,8 +10,6 @@ namespace SS.Modules
 	[RequireComponent( typeof( ITargetFinder ) )]
 	public class RangedModule : Module
 	{
-		//public Damageable currentTarget;
-
 		public ProjectileDefinition projectile;
 		public int projectileCount;
 

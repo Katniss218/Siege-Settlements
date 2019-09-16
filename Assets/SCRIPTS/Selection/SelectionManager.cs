@@ -72,8 +72,6 @@ namespace SS
 		/// <param name="callingObj">The object whoose SelectionPanel.Object is to be recalculated. Can be null to specify any object.</param>
 		internal static void ForceSelectionUIRedraw( Selectable callingObj )
 		{
-			// FIXME ----- don't use this with buttons if it's updating every frame they will get bugged and unclickable.
-
 			// Check if the object even needs updating (if it's not highlighted, then not).
 			if( callingObj != null && !IsHighlighted( callingObj ) )
 			{

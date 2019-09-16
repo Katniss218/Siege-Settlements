@@ -5,10 +5,8 @@ namespace SS.ResourceSystem.Payment
 	public interface IPaymentProgress
 	{
 		/// <summary>
-		/// Returns the progress of whatever is being done.
+		/// Checks if the progress is 100%.
 		/// </summary>
-		//Func<float> progress { get; }
-
 		Func<bool> IsDone { get; }
 
 		/// <summary>

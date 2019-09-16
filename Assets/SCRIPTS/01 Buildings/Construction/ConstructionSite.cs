@@ -26,8 +26,7 @@ namespace SS.Buildings
 		[SerializeField] private float[] resourcesRemaining;
 
 		[SerializeField] private float[] healthToResourcesConv;
-
-		//public Func<float> progress { get; private set; }
+		
 		public Func<bool> IsDone { get; private set; }
 
 		public int GetWantedAmount( string resourceId )
