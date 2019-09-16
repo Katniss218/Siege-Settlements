@@ -144,7 +144,11 @@ namespace SS.Buildings
 		{
 			GameObject gameObject = new GameObject();
 			BuildPreview buildPreview = gameObject.AddComponent<BuildPreview>();
-			gameObject.AddComponent<BuildPreviewPositioner>();
+			BuildPreviewPositioner positioner = gameObject.AddComponent<BuildPreviewPositioner>();
+			positioner.placementNodes = def.placementNodes;
+
+			float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
+			positioner.nodesSearchRange = new Vector3( max, max, max );
 
 			buildPreview.def = def;
 

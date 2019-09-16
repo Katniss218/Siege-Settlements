@@ -20,12 +20,14 @@ namespace SS.Buildings
 
 		public Vector3 size { get; set; }
 
+		public Vector3[] placementNodes { get; set; } // len = 0, if empty
+
 		public Dictionary<string, int> cost { get; private set; }
 		
 		public BarracksModuleDefinition barracks;
 		public ResearchModuleDefinition research;
 		public string[] techsRequired { get; private set; } // the default techs required to unlock.
-
+		
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
@@ -48,6 +50,8 @@ namespace SS.Buildings
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
 			this.size = serializer.ReadVector3( "Size" );
+
+			this.placementNodes = serializer.ReadVector3Array( "PlacementNodes" );
 
 			// Cost
 			var analysisData = serializer.Analyze( "Cost" );
@@ -90,6 +94,8 @@ namespace SS.Buildings
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
 			serializer.WriteVector3( "", "Size", this.size );
+
+			serializer.WriteVector3Array( "", "PlacementNodes", this.placementNodes );
 
 			// Cost
 			serializer.WriteClass( "", "Cost" );

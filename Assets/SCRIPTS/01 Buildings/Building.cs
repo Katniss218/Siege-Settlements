@@ -158,6 +158,19 @@ namespace SS.Buildings
 
 			return container;
 		}
-		
+
+
+#if UNITY_EDITOR
+		private void OnDrawGizmos()
+		{
+			Gizmos.color = Color.white;
+
+			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+			for( int i = 0; i < this.cachedDefinition.placementNodes.Length; i++ )
+			{
+				Gizmos.DrawSphere( toWorld.MultiplyVector( this.cachedDefinition.placementNodes[i] ) + this.transform.position, 0.05f );
+			}
+		}
+#endif
 	}
 }
