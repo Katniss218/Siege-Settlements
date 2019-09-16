@@ -14,7 +14,7 @@
 		};
 		Size = { X = 1.6; Y = 1.0; Z = 1.7; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.2; Y = 0.0; Z = -1.1; };
+		Entrance = { X = 0.2; Y = 0.0; Z = -1.1; }; // Barracks use it to spawn unit at this position (local).
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 40; },
