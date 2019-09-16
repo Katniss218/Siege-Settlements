@@ -14,6 +14,7 @@
 		};
 		Size = { X = 1.6; Y = 1.0; Z = 1.7; };
 		PlacementNodes = [ ];
+		Entrance = { X = 0.2; Y = 0.0; Z = -1.1; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 40; },
@@ -53,6 +54,7 @@
 		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 30; }
@@ -85,6 +87,7 @@
 		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 50; },
@@ -125,6 +128,7 @@
 		};
 		Size = { X = 1.6; Y = 1.1; Z = 1.4; };
 		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 50; },
@@ -166,6 +170,7 @@
 		Size = { X = 1.25; Y = 0.55; Z = 0.25; };
 		// Controls snapping to existing buildings.
 		PlacementNodes = [ { X = 0.75; Y = 0.25; Z = 0.0; }, { X = -0.75; Y = 0.25; Z = 0.0; } ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 15; }
@@ -193,6 +198,7 @@
 		Size = { X = 1.25; Y = 0.55; Z = 0.5; };
 		// Controls snapping to existing buildings.
 		PlacementNodes = [ { X = 0.75; Y = 0.25; Z = 0.0; }, { X = -0.75; Y = 0.25; Z = 0.0; } ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.stone"; Amount = 15; }

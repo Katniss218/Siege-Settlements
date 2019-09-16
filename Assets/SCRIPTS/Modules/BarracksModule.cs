@@ -1,4 +1,5 @@
-﻿using SS.Data;
+﻿using SS.Buildings;
+using SS.Data;
 using SS.ResourceSystem.Payment;
 using SS.UI;
 using SS.Units;
@@ -23,6 +24,9 @@ namespace SS.Modules
 
 		public Func<bool> IsDone { get; private set; }
 
+		public Func<Vector3> GetSpawnPosition { get; private set; }
+
+		public Vector3 rallyPoint { get; set; }
 
 		private UnitDefinition buildingUnit;
 		private float buildTime;
@@ -134,7 +138,7 @@ namespace SS.Modules
 							}
 						}
 
-						UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 25.0f, 5.0f ), new Vector2( -50.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+						UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
 					}
 				} );
@@ -145,7 +149,7 @@ namespace SS.Modules
 		void Update()
 		{
 			// If we are building something
-			if( isTraining )
+			if( this.isTraining )
 			{
 				Selectable selectable = this.GetComponent<Selectable>();
 
@@ -154,9 +158,37 @@ namespace SS.Modules
 					this.buildTime -= this.constructionSpeed * Time.deltaTime;
 					if( this.buildTime <= 0 )
 					{
-						Unit.Create( buildingUnit, this.transform.position, Quaternion.identity, this.GetComponent<FactionMember>().factionId );
+						// Calculate world-space spawn position.
+						Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+						Vector3 spawnPos = toWorld.MultiplyVector( this.GetSpawnPosition() ) + this.transform.position;
 
-						buildingUnit = null;
+						// Calculate world-space spawn rotation.
+						Quaternion spawnRot = Quaternion.Euler( this.transform.position - spawnPos );
+
+						RaycastHit hitInfo;
+						GameObject obj;
+						if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0, 50, 0 ), Vector3.down ), out hitInfo, 100f, 1 << LayerMask.NameToLayer( "Terrain" ) ) )//( new Ray( spawnPos, Vector3.down ), out hitInfo, 100f, 1 < LayerMask.NameToLayer( "Terrain" ) ) )
+						{
+							obj = Unit.Create( this.buildingUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
+						}
+						else
+						{
+							// FIXME ----- add method for raycasting top-down
+							// FIXME ----- add method for getting layers of the specified object type (unit/bldg/terrain/etc)
+							// convert vector to ray
+							// default ray length
+							// layer of the terrain.
+
+							Debug.LogWarning( "No suitable position for spawning was found." );
+							
+							obj = Unit.Create( this.buildingUnit, hitInfo.point, spawnRot, this.GetComponent<FactionMember>().factionId );
+						}
+
+						// Move the newly spawned unit to the rally position.
+						Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+						TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPos );
+
+						this.buildingUnit = null;
 					}
 					
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
@@ -178,6 +210,22 @@ namespace SS.Modules
 				barracks.spawnableUnits[i] = DataManager.Get<UnitDefinition>( def.spawnableUnits[i] );
 			}
 
+			Building building = obj.GetComponent<Building>();
+			if( building == null )
+			{
+				barracks.GetSpawnPosition = () =>
+				{
+					return Vector3.zero;
+				};
+			}
+			else
+			{
+				barracks.GetSpawnPosition = () =>
+				{
+					return building.entrance;
+				};
+			}
+
 			// Set the method for checking progress of the construction.
 			barracks.IsDone = () =>
 			{
@@ -196,5 +244,24 @@ namespace SS.Modules
 			//	
 			//} );
 		}
+
+#if UNITY_EDITOR
+
+		void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.blue;
+
+			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+			Vector3 spawnPos = toWorld.MultiplyVector( this.GetSpawnPosition() ) + this.transform.position;
+
+			Gizmos.DrawSphere( spawnPos, 0.1f );
+
+			Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+
+			Gizmos.color = Color.cyan;
+			Gizmos.DrawSphere( rallyPos, 0.15f );
+		}
+
+#endif
 	}
 }

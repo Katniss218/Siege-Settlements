@@ -22,6 +22,8 @@ namespace SS.Buildings
 
 		public Vector3[] placementNodes { get; set; } // len = 0, if empty
 
+		public Vector3 entrance { get; set; }
+
 		public Dictionary<string, int> cost { get; private set; }
 		
 		public BarracksModuleDefinition barracks;
@@ -52,6 +54,8 @@ namespace SS.Buildings
 			this.size = serializer.ReadVector3( "Size" );
 
 			this.placementNodes = serializer.ReadVector3Array( "PlacementNodes" );
+
+			this.entrance = serializer.ReadVector3( "Entrance" );
 
 			// Cost
 			var analysisData = serializer.Analyze( "Cost" );
@@ -96,6 +100,8 @@ namespace SS.Buildings
 			serializer.WriteVector3( "", "Size", this.size );
 
 			serializer.WriteVector3Array( "", "PlacementNodes", this.placementNodes );
+
+			serializer.WriteVector3( "", "Entrance", this.entrance );
 
 			// Cost
 			serializer.WriteClass( "", "Cost" );

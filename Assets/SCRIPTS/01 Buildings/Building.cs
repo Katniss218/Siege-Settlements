@@ -16,7 +16,8 @@ namespace SS.Buildings
 		/// Contains all of the original values for this building. Might be not accurate to the overriden values on GameObjects (Read Only).
 		/// </summary>
 		public BuildingDefinition cachedDefinition { get; private set; }
-		
+
+		public Vector3 entrance { get; private set; }
 
 
 		public static bool CheckUsable( Damageable building )
@@ -64,6 +65,7 @@ namespace SS.Buildings
 			// Assign the definition to the building, so it can be accessed later.
 			Building building = container.AddComponent<Building>();
 			building.cachedDefinition = def;
+			building.entrance = def.entrance;
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
