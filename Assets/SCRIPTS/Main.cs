@@ -212,7 +212,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Shader>( "Shaders/Solid" ) ); }
+				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Material>( "Materials/Solid" ) ); }
 				return __materialSolid;
 			}
 		}

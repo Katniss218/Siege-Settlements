@@ -5,6 +5,8 @@ using UnityEngine.Events;
 using Katniss.Utils;
 using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
+using SS.Data;
+using katniss.Utils;
 
 namespace SS.Buildings
 {
@@ -93,6 +95,137 @@ namespace SS.Buildings
 			return floored + 1;
 		}
 
+		private static GameObject CreateConstructionSiteGraphics( GameObject gameObject )
+		{
+			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+
+			int numX = Mathf.FloorToInt( collider.size.x * 2.0f );
+			int numZ = Mathf.FloorToInt( collider.size.z * 2.0f );
+
+			float spacingX = collider.size.x / (numX + 1);
+			float spacingZ = collider.size.z / (numZ + 1);
+
+			Mesh corner = AssetsManager.GetMesh( "Models/ConstructionSites/Corner.kff" );
+			Mesh segment = AssetsManager.GetMesh( "Models/ConstructionSites/Segment.kff" );
+
+
+			GameObject constructionSiteGfx = new GameObject( "constructionsite" );
+			constructionSiteGfx.transform.SetParent( gameObject.transform );
+			constructionSiteGfx.transform.localPosition = new Vector3( -collider.size.x / 2f, 0, -collider.size.z / 2f );
+			constructionSiteGfx.transform.localRotation = Quaternion.identity;
+
+			GameObject corner00 = new GameObject( "c00" );
+			corner00.transform.SetParent( constructionSiteGfx.transform );
+			corner00.transform.localPosition = new Vector3( 0, 0, 0 );
+			corner00.transform.localRotation = Quaternion.identity;
+
+			MeshFilter meshFilter = corner00.AddComponent<MeshFilter>();
+			meshFilter.mesh = corner;
+
+			MeshRenderer meshRenderer = corner00.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialSolid;
+			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+			GameObject corner01 = new GameObject( "c01" );
+			corner01.transform.SetParent( constructionSiteGfx.transform );
+			corner01.transform.localPosition = new Vector3( 0, 0, collider.size.z );
+			corner01.transform.localRotation = Quaternion.identity;
+
+			meshFilter = corner01.AddComponent<MeshFilter>();
+			meshFilter.mesh = corner;
+
+			meshRenderer = corner01.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialSolid;
+			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+			GameObject corner10 = new GameObject( "c10" );
+			corner10.transform.SetParent( constructionSiteGfx.transform );
+			corner10.transform.localPosition = new Vector3( collider.size.x, 0, 0 );
+			corner10.transform.localRotation = Quaternion.identity;
+
+			meshFilter = corner10.AddComponent<MeshFilter>();
+			meshFilter.mesh = corner;
+
+			meshRenderer = corner10.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialSolid;
+			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+			GameObject corner11 = new GameObject( "c11" );
+			corner11.transform.SetParent( constructionSiteGfx.transform );
+			corner11.transform.localPosition = new Vector3( collider.size.x, 0, collider.size.z );
+			corner11.transform.localRotation = Quaternion.identity;
+
+			meshFilter = corner11.AddComponent<MeshFilter>();
+			meshFilter.mesh = corner;
+
+			meshRenderer = corner11.AddComponent<MeshRenderer>();
+			meshRenderer.material = Main.materialSolid;
+			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+
+			for( int i = 0; i < numX; i++ )
+			{
+				// 2 rows
+
+
+				GameObject line1 = new GameObject( "X0-" + i );
+				line1.transform.SetParent( constructionSiteGfx.transform );
+				line1.transform.localPosition = new Vector3( (i * spacingX) + spacingX, 0, 0 );
+				line1.transform.localRotation = Quaternion.identity;
+
+				meshFilter = line1.AddComponent<MeshFilter>();
+				meshFilter.mesh = segment;
+
+				meshRenderer = line1.AddComponent<MeshRenderer>();
+				meshRenderer.material = Main.materialSolid;
+				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+				GameObject line2 = new GameObject( "X1-" + i );
+				line2.transform.SetParent( constructionSiteGfx.transform );
+				line2.transform.localPosition = new Vector3( (i * spacingX) + spacingX, 0, collider.size.z );
+				line2.transform.localRotation = Quaternion.identity;
+
+				meshFilter = line2.AddComponent<MeshFilter>();
+				meshFilter.mesh = segment;
+
+				meshRenderer = line2.AddComponent<MeshRenderer>();
+				meshRenderer.material = Main.materialSolid;
+				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			}
+
+			for( int i = 0; i < numZ; i++ )
+			{
+				// 2 rows
+
+
+				GameObject line1 = new GameObject( "Z0-" + i );
+				line1.transform.SetParent( constructionSiteGfx.transform );
+				line1.transform.localPosition = new Vector3( 0, 0, (i * spacingZ) + spacingZ );
+				line1.transform.localRotation = Quaternion.identity;
+
+				meshFilter = line1.AddComponent<MeshFilter>();
+				meshFilter.mesh = segment;
+
+				meshRenderer = line1.AddComponent<MeshRenderer>();
+				meshRenderer.material = Main.materialSolid;
+				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+
+				GameObject line2 = new GameObject( "Z1-" + i );
+				line2.transform.SetParent( constructionSiteGfx.transform );
+				line2.transform.localPosition = new Vector3( collider.size.x, 0, (i * spacingZ) + spacingZ );
+				line2.transform.localRotation = Quaternion.identity;
+
+				meshFilter = line2.AddComponent<MeshFilter>();
+				meshFilter.mesh = segment;
+
+				meshRenderer = line2.AddComponent<MeshRenderer>();
+				meshRenderer.material = Main.materialSolid;
+				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			}
+
+			return constructionSiteGfx;
+		}
+
 		/// <summary>
 		/// Starts the construction / repair of the specified building.
 		/// </summary>
@@ -141,6 +274,8 @@ namespace SS.Buildings
 			};
 
 			damageable.onHealthChange.AddListener( onHealthChange_whenConstructing );
+
+			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
 
 			PaymentReceiver paymentReceiver = gameObject.AddComponent<PaymentReceiver>();
 			paymentReceiver.paymentProgress = constructionSite;
@@ -207,6 +342,7 @@ namespace SS.Buildings
 				damageable.onHealthChange.RemoveListener( onHealthChange_whenConstructing );
 
 				Object.DestroyImmediate( constructionSite );
+				Object.Destroy( constructionSiteGfx );
 
 				Selectable selectable = building.GetComponent<Selectable>();
 				if( selectable != null )

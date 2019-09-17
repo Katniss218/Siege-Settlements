@@ -22,11 +22,13 @@ namespace SS.Extras
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
-
+#warning TODO - custom class for handling assigning textures/etc. to materials in a single function.
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.sharedMaterial = Main.materialPlantTransparent;
-			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
+			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
+			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
+			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
+			meshRenderer.material.SetFloat( "_BumpScale", 1.0f );
 			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
 			

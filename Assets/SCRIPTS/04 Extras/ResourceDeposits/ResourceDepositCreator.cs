@@ -24,10 +24,11 @@ namespace SS.Extras
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.material = def.shaderType == ShaderType.PlantSolid ? Main.materialPlantSolid : Main.materialSolid;
-			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-
-			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			meshRenderer.material.SetTexture( "_Emission", null );
+			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
+			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
+			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
+			meshRenderer.material.SetFloat( "_BumpScale", 1.0f );
+			meshRenderer.material.SetTexture( "_EmissionMap", null );
 			meshRenderer.material.SetFloat( "_Metallic", def.isMetallic ? 1.0f : 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", def.smoothness );
 
