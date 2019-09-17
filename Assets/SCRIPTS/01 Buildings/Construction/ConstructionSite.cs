@@ -13,7 +13,7 @@ namespace SS.Buildings
 	/// </summary>
 	public class ConstructionSite : MonoBehaviour, IPaymentProgress
 	{
-		public class _UnityEvent_string_int : UnityEvent<string,int> { }
+		public class _UnityEvent_string_int : UnityEvent<string, int> { }
 
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
@@ -21,13 +21,22 @@ namespace SS.Buildings
 		[SerializeField] private string[] resourceIds;
 
 		/// <summary>
+		/// Resources needed to progress from Building.STARTING_HEALTH_PERCENT health to 100%.
+		/// </summary>
+		[SerializeField] private int[] initialResources;
+
+		/// <summary>
 		/// An array of remaining resources, per resource type (use resourceIds[i] to get the Id) (Read Only).
 		/// </summary>
 		[SerializeField] private float[] resourcesRemaining;
 
-		[SerializeField] private float[] healthToResourcesConv;
-		
+		/// <summary>
+		/// Each entry represents a percentage of total resources needed (initial).
+		/// </summary>
+		[SerializeField] private float[] healthToResources;
+
 		public Func<bool> IsDone { get; private set; }
+
 
 		public int GetWantedAmount( string resourceId )
 		{
@@ -42,24 +51,38 @@ namespace SS.Buildings
 		}
 
 		/// <summary>
-		/// Assigns a cost (in resources) to construct the building.
+		/// Assigns a cost (in resources) to fully construct the building. Resets any progression in resources.
 		/// </summary>
-		public void AssignResources( Dictionary<string, int> requiredResources )
+		public void SetRequiredResources( Dictionary<string, int> requiredResources )
 		{
 			this.resourceIds = new string[requiredResources.Count];
 			this.resourcesRemaining = new float[requiredResources.Count];
-			
+			this.healthToResources = new float[requiredResources.Count];
+			this.initialResources = new int[requiredResources.Count];
+
+			float totalResourcesNeeded = 0;
 			int i = 0;
-			foreach( var key in requiredResources.Keys )
+			foreach( var id in requiredResources.Keys )
 			{
-				this.resourceIds[i] = key;
-				this.resourcesRemaining[i] = requiredResources[key];
+				int amount = requiredResources[id];
+				this.resourceIds[i] = id;
+				this.resourcesRemaining[i] = amount;
+				this.initialResources[i] = amount;
+
+				totalResourcesNeeded += amount;
 
 				i++;
 			}
+
+			// Once we have our total, calculate how much each resource contributes to the total.
+			for( i = 0; i < this.healthToResources.Length; i++ )
+			{
+				this.healthToResources[i] = this.resourcesRemaining[i] / totalResourcesNeeded;
+			}
+
 		}
 
-		// Rounds down if the decimal is <=0.5, up when >0.5
+		// Rounds down when the decimal is <=0.5, rounds up when >0.5
 		private static int SpecialRound( float remainingResAmt )
 		{
 			int floored = Mathf.FloorToInt( remainingResAmt );
@@ -80,32 +103,12 @@ namespace SS.Buildings
 			{
 				Debug.LogError( gameObject.name + " - Building is not repairable." );
 			}
-			Building building = gameObject.GetComponent<Building>();
-			MeshRenderer meshRenderer = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
-			// Repairing is mandatory once the building's health drops below 50%.
-			// And allowed anytime the health is below 100%.
-			if( damageable.health == damageable.healthMax )
-			{
-				Debug.LogError( "You can't start repairing a building that's full HP." );
-			}
+			Building building = gameObject.GetComponent<Building>();
+			
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
-			Dictionary<string, int> cost = building.StartToEndConstructionCost;
-			constructionSite.AssignResources( cost );
-
-			constructionSite.healthToResourcesConv = new float[cost.Count];
-			float totalResNeeded = 0; // total res needed
-			for( int i = 0; i < constructionSite.resourcesRemaining.Length; i++ )
-			{
-				totalResNeeded += constructionSite.resourcesRemaining[i];
-			}
-			for( int i = 0; i < constructionSite.healthToResourcesConv.Length; i++ )
-			{
-				constructionSite.healthToResourcesConv[i] = constructionSite.resourcesRemaining[i] / totalResNeeded;
-			}
-
-			// Set the method for checking progress of the construction.
+			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
 			constructionSite.IsDone = () =>
 			{
 				for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
@@ -120,6 +123,8 @@ namespace SS.Buildings
 				return true;
 			};
 
+			MeshRenderer meshRenderer = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
+
 			// cache the function listener so we can reference it to remove it when the construction is complete.
 			UnityAction<float> onHealthChange_whenConstructing = ( float deltaHP ) =>
 			{
@@ -128,7 +133,9 @@ namespace SS.Buildings
 				{
 					for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
 					{
-						constructionSite.resourcesRemaining[i] += (cost[constructionSite.resourceIds[i]] / (damageable.healthMax * (1 - 0.1f))) * constructionSite.healthToResourcesConv[i] * -deltaHP;
+						float resAmt = (constructionSite.initialResources[i] / (damageable.healthMax * (1 - 0.1f))) * constructionSite.healthToResources[i] * -deltaHP;
+
+						constructionSite.resourcesRemaining[i] += resAmt;
 					}
 				}
 			};
@@ -152,7 +159,7 @@ namespace SS.Buildings
 						int roundedRemaining = SpecialRound( constructionSite.resourcesRemaining[i] );
 						if( roundedRemaining == 0 )
 						{
-							break;
+							throw new Exception( "Received resource wasn't wanted." );
 						}
 						// Received more than was needed (invalid behavior).
 						if( roundedRemaining < amount )
@@ -160,7 +167,8 @@ namespace SS.Buildings
 							throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
 						}
 
-						float healAmt = ((damageable.healthMax * (1 - 0.1f)) / cost[constructionSite.resourceIds[i]]) * constructionSite.healthToResourcesConv[i] * amount;
+						float healAmt = ((damageable.healthMax * (1 - 0.1f)) / constructionSite.initialResources[i]) * constructionSite.healthToResources[i] * amount;
+
 						// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 						// Otherwise, heal it normally.
 						if( damageable.health + healAmt > damageable.healthMax )
@@ -187,11 +195,10 @@ namespace SS.Buildings
 						Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
 						AudioManager.PlayNew( building.buildSoundEffect, 1.0f, 1.0f );
-						
+
 						return;
 					}
 				}
-				throw new Exception( "Received resource was not wanted." );
 			} );
 
 			paymentReceiver.onProgressComplete.AddListener( () =>

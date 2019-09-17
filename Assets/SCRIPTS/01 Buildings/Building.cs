@@ -8,6 +8,7 @@ namespace SS.Buildings
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
 
+
 		public Vector3[] placementNodes { get; set; }
 
 		public Vector3 entrance { get; set; }
@@ -15,6 +16,7 @@ namespace SS.Buildings
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 
 		public AudioClip buildSoundEffect { get; set; }
+
 
 		/// <summary>
 		/// Checks if the building is in a 'usable' state (not under construction/repair and not below 50% health).
