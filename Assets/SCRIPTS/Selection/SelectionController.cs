@@ -40,13 +40,13 @@ namespace SS
 							if( !SelectionManager.IsHighlighted( obj ) )
 							{
 								SelectionManager.HighlightSelected( obj );
-								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
 							}
 						}
 						else
 						{
 							SelectionManager.SelectAndHighlight( obj );
-							AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
 						}
 					}
 				}
@@ -60,7 +60,7 @@ namespace SS
 					if( numSelected > 0 )
 					{
 						SelectionManager.DeselectAll();
-						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/deselect" ) );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
 					}
 				}
 				else
@@ -74,12 +74,12 @@ namespace SS
 						SelectionManager.SelectAndHighlight( obj );
 						if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
 						{
-							AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
 						}
 					}
 					else
 					{
-						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/deselect" ) );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
 					}
 				}
 			}

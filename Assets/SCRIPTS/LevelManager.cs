@@ -71,10 +71,10 @@ namespace SS.Levels
 
 		private static void LoadScenePrefabs( out GameObject environment )
 		{
-			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
-			environment = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
+			environment = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
 		}
 
 		private static void OnLevelLoad( string path, GameObject env )
@@ -87,7 +87,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					color[i, j] = AssetManager.GetTexture2D( "resource:colormap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
+					color[i, j] = AssetManager.GetTexture2D( AssetManager.RESOURCE_ID + "colormap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
 				}
 			}
 			Texture2D[,] height = new Texture2D[size, size];
@@ -95,7 +95,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					height[i, j] = AssetManager.GetTexture2D( "resource:heightmap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
+					height[i, j] = AssetManager.GetTexture2D( AssetManager.RESOURCE_ID + "heightmap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
 				}
 			}
 			LevelTerrainCreator.SpawnMap( height, color, 6f );

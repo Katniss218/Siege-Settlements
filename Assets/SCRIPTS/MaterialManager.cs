@@ -13,6 +13,7 @@ namespace SS
 		private const string COLORED_ID = AssetManager.RESOURCE_ID + "Materials/Colored";
 		private const string COLORED_DESTROYABLE_ID = AssetManager.RESOURCE_ID + "Materials/Colored_Destroyable";
 		private const string COLORED_CONSTRUCTIBLE_ID = AssetManager.RESOURCE_ID + "Materials/Colored_Constructible";
+		private const string PLACEMENT_PREV_ID = AssetManager.RESOURCE_ID + "Materials/PlacementPrev";
 
 		/// <summary>
 		/// Creates a new opaque material.
@@ -134,5 +135,18 @@ namespace SS
 
 			return material;
 		}
+
+		/// <summary>
+		/// Creates a new opaque material with a texture overlayed on top of base color.
+		/// </summary>
+		public static Material CreatePlacementPrev( Color color )
+		{
+			Material material = new Material( AssetManager.GetMaterial( PLACEMENT_PREV_ID ) );
+
+			material.SetColor( "_FactionColor", color );
+
+			return material;
+		}
+
 	}
 }

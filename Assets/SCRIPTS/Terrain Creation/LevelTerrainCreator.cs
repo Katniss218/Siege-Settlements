@@ -1,5 +1,4 @@
-﻿using SS.Content;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -52,10 +51,6 @@ namespace SS.TerrainCreation
 					terrainSegment.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
 				}
 			}
-			
-
-			//GameObject waterPlane = new GameObject( "Water" );
-			//waterPlane.AddComponent<MeshFilter>().mesh = 
 		}
 
 		static NavMeshDataInstance navMeshDataInstance;

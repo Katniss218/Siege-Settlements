@@ -164,7 +164,7 @@ namespace SS.Buildings
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 			meshFilter.mesh = buildPreview.def.mesh.Item2;
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColored( FactionManager.factions[0].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.0f );
+			meshRenderer.material = MaterialManager.CreatePlacementPrev( new Color( 1, 0, 1 ) );
 			
 			preview = gameObject;
 

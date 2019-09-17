@@ -44,6 +44,7 @@ namespace SS.Heroes
 
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
+			navMeshAgent.baseOffset = -0.1f;
 			navMeshAgent.acceleration = 8.0f;
 			navMeshAgent.stoppingDistance = 0.125f;
 			navMeshAgent.radius = def.radius;
@@ -51,7 +52,7 @@ namespace SS.Heroes
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			HUDScaled ui = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
+			HUDScaled ui = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
 
 			ui.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
 			ui.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;

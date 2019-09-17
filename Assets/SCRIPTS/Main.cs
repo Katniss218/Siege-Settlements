@@ -22,7 +22,7 @@ namespace SS
 		{
 			get
 			{
-				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Particle System" ) ); }
+				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Particle System" ) ); }
 				return __particleSystemInstance;
 			}
 		}
@@ -55,7 +55,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColored == null ) { __materialFactionColored = AssetManager.GetMaterial( "resource:Materials/FactionColored" ); }
+				if( __materialFactionColored == null ) { __materialFactionColored = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FactionColored" ); }
 				return __materialFactionColored;
 			}
 		}
@@ -65,7 +65,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = AssetManager.GetMaterial( "resource:Materials/FactionColoredDestroyable" ); }
+				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FactionColoredDestroyable" ); }
 				return __materialFactionColoredDestroyable;
 			}
 		}
@@ -75,7 +75,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = AssetManager.GetMaterial( "resource:Materials/FCConstructible" ); }
+				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FCConstructible" ); }
 				return __materialFactionColoredConstructible;
 			}
 		}
@@ -85,7 +85,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null ) { __materialSolid = AssetManager.GetMaterial( "resource:Materials/Solid" ); }
+				if( __materialSolid == null ) { __materialSolid = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/Solid" ); }
 				return __materialSolid;
 			}
 		}
@@ -95,7 +95,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantTransparent == null ) { __materialPlantTransparent = AssetManager.GetMaterial( "resource:Materials/PlantTransparent" ); }
+				if( __materialPlantTransparent == null ) { __materialPlantTransparent = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/PlantTransparent" ); }
 				return __materialPlantTransparent;
 			}
 		}
@@ -105,7 +105,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantSolid == null ) { __materialPlantSolid = AssetManager.GetMaterial( "resource:Materials/PlantSolid" ); }
+				if( __materialPlantSolid == null ) { __materialPlantSolid = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/PlantSolid" ); }
 				return __materialPlantSolid;
 			}
 		}
@@ -115,7 +115,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialParticle == null ) { __materialParticle = AssetManager.GetMaterial( "resource:Materials/Particle" ); }
+				if( __materialParticle == null ) { __materialParticle = AssetManager.GetMaterial(AssetManager.RESOURCE_ID + "Materials/Particle" ); }
 				return __materialParticle;
 			}
 		}
@@ -250,7 +250,7 @@ namespace SS
 							if( Physics.Raycast( r, out gridHit, 100, ObjectLayer.TERRAIN_MASK ) )
 							{
 								TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, newV );
-								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 							}
 						}
 					}
@@ -270,7 +270,7 @@ namespace SS
 									if( inv.CanHold( hitDeposit.resourceId ) )
 									{
 										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
-										AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
+										AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 									}
 								}
 							}
@@ -291,7 +291,7 @@ namespace SS
 									if( hitPayment.ContainsWantedResource( inv.GetAll() ) )
 									{
 										TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, hitPayment );
-										AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
+										AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 									}
 								}
 							}
@@ -319,7 +319,7 @@ namespace SS
 						}
 						// If it is a building, start repair.
 						ConstructionSite.BeginConstructionOrRepair( hitInfo.collider.gameObject );
-						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 					}
 				}
 			}
@@ -366,7 +366,7 @@ namespace SS
 							if( inv != null )
 							{
 								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
-								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 							}
 						}
 					}
