@@ -47,69 +47,7 @@ namespace SS
 				return __canvas;
 			}
 		}
-		/*
-		// TODO ----- Change this to class with ShaderType & materials.
-		
-		private static Material __materialFactionColored = null;
-		public static Material materialFactionColored
-		{
-			get
-			{
-				if( __materialFactionColored == null ) { __materialFactionColored = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FactionColored" ); }
-				return __materialFactionColored;
-			}
-		}
 
-		private static Material __materialFactionColoredDestroyable = null;
-		public static Material materialFactionColoredDestroyable
-		{
-			get
-			{
-				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FactionColoredDestroyable" ); }
-				return __materialFactionColoredDestroyable;
-			}
-		}
-
-		private static Material __materialFactionColoredConstructible = null;
-		public static Material materialFactionColoredConstructible
-		{
-			get
-			{
-				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/FCConstructible" ); }
-				return __materialFactionColoredConstructible;
-			}
-		}
-
-		private static Material __materialSolid = null;
-		public static Material materialSolid
-		{
-			get
-			{
-				if( __materialSolid == null ) { __materialSolid = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/Solid" ); }
-				return __materialSolid;
-			}
-		}
-
-		private static Material __materialPlantTransparent = null;
-		public static Material materialPlantTransparent
-		{
-			get
-			{
-				if( __materialPlantTransparent == null ) { __materialPlantTransparent = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/PlantTransparent" ); }
-				return __materialPlantTransparent;
-			}
-		}
-
-		private static Material __materialPlantSolid = null;
-		public static Material materialPlantSolid
-		{
-			get
-			{
-				if( __materialPlantSolid == null ) { __materialPlantSolid = AssetManager.GetMaterial( AssetManager.RESOURCE_ID + "Materials/PlantSolid" ); }
-				return __materialPlantSolid;
-			}
-		}
-		*/
 		private static Material __materialParticle = null;
 		public static Material materialParticle
 		{

@@ -78,10 +78,9 @@ namespace SS.Buildings
 			Damageable damageable = container.AddComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
-			// When the health is changed, make the building update it's healthbar.
+			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-
 				ui.SetHealthBarFill( damageable.healthPercent );
 				SelectionManager.ForceSelectionUIRedraw( selectable );
 			} );
