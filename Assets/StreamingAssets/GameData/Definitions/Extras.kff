@@ -1,9 +1,0 @@
-﻿Extras =
-[
-	{
-		Id = "extra.grass";
-		Mesh = "Models/Extras/Cross.kff";
-		AlbedoTexture = "Textures/Extras/grass_side_albedo.png";
-		NormalTexture = "Textures/Extras/grass_side_normal.png";
-	}
-];

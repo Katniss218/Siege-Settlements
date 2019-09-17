@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Content;
 using System;
 using TMPro;
 using UnityEngine;
@@ -90,11 +91,12 @@ namespace SS.UI
 		{
 			GameObject gameObject;
 
-			GameObjectUtils.RectTransform( Main.canvas.transform, "ToolTip", Vector2.zero, Main.toolTipBackground.rect.size, new Vector2( 0, 1 ), Vector2.zero, Vector2.zero, out gameObject, out toolTip );
+			Sprite tooltipBackground = AssetManager.GetSprite( "resource:Textures/tooltip_background" );
+			GameObjectUtils.RectTransform( Main.canvas.transform, "ToolTip", Vector2.zero, tooltipBackground.rect.size, new Vector2( 0, 1 ), Vector2.zero, Vector2.zero, out gameObject, out toolTip );
 
 			gameObject.AddComponent<CanvasRenderer>();
 
-			Image img = gameObject.AddImageSliced( Main.toolTipBackground );
+			Image img = gameObject.AddImageSliced( tooltipBackground );
 			img.raycastTarget = false;
 
 			VerticalLayoutGroup layout = gameObject.AddComponent<VerticalLayoutGroup>();
@@ -115,7 +117,7 @@ namespace SS.UI
 			GameObjectUtils.RectTransform( toolTip, "Title", Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, out title, out titleTransform );
 			titleText = title.AddComponent<TextMeshProUGUI>();
 			titleText.text = "";
-			titleText.font = FontManager.uiFont;
+			titleText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			titleText.color = FontManager.lightColor;
 			titleText.fontSize = titleFontSize;
 			titleText.fontWeight = titleFontWeight;
@@ -265,7 +267,7 @@ namespace SS.UI
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.raycastTarget = false;
 			textText.text = text ?? "";
-			textText.font = FontManager.uiFont;
+			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = textFontWeight;
@@ -338,7 +340,7 @@ namespace SS.UI
 
 			TextMeshProUGUI labelText = labelGameObject.AddComponent<TextMeshProUGUI>();
 			labelText.text = label ?? "";
-			labelText.font = FontManager.uiFont;
+			labelText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			labelText.color = FontManager.lightColor;
 			labelText.fontSize = textFontSize;
 			labelText.fontWeight = FontWeight.Thin;
@@ -361,7 +363,7 @@ namespace SS.UI
 
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.text = text ?? "";
-			textText.font = FontManager.uiFont;
+			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = FontWeight.Thin;
@@ -421,7 +423,7 @@ namespace SS.UI
 
 			TextMeshProUGUI textText = textGO.AddComponent<TextMeshProUGUI>();
 			textText.text = text ?? "";
-			textText.font = FontManager.uiFont;
+			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			textText.color = FontManager.lightColor;
 			textText.fontSize = textFontSize;
 			textText.fontWeight = FontWeight.Thin;

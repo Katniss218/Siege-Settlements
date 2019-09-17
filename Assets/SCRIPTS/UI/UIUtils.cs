@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using SS.Content;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -17,7 +18,7 @@ namespace SS.UI
 			{
 				if( __text == null )
 				{
-					__text = Resources.Load<GameObject>( "Prefabs/UI/text" );
+					__text = AssetManager.GetPrefab( "resource:Prefabs/UI/text" );
 				}
 				return __text;
 			}
@@ -30,7 +31,7 @@ namespace SS.UI
 			{
 				if( __icon == null )
 				{
-					__icon = Resources.Load<GameObject>( "Prefabs/UI/icon" );
+					__icon = AssetManager.GetPrefab( "resource:Prefabs/UI/icon" );
 				}
 				return __icon;
 			}
@@ -43,7 +44,7 @@ namespace SS.UI
 			{
 				if( __textButton == null )
 				{
-					__textButton = Resources.Load<GameObject>( "Prefabs/UI/button_text" );
+					__textButton = AssetManager.GetPrefab( "resource:Prefabs/UI/button_text" );
 				}
 				return __textButton;
 			}
@@ -56,7 +57,7 @@ namespace SS.UI
 			{
 				if( __iconButton == null )
 				{
-					__iconButton = Resources.Load<GameObject>( "Prefabs/UI/button_icon" );
+					__iconButton = AssetManager.GetPrefab( "resource:Prefabs/UI/button_icon" );
 				}
 				return __iconButton;
 			}
@@ -69,7 +70,7 @@ namespace SS.UI
 			{
 				if( __scrollableGrid == null )
 				{
-					__scrollableGrid = Resources.Load<GameObject>( "Prefabs/UI/scrollable_grid" );
+					__scrollableGrid = AssetManager.GetPrefab( "resource:Prefabs/UI/scrollable_grid" );
 				}
 				return __scrollableGrid;
 			}
@@ -82,7 +83,7 @@ namespace SS.UI
 			{
 				if( __scrollableList == null )
 				{
-					__scrollableList = Resources.Load<GameObject>( "Prefabs/UI/scrollable_list" );
+					__scrollableList = AssetManager.GetPrefab( "resource:Prefabs/UI/scrollable_list" );
 				}
 				return __scrollableList;
 			}

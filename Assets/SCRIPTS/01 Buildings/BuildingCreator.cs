@@ -1,4 +1,5 @@
-﻿using SS.Modules;
+﻿using SS.Content;
+using SS.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -57,7 +58,7 @@ namespace SS.Buildings
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			HUDUnscaled ui = Object.Instantiate( Main.buildingHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDUnscaled>();
+			HUDUnscaled ui = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDUnscaled>();
 
 			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();

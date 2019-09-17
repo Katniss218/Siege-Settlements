@@ -1,5 +1,5 @@
 ﻿using SS.Buildings;
-using SS.Data;
+using SS.Content;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
 using SS.UI;

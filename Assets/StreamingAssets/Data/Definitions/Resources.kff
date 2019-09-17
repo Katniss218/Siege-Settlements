@@ -4,30 +4,30 @@
 		Id = "resource.money";
 		DisplayName = "Money";
 		DefaultDeposit = "resource_deposit.tree";
-		Icon = "Textures/Resources/money";
+		Icon = "asset:Textures/Resources/money";
 	},
 	{
 		Id = "resource.wood";
 		DisplayName = "Wood";
 		DefaultDeposit = "resource_deposit.wood";
-		Icon = "Textures/Resources/wood";
+		Icon = "asset:Textures/Resources/wood";
 	},
 	{
 		Id = "resource.stone";
 		DisplayName = "Stone";
 		DefaultDeposit = "resource_deposit.stone";
-		Icon = "Textures/Resources/stone";
+		Icon = "asset:Textures/Resources/stone";
 	},
 	{
 		Id = "resource.iron";
 		DisplayName = "Iron";
 		DefaultDeposit = "resource_deposit.iron";
-		Icon = "Textures/Resources/iron";
+		Icon = "asset:Textures/Resources/iron";
 	},
 	{
 		Id = "resource.sulphur";
 		DisplayName = "Sulphur";
 		DefaultDeposit = "resource_deposit.sulphur";
-		Icon = "Textures/Resources/sulphur";
+		Icon = "asset:Textures/Resources/sulphur";
 	}
 ];

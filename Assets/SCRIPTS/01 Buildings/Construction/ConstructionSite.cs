@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using Katniss.Utils;
 using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
-using SS.Data;
+using SS.Content;
 using katniss.Utils;
 
 namespace SS.Buildings
@@ -105,8 +105,8 @@ namespace SS.Buildings
 			float spacingX = collider.size.x / (numX + 1);
 			float spacingZ = collider.size.z / (numZ + 1);
 
-			Mesh corner = AssetsManager.GetMesh( "Models/ConstructionSites/Corner.kff" );
-			Mesh segment = AssetsManager.GetMesh( "Models/ConstructionSites/Segment.kff" );
+			Mesh corner = AssetManager.GetMesh( "asset:Models/ConstructionSites/Corner.kff" );
+			Mesh segment = AssetManager.GetMesh( "asset:Models/ConstructionSites/Segment.kff" );
 
 
 			GameObject constructionSiteGfx = new GameObject( "constructionsite" );
@@ -234,7 +234,7 @@ namespace SS.Buildings
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			if( !Building.IsRepairable( damageable ) )
 			{
-				Debug.LogError( gameObject.name + " - Building is not repairable." );
+				throw new Exception( gameObject.name + " - Building is not repairable." );
 			}
 
 			Building building = gameObject.GetComponent<Building>();

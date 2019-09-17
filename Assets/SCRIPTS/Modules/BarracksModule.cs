@@ -1,5 +1,5 @@
 ﻿using SS.Buildings;
-using SS.Data;
+using SS.Content;
 using SS.ResourceSystem.Payment;
 using SS.UI;
 using SS.Units;
@@ -273,6 +273,7 @@ namespace SS.Modules
 
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawSphere( rallyPos, 0.15f );
+			Gizmos.DrawLine( spawnPos, rallyPos );
 		}
 #endif
 	}

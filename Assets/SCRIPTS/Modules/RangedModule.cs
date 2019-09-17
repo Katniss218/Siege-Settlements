@@ -1,5 +1,5 @@
 ﻿using Katniss.Utils;
-using SS.Data;
+using SS.Content;
 using SS.Projectiles;
 using UnityEngine;
 using UnityEngine.AI;

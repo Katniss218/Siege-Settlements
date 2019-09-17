@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace SS.Data
+namespace SS.Content
 {
 	public static class DataManager
 	{
@@ -34,7 +34,7 @@ namespace SS.Data
 		{
 			get
 			{
-				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "GameData";
+				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Data";
 			}
 		}
 
@@ -46,8 +46,8 @@ namespace SS.Data
 		{
 			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;
 		}
-		
-		static List<Definition> registeredDefinitions = new List<Definition>();
+
+		private static List<Definition> registeredDefinitions = new List<Definition>();
 
 		/// <summary>
 		/// Registers a new Definition. Definitions must have a unique ID, even if they are of different definition type.

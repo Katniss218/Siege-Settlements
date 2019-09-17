@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.Data;
+using SS.Content;
 using System;
 using UnityEngine;
 
@@ -21,11 +21,11 @@ namespace SS.Extras
 		{
 			this.id = serializer.ReadString( "Id" );
 			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetsManager.GetMesh( meshPath ) );
+			this.mesh = new Tuple<string, Mesh>( meshPath, AssetManager.GetMesh( meshPath ) );
 			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetsManager.GetTexture2D( albedoPath, TextureType.Albedo ) );
+			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetManager.GetTexture2D( albedoPath, TextureType.Color ) );
 			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetsManager.GetTexture2D( normalPath, TextureType.Normal ) );
+			this.normal = new Tuple<string, Texture2D>( normalPath, AssetManager.GetTexture2D( normalPath, TextureType.Normal ) );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

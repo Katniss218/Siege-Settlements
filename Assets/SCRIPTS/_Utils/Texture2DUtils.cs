@@ -10,6 +10,7 @@ namespace katniss.Utils
 			texture.SetPixel( 0, 0, Color.white );
 			return texture;
 		}
+
 		public static Texture2D CreateBlank( Color color )
 		{
 			Texture2D texture = new Texture2D( 1, 1 );

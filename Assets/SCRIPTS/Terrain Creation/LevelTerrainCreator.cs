@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Content;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -43,7 +44,7 @@ namespace SS.TerrainCreation
 					MeshFilter meshFilter = terrainSegment.AddComponent<MeshFilter>();
 					meshFilter.mesh = meshes[i,j];
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
-					meshRenderer.material = Resources.Load<Material>( "Materials/Ground" );
+					meshRenderer.material = AssetManager.GetMaterial( "resource:Materials/Ground" );
 					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps[i,j] );
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 

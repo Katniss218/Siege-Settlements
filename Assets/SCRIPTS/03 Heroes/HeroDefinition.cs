@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.Data;
+using SS.Content;
 using SS.Modules;
 using System;
 using UnityEngine;
@@ -73,7 +73,7 @@ namespace SS.Heroes
 			this.height = serializer.ReadFloat( "Height" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}

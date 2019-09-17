@@ -1,5 +1,5 @@
 ﻿using SS.Buildings;
-using SS.Data;
+using SS.Content;
 using SS.Inventories;
 using SS.Modules;
 using SS.ResourceSystem;
@@ -70,7 +70,7 @@ namespace SS.Units
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			HUDScaled ui = Object.Instantiate( Main.unitHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
+			HUDScaled ui = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/unit_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
 			Image hudResourceIcon = ui.transform.Find( "Resource" ).Find("Icon").GetComponent<Image>();
 			TextMeshProUGUI hudAmount = ui.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
 

@@ -5,7 +5,7 @@ namespace Katniss.Utils
 {
 	public enum TextureType : byte
 	{
-		Albedo,
+		Color,
 		Normal
 	}
 

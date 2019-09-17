@@ -22,7 +22,6 @@ namespace SS.Extras
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
-#warning TODO - custom class for handling assigning textures/etc. to materials in a single function.
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.sharedMaterial = Main.materialPlantTransparent;
 			meshRenderer.material.EnableKeyword( "_NORMALMAP" );

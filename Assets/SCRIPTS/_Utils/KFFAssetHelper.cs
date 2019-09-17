@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS;
-using SS.Data;
+using SS.Content;
 using System;
 using UnityEngine;
 
@@ -19,7 +19,7 @@ namespace Katniss.Utils
 		public static Tuple<string, Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Texture2D>( assetPath, AssetsManager.GetTexture2D( assetPath, type ) );
+			return new Tuple<string, Texture2D>( assetPath, AssetManager.GetTexture2D( assetPath, type ) );
 		}
 		
 		/// <summary>
@@ -28,7 +28,7 @@ namespace Katniss.Utils
 		public static Tuple<string, Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Sprite>( assetPath, AssetsManager.GetSprite( assetPath ) );
+			return new Tuple<string, Sprite>( assetPath, AssetManager.GetSprite( assetPath ) );
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace Katniss.Utils
 		public static Tuple<string, Mesh> ReadMeshFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Mesh>( assetPath, AssetsManager.GetMesh( assetPath ) );
+			return new Tuple<string, Mesh>( assetPath, AssetManager.GetMesh( assetPath ) );
 		}
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace Katniss.Utils
 		public static Tuple<string, AudioClip> ReadAudioClipFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, AudioClip>( assetPath, AssetsManager.GetAudioClip( assetPath ) );
+			return new Tuple<string, AudioClip>( assetPath, AssetManager.GetAudioClip( assetPath ) );
 		}
 	}
 }

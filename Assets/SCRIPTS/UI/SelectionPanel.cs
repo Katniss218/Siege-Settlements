@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Content;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +31,7 @@ namespace SS.UI
 		{
 			mode = SelectionPanelMode.Object;
 
-			switcherImage.sprite = Main.switcherObj;
+			switcherImage.sprite = AssetManager.GetSprite( "resource:Textures/obj_lst" );
 			listTransform.gameObject.SetActive( false );
 			objectTransform.gameObject.SetActive( true );
 		}
@@ -39,7 +40,7 @@ namespace SS.UI
 		{
 			mode = SelectionPanelMode.List;
 
-			switcherImage.sprite = Main.switcherList;
+			switcherImage.sprite = AssetManager.GetSprite( "resource:Textures/lst_obj" );
 			listTransform.gameObject.SetActive( true );
 			objectTransform.gameObject.SetActive( false );
 		}

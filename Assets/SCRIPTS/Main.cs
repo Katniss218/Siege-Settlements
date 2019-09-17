@@ -8,6 +8,7 @@ using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine.AI;
 using SS.ResourceSystem;
+using SS.Content;
 
 namespace SS
 {
@@ -16,73 +17,13 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
-		private static AudioClip __aiResponse = null;
-		public static AudioClip aiResponse
-		{
-			get
-			{
-				if( __aiResponse == null ) { __aiResponse = Resources.Load<AudioClip>( "Sounds/ai_response" ); }
-				return __aiResponse;
-			}
-		}
-
-		private static AudioClip __selectSound = null;
-		public static AudioClip selectSound
-		{
-			get
-			{
-				if( __selectSound == null ) { __selectSound = Resources.Load<AudioClip>( "Sounds/select" ); }
-				return __selectSound;
-			}
-		}
-
-		private static AudioClip __deselectSound = null;
-		public static AudioClip deselectSound
-		{
-			get
-			{
-				if( __deselectSound == null ) { __deselectSound = Resources.Load<AudioClip>( "Sounds/deselect" ); }
-				return __deselectSound;
-			}
-		}
-
-		private static GameObject __unitHUD = null;
-		public static GameObject unitHUD
-		{
-			get
-			{
-				if( __unitHUD == null ) { __unitHUD = Resources.Load<GameObject>( "Prefabs/unit_hud" ); }
-				return __unitHUD;
-			}
-		}
-
-		private static GameObject __buildingHUD = null;
-		public static GameObject buildingHUD
-		{
-			get
-			{
-				if( __buildingHUD == null ) { __buildingHUD = Resources.Load<GameObject>( "Prefabs/building_hud" ); }
-				return __buildingHUD;
-			}
-		}
-
-		private static GameObject __heroHUD = null;
-		public static GameObject heroHUD
-		{
-			get
-			{
-				if( __heroHUD == null ) { __heroHUD = Resources.Load<GameObject>( "Prefabs/hero_hud" ); }
-				return __heroHUD;
-			}
-		}
-
-		private static GameObject __particleSystem = null;
+		private static GameObject __particleSystemInstance = null;
 		new public static GameObject particleSystem
 		{
 			get
 			{
-				if( __particleSystem == null ) { __particleSystem = Instantiate( Resources.Load<GameObject>( "Prefabs/Particle System" ) ); }
-				return __particleSystem;
+				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Particle System" ) ); }
+				return __particleSystemInstance;
 			}
 		}
 
@@ -107,82 +48,14 @@ namespace SS
 			}
 		}
 
-		private static Sprite __switcherObj = null;
-		public static Sprite switcherObj
-		{
-			get
-			{
-				if( __switcherObj == null ) { __switcherObj = Resources.Load<Sprite>( "Textures/obj_lst" ); }
-				return __switcherObj;
-			}
-		}
-
-		private static Sprite __switcherList = null;
-		public static Sprite switcherList
-		{
-			get
-			{
-				if( __switcherList == null ) { __switcherList = Resources.Load<Sprite>( "Textures/lst_obj" ); }
-				return __switcherList;
-			}
-		}
-
-		private static Sprite __tooltipBackground = null;
-		public static Sprite toolTipBackground
-		{
-			get
-			{
-				if( __tooltipBackground == null ) { __tooltipBackground = Resources.Load<Sprite>( "Textures/tooltip_background" ); }
-				return __tooltipBackground;
-			}
-		}
-
-		private static Sprite __uiButton = null;
-		public static Sprite uiButton
-		{
-			get
-			{
-				if( __uiButton == null ) { __uiButton = Resources.Load<Sprite>( "Textures/button" ); }
-				return __uiButton;
-			}
-		}
-
-		private static Sprite __uiKnob = null;
-		public static Sprite uiKnob
-		{
-			get
-			{
-				if( __uiKnob == null ) { __uiKnob = Resources.Load<Sprite>( "Textures/knob" ); }
-				return __uiKnob;
-			}
-		}
-
-		private static Sprite __uiScrollArea = null;
-		public static Sprite uiScrollArea
-		{
-			get
-			{
-				if( __uiScrollArea == null ) { __uiScrollArea = Resources.Load<Sprite>( "Textures/scroll_area" ); }
-				return __uiScrollArea;
-			}
-		}
-
-		private static Sprite __uiScrollHandle = null;
-		public static Sprite uiScrollHandle
-		{
-			get
-			{
-				if( __uiScrollHandle == null ) { __uiScrollHandle = Resources.Load<Sprite>( "Textures/scrollbar_handle" ); }
-				return __uiScrollHandle;
-			}
-		}
+		// TODO ----- Change this to class with ShaderType & materials.
 
 		private static Material __materialFactionColored = null;
 		public static Material materialFactionColored
 		{
 			get
 			{
-				if( __materialFactionColored == null ) { __materialFactionColored = new Material( Resources.Load<Shader>( "Shaders/FactionColored" ) ); }
+				if( __materialFactionColored == null ) { __materialFactionColored = AssetManager.GetMaterial( "resource:Materials/FactionColored" ); }
 				return __materialFactionColored;
 			}
 		}
@@ -192,7 +65,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = new Material( Resources.Load<Shader>( "Shaders/FactionColoredDestroyable" ) ); }
+				if( __materialFactionColoredDestroyable == null ) { __materialFactionColoredDestroyable = AssetManager.GetMaterial( "resource:Materials/FactionColoredDestroyable" ); }
 				return __materialFactionColoredDestroyable;
 			}
 		}
@@ -202,7 +75,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = new Material( Resources.Load<Shader>( "Shaders/FCConstructible" ) ); }
+				if( __materialFactionColoredConstructible == null ) { __materialFactionColoredConstructible = AssetManager.GetMaterial( "resource:Materials/FCConstructible" ); }
 				return __materialFactionColoredConstructible;
 			}
 		}
@@ -212,7 +85,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialSolid == null ) { __materialSolid = new Material( Resources.Load<Material>( "Materials/Solid" ) ); }
+				if( __materialSolid == null ) { __materialSolid = AssetManager.GetMaterial( "resource:Materials/Solid" ); }
 				return __materialSolid;
 			}
 		}
@@ -222,7 +95,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantTransparent == null ) { __materialPlantTransparent = new Material( Resources.Load<Shader>( "Shaders/PlantTransparent" ) ); }
+				if( __materialPlantTransparent == null ) { __materialPlantTransparent = AssetManager.GetMaterial( "resource:Materials/PlantTransparent" ); }
 				return __materialPlantTransparent;
 			}
 		}
@@ -232,7 +105,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialPlantSolid == null ) { __materialPlantSolid = new Material( Resources.Load<Shader>( "Shaders/PlantSolid" ) ); }
+				if( __materialPlantSolid == null ) { __materialPlantSolid = AssetManager.GetMaterial( "resource:Materials/PlantSolid" ); }
 				return __materialPlantSolid;
 			}
 		}
@@ -242,7 +115,7 @@ namespace SS
 		{
 			get
 			{
-				if( __materialParticle == null ) { __materialParticle = Resources.Load<Material>( "Materials/Particle" ); }
+				if( __materialParticle == null ) { __materialParticle = AssetManager.GetMaterial( "resource:Materials/Particle" ); }
 				return __materialParticle;
 			}
 		}
@@ -377,7 +250,7 @@ namespace SS
 							if( Physics.Raycast( r, out gridHit, 100, ObjectLayer.TERRAIN_MASK ) )
 							{
 								TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, newV );
-								AudioManager.PlayNew( aiResponse );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
 							}
 						}
 					}
@@ -397,7 +270,7 @@ namespace SS
 									if( inv.CanHold( hitDeposit.resourceId ) )
 									{
 										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
-										AudioManager.PlayNew( aiResponse );
+										AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
 									}
 								}
 							}
@@ -418,7 +291,7 @@ namespace SS
 									if( hitPayment.ContainsWantedResource( inv.GetAll() ) )
 									{
 										TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, hitPayment );
-										AudioManager.PlayNew( aiResponse );
+										AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
 									}
 								}
 							}
@@ -446,7 +319,7 @@ namespace SS
 						}
 						// If it is a building, start repair.
 						ConstructionSite.BeginConstructionOrRepair( hitInfo.collider.gameObject );
-						AudioManager.PlayNew( aiResponse );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
 					}
 				}
 			}
@@ -463,7 +336,7 @@ namespace SS
 						if( pr != null )
 						{
 							// If it is a building, start repair.
-							List<ResourceDefinition> ress = Data.DataManager.GetAllOfType<ResourceDefinition>();
+							List<ResourceDefinition> ress = Content.DataManager.GetAllOfType<ResourceDefinition>();
 
 							foreach( var res in ress )
 							{
@@ -493,7 +366,7 @@ namespace SS
 							if( inv != null )
 							{
 								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
-								AudioManager.PlayNew( aiResponse );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/ai_response" ) );
 							}
 						}
 					}

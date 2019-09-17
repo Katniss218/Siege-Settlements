@@ -1,4 +1,4 @@
-﻿using SS.Data;
+﻿using SS.Content;
 using SS.Extras;
 using SS.Inventories;
 using SS.ResourceSystem;

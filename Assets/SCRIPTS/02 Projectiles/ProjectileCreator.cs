@@ -19,12 +19,13 @@ namespace SS.Projectiles
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
+
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.sharedMaterial = Main.materialSolid;
-			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-
-			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			meshRenderer.material.SetTexture( "_Emission", null );
+			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
+			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
+			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
+			meshRenderer.material.SetTexture( "_EmissionMap", null );
 			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
 			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
 

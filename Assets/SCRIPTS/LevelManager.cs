@@ -1,5 +1,5 @@
 ﻿using KFF;
-using SS.Data;
+using SS.Content;
 using SS.Extras;
 using SS.Heroes;
 using SS.TerrainCreation;
@@ -27,7 +27,7 @@ namespace SS.Levels
 		{
 			// Load the default Siege Settlements data & assets.
 			DataManager.LoadDefaults();
-			AssetsManager.LoadDefaults();
+			//AssetManager.LoadDefaults();
 
 			// Load the per-level data & assets.
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path + System.IO.Path.DirectorySeparatorChar + "level.kff", System.Text.Encoding.UTF8 );
@@ -71,10 +71,10 @@ namespace SS.Levels
 
 		private static void LoadScenePrefabs( out GameObject environment )
 		{
-			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
-			environment = Object.Instantiate( Resources.Load<GameObject>( "Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/__ Camera __" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
+			environment = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/Map Scene/Environment" ), Vector3.zero, Quaternion.identity );
 		}
 
 		private static void OnLevelLoad( string path, GameObject env )
@@ -87,7 +87,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					color[i, j] = Resources.Load<Texture2D>( "colormap/row-" + (size - j) + "-col-" + (i + 1) );
+					color[i, j] = AssetManager.GetTexture2D( "resource:colormap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
 				}
 			}
 			Texture2D[,] height = new Texture2D[size, size];
@@ -95,7 +95,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					height[i, j] = Resources.Load<Texture2D>( "heightmap/row-" + (size - j) + "-col-" + (i + 1) );
+					height[i, j] = AssetManager.GetTexture2D( "resource:heightmap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
 				}
 			}
 			LevelTerrainCreator.SpawnMap( height, color, 6f );

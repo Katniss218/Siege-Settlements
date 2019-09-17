@@ -1,5 +1,5 @@
 ﻿using Katniss.Utils;
-using SS.Data;
+using SS.Content;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using TMPro;
@@ -61,7 +61,7 @@ namespace SS.UI
 			
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.text = amount.ToString();
-			textText.font = FontManager.uiFont;
+			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
 			textText.color = FontManager.darkColor;
 			textText.fontSize = 14;
 			textText.alignment = TextAlignmentOptions.Right;

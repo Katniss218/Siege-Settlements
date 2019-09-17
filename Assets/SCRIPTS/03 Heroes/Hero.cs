@@ -1,4 +1,5 @@
-﻿using SS.Modules;
+﻿using SS.Content;
+using SS.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -57,7 +58,7 @@ namespace SS.Heroes
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			HUDScaled ui = Object.Instantiate( Main.heroHUD, Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
+			HUDScaled ui = Object.Instantiate( AssetManager.GetPrefab( "resource:Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
 
 			ui.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
 			ui.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;

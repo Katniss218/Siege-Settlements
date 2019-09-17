@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.Content;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace SS
@@ -39,13 +40,13 @@ namespace SS
 							if( !SelectionManager.IsHighlighted( obj ) )
 							{
 								SelectionManager.HighlightSelected( obj );
-								AudioManager.PlayNew( Main.selectSound );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
 							}
 						}
 						else
 						{
 							SelectionManager.SelectAndHighlight( obj );
-							AudioManager.PlayNew( Main.selectSound );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
 						}
 					}
 				}
@@ -59,7 +60,7 @@ namespace SS
 					if( numSelected > 0 )
 					{
 						SelectionManager.DeselectAll();
-						AudioManager.PlayNew( Main.deselectSound );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/deselect" ) );
 					}
 				}
 				else
@@ -73,12 +74,12 @@ namespace SS
 						SelectionManager.SelectAndHighlight( obj );
 						if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
 						{
-							AudioManager.PlayNew( Main.selectSound );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/select" ) );
 						}
 					}
 					else
 					{
-						AudioManager.PlayNew( Main.deselectSound );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( "resource:Sounds/deselect" ) );
 					}
 				}
 			}

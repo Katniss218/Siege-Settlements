@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.Data;
+using SS.Content;
 using SS.Modules;
 using SS.Technologies;
 using System;
@@ -81,7 +81,7 @@ namespace SS.Buildings
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 
 			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );

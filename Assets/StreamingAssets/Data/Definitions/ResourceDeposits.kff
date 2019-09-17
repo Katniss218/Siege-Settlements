@@ -1,0 +1,94 @@
+﻿ResourceDeposits =
+[
+	{
+		Id = "resource_deposit.tree";
+		DisplayName = "Tree";
+		ResourceId = "resource.wood"; // Id of the resource that's given by mining this deposit.
+		IsExtracted = false; // If true, the deposit will be 'mined' instantly.
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		// ##### \/ RENDERING \/ #####
+		ShaderType = 1; // 0 - solid, 1 - plants (wavy).
+		Mesh = "asset:Models/ResourceDeposits/Tree.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/tree_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/tree_normal.png";
+		IsMetallic = false;
+		Smoothness = 0.3;
+		PickupSound = "asset:Sounds/ResourceDeposits/tree_chop.wav";
+		DropoffSound = "asset:Sounds/silence.wav"; // Since it can't be placed by default, there's no need for dropoff sound.
+	},
+	{
+		Id = "resource_deposit.stone";
+		DisplayName = "Stone";
+		ResourceId = "resource.stone";
+		IsExtracted = true;
+		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
+		ShaderType = 0;
+		Mesh = "asset:Models/ResourceDeposits/Stone.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/stone_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/stone_normal.png";
+		IsMetallic = false;
+		Smoothness = 0.2;
+		PickupSound = "asset:Sounds/ResourceDeposits/stone_pickup.wav";
+		DropoffSound = "asset:Sounds/ResourceDeposits/stone_dropoff.wav";
+	},
+	{
+		Id = "resource_deposit.pine";
+		DisplayName = "Tree (Pine)";
+		ResourceId = "resource.wood";
+		IsExtracted = false;
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		ShaderType = 1;
+		Mesh = "asset:Models/ResourceDeposits/Pine.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/pine_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/pine_normal.png";
+		IsMetallic = false;
+		Smoothness = 0.3;
+		PickupSound = "asset:Sounds/ResourceDeposits/tree_chop.wav";
+		DropoffSound = "asset:Sounds/silence.wav"; // Since it can't be placed by default, there's no need for dropoff sound.
+	},
+	{
+		Id = "resource_deposit.wood";
+		DisplayName = "Wood";
+		ResourceId = "resource.wood";
+		IsExtracted = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
+		ShaderType = 0;
+		Mesh = "asset:Models/ResourceDeposits/Wood.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/wood_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/wood_normal.png";
+		IsMetallic = false;
+		Smoothness = 0.2;
+		PickupSound = "asset:Sounds/ResourceDeposits/wood_pickup.wav";
+		DropoffSound = "asset:Sounds/ResourceDeposits/wood_dropoff.wav";
+	},
+	{
+		Id = "resource_deposit.iron";
+		DisplayName = "Iron";
+		ResourceId = "resource.iron";
+		IsExtracted = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		ShaderType = 0;
+		Mesh = "asset:Models/ResourceDeposits/Iron.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/iron_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/iron_normal.png";
+		IsMetallic = true;
+		Smoothness = 0.4;
+		PickupSound = "asset:Sounds/ResourceDeposits/iron_pickup.wav";
+		DropoffSound = "asset:Sounds/ResourceDeposits/iron_dropoff.wav";
+	},
+	{
+		Id = "resource_deposit.sulphur";
+		DisplayName = "Sulphur";
+		ResourceId = "resource.sulphur";
+		IsExtracted = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		ShaderType = 0;
+		Mesh = "asset:Models/ResourceDeposits/Sulphur.kff";
+		AlbedoTexture = "asset:Textures/ResourceDeposits/sulphur_albedo.png";
+		NormalTexture = "asset:Textures/ResourceDeposits/sulphur_normal.png";
+		IsMetallic = false;
+		Smoothness = 0.1;
+		PickupSound = "asset:Sounds/ResourceDeposits/sulphur_pickup.wav";
+		DropoffSound = "asset:Sounds/ResourceDeposits/sulphur_dropoff.wav";
+	}
+];

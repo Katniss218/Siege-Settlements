@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.Data;
+using SS.Content;
 using SS.ResourceSystem;
 using System;
 using System.Collections.Generic;

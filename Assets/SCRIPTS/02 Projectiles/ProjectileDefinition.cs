@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using KFF;
-using SS.Data;
+using SS.Content;
 using System;
 using UnityEngine;
 
@@ -38,9 +38,9 @@ namespace SS.Projectiles
 				this.trailEndSize = serializer.ReadFloat( "TrailData.EndSize" );
 			}
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Albedo );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
-			this.trailTexture = serializer.ReadTexture2DFromAssets( "TrailData.Texture", TextureType.Albedo );
+			this.trailTexture = serializer.ReadTexture2DFromAssets( "TrailData.Texture", TextureType.Color );
 			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
 			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
 		}

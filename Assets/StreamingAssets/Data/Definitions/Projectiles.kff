@@ -1,0 +1,20 @@
+﻿Projectiles =
+[
+	{
+		Id = "projectile.arrow";
+		Mesh = "asset:Models/Arrow.kff";
+		AlbedoTexture = "asset:Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "asset:Textures/Units/unit_normal.png";
+		HitSound = "asset:Sounds/arrow_hit.wav";
+		MissSound = "asset:Sounds/arrow_miss.wav";
+		HasTrail = true;
+		TrailData =
+		{
+			Amount = 28;
+			Lifetime = 0.5;
+			StartSize = 0.05;
+			EndSize = 0.02;
+			Texture = "asset:Textures/Particles/arrow_trail.png";
+		};
+	}
+];
