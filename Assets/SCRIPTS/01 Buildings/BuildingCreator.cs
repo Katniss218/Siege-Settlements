@@ -30,15 +30,8 @@ namespace SS.Buildings
 
 			// Material
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.sharedMaterial = Main.materialFactionColoredConstructible;
-			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-			meshRenderer.material.SetFloat( "_Height", def.mesh.Item2.bounds.size.y );
-
-			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			meshRenderer.material.SetTexture( "_Emission", null );
-			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-
+			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionManager.factions[factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
+			
 			// Assign the definition to the building, so it can be accessed later.
 			Building building = container.AddComponent<Building>();
 			building.entrance = def.entrance;

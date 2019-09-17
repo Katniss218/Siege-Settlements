@@ -28,15 +28,8 @@ namespace SS.Heroes
 
 			// Add a material to the unit.
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.sharedMaterial = Main.materialFactionColoredDestroyable;
-			// Set the material's properties to the appropriate values.
-			meshRenderer.material.SetColor( "_FactionColor", FactionManager.factions[factionId].color );
-			meshRenderer.material.SetTexture( "_Albedo", def.albedo.Item2 );
-			meshRenderer.material.SetTexture( "_Normal", def.normal.Item2 );
-			meshRenderer.material.SetTexture( "_Emission", null );
-			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
-			
+			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionManager.factions[factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
+						
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );

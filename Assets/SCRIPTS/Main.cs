@@ -47,9 +47,9 @@ namespace SS
 				return __canvas;
 			}
 		}
-
+		/*
 		// TODO ----- Change this to class with ShaderType & materials.
-
+		
 		private static Material __materialFactionColored = null;
 		public static Material materialFactionColored
 		{
@@ -109,7 +109,7 @@ namespace SS
 				return __materialPlantSolid;
 			}
 		}
-
+		*/
 		private static Material __materialParticle = null;
 		public static Material materialParticle
 		{

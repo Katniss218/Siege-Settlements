@@ -43,9 +43,10 @@ namespace SS.TerrainCreation
 
 					MeshFilter meshFilter = terrainSegment.AddComponent<MeshFilter>();
 					meshFilter.mesh = meshes[i,j];
+
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
-					meshRenderer.material = AssetManager.GetMaterial( "resource:Materials/Ground" );
-					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps[i,j] );
+					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, 0.0f, 0.125f );
+
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 
 					terrainSegment.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;

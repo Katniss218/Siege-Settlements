@@ -21,13 +21,7 @@ namespace SS.Projectiles
 			meshFilter.mesh = def.mesh.Item2;
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.sharedMaterial = Main.materialSolid;
-			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
-			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
-			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
-			meshRenderer.material.SetTexture( "_EmissionMap", null );
-			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			meshRenderer.material.SetFloat( "_Smoothness", 0.5f );
+			meshRenderer.material = MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
 
 			if( def.hasTrail )
 			{

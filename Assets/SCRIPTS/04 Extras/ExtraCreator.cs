@@ -23,13 +23,7 @@ namespace SS.Extras
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.sharedMaterial = Main.materialPlantTransparent;
-			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
-			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
-			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
-			meshRenderer.material.SetFloat( "_BumpScale", 1.0f );
-			meshRenderer.material.SetFloat( "_Metallic", 0.0f );
-			meshRenderer.material.SetFloat( "_Smoothness", 0.25f );
+			meshRenderer.material = MaterialManager.CreatePlantTransparent( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.3333f );
 			
 			
 			return container;

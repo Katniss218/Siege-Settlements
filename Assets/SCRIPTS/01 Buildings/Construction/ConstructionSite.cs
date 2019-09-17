@@ -123,8 +123,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			MeshRenderer meshRenderer = corner00.AddComponent<MeshRenderer>();
-			meshRenderer.material = Main.materialSolid;
-			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 			GameObject corner01 = new GameObject( "c01" );
 			corner01.transform.SetParent( constructionSiteGfx.transform );
@@ -135,8 +134,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner01.AddComponent<MeshRenderer>();
-			meshRenderer.material = Main.materialSolid;
-			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 			GameObject corner10 = new GameObject( "c10" );
 			corner10.transform.SetParent( constructionSiteGfx.transform );
@@ -147,8 +145,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner10.AddComponent<MeshRenderer>();
-			meshRenderer.material = Main.materialSolid;
-			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 			GameObject corner11 = new GameObject( "c11" );
 			corner11.transform.SetParent( constructionSiteGfx.transform );
@@ -159,8 +156,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner11.AddComponent<MeshRenderer>();
-			meshRenderer.material = Main.materialSolid;
-			meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+			meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 
 			for( int i = 0; i < numX; i++ )
@@ -177,8 +173,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line1.AddComponent<MeshRenderer>();
-				meshRenderer.material = Main.materialSolid;
-				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+				meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 				GameObject line2 = new GameObject( "X1-" + i );
 				line2.transform.SetParent( constructionSiteGfx.transform );
@@ -189,8 +184,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line2.AddComponent<MeshRenderer>();
-				meshRenderer.material = Main.materialSolid;
-				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+				meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 			}
 
 			for( int i = 0; i < numZ; i++ )
@@ -207,8 +201,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line1.AddComponent<MeshRenderer>();
-				meshRenderer.material = Main.materialSolid;
-				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+				meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 
 				GameObject line2 = new GameObject( "Z1-" + i );
 				line2.transform.SetParent( constructionSiteGfx.transform );
@@ -219,8 +212,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line2.AddComponent<MeshRenderer>();
-				meshRenderer.material = Main.materialSolid;
-				meshRenderer.material.SetTexture( "_BaseMap", Texture2DUtils.CreateBlank() );
+				meshRenderer.material = MaterialManager.CreateOpaque( Texture2DUtils.CreateBlank(), null, null, 0.0f, 0.2f );
 			}
 
 			return constructionSiteGfx;

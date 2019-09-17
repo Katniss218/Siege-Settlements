@@ -15,7 +15,7 @@ namespace SS.Extras
 
 		public Vector3 size { get; set; }
 
-		public ShaderType shaderType { get; set; }
+		public MaterialType shaderType { get; set; }
 
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
@@ -39,7 +39,7 @@ namespace SS.Extras
 			this.resourceId = serializer.ReadString( "ResourceId" );
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );
 			this.size = serializer.ReadVector3( "Size" );
-			this.shaderType = (ShaderType)serializer.ReadByte( "ShaderType" );
+			this.shaderType = (MaterialType)serializer.ReadByte( "ShaderType" );
 
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );

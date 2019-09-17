@@ -23,15 +23,8 @@ namespace SS.Extras
 			meshFilter.mesh = def.mesh.Item2;
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = def.shaderType == ShaderType.PlantSolid ? Main.materialPlantSolid : Main.materialSolid;
-			meshRenderer.material.EnableKeyword( "_NORMALMAP" );
-			meshRenderer.material.SetTexture( "_BaseMap", def.albedo.Item2 );
-			meshRenderer.material.SetTexture( "_BumpMap", def.normal.Item2 );
-			meshRenderer.material.SetFloat( "_BumpScale", 1.0f );
-			meshRenderer.material.SetTexture( "_EmissionMap", null );
-			meshRenderer.material.SetFloat( "_Metallic", def.isMetallic ? 1.0f : 0.0f );
-			meshRenderer.material.SetFloat( "_Smoothness", def.smoothness );
-
+			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
+			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
 			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
