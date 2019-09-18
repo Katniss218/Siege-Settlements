@@ -19,11 +19,11 @@ namespace SS.Inventories
 		int slotCount { get; }
 
 		/// <summary>
-		/// Fires when resource is added to the inventory. Fired once, per resource id.
+		/// Fires after resource is added to the inventory. Fires once per resource id.
 		/// </summary>
 		_UnityEvent_string_int onAdd { get; }
 		/// <summary>
-		/// Fires when resource is removed from the inventory. Fired once, per resource id.
+		/// Fires after resource is removed from the inventory. Fires once per resource id.
 		/// </summary>
 		_UnityEvent_string_int onRemove { get; }
 

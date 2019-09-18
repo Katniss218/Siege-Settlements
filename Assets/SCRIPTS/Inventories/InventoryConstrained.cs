@@ -252,7 +252,7 @@ namespace SS.Inventories
 				this.resources[i].amount = 0;
 			}
 
-			// Call event per each type, with the counted amount.
+			// Call the event after clearing, once per each type.
 			for( int i = 0; i < res.Length; i++ )
 			{
 				this.onRemove?.Invoke( res[i].Item1, res[i].Item2 ); // be consistent, both inventories call after adding/removing.

@@ -2,6 +2,7 @@
 using SS.Extras;
 using SS.ResourceSystem;
 using SS.UI;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -27,11 +28,17 @@ namespace SS
 				{
 					return;
 				}
-				ResourceDefinition def = DataManager.Get<ResourceDefinition>( deposit.resourceId );
+
 				ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( deposit.id );
+				Dictionary<string, int> itemsInDeposit = deposit.inventory.GetAll();
+
 				ToolTip.Create( 200, def2.displayName );
-				ToolTip.AddIcon( def.icon.Item2 );
-				ToolTip.AddText( "Amount", deposit.amount + "/" + deposit.amountMax );
+				
+				foreach( var kvp in itemsInDeposit )
+				{
+					ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
+					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() ); // TODO ----- method for inventories to check how much resource can be added/removed.
+				}
 				ToolTip.ShowAt( Input.mousePosition );
 			} );
 			onMouseStay.AddListener( ( GameObject gameObject ) =>
@@ -46,35 +53,37 @@ namespace SS
 
 		void Update()
 		{
-			// If the pointer is over raycastable UI elements - stop mouseovering, and return.
+			// If the pointer is over raycastable UI elements - stop mouseovering.
 			if( EventSystem.current.IsPointerOverGameObject() )
 			{
-				onMouseExit?.Invoke( null );
-				
-				return;
-			}
-			GameObject pointerOver = null;
-			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
-			{
-				pointerOver = hitInfo.collider.gameObject;
-				if( pointerOver != currentObjectMouseOver )
-				{
-					onMouseExit?.Invoke( currentObjectMouseOver );
-					onMouseEnter?.Invoke( pointerOver );
-				}
-				else
-				{
-					if( currentObjectMouseOver != null )
-					{
-						onMouseStay?.Invoke( currentObjectMouseOver );
-					}
-				}
+				onMouseExit?.Invoke( currentObjectMouseOver );
+				currentObjectMouseOver = null;
 			}
 			else
 			{
-				onMouseExit?.Invoke( null );
+				GameObject pointerOver = null;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
+				{
+					pointerOver = hitInfo.collider.gameObject;
+					if( pointerOver != currentObjectMouseOver )
+					{
+						onMouseExit?.Invoke( currentObjectMouseOver );
+						onMouseEnter?.Invoke( pointerOver );
+					}
+					else
+					{
+						if( currentObjectMouseOver != null )
+						{
+							onMouseStay?.Invoke( currentObjectMouseOver );
+						}
+					}
+				}
+				else
+				{
+					onMouseExit?.Invoke( null );
+				}
+				currentObjectMouseOver = pointerOver;
 			}
-			currentObjectMouseOver = pointerOver;
 		}
 	}
 }

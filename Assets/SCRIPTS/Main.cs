@@ -232,10 +232,16 @@ namespace SS
 								IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
 								if( inv != null )
 								{
-									if( inv.CanHold( hitDeposit.resourceId ) )
+									// Go pick up if the inventory can hold any of the resources in the deposit.
+									Dictionary<string, int> resourcesInDeposit = hitDeposit.inventory.GetAll();
+									foreach( var kvp in resourcesInDeposit )
 									{
-										TAIGoal.PickupDeposit.AssignTAIGoal( controllableGameObjects[i], hitDeposit );
-										AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+										if( inv.CanHold( kvp.Key ) )
+										{
+											TAIGoal.PickupDeposit.AssignTAIGoal( controllableGameObjects[i], hitDeposit );
+											AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+											break;
+										}
 									}
 								}
 							}

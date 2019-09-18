@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Katniss.Utils;
+using SS.Content;
 using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
-using SS.Content;
-using katniss.Utils;
 
 namespace SS.Buildings
 {

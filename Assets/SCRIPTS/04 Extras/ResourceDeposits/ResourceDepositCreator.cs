@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.Inventories;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Extras
@@ -33,7 +34,7 @@ namespace SS.Extras
 			obstacle.size = def.size;
 			obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
 			obstacle.carving = true;
-
+			/*
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
 			resourceDepositComponent.id = def.id;
 			resourceDepositComponent.resourceId = def.resourceId;
@@ -41,6 +42,30 @@ namespace SS.Extras
 			resourceDepositComponent.amount = amountOfResource;
 			resourceDepositComponent.amountMax = amountOfResource;
 
+			resourceDepositComponent.pickupSound = def.pickupSoundEffect.Item2;
+			resourceDepositComponent.dropoffSound = def.dropoffSoundEffect.Item2;
+			*/
+
+			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
+			depositInventory.SetSlots( new InventoryConstrained.SlotInfo( def.resourceId, amountOfResource ) );
+			depositInventory.Add( def.resourceId, amountOfResource );
+
+			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
+			{
+				throw new System.InvalidOperationException( "You can't leave resources in resource deposits" );
+			} );
+
+			depositInventory.onRemove.AddListener( ( string id, int amount ) =>
+			{
+				if( depositInventory.isEmpty )
+				{
+					Object.Destroy( container );
+				}
+			} );
+
+			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
+			resourceDepositComponent.id = def.id;
+			resourceDepositComponent.isTypeExtracted = def.isExtracted;
 			resourceDepositComponent.pickupSound = def.pickupSoundEffect.Item2;
 			resourceDepositComponent.dropoffSound = def.dropoffSoundEffect.Item2;
 

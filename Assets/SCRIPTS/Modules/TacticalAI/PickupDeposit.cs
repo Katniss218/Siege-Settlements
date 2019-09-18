@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Extras;
 using SS.Inventories;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -44,12 +45,20 @@ namespace SS
 					// Clear the path, when it's in range of the deposit.
 					this.navMeshAgent.ResetPath();
 
+					string idPickedUp = "";
 					int amountPickedUp = 0;
 					if( this.depositToCollect.isTypeExtracted )
 					{
-						if( inventory.CanHold( this.depositToCollect.resourceId ) )
+						Dictionary<string, int> resourcesInDeposit = this.depositToCollect.inventory.GetAll();
+
+						foreach( var kvp in resourcesInDeposit )
 						{
-							amountPickedUp = inventory.Add( this.depositToCollect.resourceId, this.depositToCollect.amount );
+							if( inventory.CanHold( kvp.Key ) )
+							{
+								amountPickedUp = inventory.Add( kvp.Key, kvp.Value );
+								idPickedUp = kvp.Key;
+								break; // Only one resource at a time.
+							}
 						}
 					}
 					else
@@ -58,14 +67,24 @@ namespace SS
 						int amtFloored = Mathf.FloorToInt( amtCollected );
 						if( amtFloored >= 1 )
 						{
-							amountPickedUp = inventory.Add( this.depositToCollect.resourceId, amtFloored );
-							amtCollected -= amtFloored;
+							Dictionary<string, int> resourcesInDeposit = this.depositToCollect.inventory.GetAll();
+
+							foreach( var kvp in resourcesInDeposit )
+							{
+								if( inventory.CanHold( kvp.Key ) )
+								{
+									amountPickedUp = inventory.Add( kvp.Key, amtFloored );
+									idPickedUp = kvp.Key;
+									amtCollected -= amtFloored;
+									break; // Only one resource at a time.
+								}
+							}
 						}
 					}
 
 					if( amountPickedUp != 0 )
 					{
-						this.depositToCollect.PickUp( amountPickedUp );
+						this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
 						AudioManager.PlayNew( this.depositToCollect.pickupSound );
 					}
 				}

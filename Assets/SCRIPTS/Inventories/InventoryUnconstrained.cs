@@ -171,9 +171,19 @@ namespace SS.Inventories
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 
-
+			int? indexOfEmpty = null;
 			for( int i = 0; i < this.resources.Length; i++ )
 			{
+				// Cache first empty slot, to add to it if there is no resource of specified type in the inventory.
+				if( indexOfEmpty == null )
+				{
+					if( this.resources[i].id == "" )
+					{
+						indexOfEmpty = i;
+						continue;
+					}
+				}
+				// If ids are matching, add to the slot.
 				if( this.resources[i].id == id )
 				{
 					int spaceLeft = this.slotCapacity - this.resources[i].amount;
@@ -192,26 +202,22 @@ namespace SS.Inventories
 				}
 			}
 
-			// if no slots with the id were found, try occupying new one.
-
-			for( int i = 0; i < this.resources.Length; i++ )
+			// if no slots with the id were found, try a previously found empty slot.
+			if( indexOfEmpty.HasValue )
 			{
-				if( this.resources[i].id == "" )
+				this.resources[indexOfEmpty.Value].id = id;
+				int spaceLeft = this.slotCapacity - this.resources[indexOfEmpty.Value].amount;
+				if( spaceLeft < amountPref )
 				{
-					this.resources[i].id = id;
-					int spaceLeft = this.slotCapacity - this.resources[i].amount;
-					if( spaceLeft < amountPref )
-					{
-						this.resources[i].amount = this.slotCapacity;
-						this.onAdd?.Invoke( id, spaceLeft );
-						return spaceLeft;
-					}
-					else
-					{
-						this.resources[i].amount += amountPref;
-						this.onAdd?.Invoke( id, amountPref );
-						return amountPref;
-					}
+					this.resources[indexOfEmpty.Value].amount = this.slotCapacity;
+					this.onAdd?.Invoke( id, spaceLeft );
+					return spaceLeft;
+				}
+				else
+				{
+					this.resources[indexOfEmpty.Value].amount += amountPref;
+					this.onAdd?.Invoke( id, amountPref );
+					return amountPref;
 				}
 			}
 			throw new Exception( "The inventory doesn't contain any slots that can hold '" + id + "'." );
@@ -262,7 +268,7 @@ namespace SS.Inventories
 				this.resources[i].amount = 0;
 			}
 
-			// Call event per each type, with the counted amount.
+			// Call the event after clearing, once per each type.
 			for( int i = 0; i < res.Length; i++ )
 			{
 				this.onRemove?.Invoke( res[i].Item1, res[i].Item2 ); // be consistent, both inventories call after adding/removing.

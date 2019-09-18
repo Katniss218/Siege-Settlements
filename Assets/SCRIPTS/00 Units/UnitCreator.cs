@@ -119,6 +119,11 @@ namespace SS.Units
 					{
 						return;
 					}
+					if( hudGameObject == null ) // FIXME ----- seems like this can be called, when the hudGameObject has been destroyed.
+					{
+						Debug.Log( obj );
+						Debug.Log( container );
+					}
 					hudGameObject.SetActive( false );
 				}
 			};
