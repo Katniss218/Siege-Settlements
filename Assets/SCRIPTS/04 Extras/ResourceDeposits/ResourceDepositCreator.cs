@@ -28,24 +28,13 @@ namespace SS.Extras
 			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
-			collider.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			collider.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
 
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
 			obstacle.size = def.size;
-			obstacle.center = new Vector3( 0f, def.size.y / 2f, 0f );
+			obstacle.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
 			obstacle.carving = true;
-			/*
-			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
-			resourceDepositComponent.id = def.id;
-			resourceDepositComponent.resourceId = def.resourceId;
-			resourceDepositComponent.isTypeExtracted = def.isExtracted;
-			resourceDepositComponent.amount = amountOfResource;
-			resourceDepositComponent.amountMax = amountOfResource;
-
-			resourceDepositComponent.pickupSound = def.pickupSoundEffect.Item2;
-			resourceDepositComponent.dropoffSound = def.dropoffSoundEffect.Item2;
-			*/
-
+			
 			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
 			depositInventory.SetSlots( new InventoryConstrained.SlotInfo( def.resourceId, amountOfResource ) );
 			depositInventory.Add( def.resourceId, amountOfResource );

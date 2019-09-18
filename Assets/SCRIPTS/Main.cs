@@ -20,8 +20,11 @@ namespace SS
 	{
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
-		public static bool isHudLocked = false;
+		public static bool isHudLocked { get; private set; }
 
+		/// <summary>
+		/// Called when the HUD becomes locked / unlocked.
+		/// </summary>
 		public static _UnityEvent_bool onHudLockChange = new _UnityEvent_bool();
 
 
