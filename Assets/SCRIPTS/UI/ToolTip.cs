@@ -136,13 +136,13 @@ namespace SS.UI
 		/// <param name="clampToScreen">Should the tooltip be always on the screen, even if the position os outside?</param>
 		public static void MoveTo( Vector2 screenPos, bool clampToScreen )
 		{
-			if( isHidden )
-			{
-				return;
-			}
 			if( toolTip == null )
 			{
 				Init();
+			}
+			if( isHidden )
+			{
+				return;
 			}
 			if( clampToScreen )
 			{
