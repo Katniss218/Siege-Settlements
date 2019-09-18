@@ -31,8 +31,7 @@ namespace SS
 					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
 					return;
 				}
-				if( RaycastDistance.IsInRange( this.depositToCollect.gameObject, this.depositToCollect.transform.position, this.transform.position, 0.75f ) )
-				//	if( Vector3.Distance( this.transform.position, this.depositToCollect.transform.position ) < 1 )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.depositToCollect.transform, 0.75f ) )
 				{
 					IInventory inventory = this.GetComponent<IInventory>();
 

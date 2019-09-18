@@ -2,21 +2,20 @@
 
 namespace Katniss.Utils
 {
-	public static class RaycastDistance
+	public static class PhysicsDistance
 	{
-		public static bool IsInRange( GameObject target, Vector3 targetCenter, Vector3 source, float range )
+		public static bool OverlapInRange( Transform source, Transform target, float range )
 		{
-			int layer = target.layer;
+			int layer = target.gameObject.layer;
+			
 
-			Vector3 direction = targetCenter - source;
+			Collider[] cols = Physics.OverlapSphere( source.position, range, 1 << layer );
 
-			RaycastHit[] hitInfos = Physics.RaycastAll( source, direction, range, 1 << layer );
-
-			if( hitInfos != null && hitInfos.Length > 0 )
+			if( cols != null && cols.Length > 0 )
 			{
-				for( int i = 0; i < hitInfos.Length; i++ )
+				for( int i = 0; i < cols.Length; i++ )
 				{
-					if( hitInfos[i].collider.gameObject == target )
+					if( cols[i].transform == target )
 					{
 						return true;
 					}
