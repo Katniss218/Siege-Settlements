@@ -110,6 +110,18 @@ namespace SS
 			}
 		}
 
+		public bool IsControllableByPlayer( GameObject go, int playerId )
+		{
+			// Being controllable not necessarily means that you need to be selectable.
+
+			FactionMember factionMember = go.GetComponent<FactionMember>();
+			if( factionMember == null )
+			{
+				return true;
+			}
+			return factionMember.factionId == playerId;
+		}
+
 		void Update()
 		{
 			if( Input.GetMouseButtonDown( 1 ) )
@@ -148,6 +160,18 @@ namespace SS
 
 					
 					Selectable[] selected = SelectionManager.selectedObjects;
+					
+					List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
+
+					// Get the selected and controllable objects as array of GameObjects.
+					for( int i = 0; i < selected.Length; i++ )
+					{
+						if( IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+						{
+							controllableGameObjects.Add( selected[i].gameObject );
+						}
+					}
+
 
 					if( hitDeposit == null && hitPayment == null && terrainHitPos.HasValue )
 					{
@@ -155,16 +179,11 @@ namespace SS
 						// MOVE.
 						//
 
-						// Get the selected object as array of GameObjects.
-						GameObject[] selectedGameObjects = new GameObject[selected.Length];
 						float biggestRadius = float.MinValue;
 
-						for( int i = 0; i < selected.Length; i++ )
+						for( int i = 0; i < controllableGameObjects.Count; i++ )
 						{
-							selectedGameObjects[i] = selected[i].gameObject;
-
-
-							NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
+							NavMeshAgent navMeshAgent = controllableGameObjects[i].GetComponent<NavMeshAgent>();
 							if( navMeshAgent != null )
 							{
 								if( navMeshAgent.radius > biggestRadius )
@@ -175,13 +194,13 @@ namespace SS
 						}
 
 						//Calculate the grid position.
-						TAIGoal.MoveTo.GridPositionInfo grid = TAIGoal.MoveTo.GetGridPositions( selectedGameObjects );
+						TAIGoal.MoveTo.GridPositionInfo grid = TAIGoal.MoveTo.GetGridPositions( controllableGameObjects );
 
 						foreach( var kvp in grid.positions )
 						{
-							const float GRID_SPACING = 0.125f;
+							const float GRID_MARGIN = 0.125f;
 
-							Vector3 newV = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_SPACING );
+							Vector3 newV = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_MARGIN );
 														
 							RaycastHit gridHit;
 							Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
@@ -200,14 +219,14 @@ namespace SS
 							// PICKUP DEPOSIT.
 							//
 
-							for( int i = 0; i < selected.Length; i++ )
+							for( int i = 0; i < controllableGameObjects.Count; i++ )
 							{
-								IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+								IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
 								if( inv != null )
 								{
 									if( inv.CanHold( hitDeposit.resourceId ) )
 									{
-										TAIGoal.PickupDeposit.AssignTAIGoal( selected[i].gameObject, hitDeposit );
+										TAIGoal.PickupDeposit.AssignTAIGoal( controllableGameObjects[i], hitDeposit );
 										AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 									}
 								}
@@ -220,15 +239,15 @@ namespace SS
 							// PAY.
 							//
 
-							for( int i = 0; i < selected.Length; i++ )
+							for( int i = 0; i < controllableGameObjects.Count; i++ )
 							{
-								IInventory inv = selected[i].gameObject.GetComponent<IInventory>();
+								IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
 								if( inv != null )
 								{
 									// Assign the makePayment TAIGoal only if the selected object contains wanted resource in the inv.
 									if( hitPayment.ContainsWantedResource( inv.GetAll() ) )
 									{
-										TAIGoal.MakePayment.AssignTAIGoal( selected[i].gameObject, hitPayment );
+										TAIGoal.MakePayment.AssignTAIGoal( controllableGameObjects[i], hitPayment );
 										AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 									}
 								}
@@ -247,16 +266,21 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						if( hitInfo.collider.gameObject.layer != ObjectLayer.BUILDINGS )
+						GameObject gameObject = hitInfo.collider.gameObject;
+						if( gameObject.layer != ObjectLayer.BUILDINGS )
 						{
 							return;
 						}
-						if( Building.IsRepairable( hitInfo.collider.GetComponent<Damageable>() ) )
+						if( !IsControllableByPlayer( gameObject, FactionManager.PLAYER ) )
+						{
+							return;
+						}
+						if( !Building.IsRepairable( gameObject.GetComponent<Damageable>() ) )
 						{
 							return;
 						}
 						// If it is a building, start repair.
-						ConstructionSite.BeginConstructionOrRepair( hitInfo.collider.gameObject );
+						ConstructionSite.BeginConstructionOrRepair( gameObject );
 						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 					}
 				}
@@ -270,11 +294,16 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						PaymentReceiver pr = hitInfo.collider.GetComponent<PaymentReceiver>();
+						GameObject gameObject = hitInfo.collider.gameObject;
+						if( !IsControllableByPlayer( gameObject, FactionManager.PLAYER ) )
+						{
+							return;
+						}
+						PaymentReceiver pr = gameObject.GetComponent<PaymentReceiver>();
 						if( pr != null )
 						{
 							// If it is a building, start repair.
-							List<ResourceDefinition> ress = Content.DataManager.GetAllOfType<ResourceDefinition>();
+							List<ResourceDefinition> ress = DataManager.GetAllOfType<ResourceDefinition>();
 
 							foreach( var res in ress )
 							{
@@ -297,13 +326,26 @@ namespace SS
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
 						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
+						
 						Selectable[] selected = SelectionManager.selectedObjects;
+
+						List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
+
+						// Get the selected and controllable objects as array of GameObjects.
 						for( int i = 0; i < selected.Length; i++ )
 						{
-							IInventory inv = selected[i].GetComponent<IInventory>();
+							if( IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+							{
+								controllableGameObjects.Add( selected[i].gameObject );
+							}
+						}
+
+						for( int i = 0; i < controllableGameObjects.Count; i++ )
+						{
+							IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
 							if( inv != null )
 							{
-								TAIGoal.DropOffDeposit.AssignTAIGoal( selected[i].gameObject, hitInfo.point );
+								TAIGoal.DropOffDeposit.AssignTAIGoal( controllableGameObjects[i], hitInfo.point );
 								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 							}
 						}

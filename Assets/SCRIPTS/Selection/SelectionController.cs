@@ -33,7 +33,7 @@ namespace SS
 				if( obj != null )
 				{
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
-					if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
+					if( factionOfSelectable != null )// && factionOfSelectable.factionId == FactionManager.PLAYER )
 					{
 						if( SelectionManager.IsSelected( obj ) )
 						{
@@ -69,7 +69,7 @@ namespace SS
 					SelectionManager.DeselectAll();
 					
 					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
-					if( factionOfSelectable != null && factionOfSelectable.factionId == 0 )
+					if( factionOfSelectable != null ) //&& factionOfSelectable.factionId == FactionManager.PLAYER )
 					{
 						SelectionManager.SelectAndHighlight( obj );
 						if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.

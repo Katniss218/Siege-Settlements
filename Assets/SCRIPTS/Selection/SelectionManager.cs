@@ -6,6 +6,8 @@ namespace SS
 {
 	public class SelectionManager
 	{
+		private static List<Selectable> selected = new List<Selectable>();
+
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
@@ -17,10 +19,11 @@ namespace SS
 			}
 		}
 
-		private static List<Selectable> selected = new List<Selectable>();
-		// Highlighted objects are displayed on the SelectionPanel.Object.
 		private static Selectable highlighted = null;
 
+		/// <summary>
+		/// Contains the object that is currently highlighted.
+		/// </summary>
 		public static Selectable highlightedObject
 		{
 			get
@@ -31,7 +34,6 @@ namespace SS
 		
 		private static void __Highlight( Selectable obj )
 		{
-			// Highlight the new object.
 			highlighted = obj;
 			obj.onHighlight?.Invoke();
 
@@ -42,26 +44,21 @@ namespace SS
 
 		private static void __Select( Selectable obj )
 		{
-			// Add the selected object's icon to the SelectionPanel.List.
 			SelectionPanel.List.AddIcon( obj, obj.icon );
-			// Select the object.
+
 			selected.Add( obj );
-			// Notify the object that's being selected.
 			obj.onSelect?.Invoke();
 		}
 
 		private static void __Deselect( Selectable obj )
 		{
-			// Remove the deselected object's icon from the SelectionPanel.List.
 			SelectionPanel.List.RemoveIcon( obj );
-			// If the object is highlighted:
-			// - Un-highlight it.
+
 			if( IsHighlighted( obj ) )
 			{
 				SelectionPanel.Object.Clear();
 				highlighted = null;
 			}
-			// Notify the object that's being deselected.
 			obj.onDeselect?.Invoke();
 		}
 
@@ -72,12 +69,12 @@ namespace SS
 		/// <param name="callingObj">The object whoose SelectionPanel.Object is to be recalculated. Can be null to specify any object.</param>
 		internal static void ForceSelectionUIRedraw( Selectable callingObj )
 		{
-			// Check if the object even needs updating (if it's not highlighted, then not).
+			// Check if the object even needs updating.
 			if( callingObj != null && !IsHighlighted( callingObj ) )
 			{
 				return;
 			}
-			// Clear the current UI.
+
 			SelectionPanel.Object.Clear();
 
 			// if there's no need to update (nothing highlighted), return.
@@ -85,7 +82,6 @@ namespace SS
 			{
 				return;
 			}
-			// Notify the listeners to redraw the UI in the (possibly) updated form.
 			highlighted.onSelectionUIRedraw?.Invoke();
 		}
 
@@ -116,12 +112,9 @@ namespace SS
 		{
 			if( !selected.Contains( obj ) )
 			{
-				Debug.LogError( "Attempted to highlight object that is NOT selected." );
+				throw new System.Exception( "Attempted to highlight object that is NOT selected." );
 			}
-			else
-			{
-				__Highlight( obj );
-			}
+			__Highlight( obj );
 		}
 
 		/// <summary>
@@ -169,19 +162,15 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			// Clear the SelectionPanel.Object, and SelectionPanel.List.
 			SelectionPanel.Object.Clear();
 			SelectionPanel.List.Clear();
-
-			// Notify every object that's being deselected of the fact.
+			
 			for( int i = 0; i < selected.Count; i++ )
 			{
 				selected[i].onDeselect?.Invoke();
 			}
-
-			// Un-highlight the highlighted object.
+			
 			highlighted = null;
-			// Deselect every object.
 			selected.Clear();
 		}
 	}

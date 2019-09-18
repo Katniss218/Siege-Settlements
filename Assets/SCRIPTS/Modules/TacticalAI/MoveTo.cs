@@ -54,9 +54,10 @@ namespace SS
 			/// <summary>
 			/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 			/// </summary>
-			public static GridPositionInfo GetGridPositions( GameObject[] objects )
+			public static GridPositionInfo GetGridPositions( List<GameObject> objects )
 			{
-				int sideLen = Mathf.CeilToInt( Mathf.Sqrt( objects.Length ) );
+				int count = objects.Count;
+				int sideLen = Mathf.CeilToInt( Mathf.Sqrt( count ) );
 
 				Dictionary<GameObject, Vector2Int> ret = new Dictionary<GameObject, Vector2Int>();
 
@@ -67,7 +68,7 @@ namespace SS
 					for( z = 0; z < sideLen; z++ )
 					{
 						// If we calculated every object, return (since the sideLen ^ 2 can be bigger than the number of objects).
-						if( i >= objects.Length )
+						if( i >= count )
 						{
 							return new GridPositionInfo() { positions = ret, sizeX = x + 1, sizeZ = z + 1 };
 						}

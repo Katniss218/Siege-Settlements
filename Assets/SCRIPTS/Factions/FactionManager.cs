@@ -2,6 +2,8 @@
 {
 	public static class FactionManager
 	{
+		public const int PLAYER = 0;
+
 		/// <summary>
 		/// The currently registered factions.
 		/// </summary>

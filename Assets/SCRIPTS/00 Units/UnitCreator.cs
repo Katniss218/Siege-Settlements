@@ -154,18 +154,7 @@ namespace SS.Units
 					}
 				}
 			} );
-			/*if( factionId == 0 ) // If player, update the resource panel.
-			{
-				inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
-				{
-					Main.resourcePanel.UpdateResourceEntry( inventory.resourceId, inventory.resourceAmount );
-				} );
-				inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
-				{
-					Main.resourcePanel.UpdateResourceEntry( inventory.resourceId, inventory.resourceAmount );
-				} );
-			}*/
-			
+						
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
