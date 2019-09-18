@@ -15,10 +15,22 @@ namespace SS
 
 		public static GameObject currentObjectMouseOver { get; private set; }
 
+		/// <summary>
+		/// Called when mouse starts hovering over specific object.
+		/// </summary>
 		public static _UnityEvent_GameObject onMouseEnter = new _UnityEvent_GameObject();
+
+		/// <summary>
+		/// Called every frame, when while the mouse is hovering over specific object.
+		/// </summary>
 		public static _UnityEvent_GameObject onMouseStay = new _UnityEvent_GameObject();
+
+		/// <summary>
+		/// Called when mouse stops hovering over specific object.
+		/// </summary>
 		public static _UnityEvent_GameObject onMouseExit = new _UnityEvent_GameObject();
 		
+
 		void Start()
 		{
 			onMouseEnter.AddListener( ( GameObject gameObject ) =>
@@ -37,7 +49,7 @@ namespace SS
 				foreach( var kvp in itemsInDeposit )
 				{
 					ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
-					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() ); // TODO ----- method for inventories to check how much resource can be added/removed.
+					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() ); // FIXME ----- method for inventories to check how much resource can be added/removed.
 				}
 				ToolTip.ShowAt( Input.mousePosition );
 			} );
@@ -53,36 +65,61 @@ namespace SS
 
 		void Update()
 		{
-			// If the pointer is over raycastable UI elements - stop mouseovering.
+			// If the object under mouse pointer has changed to null (stopped mouseovering).
 			if( EventSystem.current.IsPointerOverGameObject() )
 			{
-				onMouseExit?.Invoke( currentObjectMouseOver );
-				currentObjectMouseOver = null;
+				// Only call the onMouseExit if the pointer leaves object that was there (!= null).
+				if( currentObjectMouseOver != null )
+				{
+					onMouseExit?.Invoke( currentObjectMouseOver );
+
+					currentObjectMouseOver = null; // newObjectMouseOver
+				}
 			}
 			else
 			{
-				GameObject pointerOver = null;
+				GameObject newObjectMouseOver = null;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 				{
-					pointerOver = hitInfo.collider.gameObject;
-					if( pointerOver != currentObjectMouseOver )
+					newObjectMouseOver = hitInfo.collider.gameObject;
+
+					// If the object under mouse pointer has not changed (the same object or still nothing).
+					if( newObjectMouseOver == currentObjectMouseOver )
 					{
-						onMouseExit?.Invoke( currentObjectMouseOver );
-						onMouseEnter?.Invoke( pointerOver );
-					}
-					else
-					{
+						// Only call the onMouseStay if the pointer hovers over object that is there (!= null).
 						if( currentObjectMouseOver != null )
 						{
 							onMouseStay?.Invoke( currentObjectMouseOver );
 						}
 					}
+					// If the object under mouse pointer has changed (either to another object or stopped mouseovering).
+					else
+					{
+						// Only call the onMouseExit if the pointer leaves object that was there (!= null).
+						if( currentObjectMouseOver != null )
+						{
+							onMouseExit?.Invoke( currentObjectMouseOver );
+						}
+
+						currentObjectMouseOver = newObjectMouseOver;
+
+						// Only call the onMouseEnter if the pointer enters object that is there (!= null).
+						if( currentObjectMouseOver != null )
+						{
+							onMouseEnter?.Invoke( currentObjectMouseOver );
+						}
+					}
 				}
 				else
 				{
-					onMouseExit?.Invoke( null );
+					// Only call the onMouseExit if the pointer leaves object that was there (!= null).
+					if( currentObjectMouseOver != null )
+					{
+						onMouseExit?.Invoke( currentObjectMouseOver );
+
+						currentObjectMouseOver = null;
+					}
 				}
-				currentObjectMouseOver = pointerOver;
 			}
 		}
 	}
