@@ -12,7 +12,7 @@ namespace SS
 	{
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
-		private GameObject currentObjectMouseOver;
+		public static GameObject currentObjectMouseOver { get; private set; }
 
 		public static _UnityEvent_GameObject onMouseEnter = new _UnityEvent_GameObject();
 		public static _UnityEvent_GameObject onMouseStay = new _UnityEvent_GameObject();

@@ -3,6 +3,7 @@ using SS.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace SS.Heroes
 {
@@ -52,17 +53,93 @@ namespace SS.Heroes
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			HUDScaled ui = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDScaled>();
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
+			hudGameObject.SetActive( false ); // HUD is hidden by default.
 
-			ui.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
-			ui.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;
+			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
+
+			hud.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
+			hud.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;
+
+			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
+			{
+				if( isLocked )
+				{
+					hudGameObject.SetActive( true );
+				}
+				else
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					if( MouseOverHandler.currentObjectMouseOver == container )
+					{
+						return;
+					}
+					hudGameObject.SetActive( false );
+				}
+			};
+
+			Main.onHudLockChange.AddListener( onHudLockChangeListener );
+
+			UnityAction<GameObject> onMouseEnterListener = ( GameObject obj ) =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( obj == container )
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					hudGameObject.SetActive( true );
+				}
+			};
+
+			UnityAction<GameObject> onMouseExitListener = ( GameObject obj ) =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( obj == container )
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					hudGameObject.SetActive( false );
+				}
+			};
+
+			// Show HUD only when mouseovered or selected.
+			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
+			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
+
+			selectable.onSelect.AddListener( () =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( MouseOverHandler.currentObjectMouseOver == container )
+				{
+					return;
+				}
+				hudGameObject.SetActive( true );
+			} );
+
+			selectable.onDeselect.AddListener( () =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( MouseOverHandler.currentObjectMouseOver == container )
+				{
+					return;
+				}
+				hudGameObject.SetActive( false );
+			} );
+
 
 			// Make the unit belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = FactionManager.factions[factionMember.factionId].color;
-				ui.SetColor( color );
+				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
@@ -73,14 +150,14 @@ namespace SS.Heroes
 			damageable.onHealthChange.AddListener( (float deltaHP) =>
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
-				ui.SetHealthBarFill( damageable.healthPercent );
+				hud.SetHealthBarFill( damageable.healthPercent );
 
 				SelectionManager.ForceSelectionUIRedraw( selectable );
 			} );
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
 			{
-				Object.Destroy( ui.gameObject );
+				Object.Destroy( hud.gameObject );
 				// for breakup make several meshes that are made up of the original one, attach physics to them.
 				// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
 				// when the scale reaches 0.x, remove the piece.
@@ -90,7 +167,10 @@ namespace SS.Heroes
 				{
 					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-
+				// Remove the now unused listeners.
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
+				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 			selectable.onSelectionUIRedraw.AddListener( () =>
 			{
@@ -118,7 +198,7 @@ namespace SS.Heroes
 			// Make the unit update it's UI's position every frame.
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{
-				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
+				hud.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
 
 			return container;

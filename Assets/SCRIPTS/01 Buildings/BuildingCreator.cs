@@ -3,6 +3,7 @@ using SS.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace SS.Buildings
 {
@@ -51,14 +52,90 @@ namespace SS.Buildings
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			HUDUnscaled ui = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs ).GetComponent<HUDUnscaled>();
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
+			hudGameObject.SetActive( false ); // HUD is hidden by default.
+
+			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
+
+			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
+			{
+				if( isLocked )
+				{
+					hudGameObject.SetActive( true );
+				}
+				else
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					if( MouseOverHandler.currentObjectMouseOver == container )
+					{
+						return;
+					}
+					hudGameObject.SetActive( false );
+				}
+			};
+
+			Main.onHudLockChange.AddListener( onHudLockChangeListener );
+
+			UnityAction<GameObject> onMouseEnterListener = ( GameObject obj ) =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( obj == container )
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					hudGameObject.SetActive( true );
+				}
+			};
+
+			UnityAction<GameObject> onMouseExitListener = ( GameObject obj ) =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( obj == container )
+				{
+					if( SelectionManager.IsSelected( selectable ) )
+					{
+						return;
+					}
+					hudGameObject.SetActive( false );
+				}
+			};
+
+			// Show HUD only when mouseovered or selected.
+			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
+			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
+
+			selectable.onSelect.AddListener( () =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( MouseOverHandler.currentObjectMouseOver == container )
+				{
+					return;
+				}
+				hudGameObject.SetActive( true );
+			} );
+
+			selectable.onDeselect.AddListener( () =>
+			{
+				if( Main.isHudLocked ) { return; }
+				if( MouseOverHandler.currentObjectMouseOver == container )
+				{
+					return;
+				}
+				hudGameObject.SetActive( false );
+			} );
+
 
 			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = FactionManager.factions[factionMember.factionId].color;
-				ui.SetColor( color );
+				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			factionMember.factionId = factionId;
@@ -81,7 +158,7 @@ namespace SS.Buildings
 			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				ui.SetHealthBarFill( damageable.healthPercent );
+				hud.SetHealthBarFill( damageable.healthPercent );
 				SelectionManager.ForceSelectionUIRedraw( selectable );
 			} );
 			// When the building dies:
@@ -90,12 +167,16 @@ namespace SS.Buildings
 			// - Play the death sound.
 			damageable.onDeath.AddListener( () =>
 			{
-				Object.Destroy( ui.gameObject );
+				Object.Destroy( hud.gameObject );
 				if( SelectionManager.IsSelected( selectable ) )
 				{
 					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
+				// Remove the now unused listeners.
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
+				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 			selectable.onSelectionUIRedraw.AddListener( () =>
 			{
@@ -125,7 +206,7 @@ namespace SS.Buildings
 			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{
-				ui.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
+				hud.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
 			};
 
 

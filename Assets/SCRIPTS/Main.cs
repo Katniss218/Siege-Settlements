@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 using SS.ResourceSystem;
 using SS.Content;
+using UnityEngine.Events;
 
 namespace SS
 {
@@ -17,6 +18,13 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
+		public class _UnityEvent_bool : UnityEvent<bool> { }
+
+		public static bool isHudLocked = false;
+
+		public static _UnityEvent_bool onHudLockChange = new _UnityEvent_bool();
+
+
 		private static GameObject __particleSystemInstance = null;
 		new public static GameObject particleSystem
 		{
@@ -134,7 +142,7 @@ namespace SS
 
 					ResourceDeposit hitDeposit = null;
 					PaymentReceiver hitPayment = null;
-					
+
 					for( int i = 0; i < raycastHits.Length; i++ )
 					{
 						if( raycastHits[i].collider.gameObject.layer == ObjectLayer.TERRAIN )
@@ -158,9 +166,9 @@ namespace SS
 					}
 
 
-					
+
 					Selectable[] selected = SelectionManager.selectedObjects;
-					
+
 					List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
 
 					// Get the selected and controllable objects as array of GameObjects.
@@ -201,7 +209,7 @@ namespace SS
 							const float GRID_MARGIN = 0.125f;
 
 							Vector3 newV = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_MARGIN );
-														
+
 							RaycastHit gridHit;
 							Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
 							if( Physics.Raycast( r, out gridHit, 100, ObjectLayer.TERRAIN_MASK ) )
@@ -212,7 +220,7 @@ namespace SS
 						}
 					}
 					else
-					{						
+					{
 						if( hitDeposit != null )
 						{
 							//
@@ -232,7 +240,7 @@ namespace SS
 								}
 							}
 						}
-						
+
 						if( hitPayment != null )
 						{
 							//
@@ -326,7 +334,7 @@ namespace SS
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
 						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
-						
+
 						Selectable[] selected = SelectionManager.selectedObjects;
 
 						List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
@@ -351,6 +359,12 @@ namespace SS
 						}
 					}
 				}
+			}
+			if( Input.GetKeyDown( KeyCode.Tab ) )
+			{
+				isHudLocked = !isHudLocked;
+
+				onHudLockChange?.Invoke( isHudLocked );
 			}
 		}
 	}
