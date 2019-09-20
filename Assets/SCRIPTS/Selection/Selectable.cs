@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace SS
@@ -8,6 +9,16 @@ namespace SS
 	/// </summary>
 	public class Selectable : MonoBehaviour
 	{
+		private static List<Selectable> __every = new List<Selectable>();
+
+		/// <summary>
+		/// Returns every selectable object in the scene that's currently active and enabled.
+		/// </summary>
+		public static Selectable[] GetAllInScene()
+		{
+			return __every.ToArray();
+		}
+
 		/// <summary>
 		/// The icon that is shown on the list of all selected objects.
 		/// </summary>
@@ -33,5 +44,16 @@ namespace SS
 		/// </summary>
 		public UnityEvent onSelectionUIRedraw = new UnityEvent();
 
+
+		// Cache the existing selectables to greatly reduce load (searching objects).
+		void OnEnable()
+		{
+			__every.Add( this );
+		}
+
+		void OnDisable()
+		{
+			__every.Remove( this );
+		}
 	}
 }

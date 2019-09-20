@@ -1,4 +1,7 @@
-﻿using SS.Content;
+﻿using Katniss.Utils;
+using SS.Content;
+using SS.UI;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -6,83 +9,190 @@ namespace SS
 {
 	public class SelectionController : MonoBehaviour
 	{
+		private const float XY_THRESHOLD = 4f;
+		private const float MAGN_THRESHOLD = 16f;
+
 		void Update()
 		{
-			// if the click was over UI element, return.
-			if( EventSystem.current.IsPointerOverGameObject() )
-			{
-				return;
-			}
-
 			// If the left mouse button was pressed.
 			if( Input.GetMouseButtonDown( 0 ) )
 			{
-				HandleSelecting();
+				oldMousePos = Input.mousePosition;
+			}
+			// If the left mouse button was pressed.
+			if( Input.GetMouseButton( 0 ) )
+			{
+				if( !isDragging )
+				{
+					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
+						Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
+					{
+						BeginDrag();
+					}
+				}
+				if( isDragging )
+				{
+					UpdateDrag();
+				}
+			}
+			// If the left mouse button was released.
+			if( Input.GetMouseButtonUp( 0 ) )
+			{
+				if( isDragging )
+				{
+					Selectable[] overlap = GetSelectablesInDragArea();
+					
+					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+					
+
+					EndDrag();
+				}
+				else
+				{
+					// if the click was over UI element, return.
+					if( EventSystem.current.IsPointerOverGameObject() )
+					{
+						return;
+					}
+					HandleSelecting( new Selectable[] { GetSelectableAtCursor() }, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+				}
 			}
 		}
 
-		internal static void HandleSelecting()
+		private enum SelectionMode : byte
 		{
-			Selectable obj = GetSelectableAtCursor();
+			Additive,
+			Exclusive
+		}
 
+		public static bool isDragging { get; private set; }
+
+		private static Vector2 beginDragPos;
+
+		private static RectTransform selectionRect = null;
+
+		private static Vector3 oldMousePos;
+
+		private static void InitRect()
+		{
+			GameObject obj;
+			RectTransform t;
+
+			GameObjectUtils.RectTransform( Main.canvas.transform, "SelectionRect", new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), out obj, out t );
+
+			obj.AddImageSliced( AssetManager.GetSprite( AssetManager.RESOURCE_ID + "Textures/selection_rect" ), false );
+
+			selectionRect = t;
+		}
+
+		private static void BeginDrag()
+		{
+			if( selectionRect == null )
+			{
+				InitRect();
+			}
+			isDragging = true;
+			selectionRect.gameObject.SetActive( true );
+			beginDragPos = Input.mousePosition;
+		}
+
+		private static void UpdateDrag()
+		{
+			if( selectionRect == null )
+			{
+				throw new System.Exception( "UpdateDrag called before BeginDrag" );
+			}
+			selectionRect.sizeDelta = new Vector2( Mathf.Abs( beginDragPos.x - Input.mousePosition.x ), Mathf.Abs( beginDragPos.y - Input.mousePosition.y ) );
+			selectionRect.anchoredPosition = new Vector2( Mathf.Min( Input.mousePosition.x, beginDragPos.x ), Mathf.Min( Input.mousePosition.y, beginDragPos.y ) );
+		}
+
+		private static void EndDrag()
+		{
+			isDragging = false;
+			selectionRect.gameObject.SetActive( false );
+		}
+
+		private static void HandleSelecting( Selectable[] uniqueObjs, SelectionMode selectionMode )
+		{
 			// Shift - add to the current selection.
 			// If the object is already selected, but is not highlighted, highlight it.
 			// - (allows for switching of highlighted object within the pool of already selected objects).
-			if( Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
+			if( selectionMode == SelectionMode.Additive )// Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
 			{
-				if( obj != null )
+				if( uniqueObjs != null )
 				{
-					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
-					if( factionOfSelectable != null )// && factionOfSelectable.factionId == FactionManager.PLAYER )
+					for( int i = 0; i < uniqueObjs.Length; i++ )
 					{
-						if( SelectionManager.IsSelected( obj ) )
+						if( uniqueObjs[i] == null )
 						{
-							if( !SelectionManager.IsHighlighted( obj ) )
+							continue;
+						}
+
+						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
+						if( factionOfSelectable != null )
+						{
+							if( Selection.IsSelected( uniqueObjs[i] ) )
 							{
-								SelectionManager.HighlightSelected( obj );
+								if( !Selection.IsHighlighted( uniqueObjs[i] ) )
+								{
+									Selection.HighlightSelected( uniqueObjs[i] );
+									AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+								}
+							}
+							else
+							{
+								Selection.SelectAndHighlight( uniqueObjs[i] );
 								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
 							}
 						}
-						else
-						{
-							SelectionManager.SelectAndHighlight( obj );
-							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
-						}
 					}
 				}
+				return;
 			}
 			// No Shift - deselect all and select at cursor (if possible).
-			else
+			if( selectionMode == SelectionMode.Exclusive )
 			{
-				int numSelected = SelectionManager.selectedObjects.Length;
-				if( obj == null )
+				if( uniqueObjs == null )
 				{
+					int numSelected = Selection.selectedObjects.Length;
 					if( numSelected > 0 )
 					{
-						SelectionManager.DeselectAll();
+						Selection.DeselectAll();
 						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
 					}
 				}
 				else
 				{
-					bool flag = SelectionManager.IsSelected( obj );
-					SelectionManager.DeselectAll();
-					
-					FactionMember factionOfSelectable = obj.GetComponent<FactionMember>();
-					if( factionOfSelectable != null ) //&& factionOfSelectable.factionId == FactionManager.PLAYER )
+					Selection.DeselectAll();
+
+					for( int i = 0; i < uniqueObjs.Length; i++ )
 					{
-						SelectionManager.SelectAndHighlight( obj );
-						if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
+						if( uniqueObjs[i] == null )
 						{
-							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+							continue;
+						}
+
+						bool flag = Selection.IsSelected( uniqueObjs[i] );
+
+						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
+						if( factionOfSelectable != null )
+						{
+							Selection.SelectAndHighlight( uniqueObjs[i] );
+							if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
+							{
+								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+							}
+						}
+						else
+						{
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
 						}
 					}
-					else
-					{
-						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
-					}
 				}
+				return;
 			}
+
+			throw new System.Exception( "Invalid selection mode" );
 		}
 
 		private static Selectable GetSelectableAtCursor()
@@ -95,5 +205,39 @@ namespace SS
 			return null;
 		}
 
+		private static Bounds GetViewportBounds( Camera camera, Vector3 corner1, Vector3 corner2 )
+		{
+			Vector3 c1View = camera.ScreenToViewportPoint( corner1 );
+			Vector3 c2View = camera.ScreenToViewportPoint( corner2 );
+
+			Vector3 min = Vector3.Min( c1View, c2View );
+			min.z = camera.nearClipPlane;
+
+			Vector3 max = Vector3.Max( c1View, c2View );
+			max.z = camera.farClipPlane;
+
+			Bounds ret = new Bounds();
+			ret.SetMinMax( min, max );
+
+			return ret;
+		}
+
+		private static Selectable[] GetSelectablesInDragArea()
+		{
+			Selectable[] selectables = Selectable.GetAllInScene();
+
+			List<Selectable> ret = new List<Selectable>();
+
+			Bounds viewportBounds = GetViewportBounds( Main.camera, new Vector3( beginDragPos.x, beginDragPos.y, 0 ), Input.mousePosition );
+
+			for( int i = 0; i < selectables.Length; i++ )
+			{
+				if( viewportBounds.Contains( Main.camera.WorldToViewportPoint( selectables[i].gameObject.transform.position ) ) )
+				{
+					ret.Add( selectables[i] );
+				}
+			}
+			return ret.ToArray();
+		}
 	}
 }

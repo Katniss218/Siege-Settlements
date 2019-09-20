@@ -3,12 +3,6 @@ using UnityEngine;
 
 namespace Katniss.Utils
 {
-	public enum TextureType : byte
-	{
-		Color,
-		Normal
-	}
-
 	public static class PngImporter
 	{
 		private static byte[] bytes;
@@ -19,17 +13,17 @@ namespace Katniss.Utils
 		public static Texture2D Import( string path, TextureType type )
 		{
 			bytes = File.ReadAllBytes( path );
-			Texture2D tex = null;
+			Texture2D texture = null;
 			if( type == TextureType.Normal )
 			{
-				tex = new Texture2D( 2, 2, TextureFormat.RGB24, true, true );
+				texture = new Texture2D( 2, 2, TextureFormat.RGB24, true, true );
 			}
 			else
 			{
-				tex = new Texture2D( 2, 2 );
+				texture = new Texture2D( 2, 2 );
 			}
-			tex.LoadImage( bytes );
-			return tex;
+			texture.LoadImage( bytes );
+			return texture;
 		}
 
 		public static Sprite MakeSprite( this Texture2D tex )

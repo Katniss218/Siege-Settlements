@@ -149,7 +149,7 @@ namespace SS.Modules
 								{
 									StartResearching( techDef );
 									// Force the Object UI to update and show that now we are researching a tech.
-									SelectionManager.ForceSelectionUIRedraw( selectable );
+									Selection.ForceSelectionUIRedraw( selectable );
 								} ) );
 							}
 							else
@@ -179,14 +179,14 @@ namespace SS.Modules
 						FactionManager.factions[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
 						this.researchedTechnology = null;
 						
-						SelectionManager.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
+						Selection.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
 					}
 
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
 					Selectable selectable = this.GetComponent<Selectable>();
 					if( selectable != null )
 					{
-						SelectionManager.ForceSelectionUIRedraw( selectable );
+						Selection.ForceSelectionUIRedraw( selectable );
 					}
 				}
 			}

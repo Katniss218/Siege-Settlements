@@ -158,7 +158,7 @@ namespace SS.Modules
 								{
 									StartTraining( unitDef );
 									// Force the Object UI to update and show that now we are training a unit.
-									SelectionManager.ForceSelectionUIRedraw( selectable );
+									Selection.ForceSelectionUIRedraw( selectable );
 								} );
 							}
 						}
@@ -213,7 +213,7 @@ namespace SS.Modules
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
 					if( selectable != null )
 					{
-						SelectionManager.ForceSelectionUIRedraw( selectable );
+						Selection.ForceSelectionUIRedraw( selectable );
 					}
 				}
 			}

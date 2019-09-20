@@ -96,7 +96,7 @@ namespace SS.UI
 
 			gameObject.AddComponent<CanvasRenderer>();
 
-			Image img = gameObject.AddImageSliced( tooltipBackground );
+			Image img = gameObject.AddImageSliced( tooltipBackground, false );
 			img.raycastTarget = false;
 
 			VerticalLayoutGroup layout = gameObject.AddComponent<VerticalLayoutGroup>();

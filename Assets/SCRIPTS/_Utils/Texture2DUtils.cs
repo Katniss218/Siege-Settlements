@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace katniss.Utils
+namespace Katniss.Utils
 {
 	public static class Texture2DUtils
 	{
@@ -11,9 +11,17 @@ namespace katniss.Utils
 			return texture;
 		}
 
-		public static Texture2D CreateBlank( Color color )
+		public static Texture2D CreateBlank( Color color, TextureType type )
 		{
-			Texture2D texture = new Texture2D( 1, 1 );
+			Texture2D texture;
+			if( type == TextureType.Normal )
+			{
+				texture = new Texture2D( 2, 2, TextureFormat.RGB24, true, true );
+			}
+			else
+			{
+				texture = new Texture2D( 2, 2, TextureFormat.RGBA32, true );
+			}
 			texture.SetPixel( 0, 0, color );
 			return texture;
 		}

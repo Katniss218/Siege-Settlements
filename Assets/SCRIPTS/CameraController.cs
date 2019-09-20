@@ -69,6 +69,11 @@ namespace SS
 
 		void Update()
 		{
+			// TODO ----- make this abstracted away from selection controller (some sort of lock variable).
+			if( SelectionController.isDragging )
+			{
+				return;
+			}
 			// Move Left-Right
 			if( Input.GetKey( KeyCode.A ) )
 			{

@@ -69,7 +69,7 @@ namespace SS.Heroes
 				}
 				else
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -88,7 +88,7 @@ namespace SS.Heroes
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -101,7 +101,7 @@ namespace SS.Heroes
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -152,7 +152,7 @@ namespace SS.Heroes
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				hud.SetHealthBarFill( damageable.healthPercent );
 
-				SelectionManager.ForceSelectionUIRedraw( selectable );
+				Selection.ForceSelectionUIRedraw( selectable );
 			} );
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
@@ -163,9 +163,9 @@ namespace SS.Heroes
 				// when the scale reaches 0.x, remove the piece.
 
 				// also, play a poof from some particle system for smoke or something at the moment of death.
-				if( SelectionManager.IsSelected( selectable ) )
+				if( Selection.IsSelected( selectable ) )
 				{
-					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );

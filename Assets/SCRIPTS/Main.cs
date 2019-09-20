@@ -170,7 +170,7 @@ namespace SS
 
 
 
-					Selectable[] selected = SelectionManager.selectedObjects;
+					Selectable[] selected = Selection.selectedObjects;
 
 					List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
 
@@ -344,7 +344,7 @@ namespace SS
 					{
 						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
 
-						Selectable[] selected = SelectionManager.selectedObjects;
+						Selectable[] selected = Selection.selectedObjects;
 
 						List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
 

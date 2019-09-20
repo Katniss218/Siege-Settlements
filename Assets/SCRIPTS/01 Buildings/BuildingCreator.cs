@@ -65,7 +65,7 @@ namespace SS.Buildings
 				}
 				else
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -84,7 +84,7 @@ namespace SS.Buildings
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -97,7 +97,7 @@ namespace SS.Buildings
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( SelectionManager.IsSelected( selectable ) )
+					if( Selection.IsSelected( selectable ) )
 					{
 						return;
 					}
@@ -159,7 +159,7 @@ namespace SS.Buildings
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
-				SelectionManager.ForceSelectionUIRedraw( selectable );
+				Selection.ForceSelectionUIRedraw( selectable );
 			} );
 			// When the building dies:
 			// - Destroy the building's UI.
@@ -168,9 +168,9 @@ namespace SS.Buildings
 			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
-				if( SelectionManager.IsSelected( selectable ) )
+				if( Selection.IsSelected( selectable ) )
 				{
-					SelectionManager.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
 				// Remove the now unused listeners.

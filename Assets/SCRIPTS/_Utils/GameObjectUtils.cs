@@ -30,12 +30,13 @@ namespace Katniss.Utils
 
 		}
 		
-		public static Image AddImageSliced( this GameObject gameObject, Sprite sprite )
+		public static Image AddImageSliced( this GameObject gameObject, Sprite sprite, bool raycastTarget )
 		{
 			Image image = gameObject.AddComponent<Image>();
 
 			image.type = Image.Type.Sliced;
 			image.sprite = sprite;
+			image.raycastTarget = raycastTarget;
 
 			return image;
 		}

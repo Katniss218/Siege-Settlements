@@ -346,7 +346,7 @@ namespace SS.Buildings
 				Selectable selectable = building.GetComponent<Selectable>();
 				if( selectable != null )
 				{
-					SelectionManager.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
+					Selection.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
 				}
 			} );
 

@@ -1,4 +1,4 @@
-﻿using katniss.Utils;
+﻿using Katniss.Utils;
 using UnityEngine;
 
 namespace SS.Buildings

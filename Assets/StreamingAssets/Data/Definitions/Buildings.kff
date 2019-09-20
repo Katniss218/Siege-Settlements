@@ -169,7 +169,11 @@
 		};
 		Size = { X = 1.25; Y = 0.55; Z = 0.25; };
 		// Controls snapping to existing buildings.
-		PlacementNodes = [ { X = 0.75; Y = 0.25; Z = 0.0; }, { X = -0.75; Y = 0.25; Z = 0.0; } ];
+		PlacementNodes =
+		[
+			{ X = 0.75; Y = 0.25; Z = 0.0; },
+			{ X = -0.75; Y = 0.25; Z = 0.0; }
+		];
 		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
@@ -197,7 +201,11 @@
 		};
 		Size = { X = 1.25; Y = 0.55; Z = 0.5; };
 		// Controls snapping to existing buildings.
-		PlacementNodes = [ { X = 0.75; Y = 0.25; Z = 0.0; }, { X = -0.75; Y = 0.25; Z = 0.0; } ];
+		PlacementNodes =
+		[
+			{ X = 0.75; Y = 0.25; Z = 0.0; },
+			{ X = -0.75; Y = 0.25; Z = 0.0; }
+		];
 		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[

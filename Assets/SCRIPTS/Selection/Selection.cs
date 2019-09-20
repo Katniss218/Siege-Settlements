@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS
 {
-	public class SelectionManager
+	public class Selection
 	{
 		private static List<Selectable> selected = new List<Selectable>();
 
