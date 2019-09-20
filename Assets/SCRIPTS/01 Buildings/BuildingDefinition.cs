@@ -110,6 +110,7 @@ namespace SS.Buildings
 			{
 				serializer.AppendClass( "Cost" );
 				serializer.WriteString( "Cost." + i, "Id", kvp.Key );
+				serializer.WriteInt( "Cost." + i, "Amount", kvp.Value );
 				i++;
 			}
 
