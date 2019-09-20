@@ -49,7 +49,7 @@ namespace SS
 				foreach( var kvp in itemsInDeposit )
 				{
 					ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
-					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() ); // FIXME ----- method for inventories to check how much resource can be added/removed.
+					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() + "/" + deposit.inventory.GetMaxCapacity( kvp.Key ) );
 				}
 				ToolTip.ShowAt( Input.mousePosition );
 			} );
