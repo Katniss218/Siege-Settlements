@@ -101,6 +101,24 @@ namespace SS.Inventories
 				return true;
 			}
 		}
+
+		public int Get( string id )
+		{
+			if( string.IsNullOrEmpty( id ) )
+			{
+				throw new ArgumentNullException( "Id can't be null or empty." );
+			}
+
+			for( int i = 0; i < this.resources.Length; i++ )
+			{
+				if( this.resources[i].id == id )
+				{
+					return this.resources[i].amount;
+				}
+			}
+			// Resource is not present.
+			return 0;
+		}
 		
 		public Dictionary<string, int> GetAll()
 		{
@@ -116,28 +134,7 @@ namespace SS.Inventories
 			return ret;
 		}
 
-		public bool Has( string id, int amount )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-			if( amount < 1 )
-			{
-				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == id )
-				{
-					return this.resources[i].amount >= amount;
-				}
-			}
-			return false;
-		}
-
-		public bool CanHold( string id )
+		public int GetMaxCapacity( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )
 			{
@@ -148,31 +145,11 @@ namespace SS.Inventories
 			{
 				if( this.resources[i].id == id )
 				{
-					return true;
+					return this.resources[i].slotCapacity;
 				}
 			}
-			return false;
-		}
-
-		public bool CanHold( string id, int amount )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-			if( amount < 1 )
-			{
-				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == id )
-				{
-					return this.resources[i].amount + amount <= this.resources[i].slotCapacity;
-				}
-			}
-			return false;
+			// No slot with the specified id.
+			return 0;
 		}
 
 		public int Add( string id, int amountMax )

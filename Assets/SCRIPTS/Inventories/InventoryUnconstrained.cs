@@ -81,7 +81,29 @@ namespace SS.Inventories
 				return true;
 			}
 		}
-	
+		
+		public int Get( string id )
+		{
+			if( string.IsNullOrEmpty( id ) )
+			{
+				throw new ArgumentNullException( "Id can't be null or empty." );
+			}
+
+			for( int i = 0; i < this.resources.Length; i++ )
+			{
+				if( this.resources[i].id == "" )
+				{
+					continue;
+				}
+				if( this.resources[i].id == id )
+				{
+					return this.resources[i].amount;
+				}
+			}
+			// Resource is not present.
+			return 0;
+		}
+
 		public Dictionary<string, int> GetAll()
 		{
 			if( this.isEmpty )
@@ -99,6 +121,35 @@ namespace SS.Inventories
 				ret.Add( this.resources[i].id, this.resources[i].amount );
 			}
 			return ret;
+		}
+
+		public int GetMaxCapacity( string id )
+		{
+			if( string.IsNullOrEmpty( id ) )
+			{
+				throw new ArgumentNullException( "Id can't be null or empty." );
+			}
+
+			bool foundEmpty = false;
+			for( int i = 0; i < this.resources.Length; i++ )
+			{
+				if( this.resources[i].id == "" )
+				{
+					foundEmpty = true;
+					continue;
+				}
+				if( this.resources[i].id == id )
+				{
+					return slotCapacity;
+				}
+			}
+			// Empty slot is present.
+			if( foundEmpty )
+			{
+				return slotCapacity;
+			}
+			// Every slot occupied by resource with different id.
+			return 0;
 		}
 
 		public bool Has( string id, int amount )

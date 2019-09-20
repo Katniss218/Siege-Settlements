@@ -52,7 +52,7 @@ namespace SS
 
 						foreach( var kvp in resourcesInDeposit )
 						{
-							if( inventory.CanHold( kvp.Key ) )
+							if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
 							{
 								amountPickedUp = inventory.Add( kvp.Key, kvp.Value );
 								idPickedUp = kvp.Key;
@@ -70,7 +70,7 @@ namespace SS
 
 							foreach( var kvp in resourcesInDeposit )
 							{
-								if( inventory.CanHold( kvp.Key ) )
+								if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
 								{
 									amountPickedUp = inventory.Add( kvp.Key, amtFloored );
 									idPickedUp = kvp.Key;

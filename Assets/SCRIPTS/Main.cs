@@ -239,7 +239,7 @@ namespace SS
 									Dictionary<string, int> resourcesInDeposit = hitDeposit.inventory.GetAll();
 									foreach( var kvp in resourcesInDeposit )
 									{
-										if( inv.CanHold( kvp.Key ) )
+										if( inv.GetMaxCapacity( kvp.Key ) != 0 )
 										{
 											TAIGoal.PickupDeposit.AssignTAIGoal( controllableGameObjects[i], hitDeposit );
 											AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );

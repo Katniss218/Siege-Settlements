@@ -19,32 +19,35 @@ namespace SS.Inventories
 		int slotCount { get; }
 
 		/// <summary>
-		/// Fires after resource is added to the inventory. Fires once per resource id.
+		/// Returns the amount of resource contained in the inventory.
 		/// </summary>
-		_UnityEvent_string_int onAdd { get; }
-		/// <summary>
-		/// Fires after resource is removed from the inventory. Fires once per resource id.
-		/// </summary>
-		_UnityEvent_string_int onRemove { get; }
+		// Returns 0 if the resource is not present.
+		int Get( string id );
 
 		/// <summary>
-		/// Returns every resource in the inventory.
+		/// Returns every resource contained in the inventory.
 		/// </summary>
 		Dictionary<string, int> GetAll();
 
 		/// <summary>
+		/// Returns the max amount of specified resource that the inventory can hold.
+		/// </summary>
+		// Returns 0 if the resource can't be contained.
+		int GetMaxCapacity( string id );
+
+		/// <summary>
 		/// Checks if the inventory contains specified amount of specified resource.
 		/// </summary>
-		bool Has( string id, int amount );
+		//[System.Obsolete] bool Has( string id, int amount );
 
 		/// <summary>
 		/// Checks if the inventory has slots that can hold specified resource.
 		/// </summary>
-		bool CanHold( string id );
+		//[System.Obsolete] bool CanHold( string id ); // FIXME - remove obsolete methods
 		/// <summary>
 		/// Checks if the inventory can hold specified amount of specified resource.
 		/// </summary>
-		bool CanHold( string id, int amount );
+		//[System.Obsolete] bool CanHold( string id, int amount );
 
 		/// <summary>
 		/// Adds the specified resource to the inventory. Returns actual the amount of resource added.
@@ -52,6 +55,7 @@ namespace SS.Inventories
 		/// <param name="id">The id of the resource to add.</param>
 		/// <param name="amountMax">The maximum amount of resource that will be added.</param>
 		int Add( string id, int amountMax );
+
 		/// <summary>
 		/// Removes the specified resource from the inventory. Returns actual the amount of resource removed.
 		/// </summary>
@@ -63,6 +67,16 @@ namespace SS.Inventories
 		/// Clears the inventory.
 		/// </summary>
 		void Clear();
+
+
+		/// <summary>
+		/// Fires after resource is added to the inventory. Fires once per resource id.
+		/// </summary>
+		_UnityEvent_string_int onAdd { get; }
+		/// <summary>
+		/// Fires after resource is removed from the inventory. Fires once per resource id.
+		/// </summary>
+		_UnityEvent_string_int onRemove { get; }
 	}
 
 	public class _UnityEvent_string_int : UnityEvent<string, int> { }
