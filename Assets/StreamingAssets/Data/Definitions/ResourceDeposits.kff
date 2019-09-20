@@ -5,9 +5,7 @@
 		DisplayName = "Tree";
 		Resources =
 		[
-			{ Id = "resource.wood"; Capacity = 5; },
-			
-			{ Id = "resource.stone"; Capacity = 5; }
+			{ Id = "resource.wood"; Capacity = 5; }
 		];
 		IsExtracted = false; // If true, the deposit will be 'mined' instantly.
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
