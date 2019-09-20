@@ -3,7 +3,12 @@
 	{
 		Id = "resource_deposit.tree";
 		DisplayName = "Tree";
-		ResourceId = "resource.wood"; // Id of the resource that's given by mining this deposit.
+		Resources =
+		[
+			{ Id = "resource.wood"; Capacity = 5; },
+			
+			{ Id = "resource.stone"; Capacity = 5; }
+		];
 		IsExtracted = false; // If true, the deposit will be 'mined' instantly.
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
@@ -19,7 +24,10 @@
 	{
 		Id = "resource_deposit.stone";
 		DisplayName = "Stone";
-		ResourceId = "resource.stone";
+		Resources =
+		[
+			{ Id = "resource.stone"; Capacity = 20; }
+		];
 		IsExtracted = true;
 		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
 		ShaderType = 0;
@@ -34,7 +42,10 @@
 	{
 		Id = "resource_deposit.pine";
 		DisplayName = "Tree (Pine)";
-		ResourceId = "resource.wood";
+		Resources =
+		[
+			{ Id = "resource.wood"; Capacity = 5; }
+		];
 		IsExtracted = false;
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 2;
@@ -49,7 +60,10 @@
 	{
 		Id = "resource_deposit.wood";
 		DisplayName = "Wood";
-		ResourceId = "resource.wood";
+		Resources =
+		[
+			{ Id = "resource.wood"; Capacity = 2; }
+		];
 		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
 		ShaderType = 0;
@@ -64,7 +78,10 @@
 	{
 		Id = "resource_deposit.iron";
 		DisplayName = "Iron";
-		ResourceId = "resource.iron";
+		Resources =
+		[
+			{ Id = "resource.iron"; Capacity = 20; }
+		];
 		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 0;
@@ -79,7 +96,10 @@
 	{
 		Id = "resource_deposit.sulphur";
 		DisplayName = "Sulphur";
-		ResourceId = "resource.sulphur";
+		Resources =
+		[
+			{ Id = "resource.sulphur"; Capacity = 20; }
+		];
 		IsExtracted = true;
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		ShaderType = 0;

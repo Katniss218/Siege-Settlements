@@ -52,6 +52,10 @@ namespace SS
 
 						foreach( var kvp in resourcesInDeposit )
 						{
+							if( kvp.Value == 0 )
+							{
+								continue;
+							}
 							if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
 							{
 								amountPickedUp = inventory.Add( kvp.Key, kvp.Value );
@@ -70,6 +74,10 @@ namespace SS
 
 							foreach( var kvp in resourcesInDeposit )
 							{
+								if( kvp.Value == 0 )
+								{
+									continue;
+								}
 								if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
 								{
 									amountPickedUp = inventory.Add( kvp.Key, amtFloored );

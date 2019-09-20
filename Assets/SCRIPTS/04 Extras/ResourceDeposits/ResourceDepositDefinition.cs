@@ -2,6 +2,7 @@
 using KFF;
 using SS.Content;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Extras
@@ -9,7 +10,8 @@ namespace SS.Extras
 	public class ResourceDepositDefinition : Definition
 	{
 		public string displayName { get; set; }
-		public string resourceId { get; set; }
+
+		public Dictionary<string, int> resources { get; private set; }
 
 		public bool isExtracted { get; set; }
 
@@ -36,7 +38,15 @@ namespace SS.Extras
 		{
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
-			this.resourceId = serializer.ReadString( "ResourceId" );
+			
+			// resources
+			var analysisData = serializer.Analyze( "Resources" );
+			this.resources = new Dictionary<string, int>( analysisData.childCount );
+			for( int i = 0; i < analysisData.childCount; i++ )
+			{
+				this.resources.Add( serializer.ReadString( "Resources." + i + ".Id" ), serializer.ReadInt( "Resources." + i + ".Capacity" ) );
+			}
+
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );
 			this.size = serializer.ReadVector3( "Size" );
 			this.shaderType = (MaterialType)serializer.ReadByte( "ShaderType" );
@@ -56,7 +66,18 @@ namespace SS.Extras
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
-			serializer.WriteString( "", "ResourceId", this.resourceId );
+
+			// Cost
+			serializer.WriteClass( "", "Resources" );
+			int i = 0;
+			foreach( var kvp in this.resources )
+			{
+				serializer.AppendClass( "Resources" );
+				serializer.WriteString( "Resources." + i, "Id", kvp.Key );
+				serializer.WriteInt( "Resources." + i, "Capacity", kvp.Value );
+				i++;
+			}
+
 			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );

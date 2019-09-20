@@ -34,8 +34,25 @@ namespace SS
 					{
 						foreach( var kvp in resourcesCarried )
 						{
-							GameObject obj = ResourceDepositCreator.Create( DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit ), hitInfo.point, Quaternion.identity, kvp.Value );
-							AudioManager.PlayNew( obj.GetComponent<ResourceDeposit>().dropoffSound );
+							ResourceDepositDefinition def = DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit );
+							int capacity = def.resources[kvp.Key];
+							int remaining = kvp.Value;
+							while( remaining > 0 )
+							{
+								GameObject obj;
+								Dictionary<string, int> dict = new Dictionary<string, int>();
+								if( remaining >= capacity )
+								{
+									dict.Add( kvp.Key, capacity );
+								}
+								else
+								{
+									dict.Add( kvp.Key, remaining );
+								}
+								remaining -= capacity;
+								obj = ResourceDepositCreator.Create( def, hitInfo.point, Quaternion.identity, dict );
+								AudioManager.PlayNew( obj.GetComponent<ResourceDeposit>().dropoffSound );
+							}
 						}
 						inventory.Clear();
 					}

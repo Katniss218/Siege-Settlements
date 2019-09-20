@@ -173,7 +173,7 @@ namespace SS.Levels
 
 					if( Physics.Raycast( new Vector3( x, 50f, z ), Vector3.down, out RaycastHit hit, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
-						ResourceDepositCreator.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), 5 );
+						ResourceDepositCreator.Create( deposits[i], hit.point, Quaternion.Euler( 0f, Random.Range( -180f, 180f ), 0f ), deposits[i].resources );
 					}
 				}
 			}

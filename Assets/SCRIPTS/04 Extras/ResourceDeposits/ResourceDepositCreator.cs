@@ -1,4 +1,5 @@
 ﻿using SS.Inventories;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,7 +7,7 @@ namespace SS.Extras
 {
 	public static class ResourceDepositCreator
 	{
-		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, int amountOfResource )
+		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, Dictionary<string,int> resources )
 		{
 			if( def == null )
 			{
@@ -36,8 +37,34 @@ namespace SS.Extras
 			obstacle.carving = true;
 			
 			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
-			depositInventory.SetSlots( new InventoryConstrained.SlotInfo( def.resourceId, amountOfResource ) );
-			depositInventory.Add( def.resourceId, amountOfResource );
+			InventoryConstrained.SlotInfo[] slotInfos = new InventoryConstrained.SlotInfo[def.resources.Count];
+			int i = 0;
+			foreach( var kvp in def.resources )
+			{
+				slotInfos[i] = new InventoryConstrained.SlotInfo( kvp.Key, kvp.Value );
+				i++;
+			}
+			depositInventory.SetSlots( slotInfos );
+			foreach( var kvp in resources )
+			{
+				int capacity = depositInventory.GetMaxCapacity( kvp.Key );
+				if( capacity == 0 )
+				{
+					throw new System.Exception( "This deposit can't hold '" + kvp.Key + "'." );
+				}
+				else
+				{
+					if( capacity < kvp.Value )
+					{
+						Debug.LogWarning( "This deposit can't hold " + kvp.Value + " x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + " x resource has been lost." );
+						depositInventory.Add( kvp.Key, capacity );
+					}
+					else
+					{
+						depositInventory.Add( kvp.Key, kvp.Value );
+					}
+				}
+			}
 
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{
