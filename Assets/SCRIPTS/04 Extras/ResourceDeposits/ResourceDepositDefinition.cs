@@ -25,8 +25,7 @@ namespace SS.Extras
 		public bool isMetallic { get; set; }
 		public float smoothness { get; set; }
 
-		public Tuple<string, AudioClip> pickupSoundEffect { get; private set; }
-		public Tuple<string, AudioClip> dropoffSoundEffect { get; private set; }
+		public Tuple<string, AudioClip> mineSound { get; private set; }
 
 
 		public ResourceDepositDefinition( string id ) : base( id )
@@ -48,6 +47,10 @@ namespace SS.Extras
 			}
 
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );
+			if( !this.isExtracted )
+			{
+				this.mineSound = serializer.ReadAudioClipFromAssets( "MineSound" );
+			}
 			this.size = serializer.ReadVector3( "Size" );
 			this.shaderType = (MaterialType)serializer.ReadByte( "ShaderType" );
 
@@ -57,8 +60,6 @@ namespace SS.Extras
 			this.isMetallic = serializer.ReadBool( "IsMetallic" );
 			this.smoothness = serializer.ReadFloat( "Smoothness" );
 
-			this.pickupSoundEffect = serializer.ReadAudioClipFromAssets( "PickupSound" );
-			this.dropoffSoundEffect = serializer.ReadAudioClipFromAssets( "DropoffSound" );
 
 		}
 
@@ -79,6 +80,11 @@ namespace SS.Extras
 			}
 
 			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
+			if( !this.isExtracted )
+			{
+				serializer.WriteString( "", "MineSound", this.mineSound.Item1 );
+			}
+
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
 
@@ -88,8 +94,6 @@ namespace SS.Extras
 			serializer.WriteBool( "", "IsMetallic", this.isMetallic );
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 
-			serializer.WriteString( "", "PickupSound", this.pickupSoundEffect.Item1 );
-			serializer.WriteString( "", "DropoffSound", this.dropoffSoundEffect.Item1 );
 		}
 	}
 }

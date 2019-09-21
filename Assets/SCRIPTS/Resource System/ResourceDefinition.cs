@@ -25,13 +25,15 @@ namespace SS.ResourceSystem
 		/// The default deposit type.
 		/// </summary>
 		public string defaultDeposit { get; set; }
-		
+
+		public Tuple<string, AudioClip> pickupSound { get; private set; }
+		public Tuple<string, AudioClip> dropoffSound { get; private set; }
 
 		public ResourceDefinition( string id ) : base( id )
 		{
-			
+
 		}
-		
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
@@ -40,6 +42,9 @@ namespace SS.ResourceSystem
 			this.defaultDeposit = serializer.ReadString( "DefaultDeposit" );
 
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+
+			this.pickupSound = serializer.ReadAudioClipFromAssets( "PickupSound" );
+			this.dropoffSound = serializer.ReadAudioClipFromAssets( "DropoffSound" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -50,6 +55,9 @@ namespace SS.ResourceSystem
 			serializer.WriteString( "", "DefaultDeposit", this.defaultDeposit );
 
 			serializer.WriteString( "", "Icon", this.icon.Item1 );
+
+			serializer.WriteString( "", "PickupSound", this.pickupSound.Item1 );
+			serializer.WriteString( "", "DropoffSound", this.dropoffSound.Item1 );
 		}
 	}
 }

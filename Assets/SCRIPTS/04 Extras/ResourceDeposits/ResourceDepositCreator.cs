@@ -7,7 +7,7 @@ namespace SS.Extras
 {
 	public static class ResourceDepositCreator
 	{
-		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, Dictionary<string,int> resources )
+		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, Dictionary<string, int> resources )
 		{
 			if( def == null )
 			{
@@ -26,7 +26,7 @@ namespace SS.Extras
 
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
-			
+
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = def.size;
 			collider.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
@@ -35,7 +35,7 @@ namespace SS.Extras
 			obstacle.size = def.size;
 			obstacle.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
 			obstacle.carving = true;
-			
+
 			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
 			InventoryConstrained.SlotInfo[] slotInfos = new InventoryConstrained.SlotInfo[def.resources.Count];
 			int i = 0;
@@ -68,7 +68,7 @@ namespace SS.Extras
 
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				
+
 			} );
 
 			depositInventory.onRemove.AddListener( ( string id, int amount ) =>
@@ -82,8 +82,14 @@ namespace SS.Extras
 			ResourceDeposit resourceDepositComponent = container.AddComponent<ResourceDeposit>();
 			resourceDepositComponent.id = def.id;
 			resourceDepositComponent.isTypeExtracted = def.isExtracted;
-			resourceDepositComponent.pickupSound = def.pickupSoundEffect.Item2;
-			resourceDepositComponent.dropoffSound = def.dropoffSoundEffect.Item2;
+			if( !def.isExtracted )
+			{
+				resourceDepositComponent.miningSound = def.mineSound.Item2;
+			}
+			else
+			{
+				resourceDepositComponent.miningSound = null;
+			}
 
 			return container;
 		}

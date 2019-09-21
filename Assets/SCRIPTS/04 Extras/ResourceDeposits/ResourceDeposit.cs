@@ -16,15 +16,14 @@ namespace SS.Extras
 		/// </summary>
 		public bool isTypeExtracted { get; set; }
 
-		public AudioClip pickupSound { get; set; }
-		public AudioClip dropoffSound { get; set; }
+		public AudioClip miningSound { get; set; }
 		
 		public IInventory inventory { get; private set; }
 		
 		
 		void Awake()
 		{
-			inventory = GetComponent<IInventory>();
+			this.inventory = GetComponent<IInventory>();
 		}
 
 		void Start()

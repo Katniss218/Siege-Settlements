@@ -1,6 +1,8 @@
 ﻿using Katniss.Utils;
+using SS.Content;
 using SS.Extras;
 using SS.Inventories;
+using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -55,7 +57,13 @@ namespace SS
 							{
 								amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
 								idPickedUp = kvp.Key;
-								break; // Only one resource at a time.
+
+								if( amountPickedUp > 0 )
+								{
+									this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+									AudioManager.PlayNew( DataManager.Get<ResourceDefinition>( idPickedUp ).pickupSound.Item2 );
+								}
+								break; // Only pick up one resource at a time.
 							}
 						}
 					}
@@ -78,16 +86,16 @@ namespace SS
 									amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
 									idPickedUp = kvp.Key;
 									amtCollected -= amtFloored;
-									break; // Only one resource at a time.
+
+									if( amountPickedUp > 0 )
+									{
+										this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+										AudioManager.PlayNew( this.depositToCollect.miningSound );
+									}
+									break; // Only pick up one resource at a time.
 								}
 							}
 						}
-					}
-
-					if( amountPickedUp != 0 )
-					{
-						this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
-						AudioManager.PlayNew( this.depositToCollect.pickupSound );
 					}
 				}
 			}

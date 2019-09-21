@@ -1,5 +1,7 @@
 ﻿using Katniss.Utils;
+using SS.Content;
 using SS.Inventories;
+using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -24,14 +26,14 @@ namespace SS
 
 			private void DropOff()
 			{
-				Dictionary<string, int> resourcesCarried = inventory.GetAll();
+				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 				foreach( var kvp in resourcesCarried )
 				{
-					int maxCapacity = destinationInventory.GetMaxCapacity( kvp.Key );
+					int maxCapacity = this.destinationInventory.GetMaxCapacity( kvp.Key );
 					if( maxCapacity > 0 )
 					{
-						int amount = destinationInventory.Get( kvp.Key );
+						int amount = this.destinationInventory.Get( kvp.Key );
 
 						int spaceLeft = maxCapacity - amount;
 						if( spaceLeft > 0 )
@@ -42,8 +44,10 @@ namespace SS
 								dropOffAmt = spaceLeft;
 							}
 
-							destinationInventory.Add( kvp.Key, dropOffAmt );
+							this.destinationInventory.Add( kvp.Key, dropOffAmt );
 							this.inventory.Remove( kvp.Key, dropOffAmt );
+							ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
+							AudioManager.PlayNew( def.dropoffSound.Item2 );
 						}
 					}
 				}
@@ -60,11 +64,11 @@ namespace SS
 
 			void Update()
 			{
-				if( PhysicsDistance.OverlapInRange( this.transform, destinationTransform, 0.75f ) )// this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.destinationTransform, 0.75f ) )// this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 				{
 					if( !this.inventory.isEmpty )
 					{
-						Vector3 direction = (destinationTransform.position - this.transform.position).normalized;
+						Vector3 direction = (this.destinationTransform.position - this.transform.position).normalized;
 						this.DropOff();
 					}
 					else
