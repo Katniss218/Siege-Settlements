@@ -8,9 +8,9 @@ namespace SS
 	/// </summary>
 	public enum DamageType : byte
 	{
-		Slash,			// == 0
-		Pierce,			// == 1
-		Concussion		// == 2
+		Slash = 0,
+		Pierce = 1,
+		Concussion = 2
 	}
 
 	public static class DamageTypeExtensions
