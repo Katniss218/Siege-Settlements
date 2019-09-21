@@ -1,8 +1,6 @@
 ﻿using SS.Content;
 using SS.Extras;
 using SS.ResourceSystem;
-using SS.UI;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -33,34 +31,7 @@ namespace SS
 
 		void Start()
 		{
-			onMouseEnter.AddListener( ( GameObject gameObject ) =>
-			{
-				ResourceDeposit deposit = gameObject.GetComponent<ResourceDeposit>();
-				if( deposit == null )
-				{
-					return;
-				}
-
-				ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( deposit.id );
-				Dictionary<string, int> itemsInDeposit = deposit.inventory.GetAll();
-
-				ToolTip.Create( 200, def2.displayName );
-				
-				foreach( var kvp in itemsInDeposit )
-				{
-					ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
-					ToolTip.AddText( def.icon.Item2, kvp.Value.ToString() + "/" + deposit.inventory.GetMaxCapacity( kvp.Key ) );
-				}
-				ToolTip.ShowAt( Input.mousePosition );
-			} );
-			onMouseStay.AddListener( ( GameObject gameObject ) =>
-			{
-				ToolTip.MoveTo( Input.mousePosition, true );
-			} );
-			onMouseExit.AddListener( ( GameObject gameObject ) =>
-			{
-				ToolTip.Hide();
-			} );
+			
 		}
 
 		void Update()

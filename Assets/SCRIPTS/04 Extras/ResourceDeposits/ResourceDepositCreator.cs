@@ -1,7 +1,11 @@
-﻿using SS.Inventories;
+﻿using SS.Content;
+using SS.Inventories;
+using SS.ResourceSystem;
+using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace SS.Extras
 {
@@ -36,6 +40,50 @@ namespace SS.Extras
 			obstacle.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
 			obstacle.carving = true;
 
+			UnityAction<GameObject> showTooltip = ( GameObject gameObject ) =>
+			{
+				if( gameObject == container )
+				{
+					ResourceDeposit deposit = gameObject.GetComponent<ResourceDeposit>();
+					if( deposit == null )
+					{
+						return;
+					}
+
+					ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( deposit.id );
+					Dictionary<string, int> itemsInDeposit = deposit.inventory.GetAll();
+
+					ToolTip.Create( 200, def2.displayName );
+
+					foreach( var kvp in itemsInDeposit )
+					{
+						ResourceDefinition resourceDef = DataManager.Get<ResourceDefinition>( kvp.Key );
+						ToolTip.AddText( resourceDef.icon.Item2, kvp.Value.ToString() + "/" + deposit.inventory.GetMaxCapacity( kvp.Key ) );
+					}
+					ToolTip.ShowAt( Input.mousePosition );
+				}
+			};
+			UnityAction<GameObject> moveTooltip = ( GameObject gameObject ) =>
+			{
+				if( gameObject == container )
+				{
+					ToolTip.MoveTo( Input.mousePosition, true );
+				}
+			};
+
+			UnityAction<GameObject> hideTooltip = ( GameObject gameObject ) =>
+			{
+				if( gameObject == container )
+				{
+					ToolTip.Hide();
+				}
+			};
+
+
+			MouseOverHandler.onMouseEnter.AddListener( showTooltip );
+			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
+			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
+
 			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
 			InventoryConstrained.SlotInfo[] slotInfos = new InventoryConstrained.SlotInfo[def.resources.Count];
 			int i = 0;
@@ -68,14 +116,23 @@ namespace SS.Extras
 
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{
-
+				showTooltip( container );
 			} );
 
 			depositInventory.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( depositInventory.isEmpty )
 				{
+					hideTooltip( container );
 					Object.Destroy( container );
+
+					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
+					MouseOverHandler.onMouseStay.RemoveListener( moveTooltip );
+					MouseOverHandler.onMouseExit.RemoveListener( hideTooltip );
+				}
+				else
+				{
+					showTooltip( container );
 				}
 			} );
 
