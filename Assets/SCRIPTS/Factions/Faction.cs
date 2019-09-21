@@ -73,7 +73,7 @@ namespace SS
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.techs[serializer.ReadString( "Techs." + i.ToString() + ".Key" )] = (TechnologyResearchProgress)serializer.ReadSByte( "Techs." + i.ToString() + ".Value" );
+				this.techs[serializer.ReadString( new Path( "Techs.{0}.Id", i ) )] = (TechnologyResearchProgress)serializer.ReadSByte( new Path( "Techs.{0}.Progress", i ) );
 			}
 		}
 
@@ -89,8 +89,8 @@ namespace SS
 				if( value.Value != TechnologyResearchProgress.Available )
 				{
 					serializer.AppendClass( "Techs" );
-					serializer.WriteString( "Techs." + i, "Key", value.Key );
-					serializer.WriteSByte( "Techs." + i, "Value", (sbyte)value.Value );
+					serializer.WriteString( new Path( "Techs.{0}", i), "Id", value.Key );
+					serializer.WriteSByte( new Path( "Techs.{0}", i), "Progress", (sbyte)value.Value );
 				}
 				i++;
 			}

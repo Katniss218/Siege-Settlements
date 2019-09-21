@@ -37,21 +37,21 @@ namespace Katniss.Utils
 					Vector3[] verts = new Vector3[analysisData.childCount];
 					for( int j = 0; j < verts.Length; j++ )
 					{
-						verts[j] = serializer.ReadVector3( "Vertices." + j.ToString() );
+						verts[j] = serializer.ReadVector3( new Path( "Vertices.{0}", +j ) );
 					}
 
 					analysisData = serializer.Analyze( "Normals" );
 					Vector3[] normals = new Vector3[analysisData.childCount];
 					for( int j = 0; j < normals.Length; j++ )
 					{
-						normals[j] = serializer.ReadVector3( "Normals." + j.ToString() );
+						normals[j] = serializer.ReadVector3( new Path( "Normals.{0}", j ) );
 					}
 
 					analysisData = serializer.Analyze( "UVs" );
 					Vector2[] uvs = new Vector2[analysisData.childCount];
 					for( int j = 0; j < uvs.Length; j++ )
 					{
-						uvs[j] = serializer.ReadVector2( "UVs." + j.ToString() );
+						uvs[j] = serializer.ReadVector2( new Path( "UVs.{0}", j ) );
 					}
 
 					analysisData = serializer.Analyze( "Faces" );
@@ -59,17 +59,12 @@ namespace Katniss.Utils
 					int[] triangles = new int[numFaces * 3];
 					for( int j = 0; j < numFaces; j++ )
 					{
-						triangles[(j * 3)] = serializer.ReadInt( "Faces." + j.ToString() + ".0" ) - 1;
-						triangles[(j * 3) +1] = serializer.ReadInt( "Faces."+j.ToString() + ".1" ) - 1;
-						triangles[(j * 3) +2] = serializer.ReadInt( "Faces."+j.ToString() + ".2" ) - 1;
+						triangles[(j * 3)] = serializer.ReadInt( new Path( "Faces.{0}.0", j ) ) - 1;
+						triangles[(j * 3) + 1] = serializer.ReadInt( new Path( "Faces.{0}.1", j ) ) - 1;
+						triangles[(j * 3) + 2] = serializer.ReadInt( new Path( "Faces.{0}.2", j ) ) - 1;
 					}
 					serializer.MoveScope( "<", true );
-
-					//Debug.Log( verts.Length );
-					//Debug.Log( normals.Length );
-					//Debug.Log( uvs.Length );
-					//Debug.Log( triangles.Length );
-
+					
 					newMesh.vertices = verts;
 					newMesh.normals = normals;
 					newMesh.uv = uvs;

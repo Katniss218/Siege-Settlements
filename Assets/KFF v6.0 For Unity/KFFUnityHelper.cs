@@ -35,7 +35,7 @@ namespace KFF
 			Vector2[] ret = new Vector2[length];
 			for( int i = 0; i < length; i++ )
 			{
-				serializer.MoveScope( i.ToString(), true );
+				serializer.MoveScope( new Path( "{0}", i ), true );
 				float x = serializer.ReadFloat( "X" );
 				float y = serializer.ReadFloat( "Y" );
 				serializer.scopeRoot = arrayScope;
@@ -74,7 +74,7 @@ namespace KFF
 			{
 
 				serializer.AppendClass( "" );
-				serializer.MoveScope( i.ToString(), true );
+				serializer.MoveScope( new Path( "{0}", i ), true );
 
 				serializer.WriteFloat( "", "X", values[i].x );
 				serializer.WriteFloat( "", "Y", values[i].y );
@@ -135,7 +135,7 @@ namespace KFF
 			Vector3[] ret = new Vector3[length];
 			for( int i = 0; i < length; i++ )
 			{
-				serializer.MoveScope( i.ToString(), true );
+				serializer.MoveScope( new Path( "{0}", i ), true );
 				float x = serializer.ReadFloat( "X" );
 				float y = serializer.ReadFloat( "Y" );
 				float z = serializer.ReadFloat( "Z" );
@@ -175,7 +175,7 @@ namespace KFF
 			for( int i = 0; i < values.Length; i++ )
 			{
 				serializer.AppendClass( "" );
-				serializer.MoveScope( i.ToString(), true );
+				serializer.MoveScope( new Path( "{0}", i ), true );
 
 				serializer.WriteFloat( "", "X", values[i].x );
 				serializer.WriteFloat( "", "Y", values[i].y );

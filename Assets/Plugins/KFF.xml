@@ -754,6 +754,11 @@
             Represents a parsed KFF file.
             </summary>
         </member>
+        <member name="P:KFF.KFFFile.fileName">
+            <summary>
+            The name of the file. Displayed when exceptions are thrown.
+            </summary>
+        </member>
         <member name="P:KFF.KFFFile.tags">
             <summary>
             The tags contained directly in the file (nest = 0).
@@ -779,7 +784,7 @@
             Returns true if this Object is a Payload, false otherwise (Read Only).
             </summary>
         </member>
-        <member name="M:KFF.KFFFile.#ctor">
+        <member name="M:KFF.KFFFile.#ctor(System.String)">
             <summary>
             Creates a new KFF file with the specified tags inside.
             </summary>
@@ -958,10 +963,11 @@
             Should the writer add a TAB char for every tag/payload inside of a List datatype.
             </summary>
         </member>
-        <member name="M:KFF.KFFParser.Parse(System.String)">
+        <member name="M:KFF.KFFParser.Parse(System.String,System.String)">
             <summary>
             Parses a string representation into a KFF file. Throws an exception if the string is malformed.
             </summary>
+            <param name="fileName">The name of the file that will be parsed.</param>
             <param name="s">The string to parse.</param>
         </member>
         <member name="M:KFF.KFFParser.ToString(KFF.KFFFile)">
@@ -1299,42 +1305,6 @@
             <param name="containerName">The name of the TagList containing the values.</param>
             <param name="serializableObjs">The values to serialize.</param>
         </member>
-        <member name="T:KFF.KFFValidator">
-            <summary>
-            Class containing methods for checking validity of a kff-string.
-            </summary>
-        </member>
-        <member name="M:KFF.KFFValidator.#ctor(System.String)">
-            <summary>
-            Creates a validator using an unvalidated string.
-            </summary>
-            <param name="unvalidatedString">The string to validate.</param>
-        </member>
-        <member name="M:KFF.KFFValidator.Validate">
-            <summary>
-            Runs the validation process. Any errors will result in exceptions being thrown.
-            </summary>
-            <exception cref="T:System.ArgumentNullException">Thrown when the string to validate is null.</exception>
-            <exception cref="T:KFF.KFFParseException">Thrown when the string is not a valid KFF representation.</exception>
-        </member>
-        <member name="M:KFF.KFFValidator.ValidateName(System.String)">
-            <summary>
-            Validates a tag's name.
-            </summary>
-            <param name="name">The string containing only the name.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the string is null or empty.</exception>
-            <exception cref="T:KFF.KFFParseException">Thrown when the string isn't a valid tag's name.</exception>
-        </member>
-        <member name="T:KFF.LineData">
-            <summary>
-            Used to represent line and collumn numbers.
-            </summary>
-        </member>
-        <member name="M:KFF.LineData.ToString">
-            <summary>
-            Converts the LineData object into a string representation.
-            </summary>
-        </member>
         <member name="T:KFF.BeforeAfterMask">
             <summary>
             Used as a 2-bit mask to tell the KFFWriter whether or not it should place a whitespace/newline/etc. around a specified token.
@@ -1383,11 +1353,12 @@
             Returns true if the path is empty (doesn't point to anything), false otherwise (Read Only).
             </summary>
         </member>
-        <member name="M:KFF.Path.#ctor(System.String)">
+        <member name="M:KFF.Path.#ctor(System.String,System.Int32[])">
             <summary>
             Parses a new path from the string representation.
             </summary>
             <param name="s">The string to parse the path from.</param>
+            <param name="placeholderValues">The values to replace placeholder symbols with.</param>
         </member>
         <member name="M:KFF.Path.ToString">
             <summary>
@@ -1424,6 +1395,26 @@
             Is used to hold characters for tokens. Also has several methods related to them.
             </summary>
         </member>
+        <member name="F:KFF.Syntax.PATH_SEGMENT_SEPARATOR">
+            <summary>
+            The char used to separate path segments in the string representation.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.PATH_BACKWARD">
+            <summary>
+            The char used to indicate a path segment going backward, instead of usual forward.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.PATH_PLACEHOLDER_OPENING">
+            <summary>
+            The char used to indicate beginning of the placeholder index.
+            </summary>
+        </member>
+        <member name="F:KFF.Syntax.PATH_PLACEHOLDER_CLOSING">
+            <summary>
+            The char used to indicate ending of the placeholder index.
+            </summary>
+        </member>
         <member name="F:KFF.Syntax.NAME_PAYLOAD_SEPARATOR">
             <summary>
             The "Name/Payload Separator" token.
@@ -1454,6 +1445,11 @@
             The "Escape Char" token.
             </summary>
         </member>
+        <member name="F:KFF.Syntax.COMMENT">
+            <summary>
+            The "Comment" token.
+            </summary>
+        </member>
         <member name="F:KFF.Syntax.CLASS_OPENING">
             <summary>
             The "Class Opening" token.
@@ -1477,16 +1473,6 @@
         <member name="F:KFF.Syntax.LIST_ELEMENT_SEPARATOR">
             <summary>
             The "List Element Separator" token.
-            </summary>
-        </member>
-        <member name="F:KFF.Syntax.PATH_SEGMENT_SEPARATOR">
-            <summary>
-            The char used to separate path segments in the string representation.
-            </summary>
-        </member>
-        <member name="F:KFF.Syntax.PATH_BACKWARD">
-            <summary>
-            The char used to indicate a path segment going backward, instead of usual forward.
             </summary>
         </member>
         <member name="F:KFF.Syntax.TOKEN_TRUE">
@@ -1683,6 +1669,11 @@
             <param name="path">The path to read from.</param>
             <param name="iterations">Number of iterations per test.</param>
             <param name="repetitions">Number of repetitions (averaging).</param>
+        </member>
+        <member name="M:KFF.TextFileData.ToString">
+            <summary>
+            Converts the LineData object into a string representation.
+            </summary>
         </member>
     </members>
 </doc>
