@@ -1,4 +1,5 @@
-﻿using SS.UI;
+﻿using SS;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +42,7 @@ namespace Katniss.Utils
 			return image;
 		}
 
-		public static void AddParticleSystem( this GameObject gameObject, float amountPerSec, Texture2D tex, Color c, float startSize, float endSize, float emissionRadius, float lifetime )
+		public static void AddParticleSystem( this GameObject gameObject, float amountPerSec, Texture2D texture, Color tint, float startSize, float endSize, float emissionRadius, float lifetime )
 		{
 			ParticleSystem particleSystem = gameObject.AddComponent<ParticleSystem>();
 			ParticleSystem.MainModule main = particleSystem.main;
@@ -67,28 +68,7 @@ namespace Katniss.Utils
 			emission.rateOverTime = amountPerSec;
 			
 			ParticleSystemRenderer renderer = gameObject.GetComponent<ParticleSystemRenderer>();
-			renderer.material = CreateMaterial( tex, c );
+			renderer.material = MaterialManager.CreateParticles( texture, tint );
 		}
-
-		private static Material CreateMaterial( Texture2D tex, Color c )
-		{
-			Material mat = new Material( SS.Main.materialParticle );
-			mat.SetTexture( "_BaseMap", tex );
-			mat.SetColor( "_BaseColor", c );
-
-			return mat;
-		}
-		/*
-		public static TextMeshProUGUI AddTextMesh( this GameObject gameObject, string text, TMP_FontAsset font, int fontSize, FontWeight fontWeight, TextAlignmentOptions alignment )
-		{
-			TextMeshProUGUI titleText = gameObject.AddComponent<TextMeshProUGUI>();
-			titleText.text = "";
-			titleText.font = Main.mainFont;
-			titleText.fontSize = titleFontSize;
-			titleText.fontWeight = FontWeight.Bold;
-			titleText.alignment = TextAlignmentOptions.Center;
-			titleText.characterSpacing = 0f;
-			titleText.enableWordWrapping = false;
-		}*/
 	}
 }

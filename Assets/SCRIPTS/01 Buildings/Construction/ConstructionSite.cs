@@ -328,7 +328,7 @@ namespace SS.Buildings
 						shape.position = Vector3.zero;
 						Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
-						AudioManager.PlayNew( building.buildSoundEffect, 1.0f, 1.0f );
+						AudioManager.PlayNew( building.buildSoundEffect );
 
 						return;
 					}

@@ -8,6 +8,7 @@
 		PlantTransparent,
 		Colored,
 		ColoredDestroyable,
-		ColoredConstructible
+		ColoredConstructible,
+		Particles
 	}
 }

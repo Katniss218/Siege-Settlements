@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Katniss.Utils;
+using UnityEngine;
 
 namespace SS.Extras
 {
@@ -14,7 +15,7 @@ namespace SS.Extras
 			container.isStatic = true;
 			container.layer = ObjectLayer.EXTRAS;
 
-			GameObject gfx = new GameObject( "graphics" );
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			gfx.isStatic = true;
 

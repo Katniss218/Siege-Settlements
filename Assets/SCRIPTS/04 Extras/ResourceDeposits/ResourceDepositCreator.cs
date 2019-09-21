@@ -1,4 +1,5 @@
-﻿using SS.Content;
+﻿using Katniss.Utils;
+using SS.Content;
 using SS.Inventories;
 using SS.ResourceSystem;
 using SS.UI;
@@ -20,7 +21,7 @@ namespace SS.Extras
 			GameObject container = new GameObject( "Resource Deposit (\"" + def.id + "\")" );
 			container.layer = ObjectLayer.EXTRAS;
 
-			GameObject gfx = new GameObject( "graphics" );
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
 			container.transform.SetPositionAndRotation( pos, rot );

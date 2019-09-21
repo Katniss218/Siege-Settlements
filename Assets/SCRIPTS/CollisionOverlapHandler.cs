@@ -11,37 +11,37 @@ namespace SS
 	public sealed class CollisionOverlapHandler : MonoBehaviour
 	{
 		[Serializable]
-		public class _UnityEvent_GameObject_Collision : UnityEvent<GameObject, Collision> { }
+		public class _UnityEvent_Collision : UnityEvent<Collision> { }
 
 		/// <summary>
 		/// Called, when the collider starts colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collision onCollisionEnter = new _UnityEvent_GameObject_Collision();
+		public _UnityEvent_Collision onCollisionEnter = new _UnityEvent_Collision();
 
 		/// <summary>
 		/// Called, when the collider is colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collision onCollisionStay = new _UnityEvent_GameObject_Collision();
+		public _UnityEvent_Collision onCollisionStay = new _UnityEvent_Collision();
 
 		/// <summary>
 		/// Called, when the collider stops colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collision onCollisionExit = new _UnityEvent_GameObject_Collision();
+		public _UnityEvent_Collision onCollisionExit = new _UnityEvent_Collision();
 
 
 		void OnCollisionEnter( Collision collision )
 		{
-			onCollisionEnter?.Invoke( this.gameObject, collision );
+			onCollisionEnter?.Invoke( collision );
 		}
 
 		void OnCollisionStay( Collision collision )
 		{
-			onCollisionStay?.Invoke( this.gameObject, collision );
+			onCollisionStay?.Invoke( collision );
 		}
 
 		void OnCollisionExit( Collision collision )
 		{
-			onCollisionExit?.Invoke( this.gameObject, collision );
+			onCollisionExit?.Invoke( collision );
 		}
 	}
 }

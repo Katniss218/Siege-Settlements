@@ -109,7 +109,7 @@ namespace SS.Modules
 						return;
 					}
 					this.Attack( target );
-					AudioManager.PlayNew( this.attackSoundEffect, 1.0f, 1.0f );
+					AudioManager.PlayNew( this.attackSoundEffect );
 				}
 			}
 		}

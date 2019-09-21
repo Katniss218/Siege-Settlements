@@ -11,37 +11,37 @@ namespace SS
 	public sealed class TriggerOverlapHandler : MonoBehaviour
 	{
 		[Serializable]
-		public class _UnityEvent_GameObject_Collider : UnityEvent<GameObject, Collider> { }
+		public class _UnityEvent_Collider : UnityEvent<Collider> { }
 
 		/// <summary>
 		/// Called, when the 'trigger' collider starts colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collider onTriggerEnter = new _UnityEvent_GameObject_Collider();
+		public _UnityEvent_Collider onTriggerEnter = new _UnityEvent_Collider();
 
 		/// <summary>
 		/// Called, when the 'trigger' collider is colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collider onTriggerStay = new _UnityEvent_GameObject_Collider();
+		public _UnityEvent_Collider onTriggerStay = new _UnityEvent_Collider();
 
 		/// <summary>
 		/// Called, when the 'trigger' collider stops colliding with another.
 		/// </summary>
-		public _UnityEvent_GameObject_Collider onTriggerExit = new _UnityEvent_GameObject_Collider();
+		public _UnityEvent_Collider onTriggerExit = new _UnityEvent_Collider();
 
 
 		void OnTriggerEnter( Collider other )
 		{
-			onTriggerEnter?.Invoke( this.gameObject, other );
+			onTriggerEnter?.Invoke( other );
 		}
 
 		void OnTriggerStay( Collider other )
 		{
-			onTriggerStay?.Invoke( this.gameObject, other );
+			onTriggerStay?.Invoke( other );
 		}
 
 		void OnTriggerExit( Collider other )
 		{
-			onTriggerExit?.Invoke( this.gameObject, other );
+			onTriggerExit?.Invoke( other );
 		}
 	}
 }

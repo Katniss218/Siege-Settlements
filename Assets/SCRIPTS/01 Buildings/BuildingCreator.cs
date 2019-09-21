@@ -1,4 +1,5 @@
-﻿using SS.Content;
+﻿using Katniss.Utils;
+using SS.Content;
 using SS.Modules;
 using SS.UI;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace SS.Buildings
 			container.isStatic = true;
 			container.layer = ObjectLayer.BUILDINGS;
 
-			GameObject gfx = new GameObject( "graphics" );
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			gfx.isStatic = true;
 
@@ -172,7 +173,7 @@ namespace SS.Buildings
 				{
 					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-				AudioManager.PlayNew( def.deathSoundEffect.Item2, 1.0f, 1.0f );
+				AudioManager.PlayNew( def.deathSoundEffect.Item2 );
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );

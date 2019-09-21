@@ -34,21 +34,7 @@ namespace SS.Inventories
 		/// </summary>
 		// Returns 0 if the resource can't be contained.
 		int GetMaxCapacity( string id );
-
-		/// <summary>
-		/// Checks if the inventory contains specified amount of specified resource.
-		/// </summary>
-		//[System.Obsolete] bool Has( string id, int amount );
-
-		/// <summary>
-		/// Checks if the inventory has slots that can hold specified resource.
-		/// </summary>
-		//[System.Obsolete] bool CanHold( string id ); // FIXME - remove obsolete methods
-		/// <summary>
-		/// Checks if the inventory can hold specified amount of specified resource.
-		/// </summary>
-		//[System.Obsolete] bool CanHold( string id, int amount );
-
+		
 		/// <summary>
 		/// Adds the specified resource to the inventory. Returns actual the amount of resource added.
 		/// </summary>

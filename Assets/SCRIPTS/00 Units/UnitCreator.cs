@@ -1,4 +1,5 @@
-﻿using SS.Buildings;
+﻿using Katniss.Utils;
+using SS.Buildings;
 using SS.Content;
 using SS.Inventories;
 using SS.Modules;
@@ -24,7 +25,7 @@ namespace SS.Units
 			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
 			container.layer = ObjectLayer.UNITS;
 
-			GameObject gfx = new GameObject( "graphics" );
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
 			container.transform.SetPositionAndRotation( pos, rot );
@@ -57,7 +58,7 @@ namespace SS.Units
 
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
-			navMeshAgent.baseOffset = -0.1f;
+			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
 			navMeshAgent.acceleration = 8.0f;
 			navMeshAgent.stoppingDistance = 0.125f;
 			navMeshAgent.radius = def.radius;

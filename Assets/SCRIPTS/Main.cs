@@ -18,6 +18,8 @@ namespace SS
 	/// </summary>
 	public class Main : MonoBehaviour
 	{
+		public const float DEFAULT_NAVMESH_BASE_OFFSET = -0.075f;
+
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
 		public static bool isHudLocked { get; private set; }
@@ -58,17 +60,7 @@ namespace SS
 				return __canvas;
 			}
 		}
-
-		private static Material __materialParticle = null;
-		public static Material materialParticle
-		{
-			get
-			{
-				if( __materialParticle == null ) { __materialParticle = AssetManager.GetMaterial(AssetManager.RESOURCE_ID + "Materials/Particle" ); }
-				return __materialParticle;
-			}
-		}
-
+		
 		private static Transform __cameraPivot = null;
 		public static Transform cameraPivot
 		{

@@ -1,6 +1,8 @@
-﻿using SS.Content;
+﻿using Katniss.Utils;
+using SS.Content;
 using SS.Modules;
 using SS.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -18,7 +20,7 @@ namespace SS.Heroes
 			GameObject container = new GameObject( "Hero (\"" + def.id + "\"), (f: " + factionId + ")" );
 			container.layer = ObjectLayer.HEROES;
 
-			GameObject gfx = new GameObject( "graphics" );
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
 			container.transform.SetPositionAndRotation( pos, rot );
@@ -45,7 +47,7 @@ namespace SS.Heroes
 
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
-			navMeshAgent.baseOffset = -0.1f;
+			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
 			navMeshAgent.acceleration = 8.0f;
 			navMeshAgent.stoppingDistance = 0.125f;
 			navMeshAgent.radius = def.radius;
@@ -58,8 +60,8 @@ namespace SS.Heroes
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 
-			hud.transform.Find( "Name" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayName;
-			hud.transform.Find( "Title" ).GetComponent<TMPro.TextMeshProUGUI>().text = def.displayTitle;
+			hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
+			hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
