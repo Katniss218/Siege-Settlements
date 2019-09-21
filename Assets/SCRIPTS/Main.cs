@@ -82,6 +82,19 @@ namespace SS
 			}
 		}
 
+		private static CameraController __cameraController = null;
+		public static CameraController cameraController
+		{
+			get
+			{
+				if( __cameraController == null )
+				{
+					__cameraController = cameraPivot.GetComponent<CameraController>();
+				}
+				return __cameraController;
+			}
+		}
+
 		private static Camera __camera = null;
 		new public static Camera camera
 		{

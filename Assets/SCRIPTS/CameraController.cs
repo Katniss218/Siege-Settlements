@@ -25,7 +25,7 @@ namespace SS
 
 		new private Camera camera;
 
-
+		public bool isMovementLocked { get; set; }
 
 		void Awake()
 		{
@@ -69,8 +69,7 @@ namespace SS
 
 		void Update()
 		{
-			// TODO ----- make this abstracted away from selection controller (some sort of lock variable).
-			if( SelectionController.isDragging )
+			if( this.isMovementLocked )
 			{
 				return;
 			}

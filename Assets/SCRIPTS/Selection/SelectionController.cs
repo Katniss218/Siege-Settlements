@@ -12,53 +12,6 @@ namespace SS
 		private const float XY_THRESHOLD = 4f;
 		private const float MAGN_THRESHOLD = 16f;
 
-		void Update()
-		{
-			// If the left mouse button was pressed.
-			if( Input.GetMouseButtonDown( 0 ) )
-			{
-				oldMousePos = Input.mousePosition;
-			}
-			// If the left mouse button was pressed.
-			if( Input.GetMouseButton( 0 ) )
-			{
-				if( !isDragging )
-				{
-					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
-						Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
-					{
-						BeginDrag();
-					}
-				}
-				if( isDragging )
-				{
-					UpdateDrag();
-				}
-			}
-			// If the left mouse button was released.
-			if( Input.GetMouseButtonUp( 0 ) )
-			{
-				if( isDragging )
-				{
-					Selectable[] overlap = GetSelectablesInDragArea();
-					
-					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
-					
-
-					EndDrag();
-				}
-				else
-				{
-					// if the click was over UI element, return.
-					if( EventSystem.current.IsPointerOverGameObject() )
-					{
-						return;
-					}
-					HandleSelecting( new Selectable[] { GetSelectableAtCursor() }, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
-				}
-			}
-		}
-
 		private enum SelectionMode : byte
 		{
 			Additive,
@@ -91,9 +44,12 @@ namespace SS
 			{
 				InitRect();
 			}
-			isDragging = true;
-			selectionRect.gameObject.SetActive( true );
+
 			beginDragPos = Input.mousePosition;
+			isDragging = true;
+			Main.cameraController.isMovementLocked = true;
+
+			selectionRect.gameObject.SetActive( true );
 		}
 
 		private static void UpdateDrag()
@@ -109,15 +65,14 @@ namespace SS
 		private static void EndDrag()
 		{
 			isDragging = false;
+			Main.cameraController.isMovementLocked = false;
+
 			selectionRect.gameObject.SetActive( false );
 		}
 
 		private static void HandleSelecting( Selectable[] uniqueObjs, SelectionMode selectionMode )
 		{
-			// Shift - add to the current selection.
-			// If the object is already selected, but is not highlighted, highlight it.
-			// - (allows for switching of highlighted object within the pool of already selected objects).
-			if( selectionMode == SelectionMode.Additive )// Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift ) )
+			if( selectionMode == SelectionMode.Additive )
 			{
 				if( uniqueObjs != null )
 				{
@@ -171,17 +126,14 @@ namespace SS
 						{
 							continue;
 						}
-
-						bool flag = Selection.IsSelected( uniqueObjs[i] );
-
+						
 						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
 						if( factionOfSelectable != null )
 						{
 							Selection.SelectAndHighlight( uniqueObjs[i] );
-							if( !flag ) // If was selected before clearing, don't play the selecting sound, since in the end, nothing changes.
-							{
-								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
-							}
+							
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+							
 						}
 						else
 						{
@@ -194,6 +146,57 @@ namespace SS
 
 			throw new System.Exception( "Invalid selection mode" );
 		}
+
+
+		void Update()
+		{
+			// If the left mouse button was pressed.
+			if( Input.GetMouseButtonDown( 0 ) )
+			{
+				oldMousePos = Input.mousePosition;
+			}
+			// If the left mouse button was pressed.
+			if( Input.GetMouseButton( 0 ) )
+			{
+				if( !isDragging )
+				{
+					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
+						Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
+					{
+						BeginDrag();
+					}
+				}
+				if( isDragging )
+				{
+					UpdateDrag();
+				}
+			}
+			// If the left mouse button was released.
+			if( Input.GetMouseButtonUp( 0 ) )
+			{
+				if( isDragging )
+				{
+					Selectable[] overlap = GetSelectablesInDragArea();
+
+					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+
+
+					EndDrag();
+				}
+				else
+				{
+					// if the click was over UI element, return.
+					if( EventSystem.current.IsPointerOverGameObject() )
+					{
+						return;
+					}
+					Selectable atCursor = GetSelectableAtCursor();
+					Selectable[] array = atCursor == null ? null : new Selectable[] { atCursor };
+					HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+				}
+			}
+		}
+
 
 		private static Selectable GetSelectableAtCursor()
 		{
@@ -236,6 +239,10 @@ namespace SS
 				{
 					ret.Add( selectables[i] );
 				}
+			}
+			if( ret.Count == 0 )
+			{
+				return null;
 			}
 			return ret.ToArray();
 		}

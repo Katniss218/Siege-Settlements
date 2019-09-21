@@ -9,14 +9,14 @@ namespace SS
 	/// </summary>
 	public class Selectable : MonoBehaviour
 	{
-		private static List<Selectable> __every = new List<Selectable>();
+		private static List<Selectable> __everySelectable = new List<Selectable>();
 
 		/// <summary>
 		/// Returns every selectable object in the scene that's currently active and enabled.
 		/// </summary>
 		public static Selectable[] GetAllInScene()
 		{
-			return __every.ToArray();
+			return __everySelectable.ToArray();
 		}
 
 		/// <summary>
@@ -48,12 +48,21 @@ namespace SS
 		// Cache the existing selectables to greatly reduce load (searching objects).
 		void OnEnable()
 		{
-			__every.Add( this );
+			__everySelectable.Add( this );
 		}
 
 		void OnDisable()
 		{
-			__every.Remove( this );
+			__everySelectable.Remove( this );
+		}
+
+		// Deselect destroyed selectables.
+		private void OnDestroy()
+		{
+			if( Selection.IsSelected( this ) )
+			{
+				Selection.Deselect( this );
+			}
 		}
 	}
 }
