@@ -49,11 +49,10 @@ namespace SS.Extras
 					{
 						return;
 					}
-
-					ResourceDepositDefinition def2 = DataManager.Get<ResourceDepositDefinition>( deposit.id );
+					
 					Dictionary<string, int> itemsInDeposit = deposit.inventory.GetAll();
 
-					ToolTip.Create( 200, def2.displayName );
+					ToolTip.Create( 200, def.displayName );
 
 					foreach( var kvp in itemsInDeposit )
 					{
