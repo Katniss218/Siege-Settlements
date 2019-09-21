@@ -55,14 +55,5 @@ namespace SS
 		{
 			__everySelectable.Remove( this );
 		}
-
-		// Deselect destroyed selectables.
-		private void OnDestroy()
-		{
-			if( Selection.IsSelected( this ) )
-			{
-				Selection.Deselect( this );
-			}
-		}
 	}
 }
