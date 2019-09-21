@@ -10,18 +10,21 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
+		[RequireComponent( typeof( IInventory ) )]
 		[RequireComponent( typeof( NavMeshAgent ) )]
-		public class DropOffDeposit : TAIGoal
+		public class DropoffToNew : TAIGoal
 		{
 			/// <summary>
 			/// The spot at which to drop off the deposit.
 			/// </summary>
 			public Vector3 destination { get; private set; }
 
+			private IInventory inventory;
+
 			private NavMeshAgent navMeshAgent;
 
 
-			private void DropOff( IInventory inventory, Vector3 direction )
+			private void DropOff( Vector3 direction )
 			{
 				// Creates deposit(s) from the inventory's items.
 				// Clears the inventory.
@@ -34,11 +37,12 @@ namespace SS
 					{
 						foreach( var kvp in resourcesCarried )
 						{
-							ResourceDepositDefinition def = DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit );
-							int capacity = def.resources[kvp.Key];
+							ResourceDepositDefinition newDepositDef = DataManager.Get<ResourceDepositDefinition>( DataManager.Get<ResourceDefinition>( kvp.Key ).defaultDeposit );
+							int capacity = newDepositDef.resources[kvp.Key];
 							int remaining = kvp.Value;
 							while( remaining > 0 )
 							{
+								// FIXME - spread the deposits in space, so they are overlapping, but not perfectly. Spread more the more deposits there are.
 								GameObject obj;
 								Dictionary<string, int> dict = new Dictionary<string, int>();
 								if( remaining >= capacity )
@@ -50,7 +54,7 @@ namespace SS
 									dict.Add( kvp.Key, remaining );
 								}
 								remaining -= capacity;
-								obj = ResourceDepositCreator.Create( def, hitInfo.point, Quaternion.identity, dict );
+								obj = ResourceDepositCreator.Create( newDepositDef, hitInfo.point, Quaternion.identity, dict );
 								AudioManager.PlayNew( obj.GetComponent<ResourceDeposit>().dropoffSound );
 							}
 						}
@@ -64,24 +68,17 @@ namespace SS
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 				this.navMeshAgent.SetDestination( this.destination );
+				this.inventory = this.GetComponent<IInventory>();
 			}
 
 			void Update()
 			{
-				if( Vector3.Distance( this.transform.position, destination ) < 1 )
+				if( Vector3.Distance( this.transform.position, destination ) < 0.75f )
 				{
-					IInventory inventory = this.GetComponent<IInventory>();
-
-					if( inventory == null )
-					{
-						Object.Destroy( this );
-						throw new System.Exception( "TAIGoal.DropOffDeposit was added to an object that doesn't have inventory." );
-					}
-					
-					if( !inventory.isEmpty )
+					if( !this.inventory.isEmpty )
 					{
 						Vector3 direction = (destination - this.transform.position).normalized;
-						this.DropOff( inventory, direction );
+						this.DropOff( direction );
 					}
 					else
 					{
@@ -97,7 +94,7 @@ namespace SS
 			{
 				TAIGoal.ClearGoal( gameObject );
 
-				DropOffDeposit dropOffDeposit = gameObject.AddComponent<TAIGoal.DropOffDeposit>();
+				DropoffToNew dropOffDeposit = gameObject.AddComponent<TAIGoal.DropoffToNew>();
 
 				dropOffDeposit.destination = destination;
 			}

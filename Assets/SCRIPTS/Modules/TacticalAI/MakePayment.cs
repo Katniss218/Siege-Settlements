@@ -38,6 +38,7 @@ namespace SS
 					Object.Destroy( this );
 					return;
 				}
+
 				if( PhysicsDistance.OverlapInRange( this.transform, this.receiver.transform, 0.75f ) )
 				{
 					this.navMeshAgent.ResetPath();

@@ -9,6 +9,7 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
+		[RequireComponent( typeof( IInventory ) )]
 		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class PickupDeposit : TAIGoal
 		{
@@ -16,12 +17,14 @@ namespace SS
 
 			private float amtCollected = 0;
 
+			private IInventory inventory;
 			private NavMeshAgent navMeshAgent;
 
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 				this.navMeshAgent.SetDestination( this.depositToCollect.transform.position );
+				this.inventory = this.GetComponent<IInventory>();
 			}
 
 			void Update()
@@ -33,14 +36,6 @@ namespace SS
 				}
 				if( PhysicsDistance.OverlapInRange( this.transform, this.depositToCollect.transform, 0.75f ) )
 				{
-					IInventory inventory = this.GetComponent<IInventory>();
-
-					if( inventory == null )
-					{
-						Destroy( this );
-						throw new System.Exception( "TAIGoal.CollectDeposit was added to an object that doesn't have IInventory." );
-					}
-
 					// Clear the path, when it's in range of the deposit.
 					this.navMeshAgent.ResetPath();
 
@@ -56,9 +51,9 @@ namespace SS
 							{
 								continue;
 							}
-							if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
+							if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
 							{
-								amountPickedUp = inventory.Add( kvp.Key, kvp.Value );
+								amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
 								idPickedUp = kvp.Key;
 								break; // Only one resource at a time.
 							}
@@ -78,9 +73,9 @@ namespace SS
 								{
 									continue;
 								}
-								if( inventory.GetMaxCapacity( kvp.Key ) != 0 )
+								if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
 								{
-									amountPickedUp = inventory.Add( kvp.Key, amtFloored );
+									amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
 									idPickedUp = kvp.Key;
 									amtCollected -= amtFloored;
 									break; // Only one resource at a time.

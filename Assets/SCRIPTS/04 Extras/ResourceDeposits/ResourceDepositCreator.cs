@@ -68,7 +68,7 @@ namespace SS.Extras
 
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				throw new System.InvalidOperationException( "You can't leave resources in resource deposits" );
+				
 			} );
 
 			depositInventory.onRemove.AddListener( ( string id, int amount ) =>

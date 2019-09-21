@@ -335,7 +335,7 @@ namespace SS
 				}
 			}
 
-			if( Input.GetKeyDown( KeyCode.P ) )
+			if( Input.GetKeyDown( KeyCode.O ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
@@ -344,6 +344,42 @@ namespace SS
 					{
 						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
 
+						if( hitDeposit != null )
+						{
+							Selectable[] selected = Selection.selectedObjects;
+
+							List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
+
+							// Get the selected and controllable objects as array of GameObjects.
+							for( int i = 0; i < selected.Length; i++ )
+							{
+								if( IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+								{
+									controllableGameObjects.Add( selected[i].gameObject );
+								}
+							}
+
+							for( int i = 0; i < controllableGameObjects.Count; i++ )
+							{
+								IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
+								if( inv != null )
+								{
+									TAIGoal.DropoffToInventory.AssignTAIGoal( controllableGameObjects[i], hitInfo.collider.transform );
+									AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if( Input.GetKeyDown( KeyCode.P ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
 						Selectable[] selected = Selection.selectedObjects;
 
 						List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
@@ -362,7 +398,7 @@ namespace SS
 							IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
 							if( inv != null )
 							{
-								TAIGoal.DropOffDeposit.AssignTAIGoal( controllableGameObjects[i], hitInfo.point );
+								TAIGoal.DropoffToNew.AssignTAIGoal( controllableGameObjects[i], hitInfo.point );
 								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 							}
 						}
