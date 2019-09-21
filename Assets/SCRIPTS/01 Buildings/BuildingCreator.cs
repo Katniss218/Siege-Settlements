@@ -53,7 +53,7 @@ namespace SS.Buildings
 			navMeshObstacle.carving = true;
 
 			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
-			hudGameObject.SetActive( false ); // HUD is hidden by default.
+			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
 

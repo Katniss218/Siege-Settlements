@@ -4,14 +4,12 @@ using SS.Inventories;
 using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace SS.Units
 {
@@ -68,7 +66,7 @@ namespace SS.Units
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
 			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/unit_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
-			hudGameObject.SetActive( false ); // HUD is hidden by default.
+			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 
@@ -148,53 +146,6 @@ namespace SS.Units
 			} );
 
 
-			// Make the unit belong to a faction.
-			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( () =>
-			{
-				Color color = FactionManager.factions[factionMember.factionId].color;
-				hud.SetColor( color );
-				meshRenderer.material.SetColor( "_FactionColor", color );
-			} );
-			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
-			factionMember.factionId = factionId;
-
-			// Make the unit damageable.
-			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.onHealthChange.AddListener( (float deltaHP) =>
-			{
-				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
-				hud.SetHealthBarFill( damageable.healthPercent );
-
-				Selection.ForceSelectionUIRedraw( selectable );
-			} );
-			// Make the unit deselect itself, and destroy it's UI when killed.
-			damageable.onDeath.AddListener( () =>
-			{
-				Object.Destroy( hud.gameObject );
-				// for breakup make several meshes that are made up of the original one, attach physics to them.
-				// let the physics play for a few seconds (randomize durations for each piece), then disable rigidbodies, and pull them downwards, reducing their scale at the same time.
-				// when the scale reaches 0.x, remove the piece.
-
-				// also, play a poof from some particle system for smoke or something at the moment of death.
-				if( Selection.IsSelected( selectable ) )
-				{
-					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
-				}
-				// Remove the now unused listeners.
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
-				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
-			} );
-			selectable.onSelectionUIRedraw.AddListener( () =>
-			{
-				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), def.displayName );
-				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-			} );
-			damageable.healthMax = def.healthMax;
-			damageable.Heal();
-			damageable.armor = def.armor;
-
 			InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
 			inventory.SetSlots( 1, 10 );
 			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
@@ -236,7 +187,56 @@ namespace SS.Units
 					}
 				}
 			} );
-						
+
+			// Make the unit belong to a faction.
+			FactionMember factionMember = container.AddComponent<FactionMember>();
+			factionMember.onFactionChange.AddListener( () =>
+			{
+				Color color = FactionManager.factions[factionMember.factionId].color;
+				hud.SetColor( color );
+				meshRenderer.material.SetColor( "_FactionColor", color );
+			} );
+			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
+			factionMember.factionId = factionId;
+
+			// Make the unit damageable.
+			Damageable damageable = container.AddComponent<Damageable>();
+			damageable.onHealthChange.AddListener( (float deltaHP) =>
+			{
+				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+				hud.SetHealthBarFill( damageable.healthPercent );
+
+				Selection.ForceSelectionUIRedraw( selectable );
+			} );
+			// Make the unit deselect itself, and destroy it's UI when killed.
+			damageable.onDeath.AddListener( () =>
+			{
+				Object.Destroy( hud.gameObject );
+				
+				if( Selection.IsSelected( selectable ) )
+				{
+					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				}
+				// Remove the now unused listeners.
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
+				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
+				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
+				if( !inventory.isEmpty )
+				{
+					TAIGoal.DropoffToNew.DropOffInventory( inventory, container.transform.position );
+				}
+			} );
+
+			selectable.onSelectionUIRedraw.AddListener( () =>
+			{
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), def.displayName );
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+			} );
+
+			damageable.healthMax = def.healthMax;
+			damageable.Heal();
+			damageable.armor = def.armor;
+	
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{

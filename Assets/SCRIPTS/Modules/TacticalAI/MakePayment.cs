@@ -1,5 +1,7 @@
 ﻿using Katniss.Utils;
+using SS.Content;
 using SS.Inventories;
+using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,6 +60,8 @@ namespace SS
 
 							this.inventory.Remove( kvp.Key, amountPayed );
 							this.receiver.ReceivePayment( kvp.Key, amountPayed );
+							ResourceDefinition resDef = DataManager.Get<ResourceDefinition>( kvp.Key );
+							AudioManager.PlayNew( resDef.dropoffSound.Item2 );
 						}
 					}
 					Object.Destroy( this );

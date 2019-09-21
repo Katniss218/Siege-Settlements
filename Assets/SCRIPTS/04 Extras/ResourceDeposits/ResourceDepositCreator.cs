@@ -115,14 +115,20 @@ namespace SS.Extras
 
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				showTooltip( container );
+				if( MouseOverHandler.currentObjectMouseOver == container )
+				{
+					showTooltip( container );
+				}
 			} );
 
 			depositInventory.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( depositInventory.isEmpty )
 				{
-					hideTooltip( container );
+					if( MouseOverHandler.currentObjectMouseOver == container )
+					{
+						hideTooltip( container );
+					}
 					Object.Destroy( container );
 
 					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
@@ -131,7 +137,10 @@ namespace SS.Extras
 				}
 				else
 				{
-					showTooltip( container );
+					if( MouseOverHandler.currentObjectMouseOver == container )
+					{
+						showTooltip( container );
+					}
 				}
 			} );
 

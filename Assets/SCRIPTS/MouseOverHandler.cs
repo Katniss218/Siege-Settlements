@@ -1,7 +1,4 @@
-﻿using SS.Content;
-using SS.Extras;
-using SS.ResourceSystem;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -27,12 +24,7 @@ namespace SS
 		/// Called when mouse stops hovering over specific object.
 		/// </summary>
 		public static _UnityEvent_GameObject onMouseExit = new _UnityEvent_GameObject();
-		
 
-		void Start()
-		{
-			
-		}
 
 		void Update()
 		{

@@ -24,46 +24,41 @@ namespace SS
 			private NavMeshAgent navMeshAgent;
 
 
-			private void DropOff( Vector3 direction )
+			public static void DropOffInventory( IInventory inventory, Vector3 position )
 			{
-				// Creates deposit(s) from the inventory's items.
-				// Clears the inventory.
-				// Stops the agent.
-
-				if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+				if( inventory.isEmpty )
 				{
-					Dictionary<string,int> resourcesCarried = this.inventory.GetAll();
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						foreach( var kvp in resourcesCarried )
-						{
-							ResourceDefinition resourceDef = DataManager.Get<ResourceDefinition>( kvp.Key );
-							ResourceDepositDefinition newDepositDef = DataManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
-							int capacity = newDepositDef.resources[kvp.Key];
-							int remaining = kvp.Value;
-							while( remaining > 0 )
-							{
-								GameObject obj;
-								Dictionary<string, int> dict = new Dictionary<string, int>();
-								if( remaining >= capacity )
-								{
-									dict.Add( kvp.Key, capacity );
-								}
-								else
-								{
-									dict.Add( kvp.Key, remaining );
-								}
-								remaining -= capacity;
-								obj = ResourceDepositCreator.Create( newDepositDef, hitInfo.point, Quaternion.identity, dict );
-								AudioManager.PlayNew( resourceDef.dropoffSound.Item2 );
-							}
-						}
-						this.inventory.Clear();
-					}
-					this.navMeshAgent.ResetPath();
+					throw new System.Exception( "Inventory was empty." );
 				}
-			}
 
+				Dictionary<string, int> resourcesCarried = inventory.GetAll();
+
+				foreach( var kvp in resourcesCarried )
+				{
+					ResourceDefinition resourceDef = DataManager.Get<ResourceDefinition>( kvp.Key );
+					ResourceDepositDefinition newDepositDef = DataManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
+					int capacity = newDepositDef.resources[kvp.Key];
+					int remaining = kvp.Value;
+					while( remaining > 0 )
+					{
+						GameObject obj;
+						Dictionary<string, int> dict = new Dictionary<string, int>();
+						if( remaining >= capacity )
+						{
+							dict.Add( kvp.Key, capacity );
+						}
+						else
+						{
+							dict.Add( kvp.Key, remaining );
+						}
+						remaining -= capacity;
+						obj = ResourceDepositCreator.Create( newDepositDef, position, Quaternion.identity, dict );
+						AudioManager.PlayNew( resourceDef.dropoffSound.Item2 );
+					}
+				}
+				inventory.Clear();
+			}
+		
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
@@ -78,7 +73,16 @@ namespace SS
 					if( !this.inventory.isEmpty )
 					{
 						Vector3 direction = (this.destination - this.transform.position).normalized;
-						this.DropOff( direction );
+
+						if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+						{
+							if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
+							{
+								Vector3 depositPosition = hitInfo.point;
+								DropOffInventory( this.inventory, depositPosition );
+							}
+							this.navMeshAgent.ResetPath();
+						}
 					}
 					else
 					{

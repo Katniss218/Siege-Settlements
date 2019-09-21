@@ -54,7 +54,7 @@ namespace SS.Heroes
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
 			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
-			hudGameObject.SetActive( false ); // HUD is hidden by default.
+			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 
