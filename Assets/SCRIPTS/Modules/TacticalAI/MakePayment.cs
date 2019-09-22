@@ -47,9 +47,9 @@ namespace SS
 
 			void Update()
 			{
+				// If the payment receiver was destroyed, stop the payment, stop the AI.
 				if( this.paymentReceiver == null )
 				{
-					// If the payment receiver was destroyed, stop the payment.
 					this.navMeshAgent.ResetPath();
 					Object.Destroy( this );
 					return;

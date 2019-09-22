@@ -173,25 +173,20 @@ namespace SS
 						}
 					}
 
-					
-					Selectable[] selected = Selection.selectedObjects;
-
 
 					if( hitDeposit == null && hitPayment == null && terrainHitPos.HasValue )
 					{
-						AssignMoveToGoal( terrainHitPos, selected );
+						AssignMoveToGoal( terrainHitPos, Selection.selectedObjects );
 					}
-					else
-					{
-						if( hitDeposit != null )
-						{
-							AssignPickupDepositGoal( hitDeposit, selected );
-						}
 
-						if( hitPayment != null )
-						{
-							AssignMakePaymentGoal( hitPayment, selected );
-						}
+					else if( hitPayment != null )
+					{
+						AssignMakePaymentGoal( hitPayment, Selection.selectedObjects );
+					}
+
+					else if( hitDeposit != null )
+					{
+						AssignPickupDepositGoal( hitDeposit, Selection.selectedObjects );
 					}
 				}
 			}
@@ -267,28 +262,8 @@ namespace SS
 
 						if( hitDeposit != null )
 						{
-							Selectable[] selected = Selection.selectedObjects;
 
-							List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
-
-							// Get the selected and controllable objects as array of GameObjects.
-							for( int i = 0; i < selected.Length; i++ )
-							{
-								if( IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
-								{
-									controllableGameObjects.Add( selected[i].gameObject );
-								}
-							}
-
-							for( int i = 0; i < controllableGameObjects.Count; i++ )
-							{
-								IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
-								if( inv != null )
-								{
-									TAIGoal.DropoffToInventory.AssignTAIGoal( controllableGameObjects[i], hitInfo.collider.transform );
-									AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
-								}
-							}
+							AssignDropoffToInventoryGoal( hitInfo, hitDeposit, Selection.selectedObjects );
 						}
 					}
 				}
@@ -301,28 +276,8 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						Selectable[] selected = Selection.selectedObjects;
 
-						List<GameObject> controllableGameObjects = new List<GameObject>( selected.Length );
-
-						// Get the selected and controllable objects as array of GameObjects.
-						for( int i = 0; i < selected.Length; i++ )
-						{
-							if( IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
-							{
-								controllableGameObjects.Add( selected[i].gameObject );
-							}
-						}
-
-						for( int i = 0; i < controllableGameObjects.Count; i++ )
-						{
-							IInventory inv = controllableGameObjects[i].GetComponent<IInventory>();
-							if( inv != null )
-							{
-								TAIGoal.DropoffToNew.AssignTAIGoal( controllableGameObjects[i], hitInfo.point );
-								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
-							}
-						}
+						AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
 					}
 				}
 			}
@@ -339,11 +294,96 @@ namespace SS
 		//
 		//
 
+		
+		private void AssignDropoffToNewGoal( RaycastHit hitInfo, Selectable[] selected )
+		{
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
+
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				{
+					continue;
+				}
+				IInventory inv = selected[i].GetComponent<IInventory>();
+				if( inv == null )
+				{
+					continue;
+				}
+				if( inv.isEmpty )
+				{
+					continue;
+				}
+
+				movableWithInvGameObjects.Add( selected[i].gameObject );
+			}
+
+			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			{
+				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+			}
+		}
+
+		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, ResourceDeposit hitDeposit, Selectable[] selected )
+		{
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
+
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				bool suitable = true;
+
+				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				{
+					continue;
+				}
+				IInventory inv = selected[i].GetComponent<IInventory>();
+				if( inv == null )
+				{
+					continue;
+				}
+				if( inv.isEmpty )
+				{
+					continue;
+				}
+				Dictionary<string, int> inventoryItems = inv.GetAll();
+
+				foreach( var kvp in inventoryItems )
+				{
+					if( hitDeposit.inventory.GetMaxCapacity( kvp.Key ) == 0 )
+					{
+						suitable = false;
+						break;
+					}
+					// don't move if the deposit doesn't have space to leave resource (inv full of that specific resource).
+					if( hitDeposit.inventory.GetMaxCapacity( kvp.Key ) == hitDeposit.inventory.Get( kvp.Key ) )
+					{
+						suitable = false;
+						break;
+					}
+				}
+
+				if( suitable )
+				{
+					movableWithInvGameObjects.Add( selected[i].gameObject );
+				}
+			}
+
+			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			{
+				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.transform );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+			}
+		}
 
 		private void AssignMoveToGoal( Vector3? terrainHitPos, Selectable[] selected )
 		{
+			const float GRID_MARGIN = 0.125f;
+
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableGameObjects = new List<GameObject>( selected.Length );
+			List<GameObject> movableGameObjects = new List<GameObject>();
 
 			float biggestRadius = float.MinValue;
 
@@ -368,24 +408,23 @@ namespace SS
 			}
 
 			//Calculate the grid position.
-			TAIGoal.MoveTo.GridPositionInfo grid = TAIGoal.MoveTo.GetGridPositions( movableGameObjects );
+			TAIGoal.MoveTo.MovementGridInfo gridInfo = TAIGoal.MoveTo.GetGridPositions( movableGameObjects );
 
-			foreach( var kvp in grid.positions )
+
+			foreach( var kvp in gridInfo.positions )
 			{
-				const float GRID_MARGIN = 0.125f;
-
-				Vector3 newV = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_MARGIN );
+				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_MARGIN );
 
 				RaycastHit gridHit;
-				Ray r = new Ray( newV + new Vector3( 0, 50, 0 ), Vector3.down );
-				if( Physics.Raycast( r, out gridHit, 100, ObjectLayer.TERRAIN_MASK ) )
+				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
+				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
-					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, newV );
+					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
 					AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
 				}
 				else
 				{
-					Debug.LogWarning( "Movement Grid position " + newV + " was outside of the map." );
+					Debug.LogWarning( "Movement Grid position " + gridPositionWorld + " was outside of the map." );
 				}
 			}
 		}
@@ -395,7 +434,7 @@ namespace SS
 			// TODO ----- move this to separate method, propably to the specific tai goal class.
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>( selected.Length );
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			// Go pick up if the inventory can hold any of the resources in the deposit.
 			Dictionary<string, int> resourcesInDeposit = hitDeposit.inventory.GetAll();
@@ -450,7 +489,7 @@ namespace SS
 		private void AssignMakePaymentGoal( PaymentReceiver hitPayment, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>( selected.Length );
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -462,12 +501,17 @@ namespace SS
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<IInventory>() == null )
+				IInventory inv = selected[i].GetComponent<IInventory>();
+				if( inv == null )
 				{
 					continue;
 				}
 				// If the inventory doesn't have any resources that can be left at the payment receiver.
-				if( !hitPayment.ContainsWantedResource( selected[i].GetComponent<IInventory>().GetAll() ) )
+				if( inv.isEmpty )
+				{
+					continue;
+				}
+				if( !hitPayment.ContainsWantedResource( inv.GetAll() ) )
 				{
 					continue;
 				}

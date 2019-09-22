@@ -55,7 +55,7 @@ namespace SS
 				return global;
 			}
 
-			public struct GridPositionInfo
+			public struct MovementGridInfo
 			{
 				public Dictionary<GameObject, Vector2Int> positions;
 
@@ -66,7 +66,7 @@ namespace SS
 			/// <summary>
 			/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 			/// </summary>
-			public static GridPositionInfo GetGridPositions( List<GameObject> objects )
+			public static MovementGridInfo GetGridPositions( List<GameObject> objects )
 			{
 				int count = objects.Count;
 				int sideLen = Mathf.CeilToInt( Mathf.Sqrt( count ) );
@@ -82,7 +82,7 @@ namespace SS
 						// If we calculated every object, return (since the sideLen ^ 2 can be bigger than the number of objects).
 						if( i >= count )
 						{
-							return new GridPositionInfo() { positions = ret, sizeX = x + 1, sizeZ = z + 1 };
+							return new MovementGridInfo() { positions = ret, sizeX = x + 1, sizeZ = z + 1 };
 						}
 
 						// Add the new object to the grid.
@@ -92,7 +92,7 @@ namespace SS
 					}
 				}
 
-				return new GridPositionInfo() { positions = ret, sizeX = x, sizeZ = z };
+				return new MovementGridInfo() { positions = ret, sizeX = x, sizeZ = z };
 			}
 		}
 	}

@@ -69,33 +69,36 @@ namespace SS
 				{
 					throw new System.Exception( "Can't add DropoffToNew TAI goal to: " + this.gameObject.name );
 				}
-				
+
 				this.navMeshAgent.SetDestination( this.destination );
 			}
 
 			void Update()
 			{
+				// If this inventory was emptied in the mean time, stop the AI.
+				if( this.inventory.isEmpty )
+				{
+					Object.Destroy( this );
+				}
 				if( Vector3.Distance( this.transform.position, this.destination ) < 0.75f )
 				{
-					if( !this.inventory.isEmpty )
-					{
-						Vector3 direction = (this.destination - this.transform.position).normalized;
+					Vector3 direction = (this.destination - this.transform.position).normalized;
 
-						if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
-						{
-							if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-							{
-								Vector3 depositPosition = hitInfo.point;
-								DropOffInventory( this.inventory, depositPosition );
-							}
-							this.navMeshAgent.ResetPath();
-						}
-					}
-					else
+					if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 					{
-						Object.Destroy( this );
+						if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
+						{
+							Vector3 depositPosition = hitInfo.point;
+							DropOffInventory( this.inventory, depositPosition );
+						}
+						this.navMeshAgent.ResetPath();
 					}
 				}
+				else
+				{
+					Object.Destroy( this );
+				}
+
 			}
 
 			/// <summary>

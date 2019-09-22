@@ -81,6 +81,16 @@ namespace SS
 
 			void Update()
 			{
+				// If the destination inventory can no longer hold any of the items in this inventory, stop the AI.
+				foreach( var kvp in this.inventory.GetAll() )
+				{
+					if( this.destinationInventory.GetMaxCapacity( kvp.Key ) != this.destinationInventory.Get( kvp.Key ) )
+					{
+						continue;
+					}
+					Object.Destroy( this );
+					return;
+				}
 				if( PhysicsDistance.OverlapInRange( this.transform, this.destinationTransform, 0.75f ) )// this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 				{
 					if( !this.inventory.isEmpty )
