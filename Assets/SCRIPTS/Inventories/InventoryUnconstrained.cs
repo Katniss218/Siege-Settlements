@@ -108,7 +108,7 @@ namespace SS.Inventories
 		{
 			if( this.isEmpty )
 			{
-				return null;
+				return new Dictionary<string, int>();
 			}
 			Dictionary<string, int> ret = new Dictionary<string, int>();
 			for( int i = 0; i < this.resources.Length; i++ )
@@ -151,66 +151,7 @@ namespace SS.Inventories
 			// Every slot occupied by resource with different id.
 			return 0;
 		}
-
-		public bool Has( string id, int amount )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-			if( amount < 1 )
-			{
-				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == id )
-				{
-					return this.resources[i].amount >= amount;
-				}
-			}
-			return false;
-		}
-
-		public bool CanHold( string id )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == "" || this.resources[i].id == id )
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public bool CanHold( string id, int amount )
-		{
-			if( string.IsNullOrEmpty( id ) )
-			{
-				throw new ArgumentNullException( "Id can't be null or empty." );
-			}
-			if( amount < 1 )
-			{
-				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
-			}
-
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				if( this.resources[i].id == id )
-				{
-					return this.resources[i].amount + amount <= this.slotCapacity;
-				}
-			}
-			return false;
-		}
-
+				
 		public int Add( string id, int amountPref )
 		{
 			if( string.IsNullOrEmpty( id ) )

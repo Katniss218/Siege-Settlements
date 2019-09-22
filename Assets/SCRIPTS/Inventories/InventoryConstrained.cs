@@ -124,7 +124,7 @@ namespace SS.Inventories
 		{
 			if( this.isEmpty )
 			{
-				return null;
+				return new Dictionary<string, int>();
 			}
 			Dictionary<string, int> ret = new Dictionary<string, int>();
 			for( int i = 0; i < this.resources.Length; i++ )
