@@ -11,10 +11,11 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
-		[RequireComponent( typeof( IInventory ) )]
-		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class PickupDeposit : TAIGoal
 		{
+			/// <summary>
+			/// The deposit to move to and pick up.
+			/// </summary>
 			public ResourceDeposit depositToCollect { get; private set; }
 
 			private float amtCollected = 0;
@@ -25,15 +26,36 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.navMeshAgent.SetDestination( this.depositToCollect.transform.position );
 				this.inventory = this.GetComponent<IInventory>();
+				if( this.navMeshAgent == null )
+				{
+					throw new System.Exception( "Can't add PickupDeposit TAI goal to: " + this.gameObject.name );
+				}
+				if( this.inventory == null )
+				{
+					throw new System.Exception( "Can't add PickupDeposit TAI goal to: " + this.gameObject.name );
+				}
+				if( this.depositToCollect == null )
+				{
+					Debug.LogWarning( "Not assigned deposit to collect: " + this.gameObject.name );
+					Object.Destroy( this );
+				}
+
+				this.navMeshAgent.SetDestination( this.depositToCollect.transform.position );
 			}
 
 			void Update()
 			{
+				// if the deposit was picked up (not on the map), stop the AI.
 				if( this.depositToCollect == null )
 				{
-					Object.Destroy( this ); // if the deposit was picked up, stop the AI.
+					Object.Destroy( this );
+					return;
+				}
+				// if the deposit was emptied (but still on the map), stop the AI.
+				if( depositToCollect.inventory.isEmpty )
+				{
+					Object.Destroy( this );
 					return;
 				}
 				if( PhysicsDistance.OverlapInRange( this.transform, this.depositToCollect.transform, 0.75f ) )
@@ -101,7 +123,7 @@ namespace SS
 			}
 
 			/// <summary>
-			/// Assigns a new PickUpResource TAI goal to the GameObject.
+			/// Assigns a new PickupDeposit TAI goal to the GameObject.
 			/// </summary>
 			public static void AssignTAIGoal( GameObject gameObject, ResourceDeposit depositToPickUp )
 			{

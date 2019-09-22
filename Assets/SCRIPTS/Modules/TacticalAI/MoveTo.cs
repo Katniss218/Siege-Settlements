@@ -6,14 +6,24 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
-		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class MoveTo : TAIGoal
 		{
+			/// <summary>
+			/// The position to move to.
+			/// </summary>
 			public Vector3 destination { get; private set; }
+
+			private NavMeshAgent navMeshAgent;
 
 			void Start()
 			{
-				this.GetComponent<NavMeshAgent>().SetDestination( this.destination );
+				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
+				if( this.navMeshAgent == null )
+				{
+					throw new System.Exception( "Can't add MoveTo TAI goal to: " + this.gameObject.name );
+				}
+
+				this.navMeshAgent.SetDestination( this.destination );
 			}
 
 			/// <summary>
@@ -28,13 +38,8 @@ namespace SS
 				moveTo.destination = destination;
 			}
 
-			public struct GridPositionInfo
-			{
-				public Dictionary<GameObject, Vector2Int> positions;
 
-				public int sizeX;
-				public int sizeZ;
-			}
+
 
 
 			public static Vector3 GridToWorld( Vector2Int grid, Vector3 gridCenter, float gridSpacing )
@@ -50,7 +55,14 @@ namespace SS
 				return global;
 			}
 
+			public struct GridPositionInfo
+			{
+				public Dictionary<GameObject, Vector2Int> positions;
 
+				public int sizeX;
+				public int sizeZ;
+			}
+			
 			/// <summary>
 			/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 			/// </summary>

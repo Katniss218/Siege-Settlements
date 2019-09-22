@@ -10,8 +10,6 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
-		[RequireComponent( typeof( IInventory ) )]
-		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class DropoffToNew : TAIGoal
 		{
 			/// <summary>
@@ -62,8 +60,17 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.navMeshAgent.SetDestination( this.destination );
 				this.inventory = this.GetComponent<IInventory>();
+				if( this.navMeshAgent == null )
+				{
+					throw new System.Exception( "Can't add DropoffToNew TAI goal to: " + this.gameObject.name );
+				}
+				if( this.inventory == null )
+				{
+					throw new System.Exception( "Can't add DropoffToNew TAI goal to: " + this.gameObject.name );
+				}
+				
+				this.navMeshAgent.SetDestination( this.destination );
 			}
 
 			void Update()

@@ -10,8 +10,6 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
-		[RequireComponent(typeof(IInventory))]
-		[RequireComponent( typeof( NavMeshAgent ) )]
 		public class DropoffToInventory : TAIGoal
 		{
 			/// <summary>
@@ -58,8 +56,27 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.navMeshAgent.SetDestination( this.destinationTransform.position );
 				this.inventory = this.GetComponent<IInventory>();
+				if( this.navMeshAgent == null )
+				{
+					throw new System.Exception( "Can't add DropoffToInventory TAI goal to: " + this.gameObject.name );
+				}
+				if( this.inventory == null )
+				{
+					throw new System.Exception( "Can't add DropoffToInventory TAI goal to: " + this.gameObject.name );
+				}
+				if( this.destinationInventory == null )
+				{
+					Debug.LogWarning( "Not assigned destination inventory: " + this.gameObject.name );
+					Object.Destroy( this );
+				}
+				if( this.destinationTransform == null )
+				{
+					Debug.LogWarning( "Not assigned destination transform: " + this.gameObject.name );
+					Object.Destroy( this );
+				}
+
+				this.navMeshAgent.SetDestination( this.destinationTransform.position );
 			}
 
 			void Update()
@@ -79,23 +96,16 @@ namespace SS
 			}
 
 			/// <summary>
-			/// Assigns a new PickUpResource TAI goal to the GameObject.
+			/// Assigns a new DropoffToInventory TAI goal to the GameObject.
 			/// </summary>
 			public static void AssignTAIGoal( GameObject gameObject, Transform destination )
 			{
-				IInventory destinationInventory = destination.GetComponent<IInventory>();
-				if( destinationInventory == null )
-				{
-					throw new System.Exception( "Destination of DropoffToInventory TAIGoal must have an inventory." );
-				}
-
 				TAIGoal.ClearGoal( gameObject );
 
 				DropoffToInventory dropOffDeposit = gameObject.AddComponent<TAIGoal.DropoffToInventory>();
 
 				dropOffDeposit.destinationTransform = destination;
-				dropOffDeposit.destinationInventory = destinationInventory;
-
+				dropOffDeposit.destinationInventory = destination.GetComponent<IInventory>();
 			}
 		}
 	}
