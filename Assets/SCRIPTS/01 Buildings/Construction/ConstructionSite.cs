@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using Katniss.Utils;
 using SS.Content;
 using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
+using SS.Levels;
+using SS.Levels.SaveStates;
 
 namespace SS.Buildings
 {
 	/// <summary>
 	/// Represents a building that's being constructed.
 	/// </summary>
-	public class ConstructionSite : MonoBehaviour, IPaymentProgress
+	[RequireComponent( typeof( Building ) )]
+	[RequireComponent( typeof( Damageable ) )]
+	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
-		public class _UnityEvent_string_int : UnityEvent<string, int> { }
-
+		public struct CSResourceInfo
+		{
+			public int initialResource { get; set; }
+			public float remaining { get; set; }
+			public float healthToResource { get; set; }
+		}
+		
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
 		[SerializeField] private string[] resourceIds;
 
+#warning - after verifying that this works, change it to dictionary<string,tuple<t,t,t>> with the tuple as a separate struct.
 		/// <summary>
 		/// Resources needed to progress from Building.STARTING_HEALTH_PERCENT health to 100%.
 		/// </summary>
@@ -35,22 +44,115 @@ namespace SS.Buildings
 		/// Each entry represents a percentage of total resources needed (initial).
 		/// </summary>
 		[SerializeField] private float[] healthToResources;
+		
+		//private Dictionary<string, CSResourceInfo> resourcesRemaining;
 
-		public Func<bool> IsDone { get; private set; }
+		private Damageable damageable;
+
+		private Building building;
+		private MeshRenderer meshRenderer;
 
 
-		public int GetWantedAmount( string resourceId )
+		private bool IsDone()
 		{
 			for( int i = 0; i < this.resourceIds.Length; i++ )
 			{
-				if( this.resourceIds[i] == resourceId )
+				int roundedAmount = SpecialRound( this.resourcesRemaining[i] );
+
+				if( roundedAmount != 0 )
 				{
-					return SpecialRound( this.resourcesRemaining[i] );
+					return false;
 				}
 			}
-			return 0;
+			return true;
 		}
 
+		public void ReceivePayment( string id, int amount )
+		{
+			for( int i = 0; i < this.resourceIds.Length; i++ )
+			{
+				// Skip to the matching resource.
+				if( this.resourceIds[i] != id )
+				{
+					continue;
+				}
+
+				int roundedRemaining = SpecialRound( this.resourcesRemaining[i] );
+				if( roundedRemaining == 0 )
+				{
+					throw new Exception( "Received resource wasn't wanted." );
+				}
+				// Received more than was needed (invalid behavior).
+				if( roundedRemaining < amount )
+				{
+					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
+				}
+
+				float healAmt = ((damageable.healthMax * (1 - 0.1f)) / this.initialResources[i]) * this.healthToResources[i] * amount;
+
+				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
+				// Otherwise, heal it normally.
+				if( damageable.health + healAmt > damageable.healthMax )
+				{
+					damageable.health = damageable.healthMax;
+				}
+				else
+				{
+					damageable.health += healAmt;
+				}
+
+				this.resourcesRemaining[i] -= amount;
+				if( this.resourcesRemaining[i] < 0 )
+				{
+					this.resourcesRemaining[i] = 0;
+				}
+
+				Main.particleSystem.transform.position = gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
+				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
+
+				BoxCollider col = this.GetComponent<BoxCollider>();
+				shape.scale = new Vector3( col.size.x, 0.25f, col.size.z );
+				shape.position = Vector3.zero;
+				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
+
+				AudioManager.PlayNew( this.building.buildSoundEffect );
+
+
+				if( this.IsDone() )
+				{
+					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
+					damageable.onHealthChange.RemoveListener( this.OnHealthChange );
+
+#warning change this to Destroy?
+					Object.DestroyImmediate( this );
+					Object.Destroy( this.transform.Find( "construction_site_graphics" ) );
+
+					Selectable selectable = building.GetComponent<Selectable>();
+					if( selectable != null )
+					{
+						Selection.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
+					}
+				}
+
+				return;
+			}
+		}
+
+		public Dictionary<string, int> GetWantedResources()
+		{
+			Dictionary<string, int> ret = new Dictionary<string, int>();
+
+			for( int i = 0; i < this.resourceIds.Length; i++ )
+			{
+				int amtRounded = SpecialRound( this.resourcesRemaining[i] );
+				if( amtRounded != 0 )
+				{
+					ret.Add( this.resourceIds[i], amtRounded );
+				}
+			}
+			return ret;
+		}
+		
 		/// <summary>
 		/// Assigns a cost (in resources) to fully construct the building. Resets any progression in resources.
 		/// </summary>
@@ -94,13 +196,40 @@ namespace SS.Buildings
 			return floored + 1;
 		}
 
+		public void OnHealthChange( float deltaHP )
+		{
+			this.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+			if( deltaHP < 0 )
+			{
+				for( int i = 0; i < this.resourceIds.Length; i++ )
+				{
+					float resAmt = (this.initialResources[i] / (damageable.healthMax * (1 - 0.1f))) * this.healthToResources[i] * -deltaHP;
+
+					this.resourcesRemaining[i] += resAmt;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Creates a new ConstructionSiteData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building, must be under construction.</param>
+		public ConstructionSiteData GetSaveState()
+		{
+			ConstructionSiteData data = new ConstructionSiteData();
+			data.resourcesRemaining = this.resourcesRemaining;
+
+			return data;
+		}
+
 		private static GameObject CreateConstructionSiteGraphics( GameObject gameObject )
 		{
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 
 			FactionMember fac = gameObject.GetComponent<FactionMember>();
 
-			Color color = fac != null ? FactionManager.factions[fac.factionId].color : Color.gray;
+			Color color = fac != null ? LevelManager.currentLevel.Value.factions[fac.factionId].color : Color.gray;
 
 			int numX = Mathf.FloorToInt( collider.size.x * 2.0f );
 			int numZ = Mathf.FloorToInt( collider.size.z * 2.0f );
@@ -116,7 +245,7 @@ namespace SS.Buildings
 			Texture2D albedoC = AssetManager.GetTexture2D( "asset:Textures/ConstructionSites/corner_albedo.png", TextureType.Color );
 			Texture2D normalC = AssetManager.GetTexture2D( "asset:Textures/ConstructionSites/corner_normal.png", TextureType.Normal );
 
-			GameObject constructionSiteGfx = new GameObject( "constructionsite" );
+			GameObject constructionSiteGfx = new GameObject( "construction_site_graphics" );
 			constructionSiteGfx.transform.SetParent( gameObject.transform );
 			constructionSiteGfx.transform.localPosition = new Vector3( -collider.size.x / 2f, 0, -collider.size.z / 2f );
 			constructionSiteGfx.transform.localRotation = Quaternion.identity;
@@ -228,7 +357,7 @@ namespace SS.Buildings
 		/// <summary>
 		/// Starts the construction / repair of the specified building.
 		/// </summary>
-		public static void BeginConstructionOrRepair( GameObject gameObject )
+		public static void BeginConstructionOrRepair( GameObject gameObject, ConstructionSiteData constructionSaveState )
 		{
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			if( !Building.IsRepairable( damageable ) )
@@ -237,119 +366,22 @@ namespace SS.Buildings
 			}
 
 			Building building = gameObject.GetComponent<Building>();
-			
-
-			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
-			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
-			constructionSite.IsDone = () =>
-			{
-				for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
-				{
-					int roundedAmount = SpecialRound( constructionSite.resourcesRemaining[i] );
-
-					if( roundedAmount != 0 )
-					{
-						return false;
-					}
-				}
-				return true;
-			};
 
 			MeshRenderer meshRenderer = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
-			// cache the function listener so we can reference it to remove it when the construction is complete.
-			UnityAction<float> onHealthChange_whenConstructing = ( float deltaHP ) =>
+			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
+			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
+			constructionSite.meshRenderer = meshRenderer;
+			
+			if( constructionSaveState.resourcesRemaining != null )
 			{
-				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
-				if( deltaHP < 0 )
-				{
-					for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
-					{
-						float resAmt = (constructionSite.initialResources[i] / (damageable.healthMax * (1 - 0.1f))) * constructionSite.healthToResources[i] * -deltaHP;
+				constructionSite.resourcesRemaining = constructionSaveState.resourcesRemaining;
+			}
 
-						constructionSite.resourcesRemaining[i] += resAmt;
-					}
-				}
-			};
-
-			damageable.onHealthChange.AddListener( onHealthChange_whenConstructing );
+			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 
 			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
-
-			PaymentReceiver paymentReceiver = gameObject.AddComponent<PaymentReceiver>();
-			paymentReceiver.paymentProgress = constructionSite;
-
-			// Every time the construction progresses:
-			// - Heal the building depending on the amount of resources (100% health => total amount of resources as specified in the definition).
-			// - Emit particles.
-			// - Play sound.
-			paymentReceiver.onPaymentMade.AddListener( ( string id, int amount ) =>
-			{
-				for( int i = 0; i < constructionSite.resourceIds.Length; i++ )
-				{
-					// Check if we even want the received resources.
-					if( constructionSite.resourceIds[i] == id )
-					{
-						int roundedRemaining = SpecialRound( constructionSite.resourcesRemaining[i] );
-						if( roundedRemaining == 0 )
-						{
-							throw new Exception( "Received resource wasn't wanted." );
-						}
-						// Received more than was needed (invalid behavior).
-						if( roundedRemaining < amount )
-						{
-							throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
-						}
-
-						float healAmt = ((damageable.healthMax * (1 - 0.1f)) / constructionSite.initialResources[i]) * constructionSite.healthToResources[i] * amount;
-
-						// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
-						// Otherwise, heal it normally.
-						if( damageable.health + healAmt > damageable.healthMax )
-						{
-							damageable.health = damageable.healthMax;
-						}
-						else
-						{
-							damageable.health += healAmt;
-						}
-
-						constructionSite.resourcesRemaining[i] -= amount;
-						if( constructionSite.resourcesRemaining[i] < 0 )
-						{
-							constructionSite.resourcesRemaining[i] = 0;
-						}
-
-						Main.particleSystem.transform.position = gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
-						ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
-
-						BoxCollider col = building.GetComponent<BoxCollider>();
-						shape.scale = new Vector3( col.size.x, 0.25f, col.size.z );
-						shape.position = Vector3.zero;
-						Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
-
-						AudioManager.PlayNew( building.buildSoundEffect );
-
-						return;
-					}
-				}
-			} );
-
-			paymentReceiver.onProgressComplete.AddListener( () =>
-			{
-				// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
-				damageable.onHealthChange.RemoveListener( onHealthChange_whenConstructing );
-
-				Object.DestroyImmediate( constructionSite );
-				Object.Destroy( constructionSiteGfx );
-
-				Selectable selectable = building.GetComponent<Selectable>();
-				if( selectable != null )
-				{
-					Selection.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
-				}
-			} );
-
+			
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
 			meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 		}

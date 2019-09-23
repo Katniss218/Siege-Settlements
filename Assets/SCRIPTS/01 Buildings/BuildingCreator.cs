@@ -1,5 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
+using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.Modules;
 using SS.UI;
 using UnityEngine;
@@ -10,21 +12,69 @@ namespace SS.Buildings
 {
 	public class BuildingCreator
 	{
-		public static GameObject Create( BuildingDefinition def, Vector3 pos, Quaternion rot, int factionId, bool isUnderConstruction = false )
+		private const string GAMEOBJECT_NAME = "Building";
+
+
+
+		public static string GetDefinitionId( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.BUILDINGS )
+			{
+				throw new System.Exception( "The specified GameObject is not a building." );
+			}
+
+			Building building = gameObject.GetComponent<Building>();
+			return building.defId;
+		}
+
+		/// <summary>
+		/// Creates a new BuildingData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building.</param>
+		public static BuildingData GetSaveState( GameObject gameObject )
+		{
+#warning incomplete - modules.
+			if( gameObject.layer != ObjectLayer.BUILDINGS )
+			{
+				throw new System.Exception( "The specified GameObject is not a building." );
+			}
+
+			BuildingData saveState = new BuildingData();
+
+			saveState.position = gameObject.transform.position;
+			saveState.rotation = gameObject.transform.rotation;
+			
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			saveState.factionId = factionMember.factionId;
+
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			saveState.health = damageable.health;
+
+			ConstructionSite constructionSite = gameObject.GetComponent<ConstructionSite>();
+			if( constructionSite != null )
+			{
+				saveState.constructionSaveState = constructionSite.GetSaveState();
+			}
+
+			return saveState;
+		}
+		
+		public static GameObject Create( BuildingDefinition def, BuildingData data )
 		{
 			if( def == null )
 			{
-				throw new System.ArgumentNullException( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null." );
 			}
-			GameObject container = new GameObject( "Building (\"" + def.id + "\"), (f: " + factionId + ")" );
-			container.isStatic = true;
+			GameObject container = new GameObject( GAMEOBJECT_NAME + " ('" + def.id + "'), (f: " + data.factionId + ")" );
 			container.layer = ObjectLayer.BUILDINGS;
+			container.isStatic = true;
 
 			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			gfx.isStatic = true;
 
-			container.transform.SetPositionAndRotation( pos, rot );
+			container.transform.SetPositionAndRotation( data.position, data.rotation );
+			
 
 			// Mesh
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
@@ -32,10 +82,11 @@ namespace SS.Buildings
 
 			// Material
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionManager.factions[factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
+			meshRenderer.material = MaterialManager.CreateColoredConstructible( LevelManager.currentLevel.Value.factions[data.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
 			
 			// Assign the definition to the building, so it can be accessed later.
 			Building building = container.AddComponent<Building>();
+			building.defId = def.id;
 			building.entrance = def.entrance;
 			building.placementNodes = def.placementNodes;
 			building.StartToEndConstructionCost = def.cost;
@@ -53,7 +104,7 @@ namespace SS.Buildings
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( data.position ), Quaternion.identity, Main.worldUIs );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
@@ -135,21 +186,25 @@ namespace SS.Buildings
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = FactionManager.factions[factionMember.factionId].color;
+				Color color = LevelManager.currentLevel.Value.factions[data.factionId].color;
 				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
-			factionMember.factionId = factionId;
+			factionMember.factionId = data.factionId;
 
 
 			if( def.barracks != null )
 			{
-				BarracksModule.AddTo( container, def.barracks );
+				BarracksModule barracks = new BarracksModule();
+
+				barracks.SetSaveState( data.barracksSaveState );
 			}
 
 			if( def.research != null )
 			{
-				ResearchModule.AddTo( container, def.research );
+				ResearchModule research = new ResearchModule();
+
+				research.SetSaveState( data.researchSaveState );
 			}
 
 			// Make the building damageable.
@@ -188,20 +243,20 @@ namespace SS.Buildings
 					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 				}
 			} );
-			// If the newly spawned building is marked as being constructed:
-			// - Set the health to 10% (construction's starting percent).
-			// - Start the construction process.
-			if( isUnderConstruction )
-			{
-				damageable.healthPercent = Building.STARTING_HEALTH_PERCENT;
-				ConstructionSite.BeginConstructionOrRepair( container );
-			}
 			// If the newly spawned building is not marked as being constructed:
 			// - Set the health to max.
-			else
+			if( data.constructionSaveState == null )
 			{
 				damageable.Heal();
 				meshRenderer.material.SetFloat( "_Progress", 1.0f );
+			}
+			// If the newly spawned building is marked as being constructed:
+			// - Set the health to 10% (construction's starting percent).
+			// - Start the construction process.
+			else
+			{
+				damageable.healthPercent = Building.STARTING_HEALTH_PERCENT;
+				ConstructionSite.BeginConstructionOrRepair( container, data.constructionSaveState );
 			}
 
 			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).

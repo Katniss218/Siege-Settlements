@@ -2,7 +2,7 @@
 
 namespace SS
 {
-	public sealed class DamageSource
+	public struct DamageSource
 	{
 		/// <summary>
 		/// Used to tell the GetRandomizedDamage how much it can deviate from the default damage value.

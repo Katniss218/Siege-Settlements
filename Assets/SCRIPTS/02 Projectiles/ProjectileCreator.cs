@@ -1,26 +1,71 @@
 ﻿using Katniss.Utils;
+using SS.Levels.SaveStates;
 using UnityEngine;
 
 namespace SS.Projectiles
 {
 	public static class ProjectileCreator
 	{
-		public static GameObject Create( ProjectileDefinition def, Vector3 position, Vector3 velocity, int factionId, DamageType damageTypeOverride, float damageOverride, float armorPenetrationOverride, Transform owner )
+		private const string GAMEOBJECT_NAME = "Projectile";
+
+
+
+		public static string GetDefinitionId( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.PROJECTILES )
+			{
+				throw new System.Exception( "The specified GameObject is not a projectile." );
+			}
+
+			Projectile projectile = gameObject.GetComponent<Projectile>();
+			return projectile.defId;
+		}
+
+		/// <summary>
+		/// Creates a new ProjectileData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a projectile.</param>
+		public static ProjectileData GetSaveState( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.PROJECTILES )
+			{
+				throw new System.Exception( "The specified GameObject is not a projectile." );
+			}
+			ProjectileData data = new ProjectileData();
+			
+			data.position = gameObject.transform.position;
+
+			Rigidbody rigidbody = gameObject.AddComponent<Rigidbody>();
+			data.velocity = rigidbody.velocity;
+
+
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			data.factionId = factionMember.factionId;
+
+			DamageSource damageSource = gameObject.GetComponent<DamageSource>();
+			data.damageTypeOverride = damageSource.damageType;
+			data.damageOverride = damageSource.damage;
+			data.armorPenetrationOverride = damageSource.armorPenetration;
+			
+			return data;
+		}
+
+		public static GameObject Create( ProjectileDefinition def, ProjectileData data )
 		{
 			const float LIFETIME = 15.0f;
 			const float HITBOX_RADIUS = 0.0625f;
 
 			if( def == null )
 			{
-				throw new System.ArgumentNullException( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null." );
 			}
-			GameObject container = new GameObject( "Projectile (\"" + def.id + "\"), (f: " + factionId + ")" );
+			GameObject container = new GameObject( GAMEOBJECT_NAME + " (\"" + def.id + "\"), (f: " + data.factionId + ")" );
 			container.layer = ObjectLayer.PROJECTILES;
 
 			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
-			container.transform.SetPositionAndRotation( position, Quaternion.identity );
+			container.transform.SetPositionAndRotation( data.position, Quaternion.identity );
 
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
@@ -33,8 +78,11 @@ namespace SS.Projectiles
 				gfx.AddParticleSystem( def.trailAmt, def.trailTexture.Item2, Color.white, def.trailStartSize, def.trailEndSize, 0.02f, def.trailLifetime );
 			}
 
+			Projectile projectile = container.AddComponent<Projectile>();
+			projectile.defId = def.id;
+
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
-			rigidbody.velocity = velocity;
+			rigidbody.velocity = data.velocity;
 
 			SphereCollider col = container.AddComponent<SphereCollider>();
 			col.radius = HITBOX_RADIUS; // hitbox size
@@ -46,9 +94,9 @@ namespace SS.Projectiles
 			t.onTimerEnd.AddListener( () => Object.Destroy( container ) );
 
 			FactionMember f = container.AddComponent<FactionMember>();
-			f.factionId = factionId;
+			f.factionId = data.factionId;
 
-			DamageSource damageSource = new DamageSource( damageTypeOverride, damageOverride, armorPenetrationOverride );
+			DamageSource damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
 
 			container.AddComponent<RotateAlongVelocity>();
 

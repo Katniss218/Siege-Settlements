@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using SS.ResourceSystem;
 using SS.Content;
 using UnityEngine.Events;
+using SS.Levels.SaveStates;
 
 namespace SS
 {
@@ -35,7 +36,7 @@ namespace SS
 		{
 			get
 			{
-				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/Particle System" ) ); }
+				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Particle System" ) ); }
 				return __particleSystemInstance;
 			}
 		}
@@ -149,7 +150,8 @@ namespace SS
 					Vector3? terrainHitPos = null;
 
 					ResourceDeposit hitDeposit = null;
-					PaymentReceiver hitPayment = null;
+					Transform hitPaymentTransform = null;
+					IPaymentReceiver hitPayment = null;
 
 					for( int i = 0; i < raycastHits.Length; i++ )
 					{
@@ -164,9 +166,10 @@ namespace SS
 							{
 								hitDeposit = deposit;
 							}
-							PaymentReceiver payment = raycastHits[i].collider.GetComponent<PaymentReceiver>();
+							IPaymentReceiver payment = raycastHits[i].collider.GetComponent<IPaymentReceiver>();
 							if( payment != null )
 							{
+								hitPaymentTransform = raycastHits[i].collider.transform;
 								hitPayment = payment;
 							}
 
@@ -181,7 +184,7 @@ namespace SS
 
 					else if( hitPayment != null )
 					{
-						AssignMakePaymentGoal( hitPayment, Selection.selectedObjects );
+						AssignMakePaymentGoal( hitPaymentTransform, hitPayment, Selection.selectedObjects );
 					}
 
 					else if( hitDeposit != null )
@@ -212,9 +215,13 @@ namespace SS
 						{
 							return;
 						}
+
 						// If it is a building, start repair.
-						ConstructionSite.BeginConstructionOrRepair( gameObject );
-						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+						// Empty cs data (no resources present).
+						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
+
+						ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 					}
 				}
 			}
@@ -232,19 +239,14 @@ namespace SS
 						{
 							return;
 						}
-						PaymentReceiver pr = gameObject.GetComponent<PaymentReceiver>();
-						if( pr != null )
+						IPaymentReceiver paymentReceiver = gameObject.GetComponent<IPaymentReceiver>();
+						if( paymentReceiver != null )
 						{
-							// If it is a building, start repair.
-							List<ResourceDefinition> ress = DataManager.GetAllOfType<ResourceDefinition>();
-
-							foreach( var res in ress )
+							Dictionary<string, int> wantedRes = paymentReceiver.GetWantedResources();
+							
+							foreach( var kvp in wantedRes )
 							{
-								int amt = pr.GetWantedAmount( res.id );
-								if( amt != 0 )
-								{
-									pr.ReceivePayment( res.id, amt );
-								}
+								paymentReceiver.ReceivePayment( kvp.Key, kvp.Value );
 							}
 						}
 					}
@@ -322,7 +324,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -374,7 +376,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.transform );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -420,7 +422,7 @@ namespace SS
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
 					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
-					AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+					AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 				}
 				else
 				{
@@ -431,8 +433,6 @@ namespace SS
 
 		private void AssignPickupDepositGoal( ResourceDeposit hitDeposit, Selectable[] selected )
 		{
-			// TODO ----- move this to separate method, propably to the specific tai goal class.
-
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
@@ -441,7 +441,6 @@ namespace SS
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				bool suitable = true;
 				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
 				{
 					continue;
@@ -455,22 +454,18 @@ namespace SS
 				{
 					continue;
 				}
+				bool canPickupAny = false;
 				foreach( var kvp in resourcesInDeposit )
 				{
-					if( inv.GetMaxCapacity( kvp.Key ) == 0 )
+					// if can pick up && has empty space for it.
+					if( inv.GetMaxCapacity( kvp.Key ) > 0 && inv.Get( kvp.Key ) != inv.GetMaxCapacity( kvp.Key ) )
 					{
-						suitable = false;
-						break;
-					}
-					// don't move if can't pick up (inv full of that specific resource).
-					if( inv.GetMaxCapacity( kvp.Key ) == inv.Get( kvp.Key ) )
-					{
-						suitable = false;
+						canPickupAny = true;
 						break;
 					}
 				}
 
-				if( suitable )
+				if( canPickupAny )
 				{
 					movableWithInvGameObjects.Add( selected[i].gameObject );
 				}
@@ -482,11 +477,11 @@ namespace SS
 				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
 
 				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
-		private void AssignMakePaymentGoal( PaymentReceiver hitPayment, Selectable[] selected )
+		private void AssignMakePaymentGoal( Transform receiverTransform, IPaymentReceiver hitReceiver, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -511,19 +506,30 @@ namespace SS
 				{
 					continue;
 				}
-				if( !hitPayment.ContainsWantedResource( inv.GetAll() ) )
+
+				Dictionary<string, int> wantedRes = hitReceiver.GetWantedResources();
+
+				bool hasWantedItem_s = false;
+				foreach( var kvp in wantedRes )
 				{
-					continue;
+					if( inv.Get( kvp.Key ) > 0 )
+					{
+						hasWantedItem_s = true;
+						break;
+					}
 				}
 
-				movableWithInvGameObjects.Add( selected[i].gameObject );
+				if( hasWantedItem_s )
+				{
+					movableWithInvGameObjects.Add( selected[i].gameObject );
+				}
 			}
 
 
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.MakePayment.AssignTAIGoal( movableWithInvGameObjects[i], hitPayment );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/ai_response" ) );
+				TAIGoal.MakePayment.AssignTAIGoal( movableWithInvGameObjects[i], receiverTransform, hitReceiver );
+				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 	}

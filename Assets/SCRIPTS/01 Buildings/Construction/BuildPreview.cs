@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Levels.SaveStates;
 using UnityEngine;
 
 namespace SS.Buildings
@@ -130,7 +131,14 @@ namespace SS.Buildings
 
 				if( Input.GetMouseButtonDown( 0 ) ) // left mouse button
 				{
-					BuildingCreator.Create( this.def, this.transform.position, this.transform.rotation, 0, true );
+					BuildingData data = new BuildingData();
+					data.position = this.transform.position;
+					data.rotation = this.transform.rotation;
+					data.factionId = FactionManager.PLAYER;
+					data.constructionSaveState = new ConstructionSiteData();
+
+					BuildingCreator.Create( this.def, data );
+
 					Destroy( this.gameObject );
 				}
 			}

@@ -1,13 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Modules
 {
-	public class TargetFinder : MonoBehaviour, ITargetFinder
+	public class MeleeModule : Module, ITargetFinder
 	{
 		private Damageable __target;
-		
-		
+
+
 		public float searchRange { get; set; }
 
 		// Recalculate the target, when the target needs to be accessed.
@@ -48,7 +48,7 @@ namespace SS
 				{
 					continue;
 				}
-				
+
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
@@ -56,10 +56,72 @@ namespace SS
 				{
 					continue;
 				}
-				
+
 				return potentialTarget;
 			}
 			return null;
+		}
+
+		// it's the target finder.
+
+		public DamageSource damageSource;
+		public float attackCooldown;
+		public AudioClip attackSoundEffect;
+
+		private FactionMember factionMember;
+		private float lastAttackTimestamp;
+
+		public bool isReadyToAttack
+		{
+			get
+			{
+				return Time.time >= this.lastAttackTimestamp + this.attackCooldown;
+			}
+		}
+
+		void Awake()
+		{
+			this.factionMember = this.GetComponent<FactionMember>();
+		}
+
+		private void Start()
+		{
+			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
+		}
+
+		void Update()
+		{
+			if( this.isReadyToAttack )
+			{
+				Damageable target = this.GetTarget();
+
+				if( target != null )
+				{
+					this.Attack( target );
+					AudioManager.PlayNew( this.attackSoundEffect );
+				}
+			}
+		}
+
+		public void SetSaveState( MeleeModuleDefinition def )
+		{
+			this.canTarget = FactionMember.CanTargetCheck;
+			this.searchRange = def.attackRange;
+			
+			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
+
+			this.damageSource = damageSource;
+			this.attackCooldown = def.attackCooldown;
+			this.attackSoundEffect = def.attackSoundEffect.Item2;
+		}
+
+		/// <summary>
+		/// Forces MeleeComponent to shoot at the target (assumes target != null).
+		/// </summary>
+		public void Attack( Damageable target )
+		{
+			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+			this.lastAttackTimestamp = Time.time;
 		}
 
 #if UNITY_EDITOR

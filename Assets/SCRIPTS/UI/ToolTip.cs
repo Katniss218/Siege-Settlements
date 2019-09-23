@@ -91,7 +91,7 @@ namespace SS.UI
 		{
 			GameObject gameObject;
 
-			Sprite tooltipBackground = AssetManager.GetSprite( AssetManager.RESOURCE_ID + "Textures/tooltip_background" );
+			Sprite tooltipBackground = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/tooltip_background" );
 			GameObjectUtils.RectTransform( Main.canvas.transform, "ToolTip", Vector2.zero, tooltipBackground.rect.size, new Vector2( 0, 1 ), Vector2.zero, Vector2.zero, out gameObject, out toolTip );
 
 			gameObject.AddComponent<CanvasRenderer>();

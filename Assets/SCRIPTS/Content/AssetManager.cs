@@ -5,10 +5,21 @@ using UnityEngine;
 
 namespace SS.Content
 {
+	/// <summary>
+	/// A class for managing Assets (models/textures/sounds/fonts/materials/etc).
+	/// </summary>
 	public static class AssetManager
 	{
-		public const string ASSET_ID = "asset:";
-		public const string RESOURCE_ID = "resource:";
+		/// <summary>
+		/// The identifier prefix used to tell the asset manager to load the asset from the level directory.
+		/// </summary>
+		public const string EXTERN_ASSET_IDENTIFIER = "asset:"; // FIXME - change these to 'extern' and 'builtin'
+
+		/// <summary>
+		/// The identifier prefix used to tell the asset manager to load the asset from the internal 'Resources' directory.
+		/// </summary>
+		public const string BUILTIN_ASSET_IDENTIFIER = "resource:";
+
 
 
 		private static Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
@@ -21,6 +32,11 @@ namespace SS.Content
 
 		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
 
+#warning incomplete - should load the assets from either: resources.load (built-in textures, unmodifyable) / current level.
+//  we want to have internal textures consistent as to not break multiplayer sync.
+
+			
+			#warning if a level is not loaded, the level-based asset can't be loaded and should throw exception.
 
 		/// <summary>
 		/// Returns the path to the "GameData" directory (Read Only).
@@ -42,6 +58,13 @@ namespace SS.Content
 			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;
 		}
 
+		/// <summary>
+		/// Clears every asset.
+		/// </summary>
+		public static void Purge()
+		{
+#warning incomplete
+		}
 
 		public static GameObject GetPrefab( string path )
 		{
@@ -50,13 +73,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
 				throw new System.Exception( "Prefabs can only be loaded via 'Resources.Load'." );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				prefabs.Add( path, Resources.Load<GameObject>( path.Substring( RESOURCE_ID.Length ) ) );
+				prefabs.Add( path, Resources.Load<GameObject>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -73,13 +96,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
 				throw new System.Exception( "Fonts can only be loaded via 'Resources.Load'." );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				fonts.Add( path, Resources.Load<TMP_FontAsset>( path.Substring( RESOURCE_ID.Length ) ) );
+				fonts.Add( path, Resources.Load<TMP_FontAsset>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -97,13 +120,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, ExternalAssetLoader.LoadMesh( GetFullPath( path.Substring( ASSET_ID.Length ) ) ) );
+				meshes.Add( path, ExternalAssetLoader.LoadMesh( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, Resources.Load<Mesh>( path.Substring( RESOURCE_ID.Length ) ) );
+				meshes.Add( path, Resources.Load<Mesh>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -121,13 +144,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				textures.Add( path, ExternalAssetLoader.LoadTexture2D( GetFullPath( path.Substring( ASSET_ID.Length ) ), loadType ) );
+				textures.Add( path, ExternalAssetLoader.LoadTexture2D( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				textures.Add( path, Resources.Load<Texture2D>( path.Substring( RESOURCE_ID.Length ) ) );
+				textures.Add( path, Resources.Load<Texture2D>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -144,13 +167,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				sprites.Add( path, ExternalAssetLoader.LoadSprite( GetFullPath( path.Substring( ASSET_ID.Length ) ) ) );
+				sprites.Add( path, ExternalAssetLoader.LoadSprite( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				sprites.Add( path, Resources.Load<Sprite>( path.Substring( RESOURCE_ID.Length ) ) );
+				sprites.Add( path, Resources.Load<Sprite>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -167,13 +190,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( GetFullPath( path.Substring( ASSET_ID.Length ) ) ) );
+				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				audioClips.Add( path, Resources.Load<AudioClip>( path.Substring( RESOURCE_ID.Length ) ) );
+				audioClips.Add( path, Resources.Load<AudioClip>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{
@@ -190,13 +213,13 @@ namespace SS.Content
 				return ret;
 			}
 
-			if( path.StartsWith( ASSET_ID ) )
+			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
 				throw new System.Exception( "Materials can only be loaded via 'Resources.Load'." );
 			}
-			else if( path.StartsWith( RESOURCE_ID ) )
+			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				materials.Add( path, Resources.Load<Material>( path.Substring( RESOURCE_ID.Length ) ) );
+				materials.Add( path, Resources.Load<Material>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
 			{

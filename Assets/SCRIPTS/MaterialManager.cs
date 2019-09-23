@@ -6,15 +6,15 @@ namespace SS
 {
 	public static class MaterialManager
 	{
-		private const string OPAQUE_ID = AssetManager.RESOURCE_ID + "Materials/Opaque";
-		private const string TRANSPARENT_ID = AssetManager.RESOURCE_ID + "Materials/Transparent";
-		private const string PLANT_OPAQUE_ID = AssetManager.RESOURCE_ID + "Materials/Plant_Opaque";
-		private const string PLANT_TRANSPARENT_ID = AssetManager.RESOURCE_ID + "Materials/Plant_Transparent";
-		private const string COLORED_ID = AssetManager.RESOURCE_ID + "Materials/Colored";
-		private const string COLORED_DESTROYABLE_ID = AssetManager.RESOURCE_ID + "Materials/Colored_Destroyable";
-		private const string COLORED_CONSTRUCTIBLE_ID = AssetManager.RESOURCE_ID + "Materials/Colored_Constructible";
-		private const string PLACEMENT_PREVIEW_ID = AssetManager.RESOURCE_ID + "Materials/PlacementPreview";
-		private const string PARTICLES_ID = AssetManager.RESOURCE_ID + "Materials/Particles";
+		private const string OPAQUE_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Opaque";
+		private const string TRANSPARENT_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Transparent";
+		private const string PLANT_OPAQUE_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Plant_Opaque";
+		private const string PLANT_TRANSPARENT_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Plant_Transparent";
+		private const string COLORED_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Colored";
+		private const string COLORED_DESTROYABLE_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Colored_Destroyable";
+		private const string COLORED_CONSTRUCTIBLE_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Colored_Constructible";
+		private const string PLACEMENT_PREVIEW_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/PlacementPreview";
+		private const string PARTICLES_ID = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Materials/Particles";
 
 		/// <summary>
 		/// Creates a new opaque material.

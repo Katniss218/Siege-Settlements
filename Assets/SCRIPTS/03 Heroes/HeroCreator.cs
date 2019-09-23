@@ -1,5 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
+using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.Modules;
 using SS.UI;
 using TMPro;
@@ -11,19 +13,59 @@ namespace SS.Heroes
 {
 	public static class HeroCreator
 	{
-		public static GameObject Create( HeroDefinition def, Vector3 pos, Quaternion rot, int factionId )
+		private const string GAMEOBJECT_NAME = "Hero";
+
+
+
+		public static string GetDefinitionId( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.HEROES )
+			{
+				throw new System.Exception( "The specified GameObject is not a hero." );
+			}
+
+			Hero hero = gameObject.GetComponent<Hero>();
+			return hero.defId;
+		}
+
+		/// <summary>
+		/// Creates a new HeroData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a hero.</param>
+		public static HeroData GetSaveState( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.HEROES )
+			{
+				throw new System.Exception( "The specified GameObject is not a hero." );
+			}
+
+			HeroData data = new HeroData();
+
+			data.position = gameObject.transform.position;
+			data.rotation = gameObject.transform.rotation;
+
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			data.factionId = factionMember.factionId;
+
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			data.health = damageable.health;
+
+			return data;
+		}
+
+		public static GameObject Create( HeroDefinition def, HeroData data )
 		{
 			if( def == null )
 			{
-				throw new System.ArgumentNullException( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null." );
 			}
-			GameObject container = new GameObject( "Hero (\"" + def.id + "\"), (f: " + factionId + ")" );
+			GameObject container = new GameObject( GAMEOBJECT_NAME + " (\"" + def.id + "\"), (f: " + data.factionId + ")" );
 			container.layer = ObjectLayer.HEROES;
 
 			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
-			container.transform.SetPositionAndRotation( pos, rot );
+			container.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			// Add a mesh to the unit.
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
@@ -31,7 +73,7 @@ namespace SS.Heroes
 
 			// Add a material to the unit.
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionManager.factions[factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
+			meshRenderer.material = MaterialManager.CreateColoredDestroyable( LevelManager.currentLevel.Value.factions[data.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
 						
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
@@ -55,7 +97,7 @@ namespace SS.Heroes
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( data.position ), Quaternion.identity, Main.worldUIs );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
@@ -140,12 +182,12 @@ namespace SS.Heroes
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = FactionManager.factions[factionMember.factionId].color;
+				Color color = LevelManager.currentLevel.Value.factions[data.factionId].color;
 				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
-			factionMember.factionId = factionId;
+			factionMember.factionId = data.factionId;
 
 			// Make the unit damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
@@ -187,13 +229,15 @@ namespace SS.Heroes
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				MeleeModule.AddTo( container, def.melee );
+				MeleeModule melee = container.AddComponent<MeleeModule>();
+				melee.SetSaveState( def.melee );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				RangedModule.AddTo( container, def.ranged );
+				RangedModule ranged = container.AddComponent<RangedModule>();
+				ranged.SetSaveState( def.ranged );
 			}
 
 

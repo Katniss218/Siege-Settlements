@@ -2,6 +2,8 @@
 using SS.Buildings;
 using SS.Content;
 using SS.Inventories;
+using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.Modules;
 using SS.ResourceSystem;
 using SS.UI;
@@ -16,19 +18,61 @@ namespace SS.Units
 {
 	public static class UnitCreator
 	{
-		public static GameObject Create( UnitDefinition def, Vector3 pos, Quaternion rot, int factionId )
+		private const string GAMEOBJECT_NAME = "Unit";
+
+
+
+		public static string GetDefinitionId( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.UNITS )
+			{
+				throw new System.Exception( "The specified GameObject is not a unit." );
+			}
+
+			Unit unit = gameObject.GetComponent<Unit>();
+			return unit.defId;
+		}
+
+		/// <summary>
+		/// Creates a new UnitData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a unit.</param>
+		public static UnitData GetSaveState( GameObject gameObject )
+		{
+#warning incomplete - modules.
+			if( gameObject.layer != ObjectLayer.UNITS )
+			{
+				throw new System.Exception( "The specified GameObject is not a unit." );
+			}
+
+			UnitData saveState = new UnitData();
+
+			saveState.position = gameObject.transform.position;
+			saveState.rotation = gameObject.transform.rotation;
+			
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			saveState.factionId = factionMember.factionId;
+
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			saveState.health = damageable.health;
+
+			return saveState;
+		}
+
+		public static GameObject Create( UnitDefinition def, UnitData data )
 		{
 			if( def == null )
 			{
-				throw new System.ArgumentNullException( "Definition can't be null" );
+				throw new System.ArgumentNullException( "Definition can't be null." );
 			}
-			GameObject container = new GameObject( "Unit (\"" + def.id + "\"), (f: " + factionId + ")" );
+			GameObject container = new GameObject( GAMEOBJECT_NAME + " ('" + def.id + "'), (f: " + data.factionId + ")" );
 			container.layer = ObjectLayer.UNITS;
 
 			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 
-			container.transform.SetPositionAndRotation( pos, rot );
+			container.transform.SetPositionAndRotation( data.position, data.rotation );
+			
 
 			// Add a mesh to the unit.
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
@@ -36,12 +80,15 @@ namespace SS.Units
 
 			// Add a material to the unit.
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionManager.factions[factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
+			meshRenderer.material = MaterialManager.CreateColoredDestroyable( LevelManager.currentLevel.Value.factions[data.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
 			
 			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
+
+			Unit unit = container.AddComponent<Unit>();
+			unit.defId = def.id;
 
 			// Mask the unit as selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
@@ -66,7 +113,7 @@ namespace SS.Units
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/unit_hud" ), Main.camera.WorldToScreenPoint( pos ), Quaternion.identity, Main.worldUIs );
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/unit_hud" ), Main.camera.WorldToScreenPoint( data.position ), Quaternion.identity, Main.worldUIs );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
@@ -193,12 +240,12 @@ namespace SS.Units
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = FactionManager.factions[factionMember.factionId].color;
+				Color color = LevelManager.currentLevel.Value.factions[data.factionId].color;
 				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			// We set the faction after assigning the listener, to automatically set the color to the appropriate value.
-			factionMember.factionId = factionId;
+			factionMember.factionId = data.factionId;
 
 			// Make the unit damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
@@ -241,13 +288,15 @@ namespace SS.Units
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				MeleeModule.AddTo( container, def.melee );
+				MeleeModule melee = container.AddComponent<MeleeModule>();
+				melee.SetSaveState( def.melee );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				RangedModule.AddTo( container, def.ranged );
+				RangedModule ranged = container.AddComponent<RangedModule>();
+				ranged.SetSaveState( def.ranged );
 			}
 
 
@@ -273,7 +322,7 @@ namespace SS.Units
 				BuildingDefinition buildingDef = bdef[i];
 
 				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
-				if( Technologies.TechLock.CheckLocked( buildingDef, FactionManager.factions[0].techs ) )
+				if( Technologies.TechLock.CheckLocked( buildingDef, FactionManager.factions[FactionManager.PLAYER].techs ) )
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, null );
 				}

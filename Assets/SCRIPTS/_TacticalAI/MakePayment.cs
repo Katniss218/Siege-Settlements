@@ -16,7 +16,8 @@ namespace SS
 			/// <summary>
 			/// The spot at which to drop off the deposit.
 			/// </summary>
-			public PaymentReceiver paymentReceiver { get; private set; }
+			public IPaymentReceiver paymentReceiver { get; private set; }
+			public Transform receiverTransform { get; private set; }
 
 			private NavMeshAgent navMeshAgent;
 			private IInventory inventory;
@@ -42,7 +43,7 @@ namespace SS
 
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 				this.inventory = this.GetComponent<IInventory>();
-				this.navMeshAgent.SetDestination( this.paymentReceiver.transform.position );
+				this.navMeshAgent.SetDestination( this.receiverTransform.position );
 			}
 
 			void Update()
@@ -55,22 +56,24 @@ namespace SS
 					return;
 				}
 
-				if( PhysicsDistance.OverlapInRange( this.transform, this.paymentReceiver.transform, 0.75f ) )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.receiverTransform, 0.75f ) )
 				{
 					this.navMeshAgent.ResetPath();
 
 					if( this.inventory != null )
 					{
-						Dictionary<string, int> inventoryItems = this.inventory.GetAll();
-						foreach( var kvp in inventoryItems )
+						Dictionary<string, int> wantedRes = this.paymentReceiver.GetWantedResources();
+						
+						foreach( var kvp in wantedRes )
 						{
-							int amtWanted = this.paymentReceiver.GetWantedAmount( kvp.Key );
-							if( amtWanted == 0 )
+							int amountInInv = this.inventory.Get( kvp.Key );
+							
+							if( amountInInv == 0 )
 							{
-								return;
+								continue;
 							}
 
-							int amountPayed = kvp.Value > amtWanted ? amtWanted : kvp.Value;
+							int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
 
 							this.inventory.Remove( kvp.Key, amountPayed );
 							this.paymentReceiver.ReceivePayment( kvp.Key, amountPayed );
@@ -85,13 +88,14 @@ namespace SS
 			/// <summary>
 			/// Assigns a new MakePayment TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, PaymentReceiver receiver )
+			public static void AssignTAIGoal( GameObject gameObject, Transform receiverTransform, IPaymentReceiver receiver )
 			{
 				TAIGoal.ClearGoal( gameObject );
 
 				MakePayment dropOffDeposit = gameObject.AddComponent<TAIGoal.MakePayment>();
 
 				dropOffDeposit.paymentReceiver = receiver;
+				dropOffDeposit.receiverTransform = receiverTransform;
 			}
 		}
 	}

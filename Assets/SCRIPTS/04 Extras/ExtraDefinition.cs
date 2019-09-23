@@ -8,9 +8,13 @@ namespace SS.Extras
 {
 	public class ExtraDefinition : Definition
 	{
+		public MaterialType shaderType { get; set; }
+
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public float metallic { get; set; }
+		public float smoothness { get; set; }
 
 		public ExtraDefinition( string id ) : base( id )
 		{
@@ -20,20 +24,27 @@ namespace SS.Extras
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
-			string meshPath = serializer.ReadString( "Mesh" );
-			this.mesh = new Tuple<string, Mesh>( meshPath, AssetManager.GetMesh( meshPath ) );
-			string albedoPath = serializer.ReadString( "AlbedoTexture" );
-			this.albedo = new Tuple<string, Texture2D>( albedoPath, AssetManager.GetTexture2D( albedoPath, TextureType.Color ) );
-			string normalPath = serializer.ReadString( "NormalTexture" );
-			this.normal = new Tuple<string, Texture2D>( normalPath, AssetManager.GetTexture2D( normalPath, TextureType.Normal ) );
+
+			this.shaderType = (MaterialType)serializer.ReadByte( "ShaderType" );
+
+			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
+			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			this.metallic = serializer.ReadFloat( "Metallic" );
+			this.smoothness = serializer.ReadFloat( "Smoothness" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
+
+			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
+
 			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
 			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
 			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteFloat( "", "Metallic", this.metallic );
+			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 		}
 	}
 }

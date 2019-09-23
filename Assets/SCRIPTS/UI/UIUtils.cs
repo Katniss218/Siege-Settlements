@@ -18,7 +18,7 @@ namespace SS.UI
 			{
 				if( __text == null )
 				{
-					__text = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/text" );
+					__text = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/text" );
 				}
 				return __text;
 			}
@@ -31,7 +31,7 @@ namespace SS.UI
 			{
 				if( __icon == null )
 				{
-					__icon = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/icon" );
+					__icon = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/icon" );
 				}
 				return __icon;
 			}
@@ -44,7 +44,7 @@ namespace SS.UI
 			{
 				if( __textButton == null )
 				{
-					__textButton = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/button_text" );
+					__textButton = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/button_text" );
 				}
 				return __textButton;
 			}
@@ -57,7 +57,7 @@ namespace SS.UI
 			{
 				if( __iconButton == null )
 				{
-					__iconButton = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/button_icon" );
+					__iconButton = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/button_icon" );
 				}
 				return __iconButton;
 			}
@@ -70,7 +70,7 @@ namespace SS.UI
 			{
 				if( __scrollableGrid == null )
 				{
-					__scrollableGrid = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/scrollable_grid" );
+					__scrollableGrid = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/scrollable_grid" );
 				}
 				return __scrollableGrid;
 			}
@@ -83,7 +83,7 @@ namespace SS.UI
 			{
 				if( __scrollableList == null )
 				{
-					__scrollableList = AssetManager.GetPrefab( AssetManager.RESOURCE_ID + "Prefabs/UI/scrollable_list" );
+					__scrollableList = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/UI/scrollable_list" );
 				}
 				return __scrollableList;
 			}

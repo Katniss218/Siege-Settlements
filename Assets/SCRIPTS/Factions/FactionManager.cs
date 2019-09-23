@@ -7,12 +7,12 @@
 		/// <summary>
 		/// The currently registered factions.
 		/// </summary>
-		public static Faction[] factions { get; private set; }
+		public static FactionData[] factions { get; private set; }
 
 		/// <summary>
 		/// Sets the factions.
 		/// </summary>
-		public static void SetFactions( Faction[] factions )
+		public static void SetFactions( FactionData[] factions )
 		{
 			FactionManager.factions = factions;
 		}

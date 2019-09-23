@@ -9,11 +9,12 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 
 namespace SS.Extras
-{
+{/*
 	public static class ResourceDepositCreator
 	{
-		public static GameObject Create( ResourceDepositDefinition def, Vector3 pos, Quaternion rot, Dictionary<string, int> resources )
+		public static GameObject Create()
 		{
+#error not used anymore. deposits should be extras with inventory deposit module thing added.
 			if( def == null )
 			{
 				throw new System.Exception( "Definition can't be null" );
@@ -159,5 +160,5 @@ namespace SS.Extras
 
 			return container;
 		}
-	}
+	}*/
 }

@@ -12,6 +12,9 @@ using UnityEngine;
 
 namespace SS.Content
 {
+	/// <summary>
+	/// A class for managing game's Data (definitions).
+	/// </summary>
 	public static class DataManager
 	{
 		private const string KFF_TNAME_UNITS_LIST = "Units";
@@ -20,12 +23,14 @@ namespace SS.Content
 		private const string KFF_TNAME_PROJECTILES_LIST = "Projectiles";
 		private const string KFF_TNAME_RESOURCES_LIST = "Resources";
 		private const string KFF_TNAME_EXTRAS_LIST = "Extras";
-		private const string KFF_TNAME_RESOURCEDEPOSITS_LIST = "ResourceDeposits";
+#warning deposits are extras now.
 		private const string KFF_TNAME_TECHNOLOGIES_LIST = "Technologies";
 
 		private static readonly Encoding FILE_ENCODING = Encoding.UTF8;
 
 		private const string DEFINITION_DIRNAME = "Definitions";
+
+#error incomplete - should load the definitions from the current level.
 
 		/// <summary>
 		/// Returns the path to the "GameData" directory (Read Only).
@@ -48,6 +53,14 @@ namespace SS.Content
 		}
 
 		private static List<Definition> registeredDefinitions = new List<Definition>();
+
+		/// <summary>
+		/// Clears every definition.
+		/// </summary>
+		public static void Purge()
+		{
+#warning incomplete
+		}
 
 		/// <summary>
 		/// Registers a new Definition. Definitions must have a unique ID, even if they are of different definition type.
@@ -75,6 +88,7 @@ namespace SS.Content
 		/// <exception cref="System.Exception">Thrown when the definition is not registered or if the types don't match.</exception>
 		public static T Get<T>( string id ) where T : Definition
 		{
+#warning split definitions from each other into their base types.
 			for( int i = 0; i < registeredDefinitions.Count; i++ )
 			{
 				if( registeredDefinitions[i].id == id )
@@ -224,24 +238,6 @@ namespace SS.Content
 			}
 		}
 
-		private static void LoadResourceDepositDefinitions( string path )
-		{
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			var analysisData = serializer.Analyze( KFF_TNAME_RESOURCEDEPOSITS_LIST );
-			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[analysisData.childCount];
-
-			for( int i = 0; i < deserialized.Length; i++ )
-			{
-				deserialized[i] = new ResourceDepositDefinition( "<missing>" );
-			}
-			serializer.DeserializeArray( KFF_TNAME_RESOURCEDEPOSITS_LIST, deserialized );
-
-			for( int i = 0; i < deserialized.Length; i++ )
-			{
-				DataManager.RegisterDefinition( deserialized[i] );
-			}
-		}
-
 		private static void LoadTechnologyDefinitions( string path )
 		{
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
@@ -280,9 +276,7 @@ namespace SS.Content
 			LoadResourceDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Resources.kff" );
 
 			LoadExtraDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Extras.kff" );
-
-			LoadResourceDepositDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "ResourceDeposits.kff" );
-
+			
 			LoadTechnologyDefinitions( definitionsFullPath + System.IO.Path.DirectorySeparatorChar + "Technologies.kff" );
 		}
 

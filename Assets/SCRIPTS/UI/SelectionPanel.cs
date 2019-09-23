@@ -31,7 +31,7 @@ namespace SS.UI
 		{
 			mode = SelectionPanelMode.Object;
 
-			switcherImage.sprite = AssetManager.GetSprite( AssetManager.RESOURCE_ID + "Textures/obj_lst" );
+			switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/obj_lst" );
 			listTransform.gameObject.SetActive( false );
 			objectTransform.gameObject.SetActive( true );
 		}
@@ -40,7 +40,7 @@ namespace SS.UI
 		{
 			mode = SelectionPanelMode.List;
 
-			switcherImage.sprite = AssetManager.GetSprite( AssetManager.RESOURCE_ID + "Textures/lst_obj" );
+			switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/lst_obj" );
 			listTransform.gameObject.SetActive( true );
 			objectTransform.gameObject.SetActive( false );
 		}

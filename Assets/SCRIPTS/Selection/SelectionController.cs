@@ -33,7 +33,7 @@ namespace SS
 
 			GameObjectUtils.RectTransform( Main.canvas.transform, "SelectionRect", new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), out obj, out t );
 
-			obj.AddImageSliced( AssetManager.GetSprite( AssetManager.RESOURCE_ID + "Textures/selection_rect" ), false );
+			obj.AddImageSliced( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/selection_rect" ), false );
 
 			selectionRect = t;
 		}
@@ -91,13 +91,13 @@ namespace SS
 								if( !Selection.IsHighlighted( uniqueObjs[i] ) )
 								{
 									Selection.HighlightSelected( uniqueObjs[i] );
-									AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+									AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 								}
 							}
 							else
 							{
 								Selection.SelectAndHighlight( uniqueObjs[i] );
-								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+								AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 							}
 						}
 					}
@@ -113,7 +113,7 @@ namespace SS
 					if( numSelected > 0 )
 					{
 						Selection.DeselectAll();
-						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
+						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
 					}
 				}
 				else
@@ -132,12 +132,12 @@ namespace SS
 						{
 							Selection.SelectAndHighlight( uniqueObjs[i] );
 							
-							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/select" ) );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 							
 						}
 						else
 						{
-							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.RESOURCE_ID + "Sounds/deselect" ) );
+							AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
 						}
 					}
 				}
