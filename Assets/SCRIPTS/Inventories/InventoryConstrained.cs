@@ -7,7 +7,7 @@ namespace SS.Inventories
 	/// <summary>
 	/// An inventory that has slots constrained to single resource ID.
 	/// </summary>
-	public class InventoryConstrained : MonoBehaviour, IInventory
+	public sealed class InventoryConstrained : MonoBehaviour, IInventory
 	{
 		private struct SlotGroup
 		{

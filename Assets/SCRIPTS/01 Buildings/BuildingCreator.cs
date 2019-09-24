@@ -33,30 +33,41 @@ namespace SS.Buildings
 		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building.</param>
 		public static BuildingData GetSaveState( GameObject gameObject )
 		{
-#warning incomplete - modules.
 			if( gameObject.layer != ObjectLayer.BUILDINGS )
 			{
 				throw new System.Exception( "The specified GameObject is not a building." );
 			}
 
-			BuildingData saveState = new BuildingData();
+			BuildingData data = new BuildingData();
 
-			saveState.position = gameObject.transform.position;
-			saveState.rotation = gameObject.transform.rotation;
+			data.position = gameObject.transform.position;
+			data.rotation = gameObject.transform.rotation;
 			
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			saveState.factionId = factionMember.factionId;
+			data.factionId = factionMember.factionId;
 
 			Damageable damageable = gameObject.GetComponent<Damageable>();
-			saveState.health = damageable.health;
+			data.health = damageable.health;
 
 			ConstructionSite constructionSite = gameObject.GetComponent<ConstructionSite>();
 			if( constructionSite != null )
 			{
-				saveState.constructionSaveState = constructionSite.GetSaveState();
+				data.constructionSaveState = constructionSite.GetSaveState();
 			}
 
-			return saveState;
+			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
+			if( barracks != null )
+			{
+				data.barracksSaveState = barracks.GetSaveState();
+			}
+
+			ResearchModule research = gameObject.GetComponent<ResearchModule>();
+			if( research != null )
+			{
+				data.researchSaveState = research.GetSaveState();
+			}
+
+			return data;
 		}
 		
 		public static GameObject Create( BuildingDefinition def, BuildingData data )

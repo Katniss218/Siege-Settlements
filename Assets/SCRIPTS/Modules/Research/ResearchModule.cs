@@ -185,7 +185,7 @@ namespace SS.Modules
 						}
 						else
 						{
-							List<TechnologyDefinition> registeredTechnologies = DataManager.GetAllOfType<TechnologyDefinition>();
+							List<TechnologyDefinition> registeredTechnologies = DefinitionManager.GetAllOfType<TechnologyDefinition>();
 							List<GameObject> gridElements = new List<GameObject>();
 							// Add every available technology to the list.
 							for( int i = 0; i < registeredTechnologies.Count; i++ )

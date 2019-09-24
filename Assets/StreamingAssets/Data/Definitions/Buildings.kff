@@ -23,8 +23,8 @@
 		// Controls the barracks module of the building. remove this to disable functionality.
 		BarracksModule =
 		{
-			ConstructionSpeed = 1.0;
-			SpawnableUnits =
+			TrainSpeed = 1.0;
+			TrainableUnits =
 			[
 				"unit.civilian"
 			];
@@ -95,8 +95,8 @@
 		];
 		BarracksModule =
 		{
-			ConstructionSpeed = 1.0;
-			SpawnableUnits =
+			TrainSpeed = 1.0;
+			TrainableUnits =
 			[
 				"unit.light_infantry",
 				"unit.heavy_infantry",
@@ -136,8 +136,8 @@
 		];
 		BarracksModule =
 		{
-			ConstructionSpeed = 1.0;
-			SpawnableUnits =
+			TrainSpeed = 1.0;
+			TrainableUnits =
 			[
 				"unit.light_cavalry",
 				"unit.heavy_cavalry",

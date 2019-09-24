@@ -200,7 +200,7 @@ namespace SS.Modules
 			this.trainableUnits = new UnitDefinition[saveState.def.trainableUnits.Length];
 			for( int i = 0; i < this.trainableUnits.Length; i++ )
 			{
-				this.trainableUnits[i] = DataManager.Get<UnitDefinition>( saveState.def.trainableUnits[i] );
+				this.trainableUnits[i] = DefinitionManager.Get<UnitDefinition>( saveState.def.trainableUnits[i] );
 			}
 
 			Building building = this.GetComponent<Building>();

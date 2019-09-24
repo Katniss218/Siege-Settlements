@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Levels;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,14 +7,14 @@ using UnityEngine;
 namespace SS.Content
 {
 	/// <summary>
-	/// A class for managing Assets (models/textures/sounds/fonts/materials/etc).
+	/// A class for managing game's currently loaded Assets (models/textures/sounds/fonts/materials/etc).
 	/// </summary>
 	public static class AssetManager
 	{
 		/// <summary>
 		/// The identifier prefix used to tell the asset manager to load the asset from the level directory.
 		/// </summary>
-		public const string EXTERN_ASSET_IDENTIFIER = "asset:"; // FIXME - change these to 'extern' and 'builtin'
+		public const string EXTERN_ASSET_IDENTIFIER = "asset:"; // FIXME - change these to 'extern' and 'builtin' (BUT only after making everything working again)
 
 		/// <summary>
 		/// The identifier prefix used to tell the asset manager to load the asset from the internal 'Resources' directory.
@@ -21,6 +22,7 @@ namespace SS.Content
 		public const string BUILTIN_ASSET_IDENTIFIER = "resource:";
 
 
+		// Asset cache.
 
 		private static Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
 		private static Dictionary<string, TMP_FontAsset> fonts = new Dictionary<string, TMP_FontAsset>();
@@ -31,40 +33,18 @@ namespace SS.Content
 		private static Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
 
 		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
+		
 
-#warning incomplete - should load the assets from either: resources.load (built-in textures, unmodifyable) / current level.
-//  we want to have internal textures consistent as to not break multiplayer sync.
 
-			
-			#warning if a level is not loaded, the level-based asset can't be loaded and should throw exception.
-
-		/// <summary>
-		/// Returns the path to the "GameData" directory (Read Only).
-		/// </summary>
-		public static string dirPath
+		public static string GetLevelAssetPath( string assetsPath )
 		{
-			get
-			{
-				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Assets";
-			}
+			return LevelManager.levelDirectoryPath + System.IO.Path.DirectorySeparatorChar + LevelManager.currentLevel.identifier + System.IO.Path.DirectorySeparatorChar + "Assets";
 		}
 
-		/// <summary>
-		/// Converts relative path into a full system path.
-		/// </summary>
-		/// <param name="assetsPath">The path starting at GameData directory.</param>
-		public static string GetFullPath( string assetsPath )
-		{
-			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;
-		}
 
-		/// <summary>
-		/// Clears every asset.
-		/// </summary>
-		public static void Purge()
-		{
-#warning incomplete
-		}
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public static GameObject GetPrefab( string path )
 		{
@@ -122,10 +102,14 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, ExternalAssetLoader.LoadMesh( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				meshes.Add( path, ExternalAssetLoader.LoadMesh( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
+				if( LevelManager.currentLevel == null )
+				{
+					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+				}
 				meshes.Add( path, Resources.Load<Mesh>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
 			else
@@ -146,7 +130,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				textures.Add( path, ExternalAssetLoader.LoadTexture2D( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
+				if( LevelManager.currentLevel == null )
+				{
+					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+				}
+				textures.Add( path, ExternalAssetLoader.LoadTexture2D( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -169,7 +157,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				sprites.Add( path, ExternalAssetLoader.LoadSprite( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				if( LevelManager.currentLevel == null )
+				{
+					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+				}
+				sprites.Add( path, ExternalAssetLoader.LoadSprite( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -192,7 +184,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( GetFullPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				if( LevelManager.currentLevel == null )
+				{
+					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+				}
+				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{

@@ -14,17 +14,24 @@ namespace SS.Levels.SaveStates
 		public int factionId { get; set; }
 
 		public float health { get; set; }
-		
-#warning incomplete - lacks modules.
+
 
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			this.position = serializer.ReadVector3( "Position" );
+			this.rotation = serializer.ReadQuaternion( "Rotation" );
+
+			this.factionId = serializer.ReadInt( "FactionId" );
+			this.health = serializer.ReadFloat( "Health" );
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			serializer.WriteVector3( "", "Position", this.position );
+			serializer.WriteQuaternion( "", "Rotation", this.rotation );
+
+			serializer.WriteInt( "", "FactionId", this.factionId );
+			serializer.WriteFloat( "", "Health", this.health );
 		}
 	}
 }

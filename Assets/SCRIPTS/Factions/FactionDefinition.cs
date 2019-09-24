@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace SS
 {
+	/// <summary>
+	/// Represents faction's data, that doesn't change.
+	/// </summary>
 	public class FactionDefinition : IKFFSerializable
 	{
 		/// <summary>
@@ -22,18 +25,14 @@ namespace SS
 
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.displayName = serializer.ReadString( "Name" );
+			this.displayName = serializer.ReadString( "DisplayName" );
 			this.color = serializer.ReadColor( "Color" );
-#warning incomplete.
-			throw new System.NotImplementedException();
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "Name", this.displayName );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteColor( "", "Color", this.color );
-#warning incomplete.
-			throw new System.NotImplementedException();
 		}
 	}
 }

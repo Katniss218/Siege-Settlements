@@ -39,7 +39,6 @@ namespace SS.Units
 		/// <param name="gameObject">The GameObject to extract the save state from. Must be a unit.</param>
 		public static UnitData GetSaveState( GameObject gameObject )
 		{
-#warning incomplete - modules.
 			if( gameObject.layer != ObjectLayer.UNITS )
 			{
 				throw new System.Exception( "The specified GameObject is not a unit." );
@@ -205,7 +204,7 @@ namespace SS.Units
 					{
 						continue;
 					}
-					hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
+					hudResourceIcon.sprite = DefinitionManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
 					hudAmount.text = kvp.Value.ToString();
 
 					hudResourceIcon.gameObject.SetActive( true );
@@ -229,7 +228,7 @@ namespace SS.Units
 						{
 							continue;
 						}
-						hudResourceIcon.sprite = DataManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
+						hudResourceIcon.sprite = DefinitionManager.Get<ResourceDefinition>( kvp.Key ).icon.Item2; // this can be null.
 						hudAmount.text = kvp.Value.ToString();
 						break;
 					}
@@ -313,7 +312,7 @@ namespace SS.Units
 		{
 			const string TEXT = "Select building to place...";
 
-			List<BuildingDefinition> bdef = DataManager.GetAllOfType<BuildingDefinition>();
+			List<BuildingDefinition> bdef = DefinitionManager.GetAllOfType<BuildingDefinition>();
 			GameObject[] gridElements = new GameObject[bdef.Count];
 
 			// Initialize the grid elements' GameObjects.

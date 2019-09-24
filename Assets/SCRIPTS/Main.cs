@@ -150,8 +150,8 @@ namespace SS
 					Vector3? terrainHitPos = null;
 
 					ResourceDeposit hitDeposit = null;
-					Transform hitPaymentTransform = null;
-					IPaymentReceiver hitPayment = null;
+					Transform hitReceiverTransform = null;
+					IPaymentReceiver[] hitPaymentReceivers = null;
 
 					for( int i = 0; i < raycastHits.Length; i++ )
 					{
@@ -166,25 +166,25 @@ namespace SS
 							{
 								hitDeposit = deposit;
 							}
-							IPaymentReceiver payment = raycastHits[i].collider.GetComponent<IPaymentReceiver>();
-							if( payment != null )
+							IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
+							if( receivers.Length > 0 )
 							{
-								hitPaymentTransform = raycastHits[i].collider.transform;
-								hitPayment = payment;
+								hitReceiverTransform = raycastHits[i].collider.transform;
+								hitPaymentReceivers = receivers;
 							}
 
 						}
 					}
 
 
-					if( hitDeposit == null && hitPayment == null && terrainHitPos.HasValue )
+					if( hitDeposit == null && hitReceiverTransform == null && terrainHitPos.HasValue )
 					{
-						AssignMoveToGoal( terrainHitPos, Selection.selectedObjects );
+						AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 					}
 
-					else if( hitPayment != null )
+					else if( hitReceiverTransform != null )
 					{
-						AssignMakePaymentGoal( hitPaymentTransform, hitPayment, Selection.selectedObjects );
+						AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
 					}
 
 					else if( hitDeposit != null )
@@ -380,7 +380,7 @@ namespace SS
 			}
 		}
 
-		private void AssignMoveToGoal( Vector3? terrainHitPos, Selectable[] selected )
+		private void AssignMoveToGoal( Vector3 terrainHitPos, Selectable[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
 
@@ -415,7 +415,7 @@ namespace SS
 
 			foreach( var kvp in gridInfo.positions )
 			{
-				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos.Value, biggestRadius * 2 + GRID_MARGIN );
+				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
 
 				RaycastHit gridHit;
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
@@ -481,11 +481,15 @@ namespace SS
 			}
 		}
 
-		private void AssignMakePaymentGoal( Transform receiverTransform, IPaymentReceiver hitReceiver, Selectable[] selected )
+		private void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
+			List<GameObject> toBeAssignedGameObjects = new List<GameObject>();
+			List<int> receiverIndices = new List<int>();
 
+// every unit could go to different payments on the same, clicked object (later change this to pie menu, where the player selects explicitly to which payment receiver to go).
+// that payment receiver needs an icon to display. So by extension - every payment receiver needs an icon.
+			
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
@@ -507,28 +511,36 @@ namespace SS
 					continue;
 				}
 
-				Dictionary<string, int> wantedRes = hitReceiver.GetWantedResources();
-
-				bool hasWantedItem_s = false;
-				foreach( var kvp in wantedRes )
+				// loop over every receiver and choose a compatible one.
+				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
-					if( inv.Get( kvp.Key ) > 0 )
+
+					Dictionary<string, int> wantedRes = paymentReceivers[j].GetWantedResources();
+
+					bool hasWantedItem_s = false;
+					foreach( var kvp in wantedRes )
 					{
-						hasWantedItem_s = true;
+						if( inv.Get( kvp.Key ) > 0 )
+						{
+							hasWantedItem_s = true;
+							break;
+						}
+					}
+
+					if( hasWantedItem_s )
+					{
+						toBeAssignedGameObjects.Add( selected[i].gameObject );
+						receiverIndices.Add( j );
 						break;
 					}
-				}
-
-				if( hasWantedItem_s )
-				{
-					movableWithInvGameObjects.Add( selected[i].gameObject );
+					// if this receiver is not compatible - onto the next one.
 				}
 			}
 
 
-			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
-				TAIGoal.MakePayment.AssignTAIGoal( movableWithInvGameObjects[i], receiverTransform, hitReceiver );
+				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform, paymentReceivers[receiverIndices[i]] );
 				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}

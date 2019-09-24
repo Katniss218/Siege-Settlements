@@ -11,16 +11,18 @@ namespace SS.Levels.SaveStates
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
 
-#warning incomplete - lacks modules (deposit).
+#warning incomplete - lacks modules (deposits).
 
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			this.position = serializer.ReadVector3( "Position" );
+			this.rotation = serializer.ReadQuaternion( "Rotation" );
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			serializer.WriteVector3( "", "Position", this.position );
+			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 		}
 	}
 }

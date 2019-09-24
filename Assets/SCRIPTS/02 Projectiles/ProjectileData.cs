@@ -17,18 +17,29 @@ namespace SS.Levels.SaveStates
 		public float damageOverride { get; set; }
 		public float armorPenetrationOverride { get; set; }
 		
-
-#warning incomplete - lacks fields.
-#warning incomplete - lacks modules.
-
+		
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			this.position = serializer.ReadVector3( "Position" );
+			this.velocity = serializer.ReadVector3( "Velocity" );
+
+			this.factionId = serializer.ReadInt( "FactionId" );
+
+			this.damageTypeOverride = (DamageType)serializer.ReadByte( "DamageTypeOverride" );
+			this.damageOverride = serializer.ReadFloat( "DamageOverride" );
+			this.armorPenetrationOverride = serializer.ReadFloat( "ArmorPenetrationOverride" );
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
-			throw new System.NotImplementedException();
+			serializer.WriteVector3( "", "Position", this.position );
+			serializer.WriteVector3( "", "Velocity", this.velocity );
+
+			serializer.WriteInt( "", "FactionId", this.factionId );
+
+			serializer.WriteByte( "", "DamageTypeOverride", (byte)this.damageTypeOverride );
+			serializer.WriteFloat( "", "DamageOverride", this.damageOverride );
+			serializer.WriteFloat( "", "ArmorPenetrationOverride", this.armorPenetrationOverride );
 		}
 	}
 }

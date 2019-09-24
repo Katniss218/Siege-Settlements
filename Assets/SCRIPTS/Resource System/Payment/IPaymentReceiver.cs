@@ -7,8 +7,6 @@ namespace SS.ResourceSystem.Payment
 	/// </summary>
 	public interface IPaymentReceiver
 	{
-#warning We might have to deal with multiple payment receivers per object. Interact with the first available. GetComponents<> and get the first that would accept current resources.
-
 		/// <summary>
 		/// Makes this payment receiver receive a payment.
 		/// </summary>

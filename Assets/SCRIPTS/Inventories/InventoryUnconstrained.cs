@@ -7,7 +7,7 @@ namespace SS.Inventories
 	/// <summary>
 	/// An inventory that can hold arbitrary resource in each of the slots (as long as there are no duplicate ids).
 	/// </summary>
-	public class InventoryUnconstrained : MonoBehaviour, IInventory
+	public sealed class InventoryUnconstrained : MonoBehaviour, IInventory
 	{
 		private struct SlotGroup
 		{

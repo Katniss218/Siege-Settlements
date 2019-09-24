@@ -77,7 +77,7 @@ namespace SS
 
 							this.inventory.Remove( kvp.Key, amountPayed );
 							this.paymentReceiver.ReceivePayment( kvp.Key, amountPayed );
-							ResourceDefinition resDef = DataManager.Get<ResourceDefinition>( kvp.Key );
+							ResourceDefinition resDef = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
 							AudioManager.PlayNew( resDef.dropoffSound.Item2 );
 						}
 					}

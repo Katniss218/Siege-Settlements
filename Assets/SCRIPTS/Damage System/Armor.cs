@@ -41,12 +41,12 @@ namespace SS
 		/// <summary>
 		/// Calculates reduced damage, based on the armor's current values and the parameters of the incoming damage.
 		/// </summary>
-		/// <param name="incomingDamage">The amount of incoming damage (the raw damage, before any reductions).</param>
 		/// <param name="damageType">The type of incoming damage.</param>
+		/// <param name="damage">The amount of incoming damage (the raw damage, before any reductions).</param>
 		/// <param name="armorPenetration">The amount of armor penetration of the incoming damage.</param>
-		public float CalculateReducedDamage( float incomingDamage, DamageType damageType, float armorPenetration )
+		public float CalculateReducedDamage( DamageType damageType, float damage, float armorPenetration )
 		{
-			return incomingDamage * this.GetMultiplier( this.values[(int)damageType], armorPenetration);
+			return damage * this.GetMultiplier( this.values[(int)damageType], armorPenetration);
 		}
 		
 		public void DeserializeKFF( KFFSerializer serializer )

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace SS
 {
 	/// <summary>
-	/// Represents a faction.
+	/// Represents a faction's data that changes.
 	/// </summary>
 	public class FactionData : IKFFSerializable
 	{
@@ -29,7 +29,7 @@ namespace SS
 		// Loads the registered technologies to the faction's cache.
 		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState )
 		{
-			List<TechnologyDefinition> technologiesLoaded = DataManager.GetAllOfType<TechnologyDefinition>();
+			List<TechnologyDefinition> technologiesLoaded = DefinitionManager.GetAllOfType<TechnologyDefinition>();
 			for( int i = 0; i < technologiesLoaded.Count; i++ )
 			{
 				techs.Add( technologiesLoaded[i].id, defaultState );

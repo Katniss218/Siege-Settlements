@@ -154,7 +154,7 @@ namespace SS
 				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
 			}
 
-			float reducedDamage = this.armor.CalculateReducedDamage( amount, type, armorPenetration ); 
+			float reducedDamage = this.armor.CalculateReducedDamage( type, amount, armorPenetration ); 
 
 			this.health -= reducedDamage;
 		}

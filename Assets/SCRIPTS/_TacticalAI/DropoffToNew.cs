@@ -33,8 +33,8 @@ namespace SS
 
 				foreach( var kvp in resourcesCarried )
 				{
-					ResourceDefinition resourceDef = DataManager.Get<ResourceDefinition>( kvp.Key );
-					ResourceDepositDefinition newDepositDef = DataManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
+					ResourceDefinition resourceDef = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
+					ResourceDepositDefinition newDepositDef = DefinitionManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
 					int capacity = newDepositDef.resources[kvp.Key];
 					int remaining = kvp.Value;
 					while( remaining > 0 )

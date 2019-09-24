@@ -44,7 +44,7 @@ namespace SS
 
 							this.destinationInventory.Add( kvp.Key, dropOffAmt );
 							this.inventory.Remove( kvp.Key, dropOffAmt );
-							ResourceDefinition def = DataManager.Get<ResourceDefinition>( kvp.Key );
+							ResourceDefinition def = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
 							AudioManager.PlayNew( def.dropoffSound.Item2 );
 						}
 					}
