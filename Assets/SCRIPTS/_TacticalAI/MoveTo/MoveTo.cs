@@ -13,6 +13,7 @@ namespace SS
 			/// </summary>
 			public Vector3 destination { get; private set; }
 
+
 			private NavMeshAgent navMeshAgent;
 
 			void Start()
@@ -24,6 +25,13 @@ namespace SS
 				}
 
 				this.navMeshAgent.SetDestination( this.destination );
+			}
+
+			public override TAIGoalData GetData()
+			{
+				MoveToData data = new MoveToData();
+				data.destination = this.destination;
+				return data;
 			}
 
 			/// <summary>

@@ -16,12 +16,13 @@ namespace SS
 			/// <summary>
 			/// The deposit to move to and pick up.
 			/// </summary>
-			public ResourceDeposit depositToCollect { get; private set; }
+			public GameObject destination { get; private set; }
+
 
 			private float amtCollected = 0;
 
-			private IInventory inventory;
 			private NavMeshAgent navMeshAgent;
+			private IInventory inventory;
 
 			void Start()
 			{
@@ -91,7 +92,7 @@ namespace SS
 					}
 					else
 					{
-						amtCollected += ResourceDeposit.MINING_SPEED * Time.deltaTime;
+						amtCollected += Extras.ResourceDeposit.MINING_SPEED * Time.deltaTime;
 						int amtFloored = Mathf.FloorToInt( amtCollected );
 						if( amtFloored >= 1 )
 						{
@@ -125,7 +126,7 @@ namespace SS
 			/// <summary>
 			/// Assigns a new PickupDeposit TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, ResourceDeposit depositToPickUp )
+			public static void AssignTAIGoal( UnityEngine.GameObject gameObject, Extras.ResourceDeposit depositToPickUp )
 			{
 				TAIGoal.ClearGoal( gameObject );
 

@@ -10,6 +10,9 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
+		/// <summary>
+		/// Drops off the entire contents of the inventory at the specified location.
+		/// </summary>
 		public class DropoffToNew : TAIGoal
 		{
 			/// <summary>
@@ -17,9 +20,8 @@ namespace SS
 			/// </summary>
 			public Vector3 destination { get; private set; }
 
-			private IInventory inventory;
-
 			private NavMeshAgent navMeshAgent;
+			private IInventory inventory;
 
 
 			public static void DropOffInventory( IInventory inventory, Vector3 position )
@@ -33,7 +35,8 @@ namespace SS
 
 				foreach( var kvp in resourcesCarried )
 				{
-					ResourceDefinition resourceDef = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
+					ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+#warning extra
 					ResourceDepositDefinition newDepositDef = DefinitionManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
 					int capacity = newDepositDef.resources[kvp.Key];
 					int remaining = kvp.Value;
@@ -99,6 +102,13 @@ namespace SS
 					Object.Destroy( this );
 				}
 
+			}
+
+			public override TAIGoalData GetData()
+			{
+				DropoffToNewData data = new DropoffToNewData();
+				data.destination = this.destination;
+				return data;
 			}
 
 			/// <summary>

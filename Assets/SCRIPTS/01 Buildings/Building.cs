@@ -1,12 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Buildings
 {
 	public class Building : MonoBehaviour
 	{
+		public static bool IsValid( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.BUILDINGS )
+			{
+				return false;
+			}
+			if( gameObject.GetComponent<Building>() == null )
+			{
+				return false;
+			}
+			return true;
+		}
+
+		private static List<GameObject> _allBuildings = new List<GameObject>();
+
+		public static GameObject[] GetAllBuildings()
+		{
+			return _allBuildings.ToArray();
+		}
+
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
+
+		public Guid guid { get; set; }
 
 		public string defId { get; set; }
 		
@@ -18,6 +41,9 @@ namespace SS.Buildings
 
 		public AudioClip buildSoundEffect { get; set; }
 
+		public string displayName { get; set; }
+
+		public AudioClip deathSound { get; set; }
 
 		/// <summary>
 		/// Checks if the building is in a 'usable' state (not under construction/repair and not below 50% health).
@@ -45,6 +71,16 @@ namespace SS.Buildings
 			}
 			// If the construction/repair is NOT being done.
 			return building.health < building.healthMax;
+		}
+
+		void OnEnable()
+		{
+			_allBuildings.Add( this.gameObject );
+		}
+
+		void OnDisable()
+		{
+			_allBuildings.Remove( this.gameObject );
 		}
 
 #if UNITY_EDITOR

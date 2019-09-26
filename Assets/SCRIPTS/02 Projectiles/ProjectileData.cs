@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
@@ -8,6 +9,8 @@ namespace SS.Levels.SaveStates
 	/// </summary>
 	public class ProjectileData : IKFFSerializable
 	{
+		public Guid guid { get; set; }
+
 		public Vector3 position { get; set; }
 		public Vector3 velocity { get; set; }
 
@@ -17,9 +20,11 @@ namespace SS.Levels.SaveStates
 		public float damageOverride { get; set; }
 		public float armorPenetrationOverride { get; set; }
 		
-		
+
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
+			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+
 			this.position = serializer.ReadVector3( "Position" );
 			this.velocity = serializer.ReadVector3( "Velocity" );
 
@@ -32,6 +37,8 @@ namespace SS.Levels.SaveStates
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
+			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
+
 			serializer.WriteVector3( "", "Position", this.position );
 			serializer.WriteVector3( "", "Velocity", this.velocity );
 

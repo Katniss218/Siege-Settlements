@@ -9,5 +9,10 @@ namespace SS
 		{
 			Object.DestroyImmediate( gameObject.GetComponent<TAIGoal>() );
 		}
+
+		/// <summary>
+		/// Returns the data for this TAIGoal.
+		/// </summary>
+		public abstract TAIGoalData GetData();
 	}
 }

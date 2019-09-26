@@ -103,7 +103,7 @@ namespace SS.Modules
 			}
 		}
 
-		public void SetSaveState( MeleeModuleDefinition def )
+		public void SetDefinition( MeleeModuleDefinition def )
 		{
 			this.canTarget = FactionMember.CanTargetCheck;
 			this.searchRange = def.attackRange;

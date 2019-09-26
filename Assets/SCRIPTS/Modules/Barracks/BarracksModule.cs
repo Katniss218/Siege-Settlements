@@ -1,5 +1,6 @@
 ﻿using SS.Buildings;
 using SS.Content;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem.Payment;
 using SS.UI;
@@ -60,6 +61,7 @@ namespace SS.Modules
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
+		private Selectable selectable;
 		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -107,10 +109,6 @@ namespace SS.Modules
 			this.trainProgress = def.buildTime;
 
 			this.resourcesRemaining = new Dictionary<string, int>( this.trainedUnit.cost );
-			/*foreach( var kvp in this.trainedUnit.cost )
-			{
-				this.resourcesRemaining.Add( kvp.Key, kvp.Value );
-			}*/
 		}
 
 		// Start is called before the first frame update
@@ -118,7 +116,7 @@ namespace SS.Modules
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
 
-			
+			this.selectable = this.GetComponent<Selectable>();
 		}
 
 		// Update is called once per frame
@@ -181,26 +179,26 @@ namespace SS.Modules
 		public BarracksModuleSaveState GetSaveState()
 		{
 			BarracksModuleSaveState saveState = new BarracksModuleSaveState();
-			saveState.def = this.def;
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
-			saveState.trainedUnit = this.trainedUnit;
+			saveState.trainedUnitId = this.trainedUnit.id;
 			saveState.trainProgress = this.trainProgress;
 
 			return saveState;
 		}
 
-		/// <summary>
-		/// Adds this BarracksModuleSaveState to the specified GameObject.
-		/// </summary>
-		/// <param name="gameObject">The GameObject to apply the BarracksModule to.</param>
-		public void SetSaveState( BarracksModuleSaveState saveState )
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
+		public void SetDefinition( BarracksModuleDefinition def )
 		{
-			this.trainSpeed = saveState.def.trainSpeed;
-			this.trainableUnits = new UnitDefinition[saveState.def.trainableUnits.Length];
+			this.trainSpeed = def.trainSpeed;
+			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];
 			for( int i = 0; i < this.trainableUnits.Length; i++ )
 			{
-				this.trainableUnits[i] = DefinitionManager.Get<UnitDefinition>( saveState.def.trainableUnits[i] );
+				this.trainableUnits[i] = DefinitionManager.GetUnit( def.trainableUnits[i] );
 			}
 
 			Building building = this.GetComponent<Building>();
@@ -217,69 +215,75 @@ namespace SS.Modules
 
 			if( selectable != null )
 			{
-				//####
-				// Assign the UI redraw pass.
-				//####
-				selectable.onSelectionUIRedraw.AddListener( () =>
-				{
-					// If the barracks are on a building, that is not usable.
-					if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
-					{
-						Damageable damageable = this.GetComponent<Damageable>();
-
-						if( damageable != null )
-						{
-							if( !Building.IsUsable( damageable ) )
-							{
-								return;
-							}
-						}
-					}
-
-					if( this.IsPaymentDone() )
-					{
-						if( this.isTraining )
-						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
-						}
-
-						else
-						{
-							GameObject[] gridElements = new GameObject[this.trainableUnits.Length];
-							// Initialize the grid elements' GameObjects.
-							for( int i = 0; i < this.trainableUnits.Length; i++ )
-							{
-								UnitDefinition unitDef = this.trainableUnits[i];
-								// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
-								if( Technologies.TechLock.CheckLocked( unitDef, FactionManager.factions[FactionManager.PLAYER].techs ) )
-								{
-									gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, null );
-								}
-								else
-								{
-									gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, () =>
-									{
-										this.StartTraining( unitDef );
-										// Force the Object UI to update and show that now we are training a unit.
-										Selection.ForceSelectionUIRedraw( selectable );
-									} );
-								}
-							}
-
-							UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
-						}
-					}
-					else
-					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.trainedUnit.displayName + "'." );
-					}
-				} );
+				// if applied before, remove.
+				selectable.onSelectionUIRedraw.RemoveListener( this.OnSelectionUIRedraw );
+				// add.
+				selectable.onSelectionUIRedraw.AddListener( this.OnSelectionUIRedraw );
 			}
-
-			this.trainedUnit = saveState.trainedUnit;
+		}
+		
+		public void SetSaveState( BarracksModuleSaveState saveState )
+		{
+			this.resourcesRemaining = saveState.resourcesRemaining;
+			this.trainedUnit = DefinitionManager.GetUnit( saveState.trainedUnitId );
 			this.trainProgress = saveState.trainProgress;
 			this.rallyPoint = saveState.rallyPoint;
+		}
+
+		private void OnSelectionUIRedraw()
+		{
+			// If the barracks are on a building, that is not usable.
+			if( this.selectable.gameObject.layer == ObjectLayer.BUILDINGS )
+			{
+				Damageable damageable = this.GetComponent<Damageable>();
+
+				if( damageable != null )
+				{
+					if( !Building.IsUsable( damageable ) )
+					{
+						return;
+					}
+				}
+			}
+
+			if( this.IsPaymentDone() )
+			{
+				if( this.isTraining )
+				{
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
+				}
+
+				else
+				{
+					GameObject[] gridElements = new GameObject[this.trainableUnits.Length];
+					// Initialize the grid elements' GameObjects.
+					for( int i = 0; i < this.trainableUnits.Length; i++ )
+					{
+						UnitDefinition unitDef = this.trainableUnits[i];
+						// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
+						if( Technologies.TechLock.CheckLocked( unitDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].techs ) )
+						{
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, null );
+						}
+						else
+						{
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, () =>
+							{
+								this.StartTraining( unitDef );
+								// Force the Object UI to update and show that now we are training a unit.
+								Selection.ForceSelectionUIRedraw( this.selectable );
+							} );
+						}
+					}
+
+					UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
+				}
+			}
+			else
+			{
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.trainedUnit.displayName + "'." );
+			}
 		}
 
 #if UNITY_EDITOR

@@ -117,8 +117,26 @@ namespace SS.Levels
 			{
 				throw new System.ArgumentNullException( "Level identifier can't be null or empty." );
 			}
-			throw new System.NotImplementedException();
-#error incomplete.
+
+			string[] directories = System.IO.Directory.GetDirectories( GetLevelPath( levelIdentifier ) );
+
+			List<string> directoriesWithSaveStates = new List<string>();
+
+			for( int i = 0; i < directories.Length; i++ )
+			{
+				string[] files = System.IO.Directory.GetFiles( directories[i] );
+
+				for( int j = 0; j < files.Length; j++ )
+				{
+					if( System.IO.Path.GetFileName( files[j] ) == "save_state.kff" )
+					{
+						directoriesWithSaveStates.Add( directories[i] );
+						break;
+					}
+				}
+			}
+
+			return directoriesWithSaveStates.ToArray();
 		}
 
 
@@ -133,20 +151,17 @@ namespace SS.Levels
 		/// </summary>
 		public static void UnloadLevel()
 		{
-#warning incomplete.
+//#warning incomplete.
 			if( !isLevelLoaded )
 			{
 				throw new System.Exception( "There's no level loaded. You must load a level first." );
 			}
-#warning unload previous scene (destroy all level gameobjects)
-#warning destroy and unload terrain.
-#warning unload definitions and assets from the managers.
+//#warning unload previous scene (destroy all level gameobjects)
+//#warning destroy and unload terrain.
+//#warning unload definitions and assets from the managers.
 
-
-			Reload scene.
-
-
-
+			UnityEngine.SceneManagement.SceneManager.LoadScene( "MainMenu" );
+			
 			currentLevelId = null;
 			currentLevelSaveStateId = null;
 		}
@@ -220,7 +235,9 @@ namespace SS.Levels
 			InstantiateProjectiles( currentLevelId, currentLevelSaveStateId );
 			InstantiateHeroes( currentLevelId, currentLevelSaveStateId );
 			InstantiateExtras( currentLevelId, currentLevelSaveStateId );
-			
+
+#error incomplete. assign definitions to every object first, then assign data to every one of them (this way guids will be assigned and referencing should persist).
+
 			lastLoadTime = Time.time;
 			currentLevelId = levelIdentifier;
 			currentLevelSaveStateId = levelSaveStateIdentifier;
@@ -416,54 +433,52 @@ namespace SS.Levels
 		/// <param name="saveSettings">The additional settings that define the behaviour of the method.</param>
 		public static void SaveStateFromScene( string newLevelSaveStateId )
 		{
-			// TODO - collect save state of every object specified below, that currently exists in the scene:
-#warning on enable - add building to list, on disable - remove, etc. instead of this taxing thing
-			GameObject[] gameObjects = Object.FindObjectsOfType<GameObject>();
+			GameObject[] units = Unit.GetAllUnits();
+			GameObject[] buildings = Building.GetAllBuildings();
+			GameObject[] projectiles = Projectile.GetAllProjectiles();
+			GameObject[] heroes = Hero.GetAllHeroes();
+			GameObject[] extras = Extra.GetAllExtras();
 
-			List<UnitData> unitSaveStates = new List<UnitData>();
-			List<BuildingData> buildingSaveStates = new List<BuildingData>();
-			List<ProjectileData> projectileSaveStates = new List<ProjectileData>();
-			List<HeroData> heroSaveStates = new List<HeroData>();
-			List<ExtraData> extraSaveStates = new List<ExtraData>();
+			UnitData[] unitData = new UnitData[units.Length];
+			BuildingData[] buildingData = new BuildingData[buildings.Length];
+			ProjectileData[] projectileData = new ProjectileData[projectiles.Length];
+			HeroData[] heroData = new HeroData[heroes.Length];
+			ExtraData[] extraData = new ExtraData[extras.Length];
 
-			for( int i = 0; i < gameObjects.Length; i++ )
+			for( int i = 0; i < unitData.Length; i++ )
 			{
-				switch( gameObjects[i].layer )
-				{
-					case ObjectLayer.UNITS:
-
-						unitSaveStates.Add( UnitCreator.GetSaveState( gameObjects[i] ) );
-						break;
-
-					case ObjectLayer.BUILDINGS:
-
-						buildingSaveStates.Add( BuildingCreator.GetSaveState( gameObjects[i] ) );
-						break;
-
-					case ObjectLayer.PROJECTILES:
-
-						projectileSaveStates.Add( ProjectileCreator.GetSaveState( gameObjects[i] ) );
-						break;
-
-					case ObjectLayer.HEROES:
-
-						heroSaveStates.Add( HeroCreator.GetSaveState( gameObjects[i] ) );
-						break;
-
-					case ObjectLayer.EXTRAS:
-
-						extraSaveStates.Add( ExtraCreator.GetSaveState( gameObjects[i] ) );
-						break;
-				}
+				unitData[i] = UnitCreator.GetData( units[i] );
 			}
-			// - units
-			// - buildings
-			// - projectiles
-			// - heroes
-			// - extras
+			for( int i = 0; i < buildingData.Length; i++ )
+			{
+				buildingData[i] = BuildingCreator.GetData( buildings[i] );
+			}
+			for( int i = 0; i < projectileData.Length; i++ )
+			{
+				projectileData[i] = ProjectileCreator.GetData( projectiles[i] );
+			}
+			for( int i = 0; i < heroData.Length; i++ )
+			{
+				heroData[i] = HeroCreator.GetData( heroes[i] );
+			}
+			for( int i = 0; i < extraData.Length; i++ )
+			{
+				extraData[i] = ExtraCreator.GetData( extras[i] );
+			}
+
 #error incomplete.
 			throw new System.NotImplementedException();
-			// - tai goals.
+#error TAI goals have to be saved with objects.
+
+			// we need to get the index of the object in the array.
+			// onenable having it add to list would make it easier, as we can just loop over that list to make our save state list.
+			// then the index of data would correspond to index of object itself.
+			// the objects referencing modules that can appear on more than one object can break this and it doesn't work.
+			// still doesn't solve having multiples of the same interface on an object.
+			
+#error Inventory needs to be a module? and it needs to be serialized.
+
+
 			// - selected and highlighted objects - saved as indices to the unit/hero/building/etc array.
 		}
 	}

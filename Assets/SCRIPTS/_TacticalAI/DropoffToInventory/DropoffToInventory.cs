@@ -12,14 +12,11 @@ namespace SS
 	{
 		public class DropoffToInventory : TAIGoal
 		{
-			/// <summary>
-			/// The spot at which to drop off the deposit.
-			/// </summary>
-			public IInventory destinationInventory { get; private set; }
+			public GameObject destination { get; private set; }
 
-			private IInventory inventory;
-			private Transform destinationTransform;
+
 			private NavMeshAgent navMeshAgent;
+			private IInventory inventory;
 
 
 			private void DropOff()
@@ -44,7 +41,7 @@ namespace SS
 
 							this.destinationInventory.Add( kvp.Key, dropOffAmt );
 							this.inventory.Remove( kvp.Key, dropOffAmt );
-							ResourceDefinition def = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
+							ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
 							AudioManager.PlayNew( def.dropoffSound.Item2 );
 						}
 					}
@@ -65,18 +62,13 @@ namespace SS
 				{
 					throw new System.Exception( "Can't add DropoffToInventory TAI goal to: " + this.gameObject.name );
 				}
-				if( this.destinationInventory == null )
+				if( this.destination == null )
 				{
-					Debug.LogWarning( "Not assigned destination inventory: " + this.gameObject.name );
-					Object.Destroy( this );
-				}
-				if( this.destinationTransform == null )
-				{
-					Debug.LogWarning( "Not assigned destination transform: " + this.gameObject.name );
+					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
 				}
 
-				this.navMeshAgent.SetDestination( this.destinationTransform.position );
+				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 
 			void Update()
@@ -91,7 +83,7 @@ namespace SS
 					Object.Destroy( this );
 					return;
 				}
-				if( PhysicsDistance.OverlapInRange( this.transform, this.destinationTransform, 0.75f ) )// this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.destinationTransform, 0.75f ) )
 				{
 					if( !this.inventory.isEmpty )
 					{
@@ -105,17 +97,25 @@ namespace SS
 				}
 			}
 
+			public override TAIGoalData GetData()
+			{
+				DropoffToInventoryData data = new DropoffToInventoryData();
+
+				data.destinationInventoryObjIndex = wtf. in what array to lookup it?.
+
+				throw new System.NotImplementedException();
+			}
+
 			/// <summary>
 			/// Assigns a new DropoffToInventory TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, Transform destination )
+			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 
 				DropoffToInventory dropOffDeposit = gameObject.AddComponent<TAIGoal.DropoffToInventory>();
 
-				dropOffDeposit.destinationTransform = destination;
-				dropOffDeposit.destinationInventory = destination.GetComponent<IInventory>();
+				dropOffDeposit.destination = destination;
 			}
 		}
 	}

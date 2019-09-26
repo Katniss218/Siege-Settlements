@@ -89,7 +89,7 @@ namespace SS.Units
 			this.cost = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.cost.Add( serializer.ReadString( "Cost." + i + ".Id" ), serializer.ReadInt( "Cost." + i + ".Amount" ) );
+				this.cost.Add( serializer.ReadString( new Path( "Cost.{0}.Id", i ) ), serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) ) );
 			}
 
 			this.buildTime = serializer.ReadFloat( "BuildTime" );
@@ -131,8 +131,8 @@ namespace SS.Units
 			foreach( var kvp in this.cost )
 			{
 				serializer.AppendClass( "Cost" );
-				serializer.WriteString( "Cost." + i, "Id", kvp.Key );
-				serializer.WriteInt( "Cost." + i, "Amount", kvp.Value );
+				serializer.WriteString( new Path( "Cost.{0}", i ), "Id", kvp.Key );
+				serializer.WriteInt( new Path( "Cost.{0}", i ), "Amount", kvp.Value );
 				i++;
 			}
 

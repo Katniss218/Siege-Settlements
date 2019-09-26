@@ -8,7 +8,6 @@ namespace SS.Modules
 		public float trainSpeed { get; set; }
 		
 
-
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );

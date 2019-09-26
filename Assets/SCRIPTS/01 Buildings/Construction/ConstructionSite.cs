@@ -17,19 +17,19 @@ namespace SS.Buildings
 	[RequireComponent( typeof( Damageable ) )]
 	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
-		public struct CSResourceInfo
+		public struct ResourceInfo
 		{
+#error Change this to dictionary, indexed by resource ID (removes possibility of desync of array indices).
 			public int initialResource { get; set; }
 			public float remaining { get; set; }
 			public float healthToResource { get; set; }
 		}
-		
+
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
 		[SerializeField] private string[] resourceIds;
 
-#warning - after verifying that this works, change it to dictionary<string,tuple<t,t,t>> with the tuple as a separate struct.
 		/// <summary>
 		/// Resources needed to progress from Building.STARTING_HEALTH_PERCENT health to 100%.
 		/// </summary>
@@ -45,7 +45,7 @@ namespace SS.Buildings
 		/// </summary>
 		[SerializeField] private float[] healthToResources;
 		
-		//private Dictionary<string, CSResourceInfo> resourcesRemaining;
+		//private Dictionary<string, ResourceInfo> resourcesInfo;
 
 		private Damageable damageable;
 

@@ -13,11 +13,7 @@ namespace SS
 	{
 		public class MakePayment : TAIGoal
 		{
-			/// <summary>
-			/// The spot at which to drop off the deposit.
-			/// </summary>
-			public IPaymentReceiver paymentReceiver { get; private set; }
-			public Transform receiverTransform { get; private set; }
+			public GameObject destination { get; private set; }
 
 			private NavMeshAgent navMeshAgent;
 			private IInventory inventory;
@@ -35,51 +31,58 @@ namespace SS
 				{
 					throw new System.Exception( "Can't add MakePayment TAI goal to: " + this.gameObject.name );
 				}
-				if( this.paymentReceiver == null )
+				if( this.destination == null )
 				{
-					Debug.LogWarning( "Not assigned payment receiver: " + this.gameObject.name );
+					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
 				}
 
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 				this.inventory = this.GetComponent<IInventory>();
-				this.navMeshAgent.SetDestination( this.receiverTransform.position );
+				this.navMeshAgent.SetDestination( this.destination.transform.position );
+			}
+
+			// pays first ipayment receiver on the object. if has resources left in inv, pays the 2nd, etc.
+			private void Pay( GameObject gameObject )
+			{
+#error Choose first IPaymentReceiver, pay, if has resources left, choose second IPaymentReceiver, pay, repeat.
+				Dictionary<string, int> wantedRes = this.paymentReceiver.GetWantedResources();
+
+				foreach( var kvp in wantedRes )
+				{
+					int amountInInv = this.inventory.Get( kvp.Key );
+
+					if( amountInInv == 0 )
+					{
+						continue;
+					}
+
+					int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
+
+					this.inventory.Remove( kvp.Key, amountPayed );
+					this.paymentReceiver.ReceivePayment( kvp.Key, amountPayed );
+					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+					AudioManager.PlayNew( resDef.dropoffSound.Item2 );
+				}
 			}
 
 			void Update()
 			{
 				// If the payment receiver was destroyed, stop the payment, stop the AI.
-				if( this.paymentReceiver == null )
+				if( this.destination == null )
 				{
 					this.navMeshAgent.ResetPath();
 					Object.Destroy( this );
 					return;
 				}
 
-				if( PhysicsDistance.OverlapInRange( this.transform, this.receiverTransform, 0.75f ) )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
 				{
 					this.navMeshAgent.ResetPath();
 
 					if( this.inventory != null )
 					{
-						Dictionary<string, int> wantedRes = this.paymentReceiver.GetWantedResources();
 						
-						foreach( var kvp in wantedRes )
-						{
-							int amountInInv = this.inventory.Get( kvp.Key );
-							
-							if( amountInInv == 0 )
-							{
-								continue;
-							}
-
-							int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
-
-							this.inventory.Remove( kvp.Key, amountPayed );
-							this.paymentReceiver.ReceivePayment( kvp.Key, amountPayed );
-							ResourceDefinition resDef = DefinitionManager.Get<ResourceDefinition>( kvp.Key );
-							AudioManager.PlayNew( resDef.dropoffSound.Item2 );
-						}
 					}
 					Object.Destroy( this );
 				}
@@ -88,14 +91,13 @@ namespace SS
 			/// <summary>
 			/// Assigns a new MakePayment TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, Transform receiverTransform, IPaymentReceiver receiver )
+			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 
 				MakePayment dropOffDeposit = gameObject.AddComponent<TAIGoal.MakePayment>();
 
-				dropOffDeposit.paymentReceiver = receiver;
-				dropOffDeposit.receiverTransform = receiverTransform;
+				dropOffDeposit.destination = destination;
 			}
 		}
 	}

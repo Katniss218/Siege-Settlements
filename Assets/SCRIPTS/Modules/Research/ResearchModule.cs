@@ -1,5 +1,6 @@
 ﻿using SS.Buildings;
 using SS.Content;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
@@ -45,6 +46,7 @@ namespace SS.Modules
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
+		private Selectable selectable;
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -102,6 +104,7 @@ namespace SS.Modules
 		{
 			this.factionMember = GetComponent<FactionMember>();
 
+			this.selectable = this.GetComponent<Selectable>();
 		}
 
 		// Update is called once per frame
@@ -112,7 +115,7 @@ namespace SS.Modules
 				this.researchProgress -= this.researchSpeed * Time.deltaTime;
 				if( this.researchProgress <= 0 )
 				{
-					FactionManager.factions[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
+					LevelDataManager.factionData[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
 					this.researchedTechnology = null;
 
 					Selection.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
@@ -139,83 +142,92 @@ namespace SS.Modules
 		public ResearchModuleSaveState GetSaveState()
 		{
 			ResearchModuleSaveState saveState = new ResearchModuleSaveState();
-			saveState.def = this.def;
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
-			saveState.researchedTechnology = this.researchedTechnology;
+			saveState.researchedTechnologyId = this.researchedTechnology.id;
 			saveState.researchProgress = this.researchProgress;
 
 			return saveState;
 		}
 
-		/// <summary>
-		/// Adds this BarracksModuleSaveState to the specified GameObject.
-		/// </summary>
-		/// <param name="gameObject">The GameObject to apply the BarracksModule to.</param>
-		public void SetSaveState( ResearchModuleSaveState saveState )
-		{
 
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+			
+		public void SetDefinition( ResearchModuleDefinition saveState )
+		{
 			Selectable selectable = this.GetComponent<Selectable>();
 
 			if( selectable != null )
 			{
-				//####
-				// Assign the UI redraw pass.
-				//####
-				selectable.onSelectionUIRedraw.AddListener( () =>
-				{
-					// If the research facility is on a building, that is not usable.
-					if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
-					{
-						Damageable damageable = this.GetComponent<Damageable>();
+				// if applied before, remove.
+				selectable.onSelectionUIRedraw.RemoveListener( this.OnSelectionUIRedraw );
+				// add.
+				selectable.onSelectionUIRedraw.AddListener( this.OnSelectionUIRedraw );
+			}
+		}
+		
+		public void SetSaveState( ResearchModuleSaveState saveState )
+		{
+			this.resourcesRemaining = saveState.resourcesRemaining;
+			this.researchedTechnology = DefinitionManager.GetTechnology( saveState.researchedTechnologyId );
+			this.researchProgress = saveState.researchProgress;
+		}
 
-						if( damageable != null )
-						{
-							if( !Building.IsUsable( damageable ) )
-							{
-								return;
-							}
-						}
-					}
-					if( this.IsPaymentDone() )
+		private void OnSelectionUIRedraw()
+		{
+			// If the research facility is on a building, that is not usable.
+			if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
+			{
+				Damageable damageable = this.GetComponent<Damageable>();
+
+				if( damageable != null )
+				{
+					if( !Building.IsUsable( damageable ) )
 					{
-						if( this.isResearching )
+						return;
+					}
+				}
+			}
+			if( this.IsPaymentDone() )
+			{
+				if( this.isResearching )
+				{
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgress + " s." );
+				}
+				else
+				{
+					TechnologyDefinition[] registeredTechnologies = DefinitionManager.GetAllTechnologies();
+					GameObject[] gridElements = new GameObject[registeredTechnologies.Length];
+					// Add every available technology to the list.
+					for( int i = 0; i < registeredTechnologies.Length; i++ )
+					{
+						TechnologyDefinition techDef = registeredTechnologies[i];
+						// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
+						if( LevelDataManager.factionData[this.factionMember.factionId].techs[techDef.id] == TechnologyResearchProgress.Available )
 						{
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgress + " s." );
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, () =>
+							{
+								StartResearching( techDef );
+								// Force the Object UI to update and show that now we are researching a tech.
+								Selection.ForceSelectionUIRedraw( selectable );
+							} );
 						}
 						else
 						{
-							List<TechnologyDefinition> registeredTechnologies = DefinitionManager.GetAllOfType<TechnologyDefinition>();
-							List<GameObject> gridElements = new List<GameObject>();
-							// Add every available technology to the list.
-							for( int i = 0; i < registeredTechnologies.Count; i++ )
-							{
-								TechnologyDefinition techDef = registeredTechnologies[i];
-								// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
-								if( FactionManager.factions[this.factionMember.factionId].techs[techDef.id] == TechnologyResearchProgress.Available )
-								{
-									gridElements.Add( UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, () =>
-									{
-										StartResearching( techDef );
-										// Force the Object UI to update and show that now we are researching a tech.
-										Selection.ForceSelectionUIRedraw( selectable );
-									} ) );
-								}
-								else
-								{
-									gridElements.Add( UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, null ) );
-								}
-							}
-							// Create the actual UI.
-							UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select tech to research..." );
-							UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements.ToArray() );
+							gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.objectTransform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, null );
 						}
 					}
-					else
-					{
-						UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.researchedTechnology.displayName + "'." );
-					}
-				} );
+					// Create the actual UI.
+					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select tech to research..." );
+					UIUtils.InstantiateScrollableGrid( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+				}
+			}
+			else
+			{
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.researchedTechnology.displayName + "'." );
 			}
 		}
 	}

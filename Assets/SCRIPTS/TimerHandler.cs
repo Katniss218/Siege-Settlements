@@ -20,7 +20,13 @@ namespace SS
 
 		void Start()
 		{
-			StartCoroutine( _StartTimer() );
+			this.StartCoroutine( this._Timer() );
+		}
+
+		public void ResetTimer()
+		{
+			this.StopCoroutine( this._Timer() );
+			this.StartCoroutine( this._Timer() );
 		}
 
 		/// <summary>
@@ -28,15 +34,15 @@ namespace SS
 		/// </summary>
 		public void OverrideTrigger()
 		{
-			onTimerEnd?.Invoke();
-			StopAllCoroutines();
+			this.onTimerEnd?.Invoke();
+			this.StopAllCoroutines();
 		}
 		
-		IEnumerator _StartTimer()
+		IEnumerator _Timer()
 		{
-			yield return new WaitForSeconds( duration );
+			yield return new WaitForSeconds( this.duration );
 
-			onTimerEnd?.Invoke();
+			this.onTimerEnd?.Invoke();
 		}
 	}
 }

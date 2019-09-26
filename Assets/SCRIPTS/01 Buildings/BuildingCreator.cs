@@ -4,9 +4,11 @@ using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Modules;
 using SS.UI;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using Object = UnityEngine.Object;
 
 namespace SS.Buildings
 {
@@ -15,107 +17,175 @@ namespace SS.Buildings
 		private const string GAMEOBJECT_NAME = "Building";
 
 
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static string GetDefinitionId( GameObject gameObject )
+		private static void SetBuildingDefinition( GameObject gameObject, BuildingDefinition def )
 		{
-			if( gameObject.layer != ObjectLayer.BUILDINGS )
-			{
-				throw new System.Exception( "The specified GameObject is not a building." );
-			}
-
-			Building building = gameObject.GetComponent<Building>();
-			return building.defId;
-		}
-
-		/// <summary>
-		/// Creates a new BuildingData from a GameObject.
-		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building.</param>
-		public static BuildingData GetSaveState( GameObject gameObject )
-		{
-			if( gameObject.layer != ObjectLayer.BUILDINGS )
-			{
-				throw new System.Exception( "The specified GameObject is not a building." );
-			}
-
-			BuildingData data = new BuildingData();
-
-			data.position = gameObject.transform.position;
-			data.rotation = gameObject.transform.rotation;
 			
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			data.factionId = factionMember.factionId;
+			//
+			//    GRAPHICS GAMEOBJECT
+			//
 
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-			data.health = damageable.health;
+			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 
-			ConstructionSite constructionSite = gameObject.GetComponent<ConstructionSite>();
-			if( constructionSite != null )
-			{
-				data.constructionSaveState = constructionSite.GetSaveState();
-			}
 
-			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
-			if( barracks != null )
-			{
-				data.barracksSaveState = barracks.GetSaveState();
-			}
-
-			ResearchModule research = gameObject.GetComponent<ResearchModule>();
-			if( research != null )
-			{
-				data.researchSaveState = research.GetSaveState();
-			}
-
-			return data;
-		}
-		
-		public static GameObject Create( BuildingDefinition def, BuildingData data )
-		{
-			if( def == null )
-			{
-				throw new System.ArgumentNullException( "Definition can't be null." );
-			}
-			GameObject container = new GameObject( GAMEOBJECT_NAME + " ('" + def.id + "'), (f: " + data.factionId + ")" );
-			container.layer = ObjectLayer.BUILDINGS;
-			container.isStatic = true;
-
-			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			gfx.isStatic = true;
-
-			container.transform.SetPositionAndRotation( data.position, data.rotation );
-			
-
-			// Mesh
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			// Set the building's mesh and material.
+			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
-
-			// Material
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredConstructible( LevelManager.currentLevel.Value.factions[data.factionId].color, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
 			
-			// Assign the definition to the building, so it can be accessed later.
-			Building building = container.AddComponent<Building>();
+			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
+			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionDefinition.DefaultColor, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
+
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			// Set the building's size.
+			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+			collider.size = def.size;
+			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
+
+			NavMeshObstacle navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+			navMeshObstacle.size = def.size;
+			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
+
+			// Set the building's selected icon.
+			Selectable selectable = gameObject.GetComponent<Selectable>();
+			selectable.icon = def.icon.Item2;
+			
+			// Set the building's native parameters.
+			Building building = gameObject.GetComponent<Building>();
 			building.defId = def.id;
 			building.entrance = def.entrance;
 			building.placementNodes = def.placementNodes;
 			building.StartToEndConstructionCost = def.cost;
 			building.buildSoundEffect = def.buildSoundEffect.Item2;
+			building.displayName = def.displayName;
+			building.deathSound = def.deathSoundEffect.Item2;
 
+			// Set the building's health.
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			damageable.healthMax = def.healthMax;
+			damageable.armor = def.armor;
+
+
+			//
+			//    MODULES
+			//
+
+			// Remove old melee module (if present).
+			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
+			if( barracks != null )
+			{
+				Object.Destroy( barracks );
+			}
+			// If the new unit is melee, setup the melee module.
+			if( def.barracks != null )
+			{
+				barracks = gameObject.AddComponent<BarracksModule>();
+				barracks.SetDefinition( def.barracks );
+			}
+
+			// Remove old ranged module (if present).
+			ResearchModule research = gameObject.GetComponent<ResearchModule>();
+			if( research != null )
+			{
+				Object.Destroy( research );
+			}
+			// If the new unit is ranged, setup the ranged module.
+			if( def.research != null )
+			{
+				research = gameObject.AddComponent<ResearchModule>();
+				research.SetDefinition( def.research );
+			}
+		}
+
+		private static void SetBuildingData( GameObject gameObject, BuildingData data )
+		{
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+
+			
+			// Assign the definition to the building, so it can be accessed later.
+			Building building = gameObject.GetComponent<Building>();
+			building.guid = data.guid;
+			
+			// Make the building belong to a faction.
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			factionMember.factionId = data.factionId;
+
+			// Make the building damageable.
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			damageable.health = data.health;
+
+			// If the building was under construction/repair, make it under c/r.
+			if( data.constructionSaveState != null )
+			{
+				// The health is set to 10% in the data passed as a parameter if the construction is fresh.
+				ConstructionSite.BeginConstructionOrRepair( gameObject, data.constructionSaveState );
+			}
+
+
+			//
+			//    MODULES
+			//
+
+			if( data.barracksSaveState != null )
+			{
+				BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
+				barracks.SetSaveState( data.barracksSaveState );
+			}
+
+			if( data.researchSaveState != null )
+			{
+				ResearchModule research = gameObject.GetComponent<ResearchModule>();
+				research.SetSaveState( data.researchSaveState );
+			}
+		}
+
+		private static GameObject CreateBuilding()
+		{
+			GameObject container = new GameObject( GAMEOBJECT_NAME );
+			container.layer = ObjectLayer.BUILDINGS;
+			container.isStatic = true;
+
+
+			//
+			//    GRAPHICS GAMEOBJECT
+			//
+
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
+			gfx.transform.SetParent( container.transform );
+			gfx.isStatic = true;
+
+			
+			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+			
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-			collider.size = def.size;
-			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 
+			Building building = container.AddComponent<Building>();
+
+			// Make the building selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
-			selectable.icon = def.icon.Item2;
 
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
-			navMeshObstacle.size = def.size;
-			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 			navMeshObstacle.carving = true;
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( data.position ), Quaternion.identity, Main.worldUIs );
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.worldUIs );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
@@ -197,37 +267,22 @@ namespace SS.Buildings
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelManager.currentLevel.Value.factions[data.factionId].color;
+				Color color = LevelDataManager.factions[factionMember.factionId].color;
 				hud.SetColor( color );
 				meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
-			factionMember.factionId = data.factionId;
-
-
-			if( def.barracks != null )
-			{
-				BarracksModule barracks = new BarracksModule();
-
-				barracks.SetSaveState( data.barracksSaveState );
-			}
-
-			if( def.research != null )
-			{
-				ResearchModule research = new ResearchModule();
-
-				research.SetSaveState( data.researchSaveState );
-			}
+			
 
 			// Make the building damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.healthMax = def.healthMax;
-			damageable.armor = def.armor;
+			
 			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
 				Selection.ForceSelectionUIRedraw( selectable );
 			} );
+
 			// When the building dies:
 			// - Destroy the building's UI.
 			// - Deselect the building.
@@ -239,36 +294,24 @@ namespace SS.Buildings
 				{
 					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-				AudioManager.PlayNew( def.deathSoundEffect.Item2 );
+				AudioManager.PlayNew( building.deathSound );
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
+
+			// Make the building show it's parameters on the Selection Panel, when highlighted.
 			selectable.onSelectionUIRedraw.AddListener( () =>
 			{
-				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), def.displayName );
+				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), building.displayName );
 				UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
 				if( !Building.IsUsable( damageable ) )
 				{
 					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 				}
 			} );
-			// If the newly spawned building is not marked as being constructed:
-			// - Set the health to max.
-			if( data.constructionSaveState == null )
-			{
-				damageable.Heal();
-				meshRenderer.material.SetFloat( "_Progress", 1.0f );
-			}
-			// If the newly spawned building is marked as being constructed:
-			// - Set the health to 10% (construction's starting percent).
-			// - Start the construction process.
-			else
-			{
-				damageable.healthPercent = Building.STARTING_HEALTH_PERCENT;
-				ConstructionSite.BeginConstructionOrRepair( container, data.constructionSaveState );
-			}
+			
 
 			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
@@ -278,6 +321,115 @@ namespace SS.Buildings
 
 
 			return container;
+		}
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public static string GetDefinitionId( GameObject gameObject )
+		{
+			if( !Building.IsValid( gameObject ) )
+			{
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid building." );
+			}
+
+			Building building = gameObject.GetComponent<Building>();
+			return building.defId;
+		}
+
+		/// <summary>
+		/// Creates a new BuildingData from a GameObject.
+		/// </summary>
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building.</param>
+		public static BuildingData GetData( GameObject gameObject )
+		{
+			if( !Building.IsValid( gameObject ) )
+			{
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid building." );
+			}
+
+			BuildingData data = new BuildingData();
+
+			data.guid = gameObject.GetComponent<Building>().guid;
+
+			data.position = gameObject.transform.position;
+			data.rotation = gameObject.transform.rotation;
+			
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			data.factionId = factionMember.factionId;
+
+			Damageable damageable = gameObject.GetComponent<Damageable>();
+			data.health = damageable.health;
+
+			ConstructionSite constructionSite = gameObject.GetComponent<ConstructionSite>();
+			if( constructionSite != null )
+			{
+				data.constructionSaveState = constructionSite.GetSaveState();
+			}
+
+			//
+			//    MODULES
+			//
+
+			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
+			if( barracks != null )
+			{
+				data.barracksSaveState = barracks.GetSaveState();
+			}
+
+			ResearchModule research = gameObject.GetComponent<ResearchModule>();
+			if( research != null )
+			{
+				data.researchSaveState = research.GetSaveState();
+			}
+
+			return data;
+		}
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
+
+
+		public static void SetData( GameObject gameObject, BuildingData data )
+		{
+			if( !Building.IsValid( gameObject ) )
+			{
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid building." );
+			}
+			SetBuildingData( gameObject, data );
+		}
+
+
+		
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public static GameObject CreateEmpty( Guid guid, BuildingDefinition def )
+		{
+			GameObject gameObject = CreateBuilding();
+
+			SetBuildingDefinition( gameObject, def );
+
+			Building building = gameObject.GetComponent<Building>();
+			building.guid = guid;
+
+			return gameObject;
+		}
+
+		public static GameObject Create( BuildingDefinition def, BuildingData data )
+		{
+			GameObject gameObject = CreateBuilding();
+
+			SetBuildingDefinition( gameObject, def );
+			SetBuildingData( gameObject, data );
+
+			return gameObject;
 		}
 	}
 }

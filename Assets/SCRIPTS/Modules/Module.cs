@@ -7,6 +7,6 @@ namespace SS.Modules
 	/// </summary>
 	public abstract class Module : MonoBehaviour
 	{
-		
+
 	}
 }

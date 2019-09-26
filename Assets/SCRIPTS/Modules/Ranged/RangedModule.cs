@@ -172,7 +172,7 @@ namespace SS.Modules
 			}
 		}
 
-		public void SetSaveState( RangedModuleDefinition def )
+		public void SetDefinition( RangedModuleDefinition def )
 		{
 			this.canTarget = FactionMember.CanTargetCheck;
 			this.searchRange = def.attackRange;

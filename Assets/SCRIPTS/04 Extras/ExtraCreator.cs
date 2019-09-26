@@ -25,7 +25,7 @@ namespace SS.Extras
 		/// Creates a new ExtraData from a GameObject.
 		/// </summary>
 		/// <param name="gameObject">The GameObject to extract the save state from. Must be an extra.</param>
-		public static ExtraData GetSaveState( GameObject gameObject )
+		public static ExtraData GetData( GameObject gameObject )
 		{
 			if( gameObject.layer != ObjectLayer.EXTRAS )
 			{

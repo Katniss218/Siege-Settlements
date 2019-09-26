@@ -11,7 +11,7 @@ namespace SS.Levels.SaveStates
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
 
-#warning incomplete - lacks modules (deposits).
+#error incomplete - lacks modules (resource deposit module).
 
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
