@@ -8,7 +8,7 @@ namespace SS.Extras
 	{
 		private const string GAMEOBJECT_NAME = "Extra";
 
-
+#error incomplete - structure.
 
 		public static string GetDefinitionId( GameObject gameObject )
 		{

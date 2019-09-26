@@ -433,6 +433,12 @@ namespace SS.Units
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
 
+			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
+			if( taiGoal != null )
+			{
+				data.taiGoalData = taiGoal.GetData();
+			}
+
 			return data;
 		}
 

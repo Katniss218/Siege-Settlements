@@ -33,7 +33,39 @@ namespace SS.Levels.SaveStates
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
 
-#error figure out a way to serialize type of tai goal data (enum?).
+
+			TAIGoalType goalType = (TAIGoalType)serializer.ReadByte( "TAIGoalType" );
+			if( goalType != TAIGoalType.None )
+			{
+
+				switch( goalType )
+				{
+					case TAIGoalType.DropoffToInventory:
+						this.taiGoalData = new DropoffToInventoryData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
+
+					case TAIGoalType.DropoffToNew:
+						this.taiGoalData = new DropoffToNewData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
+
+					case TAIGoalType.MakePayment:
+						this.taiGoalData = new MakePaymentData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
+
+					case TAIGoalType.MoveTo:
+						this.taiGoalData = new MoveToData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
+
+					case TAIGoalType.PickupDeposit:
+						this.taiGoalData = new PickupDepositData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
+				}
+			}
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
@@ -45,6 +77,36 @@ namespace SS.Levels.SaveStates
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
+
+
+			if( this.taiGoalData != null )
+			{
+				if( this.taiGoalData is DropoffToInventoryData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.DropoffToInventory );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+				else if( this.taiGoalData is DropoffToNewData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.DropoffToNew );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+				else if( this.taiGoalData is MakePaymentData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.MakePayment );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+				else if( this.taiGoalData is MoveToData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.MoveTo );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+				else if( this.taiGoalData is PickupDepositData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.PickupDeposit );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+			}
 		}
 	}
 }

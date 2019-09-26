@@ -7,9 +7,11 @@ using SS.Levels.SaveStates;
 using SS.Projectiles;
 using SS.TerrainCreation;
 using SS.Units;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SS.Levels
 {
@@ -215,6 +217,7 @@ namespace SS.Levels
 			DefinitionManager.LoadProjectileDefinitions();
 			DefinitionManager.LoadHeroDefinitions();
 			DefinitionManager.LoadExtraDefinitions();
+			DefinitionManager.LoadResourceDepositDefinitions();
 
 			DefinitionManager.LoadResourceDefinitions();
 			DefinitionManager.LoadTechnologyDefinitions();
@@ -230,13 +233,73 @@ namespace SS.Levels
 
 			// apply save state
 
-			InstantiateUnits( currentLevelId, currentLevelSaveStateId ); // load units from current save state.
-			InstantiateBuildings( currentLevelId, currentLevelSaveStateId );
-			InstantiateProjectiles( currentLevelId, currentLevelSaveStateId );
-			InstantiateHeroes( currentLevelId, currentLevelSaveStateId );
-			InstantiateExtras( currentLevelId, currentLevelSaveStateId );
+			var sUnits = GetSavedUnits( currentLevelId, currentLevelSaveStateId );
+			var sBuildings = GetSavedBuildings( currentLevelId, currentLevelSaveStateId );
+			var sProjectiles = GetSavedProjectiles( currentLevelId, currentLevelSaveStateId );
+			var sHeroes = GetSavedHeroes( currentLevelId, currentLevelSaveStateId );
+			var sExtras = GetSavedExtras( currentLevelId, currentLevelSaveStateId );
+			var sResourceDeposits = GetSavedResourceDeposits( currentLevelId, currentLevelSaveStateId );
 
-#error incomplete. assign definitions to every object first, then assign data to every one of them (this way guids will be assigned and referencing should persist).
+			GameObject[] units = new GameObject[sUnits.Count];
+			GameObject[] buildings = new GameObject[sBuildings.Count];
+			GameObject[] projectiles = new GameObject[sProjectiles.Count];
+			GameObject[] heroes = new GameObject[sHeroes.Count];
+			GameObject[] extras = new GameObject[sExtras.Count];
+			GameObject[] resourceDeposits = new GameObject[sResourceDeposits.Count];
+
+			// Spawn every object on the map (no data present yet, because that might need other objects's guids).
+
+			for( int i = 0; i < units.Length; i++ )
+			{
+				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid, sUnits[i].Item1 );
+			}
+			for( int i = 0; i < buildings.Length; i++ )
+			{
+				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid, sBuildings[i].Item1 );
+			}
+			for( int i = 0; i < projectiles.Length; i++ )
+			{
+				projectiles[i] = ProjectileCreator.CreateEmpty( sProjectiles[i].Item2.guid, sProjectiles[i].Item1 );
+			}
+			for( int i = 0; i < heroes.Length; i++ )
+			{
+				heroes[i] = HeroCreator.CreateEmpty( sHeroes[i].Item2.guid, sHeroes[i].Item1 );
+			}
+			for( int i = 0; i < extras.Length; i++ )
+			{
+				extras[i] = ExtraCreator.CreateEmpty( sExtras[i].Item2.guid, sExtras[i].Item1 );
+			}
+			for( int i = 0; i < resourceDeposits.Length; i++ )
+			{
+				resourceDeposits[i] = ResourceDepositCreator.CreateEmpty( sResourceDeposits[i].Item2.guid, sResourceDeposits[i].Item1 );
+			}
+
+			// Set the data (guids stay the same).
+
+			for( int i = 0; i < units.Length; i++ )
+			{
+				UnitCreator.SetData( units[i], sUnits[i].Item2 );
+			}
+			for( int i = 0; i < buildings.Length; i++ )
+			{
+				BuildingCreator.SetData( buildings[i], sBuildings[i].Item2 );
+			}
+			for( int i = 0; i < projectiles.Length; i++ )
+			{
+				ProjectileCreator.SetData( projectiles[i], sProjectiles[i].Item2 );
+			}
+			for( int i = 0; i < heroes.Length; i++ )
+			{
+				HeroCreator.SetData( heroes[i], sHeroes[i].Item2 );
+			}
+			for( int i = 0; i < extras.Length; i++ )
+			{
+				ExtraCreator.SetData( extras[i], sExtras[i].Item2 );
+			}
+			for( int i = 0; i < resourceDeposits.Length; i++ )
+			{
+				ResourceDepositCreator.SetData( resourceDeposits[i], sResourceDeposits[i].Item2 );
+			}
 
 			lastLoadTime = Time.time;
 			currentLevelId = levelIdentifier;
@@ -283,14 +346,16 @@ namespace SS.Levels
 			LevelDataManager.factionData = fac;
 		}
 
-		private static void InstantiateUnits( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<UnitDefinition, UnitData>> GetSavedUnits( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
 			
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-			
-			int unitCount = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < unitCount; i++ )
+
+			List<Tuple<UnitDefinition, UnitData>> ret = new List<Tuple<UnitDefinition, UnitData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
 			{
 				UnitData data = new UnitData();
 				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
@@ -298,18 +363,22 @@ namespace SS.Levels
 				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
 				UnitDefinition def = DefinitionManager.GetUnit( defId );
 
-				UnitCreator.Create( def, data );
+				ret.Add( new Tuple<UnitDefinition, UnitData>( def, data ) );
 			}
+
+			return ret;
 		}
 
-		private static void InstantiateBuildings( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<BuildingDefinition, BuildingData>> GetSavedBuildings( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			int unitCount = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < unitCount; i++ )
+			List<Tuple<BuildingDefinition, BuildingData>> ret = new List<Tuple<BuildingDefinition, BuildingData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
 			{
 				BuildingData data = new BuildingData();
 				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
@@ -317,18 +386,22 @@ namespace SS.Levels
 				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
 				BuildingDefinition def = DefinitionManager.GetBuilding( defId );
 
-				BuildingCreator.Create( def, data );
+				ret.Add( new Tuple<BuildingDefinition, BuildingData>( def, data ) );
 			}
+
+			return ret;
 		}
 
-		private static void InstantiateProjectiles( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<ProjectileDefinition, ProjectileData>> GetSavedProjectiles( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			int unitCount = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < unitCount; i++ )
+			List<Tuple<ProjectileDefinition, ProjectileData>> ret = new List<Tuple<ProjectileDefinition, ProjectileData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
 			{
 				ProjectileData data = new ProjectileData();
 				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
@@ -336,18 +409,22 @@ namespace SS.Levels
 				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
 				ProjectileDefinition def = DefinitionManager.GetProjectile( defId );
 
-				ProjectileCreator.Create( def, data );
+				ret.Add( new Tuple<ProjectileDefinition, ProjectileData>( def, data ) );
 			}
-		}
 
-		private static void InstantiateHeroes( string levelIdentifier, string levelSaveStateIdentifier )
+			return ret;
+		}
+		
+		private static List<Tuple<HeroDefinition, HeroData>> GetSavedHeroes( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			int unitCount = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < unitCount; i++ )
+			List<Tuple<HeroDefinition, HeroData>> ret = new List<Tuple<HeroDefinition, HeroData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
 			{
 				HeroData data = new HeroData();
 				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
@@ -355,18 +432,22 @@ namespace SS.Levels
 				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
 				HeroDefinition def = DefinitionManager.GetHero( defId );
 
-				HeroCreator.Create( def, data );
+				ret.Add( new Tuple<HeroDefinition, HeroData>( def, data ) );
 			}
+
+			return ret;
 		}
 
-		private static void InstantiateExtras( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<ExtraDefinition, ExtraData>> GetSavedExtras( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			int unitCount = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < unitCount; i++ )
+			List<Tuple<ExtraDefinition, ExtraData>> ret = new List<Tuple<ExtraDefinition, ExtraData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
 			{
 				ExtraData data = new ExtraData();
 				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
@@ -374,8 +455,33 @@ namespace SS.Levels
 				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
 				ExtraDefinition def = DefinitionManager.GetExtra( defId );
 
-				ExtraCreator.Create( def, data );
+				ret.Add( new Tuple<ExtraDefinition, ExtraData>( def, data ) );
 			}
+
+			return ret;
+		}
+
+		private static List<Tuple<ResourceDepositDefinition, ResourceDepositData>> GetSavedResourceDeposits( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+			List<Tuple<ResourceDepositDefinition, ResourceDepositData>> ret = new List<Tuple<ResourceDepositDefinition, ResourceDepositData>>();
+
+			int count = serializer.Analyze( "List" ).childCount;
+			for( int i = 0; i < count; i++ )
+			{
+				ResourceDepositData data = new ResourceDepositData();
+				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
+
+				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
+				ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( defId );
+
+				ret.Add( new Tuple<ResourceDepositDefinition, ResourceDepositData>( def, data ) );
+			}
+
+			return ret;
 		}
 
 
@@ -438,12 +544,14 @@ namespace SS.Levels
 			GameObject[] projectiles = Projectile.GetAllProjectiles();
 			GameObject[] heroes = Hero.GetAllHeroes();
 			GameObject[] extras = Extra.GetAllExtras();
+			GameObject[] resourceDeposits = ResourceDeposit.GetAllResourceDeposits();
 
 			UnitData[] unitData = new UnitData[units.Length];
 			BuildingData[] buildingData = new BuildingData[buildings.Length];
 			ProjectileData[] projectileData = new ProjectileData[projectiles.Length];
 			HeroData[] heroData = new HeroData[heroes.Length];
 			ExtraData[] extraData = new ExtraData[extras.Length];
+			ResourceDepositData[] resourceDepositData = new ResourceDepositData[resourceDeposits.Length];
 
 			for( int i = 0; i < unitData.Length; i++ )
 			{
@@ -468,7 +576,6 @@ namespace SS.Levels
 
 #error incomplete.
 			throw new System.NotImplementedException();
-#error TAI goals have to be saved with objects.
 
 			// we need to get the index of the object in the array.
 			// onenable having it add to list would make it easier, as we can just loop over that list to make our save state list.
@@ -479,7 +586,7 @@ namespace SS.Levels
 #error Inventory needs to be a module? and it needs to be serialized.
 
 
-			// - selected and highlighted objects - saved as indices to the unit/hero/building/etc array.
+			// - selected and highlighted objects - saved as unit/hero/building/etc guids.
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
@@ -8,17 +9,25 @@ namespace SS.Levels.SaveStates
 	/// </summary>
 	public class ResourceDepositData : IKFFSerializable
 	{
+		public Guid guid { get; set; }
+
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
-		
+
+#error inv
+
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
+			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+
 			this.position = serializer.ReadVector3( "Position" );
 			this.rotation = serializer.ReadQuaternion( "Rotation" );
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
 		{
+			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
+
 			serializer.WriteVector3( "", "Position", this.position );
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 		}

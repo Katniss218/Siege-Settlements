@@ -48,6 +48,7 @@ namespace SS.Content
 		private static ProjectileDefinition[] projectileDefinitions = null;
 		private static HeroDefinition[] heroDefinitions = null;
 		private static ExtraDefinition[] extraDefinitions = null;
+		private static ResourceDepositDefinition[] resourceDepositDefinitions = null;
 
 		// "Soft" definitions.
 
@@ -146,8 +147,24 @@ namespace SS.Content
 			extraDefinitions = deserialized;
 		}
 
+		public static void LoadResourceDepositDefinitions()
+		{
+			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "resource_deposits.kff" );
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+
+			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.Analyze( "List" ).childCount];
+			for( int i = 0; i < deserialized.Length; i++ )
+			{
+				deserialized[i] = new ResourceDepositDefinition( "<missing>" );
+			}
+			serializer.DeserializeArray( "List", deserialized );
+
+			resourceDepositDefinitions = deserialized;
+		}
+
 		// ///////////////////////////////////////////////
-		
+
 		public static void LoadResourceDefinitions()
 		{
 			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "resources.kff" );
@@ -297,6 +314,29 @@ namespace SS.Content
 			for( int i = 0; i < ret.Length; i++ )
 			{
 				ret[i] = extraDefinitions[i];
+			}
+			return ret;
+		}
+
+
+		public static ResourceDepositDefinition GetResourceDeposit( string id )
+		{
+			for( int i = 0; i < extraDefinitions.Length; i++ )
+			{
+				if( resourceDepositDefinitions[i].id == id )
+				{
+					return resourceDepositDefinitions[i];
+				}
+			}
+			throw new System.Exception( "An extra with an id '" + id + "' is not registered." );
+		}
+
+		public static ResourceDepositDefinition[] GetAllResourceDeposits()
+		{
+			ResourceDepositDefinition[] ret = new ResourceDepositDefinition[extraDefinitions.Length];
+			for( int i = 0; i < ret.Length; i++ )
+			{
+				ret[i] = resourceDepositDefinitions[i];
 			}
 			return ret;
 		}

@@ -17,14 +17,13 @@ namespace SS.Buildings
 	[RequireComponent( typeof( Damageable ) )]
 	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
-		public struct ResourceInfo
+		public class ResourceInfo
 		{
-#error Change this to dictionary, indexed by resource ID (removes possibility of desync of array indices).
 			public int initialResource { get; set; }
 			public float remaining { get; set; }
 			public float healthToResource { get; set; }
 		}
-
+		/*
 		/// <summary>
 		/// An array of resource types needed for construction (Read Only).
 		/// </summary>
@@ -44,8 +43,8 @@ namespace SS.Buildings
 		/// Each entry represents a percentage of total resources needed (initial).
 		/// </summary>
 		[SerializeField] private float[] healthToResources;
-		
-		//private Dictionary<string, ResourceInfo> resourcesInfo;
+		*/
+		private Dictionary<string, ResourceInfo> resourceInfo;
 
 		private Damageable damageable;
 
@@ -55,9 +54,9 @@ namespace SS.Buildings
 
 		private bool IsDone()
 		{
-			for( int i = 0; i < this.resourceIds.Length; i++ )
+			foreach( var kvp in resourceInfo )
 			{
-				int roundedAmount = SpecialRound( this.resourcesRemaining[i] );
+				int roundedAmount = SpecialRound( kvp.Value.remaining );
 
 				if( roundedAmount != 0 )
 				{
@@ -69,15 +68,19 @@ namespace SS.Buildings
 
 		public void ReceivePayment( string id, int amount )
 		{
-			for( int i = 0; i < this.resourceIds.Length; i++ )
+			foreach( var kvp in this.resourceInfo )
 			{
+
+			//}
+			//for( int i = 0; i < this.resourceIds.Length; i++ )
+			//{
 				// Skip to the matching resource.
-				if( this.resourceIds[i] != id )
+				if( kvp.Key != id )
 				{
 					continue;
 				}
 
-				int roundedRemaining = SpecialRound( this.resourcesRemaining[i] );
+				int roundedRemaining = SpecialRound( kvp.Value.remaining );
 				if( roundedRemaining == 0 )
 				{
 					throw new Exception( "Received resource wasn't wanted." );
@@ -88,7 +91,7 @@ namespace SS.Buildings
 					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
 				}
 
-				float healAmt = ((damageable.healthMax * (1 - 0.1f)) / this.initialResources[i]) * this.healthToResources[i] * amount;
+				float healAmt = ((damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
 
 				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 				// Otherwise, heal it normally.
@@ -101,10 +104,10 @@ namespace SS.Buildings
 					damageable.health += healAmt;
 				}
 
-				this.resourcesRemaining[i] -= amount;
-				if( this.resourcesRemaining[i] < 0 )
+				kvp.Value.remaining -= amount;
+				if( kvp.Value.remaining < 0 )
 				{
-					this.resourcesRemaining[i] = 0;
+					kvp.Value.remaining = 0;
 				}
 
 				Main.particleSystem.transform.position = gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
@@ -142,12 +145,12 @@ namespace SS.Buildings
 		{
 			Dictionary<string, int> ret = new Dictionary<string, int>();
 
-			for( int i = 0; i < this.resourceIds.Length; i++ )
+			foreach( var kvp in this.resourceInfo )
 			{
-				int amtRounded = SpecialRound( this.resourcesRemaining[i] );
+				int amtRounded = SpecialRound( kvp.Value.remaining );
 				if( amtRounded != 0 )
 				{
-					ret.Add( this.resourceIds[i], amtRounded );
+					ret.Add( kvp.Key, amtRounded );
 				}
 			}
 			return ret;
@@ -158,29 +161,24 @@ namespace SS.Buildings
 		/// </summary>
 		public void SetRequiredResources( Dictionary<string, int> requiredResources )
 		{
-			this.resourceIds = new string[requiredResources.Count];
-			this.resourcesRemaining = new float[requiredResources.Count];
-			this.healthToResources = new float[requiredResources.Count];
-			this.initialResources = new int[requiredResources.Count];
-
+			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources .Count );
+			
 			float totalResourcesNeeded = 0;
-			int i = 0;
+			//int i = 0;
 			foreach( var id in requiredResources.Keys )
 			{
 				int amount = requiredResources[id];
-				this.resourceIds[i] = id;
-				this.resourcesRemaining[i] = amount;
-				this.initialResources[i] = amount;
-
+				this.resourceInfo.Add( id, new ResourceInfo() { initialResource = amount, remaining = amount } );
+				
 				totalResourcesNeeded += amount;
 
-				i++;
+				//i++;
 			}
 
 			// Once we have our total, calculate how much each resource contributes to the total.
-			for( i = 0; i < this.healthToResources.Length; i++ )
+			foreach( var kvp in this.resourceInfo )
 			{
-				this.healthToResources[i] = this.resourcesRemaining[i] / totalResourcesNeeded;
+				kvp.Value.healthToResource = kvp.Value.remaining / totalResourcesNeeded;
 			}
 
 		}
@@ -201,11 +199,11 @@ namespace SS.Buildings
 			this.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 			if( deltaHP < 0 )
 			{
-				for( int i = 0; i < this.resourceIds.Length; i++ )
+				foreach( var kvp in this.resourceInfo )
 				{
-					float resAmt = (this.initialResources[i] / (damageable.healthMax * (1 - 0.1f))) * this.healthToResources[i] * -deltaHP;
+					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * kvp.Value.healthToResource * -deltaHP;
 
-					this.resourcesRemaining[i] += resAmt;
+					kvp.Value.remaining += resAmt;
 				}
 			}
 		}
@@ -218,7 +216,12 @@ namespace SS.Buildings
 		public ConstructionSiteData GetSaveState()
 		{
 			ConstructionSiteData data = new ConstructionSiteData();
-			data.resourcesRemaining = this.resourcesRemaining;
+
+			data.resourcesRemaining = new Dictionary<string, float>();
+			foreach( var kvp in this.resourceInfo )
+			{
+				data.resourcesRemaining.Add( kvp.Key, kvp.Value.remaining );
+			}
 
 			return data;
 		}
@@ -229,7 +232,7 @@ namespace SS.Buildings
 
 			FactionMember fac = gameObject.GetComponent<FactionMember>();
 
-			Color color = fac != null ? LevelManager.currentLevel.Value.factions[fac.factionId].color : Color.gray;
+			Color color = fac != null ? LevelDataManager.factions[fac.factionId].color : Color.gray;
 
 			int numX = Mathf.FloorToInt( collider.size.x * 2.0f );
 			int numZ = Mathf.FloorToInt( collider.size.z * 2.0f );
@@ -357,7 +360,7 @@ namespace SS.Buildings
 		/// <summary>
 		/// Starts the construction / repair of the specified building.
 		/// </summary>
-		public static void BeginConstructionOrRepair( GameObject gameObject, ConstructionSiteData constructionSaveState )
+		public static void BeginConstructionOrRepair( GameObject gameObject, ConstructionSiteData data )
 		{
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			if( !Building.IsRepairable( damageable ) )
@@ -373,9 +376,12 @@ namespace SS.Buildings
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
 			constructionSite.meshRenderer = meshRenderer;
 			
-			if( constructionSaveState.resourcesRemaining != null )
+			if( data.resourcesRemaining != null )
 			{
-				constructionSite.resourcesRemaining = constructionSaveState.resourcesRemaining;
+				foreach( var kvp in data.resourcesRemaining )
+				{
+					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
+				}
 			}
 
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
