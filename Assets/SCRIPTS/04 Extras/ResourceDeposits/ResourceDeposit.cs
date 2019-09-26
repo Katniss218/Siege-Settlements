@@ -1,4 +1,5 @@
 ﻿using SS.Inventories;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,8 @@ namespace SS.Extras
 	public class ResourceDeposit : MonoBehaviour
 	{
 		public const float MINING_SPEED = 2.0f;
+
+		public Guid guid { get; set; }
 
 		public string id { get; set; }
 		

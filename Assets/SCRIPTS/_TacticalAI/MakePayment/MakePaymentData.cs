@@ -1,10 +1,9 @@
-﻿using System;
-using KFF;
-using UnityEngine;
+﻿using KFF;
+using System;
 
 namespace SS
 {
-	public class DropoffToInventoryData : TAIGoalData
+	public class MakePaymentData : TAIGoalData
 	{
 		public Guid destinationGuid { get; set; }
 

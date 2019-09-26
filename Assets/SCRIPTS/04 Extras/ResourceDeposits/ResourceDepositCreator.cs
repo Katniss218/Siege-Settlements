@@ -9,12 +9,12 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 
 namespace SS.Extras
-{/*
+{
 	public static class ResourceDepositCreator
 	{
+#error incomplete (set data, set definition, etc.)
 		public static GameObject Create()
 		{
-#error not used anymore. deposits should be extras with inventory deposit module thing added.
 			if( def == null )
 			{
 				throw new System.Exception( "Definition can't be null" );
@@ -160,5 +160,5 @@ namespace SS.Extras
 
 			return container;
 		}
-	}*/
+	}
 }

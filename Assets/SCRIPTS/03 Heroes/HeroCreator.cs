@@ -133,7 +133,31 @@ namespace SS.Heroes
 			//    MODULES
 			//
 
-#error tai goal data
+			TAIGoalData taiGoalData = data.taiGoalData;
+			if( taiGoalData != null )
+			{
+				if( taiGoalData is MoveToData )
+				{
+					TAIGoal.MoveTo.AssignTAIGoal( gameObject, ((MoveToData)taiGoalData).destination );
+				}
+				else if( taiGoalData is DropoffToNewData )
+				{
+					TAIGoal.DropoffToNew.AssignTAIGoal( gameObject, ((DropoffToNewData)taiGoalData).destination );
+				}
+
+				else if( taiGoalData is DropoffToInventoryData )
+				{
+					TAIGoal.DropoffToInventory.AssignTAIGoal( gameObject, Main.GetGameObject( ((DropoffToInventoryData)taiGoalData).destinationGuid ) );
+				}
+				else if( taiGoalData is MakePaymentData )
+				{
+					TAIGoal.MakePayment.AssignTAIGoal( gameObject, Main.GetGameObject( ((MakePaymentData)taiGoalData).destinationGuid ) );
+				}
+				else if( taiGoalData is PickupDepositData )
+				{
+					TAIGoal.PickupDeposit.AssignTAIGoal( gameObject, Main.GetGameObject( ((PickupDepositData)taiGoalData).destinationGuid ) );
+				}
+			}
 
 		}
 

@@ -45,24 +45,33 @@ namespace SS
 			// pays first ipayment receiver on the object. if has resources left in inv, pays the 2nd, etc.
 			private void Pay( GameObject gameObject )
 			{
-#error Choose first IPaymentReceiver, pay, if has resources left, choose second IPaymentReceiver, pay, repeat.
-				Dictionary<string, int> wantedRes = this.paymentReceiver.GetWantedResources();
+				IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
 
-				foreach( var kvp in wantedRes )
+				for( int i = 0; i < paymentReceivers.Length; i++ )
 				{
-					int amountInInv = this.inventory.Get( kvp.Key );
+					Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
 
-					if( amountInInv == 0 )
+					foreach( var kvp in wantedRes )
 					{
-						continue;
+						int amountInInv = this.inventory.Get( kvp.Key );
+
+						if( amountInInv == 0 )
+						{
+							continue;
+						}
+
+						int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
+
+						this.inventory.Remove( kvp.Key, amountPayed );
+						paymentReceivers[i].ReceivePayment( kvp.Key, amountPayed );
+						ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+						AudioManager.PlayNew( resDef.dropoffSound.Item2 );
 					}
-
-					int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
-
-					this.inventory.Remove( kvp.Key, amountPayed );
-					this.paymentReceiver.ReceivePayment( kvp.Key, amountPayed );
-					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-					AudioManager.PlayNew( resDef.dropoffSound.Item2 );
+					// If there is no resources to pay (everything spent).
+					if( this.inventory.isEmpty )
+					{
+						break;
+					}
 				}
 			}
 
@@ -88,6 +97,16 @@ namespace SS
 				}
 			}
 
+
+			public override TAIGoalData GetData()
+			{
+				MakePaymentData data = new MakePaymentData();
+				
+				data.destinationGuid = Main.GetGuid( this.destination );
+
+				return data;
+			}
+			
 			/// <summary>
 			/// Assigns a new MakePayment TAI goal to the GameObject.
 			/// </summary>

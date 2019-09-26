@@ -6,7 +6,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Contains every information to successfully round-trip an extra, to and from file.
 	/// </summary>
-	public class ExtraData : IKFFSerializable
+	public class ResourceDepositData : IKFFSerializable
 	{
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }

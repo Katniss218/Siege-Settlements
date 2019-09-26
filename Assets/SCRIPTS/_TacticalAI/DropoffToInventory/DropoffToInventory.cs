@@ -23,12 +23,14 @@ namespace SS
 			{
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
+				IInventory destinationInventory = this.destination.GetComponent<IInventory>();
+
 				foreach( var kvp in resourcesCarried )
 				{
-					int maxCapacity = this.destinationInventory.GetMaxCapacity( kvp.Key );
+					int maxCapacity = destinationInventory.GetMaxCapacity( kvp.Key );
 					if( maxCapacity > 0 )
 					{
-						int amount = this.destinationInventory.Get( kvp.Key );
+						int amount = destinationInventory.Get( kvp.Key );
 
 						int spaceLeft = maxCapacity - amount;
 						if( spaceLeft > 0 )
@@ -39,7 +41,7 @@ namespace SS
 								dropOffAmt = spaceLeft;
 							}
 
-							this.destinationInventory.Add( kvp.Key, dropOffAmt );
+							destinationInventory.Add( kvp.Key, dropOffAmt );
 							this.inventory.Remove( kvp.Key, dropOffAmt );
 							ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
 							AudioManager.PlayNew( def.dropoffSound.Item2 );
@@ -73,21 +75,17 @@ namespace SS
 
 			void Update()
 			{
-				// If the destination inventory can no longer hold any of the items in this inventory, stop the AI.
-				foreach( var kvp in this.inventory.GetAll() )
+				// If the destination has been destroyed.
+				if( this.destination == null )
 				{
-					if( this.destinationInventory.GetMaxCapacity( kvp.Key ) != this.destinationInventory.Get( kvp.Key ) )
-					{
-						continue;
-					}
 					Object.Destroy( this );
 					return;
 				}
-				if( PhysicsDistance.OverlapInRange( this.transform, this.destinationTransform, 0.75f ) )
+				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
 				{
 					if( !this.inventory.isEmpty )
 					{
-						Vector3 direction = (this.destinationTransform.position - this.transform.position).normalized;
+						Vector3 direction = (this.destination.transform.position - this.transform.position).normalized;
 						this.DropOff();
 					}
 					else
@@ -101,9 +99,9 @@ namespace SS
 			{
 				DropoffToInventoryData data = new DropoffToInventoryData();
 
-				data.destinationInventoryObjIndex = wtf. in what array to lookup it?.
+				data.destinationGuid = Main.GetGuid( this.destination );
 
-				throw new System.NotImplementedException();
+				return data;
 			}
 
 			/// <summary>

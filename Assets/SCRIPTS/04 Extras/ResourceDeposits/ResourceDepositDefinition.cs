@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Extras
-#warning TODO - ResourceDepositModule : IInventory
-{/*
+{
 	public class ResourceDepositDefinition : Definition
 	{
 		public string displayName { get; set; }
@@ -96,5 +95,5 @@ namespace SS.Extras
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 
 		}
-	}*/
+	}
 }

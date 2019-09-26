@@ -2,7 +2,6 @@
 using SS.Content;
 using SS.Extras;
 using SS.Inventories;
-using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,39 +35,52 @@ namespace SS
 				{
 					throw new System.Exception( "Can't add PickupDeposit TAI goal to: " + this.gameObject.name );
 				}
-				if( this.depositToCollect == null )
+				if( this.destination == null )
 				{
-					Debug.LogWarning( "Not assigned deposit to collect: " + this.gameObject.name );
+					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
 				}
 
-				this.navMeshAgent.SetDestination( this.depositToCollect.transform.position );
+				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 
-			void Update()
+			private void PickUp()
 			{
-				// if the deposit was picked up (not on the map), stop the AI.
-				if( this.depositToCollect == null )
-				{
-					Object.Destroy( this );
-					return;
-				}
-				// if the deposit was emptied (but still on the map), stop the AI.
-				if( depositToCollect.inventory.isEmpty )
-				{
-					Object.Destroy( this );
-					return;
-				}
-				if( PhysicsDistance.OverlapInRange( this.transform, this.depositToCollect.transform, 0.75f ) )
-				{
-					// Clear the path, when it's in range of the deposit.
-					this.navMeshAgent.ResetPath();
+				string idPickedUp = "";
+				int amountPickedUp = 0;
 
-					string idPickedUp = "";
-					int amountPickedUp = 0;
-					if( this.depositToCollect.isTypeExtracted )
+				ResourceDeposit depositToCollect = this.destination.GetComponent<ResourceDeposit>();
+				if( depositToCollect.isTypeExtracted )
+				{
+					Dictionary<string, int> resourcesInDeposit = depositToCollect.inventory.GetAll();
+
+					foreach( var kvp in resourcesInDeposit )
 					{
-						Dictionary<string, int> resourcesInDeposit = this.depositToCollect.inventory.GetAll();
+						if( kvp.Value == 0 )
+						{
+							continue;
+						}
+						if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
+						{
+							amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
+							idPickedUp = kvp.Key;
+
+							if( amountPickedUp > 0 )
+							{
+								depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+								AudioManager.PlayNew( DefinitionManager.GetResource( idPickedUp ).pickupSound.Item2 );
+							}
+							break; // Only pick up one resource at a time.
+						}
+					}
+				}
+				else
+				{
+					amtCollected += ResourceDeposit.MINING_SPEED * Time.deltaTime;
+					int amtFloored = Mathf.FloorToInt( amtCollected );
+					if( amtFloored >= 1 )
+					{
+						Dictionary<string, int> resourcesInDeposit = depositToCollect.inventory.GetAll();
 
 						foreach( var kvp in resourcesInDeposit )
 						{
@@ -78,61 +90,59 @@ namespace SS
 							}
 							if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
 							{
-								amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
+								amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
 								idPickedUp = kvp.Key;
+								amtCollected -= amtFloored;
 
 								if( amountPickedUp > 0 )
 								{
-									this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
-									AudioManager.PlayNew( DefinitionManager.Get<ResourceDefinition>( idPickedUp ).pickupSound.Item2 );
+									depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+									AudioManager.PlayNew( depositToCollect.miningSound );
 								}
 								break; // Only pick up one resource at a time.
-							}
-						}
-					}
-					else
-					{
-						amtCollected += Extras.ResourceDeposit.MINING_SPEED * Time.deltaTime;
-						int amtFloored = Mathf.FloorToInt( amtCollected );
-						if( amtFloored >= 1 )
-						{
-							Dictionary<string, int> resourcesInDeposit = this.depositToCollect.inventory.GetAll();
-
-							foreach( var kvp in resourcesInDeposit )
-							{
-								if( kvp.Value == 0 )
-								{
-									continue;
-								}
-								if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
-								{
-									amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
-									idPickedUp = kvp.Key;
-									amtCollected -= amtFloored;
-
-									if( amountPickedUp > 0 )
-									{
-										this.depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
-										AudioManager.PlayNew( this.depositToCollect.miningSound );
-									}
-									break; // Only pick up one resource at a time.
-								}
 							}
 						}
 					}
 				}
 			}
 
+			void Update()
+			{
+				// if the deposit was picked up (not on the map), stop the AI.
+				if( this.destination == null )
+				{
+					Object.Destroy( this );
+					return;
+				}
+				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
+				{
+					// Clear the path, when it's in range of the deposit.
+					this.navMeshAgent.ResetPath();
+
+					this.PickUp();
+				}
+			}
+
+
+			public override TAIGoalData GetData()
+			{
+				PickupDepositData data = new PickupDepositData();
+
+				data.destinationGuid = Main.GetGuid( this.destination );
+
+				return data;
+			}
+
 			/// <summary>
 			/// Assigns a new PickupDeposit TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( UnityEngine.GameObject gameObject, Extras.ResourceDeposit depositToPickUp )
+			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 
-				PickupDeposit pickUpResource = gameObject.AddComponent<TAIGoal.PickupDeposit>();
+				PickupDeposit pickupDeposit = gameObject.AddComponent<TAIGoal.PickupDeposit>();
 
-				pickUpResource.depositToCollect = depositToPickUp;
+				pickupDeposit.destination = destination;
 			}
 		}
 	}

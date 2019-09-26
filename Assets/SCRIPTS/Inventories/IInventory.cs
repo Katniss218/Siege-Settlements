@@ -8,7 +8,7 @@ namespace SS.Inventories
 	/// </summary>
 	public interface IInventory
 	{
-#error only one IInventory component per object.
+#error only one IInventory module per object (serialization).
 
 		/// <summary>
 		/// Returns true, if the inventory is currently holding a resource (Read Only).

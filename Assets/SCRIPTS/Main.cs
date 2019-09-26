@@ -11,6 +11,10 @@ using SS.ResourceSystem;
 using SS.Content;
 using UnityEngine.Events;
 using SS.Levels.SaveStates;
+using System;
+using SS.Projectiles;
+using SS.Units;
+using SS.Heroes;
 
 namespace SS
 {
@@ -543,6 +547,48 @@ namespace SS
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform, paymentReceivers[receiverIndices[i]] );
 				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
+		}
+
+		public static Guid GetGuid( GameObject obj )
+		{
+			// gets guid of object.
+
+			Unit unit = obj.GetComponent<Unit>();
+			if( unit != null )
+			{
+				return unit.guid;
+			}
+			Building building = obj.GetComponent<Building>();
+			if( building != null )
+			{
+				return building.guid;
+			}
+			Projectile projectile = obj.GetComponent<Projectile>();
+			if( projectile != null )
+			{
+				return projectile.guid;
+			}
+			Hero hero = obj.GetComponent<Hero>();
+			if( hero != null )
+			{
+				return hero.guid;
+			}
+			Extra extra = obj.GetComponent<Extra>();
+			if( extra != null )
+			{
+				return extra.guid;
+			}
+			ResourceDeposit deposit = obj.GetComponent<ResourceDeposit>();
+			if( deposit != null )
+			{
+				return deposit.guid;
+			}
+			throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
+		}
+
+		public static GameObject GetGameObject( Guid guid )
+		{
+			// gets object with specified guid.
 		}
 	}
 }
