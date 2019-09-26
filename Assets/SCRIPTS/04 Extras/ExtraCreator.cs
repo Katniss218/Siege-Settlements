@@ -1,5 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Levels.SaveStates;
+using System;
 using UnityEngine;
 
 namespace SS.Extras
@@ -8,13 +9,74 @@ namespace SS.Extras
 	{
 		private const string GAMEOBJECT_NAME = "Extra";
 
-#error incomplete - structure.
 
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		private static void SetExtraDefinition( GameObject gameObject, ExtraDefinition def )
+		{
+
+			//
+			//    GRAPHICS GAMEOBJECT
+			//
+
+			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			
+			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
+			meshFilter.mesh = def.mesh.Item2;
+
+			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
+			
+			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			Extra extra = gameObject.GetComponent<Extra>();
+			extra.defId = def.id;
+		}
+
+		private static void SetExtraData( GameObject gameObject, ExtraData data )
+		{
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+
+			Extra extra = gameObject.GetComponent<Extra>();
+			extra.guid = data.guid;
+		}
+
+		private static GameObject CreateExtra()
+		{
+			GameObject container = new GameObject( GAMEOBJECT_NAME );
+			container.isStatic = true;
+			container.layer = ObjectLayer.EXTRAS;
+
+			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
+			gfx.transform.SetParent( container.transform );
+			gfx.isStatic = true;
+			
+			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
+			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			
+			return container;
+		}
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 		public static string GetDefinitionId( GameObject gameObject )
 		{
-			if( gameObject.layer != ObjectLayer.HEROES )
+			if( !Extra.IsValid( gameObject ) )
 			{
-				throw new System.Exception( "The specified GameObject is not a hero." );
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
 			}
 
 			Extra extra = gameObject.GetComponent<Extra>();
@@ -27,12 +89,14 @@ namespace SS.Extras
 		/// <param name="gameObject">The GameObject to extract the save state from. Must be an extra.</param>
 		public static ExtraData GetData( GameObject gameObject )
 		{
-			if( gameObject.layer != ObjectLayer.EXTRAS )
+			if( !Extra.IsValid( gameObject ) )
 			{
-				throw new System.Exception( "The specified GameObject is not an extra." );
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
 			}
 
 			ExtraData data = new ExtraData();
+
+			data.guid = gameObject.GetComponent<Extra>().guid;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
@@ -40,30 +104,47 @@ namespace SS.Extras
 			return data;
 		}
 
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public static void SetData( GameObject gameObject, ExtraData data )
+		{
+			if( !Extra.IsValid( gameObject ) )
+			{
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
+			}
+
+			SetExtraData( gameObject, data );
+		}
+
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public static GameObject CreateEmpty( Guid guid, ExtraDefinition def )
+		{
+			GameObject gameObject = CreateExtra();
+
+			SetExtraDefinition( gameObject, def );
+
+			Extra extra = gameObject.GetComponent<Extra>();
+			extra.guid = guid;
+
+			return gameObject;
+		}
+
 		public static GameObject Create( ExtraDefinition def, ExtraData data )
 		{
-			if( def == null )
-			{
-				throw new System.Exception( "Definition can't be null" );
-			}
-			GameObject container = new GameObject( GAMEOBJECT_NAME + " (\"" + def.id + "\")" );
-			container.isStatic = true;
-			container.layer = ObjectLayer.EXTRAS;
+			GameObject gameObject = CreateExtra();
 
-			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			gfx.isStatic = true;
+			SetExtraDefinition( gameObject, def );
+			SetExtraData( gameObject, data );
 
-			container.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreatePlantTransparent( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.3333f );
-			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
-
-
-			return container;
+			return gameObject;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using SS.Content;
 using SS.Extras;
 using SS.Inventories;
+using SS.Levels.SaveStates;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,13 +37,12 @@ namespace SS
 				foreach( var kvp in resourcesCarried )
 				{
 					ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-#warning extra
-					ResourceDepositDefinition newDepositDef = DefinitionManager.Get<ResourceDepositDefinition>( resourceDef.defaultDeposit );
+
+					ResourceDepositDefinition newDepositDef = DefinitionManager.GetResourceDeposit( resourceDef.defaultDeposit );
 					int capacity = newDepositDef.resources[kvp.Key];
 					int remaining = kvp.Value;
 					while( remaining > 0 )
 					{
-						GameObject obj;
 						Dictionary<string, int> dict = new Dictionary<string, int>();
 						if( remaining >= capacity )
 						{
@@ -53,7 +53,14 @@ namespace SS
 							dict.Add( kvp.Key, remaining );
 						}
 						remaining -= capacity;
-						obj = ResourceDepositCreator.Create( newDepositDef, position, Quaternion.identity, dict );
+
+						ResourceDepositData data = new ResourceDepositData();
+						data.position = position;
+						data.rotation = Quaternion.identity;
+						data.resources = dict;
+
+						ResourceDepositCreator.Create( newDepositDef, data );
+
 						AudioManager.PlayNew( resourceDef.dropoffSound.Item2 );
 					}
 				}

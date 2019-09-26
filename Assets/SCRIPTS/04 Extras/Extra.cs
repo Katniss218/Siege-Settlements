@@ -6,6 +6,19 @@ namespace SS.Extras
 {
 	public class Extra : MonoBehaviour
 	{
+		public static bool IsValid( GameObject gameObject )
+		{
+			if( gameObject.layer != ObjectLayer.EXTRAS )
+			{
+				return false;
+			}
+			if( gameObject.GetComponent<Extra>() == null )
+			{
+				return false;
+			}
+			return true;
+		}
+
 		private static List<GameObject> _allExtras = new List<GameObject>();
 
 		public static GameObject[] GetAllExtras()

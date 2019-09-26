@@ -37,7 +37,6 @@ namespace SS.Levels.SaveStates
 			TAIGoalType goalType = (TAIGoalType)serializer.ReadByte( "TAIGoalType" );
 			if( goalType != TAIGoalType.None )
 			{
-
 				switch( goalType )
 				{
 					case TAIGoalType.DropoffToInventory:

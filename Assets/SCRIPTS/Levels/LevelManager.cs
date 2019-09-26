@@ -574,7 +574,6 @@ namespace SS.Levels
 				extraData[i] = ExtraCreator.GetData( extras[i] );
 			}
 
-#error incomplete.
 			throw new System.NotImplementedException();
 
 			// we need to get the index of the object in the array.
@@ -582,8 +581,10 @@ namespace SS.Levels
 			// then the index of data would correspond to index of object itself.
 			// the objects referencing modules that can appear on more than one object can break this and it doesn't work.
 			// still doesn't solve having multiples of the same interface on an object.
-			
-#error Inventory needs to be a module? and it needs to be serialized.
+
+#error Inventory needs to be a proper module?
+
+#error Inventories need to be serializable.
 
 
 			// - selected and highlighted objects - saved as unit/hero/building/etc guids.

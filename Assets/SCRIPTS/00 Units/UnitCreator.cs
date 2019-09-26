@@ -455,6 +455,7 @@ namespace SS.Units
 			{
 				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid unit." );
 			}
+
 			SetUnitData( gameObject, data );
 		}
 
