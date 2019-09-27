@@ -28,9 +28,9 @@ namespace SS.UI
 		// Start is called before the first frame update
 		void Start()
 		{
-			List<ResourceDefinition> definedRes = DefinitionManager.GetAllOfType<ResourceDefinition>();
+			ResourceDefinition[] definedRes = DefinitionManager.GetAllResources();
 
-			for( int i = 0; i < definedRes.Count; i++ )
+			for( int i = 0; i < definedRes.Length; i++ )
 			{
 				AddResourceEntry( definedRes[i] );
 			}

@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Inventories;
+using SS.Modules.Inventories;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
 using SS.UI;
@@ -52,14 +52,15 @@ namespace SS.Extras
 			
 
 			InventoryConstrained depositInventory = gameObject.GetComponent<InventoryConstrained>();
-			InventoryConstrained.SlotInfo[] slotInfos = new InventoryConstrained.SlotInfo[def.resources.Count];
+			InventoryConstrainedDefinition inventoryDef = new InventoryConstrainedDefinition();
+			inventoryDef.slots = new InventoryConstrainedDefinition.Slot[def.resources.Count];
 			int i = 0;
 			foreach( var kvp in def.resources )
 			{
-				slotInfos[i] = new InventoryConstrained.SlotInfo( kvp.Key, kvp.Value );
+				inventoryDef.slots[i] = new InventoryConstrainedDefinition.Slot() { resourceId = kvp.Key, capacity = kvp.Value };
 				i++;
 			}
-			depositInventory.SetSlots( slotInfos );
+			depositInventory.SetDefinition( inventoryDef );
 			
 			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
 			resourceDeposit.defId = def.id;

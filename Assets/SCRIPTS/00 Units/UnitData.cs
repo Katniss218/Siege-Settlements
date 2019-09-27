@@ -1,5 +1,6 @@
 ﻿using KFF;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
@@ -18,6 +19,8 @@ namespace SS.Levels.SaveStates
 		
 		public float health { get; set; }
 
+		public Dictionary<string,int> items { get; set; }
+
 		public TAIGoalData taiGoalData { get; set; }
 
 		// when a module save state is present on the save state, and it's not present on the definition - throw an exception.
@@ -33,6 +36,14 @@ namespace SS.Levels.SaveStates
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
 
+
+			// Cost
+			var analysisData = serializer.Analyze( "Items" );
+			this.items = new Dictionary<string, int>( analysisData.childCount );
+			for( int i = 0; i < analysisData.childCount; i++ )
+			{
+				this.items.Add( serializer.ReadString( new Path( "Items.{0}.Id", i ) ), serializer.ReadInt( new Path( "Items.{0}.Amount", i ) ) );
+			}
 
 			TAIGoalType goalType = (TAIGoalType)serializer.ReadByte( "TAIGoalType" );
 			if( goalType != TAIGoalType.None )
@@ -77,6 +88,16 @@ namespace SS.Levels.SaveStates
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
 
+			// Cost
+			serializer.WriteClass( "", "Items" );
+			int i = 0;
+			foreach( var kvp in this.items )
+			{
+				serializer.AppendClass( "Items" );
+				serializer.WriteString( new Path( "Items.{0}", i ), "Id", kvp.Key );
+				serializer.WriteInt( new Path( "Items.{0}", i ), "Amount", kvp.Value );
+				i++;
+			}
 
 			if( this.taiGoalData != null )
 			{

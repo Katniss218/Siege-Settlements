@@ -1,4 +1,4 @@
-﻿using SS.Inventories;
+﻿using SS.Modules.Inventories;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

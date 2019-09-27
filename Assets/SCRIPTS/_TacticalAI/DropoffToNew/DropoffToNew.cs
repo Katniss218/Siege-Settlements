@@ -1,6 +1,6 @@
 ﻿using SS.Content;
 using SS.Extras;
-using SS.Inventories;
+using SS.Modules.Inventories;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
 using System.Collections.Generic;

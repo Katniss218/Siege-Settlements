@@ -38,7 +38,7 @@ namespace SS.Content
 
 		public static string GetLevelAssetPath( string assetsPath )
 		{
-			return LevelManager.levelDirectoryPath + System.IO.Path.DirectorySeparatorChar + LevelManager.currentLevel.identifier + System.IO.Path.DirectorySeparatorChar + "Assets";
+			return LevelManager.levelDirectoryPath + System.IO.Path.DirectorySeparatorChar + LevelManager.currentLevelId + System.IO.Path.DirectorySeparatorChar + "Assets";
 		}
 
 
@@ -106,7 +106,7 @@ namespace SS.Content
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				if( LevelManager.currentLevel == null )
+				if( !LevelManager.isLevelLoaded )
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
@@ -130,7 +130,7 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( LevelManager.currentLevel == null )
+				if( LevelManager.isLevelLoaded )
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
@@ -157,7 +157,7 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( LevelManager.currentLevel == null )
+				if( !LevelManager.isLevelLoaded )
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
@@ -184,7 +184,7 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( LevelManager.currentLevel == null )
+				if( !LevelManager.isLevelLoaded )
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}

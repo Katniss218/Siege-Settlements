@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Events;
 
-namespace SS.Inventories
+namespace SS.Modules.Inventories
 {
 	/// <summary>
 	/// Represents any type of inventory.
 	/// </summary>
 	public interface IInventory
 	{
-#error only one IInventory module per object (serialization).
-
 		/// <summary>
 		/// Returns true, if the inventory is currently holding a resource (Read Only).
 		/// </summary>

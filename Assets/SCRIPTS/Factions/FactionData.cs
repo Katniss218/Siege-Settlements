@@ -29,8 +29,8 @@ namespace SS
 		// Loads the registered technologies to the faction's cache.
 		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState )
 		{
-			List<TechnologyDefinition> technologiesLoaded = DefinitionManager.GetAllOfType<TechnologyDefinition>();
-			for( int i = 0; i < technologiesLoaded.Count; i++ )
+			TechnologyDefinition[] technologiesLoaded = DefinitionManager.GetAllTechnologies();
+			for( int i = 0; i < technologiesLoaded.Length; i++ )
 			{
 				techs.Add( technologiesLoaded[i].id, defaultState );
 			}

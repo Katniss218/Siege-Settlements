@@ -1,7 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Extras;
-using SS.Inventories;
+using SS.Modules.Inventories;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;

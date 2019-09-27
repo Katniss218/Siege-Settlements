@@ -2,6 +2,7 @@
 using KFF;
 using SS.Content;
 using SS.Modules;
+using SS.Modules.Inventories;
 using SS.Technologies;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace SS.Units
 				this.ranged = new RangedModuleDefinition();
 				serializer.Deserialize( "RangedModule", this.ranged );
 			}
-
+			
 			this.isConstructor = serializer.ReadBool( "IsConstructor" );
 
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );

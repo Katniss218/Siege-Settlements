@@ -9,7 +9,9 @@ namespace SS.UI
 	{
 		public void Click()
 		{
-			LevelManager.Load( Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar + "Tutorial" );
+#error INCOMPLETE. Add level loading btn
+			throw new System.NotImplementedException( "Add level loading btn" );
+			//LevelManager.Load( Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar + "Tutorial" );
 		}
 	}
 }

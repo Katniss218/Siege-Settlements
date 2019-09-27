@@ -14,7 +14,7 @@ namespace SS.Levels.SaveStates
 
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
-
+		
 		public Dictionary<string,int> resources { get; set; }
 
 

@@ -3,11 +3,10 @@ using SS.Buildings;
 using UnityEngine.EventSystems;
 using SS.UI;
 using SS.Extras;
-using SS.Inventories;
+using SS.Modules.Inventories;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine.AI;
-using SS.ResourceSystem;
 using SS.Content;
 using UnityEngine.Events;
 using SS.Levels.SaveStates;
@@ -15,6 +14,7 @@ using System;
 using SS.Projectiles;
 using SS.Units;
 using SS.Heroes;
+using SS.Levels;
 
 namespace SS
 {
@@ -211,7 +211,7 @@ namespace SS
 						{
 							return;
 						}
-						if( !IsControllableByPlayer( gameObject, FactionManager.PLAYER ) )
+						if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
 						{
 							return;
 						}
@@ -239,7 +239,7 @@ namespace SS
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
 						UnityEngine.GameObject gameObject = hitInfo.collider.gameObject;
-						if( !IsControllableByPlayer( gameObject, FactionManager.PLAYER ) )
+						if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
 						{
 							return;
 						}
@@ -308,7 +308,7 @@ namespace SS
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
 				{
 					continue;
 				}
@@ -341,7 +341,7 @@ namespace SS
 			{
 				bool suitable = true;
 
-				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
 				{
 					continue;
 				}
@@ -379,7 +379,7 @@ namespace SS
 
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.transform );
+				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.gameObject );
 				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
@@ -395,7 +395,7 @@ namespace SS
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
 				{
 					continue;
 				}
@@ -435,17 +435,17 @@ namespace SS
 			}
 		}
 
-		private void AssignPickupDepositGoal( Extras.ResourceDeposit hitDeposit, Selectable[] selected )
+		private void AssignPickupDepositGoal( ResourceDeposit hitDeposit, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<UnityEngine.GameObject> movableWithInvGameObjects = new List<UnityEngine.GameObject>();
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			// Go pick up if the inventory can hold any of the resources in the deposit.
 			Dictionary<string, int> resourcesInDeposit = hitDeposit.inventory.GetAll();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
 				{
 					continue;
 				}
@@ -480,7 +480,7 @@ namespace SS
 			{
 				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
 
-				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit );
+				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit.gameObject );
 				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
@@ -496,7 +496,7 @@ namespace SS
 			
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !IsControllableByPlayer( selected[i].gameObject, FactionManager.PLAYER ) )
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
 				{
 					continue;
 				}
@@ -516,6 +516,7 @@ namespace SS
 				}
 
 				// loop over every receiver and choose a compatible one.
+#warning this is not possible to serialize currently.
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
 
@@ -544,7 +545,7 @@ namespace SS
 
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
-				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform, paymentReceivers[receiverIndices[i]] );
+				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.gameObject );
 				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
@@ -588,6 +589,8 @@ namespace SS
 
 		public static GameObject GetGameObject( Guid guid )
 		{
+			throw new Exception();
+//#error loop over every type of objects and get one with correct guid.
 			// gets object with specified guid.
 		}
 	}

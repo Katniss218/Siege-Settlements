@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using UnityEngine;
 
@@ -134,7 +135,7 @@ namespace SS.Buildings
 					BuildingData data = new BuildingData();
 					data.position = this.transform.position;
 					data.rotation = this.transform.rotation;
-					data.factionId = FactionManager.PLAYER;
+					data.factionId = LevelDataManager.PLAYER_FAC;
 					data.constructionSaveState = new ConstructionSiteData();
 
 					BuildingCreator.Create( this.def, data );

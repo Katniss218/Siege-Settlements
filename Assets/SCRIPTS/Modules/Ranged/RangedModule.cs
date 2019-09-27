@@ -180,7 +180,7 @@ namespace SS.Modules
 
 			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
 
-			this.projectile = DefinitionManager.Get<ProjectileDefinition>( def.projectileId );
+			this.projectile = DefinitionManager.GetProjectile( def.projectileId );
 			this.damageSource = damageSource;
 			this.projectileCount = def.projectileCount;
 			this.attackCooldown = def.attackCooldown;

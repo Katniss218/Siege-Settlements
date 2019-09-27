@@ -1,14 +1,12 @@
 ﻿using Katniss.Utils;
 using SS.Buildings;
 using SS.Content;
-using SS.Inventories;
+using SS.Modules.Inventories;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Modules;
-using SS.ResourceSystem;
 using SS.UI;
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -139,6 +137,12 @@ namespace SS.Units
 			// Make the unit damageable.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.health = data.health;
+
+			IInventory inventory = gameObject.GetComponent<IInventory>();
+			foreach( var kvp in data.items )
+			{
+				inventory.Add( kvp.Key, kvp.Value );
+			}
 
 			//
 			//    MODULES
@@ -294,7 +298,10 @@ namespace SS.Units
 
 			// Add inventory.
 			InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
-			inventory.SetSlots( 1, 10 );
+			InventoryUnconstrainedDefinition inventoryDef = new InventoryUnconstrainedDefinition();
+			inventoryDef.slotCapacity = 10;
+			inventoryDef.slotCount = 1;
+			inventory.SetDefinition( inventoryDef );
 
 			// Make the inventory update the HUD wien resources are added/removed.
 			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
