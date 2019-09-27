@@ -19,9 +19,17 @@ namespace SS.Projectiles
 			return true;
 		}
 
-		private static List<GameObject> _allProjectiles = new List<GameObject>();
-		
+		private static List<Projectile> _allProjectiles = new List<Projectile>();
+
+		public static Projectile[] GetAllProjectiles()
+		{
+			return _allProjectiles.ToArray();
+		}
+
+
 		public Guid guid { get; set; }
+
+		public string defId { get; set; }
 
 		public DamageSource damageSource { get; set; }
 
@@ -29,22 +37,16 @@ namespace SS.Projectiles
 		public AudioClip missSound { get; set; }
 
 
-		public static GameObject[] GetAllProjectiles()
-		{
-			return _allProjectiles.ToArray();
-		}
-
-		public string defId { get; set; }
 
 
 		void OnEnable()
 		{
-			_allProjectiles.Add( this.gameObject );
+			_allProjectiles.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allProjectiles.Remove( this.gameObject );
+			_allProjectiles.Remove( this );
 		}
 	}
 }

@@ -20,27 +20,7 @@ namespace SS.Content
 		public static readonly Encoding FILE_ENCODING = Encoding.UTF8;
 
 		private const string DEFINITION_DIRNAME = "Definitions";
-				
-		/// <summary>
-		/// Returns the path to the "GameData" directory (Read Only).
-		/// </summary>
-		public static string dirPath
-		{
-			get
-			{
-				return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Data";
-			}
-		}
-
-		/// <summary>
-		/// Converts relative path into a full system path.
-		/// </summary>
-		/// <param name="assetsPath">The path starting at GameData directory.</param>
-		public static string GetFullPath( string assetsPath )
-		{
-			return dirPath + System.IO.Path.DirectorySeparatorChar + assetsPath;
-		}
-
+			
 		// Object definitions
 
 		private static UnitDefinition[] unitDefinitions = null;

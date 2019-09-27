@@ -19,9 +19,9 @@ namespace SS.Heroes
 			return true;
 		}
 
-		private static List<GameObject> _allHeroes = new List<GameObject>();
+		private static List<Hero> _allHeroes = new List<Hero>();
 
-		public static GameObject[] GetAllHeroes()
+		public static Hero[] GetAllHeroes()
 		{
 			return _allHeroes.ToArray();
 		}
@@ -37,12 +37,12 @@ namespace SS.Heroes
 
 		void OnEnable()
 		{
-			_allHeroes.Add( this.gameObject );
+			_allHeroes.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allHeroes.Remove( this.gameObject );
+			_allHeroes.Remove( this );
 		}
 	}
 }

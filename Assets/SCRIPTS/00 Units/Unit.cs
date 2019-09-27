@@ -19,9 +19,9 @@ namespace SS.Units
 			return true;
 		}
 
-		private static List<GameObject> _allUnits = new List<GameObject>();
+		private static List<Unit> _allUnits = new List<Unit>();
 
-		public static GameObject[] GetAllUnits()
+		public static Unit[] GetAllUnits()
 		{
 			return _allUnits.ToArray();
 		}
@@ -36,12 +36,12 @@ namespace SS.Units
 
 		void OnEnable()
 		{
-			_allUnits.Add( this.gameObject );
+			_allUnits.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allUnits.Remove( this.gameObject );
+			_allUnits.Remove( this );
 		}
 	}
 }

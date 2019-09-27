@@ -1,9 +1,12 @@
-﻿Extras =
+﻿List =
 [
 	{
 		Id = "extra.grass";
 		Mesh = "asset:Models/Extras/Cross.kff";
 		AlbedoTexture = "asset:Textures/Extras/grass_side_albedo.png";
 		NormalTexture = "asset:Textures/Extras/grass_side_normal.png";
+		ShaderType = 0;
+		Metallic = 0.0;
+		Smoothness = 0.1;
 	}
 ];

@@ -19,9 +19,9 @@ namespace SS.Buildings
 			return true;
 		}
 
-		private static List<GameObject> _allBuildings = new List<GameObject>();
+		private static List<Building> _allBuildings = new List<Building>();
 
-		public static GameObject[] GetAllBuildings()
+		public static Building[] GetAllBuildings()
 		{
 			return _allBuildings.ToArray();
 		}
@@ -75,12 +75,12 @@ namespace SS.Buildings
 
 		void OnEnable()
 		{
-			_allBuildings.Add( this.gameObject );
+			_allBuildings.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allBuildings.Remove( this.gameObject );
+			_allBuildings.Remove( this );
 		}
 
 #if UNITY_EDITOR

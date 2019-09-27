@@ -589,9 +589,60 @@ namespace SS
 
 		public static GameObject GetGameObject( Guid guid )
 		{
-			throw new Exception();
-//#error loop over every type of objects and get one with correct guid.
-			// gets object with specified guid.
+			Unit[] units = Unit.GetAllUnits();
+			for( int i = 0; i < units.Length; i++ )
+			{
+				if( units[i].guid == guid )
+				{
+					return units[i].gameObject;
+				}
+			}
+
+			Building[] buildings = Building.GetAllBuildings();
+			for( int i = 0; i < buildings.Length; i++ )
+			{
+				if( buildings[i].guid == guid )
+				{
+					return buildings[i].gameObject;
+				}
+			}
+
+			Projectile[] projectiles = Projectile.GetAllProjectiles();
+			for( int i = 0; i < projectiles.Length; i++ )
+			{
+				if( projectiles[i].guid == guid )
+				{
+					return projectiles[i].gameObject;
+				}
+			}
+
+			Hero[] heroes = Hero.GetAllHeroes();
+			for( int i = 0; i < heroes.Length; i++ )
+			{
+				if( heroes[i].guid == guid )
+				{
+					return heroes[i].gameObject;
+				}
+			}
+
+			Extra[] extras = Extra.GetAllExtras();
+			for( int i = 0; i < extras.Length; i++ )
+			{
+				if( extras[i].guid == guid )
+				{
+					return extras[i].gameObject;
+				}
+			}
+
+			ResourceDeposit[] resourceDeposits = ResourceDeposit.GetAllResourceDeposits();
+			for( int i = 0; i < resourceDeposits.Length; i++ )
+			{
+				if( resourceDeposits[i].guid == guid )
+				{
+					return resourceDeposits[i].gameObject;
+				}
+			}
+			return null;
 		}
 	}
 }

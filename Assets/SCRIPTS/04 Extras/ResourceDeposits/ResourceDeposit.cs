@@ -22,9 +22,9 @@ namespace SS.Extras
 			return true;
 		}
 
-		private static List<GameObject> _allResourceDeposits = new List<GameObject>();
+		private static List<ResourceDeposit> _allResourceDeposits = new List<ResourceDeposit>();
 
-		public static GameObject[] GetAllResourceDeposits()
+		public static ResourceDeposit[] GetAllResourceDeposits()
 		{
 			return _allResourceDeposits.ToArray();
 		}
@@ -60,12 +60,12 @@ namespace SS.Extras
 
 		void OnEnable()
 		{
-			_allResourceDeposits.Add( this.gameObject );
+			_allResourceDeposits.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allResourceDeposits.Remove( this.gameObject );
+			_allResourceDeposits.Remove( this );
 		}
 	}
 }

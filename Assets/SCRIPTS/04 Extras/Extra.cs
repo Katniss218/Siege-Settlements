@@ -19,9 +19,9 @@ namespace SS.Extras
 			return true;
 		}
 
-		private static List<GameObject> _allExtras = new List<GameObject>();
+		private static List<Extra> _allExtras = new List<Extra>();
 
-		public static GameObject[] GetAllExtras()
+		public static Extra[] GetAllExtras()
 		{
 			return _allExtras.ToArray();
 		}
@@ -33,12 +33,12 @@ namespace SS.Extras
 
 		void OnEnable()
 		{
-			_allExtras.Add( this.gameObject );
+			_allExtras.Add( this );
 		}
 
 		void OnDisable()
 		{
-			_allExtras.Remove( this.gameObject );
+			_allExtras.Remove( this );
 		}
 	}
 }

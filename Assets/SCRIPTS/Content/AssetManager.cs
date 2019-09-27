@@ -35,13 +35,7 @@ namespace SS.Content
 		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
 		
 
-
-		public static string GetLevelAssetPath( string assetsPath )
-		{
-			return LevelManager.levelDirectoryPath + System.IO.Path.DirectorySeparatorChar + LevelManager.currentLevelId + System.IO.Path.DirectorySeparatorChar + "Assets";
-		}
-
-
+		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -102,7 +96,7 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, ExternalAssetLoader.LoadMesh( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				meshes.Add( path, ExternalAssetLoader.LoadMesh( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -130,11 +124,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( LevelManager.isLevelLoaded )
+				if( !LevelManager.isLevelLoaded )
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
-				textures.Add( path, ExternalAssetLoader.LoadTexture2D( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
+				textures.Add( path, ExternalAssetLoader.LoadTexture2D( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -161,7 +155,7 @@ namespace SS.Content
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
-				sprites.Add( path, ExternalAssetLoader.LoadSprite( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				sprites.Add( path, ExternalAssetLoader.LoadSprite( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -188,7 +182,7 @@ namespace SS.Content
 				{
 					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
 				}
-				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( GetLevelAssetPath( path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
