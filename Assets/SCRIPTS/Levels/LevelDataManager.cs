@@ -1,4 +1,6 @@
-﻿using SS.Levels.SaveStates;
+﻿using KFF;
+using SS.Content;
+using SS.Levels.SaveStates;
 
 namespace SS.Levels
 {
@@ -32,7 +34,7 @@ namespace SS.Levels
 				_factions = value;
 			}
 		}
-
+		
 		static FactionData[] _factionData;
 		public static FactionData[] factionData
 		{
@@ -75,5 +77,54 @@ namespace SS.Levels
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
+
+		public static void LoadFactions( string levelIdentifier )
+		{
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "factions.kff" );
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+			
+			int count = serializer.Analyze( "List" ).childCount;
+
+			factions = new FactionDefinition[count];
+
+			for( int i = 0; i < factions.Length; i++ )
+			{
+				factions[i] = new FactionDefinition();
+			}
+
+			serializer.DeserializeArray( "List", factions );
+		}
+
+		public static void LoadFactionData( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+
+			int count = serializer.Analyze( "List" ).childCount;
+
+			factionData = new FactionData[count];
+
+			for( int i = 0; i < factionData.Length; i++ )
+			{
+				factionData[i] = new FactionData();
+			}
+
+			serializer.DeserializeArray( "List", factionData );
+		}
+
+		public static void SaveFactionData( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
+
+			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
+
+			serializer.SerializeArray( "", "List", factionData );
+			
+			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
+		}
 	}
 }

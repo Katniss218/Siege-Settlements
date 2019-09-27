@@ -245,10 +245,13 @@ namespace SS.Extras
 
 			ResourceDepositData data = new ResourceDepositData();
 
-			data.guid = gameObject.GetComponent<ResourceDeposit>().guid;
+			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
+			data.guid = resourceDeposit.guid;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
+
+			data.resources = resourceDeposit.inventory.GetAll();
 
 			return data;
 		}

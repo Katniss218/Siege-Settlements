@@ -293,6 +293,10 @@ namespace SS
 
 				onHudLockChange?.Invoke( isHudLocked );
 			}
+			if( Input.GetKeyDown( KeyCode.F3 ) )
+			{
+				LevelManager.SaveScene( "save_new" );
+			}
 		}
 
 

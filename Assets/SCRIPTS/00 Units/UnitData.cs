@@ -46,6 +46,7 @@ namespace SS.Levels.SaveStates
 			}
 
 			TAIGoalType goalType = (TAIGoalType)serializer.ReadByte( "TAIGoalType" );
+#warning TODO - Check if the tag is present, not against the value. Remove "None" goal type.
 			if( goalType != TAIGoalType.None )
 			{
 				switch( goalType )

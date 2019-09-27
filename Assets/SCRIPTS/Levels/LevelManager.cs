@@ -224,6 +224,8 @@ namespace SS.Levels
 			DefinitionManager.LoadResourceDefinitions();
 			DefinitionManager.LoadTechnologyDefinitions();
 
+			LevelDataManager.LoadFactions( levelIdentifier );
+			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
 
 			DeleteMainMenuUI(); // remove main menu ui canvas (all ui objects)
 
@@ -461,7 +463,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 			
-			int count = serializer.Analyze( "List" ).childCount;
+			int count = serializer.Analyze( "SelectedGuids" ).childCount;
 
 			GameObject[] ret = new GameObject[count];
 
@@ -569,7 +571,13 @@ namespace SS.Levels
 			{
 				resourceDepositData[i] = new Tuple<string, ResourceDepositData>( ResourceDepositCreator.GetDefinitionId( resourceDeposits[i].gameObject ), ResourceDepositCreator.GetData( resourceDeposits[i].gameObject ) );
 			}
-			
+
+			string path = GetLevelSaveStatePath( currentLevelId, newLevelSaveStateId );
+			if( !System.IO.Directory.Exists( path ) )
+			{
+				System.IO.Directory.CreateDirectory( path );
+			}
+
 			SaveUnits( unitData, currentLevelId, newLevelSaveStateId );
 			SaveBuildings( buildingData, currentLevelId, newLevelSaveStateId );
 			SaveProjectiles( projectileData, currentLevelId, newLevelSaveStateId );
@@ -577,7 +585,7 @@ namespace SS.Levels
 			SaveExtras( extraData, currentLevelId, newLevelSaveStateId );
 			SaveResourceDeposits( resourceDepositData, currentLevelId, newLevelSaveStateId );
 
-			
+			LevelDataManager.SaveFactionData( currentLevelId, newLevelSaveStateId );
 
 			Guid highlighted = Main.GetGuid( Selection.highlightedObject.gameObject );
 
@@ -601,7 +609,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < units.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -620,7 +628,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < buildings.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -639,7 +647,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -658,7 +666,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < heroes.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -677,7 +685,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < extras.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -696,7 +704,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 			for( int i = 0; i < resourceDeposits.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
@@ -719,7 +727,7 @@ namespace SS.Levels
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
 			serializer.WriteString( "", "HighlightedGuid", highlighted.ToString( "D" ) );
-			serializer.WriteClass( "", "List" );
+			serializer.WriteList( "", "List" );
 
 			string[] selectedGuidStrings = new string[selected.Length];
 			for( int i = 0; i < selected.Length; i++ )

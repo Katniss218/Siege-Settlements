@@ -440,6 +440,8 @@ namespace SS.Units
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
 
+			data.items = gameObject.GetComponent<IInventory>().GetAll();
+
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )
 			{
