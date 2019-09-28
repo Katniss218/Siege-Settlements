@@ -1,11 +1,11 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Levels.SaveStates;
+using UnityEngine;
 
 namespace SS.Levels
 {
 	/// <summary>
-	/// Represents the level file. Contains data, that's unique to the level, and doesn't change throuought the gameplay.
+	/// Contains data, that's unique to the level, and doesn't change throuought the gameplay.
 	/// </summary>
 	public static class LevelDataManager
 	{
@@ -116,6 +116,80 @@ namespace SS.Levels
 			serializer.DeserializeArray( "List", factionData );
 		}
 
+		public static void LoadDaylightCycle( string levelIdentifier )
+		{
+			string path = LevelManager.GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+			
+			int dayLength = serializer.ReadInt( "DaylightCycle.DayLength" );
+			int nightLength = serializer.ReadInt( "DaylightCycle.NightLength" );
+
+			float sunIntensity = serializer.ReadFloat( "DaylightCycle.SunIntensity" );
+			float moonIntensity = serializer.ReadFloat( "DaylightCycle.MoonIntensity" );
+
+			float sunElevationAngle = serializer.ReadFloat( "DaylightCycle.SunElevationAngle" );
+			float moonElevationAngle = serializer.ReadFloat( "DaylightCycle.MoonElevationAngle" );
+
+
+			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
+			if( daylightCycle == null )
+			{
+				throw new System.Exception( "Couldn't find DaylightCycleController object." );
+			}
+			daylightCycle.dayLength = dayLength;
+			daylightCycle.nightLength = nightLength;
+
+			daylightCycle.sunIntensity = sunIntensity;
+			daylightCycle.moonIntensity = moonIntensity;
+
+			daylightCycle.sunElevationAngle = sunElevationAngle;
+			daylightCycle.moonElevationAngle = moonElevationAngle;
+		}
+
+		public static void LoadDaylightCycleData( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+			float time = serializer.ReadFloat( "DaylightCycleData.Time" );
+
+
+			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
+			if( daylightCycle == null )
+			{
+				throw new System.Exception( "Couldn't find DaylightCycleController object." );
+			}
+			daylightCycle.time = time;
+		}
+
+		public static void LoadCameraData( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+			Vector3 pos = serializer.ReadVector3( "CameraData.Position" );
+			Quaternion rot = serializer.ReadQuaternion( "CameraData.Rotation" );
+
+			float orthSize = serializer.ReadFloat( "CameraData.ZoomSize" );
+
+
+			CameraController camController = Object.FindObjectOfType<CameraController>();
+			if( camController == null )
+			{
+				throw new System.Exception( "Couldn't find CameraController object." );
+			}
+
+			camController.transform.SetPositionAndRotation( pos, rot );
+			camController.transform.GetChild( 0 ).GetComponent<Camera>().orthographicSize = orthSize;
+		}
+
+		//
+		//
+		//
+
 		public static void SaveFactionData( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
@@ -125,6 +199,33 @@ namespace SS.Levels
 			serializer.SerializeArray( "", "List", factionData );
 			
 			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
+		}
+
+		public static void SaveDaylightCycleData( KFFSerializer serializer )
+		{
+			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
+			if( daylightCycle == null )
+			{
+				throw new System.Exception( "Couldn't find DaylightCycleController object." );
+			}
+
+			serializer.WriteClass( "", "DaylightCycleData" );
+			serializer.WriteFloat( "DaylightCycleData", "Time", daylightCycle.time );
+		}
+
+		public static void SaveCameraData( KFFSerializer serializer )
+		{
+			CameraController camController = Object.FindObjectOfType<CameraController>();
+			if( camController == null )
+			{
+				throw new System.Exception( "Couldn't find CameraController object." );
+			}
+
+			serializer.WriteClass( "", "CameraData" );
+			serializer.WriteVector3( "CameraData", "Position", camController.transform.position );
+			serializer.WriteQuaternion( "CameraData", "Rotation", camController.transform.rotation );
+
+			serializer.WriteFloat( "CameraData", "ZoomSize", camController.transform.GetChild( 0 ).GetComponent<Camera>().orthographicSize );
 		}
 	}
 }

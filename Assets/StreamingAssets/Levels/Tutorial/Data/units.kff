@@ -36,7 +36,7 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/wolf_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
 	},
 	{
 		Id = "unit.light_infantry";
@@ -75,7 +75,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/light_infantry_icon";
+		Icon = "extern:Textures/Units/light_infantry_icon.png";
 	},
 	{
 		Id = "unit.heavy_infantry";
@@ -113,7 +113,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/heavy_infantry_icon";
+		Icon = "extern:Textures/Units/heavy_infantry_icon.png";
 	},
 	{
 		Id = "unit.light_cavalry";
@@ -151,7 +151,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/light_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/light_cavalry_icon";
+		Icon = "extern:Textures/Units/light_cavalry_icon.png";
 	},
 	{
 		Id = "unit.heavy_cavalry";
@@ -189,7 +189,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/heavy_cavalry_icon";
+		Icon = "extern:Textures/Units/heavy_cavalry_icon.png";
 	},
 	{
 		Id = "unit.bowmen";
@@ -212,7 +212,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 5.0;
 			AttackCooldown = 3.0;
-			Velocity = 2.5;
+			Velocity = 2.2;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
@@ -235,7 +235,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/bowmen_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/bowmen_icon";
+		Icon = "extern:Textures/Units/bowmen_icon.png";
 	},
 	{
 		Id = "unit.crossbowmen";
@@ -258,7 +258,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 6.0;
 			AttackCooldown = 3.0;
-			Velocity = 2.75;
+			Velocity = 2.3;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
@@ -281,7 +281,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/crossbowmen_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/crossbowmen_icon";
+		Icon = "extern:Textures/Units/crossbowmen_icon.png";
 	},
 	{
 		Id = "unit.mounted_archers";
@@ -304,7 +304,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 4.5;
 			AttackCooldown = 3.0;
-			Velocity = 2.5;
+			Velocity = 2.2;
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
@@ -327,7 +327,7 @@
 		Mesh = "extern:Models/UnitRectangle.kff";
 		AlbedoTexture = "extern:Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
-		Icon = "extern:Textures/Units/mounted_archers_icon";
+		Icon = "extern:Textures/Units/mounted_archers_icon.png";
 	},
 	{
 		Id = "unit.civilian";
@@ -356,7 +356,7 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/civilian_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
 	},
 	{
 		Id = "unit.civilian_employed";
@@ -385,6 +385,6 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/civilian_employed_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
 	}
 ];

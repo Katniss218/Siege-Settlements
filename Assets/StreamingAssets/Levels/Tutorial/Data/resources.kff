@@ -4,7 +4,7 @@
 		Id = "resource.money";
 		DisplayName = "Money";
 		DefaultDeposit = "resource_deposit.tree";
-		Icon = "extern:Textures/Resources/money";
+		Icon = "extern:Textures/Resources/money.png";
 		
 		PickupSound = "extern:Sounds/silence.wav";
 		DropoffSound = "extern:Sounds/silence.wav";
@@ -13,7 +13,7 @@
 		Id = "resource.wood";
 		DisplayName = "Wood";
 		DefaultDeposit = "resource_deposit.wood";
-		Icon = "extern:Textures/Resources/wood";
+		Icon = "extern:Textures/Resources/wood.png";
 		PickupSound = "extern:Sounds/ResourceDeposits/wood_pickup.wav";
 		DropoffSound = "extern:Sounds/ResourceDeposits/wood_dropoff.wav";
 	},
@@ -21,7 +21,7 @@
 		Id = "resource.stone";
 		DisplayName = "Stone";
 		DefaultDeposit = "resource_deposit.stone";
-		Icon = "extern:Textures/Resources/stone";
+		Icon = "extern:Textures/Resources/stone.png";
 		PickupSound = "extern:Sounds/ResourceDeposits/stone_pickup.wav";
 		DropoffSound = "extern:Sounds/ResourceDeposits/stone_dropoff.wav";
 	},
@@ -29,7 +29,7 @@
 		Id = "resource.iron";
 		DisplayName = "Iron";
 		DefaultDeposit = "resource_deposit.iron";
-		Icon = "extern:Textures/Resources/iron";
+		Icon = "extern:Textures/Resources/iron.png";
 		PickupSound = "extern:Sounds/ResourceDeposits/iron_pickup.wav";
 		DropoffSound = "extern:Sounds/ResourceDeposits/iron_dropoff.wav";
 	},
@@ -37,7 +37,7 @@
 		Id = "resource.sulphur";
 		DisplayName = "Sulphur";
 		DefaultDeposit = "resource_deposit.sulphur";
-		Icon = "extern:Textures/Resources/sulphur";
+		Icon = "extern:Textures/Resources/sulphur.png";
 		PickupSound = "extern:Sounds/ResourceDeposits/sulphur_pickup.wav";
 		DropoffSound = "extern:Sounds/ResourceDeposits/sulphur_dropoff.wav";
 	}

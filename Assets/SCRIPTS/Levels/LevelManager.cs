@@ -214,7 +214,8 @@ namespace SS.Levels
 			}
 			currentLevelId = levelIdentifier;
 			currentLevelSaveStateId = levelSaveStateIdentifier;
-			
+
+#warning add a parameter for level id.
 			DefinitionManager.LoadUnitDefinitions();
 			DefinitionManager.LoadBuildingDefinitions();
 			DefinitionManager.LoadProjectileDefinitions();
@@ -224,9 +225,7 @@ namespace SS.Levels
 
 			DefinitionManager.LoadResourceDefinitions();
 			DefinitionManager.LoadTechnologyDefinitions();
-
-			LevelDataManager.LoadFactions( levelIdentifier );
-			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
+			
 
 			DeleteMainMenuUI(); // remove main menu ui canvas (all ui objects)
 
@@ -234,7 +233,13 @@ namespace SS.Levels
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
 
-			Main.cameraPivot.position = new Vector3( 32, 0, 32 );
+			LevelDataManager.LoadFactions( levelIdentifier );
+			LevelDataManager.LoadDaylightCycle( levelIdentifier );
+
+
+			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
+			LevelDataManager.LoadDaylightCycleData( levelIdentifier, levelSaveStateIdentifier );
+			LevelDataManager.LoadCameraData( levelIdentifier, levelSaveStateIdentifier );
 
 			// apply save state
 
@@ -323,6 +328,7 @@ namespace SS.Levels
 			{
 				Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
 			}
+			
 
 
 			lastLoadTime = Time.time;
@@ -622,6 +628,14 @@ namespace SS.Levels
 			SaveResourceDeposits( resourceDepositData, currentLevelId, newLevelSaveStateId );
 			
 			LevelDataManager.SaveFactionData( currentLevelId, newLevelSaveStateId );
+
+			string levelSaveStateFilePath = LevelManager.GetLevelSaveStatePath( currentLevelId, newLevelSaveStateId ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+			KFFSerializer serializer = new KFFSerializer( new KFFFile( levelSaveStateFilePath ) );
+
+			LevelDataManager.SaveDaylightCycleData( serializer );
+			LevelDataManager.SaveCameraData( serializer );
+
+			serializer.WriteToFile( levelSaveStateFilePath, DefinitionManager.FILE_ENCODING );
 
 			Guid? highlighted = null;
 			if( Selection.highlightedObject != null )

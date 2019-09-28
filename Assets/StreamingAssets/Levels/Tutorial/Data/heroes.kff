@@ -35,6 +35,6 @@
 		Mesh = "extern:Models/Hero.kff";
 		AlbedoTexture = "extern:Textures/heroes/hero_albedo.png";
 		NormalTexture = "extern:Textures/Heroes/hero_normal.png";
-		Icon = "extern:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
 	}
 ];

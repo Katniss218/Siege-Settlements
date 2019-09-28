@@ -5,7 +5,7 @@
 	W = 28;
 	H = 28;
 };
-PivotUnitMode = "normalized"; // "normalized" or "pixels"
+PivotUnitMode = "Normalized"; // "Normalized" or "Pixels"
 Pivot =
 {
 	X = 0; // 0 to 1

@@ -27,6 +27,15 @@ namespace SS.Modules
 			{
 				this.__target = this.FindTarget( this.searchRange );
 			}
+			else
+			{
+				FactionMember targetFactionMember = this.__target.GetComponent<FactionMember>();
+				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+				{
+					this.__target = this.FindTarget( this.searchRange );
+				}
+			}
+
 			return this.__target;
 		}
 
@@ -37,9 +46,7 @@ namespace SS.Modules
 			{
 				return null;
 			}
-
-			FactionMember selfFactionMember = this.GetComponent<FactionMember>();
-
+			
 			for( int i = 0; i < col.Length; i++ )
 			{
 				// If the overlapped object can't be damaged.
@@ -52,7 +59,7 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.canTarget.Invoke( selfFactionMember, targetFactionMember ) )
+				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
 				{
 					continue;
 				}

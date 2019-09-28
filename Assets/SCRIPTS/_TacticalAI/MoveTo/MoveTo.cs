@@ -27,6 +27,14 @@ namespace SS
 				this.navMeshAgent.SetDestination( this.destination );
 			}
 
+			private void Update()
+			{
+				if( Vector3.Distance( this.transform.position, navMeshAgent.destination ) <= navMeshAgent.stoppingDistance )
+				{
+					Destroy( this );
+				}
+			}
+
 			public override TAIGoalData GetData()
 			{
 				MoveToData data = new MoveToData();

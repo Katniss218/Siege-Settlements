@@ -24,25 +24,26 @@ namespace SS.Content
 			return ret;
 		}
 
-		public static Sprite LoadSprite( string filePathNoExt )
+		public static Sprite LoadSprite( string imgPath )
 		{
 			// sprites have a texture (path.png) and KFF data file (path.kff).
-			
-			Texture2D tex = PngImporter.Import( filePathNoExt + ".png", TextureType.Color );
 
-			string kffPath = filePathNoExt + ".kff";
+			string kffPath = System.IO.Path.GetDirectoryName( imgPath ) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension( imgPath ) + ".kff";
+
+			Texture2D tex = PngImporter.Import( imgPath, TextureType.Color );
+			
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( kffPath, Encoding.UTF8 );
 			Rect rect = serializer.ReadRect( "Rect" );
 			string pivotUnitMode = serializer.ReadString( "PivotUnitMode" );
 			Vector2 pivot = serializer.ReadVector2( "Pivot" );
 
-			if( pivotUnitMode == "normalized" )
+			if( pivotUnitMode == "Normalized" )
 			{
 				pivot.Scale( rect.size ); // if the pivot is given in range 0-1, scale it to the range 0-width/height
 			}
-			else if( pivotUnitMode != "pixels" )
+			else if( pivotUnitMode != "Pixels" )
 			{
-				throw new System.Exception( "Invalid value: '" + pivotUnitMode + "', expected 'pixels' or 'normalized'." );
+				throw new System.Exception( "Invalid value: '" + pivotUnitMode + "', expected 'Pixels' or 'Normalized'." );
 			}
 
 			Sprite ret = Sprite.Create( tex, rect, pivot );

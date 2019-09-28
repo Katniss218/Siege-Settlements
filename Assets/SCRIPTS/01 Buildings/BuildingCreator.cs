@@ -136,7 +136,7 @@ namespace SS.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+				meshRenderer.material.SetFloat( "_Progress", 1.0f );
 			}
 			// If the building was under construction/repair, make it under c/r.
 			else

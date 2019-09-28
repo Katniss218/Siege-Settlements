@@ -7,25 +7,32 @@ namespace SS
 	/// </summary>
 	public class DaylightCycleController : MonoBehaviour
 	{
-		[SerializeField] int dayLength = 400;
-		[SerializeField] int nightLength = 200;
-		[SerializeField] float startTime = 80;
+		public int dayLength = 400;
+		public int nightLength = 200;
+
+		//[SerializeField] float startTime = 80;
 
 		[SerializeField] Light sun = null;
 		[SerializeField] Light moon = null;
 		[SerializeField] Transform sunPivot = null;
 		[SerializeField] Transform moonPivot = null;
 
-		[SerializeField] float sunIntensity = 0.8f;
-		[SerializeField] float moonIntensity = 0.1f;
+		public float sunIntensity = 0.8f;
+		public float moonIntensity = 0.1f;
 
-		[SerializeField] float sunElevationAngle = 60;
-		[SerializeField] float moonElevationAngle = 60;
+		public float sunElevationAngle = 60;
+		public float moonElevationAngle = 60;
 
 		/// <summary>
 		/// The total length of the day and night combined.
 		/// </summary>
-		public int totalDayLength { get; private set; }
+		public int totalDayLength
+		{
+			get
+			{
+				return this.dayLength + this.nightLength;
+			}
+		}
 
 		[SerializeField] private float __time;
 		/// <summary>
@@ -39,7 +46,7 @@ namespace SS
 			}
 			set
 			{
-				this.__time = value;
+				this.__time = value % this.totalDayLength;
 			}
 		}
 
@@ -60,10 +67,6 @@ namespace SS
 
 		void Awake()
 		{
-			this.totalDayLength = this.dayLength + this.nightLength;
-
-			this.time = this.startTime % this.totalDayLength;
-
 			this.sunTransform = this.sun.transform;
 			this.moonTransform = this.moon.transform;
 		}

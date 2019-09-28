@@ -32,6 +32,15 @@ namespace SS.Modules
 			{
 				this.__target = this.FindTarget( this.searchRange );
 			}
+			else
+			{
+				FactionMember targetFactionMember = this.__target.GetComponent<FactionMember>();
+				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+				{
+					this.__target = this.FindTarget( this.searchRange );
+				}
+			}
+
 			return this.__target;
 		}
 
@@ -42,9 +51,7 @@ namespace SS.Modules
 			{
 				return null;
 			}
-
-			FactionMember selfFactionMember = this.GetComponent<FactionMember>();
-
+			
 			for( int i = 0; i < col.Length; i++ )
 			{
 				// If the overlapped object can't be damaged.
@@ -57,7 +64,7 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.canTarget.Invoke( selfFactionMember, targetFactionMember ) )
+				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
 				{
 					continue;
 				}
@@ -127,6 +134,7 @@ namespace SS.Modules
 					ranVel.z *= UnityEngine.Random.Range( 0.9f, 1.1f );
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, ranVel );
 				}
+				AudioManager.PlayNew( this.attackSoundEffect );
 			}
 			this.lastAttackTimestamp = Time.time;
 		}
@@ -168,7 +176,6 @@ namespace SS.Modules
 						return;
 					}
 					this.Attack( target );
-					AudioManager.PlayNew( this.attackSoundEffect );
 				}
 			}
 		}
@@ -193,10 +200,20 @@ namespace SS.Modules
 
 #if UNITY_EDITOR
 
+		private void OnDrawGizmos()
+		{
+			Gizmos.color = new Color( 0.0f, 0.0f, 1.0f );
+			Gizmos.DrawSphere( this.__target.transform.position, 0.125f );
+			Gizmos.DrawLine( this.transform.position, this.__target.transform.position );
+		}
+
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = new Color( 1.0f, 0.4f, 0.0f );
 			Gizmos.DrawWireSphere( this.transform.position, BallisticSolver.GetMaxRange( this.velocity, -Physics.gravity.y, 0.0f ) );
+
+			Gizmos.color = new Color( 1.0f, 1.0f, 0.0f );
+			Gizmos.DrawWireSphere( this.transform.position, this.searchRange );
 
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			Vector3 pos;
