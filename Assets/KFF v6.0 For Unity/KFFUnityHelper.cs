@@ -252,7 +252,7 @@ namespace KFF
 			float x = serializer.ReadFloat( "X" );
 			float y = serializer.ReadFloat( "Y" );
 			float z = serializer.ReadFloat( "Z" );
-			float w = serializer.ReadFloat( "Z" );
+			float w = serializer.ReadFloat( "W" );
 
 			serializer.scopeRoot = beginScope;
 			return new Quaternion( x, y, z, w );
