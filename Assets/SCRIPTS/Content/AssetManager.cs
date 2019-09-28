@@ -14,12 +14,12 @@ namespace SS.Content
 		/// <summary>
 		/// The identifier prefix used to tell the asset manager to load the asset from the level directory.
 		/// </summary>
-		public const string EXTERN_ASSET_IDENTIFIER = "asset:"; // FIXME - change these to 'extern' and 'builtin' (BUT only after making everything working again)
+		public const string EXTERN_ASSET_IDENTIFIER = "extern:";
 
 		/// <summary>
 		/// The identifier prefix used to tell the asset manager to load the asset from the internal 'Resources' directory.
 		/// </summary>
-		public const string BUILTIN_ASSET_IDENTIFIER = "resource:";
+		public const string BUILTIN_ASSET_IDENTIFIER = "builtin:";
 
 
 		// Asset cache.

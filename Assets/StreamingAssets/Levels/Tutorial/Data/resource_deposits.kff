@@ -9,14 +9,14 @@
 		];
 		IsExtracted = false; // If true, the deposit will be 'mined' instantly.
 							 // Unextracted resources use mining sound. Extracted ones, use resource pickup sound.
-		MineSound = "asset:Sounds/ResourceDeposits/tree_chop.wav";
+		MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
 		
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 2; // 0 - opaque, 2 - displaced opaque (plant).
-		Mesh = "asset:Models/ResourceDeposits/Tree.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/tree_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/tree_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Tree.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/tree_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/tree_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.3;
 	},
@@ -31,9 +31,9 @@
 		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "asset:Models/ResourceDeposits/Stone.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/stone_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/stone_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Stone.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/stone_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/stone_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.2;
 	},
@@ -45,13 +45,13 @@
 			{ Id = "resource.wood"; Capacity = 5; }
 		];
 		IsExtracted = false;
-		MineSound = "asset:Sounds/ResourceDeposits/tree_chop.wav";
+		MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 2;
-		Mesh = "asset:Models/ResourceDeposits/Pine.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/pine_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/pine_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Pine.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/pine_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/pine_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.3;
 	},
@@ -66,9 +66,9 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "asset:Models/ResourceDeposits/Wood.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/wood_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/wood_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Wood.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/wood_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/wood_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.2;
 	},
@@ -83,9 +83,9 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "asset:Models/ResourceDeposits/Iron.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/iron_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/iron_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Iron.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/iron_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/iron_normal.png";
 		IsMetallic = true;
 		Smoothness = 0.4;
 	},
@@ -100,9 +100,9 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "asset:Models/ResourceDeposits/Sulphur.kff";
-		AlbedoTexture = "asset:Textures/ResourceDeposits/sulphur_albedo.png";
-		NormalTexture = "asset:Textures/ResourceDeposits/sulphur_normal.png";
+		Mesh = "extern:Models/ResourceDeposits/Sulphur.kff";
+		AlbedoTexture = "extern:Textures/ResourceDeposits/sulphur_albedo.png";
+		NormalTexture = "extern:Textures/ResourceDeposits/sulphur_normal.png";
 		IsMetallic = false;
 		Smoothness = 0.1;
 	}

@@ -33,12 +33,12 @@
 		// ResearchModule = { };
 		
 		TechsRequired = [];
-		Mesh = "asset:Models/Buildings/TownCenter.kff";
-		AlbedoTexture = "asset:Textures/Buildings/town_center.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Mesh = "extern:Models/Buildings/TownCenter.kff";
+		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	},
 	{
 		Id = "building.house0";
@@ -66,12 +66,12 @@
 		};
 		
 		TechsRequired = [];
-		Mesh = "asset:Models/Buildings/House.kff";
-		AlbedoTexture = "asset:Textures/Units/heavy_infantry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Mesh = "extern:Models/Buildings/House.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "building.barracks";
@@ -107,12 +107,12 @@
 		TechsRequired = [
 			"technology.weaponry"
 		];
-		Mesh = "asset:Models/Buildings/House.kff";
-		AlbedoTexture = "asset:Textures/Units/heavy_cavalry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Mesh = "extern:Models/Buildings/House.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	},
 	{
 		Id = "building.stables";
@@ -148,12 +148,12 @@
 		[
 			"technology.horse_riding"
 		];
-		Mesh = "asset:Models/Buildings/House.kff";
-		AlbedoTexture = "asset:Textures/Units/heavy_cavalry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Mesh = "extern:Models/Buildings/House.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	},
 	{
 		Id = "building.palisade_wall";
@@ -180,12 +180,12 @@
 			{ Id = "resource.wood"; Amount = 15; }
 		];		
 		TechsRequired = [];
-		Mesh = "asset:Models/Buildings/Palisade_Wall.kff";
-		AlbedoTexture = "asset:Textures/Buildings/town_center.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Mesh = "extern:Models/Buildings/Palisade_Wall.kff";
+		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	},
 	{
 		Id = "building.stone_wall";
@@ -212,11 +212,11 @@
 			{ Id = "resource.stone"; Amount = 15; }
 		];		
 		TechsRequired = [];
-		Mesh = "asset:Models/Buildings/Stone_Wall.kff";
-		AlbedoTexture = "asset:Textures/Buildings/town_center.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		BuildSound = "asset:Sounds/construction_site.wav";
-		DeathSound = "asset:Sounds/building_dest_wood.wav";
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Mesh = "extern:Models/Buildings/Stone_Wall.kff";
+		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	}
 ];

@@ -26,15 +26,15 @@
 			LocalOffsetMin = { X = -0.2; Y = 0.1875; Z = -0.2; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.2; Y = 0.1875; Z = 0.2; };
-			AttackSound = "asset:Sounds/loose.wav";
+			AttackSound = "extern:Sounds/loose.wav";
 		};
 		MovementSpeed = 0.35;
 		RotationSpeed = 200.0;
 		Radius = 0.2;
 		Height = 0.1875;
-		Mesh = "asset:Models/Hero.kff";
-		AlbedoTexture = "asset:Textures/heroes/hero_albedo.png";
-		NormalTexture = "asset:Textures/Heroes/hero_normal.png";
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Mesh = "extern:Models/Hero.kff";
+		AlbedoTexture = "extern:Textures/heroes/hero_albedo.png";
+		NormalTexture = "extern:Textures/Heroes/hero_normal.png";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	}
 ];

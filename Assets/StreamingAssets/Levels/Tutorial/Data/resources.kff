@@ -4,41 +4,41 @@
 		Id = "resource.money";
 		DisplayName = "Money";
 		DefaultDeposit = "resource_deposit.tree";
-		Icon = "asset:Textures/Resources/money";
+		Icon = "extern:Textures/Resources/money";
 		
-		PickupSound = "asset:Sounds/silence.wav";
-		DropoffSound = "asset:Sounds/silence.wav";
+		PickupSound = "extern:Sounds/silence.wav";
+		DropoffSound = "extern:Sounds/silence.wav";
 	},
 	{
 		Id = "resource.wood";
 		DisplayName = "Wood";
 		DefaultDeposit = "resource_deposit.wood";
-		Icon = "asset:Textures/Resources/wood";
-		PickupSound = "asset:Sounds/ResourceDeposits/wood_pickup.wav";
-		DropoffSound = "asset:Sounds/ResourceDeposits/wood_dropoff.wav";
+		Icon = "extern:Textures/Resources/wood";
+		PickupSound = "extern:Sounds/ResourceDeposits/wood_pickup.wav";
+		DropoffSound = "extern:Sounds/ResourceDeposits/wood_dropoff.wav";
 	},
 	{
 		Id = "resource.stone";
 		DisplayName = "Stone";
 		DefaultDeposit = "resource_deposit.stone";
-		Icon = "asset:Textures/Resources/stone";
-		PickupSound = "asset:Sounds/ResourceDeposits/stone_pickup.wav";
-		DropoffSound = "asset:Sounds/ResourceDeposits/stone_dropoff.wav";
+		Icon = "extern:Textures/Resources/stone";
+		PickupSound = "extern:Sounds/ResourceDeposits/stone_pickup.wav";
+		DropoffSound = "extern:Sounds/ResourceDeposits/stone_dropoff.wav";
 	},
 	{
 		Id = "resource.iron";
 		DisplayName = "Iron";
 		DefaultDeposit = "resource_deposit.iron";
-		Icon = "asset:Textures/Resources/iron";
-		PickupSound = "asset:Sounds/ResourceDeposits/iron_pickup.wav";
-		DropoffSound = "asset:Sounds/ResourceDeposits/iron_dropoff.wav";
+		Icon = "extern:Textures/Resources/iron";
+		PickupSound = "extern:Sounds/ResourceDeposits/iron_pickup.wav";
+		DropoffSound = "extern:Sounds/ResourceDeposits/iron_dropoff.wav";
 	},
 	{
 		Id = "resource.sulphur";
 		DisplayName = "Sulphur";
 		DefaultDeposit = "resource_deposit.sulphur";
-		Icon = "asset:Textures/Resources/sulphur";
-		PickupSound = "asset:Sounds/ResourceDeposits/sulphur_pickup.wav";
-		DropoffSound = "asset:Sounds/ResourceDeposits/sulphur_dropoff.wav";
+		Icon = "extern:Textures/Resources/sulphur";
+		PickupSound = "extern:Sounds/ResourceDeposits/sulphur_pickup.wav";
+		DropoffSound = "extern:Sounds/ResourceDeposits/sulphur_dropoff.wav";
 	}
 ];

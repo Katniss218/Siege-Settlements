@@ -19,7 +19,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 0.6;
 			AttackCooldown = 0.8;
-			AttackSound = "asset:Sounds/melee.wav";
+			AttackSound = "extern:Sounds/melee.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.4;
@@ -33,10 +33,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitSquare.kff";
-		AlbedoTexture = "asset:Textures/Units/wolf_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal_square.png";
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/wolf_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "unit.light_infantry";
@@ -58,7 +58,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 0.6;
 			AttackCooldown = 0.75;
-			AttackSound = "asset:Sounds/melee.wav";
+			AttackSound = "extern:Sounds/melee.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.35;
@@ -72,10 +72,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/light_infantry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/light_infantry_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/light_infantry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/light_infantry_icon";
 	},
 	{
 		Id = "unit.heavy_infantry";
@@ -96,7 +96,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 0.6;
 			AttackCooldown = 0.52;
-			AttackSound = "asset:Sounds/melee.wav";
+			AttackSound = "extern:Sounds/melee.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.25;
@@ -110,10 +110,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/heavy_infantry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/heavy_infantry_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/heavy_infantry_icon";
 	},
 	{
 		Id = "unit.light_cavalry";
@@ -134,7 +134,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 0.6;
 			AttackCooldown = 0.65;
-			AttackSound = "asset:Sounds/melee.wav";
+			AttackSound = "extern:Sounds/melee.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.5;
@@ -148,10 +148,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/light_cavalry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/light_cavalry_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/light_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/light_cavalry_icon";
 	},
 	{
 		Id = "unit.heavy_cavalry";
@@ -172,7 +172,7 @@
 			ArmorPenetration = 0.0;
 			AttackRange = 0.6;
 			AttackCooldown = 0.47;
-			AttackSound = "asset:Sounds/melee.wav";
+			AttackSound = "extern:Sounds/melee.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.4;
@@ -186,10 +186,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/heavy_cavalry_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/heavy_cavalry_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/heavy_cavalry_icon";
 	},
 	{
 		Id = "unit.bowmen";
@@ -216,7 +216,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
-			AttackSound = "asset:Sounds/loose.wav";
+			AttackSound = "extern:Sounds/loose.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.35;
@@ -232,10 +232,10 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/bowmen_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/bowmen_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/bowmen_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/bowmen_icon";
 	},
 	{
 		Id = "unit.crossbowmen";
@@ -262,7 +262,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
-			AttackSound = "asset:Sounds/loose.wav";
+			AttackSound = "extern:Sounds/loose.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.35;
@@ -278,10 +278,10 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/crossbowmen_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/crossbowmen_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/crossbowmen_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/crossbowmen_icon";
 	},
 	{
 		Id = "unit.mounted_archers";
@@ -308,7 +308,7 @@
 			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																   // To prevent randomization, set the specific coordinate in both fields to the same value.
 			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
-			AttackSound = "asset:Sounds/loose.wav";
+			AttackSound = "extern:Sounds/loose.wav";
 		};
 		IsConstructor = false;
 		MovementSpeed = 0.45;
@@ -324,10 +324,10 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitRectangle.kff";
-		AlbedoTexture = "asset:Textures/Units/mounted_archers_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal.png";
-		Icon = "asset:Textures/Units/mounted_archers_icon";
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/mounted_archers_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/mounted_archers_icon";
 	},
 	{
 		Id = "unit.civilian";
@@ -353,10 +353,10 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitSquare.kff";
-		AlbedoTexture = "asset:Textures/Units/civilian_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal_square.png";
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/civilian_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "unit.civilian_employed";
@@ -382,9 +382,9 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "asset:Models/UnitSquare.kff";
-		AlbedoTexture = "asset:Textures/Units/civilian_employed_albedo.png";
-		NormalTexture = "asset:Textures/Units/unit_normal_square.png";
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/civilian_employed_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	}
 ];

@@ -8,7 +8,7 @@
 			{ Id = "resource.wood"; Amount = 5; },
 			{ Id = "resource.stone"; Amount = 5; }
 		];
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	},
 	{
 		Id = "technology.horse_riding";
@@ -18,7 +18,7 @@
 			{ Id = "resource.wood"; Amount = 5; },
 			{ Id = "resource.stone"; Amount = 5; }
 		];
-		Icon = "asset:Textures/Buildings/house1_icon";
+		Icon = "extern:Textures/Buildings/house1_icon";
 	},
 	{
 		Id = "technology.archery";
@@ -28,6 +28,6 @@
 			{ Id = "resource.wood"; Amount = 6; },
 			{ Id = "resource.stone"; Amount = 4; }
 		];
-		Icon = "asset:Textures/Buildings/house0_icon";
+		Icon = "extern:Textures/Buildings/house0_icon";
 	}
 ];
