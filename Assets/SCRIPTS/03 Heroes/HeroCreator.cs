@@ -117,6 +117,9 @@ namespace SS.Heroes
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
+			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
+
 			// Set the globally unique identifier.
 			Hero hero = gameObject.GetComponent<Hero>();
 			hero.guid = data.guid;
@@ -199,6 +202,7 @@ namespace SS.Heroes
 			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
 			navMeshAgent.acceleration = DEFAULT_ACCELERATION;
 			navMeshAgent.stoppingDistance = DEFAULT_STOPPING_DISTANCE;
+			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 
 			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.worldUIs );

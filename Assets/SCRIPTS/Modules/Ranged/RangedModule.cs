@@ -202,9 +202,12 @@ namespace SS.Modules
 
 		private void OnDrawGizmos()
 		{
-			Gizmos.color = new Color( 0.0f, 0.0f, 1.0f );
-			Gizmos.DrawSphere( this.__target.transform.position, 0.125f );
-			Gizmos.DrawLine( this.transform.position, this.__target.transform.position );
+			if( this.__target != null )
+			{
+				Gizmos.color = new Color( 0.0f, 0.0f, 1.0f );
+				Gizmos.DrawSphere( this.__target.transform.position, 0.125f );
+				Gizmos.DrawLine( this.transform.position, this.__target.transform.position );
+			}
 		}
 
 		private void OnDrawGizmosSelected()

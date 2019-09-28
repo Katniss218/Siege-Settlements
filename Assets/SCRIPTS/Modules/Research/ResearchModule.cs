@@ -110,26 +110,28 @@ namespace SS.Modules
 		// Update is called once per frame
 		void Update()
 		{
-			if( this.isResearching )
+			if( IsPaymentDone() )
 			{
-				this.researchProgress -= this.researchSpeed * Time.deltaTime;
-				if( this.researchProgress <= 0 )
+				if( this.isResearching )
 				{
-					LevelDataManager.factionData[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
-					this.researchedTechnology = null;
+					this.researchProgress -= this.researchSpeed * Time.deltaTime;
+					if( this.researchProgress <= 0 )
+					{
+						LevelDataManager.factionData[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
+						this.researchedTechnology = null;
 
-					Selection.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
-				}
+						Selection.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
+					}
 
-				// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
-				Selectable selectable = this.GetComponent<Selectable>();
-				if( selectable != null )
-				{
-					Selection.ForceSelectionUIRedraw( selectable );
+					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
+					Selectable selectable = this.GetComponent<Selectable>();
+					if( selectable != null )
+					{
+						Selection.ForceSelectionUIRedraw( selectable );
+					}
 				}
 			}
 		}
-
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -206,6 +208,10 @@ namespace SS.Modules
 						return;
 					}
 				}
+			}
+			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
 			}
 			if( this.IsPaymentDone() )
 			{

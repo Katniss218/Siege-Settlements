@@ -8,6 +8,7 @@ using SS.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS.Modules
 {
@@ -122,49 +123,52 @@ namespace SS.Modules
 		// Update is called once per frame
 		void Update()
 		{
-			// If we are building something
-			if( this.isTraining )
+			if( IsPaymentDone() )
 			{
-				Selectable selectable = this.GetComponent<Selectable>();
-
-				this.trainProgress -= this.trainSpeed * Time.deltaTime;
-				if( this.trainProgress <= 0 )
+				// If we are building something
+				if( this.isTraining )
 				{
-					// Calculate world-space spawn position.
-					Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-					Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
+					Selectable selectable = this.GetComponent<Selectable>();
 
-					// Calculate world-space spawn rotation.
-					Quaternion spawnRot = Quaternion.Euler( this.transform.position - spawnPos );
-
-					RaycastHit hitInfo;
-					if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down ), out hitInfo, 100f, ObjectLayer.TERRAIN_MASK ) )
+					this.trainProgress -= this.trainSpeed * Time.deltaTime;
+					if( this.trainProgress <= 0 )
 					{
-						UnitData data = new UnitData();
-						data.guid = Guid.NewGuid();
-						data.position = hitInfo.point;
-						data.rotation = spawnRot;
-						data.factionId = this.factionMember.factionId;
-						data.health = this.trainedUnit.healthMax;
-						data.items = new Dictionary<string, int>();
+						// Calculate world-space spawn position.
+						Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+						Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
 
-						GameObject obj = UnitCreator.Create( this.trainedUnit, data );
-						// Move the newly spawned unit to the rally position.
-						Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
-						TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPointWorld );
+						// Calculate world-space spawn rotation.
+						Quaternion spawnRot = Quaternion.identity;
+
+						RaycastHit hitInfo;
+						if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down ), out hitInfo, 100f, ObjectLayer.TERRAIN_MASK ) )
+						{
+							UnitData data = new UnitData();
+							data.guid = Guid.NewGuid();
+							data.position = hitInfo.point;
+							data.rotation = spawnRot;
+							data.factionId = this.factionMember.factionId;
+							data.health = this.trainedUnit.healthMax;
+							data.items = new Dictionary<string, int>();
+
+							GameObject obj = UnitCreator.Create( this.trainedUnit, data );
+							// Move the newly spawned unit to the rally position.
+							Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+							TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPointWorld );
+						}
+						else
+						{
+							Debug.LogWarning( "No suitable position for spawning was found." );
+						}
+
+						this.trainedUnit = null;
 					}
-					else
+
+					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
+					if( selectable != null )
 					{
-						Debug.LogWarning( "No suitable position for spawning was found." );
+						Selection.ForceSelectionUIRedraw( selectable );
 					}
-					
-					this.trainedUnit = null;
-				}
-
-				// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.
-				if( selectable != null )
-				{
-					Selection.ForceSelectionUIRedraw( selectable );
 				}
 			}
 		}
@@ -261,14 +265,16 @@ namespace SS.Modules
 					}
 				}
 			}
-
+			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
 			if( this.IsPaymentDone() )
 			{
 				if( this.isTraining )
 				{
 					UIUtils.InstantiateText( SelectionPanel.objectTransform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
 				}
-
 				else
 				{
 					GameObject[] gridElements = new GameObject[this.trainableUnits.Length];

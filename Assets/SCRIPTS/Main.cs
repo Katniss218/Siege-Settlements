@@ -281,12 +281,27 @@ namespace SS
 						FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
 						if( fac != null )
 						{
+							fac.factionId = 0;
+						}
+					}
+				}
+			}
+			if( Input.GetKeyDown( KeyCode.Alpha2 ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
+						FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
+						if( fac != null )
+						{
 							fac.factionId = 1;
 						}
 					}
 				}
 			}
-			if( Input.GetKeyDown( KeyCode.Alpha0 ) )
+			if( Input.GetKeyDown( KeyCode.Alpha9 ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
 				{
@@ -300,6 +315,24 @@ namespace SS
 						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 						data.resources = new Dictionary<string, int>();
 						data.resources.Add( "resource.wood", 5 );
+						ResourceDepositCreator.Create( def, data );
+					}
+				}
+			}
+			if( Input.GetKeyDown( KeyCode.Alpha0 ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
+						ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.stone" );
+						ResourceDepositData data = new ResourceDepositData();
+						data.guid = Guid.NewGuid();
+						data.position = hitInfo.point;
+						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+						data.resources = new Dictionary<string, int>();
+						data.resources.Add( "resource.stone", 20 );
 						ResourceDepositCreator.Create( def, data );
 					}
 				}
