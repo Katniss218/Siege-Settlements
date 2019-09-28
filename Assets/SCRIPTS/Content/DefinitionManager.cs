@@ -301,14 +301,14 @@ namespace SS.Content
 
 		public static ResourceDepositDefinition GetResourceDeposit( string id )
 		{
-			for( int i = 0; i < extraDefinitions.Length; i++ )
+			for( int i = 0; i < resourceDepositDefinitions.Length; i++ )
 			{
 				if( resourceDepositDefinitions[i].id == id )
 				{
 					return resourceDepositDefinitions[i];
 				}
 			}
-			throw new System.Exception( "An extra with an id '" + id + "' is not registered." );
+			throw new System.Exception( "A resource deposit with an id '" + id + "' is not registered." );
 		}
 
 		public static ResourceDepositDefinition[] GetAllResourceDeposits()
