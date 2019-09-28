@@ -91,7 +91,7 @@ namespace SS
 
 					if( this.inventory != null )
 					{
-						
+						Pay( this.destination );
 					}
 					Object.Destroy( this );
 				}

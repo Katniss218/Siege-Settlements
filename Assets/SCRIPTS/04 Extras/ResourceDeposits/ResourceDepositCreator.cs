@@ -64,14 +64,11 @@ namespace SS.Extras
 			
 			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
 			resourceDeposit.defId = def.id;
+			resourceDeposit.displayName = def.displayName;
 			resourceDeposit.isTypeExtracted = def.isExtracted;
 			if( !def.isExtracted )
 			{
 				resourceDeposit.miningSound = def.mineSound.Item2;
-			}
-			else
-			{
-				resourceDeposit.miningSound = null;
 			}
 		}
 
@@ -86,18 +83,21 @@ namespace SS.Extras
 
 			IInventory inventory = gameObject.GetComponent<IInventory>();
 
+			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
+			resourceDeposit.guid = data.guid;
+
 			foreach( var kvp in data.resources )
 			{
 				int capacity = inventory.GetMaxCapacity( kvp.Key );
 				if( capacity == 0 )
 				{
-					throw new System.Exception( "This deposit can't hold '" + kvp.Key + "'." );
+					throw new Exception( "This deposit can't hold '" + kvp.Key + "'." );
 				}
 				else
 				{
 					if( capacity < kvp.Value )
 					{
-						Debug.LogWarning( "This deposit can't hold " + kvp.Value + " x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + " x resource has been lost." );
+						Debug.LogWarning( "This deposit can't hold " + kvp.Value + "x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + "x resource has been lost." );
 						inventory.Add( kvp.Key, capacity );
 					}
 					else
@@ -135,7 +135,10 @@ namespace SS.Extras
 			NavMeshObstacle obstacle = container.AddComponent<NavMeshObstacle>();
 			obstacle.carving = true;
 
+			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
+
 			ResourceDeposit resourceDeposit = container.AddComponent<ResourceDeposit>();
+			resourceDeposit.inventory = depositInventory;
 
 			UnityAction<GameObject> showTooltip = ( GameObject gameObject ) =>
 			{
@@ -180,7 +183,6 @@ namespace SS.Extras
 			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
 			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
 
-			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
 			
 			depositInventory.onAdd.AddListener( ( string id, int amount ) =>
 			{

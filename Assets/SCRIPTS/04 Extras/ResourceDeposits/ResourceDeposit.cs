@@ -45,14 +45,9 @@ namespace SS.Extras
 
 		public AudioClip miningSound { get; set; }
 		
-		public IInventory inventory { get; private set; }
+		public IInventory inventory { get; set; }
 		
 		
-		void Awake()
-		{
-			this.inventory = this.GetComponent<IInventory>();
-		}
-
 		void Start()
 		{
 

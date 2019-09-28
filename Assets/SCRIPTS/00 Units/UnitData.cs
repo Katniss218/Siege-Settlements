@@ -16,10 +16,10 @@ namespace SS.Levels.SaveStates
 		public Quaternion rotation { get; set; }
 
 		public int factionId { get; set; }
-		
+
 		public float health { get; set; }
 
-		public Dictionary<string,int> items { get; set; }
+		public Dictionary<string, int> items { get; set; }
 
 		public TAIGoalData taiGoalData { get; set; }
 
@@ -100,7 +100,11 @@ namespace SS.Levels.SaveStates
 				i++;
 			}
 
-			if( this.taiGoalData != null )
+			if( this.taiGoalData == null )
+			{
+				serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.None );
+			}
+			else
 			{
 				if( this.taiGoalData is DropoffToInventoryData )
 				{

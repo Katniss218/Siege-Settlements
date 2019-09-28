@@ -282,11 +282,11 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-
 						AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
 					}
 				}
 			}
+
 			if( Input.GetKeyDown( KeyCode.Tab ) )
 			{
 				isHudLocked = !isHudLocked;
@@ -296,6 +296,25 @@ namespace SS
 			if( Input.GetKeyDown( KeyCode.F3 ) )
 			{
 				LevelManager.SaveScene( "save_new" );
+			}
+
+			if( Input.GetKeyDown( KeyCode.Alpha0 ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
+						ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.tree" );
+						ResourceDepositData data = new ResourceDepositData();
+						data.guid = Guid.NewGuid();
+						data.position = hitInfo.point;
+						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+						data.resources = new Dictionary<string, int>();
+						data.resources.Add( "resource.wood", 5 );
+						ResourceDepositCreator.Create( def, data );
+					}
+				}
 			}
 		}
 

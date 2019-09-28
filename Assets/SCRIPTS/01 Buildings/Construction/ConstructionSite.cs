@@ -91,17 +91,17 @@ namespace SS.Buildings
 					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
 				}
 
-				float healAmt = ((damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
+				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
 
 				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 				// Otherwise, heal it normally.
-				if( damageable.health + healAmt > damageable.healthMax )
+				if( this.damageable.health + healAmt > this.damageable.healthMax )
 				{
-					damageable.health = damageable.healthMax;
+					this.damageable.health = this.damageable.healthMax;
 				}
 				else
 				{
-					damageable.health += healAmt;
+					this.damageable.health += healAmt;
 				}
 
 				kvp.Value.remaining -= amount;
@@ -110,7 +110,7 @@ namespace SS.Buildings
 					kvp.Value.remaining = 0;
 				}
 
-				Main.particleSystem.transform.position = gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
+				Main.particleSystem.transform.position = this.gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
 
 				BoxCollider col = this.GetComponent<BoxCollider>();
@@ -124,15 +124,15 @@ namespace SS.Buildings
 				if( this.IsDone() )
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
-					damageable.onHealthChange.RemoveListener( this.OnHealthChange );
-					
-					Object.Destroy( this );
-					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
+					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
 
-					Selectable selectable = building.GetComponent<Selectable>();
+					Selectable selectable = this.GetComponent<Selectable>();
+
+					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
+					Object.DestroyImmediate( this ); // destroyimmediate so the redraw doesn't detect the construction site that's still present when using Destroy().
+
 					if( selectable != null )
 					{
-#warning seems like it's not called when building walls using "K" shortcut.
 						Selection.ForceSelectionUIRedraw( selectable ); // force redraw to refresh after the construction site has been destroyed.
 					}
 				}
