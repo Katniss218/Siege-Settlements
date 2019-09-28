@@ -9,7 +9,7 @@ namespace SS.UI
 	{
 		public void Click()
 		{
-			LevelManager.LoadLevel( "Tutorial", "save01" );
+			LevelManager.LoadLevel( "Tutorial", "save_new" );
 		}
 	}
 }

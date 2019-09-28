@@ -90,7 +90,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteFloat( "", "Health", this.health );
 
 			// Cost
-			serializer.WriteClass( "", "Items" );
+			serializer.WriteList( "", "Items" );
 			int i = 0;
 			foreach( var kvp in this.items )
 			{

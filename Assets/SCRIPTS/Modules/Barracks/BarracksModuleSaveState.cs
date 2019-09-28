@@ -37,7 +37,6 @@ namespace SS.Levels.SaveStates
 			serializer.WriteFloat( "", "TrainProgress", this.trainProgress );
 
 			serializer.WriteVector3( "", "RallyPoint", this.rallyPoint );
-			throw new System.NotImplementedException();
 		}
 	}
 }

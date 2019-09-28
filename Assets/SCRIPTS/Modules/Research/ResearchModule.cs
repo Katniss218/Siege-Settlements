@@ -80,7 +80,7 @@ namespace SS.Modules
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			return this.resourcesRemaining;
+			return new Dictionary<string, int>( this.resourcesRemaining );
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace SS.Modules
 		}
 
 		// Start is called before the first frame update
-		void Start()
+		void Awake()
 		{
 			this.factionMember = GetComponent<FactionMember>();
 
@@ -144,7 +144,14 @@ namespace SS.Modules
 			ResearchModuleSaveState saveState = new ResearchModuleSaveState();
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
-			saveState.researchedTechnologyId = this.researchedTechnology.id;
+			if( this.researchedTechnology == null )
+			{
+				saveState.researchedTechnologyId = "";
+			}
+			else
+			{
+				saveState.researchedTechnologyId = this.researchedTechnology.id;
+			}
 			saveState.researchProgress = this.researchProgress;
 
 			return saveState;
@@ -156,8 +163,9 @@ namespace SS.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			
-		public void SetDefinition( ResearchModuleDefinition saveState )
+		public void SetDefinition( ResearchModuleDefinition def )
 		{
+			this.researchSpeed = def.researchSpeed;
 			Selectable selectable = this.GetComponent<Selectable>();
 
 			if( selectable != null )
@@ -172,14 +180,22 @@ namespace SS.Modules
 		public void SetSaveState( ResearchModuleSaveState saveState )
 		{
 			this.resourcesRemaining = saveState.resourcesRemaining;
-			this.researchedTechnology = DefinitionManager.GetTechnology( saveState.researchedTechnologyId );
+
+			if( saveState.researchedTechnologyId == "" )
+			{
+				this.researchedTechnology = null;
+			}
+			else
+			{
+				this.researchedTechnology = DefinitionManager.GetTechnology( saveState.researchedTechnologyId );
+			}
 			this.researchProgress = saveState.researchProgress;
 		}
 
 		private void OnSelectionUIRedraw()
 		{
 			// If the research facility is on a building, that is not usable.
-			if( selectable.gameObject.layer == ObjectLayer.BUILDINGS )
+			if( this.selectable.gameObject.layer == ObjectLayer.BUILDINGS )
 			{
 				Damageable damageable = this.GetComponent<Damageable>();
 

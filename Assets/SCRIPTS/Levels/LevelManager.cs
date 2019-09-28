@@ -6,6 +6,7 @@ using SS.Heroes;
 using SS.Levels.SaveStates;
 using SS.Projectiles;
 using SS.TerrainCreation;
+using SS.UI;
 using SS.Units;
 using System;
 using System.Collections.Generic;
@@ -305,16 +306,24 @@ namespace SS.Levels
 				ResourceDepositCreator.SetData( resourceDeposits[i], sResourceDeposits[i].Item2 );
 			}
 
+			SelectionPanelMode selectionPanelMode;
 			GameObject highlighted;
-			GameObject[] selected = GetSelected( levelIdentifier, levelSaveStateIdentifier, out highlighted );
+			GameObject[] selected = GetSelected( levelIdentifier, levelSaveStateIdentifier, out highlighted, out selectionPanelMode );
 
-			for( int i = 0; i < selected.Length; i++ )
+			SelectionPanel.SetMode( selectionPanelMode );
+
+			if( selected != null )
 			{
-				Selection.SelectAndHighlight( selected[i].GetComponent<Selectable>() );
+				for( int i = 0; i < selected.Length; i++ )
+				{
+					Selection.SelectAndHighlight( selected[i].GetComponent<Selectable>() );
+				}
 			}
-			Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
+			if( highlighted != null )
+			{
+				Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
+			}
 
-#warning needs to load selection panel mode.
 
 			lastLoadTime = Time.time;
 		}
@@ -457,17 +466,44 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static GameObject[] GetSelected( string levelIdentifier, string levelSaveStateIdentifier, out GameObject highlight )
+		private static GameObject[] GetSelected( string levelIdentifier, string levelSaveStateIdentifier, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-			
+
+			string sel = serializer.ReadString( "SelectionPanelMode" );
+			if( sel == "Object" )
+			{
+				selectionPanelMode = SelectionPanelMode.Object;
+			}
+			else if( sel == "List" )
+			{
+				selectionPanelMode = SelectionPanelMode.List;
+			}
+			else
+			{
+				throw new Exception( "Invalid Selection Panel Mode: '" + sel + "'." );
+			}
+			if( serializer.Analyze( "SelectedGuids" ).isFail )
+			{
+				highlight = null;
+				return null;
+			}
+
 			int count = serializer.Analyze( "SelectedGuids" ).childCount;
 
 			GameObject[] ret = new GameObject[count];
 
-			highlight = Main.GetGameObject( Guid.ParseExact( serializer.ReadString( "HighlightedGuid" ), "D" ) );
+			if( serializer.Analyze( "HighlightedGuid" ).isFail )
+			{
+				highlight = null;
+			}
+			else
+			{
+				highlight = Main.GetGameObject( Guid.ParseExact( serializer.ReadString( "HighlightedGuid" ), "D" ) );
+			}
+
 
 			for( int i = 0; i < count; i++ )
 			{
@@ -584,22 +620,26 @@ namespace SS.Levels
 			SaveHeroes( heroData, currentLevelId, newLevelSaveStateId );
 			SaveExtras( extraData, currentLevelId, newLevelSaveStateId );
 			SaveResourceDeposits( resourceDepositData, currentLevelId, newLevelSaveStateId );
-
+			
 			LevelDataManager.SaveFactionData( currentLevelId, newLevelSaveStateId );
 
-			Guid highlighted = Main.GetGuid( Selection.highlightedObject.gameObject );
-
-			var selectedObjs = Selection.selectedObjects;
-			Guid[] selection = new Guid[selectedObjs.Length];
-
-			for( int i = 0; i < selectedObjs.Length; i++ )
+			Guid? highlighted = null;
+			if( Selection.highlightedObject != null )
 			{
-				selection[i] = Main.GetGuid( selectedObjs[i].gameObject );
+				highlighted = Main.GetGuid( Selection.highlightedObject.gameObject );
 			}
+			Guid?[] selection = null;
+			var selectedObjs = Selection.selectedObjects;
+			if( selectedObjs.Length > 0 )
+			{
+				selection = new Guid?[selectedObjs.Length];
 
-#warning what if selection = null. / highlight - null.
-
-#warning also save the state of the selection panel mode (obj/lst)
+				for( int i = 0; i < selectedObjs.Length; i++ )
+				{
+					selection[i] = Main.GetGuid( selectedObjs[i].gameObject );
+				}
+			}
+			
 			SaveSelection( highlighted, selection, currentLevelId, newLevelSaveStateId );
 		}
 
@@ -720,25 +760,30 @@ namespace SS.Levels
 
 
 
-		private static void SaveSelection( Guid highlighted, Guid[] selected, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveSelection( Guid? highlighted, Guid?[] selected, string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteString( "", "HighlightedGuid", highlighted.ToString( "D" ) );
+			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.mode == SelectionPanelMode.Object ? "Object" : "List" );
+			if( highlighted != null )
+			{
+				serializer.WriteString( "", "HighlightedGuid", highlighted.Value.ToString( "D" ) );
+			}
 			serializer.WriteList( "", "List" );
-
-			string[] selectedGuidStrings = new string[selected.Length];
-			for( int i = 0; i < selected.Length; i++ )
+			if( selected != null )
 			{
-				selectedGuidStrings[i] = selected[i].ToString( "D" );
+				string[] selectedGuidStrings = new string[selected.Length];
+				for( int i = 0; i < selected.Length; i++ )
+				{
+					selectedGuidStrings[i] = selected[i].Value.ToString( "D" );
+				}
+				for( int i = 0; i < selected.Length; i++ )
+				{
+					serializer.WriteStringArray( "", "SelectedGuids", selectedGuidStrings );
+				}
 			}
-			for( int i = 0; i < selected.Length; i++ )
-			{
-				serializer.WriteStringArray( "", "SelectedGuids", selectedGuidStrings );
-			}
-
 			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 	}

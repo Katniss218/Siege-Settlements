@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using System;
 using UnityEngine;
 
 namespace SS.Buildings
@@ -133,9 +134,11 @@ namespace SS.Buildings
 				if( Input.GetMouseButtonDown( 0 ) ) // left mouse button
 				{
 					BuildingData data = new BuildingData();
+					data.guid = Guid.NewGuid();
 					data.position = this.transform.position;
 					data.rotation = this.transform.rotation;
 					data.factionId = LevelDataManager.PLAYER_FAC;
+					data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
 					data.constructionSaveState = new ConstructionSiteData();
 
 					BuildingCreator.Create( this.def, data );

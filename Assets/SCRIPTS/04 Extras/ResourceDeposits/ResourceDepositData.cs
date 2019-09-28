@@ -42,7 +42,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 
 			// resources
-			serializer.WriteClass( "", "Resources" );
+			serializer.WriteList( "", "Resources" );
 			int i = 0;
 			foreach( var kvp in this.resources )
 			{

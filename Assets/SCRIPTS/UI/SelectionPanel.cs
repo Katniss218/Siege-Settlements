@@ -27,6 +27,18 @@ namespace SS.UI
 			}
 		}
 
+		public static void SetMode( SelectionPanelMode mode )
+		{
+			if( mode == SelectionPanelMode.List )
+			{
+				SetModeList();
+			}
+			else
+			{
+				SetModeObject();
+			}
+		}
+
 		private static void SetModeObject()
 		{
 			mode = SelectionPanelMode.Object;

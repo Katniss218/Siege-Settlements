@@ -95,7 +95,7 @@ namespace SS.Modules
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			return this.resourcesRemaining;
+			return new Dictionary<string, int>( this.resourcesRemaining );
 		}
 		
 		private void StartTraining( UnitDefinition def )
@@ -112,7 +112,7 @@ namespace SS.Modules
 		}
 
 		// Start is called before the first frame update
-		void Start()
+		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
 
@@ -141,10 +141,12 @@ namespace SS.Modules
 					if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down ), out hitInfo, 100f, ObjectLayer.TERRAIN_MASK ) )
 					{
 						UnitData data = new UnitData();
+						data.guid = Guid.NewGuid();
 						data.position = hitInfo.point;
 						data.rotation = spawnRot;
 						data.factionId = this.factionMember.factionId;
 						data.health = this.trainedUnit.healthMax;
+						data.items = new Dictionary<string, int>();
 
 						GameObject obj = UnitCreator.Create( this.trainedUnit, data );
 						// Move the newly spawned unit to the rally position.
@@ -181,7 +183,14 @@ namespace SS.Modules
 			BarracksModuleSaveState saveState = new BarracksModuleSaveState();
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
-			saveState.trainedUnitId = this.trainedUnit.id;
+			if( this.trainedUnit == null )
+			{
+				saveState.trainedUnitId = "";
+			}
+			else
+			{
+				saveState.trainedUnitId = this.trainedUnit.id;
+			}
 			saveState.trainProgress = this.trainProgress;
 
 			return saveState;
@@ -225,7 +234,14 @@ namespace SS.Modules
 		public void SetSaveState( BarracksModuleSaveState saveState )
 		{
 			this.resourcesRemaining = saveState.resourcesRemaining;
-			this.trainedUnit = DefinitionManager.GetUnit( saveState.trainedUnitId );
+			if( saveState.trainedUnitId == "" )
+			{
+				this.trainedUnit = null;
+			}
+			else
+			{
+				this.trainedUnit = DefinitionManager.GetUnit( saveState.trainedUnitId );
+			}
 			this.trainProgress = saveState.trainProgress;
 			this.rallyPoint = saveState.rallyPoint;
 		}

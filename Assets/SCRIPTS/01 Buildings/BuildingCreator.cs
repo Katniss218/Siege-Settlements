@@ -105,6 +105,15 @@ namespace SS.Buildings
 
 		private static void SetBuildingData( GameObject gameObject, BuildingData data )
 		{
+			
+			//
+			//    GRAPHICS GAMEOBJECT
+			//
+
+			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			
+			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
+			
 
 			//
 			//    CONTAINER GAMEOBJECT
@@ -125,8 +134,12 @@ namespace SS.Buildings
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.health = data.health;
 
+			if( data.constructionSaveState == null )
+			{
+				meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+			}
 			// If the building was under construction/repair, make it under c/r.
-			if( data.constructionSaveState != null )
+			else
 			{
 				// The health is set to 10% in the data passed as a parameter if the construction is fresh.
 				ConstructionSite.BeginConstructionOrRepair( gameObject, data.constructionSaveState );

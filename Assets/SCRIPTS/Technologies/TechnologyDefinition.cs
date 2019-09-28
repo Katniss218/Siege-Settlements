@@ -44,7 +44,7 @@ namespace SS.Technologies
 
 
 			// Cost
-			serializer.WriteClass( "", "Cost" );
+			serializer.WriteList( "", "Cost" );
 			int i = 0;
 			foreach( var kvp in this.cost )
 			{

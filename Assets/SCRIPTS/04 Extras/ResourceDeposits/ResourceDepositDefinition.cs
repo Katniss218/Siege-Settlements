@@ -69,7 +69,7 @@ namespace SS.Extras
 			serializer.WriteString( "", "DisplayName", this.displayName );
 
 			// Cost
-			serializer.WriteClass( "", "Resources" );
+			serializer.WriteList( "", "Resources" );
 			int i = 0;
 			foreach( var kvp in this.resources )
 			{

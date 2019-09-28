@@ -104,7 +104,7 @@ namespace SS.Buildings
 			serializer.WriteVector3( "", "Entrance", this.entrance );
 
 			// Cost
-			serializer.WriteClass( "", "Cost" );
+			serializer.WriteList( "", "Cost" );
 			int i = 0;
 			foreach( var kvp in this.cost )
 			{

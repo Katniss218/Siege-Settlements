@@ -30,7 +30,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteString( "", "ResearchedTechnologyId", this.researchedTechnologyId );
 			serializer.WriteFloat( "", "ResearchProgress", this.researchProgress );
 
-			serializer.WriteClass( "", "ResourcesRemaining" );
+			serializer.WriteList( "", "ResourcesRemaining" );
 			int i = 0;
 			foreach( var kvp in this.resourcesRemaining )
 			{

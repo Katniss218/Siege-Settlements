@@ -230,7 +230,7 @@ namespace SS
 				}
 			}
 
-			// Temporary resource payment speedup.
+			// Temporary resource payment speedup (every payment receiver to full).
 			if( Input.GetKeyDown( KeyCode.K ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
@@ -238,19 +238,19 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						UnityEngine.GameObject gameObject = hitInfo.collider.gameObject;
+						GameObject gameObject = hitInfo.collider.gameObject;
 						if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
 						{
 							return;
 						}
-						IPaymentReceiver paymentReceiver = gameObject.GetComponent<IPaymentReceiver>();
-						if( paymentReceiver != null )
+						IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
+						for( int i = 0; i < paymentReceivers.Length; i++ )
 						{
-							Dictionary<string, int> wantedRes = paymentReceiver.GetWantedResources();
+							Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
 							
 							foreach( var kvp in wantedRes )
 							{
-								paymentReceiver.ReceivePayment( kvp.Key, kvp.Value );
+								paymentReceivers[i].ReceivePayment( kvp.Key, kvp.Value );
 							}
 						}
 					}

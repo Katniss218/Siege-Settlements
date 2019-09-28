@@ -127,7 +127,7 @@ namespace SS.Units
 			serializer.WriteFloat( "", "Height", this.height );
 
 			// Cost
-			serializer.WriteClass( "", "Cost" );
+			serializer.WriteList( "", "Cost" );
 			int i = 0;
 			foreach( var kvp in this.cost )
 			{

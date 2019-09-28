@@ -125,10 +125,9 @@ namespace SS.Buildings
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					damageable.onHealthChange.RemoveListener( this.OnHealthChange );
-
-#warning change this to Destroy?
-					Object.DestroyImmediate( this );
-					Object.Destroy( this.transform.Find( "construction_site_graphics" ) );
+					
+					Object.Destroy( this );
+					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 
 					Selectable selectable = building.GetComponent<Selectable>();
 					if( selectable != null )
@@ -144,7 +143,7 @@ namespace SS.Buildings
 		public Dictionary<string, int> GetWantedResources()
 		{
 			Dictionary<string, int> ret = new Dictionary<string, int>();
-
+			
 			foreach( var kvp in this.resourceInfo )
 			{
 				int amtRounded = SpecialRound( kvp.Value.remaining );
@@ -161,7 +160,7 @@ namespace SS.Buildings
 		/// </summary>
 		public void SetRequiredResources( Dictionary<string, int> requiredResources )
 		{
-			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources .Count );
+			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources.Count );
 			
 			float totalResourcesNeeded = 0;
 			//int i = 0;
@@ -374,6 +373,9 @@ namespace SS.Buildings
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
+			constructionSite.meshRenderer = meshRenderer;
+			constructionSite.damageable = damageable;
+			constructionSite.building = building;
 			constructionSite.meshRenderer = meshRenderer;
 			
 			if( data.resourcesRemaining != null )

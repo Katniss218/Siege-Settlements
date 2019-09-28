@@ -22,7 +22,7 @@ namespace SS.Levels.SaveStates
 		public void SerializeKFF( KFFSerializer serializer )
 		{
 			// resources
-			serializer.WriteClass( "", "ResourcesRemaining" );
+			serializer.WriteList( "", "ResourcesRemaining" );
 			int i = 0;
 			foreach( var kvp in this.resourcesRemaining )
 			{
