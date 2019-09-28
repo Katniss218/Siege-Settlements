@@ -20,6 +20,7 @@ namespace SS
 
 		void Start()
 		{
+#warning make it start after invoking a method, instead of on start().
 			this.StartCoroutine( this._Timer() );
 		}
 

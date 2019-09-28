@@ -520,7 +520,7 @@ namespace SS
 				}
 
 				// loop over every receiver and choose a compatible one.
-#warning this is not possible to serialize currently.
+#warning Revert this to not search for compatible receiver, instead just check if receiver is present.
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
 

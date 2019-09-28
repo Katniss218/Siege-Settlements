@@ -12,6 +12,9 @@ namespace SS.Levels.SaveStates
 		public Guid guid { get; set; }
 
 		public Vector3 position { get; set; }
+
+		public bool isStuck { get; set; }
+		public Quaternion stuckRotation { get; set; }
 		public Vector3 velocity { get; set; }
 
 		public int factionId { get; set; }
@@ -26,7 +29,15 @@ namespace SS.Levels.SaveStates
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
 
 			this.position = serializer.ReadVector3( "Position" );
-			this.velocity = serializer.ReadVector3( "Velocity" );
+			this.isStuck = serializer.ReadBool( "IsStuck" );
+			if( this.isStuck )
+			{
+				this.stuckRotation = serializer.ReadQuaternion( "StuckRotation" );
+			}
+			else
+			{
+				this.velocity = serializer.ReadVector3( "Velocity" );
+			}
 
 			this.factionId = serializer.ReadInt( "FactionId" );
 
@@ -40,7 +51,15 @@ namespace SS.Levels.SaveStates
 			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
 
 			serializer.WriteVector3( "", "Position", this.position );
-			serializer.WriteVector3( "", "Velocity", this.velocity );
+			serializer.WriteBool( "", "IsStuck", this.isStuck );
+			if( this.isStuck )
+			{
+				serializer.WriteQuaternion( "", "StuckRotation", this.stuckRotation );
+			}
+			else
+			{
+				serializer.WriteVector3( "", "Velocity", this.velocity );
+			}
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
 

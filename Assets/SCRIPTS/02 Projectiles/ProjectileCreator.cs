@@ -79,8 +79,16 @@ namespace SS.Projectiles
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, Quaternion.identity );
 
-			Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
-			rigidbody.velocity = data.velocity;
+			if( data.isStuck )
+			{
+				MakeStuck( gameObject );
+				gameObject.transform.rotation = data.stuckRotation;
+			}
+			else
+			{
+				Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
+				rigidbody.velocity = data.velocity;
+			}
 			
 			// Set the globally unique identifier.
 			Projectile projectile = gameObject.GetComponent<Projectile>();
@@ -92,6 +100,15 @@ namespace SS.Projectiles
 
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
+		}
+
+		private static void MakeStuck( GameObject unstuckProjectile )
+		{
+			unstuckProjectile.GetComponent<TimerHandler>().ResetTimer(); // reset the timer to count again from after being stuck.
+
+			Object.Destroy( unstuckProjectile.GetComponent<RotateAlongVelocity>() );
+			Object.Destroy( unstuckProjectile.GetComponent<Rigidbody>() );
+			Object.Destroy( unstuckProjectile.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
 		}
 
 		private static GameObject CreateProjectile()
@@ -145,9 +162,7 @@ namespace SS.Projectiles
 				if( hitDamageable == null )
 				{
 					// when the projectile hits non-damageable object, it sticks into it (like an arrow).
-					Object.Destroy( container.GetComponent<RotateAlongVelocity>() );
-					Object.Destroy( container.GetComponent<Rigidbody>() );
-					Object.Destroy( container.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
+					MakeStuck( container );
 					AudioManager.PlayNew( projectile.missSound );
 					return;
 				}
@@ -202,14 +217,22 @@ namespace SS.Projectiles
 
 			data.position = gameObject.transform.position;
 
-			Rigidbody rigidbody = gameObject.AddComponent<Rigidbody>();
-			data.velocity = rigidbody.velocity;
-
+			Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
+			if( rigidbody == null )
+			{
+				data.isStuck = true;
+				data.stuckRotation = gameObject.transform.rotation;
+			}
+			else
+			{
+				data.isStuck = false;
+				data.velocity = rigidbody.velocity;
+			}
 
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 			data.factionId = factionMember.factionId;
 
-			DamageSource damageSource = gameObject.GetComponent<DamageSource>();
+			DamageSource damageSource = gameObject.GetComponent<Projectile>().damageSource;
 			data.damageTypeOverride = damageSource.damageType;
 			data.damageOverride = damageSource.damage;
 			data.armorPenetrationOverride = damageSource.armorPenetration;

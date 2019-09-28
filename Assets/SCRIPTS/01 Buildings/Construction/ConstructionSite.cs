@@ -132,6 +132,7 @@ namespace SS.Buildings
 					Selectable selectable = building.GetComponent<Selectable>();
 					if( selectable != null )
 					{
+#warning seems like it's not called when building walls using "K" shortcut.
 						Selection.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
 					}
 				}

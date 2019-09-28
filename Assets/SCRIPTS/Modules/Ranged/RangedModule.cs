@@ -134,6 +134,7 @@ namespace SS.Modules
 		private void Shoot( Vector3 pos, Vector3 vel )
 		{
 			ProjectileData data = new ProjectileData();
+			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
 			data.factionId = this.factionMember.factionId;

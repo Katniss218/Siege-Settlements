@@ -1,1 +1,1 @@
-﻿List=[];
+﻿List=[{DefinitionId="projectile.arrow";Data={Guid="c9cccaa9-203a-4c14-a02a-7ca5105ca16e";Position={X=4.1872963905334473;Y=0.041905134916305542;Z=4.7534236907958984;};IsStuck=true;StuckRotation={X=0.09485790878534317;Y=0.73992812633514404;Z=-0.10677441954612732;W=0.6573488712310791;};FactionId=0;DamageTypeOverride=1;DamageOverride=1.0;ArmorPenetrationOverride=0.0;};}];
