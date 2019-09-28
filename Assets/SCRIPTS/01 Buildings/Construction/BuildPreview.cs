@@ -68,15 +68,15 @@ namespace SS.Buildings
 
 		private bool IsOnFlatGround()
 		{
-			float halfHeight = def.size.y / 2f;
+			Vector3 halfSize = this.def.size * 0.5f;
 
 			// Setup the 4 corners for raycast.
 			Vector3[] pos = new Vector3[4]
 			{
-				new Vector3( -def.size.x, maxDeviation, -def.size.z ),
-				new Vector3( -def.size.x, maxDeviation, def.size.z ),
-				new Vector3( def.size.x, maxDeviation, -def.size.z ),
-				new Vector3( def.size.x, maxDeviation, def.size.z )
+				new Vector3( -halfSize.x, maxDeviation, -halfSize.z ),
+				new Vector3( -halfSize.x, maxDeviation, halfSize.z ),
+				new Vector3( halfSize.x, maxDeviation, -halfSize.z ),
+				new Vector3( halfSize.x, maxDeviation, halfSize.z )
 			};
 
 			// Setup the outputs for the 4 corners.
