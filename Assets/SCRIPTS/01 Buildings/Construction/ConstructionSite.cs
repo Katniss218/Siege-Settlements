@@ -125,6 +125,7 @@ namespace SS.Buildings
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
+					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
 
 					Selectable selectable = this.GetComponent<Selectable>();
 
@@ -205,6 +206,19 @@ namespace SS.Buildings
 
 					kvp.Value.remaining += resAmt;
 				}
+			}
+		}
+
+		public void OnFactionChange()
+		{
+			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
+			Color facColor = LevelDataManager.factions[this.GetComponent<FactionMember>().factionId].color;
+
+			for( int i = 0; i < constr_gfx.childCount; i++ )
+			{
+				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
+
+				meshRenderer.material.SetColor( "_FactionColor", facColor );
 			}
 		}
 
@@ -388,6 +402,7 @@ namespace SS.Buildings
 			}
 
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
+			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
 			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
 			
