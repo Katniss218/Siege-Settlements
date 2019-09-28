@@ -35,7 +35,7 @@ namespace SS
 		public static _UnityEvent_bool onHudLockChange = new _UnityEvent_bool();
 
 
-		private static UnityEngine.GameObject __particleSystemInstance = null;
+		private static GameObject __particleSystemInstance = null;
 		new public static GameObject particleSystem
 		{
 			get
@@ -131,7 +131,7 @@ namespace SS
 			}
 		}
 
-		public bool IsControllableByPlayer( UnityEngine.GameObject go, int playerId )
+		public bool IsControllableByPlayer( GameObject go, int playerId )
 		{
 			// Being controllable not necessarily means that you need to be selectable.
 
@@ -153,7 +153,7 @@ namespace SS
 
 					Vector3? terrainHitPos = null;
 
-					Extras.ResourceDeposit hitDeposit = null;
+					ResourceDeposit hitDeposit = null;
 					Transform hitReceiverTransform = null;
 					IPaymentReceiver[] hitPaymentReceivers = null;
 
@@ -165,7 +165,7 @@ namespace SS
 						}
 						else
 						{
-							Extras.ResourceDeposit deposit = raycastHits[i].collider.GetComponent<Extras.ResourceDeposit>();
+							ResourceDeposit deposit = raycastHits[i].collider.GetComponent<ResourceDeposit>();
 							if( deposit != null )
 							{
 								hitDeposit = deposit;
@@ -206,7 +206,7 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						UnityEngine.GameObject gameObject = hitInfo.collider.gameObject;
+						GameObject gameObject = hitInfo.collider.gameObject;
 						if( gameObject.layer != ObjectLayer.BUILDINGS )
 						{
 							return;
@@ -221,7 +221,7 @@ namespace SS
 						}
 
 						// If it is a building, start repair.
-						// Empty cs data (no resources present).
+						// Empty ConstructionSiteData (no resources present).
 						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
 
 						ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
@@ -264,7 +264,7 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						Extras.ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<Extras.ResourceDeposit>();
+						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
 
 						if( hitDeposit != null )
 						{
@@ -307,7 +307,7 @@ namespace SS
 		
 		private void AssignDropoffToNewGoal( RaycastHit hitInfo, Selectable[] selected )
 		{
-			List<UnityEngine.GameObject> movableWithInvGameObjects = new List<UnityEngine.GameObject>();
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
@@ -336,9 +336,9 @@ namespace SS
 			}
 		}
 
-		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, Extras.ResourceDeposit hitDeposit, Selectable[] selected )
+		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, ResourceDeposit hitDeposit, Selectable[] selected )
 		{
-			List<UnityEngine.GameObject> movableWithInvGameObjects = new List<UnityEngine.GameObject>();
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
@@ -393,7 +393,7 @@ namespace SS
 			const float GRID_MARGIN = 0.125f;
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<UnityEngine.GameObject> movableGameObjects = new List<UnityEngine.GameObject>();
+			List<GameObject> movableGameObjects = new List<GameObject>();
 
 			float biggestRadius = float.MinValue;
 
@@ -492,7 +492,7 @@ namespace SS
 		private void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<UnityEngine.GameObject> toBeAssignedGameObjects = new List<UnityEngine.GameObject>();
+			List<GameObject> toBeAssignedGameObjects = new List<GameObject>();
 			List<int> receiverIndices = new List<int>();
 
 // every unit could go to different payments on the same, clicked object (later change this to pie menu, where the player selects explicitly to which payment receiver to go).

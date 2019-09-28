@@ -13,30 +13,46 @@ namespace SS
 		/// The length of time after which the event will trigger.
 		/// </summary>
 		public float duration = 1.0f;
+
 		/// <summary>
 		/// The event that will fire when the timer reaches 'duration' seconds, or when 'TriggerEarly()' is called.
 		/// </summary>
 		public UnityEvent onTimerEnd = new UnityEvent();
+		
 
-		void Start()
-		{
-#warning make it start after invoking a method, instead of on start().
-			this.StartCoroutine( this._Timer() );
-		}
 
-		public void ResetTimer()
+		/// <summary>
+		/// Starts the timer.
+		/// </summary>
+		public void StartTimer()
 		{
-			this.StopCoroutine( this._Timer() );
 			this.StartCoroutine( this._Timer() );
 		}
 
 		/// <summary>
-		/// Invokes the event early, stops the timer from firing after the set amount of time.
+		/// Stops the timer, without triggering the onTimerEnd event.
+		/// </summary>
+		public void StopTimer()
+		{
+			this.StopCoroutine( this._Timer() );
+		}
+
+		/// <summary>
+		/// Restarts the timer.
+		/// </summary>
+		public void RestartTimer()
+		{
+			this.StopTimer();
+			this.StartTimer();
+		}
+
+		/// <summary>
+		/// Invokes the onTimerEnd event early, stops the timer.
 		/// </summary>
 		public void OverrideTrigger()
 		{
 			this.onTimerEnd?.Invoke();
-			this.StopAllCoroutines();
+			this.StopTimer();
 		}
 		
 		IEnumerator _Timer()

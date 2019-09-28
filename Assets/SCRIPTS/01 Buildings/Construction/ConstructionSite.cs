@@ -133,7 +133,7 @@ namespace SS.Buildings
 					if( selectable != null )
 					{
 #warning seems like it's not called when building walls using "K" shortcut.
-						Selection.ForceSelectionUIRedraw( selectable ); // forse redraw to refresh after the const site has beed destroyed.
+						Selection.ForceSelectionUIRedraw( selectable ); // force redraw to refresh after the construction site has been destroyed.
 					}
 				}
 

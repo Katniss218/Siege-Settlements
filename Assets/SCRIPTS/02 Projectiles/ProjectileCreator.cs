@@ -53,7 +53,7 @@ namespace SS.Projectiles
 			// Set the projectile's lifetime and reset the lifetime timer.
 			TimerHandler t = gameObject.GetComponent<TimerHandler>();
 			t.duration = DEFAULT_LIFETIME;
-			t.ResetTimer();
+			t.RestartTimer(); // DON'T just StartTimer(), RestartTimer() in case the timer has been started before.
 
 
 			// Remove old trail (if present).
@@ -104,7 +104,7 @@ namespace SS.Projectiles
 
 		private static void MakeStuck( GameObject unstuckProjectile )
 		{
-			unstuckProjectile.GetComponent<TimerHandler>().ResetTimer(); // reset the timer to count again from after being stuck.
+			unstuckProjectile.GetComponent<TimerHandler>().RestartTimer(); // reset the timer to count again from after being stuck.
 
 			Object.Destroy( unstuckProjectile.GetComponent<RotateAlongVelocity>() );
 			Object.Destroy( unstuckProjectile.GetComponent<Rigidbody>() );
