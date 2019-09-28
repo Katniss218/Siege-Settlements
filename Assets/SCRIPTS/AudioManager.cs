@@ -9,14 +9,11 @@ namespace SS
 	public static class AudioManager
 	{
 		private static List<AudioSource> sources = new List<AudioSource>();
-
-		private static Transform audioSourcesParent => Main.main_transform;
-
+		
 		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch )
 		{
 			// Create a new source GameObject to hold the new AudioSource.
 			GameObject gameObject = new GameObject( "AudioSource" );
-			gameObject.transform.SetParent( audioSourcesParent );
 
 			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();

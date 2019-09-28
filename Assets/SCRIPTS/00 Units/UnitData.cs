@@ -44,9 +44,8 @@ namespace SS.Levels.SaveStates
 			{
 				this.items.Add( serializer.ReadString( new Path( "Items.{0}.Id", i ) ), serializer.ReadInt( new Path( "Items.{0}.Amount", i ) ) );
 			}
-
+			
 			TAIGoalType goalType = (TAIGoalType)serializer.ReadByte( "TAIGoalType" );
-#warning TODO - Check if the tag is present, not against the value. Remove "None" goal type.
 			if( goalType != TAIGoalType.None )
 			{
 				switch( goalType )

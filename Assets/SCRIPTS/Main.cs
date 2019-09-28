@@ -105,32 +105,6 @@ namespace SS
 			}
 		}
 
-		private static Transform __main_transform = null;
-		public static Transform main_transform
-		{
-			get
-			{
-				if( __main_transform == null )
-				{
-					__main_transform = FindObjectOfType<Main>().transform;
-				}
-				return __main_transform;
-			}
-		}
-
-		private static ResourcePanel __resourcePanel = null;
-		public static ResourcePanel resourcePanel
-		{
-			get
-			{
-				if( __resourcePanel == null )
-				{
-					__resourcePanel = FindObjectOfType<ResourcePanel>();
-				}
-				return __resourcePanel;
-			}
-		}
-
 		public bool IsControllableByPlayer( GameObject go, int playerId )
 		{
 			// Being controllable not necessarily means that you need to be selectable.
@@ -298,6 +272,21 @@ namespace SS
 				LevelManager.SaveScene( "save_new" );
 			}
 
+			if( Input.GetKeyDown( KeyCode.Alpha1 ) )
+			{
+				if( !EventSystem.current.IsPointerOverGameObject() )
+				{
+					RaycastHit hitInfo;
+					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					{
+						FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
+						if( fac != null )
+						{
+							fac.factionId = 1;
+						}
+					}
+				}
+			}
 			if( Input.GetKeyDown( KeyCode.Alpha0 ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
@@ -510,12 +499,19 @@ namespace SS
 
 		private void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, Selectable[] selected )
 		{
+			FactionMember recFactionMember = paymentReceiverTransform.GetComponent<FactionMember>();
+			if( recFactionMember != null )
+			{
+				// Don't assign make payment to non player.
+				if( recFactionMember.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					return;
+				}
+			}
+
+
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> toBeAssignedGameObjects = new List<GameObject>();
-			List<int> receiverIndices = new List<int>();
-
-// every unit could go to different payments on the same, clicked object (later change this to pie menu, where the player selects explicitly to which payment receiver to go).
-// that payment receiver needs an icon to display. So by extension - every payment receiver needs an icon.
 			
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -538,11 +534,9 @@ namespace SS
 					continue;
 				}
 
-				// loop over every receiver and choose a compatible one.
-#warning Revert this to not search for compatible receiver, instead just check if receiver is present.
+				// loop over every receiver and check if any of them wants resources that are in the selected obj's inventory.
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
-
 					Dictionary<string, int> wantedRes = paymentReceivers[j].GetWantedResources();
 
 					bool hasWantedItem_s = false;
@@ -558,10 +552,9 @@ namespace SS
 					if( hasWantedItem_s )
 					{
 						toBeAssignedGameObjects.Add( selected[i].gameObject );
-						receiverIndices.Add( j );
 						break;
 					}
-					// if this receiver is not compatible - onto the next one.
+					// if this receiver is not compatible - check the next one.
 				}
 			}
 
@@ -587,25 +580,25 @@ namespace SS
 			{
 				return building.guid;
 			}
-			Projectile projectile = obj.GetComponent<Projectile>();
-			if( projectile != null )
+			ResourceDeposit deposit = obj.GetComponent<ResourceDeposit>();
+			if( deposit != null )
 			{
-				return projectile.guid;
+				return deposit.guid;
 			}
 			Hero hero = obj.GetComponent<Hero>();
 			if( hero != null )
 			{
 				return hero.guid;
 			}
+			Projectile projectile = obj.GetComponent<Projectile>();
+			if( projectile != null )
+			{
+				return projectile.guid;
+			}
 			Extra extra = obj.GetComponent<Extra>();
 			if( extra != null )
 			{
 				return extra.guid;
-			}
-			ResourceDeposit deposit = obj.GetComponent<ResourceDeposit>();
-			if( deposit != null )
-			{
-				return deposit.guid;
 			}
 			throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
 		}
@@ -630,15 +623,6 @@ namespace SS
 				}
 			}
 
-			Projectile[] projectiles = Projectile.GetAllProjectiles();
-			for( int i = 0; i < projectiles.Length; i++ )
-			{
-				if( projectiles[i].guid == guid )
-				{
-					return projectiles[i].gameObject;
-				}
-			}
-
 			Hero[] heroes = Hero.GetAllHeroes();
 			for( int i = 0; i < heroes.Length; i++ )
 			{
@@ -648,21 +632,30 @@ namespace SS
 				}
 			}
 
-			Extra[] extras = Extra.GetAllExtras();
-			for( int i = 0; i < extras.Length; i++ )
-			{
-				if( extras[i].guid == guid )
-				{
-					return extras[i].gameObject;
-				}
-			}
-
 			ResourceDeposit[] resourceDeposits = ResourceDeposit.GetAllResourceDeposits();
 			for( int i = 0; i < resourceDeposits.Length; i++ )
 			{
 				if( resourceDeposits[i].guid == guid )
 				{
 					return resourceDeposits[i].gameObject;
+				}
+			}
+
+			Projectile[] projectiles = Projectile.GetAllProjectiles();
+			for( int i = 0; i < projectiles.Length; i++ )
+			{
+				if( projectiles[i].guid == guid )
+				{
+					return projectiles[i].gameObject;
+				}
+			}
+
+			Extra[] extras = Extra.GetAllExtras();
+			for( int i = 0; i < extras.Length; i++ )
+			{
+				if( extras[i].guid == guid )
+				{
+					return extras[i].gameObject;
 				}
 			}
 			return null;
