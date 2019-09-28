@@ -25,7 +25,7 @@ namespace SS.Buildings
 		private void SnapToGround()
 		{
 			RaycastHit hitInfo;
-			if( Physics.Raycast( new Ray( this.transform.position, Vector3.down ), out hitInfo, float.MaxValue, ObjectLayer.TERRAIN_MASK ) )
+			if( Physics.Raycast( new Ray( this.transform.position + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down ), out hitInfo, float.MaxValue, ObjectLayer.TERRAIN_MASK ) )
 			{
 				this.transform.position = hitInfo.point;
 			}
@@ -126,7 +126,7 @@ namespace SS.Buildings
 				}
 
 				// snap the preview to ground.
-				SnapToGround();
+				this.SnapToGround();
 			}
 		}
 
