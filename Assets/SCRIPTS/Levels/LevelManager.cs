@@ -167,6 +167,7 @@ namespace SS.Levels
 
 			SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
 			SceneManager.UnloadSceneAsync( "Level - '" + currentLevelId + ":" + currentLevelSaveStateId + "'" );
+#warning the scene is playing until gets unloaded - can produce errors when the purges happen before unload.
 			DefinitionManager.Purge();
 			AssetManager.Purge();
 			AssetManager.sourceLevelId = null;
@@ -176,7 +177,7 @@ namespace SS.Levels
 			MouseOverHandler.onMouseStay.RemoveAllListeners();
 
 			Selection.Purge();
-			AudioManager.Purge();
+			AudioManager.StopSounds();
 
 			loadedLevelScene = null;
 			currentLevelId = null;

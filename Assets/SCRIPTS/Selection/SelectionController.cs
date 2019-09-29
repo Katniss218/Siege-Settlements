@@ -91,13 +91,13 @@ namespace SS
 								if( !Selection.IsHighlighted( uniqueObjs[i] ) )
 								{
 									Selection.HighlightSelected( uniqueObjs[i] );
-									AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+									AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 								}
 							}
 							else
 							{
 								Selection.SelectAndHighlight( uniqueObjs[i] );
-								AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+								AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 							}
 						}
 					}
@@ -113,7 +113,7 @@ namespace SS
 					if( numSelected > 0 )
 					{
 						Selection.DeselectAll();
-						AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
 					}
 				}
 				else
@@ -132,12 +132,12 @@ namespace SS
 						{
 							Selection.SelectAndHighlight( uniqueObjs[i] );
 							
-							AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
 							
 						}
 						else
 						{
-							AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
+							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
 						}
 					}
 				}

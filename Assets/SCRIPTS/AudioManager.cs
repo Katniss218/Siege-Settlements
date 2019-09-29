@@ -6,20 +6,33 @@ namespace SS
 	/// <summary>
 	/// Manages audio clips. Use it to play sounds.
 	/// </summary>
-	public static class AudioManager
+	public class AudioManager : MonoBehaviour
 	{
 		private static List<AudioSource> sources = new List<AudioSource>();
-		
-		public static void Purge()
-		{
-#warning AudioManager's sources should be in the persistent scene. The same goes for the AudioManager itself. They can be stopped at will.
-			sources.Clear();
-		}
 
+		private static Transform __audioSourceContainer;
+		private static Transform audioSourceContainer
+		{
+			get
+			{
+				if( __audioSourceContainer == null )
+				{
+					__audioSourceContainer = Object.FindObjectOfType<AudioManager>().transform;
+				}
+				return __audioSourceContainer;
+			}
+		}
+		
 		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch )
 		{
+			if( audioSourceContainer == null )
+			{
+				throw new System.Exception( "Can't play sound. There are no AudioManagers added to any GameObject." );
+			}
+
 			// Create a new source GameObject to hold the new AudioSource.
 			GameObject gameObject = new GameObject( "AudioSource" );
+			gameObject.transform.SetParent( audioSourceContainer );
 
 			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
@@ -42,7 +55,7 @@ namespace SS
 		/// <param name="clip">The sound to play.</param>
 		/// <param name="volume">The volume (0-1)</param>
 		/// <param name="pitch">The pitch.</param>
-		public static void Play( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
+		public static void PlaySound( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
 		{
 			foreach( AudioSource audioSource in sources )
 			{
@@ -64,7 +77,26 @@ namespace SS
 			sources.Add( newAudioSource );
 		}
 
-		private static void SetClipAndPlay( AudioSource source, TimerHandler timer, AudioClip clip, float volume, float pitch )
+		public static void StopSounds( AudioClip matchClip = null )
+		{
+			foreach( AudioSource audioSource in sources )
+			{
+				if( audioSource == null )
+				{
+					throw new System.Exception( "Null audio source found." );
+				}
+
+				if( audioSource.isPlaying )
+				{
+					if( matchClip == null || audioSource.clip == matchClip )
+					{
+						audioSource.Stop();
+					}
+				}
+			}
+		}
+
+		private static void SetClipAndPlay( AudioSource source, TimerHandler timerHandler, AudioClip clip, float volume, float pitch )
 		{
 			// Sets the source's clip, volume, and pitch.
 			// Also sets the timer's duration to the clip's length, as it should never be different.
@@ -73,7 +105,7 @@ namespace SS
 			source.pitch = pitch;
 			source.clip = clip;
 
-			timer.duration = clip.length;
+			timerHandler.duration = clip.length;
 
 			source.Play();
 		}

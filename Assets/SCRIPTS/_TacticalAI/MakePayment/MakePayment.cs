@@ -65,7 +65,7 @@ namespace SS
 						this.inventory.Remove( kvp.Key, amountPayed );
 						paymentReceivers[i].ReceivePayment( kvp.Key, amountPayed );
 						ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-						AudioManager.Play( resDef.dropoffSound.Item2 );
+						AudioManager.PlaySound( resDef.dropoffSound.Item2 );
 					}
 					// If there is no resources to pay (everything spent).
 					if( this.inventory.isEmpty )

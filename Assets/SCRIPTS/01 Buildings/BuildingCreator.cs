@@ -307,7 +307,7 @@ namespace SS.Buildings
 				{
 					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-				AudioManager.Play( building.deathSound );
+				AudioManager.PlaySound( building.deathSound );
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );

@@ -134,7 +134,7 @@ namespace SS.Modules
 					ranVel.z *= UnityEngine.Random.Range( 0.9f, 1.1f );
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, ranVel );
 				}
-				AudioManager.Play( this.attackSoundEffect );
+				AudioManager.PlaySound( this.attackSoundEffect );
 			}
 			this.lastAttackTimestamp = Time.time;
 		}
