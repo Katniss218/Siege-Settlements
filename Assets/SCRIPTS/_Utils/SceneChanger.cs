@@ -9,12 +9,12 @@ namespace Katniss.Utils
 	{
 		public void SwitchScene( string sceneName )
 		{
-			SceneManager.LoadScene( sceneName );
+			SceneManager.LoadScene( sceneName, LoadSceneMode.Additive );
 		}
 
 		public void SwitchScene( int buildIndex )
 		{
-			SceneManager.LoadScene( buildIndex );
+			SceneManager.LoadScene( buildIndex, LoadSceneMode.Additive );
 		}
 	}
 }

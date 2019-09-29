@@ -220,7 +220,7 @@ namespace SS
 						for( int i = 0; i < paymentReceivers.Length; i++ )
 						{
 							Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
-							
+
 							foreach( var kvp in wantedRes )
 							{
 								paymentReceivers[i].ReceivePayment( kvp.Key, kvp.Value );
@@ -265,10 +265,6 @@ namespace SS
 				isHudLocked = !isHudLocked;
 
 				onHudLockChange?.Invoke( isHudLocked );
-			}
-			if( Input.GetKeyDown( KeyCode.F3 ) )
-			{
-				LevelManager.SaveScene( "save_new" );
 			}
 
 			if( Input.GetKeyDown( KeyCode.Alpha1 ) )
@@ -335,6 +331,17 @@ namespace SS
 						data.resources.Add( "resource.stone", 20 );
 						ResourceDepositCreator.Create( def, data );
 					}
+				}
+			}
+			if( Input.GetKeyDown( KeyCode.Pause ) )
+			{
+				if( PauseManager.isPaused )
+				{
+					PauseManager.Unpause();
+				}
+				else
+				{
+					PauseManager.Pause();
 				}
 			}
 		}

@@ -36,6 +36,19 @@ namespace SS.Content
 		private static TechnologyDefinition[] technologyDefinitions = null;
 
 
+		public static void Purge()
+		{
+			unitDefinitions = null;
+			buildingDefinitions = null;
+			projectileDefinitions = null;
+			heroDefinitions = null;
+			extraDefinitions = null;
+			resourceDepositDefinitions = null;
+
+			resourceDefinitions = null;
+			technologyDefinitions = null;
+		}
+
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

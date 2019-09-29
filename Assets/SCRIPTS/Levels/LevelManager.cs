@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace SS.Levels
@@ -19,7 +20,7 @@ namespace SS.Levels
 	/// <summary>
 	/// Manages level-specific stuff.
 	/// </summary>
-	public class LevelManager
+	public class LevelManager : MonoBehaviour
 	{
 		public const string DEFAULT_LEVEL_SAVE_STATE_IDENTIFIER = "__default__"; // filename of default save state.
 		public const string DEFAULT_LEVEL_SAVE_STATE_DISPLAYNAME = ""; // display name of default save state
@@ -38,13 +39,15 @@ namespace SS.Levels
 
 		public static string currentLevelId { get; private set; }
 		public static string currentLevelDisplayName { get; private set; }
+#warning not loading display names.
 
 		public static string currentLevelSaveStateId { get; private set; }
 		public static string currentLevelSaveStateDisplayName { get; private set; }
 
+		private static Scene? loadedLevelScene;
 
 		const char REPLACEMENT_CHAR = '_';
-		static readonly char[] INVALID_CHARS = new char[] { '/', '\\', '?', '*', ':', '<', '>', '|' };
+		static readonly char[] INVALID_CHARS = new char[] { ' ', '/', '\\', '?', '*', ':', '<', '>', '|' };
 		/// <summary>
 		/// Converts displayname into valid filename (removes special path characters).
 		/// </summary>
@@ -88,19 +91,19 @@ namespace SS.Levels
 
 		public static string GetLevelPath( string levelIdentifier )
 		{
-			return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar
+			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
 				+ levelIdentifier;
 		}
 
 		public static string GetFullDataPath( string levelIdentifier, string dataPath )
 		{
-			return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar
+			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
 				+ levelIdentifier + System.IO.Path.DirectorySeparatorChar  + "Data" + System.IO.Path.DirectorySeparatorChar + dataPath;
 		}
 
 		public static string GetFullAssetsPath( string levelIdentifier, string assetsPath )
 		{
-			return Application.streamingAssetsPath + System.IO.Path.DirectorySeparatorChar + "Levels" + System.IO.Path.DirectorySeparatorChar
+			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
 				+ levelIdentifier + System.IO.Path.DirectorySeparatorChar + "Assets" + System.IO.Path.DirectorySeparatorChar + assetsPath;
 		}
 
@@ -163,28 +166,19 @@ namespace SS.Levels
 			//#warning destroy and unload terrain.
 			//#warning unload definitions and assets from the managers.
 
-			UnityEngine.SceneManagement.SceneManager.LoadScene( "MainMenu" );
+			SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
+			SceneManager.UnloadSceneAsync( "Level - '" + currentLevelId + ":" + currentLevelSaveStateId + "'" );
+			DefinitionManager.Purge();
+			AssetManager.Purge();
+			Main.onHudLockChange.RemoveAllListeners();
+			MouseOverHandler.onMouseEnter.RemoveAllListeners();
+			MouseOverHandler.onMouseExit.RemoveAllListeners();
+			MouseOverHandler.onMouseStay.RemoveAllListeners();
 
+			loadedLevelScene = null;
 			currentLevelId = null;
 			currentLevelSaveStateId = null;
 		}
-
-
-		private static void DeleteMainMenuUI()
-		{
-			// Find every gameObject in the scene.
-			GameObject[] gameObjects = Object.FindObjectsOfType<GameObject>();
-
-			// If it's the main menu object, destroy it.
-			for( int i = 0; i < gameObjects.Length; i++ )
-			{
-				if( gameObjects[i].CompareTag( "Menu" ) )
-				{
-					Object.Destroy( gameObjects[i] );
-				}
-			}
-		}
-
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -215,6 +209,13 @@ namespace SS.Levels
 			currentLevelId = levelIdentifier;
 			currentLevelSaveStateId = levelSaveStateIdentifier;
 
+
+			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
+			SceneManager.SetActiveScene( loadedLevelScene.Value );
+
+			SceneManager.UnloadSceneAsync( "MainMenu" );
+
+
 #warning add a parameter for level id.
 			DefinitionManager.LoadUnitDefinitions();
 			DefinitionManager.LoadBuildingDefinitions();
@@ -225,10 +226,46 @@ namespace SS.Levels
 
 			DefinitionManager.LoadResourceDefinitions();
 			DefinitionManager.LoadTechnologyDefinitions();
+
+			//#######
+			//#######
+			//#######
+			//#######
+
+
+			//# "Persist-Between" scene
+			// Contains persist-between-scenes objects. (e.g. level manager (loader), audio manager, input manager (later))
+			// Precompiled, doesn't change.
+
+			//#######
+
+			//# "Main Menu" scene
+			// Contains main menu.
+			// also contains canvases for each of the submenus.
+
+			//# "Campaign" scene
+			// Campaigns are a separate file that joins levels together.
+			// a level can be loaded after the previous one is completed.
+			// Contains a map of current campaign.
+			// The map contains areas with buttons that correspond to the levels.
+
+			//# "Load Level" scene - Load Level
+			// Contains list of every level and level save state.
+			// similar to save/load menu, but on a separate scene. And only allows loading (since the level is not loaded so saving not possible).
+
+			//# "Level" Scene
+			// Procedurally created when level is loaded, contains the level objects.
+			// This is the actual game window scene, in which the gameplay takes place.
+			// Also contains a "Level" GameObject that holds information about the current level.
+			// Contains level GUI (on a separate canvas).
+			// Destroyed when a level is unloaded.
+
+
+			//#######
+			//#######
+			//#######
+			//#######
 			
-
-			DeleteMainMenuUI(); // remove main menu ui canvas (all ui objects)
-
 			InstantiateGameUI(); // game UI prefabs
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
@@ -573,7 +610,7 @@ namespace SS.Levels
 		/// Saves the scene to the specified level save state (level itself is the currently loaded ofc).
 		/// </summary>
 		/// <param name="saveSettings">The additional settings that define the behaviour of the method.</param>
-		public static void SaveScene( string newLevelSaveStateId )
+		public static void SaveScene( string newLevelSaveStateDisplayName, string newLevelSaveStateId )
 		{
 			Unit[] units = Unit.GetAllUnits();
 			Building[] buildings = Building.GetAllBuildings();
@@ -632,6 +669,7 @@ namespace SS.Levels
 			string levelSaveStateFilePath = LevelManager.GetLevelSaveStatePath( currentLevelId, newLevelSaveStateId ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( levelSaveStateFilePath ) );
 
+			serializer.WriteString( "", "DisplayName", newLevelSaveStateDisplayName );
 			LevelDataManager.SaveDaylightCycleData( serializer );
 			LevelDataManager.SaveCameraData( serializer );
 

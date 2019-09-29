@@ -35,6 +35,18 @@ namespace SS.Content
 		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
 		
 
+		public static void Purge()
+		{
+			prefabs.Clear();
+			fonts.Clear();
+
+			textures.Clear();
+			sprites.Clear();
+			meshes.Clear();
+			audioClips.Clear();
+
+			materials.Clear();
+		}
 		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

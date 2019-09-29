@@ -1,0 +1,25 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace SS
+{
+	/// <summary>
+	/// Loads specified scene, when Start() is called.
+	/// </summary>
+	[DisallowMultipleComponent]
+	public class DefaultSceneLoader : MonoBehaviour
+	{
+		[SerializeField] private string defaultSceneName;
+
+		void Start()
+		{
+			if( string.IsNullOrEmpty( defaultSceneName ) )
+			{
+				throw new System.Exception( "The default scene hasn't been set." );
+			}
+
+			SceneManager.LoadScene( defaultSceneName, LoadSceneMode.Additive );
+		}
+	}
+}
