@@ -61,7 +61,7 @@ namespace SS
 
 						ResourceDepositCreator.Create( newDepositDef, data );
 
-						AudioManager.PlayNew( resourceDef.dropoffSound.Item2 );
+						AudioManager.Play( resourceDef.dropoffSound.Item2 );
 					}
 				}
 				inventory.Clear();

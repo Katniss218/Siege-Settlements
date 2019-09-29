@@ -23,27 +23,18 @@ namespace SS.UI
 			{
 				return;
 			}
-						
+
 			// User will input level names (for both saving and loading).
+			// Buttons will input names.
 
-			// Buttons will input ids.
+			// the system will go through every button/something and check the corresponding path.
 
-			//StartCoroutine( _Load( level, saveState ) );
-#warning fill in the ids in the input fields, but if you type in display names, they will get converted to ids.
-			//LevelManager.UnloadLevel();
+			if( LevelManager.isLevelLoaded )
+			{
+#warning figure out a way to load levels from within the in-game save/load menu.
+				throw new System.Exception( "The level is already loaded." );
+			}
 			LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text );
-		}
-
-		IEnumerator _Load( string level, string saveState )
-		{
-			LevelManager.UnloadLevel();
-
-			yield return null;
-
-			Debug.Log( "BEFORE" );
-			LevelManager.LoadLevel( level, saveState );
-			Debug.Log( "AFTER" );
-#warning doesn't work.
 		}
 	}
 }

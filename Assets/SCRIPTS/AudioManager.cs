@@ -10,6 +10,12 @@ namespace SS
 	{
 		private static List<AudioSource> sources = new List<AudioSource>();
 		
+		public static void Purge()
+		{
+#warning AudioManager's sources should be in the persistent scene. The same goes for the AudioManager itself. They can be stopped at will.
+			sources.Clear();
+		}
+
 		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch )
 		{
 			// Create a new source GameObject to hold the new AudioSource.
@@ -36,7 +42,7 @@ namespace SS
 		/// <param name="clip">The sound to play.</param>
 		/// <param name="volume">The volume (0-1)</param>
 		/// <param name="pitch">The pitch.</param>
-		public static void PlayNew( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
+		public static void Play( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
 		{
 			foreach( AudioSource audioSource in sources )
 			{

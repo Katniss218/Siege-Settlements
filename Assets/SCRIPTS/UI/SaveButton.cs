@@ -8,7 +8,7 @@ namespace SS.UI
 {
 	public class SaveButton : MonoBehaviour
 	{
-		[SerializeField] private SaveLoadMenu saveLoadMenu;
+		[SerializeField] private SaveLoadMenu saveLoadMenu = null;
 
 		public TMP_InputField levelInput;
 		public TMP_InputField levelSaveStateInput;

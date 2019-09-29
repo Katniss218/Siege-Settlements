@@ -8,7 +8,6 @@ namespace SS
 
 		public static void Pause()
 		{
-#warning TODO - While paused, the player is still able to send inputs.
 			isPaused = true;
 			Time.timeScale = 0.0f;
 		}

@@ -198,7 +198,7 @@ namespace SS
 						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
 
 						ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
-						AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+						AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 					}
 				}
 			}
@@ -379,7 +379,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -431,7 +431,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.gameObject );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -477,7 +477,7 @@ namespace SS
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
 					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
-					AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+					AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 				}
 				else
 				{
@@ -532,7 +532,7 @@ namespace SS
 				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
 
 				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit.gameObject );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -601,7 +601,7 @@ namespace SS
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.gameObject );
-				AudioManager.PlayNew( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.Play( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 

@@ -173,5 +173,11 @@ namespace SS
 			highlighted = null;
 			selected.Clear();
 		}
+
+		public static void Purge()
+		{
+			highlighted = null;
+			selected.Clear();
+		}
 	}
 }

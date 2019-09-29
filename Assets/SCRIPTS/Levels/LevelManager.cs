@@ -39,7 +39,6 @@ namespace SS.Levels
 
 		public static string currentLevelId { get; private set; }
 		public static string currentLevelDisplayName { get; private set; }
-#warning not loading display names.
 
 		public static string currentLevelSaveStateId { get; private set; }
 		public static string currentLevelSaveStateDisplayName { get; private set; }
@@ -170,10 +169,14 @@ namespace SS.Levels
 			SceneManager.UnloadSceneAsync( "Level - '" + currentLevelId + ":" + currentLevelSaveStateId + "'" );
 			DefinitionManager.Purge();
 			AssetManager.Purge();
+			AssetManager.sourceLevelId = null;
 			Main.onHudLockChange.RemoveAllListeners();
 			MouseOverHandler.onMouseEnter.RemoveAllListeners();
 			MouseOverHandler.onMouseExit.RemoveAllListeners();
 			MouseOverHandler.onMouseStay.RemoveAllListeners();
+
+			Selection.Purge();
+			AudioManager.Purge();
 
 			loadedLevelScene = null;
 			currentLevelId = null;
@@ -209,6 +212,7 @@ namespace SS.Levels
 			currentLevelId = levelIdentifier;
 			currentLevelSaveStateId = levelSaveStateIdentifier;
 
+			AssetManager.sourceLevelId = levelIdentifier;
 
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
@@ -216,57 +220,25 @@ namespace SS.Levels
 			SceneManager.UnloadSceneAsync( "MainMenu" );
 
 
-#warning add a parameter for level id.
-			DefinitionManager.LoadUnitDefinitions();
-			DefinitionManager.LoadBuildingDefinitions();
-			DefinitionManager.LoadProjectileDefinitions();
-			DefinitionManager.LoadHeroDefinitions();
-			DefinitionManager.LoadExtraDefinitions();
-			DefinitionManager.LoadResourceDepositDefinitions();
+#warning Reading/writing to the same file in multiple places.
+			KFFSerializer serializer = KFFSerializer.ReadFromFile( GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
+			currentLevelDisplayName = serializer.ReadString( "DisplayName" );
 
-			DefinitionManager.LoadResourceDefinitions();
-			DefinitionManager.LoadTechnologyDefinitions();
-
-			//#######
-			//#######
-			//#######
-			//#######
+			serializer = KFFSerializer.ReadFromFile( GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff", DefinitionManager.FILE_ENCODING );
+			currentLevelSaveStateDisplayName = serializer.ReadString( "DisplayName" );
 
 
-			//# "Persist-Between" scene
-			// Contains persist-between-scenes objects. (e.g. level manager (loader), audio manager, input manager (later))
-			// Precompiled, doesn't change.
+			DefinitionManager.LoadUnitDefinitions( levelIdentifier );
+			DefinitionManager.LoadBuildingDefinitions( levelIdentifier );
+			DefinitionManager.LoadProjectileDefinitions( levelIdentifier );
+			DefinitionManager.LoadHeroDefinitions( levelIdentifier );
+			DefinitionManager.LoadExtraDefinitions( levelIdentifier );
+			DefinitionManager.LoadResourceDepositDefinitions( levelIdentifier );
 
-			//#######
-
-			//# "Main Menu" scene
-			// Contains main menu.
-			// also contains canvases for each of the submenus.
-
-			//# "Campaign" scene
-			// Campaigns are a separate file that joins levels together.
-			// a level can be loaded after the previous one is completed.
-			// Contains a map of current campaign.
-			// The map contains areas with buttons that correspond to the levels.
-
-			//# "Load Level" scene - Load Level
-			// Contains list of every level and level save state.
-			// similar to save/load menu, but on a separate scene. And only allows loading (since the level is not loaded so saving not possible).
-
-			//# "Level" Scene
-			// Procedurally created when level is loaded, contains the level objects.
-			// This is the actual game window scene, in which the gameplay takes place.
-			// Also contains a "Level" GameObject that holds information about the current level.
-			// Contains level GUI (on a separate canvas).
-			// Destroyed when a level is unloaded.
-
-
-			//#######
-			//#######
-			//#######
-			//#######
+			DefinitionManager.LoadResourceDefinitions( levelIdentifier );
+			DefinitionManager.LoadTechnologyDefinitions( levelIdentifier );
 			
-			InstantiateGameUI(); // game UI prefabs
+			InstantiateLevelPrefabs(); // game UI prefabs
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
 
@@ -590,7 +562,7 @@ namespace SS.Levels
 			LevelTerrainCreator.UpdateNavMesh();
 		}
 
-		private static void InstantiateGameUI()
+		private static void InstantiateLevelPrefabs()
 		{
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Map Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Map Scene/__ Game UI Canvas __" ), Vector3.zero, Quaternion.identity );

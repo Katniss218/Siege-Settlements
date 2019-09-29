@@ -35,6 +35,9 @@ namespace SS.Content
 		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
 		
 
+		public static string sourceLevelId { get; set; }
+
+
 		public static void Purge()
 		{
 			prefabs.Clear();
@@ -47,11 +50,11 @@ namespace SS.Content
 
 			materials.Clear();
 		}
-		
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 		public static GameObject GetPrefab( string path )
 		{
 			if( prefabs.TryGetValue( path, out GameObject ret ) )
@@ -108,13 +111,13 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, ExternalAssetLoader.LoadMesh( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				meshes.Add( path, ExternalAssetLoader.LoadMesh( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
-				if( !LevelManager.isLevelLoaded )
+				if( string.IsNullOrEmpty( sourceLevelId ) )
 				{
-					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+					throw new System.Exception( "Can't load asset '" + path + "'. The source level ID has not been set." );
 				}
 				meshes.Add( path, Resources.Load<Mesh>( path.Substring( BUILTIN_ASSET_IDENTIFIER.Length ) ) );
 			}
@@ -136,11 +139,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( !LevelManager.isLevelLoaded )
+				if( string.IsNullOrEmpty( sourceLevelId ) )
 				{
-					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+					throw new System.Exception( "Can't load asset '" + path + "'. The source level ID has not been set." );
 				}
-				textures.Add( path, ExternalAssetLoader.LoadTexture2D( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
+				textures.Add( path, ExternalAssetLoader.LoadTexture2D( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ), loadType ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -163,11 +166,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( !LevelManager.isLevelLoaded )
+				if( string.IsNullOrEmpty( sourceLevelId ) )
 				{
-					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+					throw new System.Exception( "Can't load asset '" + path + "'. The source level ID has not been set." );
 				}
-				sprites.Add( path, ExternalAssetLoader.LoadSprite( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				sprites.Add( path, ExternalAssetLoader.LoadSprite( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{
@@ -190,11 +193,11 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				if( !LevelManager.isLevelLoaded )
+				if( string.IsNullOrEmpty( sourceLevelId ) )
 				{
-					throw new System.Exception( "Can't load asset '" + path + "'. There is no level currently loaded." );
+					throw new System.Exception( "Can't load asset '" + path + "'. The source level ID has not been set." );
 				}
-				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( LevelManager.GetFullAssetsPath( LevelManager.currentLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				audioClips.Add( path, ExternalAssetLoader.LoadAudioClip( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{

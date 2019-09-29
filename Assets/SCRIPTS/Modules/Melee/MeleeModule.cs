@@ -105,7 +105,7 @@ namespace SS.Modules
 				if( target != null )
 				{
 					this.Attack( target );
-					AudioManager.PlayNew( this.attackSoundEffect );
+					AudioManager.Play( this.attackSoundEffect );
 				}
 			}
 		}

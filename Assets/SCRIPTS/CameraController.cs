@@ -73,6 +73,10 @@ namespace SS
 			{
 				return;
 			}
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			// Move Left-Right
 			if( Input.GetKey( KeyCode.A ) )
 			{

@@ -163,7 +163,7 @@ namespace SS.Projectiles
 				{
 					// when the projectile hits non-damageable object, it sticks into it (like an arrow).
 					MakeStuck( container );
-					AudioManager.PlayNew( projectile.missSound );
+					AudioManager.Play( projectile.missSound );
 					return;
 				}
 
@@ -177,7 +177,7 @@ namespace SS.Projectiles
 					}
 				}
 				hitDamageable.TakeDamage( projectile.damageSource.damageType, projectile.damageSource.GetRandomizedDamage(), projectile.damageSource.armorPenetration );
-				AudioManager.PlayNew( projectile.hitSound );
+				AudioManager.Play( projectile.hitSound );
 				Object.Destroy( container );
 			} );
 

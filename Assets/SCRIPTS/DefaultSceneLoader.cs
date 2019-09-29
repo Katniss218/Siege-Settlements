@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SS
@@ -10,7 +9,7 @@ namespace SS
 	[DisallowMultipleComponent]
 	public class DefaultSceneLoader : MonoBehaviour
 	{
-		[SerializeField] private string defaultSceneName;
+		[SerializeField] private string defaultSceneName = null;
 
 		void Start()
 		{

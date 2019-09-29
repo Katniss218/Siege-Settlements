@@ -56,9 +56,9 @@ namespace SS.Content
 
 		// Loading from CURRENT level. Replaces the old defs.
 		
-		public static void LoadUnitDefinitions()
+		public static void LoadUnitDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "units.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "units.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 			
@@ -73,9 +73,9 @@ namespace SS.Content
 		}
 
 
-		public static void LoadBuildingDefinitions()
+		public static void LoadBuildingDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "buildings.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "buildings.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -90,9 +90,9 @@ namespace SS.Content
 		}
 
 
-		public static void LoadProjectileDefinitions()
+		public static void LoadProjectileDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "projectiles.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "projectiles.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -107,9 +107,9 @@ namespace SS.Content
 		}
 
 
-		public static void LoadHeroDefinitions()
+		public static void LoadHeroDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "heroes.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "heroes.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -124,9 +124,9 @@ namespace SS.Content
 		}
 
 
-		public static void LoadExtraDefinitions()
+		public static void LoadExtraDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "extras.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "extras.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -140,9 +140,9 @@ namespace SS.Content
 			extraDefinitions = deserialized;
 		}
 
-		public static void LoadResourceDepositDefinitions()
+		public static void LoadResourceDepositDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "resource_deposits.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "resource_deposits.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -158,9 +158,9 @@ namespace SS.Content
 
 		// ///////////////////////////////////////////////
 
-		public static void LoadResourceDefinitions()
+		public static void LoadResourceDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "resources.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "resources.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
@@ -175,9 +175,9 @@ namespace SS.Content
 		}
 
 
-		public static void LoadTechnologyDefinitions()
+		public static void LoadTechnologyDefinitions( string levelIdentifier )
 		{
-			string path = LevelManager.GetFullDataPath( LevelManager.currentLevelId, "technologies.kff" );
+			string path = LevelManager.GetFullDataPath( levelIdentifier, "technologies.kff" );
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
 
