@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Katniss.Utils
+namespace SS.Factions
 {
 	/// <summary>
 	/// Represents relations between 2 members (indices) of type 'int'.

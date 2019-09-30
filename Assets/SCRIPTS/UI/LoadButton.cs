@@ -20,12 +20,7 @@ namespace SS.UI
 			{
 				return;
 			}
-
-#warning User will input level names (for both saving and loading).
-#warning Buttons will input names.
-
-#warning the system will go through every button/something and check the corresponding path.
-
+			
 			if( LevelManager.isLevelLoaded )
 			{
 				LevelManager.UnloadLevel( false, () =>

@@ -4,7 +4,7 @@ using SS.Technologies;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.factions
 {
 	/// <summary>
 	/// Represents a faction's data that changes.

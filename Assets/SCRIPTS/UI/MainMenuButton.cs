@@ -7,7 +7,7 @@ namespace SS.UI
 	{
 		public void _Trigger()
 		{
-			LevelManager.UnloadLevel(true, null);
+			LevelManager.UnloadLevel( true, null );
 		}
 	}
 }

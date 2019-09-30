@@ -1,7 +1,7 @@
 ﻿using KFF;
 using UnityEngine;
 
-namespace SS
+namespace SS.Factions
 {
 	/// <summary>
 	/// Represents faction's data, that doesn't change.

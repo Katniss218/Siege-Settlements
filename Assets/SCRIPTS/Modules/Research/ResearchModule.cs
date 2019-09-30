@@ -1,5 +1,6 @@
 ﻿using SS.Buildings;
 using SS.Content;
+using SS.Factions;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem.Payment;
