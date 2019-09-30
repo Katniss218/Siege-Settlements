@@ -1,9 +1,6 @@
 ﻿using SS.Levels;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace SS.UI
 {
@@ -31,7 +28,7 @@ namespace SS.UI
 
 			if( LevelManager.isLevelLoaded )
 			{
-#warning figure out a way to load levels from within the in-game save/load menu.
+#warning figure out a way to load levels from within the in-game save/load menu (needs to wait for the async oper to complete and hook up after it).
 				throw new System.Exception( "The level is already loaded." );
 			}
 			LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text );

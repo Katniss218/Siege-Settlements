@@ -161,13 +161,17 @@ namespace SS.Levels
 			{
 				throw new System.Exception( "There's no level loaded. You must load a level first." );
 			}
-			//#warning unload previous scene (destroy all level gameobjects)
-			//#warning destroy and unload terrain.
-			//#warning unload definitions and assets from the managers.
 
-			SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
-			SceneManager.UnloadSceneAsync( "Level - '" + currentLevelId + ":" + currentLevelSaveStateId + "'" );
-#warning the scene is playing until gets unloaded - can produce errors when the purges happen before unload.
+			AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "Level - '" + currentLevelId + ":" + currentLevelSaveStateId + "'" );
+
+			asyncOperation.completed += ( AsyncOperation oper ) =>
+			{
+				UnloadLevel_AfterAsync();
+			};
+		}
+
+		private static void UnloadLevel_AfterAsync()
+		{
 			DefinitionManager.Purge();
 			AssetManager.Purge();
 			AssetManager.sourceLevelId = null;
@@ -178,6 +182,8 @@ namespace SS.Levels
 
 			Selection.Purge();
 			AudioManager.StopSounds();
+
+			SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
 
 			loadedLevelScene = null;
 			currentLevelId = null;
@@ -210,17 +216,21 @@ namespace SS.Levels
 			{
 				levelSaveStateIdentifier = DEFAULT_LEVEL_SAVE_STATE_IDENTIFIER;
 			}
-			currentLevelId = levelIdentifier;
-			currentLevelSaveStateId = levelSaveStateIdentifier;
-
 			AssetManager.sourceLevelId = levelIdentifier;
 
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
 
-			SceneManager.UnloadSceneAsync( "MainMenu" );
+			AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
+			asyncOperation.completed += ( AsyncOperation oper ) =>
+			{
+				LoadLevel_AfterAsync( levelIdentifier, levelSaveStateIdentifier );
+			};
+		}
 
-
+		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
+		{
+			
 #warning Reading/writing to the same file in multiple places.
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
 			currentLevelDisplayName = serializer.ReadString( "DisplayName" );
@@ -338,12 +348,14 @@ namespace SS.Levels
 			{
 				Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
 			}
-			
 
+
+			currentLevelId = levelIdentifier;
+			currentLevelSaveStateId = levelSaveStateIdentifier;
 
 			lastLoadTime = Time.time;
 		}
-		
+
 		private static List<Tuple<UnitDefinition, UnitData>> GetSavedUnits( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
