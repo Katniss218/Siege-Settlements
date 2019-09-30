@@ -14,6 +14,7 @@ using SS.Projectiles;
 using SS.Units;
 using SS.Heroes;
 using SS.Levels;
+using SS.Factions;
 
 namespace SS
 {

@@ -7,6 +7,7 @@ using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Factions;
 
 namespace SS.Buildings
 {
