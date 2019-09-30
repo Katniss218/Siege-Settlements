@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.Levels;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace SS.Diplomacy
@@ -32,7 +33,7 @@ namespace SS.Diplomacy
 
 		// Checks if the faction members can target each other.
 		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.
-		internal static bool CanTargetCheck( FactionMember fac1, FactionMember fac2 )
+		internal static bool CanTargetAnother( FactionMember fac1, FactionMember fac2 )
 		{
 			if( fac1 == null )
 			{
@@ -42,7 +43,11 @@ namespace SS.Diplomacy
 			{
 				return true;
 			}
-			return fac1.factionId != fac2.factionId;
+			if( fac1.factionId == fac2.factionId )
+			{
+				return false;
+			}
+			return LevelDataManager.diplomaticRelations.Get( fac1.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
 	}
 }

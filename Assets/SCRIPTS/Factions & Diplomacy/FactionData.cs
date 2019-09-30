@@ -4,7 +4,7 @@ using SS.Technologies;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.factions
+namespace SS.Diplomacy
 {
 	/// <summary>
 	/// Represents a faction's data that changes.
@@ -15,7 +15,6 @@ namespace SS.factions
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>
 		public Dictionary<string, TechnologyResearchProgress> techs { get; private set; }
-
 
 		/// <summary>
 		/// Creates a new, blank faction.

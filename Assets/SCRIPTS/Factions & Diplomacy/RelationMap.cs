@@ -24,6 +24,18 @@ namespace SS.Diplomacy
 
 		private T[] __values;
 
+		public T this[int i]
+		{
+			get
+			{
+				return this.__values[i];
+			}
+			set
+			{
+				this.__values[i] = value;
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the relation between members n1 and n2.
 		/// </summary>
@@ -45,7 +57,7 @@ namespace SS.Diplomacy
 		/// <summary>
 		/// Returns the number of relations between members.
 		/// </summary>
-		public int Count
+		public int MatrixLength
 		{
 			get
 			{
@@ -60,12 +72,24 @@ namespace SS.Diplomacy
 
 
 
-		private int GetArrayLength( int size )
+		public static int GetMatrixLength( int size )
 		{
-			return ((this.Size - 1) * this.Size) / 2;
+			return ((size - 1) * size) / 2;
 		}
 
-		private int GetArrayIndex( int n1, int n2 )
+		public static int GetSize( int matrixLength )
+		{
+			float num = 0.5f * (float)(1 + Math.Sqrt( 1 + 8 * matrixLength ));
+
+			if( Math.Floor( num ) != num )
+			{
+				throw new Exception( "Invalid matrix length " + matrixLength );
+			}
+
+			return (int)num;
+		}
+		
+		private static int GetMatrixIndex( int n1, int n2 )
 		{
 			return Solt( n1 ) + n2;
 		}
@@ -78,7 +102,7 @@ namespace SS.Diplomacy
 		public RelationMap( int size )
 		{
 			this.Size = size;
-			__values = new T[this.GetArrayLength( size )];
+			__values = new T[GetMatrixLength( size )];
 		}
 
 		/// <summary>
@@ -89,7 +113,7 @@ namespace SS.Diplomacy
 		public RelationMap( int size, T defaultValue )
 		{
 			this.Size = size;
-			__values = Enumerable.Repeat( defaultValue, this.GetArrayLength( size ) ).ToArray();
+			__values = Enumerable.Repeat( defaultValue, GetMatrixLength( size ) ).ToArray();
 		}
 
 
@@ -114,7 +138,7 @@ namespace SS.Diplomacy
 				Swap<int>( ref n1, ref n2 );
 			}
 
-			return __values[GetArrayIndex( n1, n2 )];
+			return __values[GetMatrixIndex( n1, n2 )];
 		}
 
 		/// <summary>
@@ -138,7 +162,7 @@ namespace SS.Diplomacy
 				Swap<int>( ref n1, ref n2 );
 			}
 
-			__values[GetArrayIndex( n1, n2 )] = value;
+			__values[GetMatrixIndex( n1, n2 )] = value;
 		}
 
 		/// <summary>

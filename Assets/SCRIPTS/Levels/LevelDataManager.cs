@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using SS.factions;
 using SS.Diplomacy;
 using UnityEngine;
 
@@ -21,6 +20,8 @@ namespace SS.Levels
 		//
 
 		public const int PLAYER_FAC = 0;
+
+		public static int numFactions { get; private set; }
 
 		static FactionDefinition[] _factions;
 		public static FactionDefinition[] factions
@@ -53,7 +54,9 @@ namespace SS.Levels
 				_factionData = value;
 			}
 		}
-		
+
+		public static RelationMap<DiplomaticRelation> diplomaticRelations { get; private set; }
+
 		//
 		//    Quests
 		//
@@ -62,8 +65,8 @@ namespace SS.Levels
 		//
 		//    Dialogues
 		//
-		
-			
+
+
 
 
 		//
@@ -78,7 +81,7 @@ namespace SS.Levels
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+
 
 		public static void LoadFactions( string levelIdentifier )
 		{
@@ -90,6 +93,7 @@ namespace SS.Levels
 			int count = serializer.Analyze( "List" ).childCount;
 
 			factions = new FactionDefinition[count];
+			numFactions = count;
 
 			for( int i = 0; i < factions.Length; i++ )
 			{
@@ -107,6 +111,10 @@ namespace SS.Levels
 
 
 			int count = serializer.Analyze( "List" ).childCount;
+			if( count != numFactions )
+			{
+				throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
+			}
 
 			factionData = new FactionData[count];
 
@@ -116,6 +124,18 @@ namespace SS.Levels
 			}
 
 			serializer.DeserializeArray( "List", factionData );
+
+
+			int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
+
+			sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
+
+			diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
+
+			for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
+			{
+				diplomaticRelations[i] = (DiplomaticRelation)array[i];
+			}
 		}
 
 		public static void LoadDaylightCycle( string levelIdentifier )
@@ -199,7 +219,17 @@ namespace SS.Levels
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
 			serializer.SerializeArray( "", "List", factionData );
+
 			
+			sbyte[] array = new sbyte[diplomaticRelations.MatrixLength];
+			
+			for( int i = 0; i < array.Length; i++ )
+			{
+				array[i] = (sbyte)diplomaticRelations[i];
+			}
+
+			serializer.WriteSByteArray( "", "RelationMatrix", array );
+
 			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 

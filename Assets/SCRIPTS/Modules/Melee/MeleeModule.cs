@@ -113,7 +113,7 @@ namespace SS.Modules
 
 		public void SetDefinition( MeleeModuleDefinition def )
 		{
-			this.canTarget = FactionMember.CanTargetCheck;
+			this.canTarget = FactionMember.CanTargetAnother;
 			this.searchRange = def.attackRange;
 			
 			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
