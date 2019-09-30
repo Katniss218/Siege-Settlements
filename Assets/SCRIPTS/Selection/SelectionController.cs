@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Factions;
+using SS.Diplomacy;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;

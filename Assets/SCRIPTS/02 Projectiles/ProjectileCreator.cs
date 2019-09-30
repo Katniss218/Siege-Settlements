@@ -1,5 +1,5 @@
 ﻿using Katniss.Utils;
-using SS.Factions;
+using SS.Diplomacy;
 using SS.Levels.SaveStates;
 using System;
 using UnityEngine;

@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Factions;
+using SS.Diplomacy;
 using SS.Levels.SaveStates;
 using SS.Projectiles;
 using System;

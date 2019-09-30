@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace SS.Factions
+namespace SS.Diplomacy
 {
 	/// <summary>
 	/// Represents relations between 2 members (indices) of type 'int'.

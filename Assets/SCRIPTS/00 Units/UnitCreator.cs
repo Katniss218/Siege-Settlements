@@ -13,7 +13,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
-using SS.Factions;
+using SS.Diplomacy;
 
 namespace SS.Units
 {

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace SS.Factions
+namespace SS.Diplomacy
 {
 	/// <summary>
 	/// The object that belongs to a faction.

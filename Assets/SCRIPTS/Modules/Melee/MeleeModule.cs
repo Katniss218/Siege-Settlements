@@ -1,4 +1,4 @@
-﻿using SS.Factions;
+﻿using SS.Diplomacy;
 using System;
 using UnityEngine;
 
