@@ -598,7 +598,6 @@ namespace SS.Levels
 		private static void InstantiateLevelPrefabs()
 		{
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Game Camera" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Daylight Cycle" ), Vector3.zero, Quaternion.identity );
 		}
 

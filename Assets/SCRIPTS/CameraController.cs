@@ -109,7 +109,7 @@ namespace SS
 			}
 
 
-			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
+			if( UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
 				return;
 			}
