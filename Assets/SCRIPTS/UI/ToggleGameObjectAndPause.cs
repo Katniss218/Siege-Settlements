@@ -4,27 +4,25 @@ namespace SS.UI
 {
 	public class ToggleGameObjectAndPause : MonoBehaviour
 	{
-		[SerializeField] GameObject prefab;
-
-		GameObject toggleGameObject;
-
+		[SerializeField] GameObject toggleGameObject = null;
+		
 		public void _Toggle()
 		{
-			if( this.toggleGameObject == null )
-			{
-				if( !PauseManager.isPaused )
-				{
-					PauseManager.Pause();
-				}
-				this.toggleGameObject = Object.Instantiate( prefab, Main.canvas.transform );
-			}
-			else
+			if( this.toggleGameObject.activeSelf )
 			{
 				if( PauseManager.isPaused )
 				{
 					PauseManager.Unpause();
 				}
-				Object.Destroy( toggleGameObject );
+				toggleGameObject.SetActive( false );
+			}
+			else
+			{
+				if( !PauseManager.isPaused )
+				{
+					PauseManager.Pause();
+				}
+				toggleGameObject.SetActive( true );
 			}
 		}
 	}

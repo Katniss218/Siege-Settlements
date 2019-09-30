@@ -21,17 +21,22 @@ namespace SS.UI
 				return;
 			}
 
-			// User will input level names (for both saving and loading).
-			// Buttons will input names.
+#warning User will input level names (for both saving and loading).
+#warning Buttons will input names.
 
-			// the system will go through every button/something and check the corresponding path.
+#warning the system will go through every button/something and check the corresponding path.
 
 			if( LevelManager.isLevelLoaded )
 			{
-#warning figure out a way to load levels from within the in-game save/load menu (needs to wait for the async oper to complete and hook up after it).
-				throw new System.Exception( "The level is already loaded." );
+				LevelManager.UnloadLevel( false, () =>
+				{
+					LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text, null );
+				} );
 			}
-			LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text );
+			else
+			{
+				LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text, null );
+			}
 		}
 	}
 }

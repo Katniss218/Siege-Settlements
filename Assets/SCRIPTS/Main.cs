@@ -50,7 +50,18 @@ namespace SS
 		{
 			get
 			{
-				if( __worldUIs == null ) { __worldUIs = FindObjectOfType<Canvas>().transform.Find( "_WorldUIs" ); }
+				if( __worldUIs == null )
+				{
+					Canvas[] canvases = FindObjectsOfType<Canvas>();
+					for( int i = 0; i < canvases.Length;i++ )
+					{
+						if( canvases[i].gameObject.CompareTag( "World UIs" ) )
+						{
+							__worldUIs = canvases[i].transform;
+							break;
+						}
+					}
+				}
 				return __worldUIs;
 			}
 		}

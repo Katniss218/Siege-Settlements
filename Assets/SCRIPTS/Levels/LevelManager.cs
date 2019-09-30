@@ -154,7 +154,7 @@ namespace SS.Levels
 		/// <summary>
 		/// Unloads the level gameobjects from the scene.
 		/// </summary>
-		public static void UnloadLevel()
+		public static void UnloadLevel( bool loadMenu, Action onAfterLevelUnloaded )
 		{
 			//#warning incomplete.
 			if( !isLevelLoaded )
@@ -166,11 +166,12 @@ namespace SS.Levels
 
 			asyncOperation.completed += ( AsyncOperation oper ) =>
 			{
-				UnloadLevel_AfterAsync();
+				UnloadLevel_AfterAsync( loadMenu );
+				onAfterLevelUnloaded?.Invoke();
 			};
 		}
 
-		private static void UnloadLevel_AfterAsync()
+		private static void UnloadLevel_AfterAsync( bool loadMenu )
 		{
 			DefinitionManager.Purge();
 			AssetManager.Purge();
@@ -183,7 +184,11 @@ namespace SS.Levels
 			Selection.Purge();
 			AudioManager.StopSounds();
 
-			SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
+			if( loadMenu )
+			{
+				SceneManager.UnloadSceneAsync( "Level GUI" );
+				SceneManager.LoadScene( "MainMenu", LoadSceneMode.Additive );
+			}
 
 			loadedLevelScene = null;
 			currentLevelId = null;
@@ -193,7 +198,7 @@ namespace SS.Levels
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+		
 		// LOADING
 
 		/// <summary>
@@ -201,15 +206,15 @@ namespace SS.Levels
 		/// </summary>
 		/// <param name="levelIdentifier">The level that is going to be loaded.</param>
 		/// <param name="levelSaveStateIdentifier">The save state associated with the level. If null, the level's default save state will be used.</param>
-		public static void LoadLevel( string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadLevel( string levelIdentifier, string levelSaveStateIdentifier, Action onAfterSceneLoaded )
 		{
 			if( string.IsNullOrEmpty( levelIdentifier ) )
 			{
-				throw new System.Exception( "The level identifier can't be null or empty." );
+				throw new Exception( "The level identifier can't be null or empty." );
 			}
 			if( isLevelLoaded )
 			{
-				throw new System.Exception( "There's already a level loaded. You must unload it first." );
+				throw new Exception( "There's already a level loaded. You must unload it first." );
 			}
 
 			if( levelSaveStateIdentifier == null ) // if specified save state == null, set to default save state.
@@ -221,17 +226,32 @@ namespace SS.Levels
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
 
-			AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
-			asyncOperation.completed += ( AsyncOperation oper ) =>
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/World UI Canvas" ) );
+
+			if( !SceneManager.GetSceneByName( "Level GUI" ).isLoaded )
+			{
+				SceneManager.LoadScene( "Level GUI", LoadSceneMode.Additive );
+			}
+
+			if( SceneManager.GetSceneByName( "MainMenu" ).isLoaded )
+			{
+				AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
+				asyncOperation.completed += ( AsyncOperation oper ) =>
+				{
+					LoadLevel_AfterAsync( levelIdentifier, levelSaveStateIdentifier );
+					onAfterSceneLoaded?.Invoke();
+				};
+			}
+			else
 			{
 				LoadLevel_AfterAsync( levelIdentifier, levelSaveStateIdentifier );
-			};
+				onAfterSceneLoaded?.Invoke();
+			}
 		}
 
 		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			
-#warning Reading/writing to the same file in multiple places.
+#warning Reading/writing to the same file (level.kff) in multiple places.
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
 			currentLevelDisplayName = serializer.ReadString( "DisplayName" );
 
@@ -578,7 +598,6 @@ namespace SS.Levels
 		private static void InstantiateLevelPrefabs()
 		{
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Game Canvas" ), Vector3.zero, Quaternion.identity );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Game Camera" ), Vector3.zero, Quaternion.Euler( CameraController.defaultRotX, CameraController.defaultRotY, CameraController.defaultRotZ ) );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Daylight Cycle" ), Vector3.zero, Quaternion.identity );
 		}

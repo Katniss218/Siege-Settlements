@@ -99,7 +99,6 @@ namespace SS
 						if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 						{
 							Vector3 depositPosition = hitInfo.point;
-#warning dropoff inventory can somehow be empty.
 							DropOffInventory( this.inventory, depositPosition );
 						}
 						this.navMeshAgent.ResetPath();
