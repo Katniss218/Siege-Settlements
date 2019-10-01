@@ -55,6 +55,7 @@ namespace SS.Levels
 			}
 		}
 
+#warning callback on when relation changes. To change the diplomacy menu icon.
 		public static RelationMap<DiplomaticRelation> diplomaticRelations { get; private set; }
 
 		//
@@ -91,10 +92,9 @@ namespace SS.Levels
 
 			
 			int count = serializer.Analyze( "List" ).childCount;
-
-			factions = new FactionDefinition[count];
 			numFactions = count;
 
+			factions = new FactionDefinition[numFactions];
 			for( int i = 0; i < factions.Length; i++ )
 			{
 				factions[i] = new FactionDefinition();
@@ -116,7 +116,7 @@ namespace SS.Levels
 				throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
 			}
 
-			factionData = new FactionData[count];
+			factionData = new FactionData[numFactions];
 
 			for( int i = 0; i < factionData.Length; i++ )
 			{

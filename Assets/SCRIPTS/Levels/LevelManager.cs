@@ -280,7 +280,7 @@ namespace SS.Levels
 			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
 			LevelDataManager.LoadDaylightCycleData( levelIdentifier, levelSaveStateIdentifier );
 			LevelDataManager.LoadCameraData( levelIdentifier, levelSaveStateIdentifier );
-
+			
 			// apply save state
 
 			var sUnits = GetSavedUnits( levelIdentifier, levelSaveStateIdentifier );
