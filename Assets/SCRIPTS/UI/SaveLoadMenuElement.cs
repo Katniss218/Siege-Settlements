@@ -2,6 +2,7 @@
 
 namespace SS.UI
 {
+	[DisallowMultipleComponent]
 	public class SaveLoadMenuElement : MonoBehaviour
 	{
 		public string levelId;

@@ -81,7 +81,19 @@ namespace SS.Modules
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			return new Dictionary<string, int>( this.resourcesRemaining );
+			Dictionary<string, int> ret = new Dictionary<string, int>();
+			if( this.resourcesRemaining == null )
+			{
+				return ret;
+			}
+			foreach( var kvp in this.resourcesRemaining )
+			{
+				if( kvp.Value > 0 )
+				{
+					ret.Add( kvp.Key, kvp.Value );
+				}
+			}
+			return ret;
 		}
 
 		/// <summary>
@@ -120,6 +132,7 @@ namespace SS.Modules
 					{
 						LevelDataManager.factionData[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
 						this.researchedTechnology = null;
+						this.resourcesRemaining = null;
 
 						Selection.ForceSelectionUIRedraw( null ); // if it needs to update (e.g. civilian that could now build new buildings).
 					}

@@ -589,10 +589,10 @@ namespace SS
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
 					Dictionary<string, int> wantedRes = paymentReceivers[j].GetWantedResources();
-
 					bool hasWantedItem_s = false;
 					foreach( var kvp in wantedRes )
 					{
+						Debug.Log( "Wanted:" + kvp.Key + ", " + kvp.Value );
 						if( inv.Get( kvp.Key ) > 0 )
 						{
 							hasWantedItem_s = true;

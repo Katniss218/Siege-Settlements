@@ -37,6 +37,19 @@ namespace SS.Levels.SaveStates
 			serializer.WriteFloat( "", "TrainProgress", this.trainProgress );
 
 			serializer.WriteVector3( "", "RallyPoint", this.rallyPoint );
+
+			if( resourcesRemaining != null )
+			{
+				serializer.WriteList( "", "ResourcesRemaining" );
+				int i = 0;
+				foreach( var kvp in this.resourcesRemaining )
+				{
+					serializer.AppendClass( "ResourcesRemaining" );
+					serializer.WriteString( new Path( "ResourcesRemaining.{0}", i ), "Id", kvp.Key );
+					serializer.WriteInt( new Path( "ResourcesRemaining.{0}", i ), "Amount", kvp.Value );
+					i++;
+				}
+			}
 		}
 	}
 }

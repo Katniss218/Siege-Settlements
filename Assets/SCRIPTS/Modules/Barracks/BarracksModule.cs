@@ -97,7 +97,19 @@ namespace SS.Modules
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			return new Dictionary<string, int>( this.resourcesRemaining );
+			Dictionary<string, int> ret = new Dictionary<string, int>();
+			if( this.resourcesRemaining == null )
+			{
+				return ret;
+			}
+			foreach( var kvp in this.resourcesRemaining )
+			{
+				if( kvp.Value > 0 )
+				{
+					ret.Add( kvp.Key, kvp.Value );
+				}
+			}
+			return ret;
 		}
 		
 		private void StartTraining( UnitDefinition def )
@@ -163,6 +175,7 @@ namespace SS.Modules
 						}
 
 						this.trainedUnit = null;
+						this.resourcesRemaining = null;
 					}
 
 					// Force the SelectionPanel.Object UI to update and show that we either have researched the tech, ot that the progress progressed.

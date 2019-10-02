@@ -105,7 +105,7 @@ namespace SS.Levels
 
 		public static void LoadFactionData( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
+			string path = LevelManager.GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -138,11 +138,11 @@ namespace SS.Levels
 			}
 		}
 
-		public static void LoadDaylightCycle( string levelIdentifier )
+		public static void LoadDaylightCycle( KFFSerializer serializer ) //string levelIdentifier )
 		{
-			string path = LevelManager.GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
+			//string path = LevelManager.GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 			
 			int dayLength = serializer.ReadInt( "DaylightCycle.DayLength" );
 			int nightLength = serializer.ReadInt( "DaylightCycle.NightLength" );
@@ -169,15 +169,16 @@ namespace SS.Levels
 			daylightCycle.moonElevationAngle = moonElevationAngle;
 		}
 
-		public static void LoadDaylightCycleData( string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadDaylightCycleData( KFFSerializer serializer )// string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+			//string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
 			float time = serializer.ReadFloat( "DaylightCycleData.Time" );
 
 
+#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
 			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
 			if( daylightCycle == null )
 			{
@@ -186,11 +187,11 @@ namespace SS.Levels
 			daylightCycle.time = time;
 		}
 
-		public static void LoadCameraData( string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadCameraData( KFFSerializer serializer )// string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+			//string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
 			Vector3 pos = serializer.ReadVector3( "CameraData.Position" );
 			Quaternion rot = serializer.ReadQuaternion( "CameraData.Rotation" );
@@ -198,6 +199,7 @@ namespace SS.Levels
 			float orthSize = serializer.ReadFloat( "CameraData.ZoomSize" );
 
 
+#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
 			CameraController camController = Object.FindObjectOfType<CameraController>();
 			if( camController == null )
 			{
@@ -214,7 +216,7 @@ namespace SS.Levels
 
 		public static void SaveFactionData( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
+			string path = LevelManager.GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -235,6 +237,7 @@ namespace SS.Levels
 
 		public static void SaveDaylightCycleData( KFFSerializer serializer )
 		{
+#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
 			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
 			if( daylightCycle == null )
 			{
@@ -247,6 +250,7 @@ namespace SS.Levels
 
 		public static void SaveCameraData( KFFSerializer serializer )
 		{
+#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
 			CameraController camController = Object.FindObjectOfType<CameraController>();
 			if( camController == null )
 			{

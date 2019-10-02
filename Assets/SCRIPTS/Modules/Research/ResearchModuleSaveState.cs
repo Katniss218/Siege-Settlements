@@ -30,16 +30,18 @@ namespace SS.Levels.SaveStates
 			serializer.WriteString( "", "ResearchedTechnologyId", this.researchedTechnologyId );
 			serializer.WriteFloat( "", "ResearchProgress", this.researchProgress );
 
-			serializer.WriteList( "", "ResourcesRemaining" );
-			int i = 0;
-			foreach( var kvp in this.resourcesRemaining )
+			if( resourcesRemaining != null )
 			{
-				serializer.AppendClass( "ResourcesRemaining" );
-				serializer.WriteString( new Path( "ResourcesRemaining.{0}", i ), "Id", kvp.Key );
-				serializer.WriteInt( new Path( "ResourcesRemaining.{0}", i ), "Amount", kvp.Value );
-				i++;
+				serializer.WriteList( "", "ResourcesRemaining" );
+				int i = 0;
+				foreach( var kvp in this.resourcesRemaining )
+				{
+					serializer.AppendClass( "ResourcesRemaining" );
+					serializer.WriteString( new Path( "ResourcesRemaining.{0}", i ), "Id", kvp.Key );
+					serializer.WriteInt( new Path( "ResourcesRemaining.{0}", i ), "Amount", kvp.Value );
+					i++;
+				}
 			}
-
 		}
 	}
 }

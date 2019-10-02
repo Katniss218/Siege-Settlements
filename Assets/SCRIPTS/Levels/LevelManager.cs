@@ -24,11 +24,15 @@ namespace SS.Levels
 	{
 		public const string DEFAULT_LEVEL_SAVE_STATE_IDENTIFIER = "__default__"; // filename of default save state.
 		public const string DEFAULT_LEVEL_SAVE_STATE_DISPLAYNAME = ""; // display name of default save state
-																	   /// <summary>
-																	   /// The time stamp of when the last level was loaded (in units of time elapsed since the game's launch) (Read only).
-																	   /// </summary>
+		
+		/// <summary>
+		/// The time stamp of when the last level was loaded (in units of time elapsed since the game's launch) (Read only).
+		/// </summary>
 		public static float lastLoadTime { get; private set; }
 
+		/// <summary>
+		/// Returns true if a level is currently loaded.
+		/// </summary>
 		public static bool isLevelLoaded
 		{
 			get
@@ -37,13 +41,32 @@ namespace SS.Levels
 			}
 		}
 
+
+		/// <summary>
+		/// Contains the identifier of the currently loaded level. null if no level is loaded (Read Only).
+		/// </summary>
 		public static string currentLevelId { get; private set; }
+
+		/// <summary>
+		/// Contains the display name of the currently loaded level. null if no level is loaded (Read Only).
+		/// </summary>
 		public static string currentLevelDisplayName { get; private set; }
 
+
+		/// <summary>
+		/// Contains the identifier of the currently loaded level save state. null if no level save state is loaded (Read Only).
+		/// </summary>
 		public static string currentLevelSaveStateId { get; private set; }
+
+		/// <summary>
+		/// Contains the display name of the currently loaded level save state. null if no level save state is loaded (Read Only).
+		/// </summary>
 		public static string currentLevelSaveStateDisplayName { get; private set; }
 
+
+
 		private static Scene? loadedLevelScene;
+
 
 		const char REPLACEMENT_CHAR = '_';
 		static readonly char[] INVALID_CHARS = new char[] { ' ', '/', '\\', '?', '*', ':', '<', '>', '|' };
@@ -78,9 +101,9 @@ namespace SS.Levels
 
 
 		/// <summary>
-		/// Returns the path to the "GameData" directory (Read Only).
+		/// Returns the path to the 'Levels' directory (Read Only).
 		/// </summary>
-		public static string levelDirectoryPath
+		public static string levelsDirectoryPath
 		{
 			get
 			{
@@ -88,29 +111,65 @@ namespace SS.Levels
 			}
 		}
 
-		public static string GetLevelPath( string levelIdentifier )
+		/// <summary>
+		/// Returns path to the level's main directory ('../Levels/levelIdentifier/').
+		/// </summary>
+		public static string GetLevelMainDirectory( string levelIdentifier )
 		{
-			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
+			return levelsDirectoryPath + System.IO.Path.DirectorySeparatorChar
 				+ levelIdentifier;
 		}
 
-		public static string GetFullDataPath( string levelIdentifier, string dataPath )
+		/// <summary>
+		/// Returns path to the level save state's main directory ('../Levels/levelIdentifier/SaveStates/levelSaveStateIdentifier/').
+		/// </summary>
+		public static string GetLevelSaveStateMainDirectory( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
-				+ levelIdentifier + System.IO.Path.DirectorySeparatorChar  + "Data" + System.IO.Path.DirectorySeparatorChar + dataPath;
-		}
-
-		public static string GetFullAssetsPath( string levelIdentifier, string assetsPath )
-		{
-			return levelDirectoryPath + System.IO.Path.DirectorySeparatorChar
-				+ levelIdentifier + System.IO.Path.DirectorySeparatorChar + "Assets" + System.IO.Path.DirectorySeparatorChar + assetsPath;
-		}
-
-		public static string GetLevelSaveStatePath( string levelIdentifier, string levelSaveStateIdentifier )
-		{
-			return GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "SaveStates" + System.IO.Path.DirectorySeparatorChar
+			return GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "SaveStates" + System.IO.Path.DirectorySeparatorChar
 				+ levelSaveStateIdentifier;
 		}
+
+
+		/// <summary>
+		/// Returns full data path (in the level's 'Data' directory).
+		/// </summary>
+		public static string GetFullDataPath( string levelIdentifier, string dataPath )
+		{
+			return GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "Data" + System.IO.Path.DirectorySeparatorChar + dataPath;
+		}
+
+		/// <summary>
+		/// Returns full assets path (in the level's 'Assets' directory).
+		/// </summary>
+		public static string GetFullAssetsPath( string levelIdentifier, string assetsPath )
+		{
+			return GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "Assets" + System.IO.Path.DirectorySeparatorChar + assetsPath;
+		}
+
+
+
+		//
+		//
+
+		/// <summary>
+		/// Returns full level path (in the level's main directory).
+		/// </summary>
+		public static string GetFullLevelPath( string levelIdentifier, string path )
+		{
+			return GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + path;
+		}
+
+		/// <summary>
+		/// Returns full level save state path (in the level save state's main directory).
+		/// </summary>
+		public static string GetFullLevelSaveStatePath( string levelIdentifier, string levelSaveStateIdentifier, string path )
+		{
+			return GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + path;
+		}
+
+
+
+
 
 		/// <summary>
 		/// Returns every non-default save state of the specified level.
@@ -123,7 +182,7 @@ namespace SS.Levels
 				throw new System.ArgumentNullException( "Level identifier can't be null or empty." );
 			}
 
-			string[] directories = System.IO.Directory.GetDirectories( GetLevelPath( levelIdentifier ) );
+			string[] directories = System.IO.Directory.GetDirectories( GetLevelMainDirectory( levelIdentifier ) );
 
 			List<string> directoriesWithSaveStates = new List<string>();
 
@@ -251,13 +310,12 @@ namespace SS.Levels
 
 		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-#warning Reading/writing to the same file (level.kff) in multiple places.
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
-			currentLevelDisplayName = serializer.ReadString( "DisplayName" );
+			KFFSerializer serializerL = KFFSerializer.ReadFromFile( GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
+			currentLevelDisplayName = serializerL.ReadString( "DisplayName" );
 
-			serializer = KFFSerializer.ReadFromFile( GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff", DefinitionManager.FILE_ENCODING );
-			currentLevelSaveStateDisplayName = serializer.ReadString( "DisplayName" );
-
+			KFFSerializer serializerLSS = KFFSerializer.ReadFromFile( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff", DefinitionManager.FILE_ENCODING );
+			currentLevelSaveStateDisplayName = serializerLSS.ReadString( "DisplayName" );
+			
 
 			DefinitionManager.LoadUnitDefinitions( levelIdentifier );
 			DefinitionManager.LoadBuildingDefinitions( levelIdentifier );
@@ -274,12 +332,12 @@ namespace SS.Levels
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
 
 			LevelDataManager.LoadFactions( levelIdentifier );
-			LevelDataManager.LoadDaylightCycle( levelIdentifier );
+			LevelDataManager.LoadDaylightCycle( serializerL );
 
 
 			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
-			LevelDataManager.LoadDaylightCycleData( levelIdentifier, levelSaveStateIdentifier );
-			LevelDataManager.LoadCameraData( levelIdentifier, levelSaveStateIdentifier );
+			LevelDataManager.LoadDaylightCycleData( serializerLSS );
+			LevelDataManager.LoadCameraData( serializerLSS );
 			
 			// apply save state
 
@@ -378,7 +436,7 @@ namespace SS.Levels
 
 		private static List<Tuple<UnitDefinition, UnitData>> GetSavedUnits( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -401,7 +459,7 @@ namespace SS.Levels
 
 		private static List<Tuple<BuildingDefinition, BuildingData>> GetSavedBuildings( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -424,7 +482,7 @@ namespace SS.Levels
 
 		private static List<Tuple<ProjectileDefinition, ProjectileData>> GetSavedProjectiles( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -447,7 +505,7 @@ namespace SS.Levels
 
 		private static List<Tuple<HeroDefinition, HeroData>> GetSavedHeroes( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -470,7 +528,7 @@ namespace SS.Levels
 
 		private static List<Tuple<ExtraDefinition, ExtraData>> GetSavedExtras( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -493,7 +551,7 @@ namespace SS.Levels
 
 		private static List<Tuple<ResourceDepositDefinition, ResourceDepositData>> GetSavedResourceDeposits( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -516,7 +574,7 @@ namespace SS.Levels
 
 		private static GameObject[] GetSelected( string levelIdentifier, string levelSaveStateIdentifier, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
@@ -654,7 +712,7 @@ namespace SS.Levels
 				resourceDepositData[i] = new Tuple<string, ResourceDepositData>( ResourceDepositCreator.GetDefinitionId( resourceDeposits[i].gameObject ), ResourceDepositCreator.GetData( resourceDeposits[i].gameObject ) );
 			}
 
-			string path = GetLevelSaveStatePath( currentLevelId, newLevelSaveStateId );
+			string path = GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId );
 			if( !System.IO.Directory.Exists( path ) )
 			{
 				System.IO.Directory.CreateDirectory( path );
@@ -669,7 +727,7 @@ namespace SS.Levels
 			
 			LevelDataManager.SaveFactionData( currentLevelId, newLevelSaveStateId );
 
-			string levelSaveStateFilePath = LevelManager.GetLevelSaveStatePath( currentLevelId, newLevelSaveStateId ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+			string levelSaveStateFilePath = LevelManager.GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( levelSaveStateFilePath ) );
 
 			serializer.WriteString( "", "DisplayName", newLevelSaveStateDisplayName );
@@ -700,7 +758,7 @@ namespace SS.Levels
 
 		private static void SaveUnits( Tuple<string, UnitData>[] units, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -719,7 +777,7 @@ namespace SS.Levels
 
 		private static void SaveBuildings( Tuple<string, BuildingData>[] buildings, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -738,7 +796,7 @@ namespace SS.Levels
 
 		private static void SaveProjectiles( Tuple<string, ProjectileData>[] projectiles, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -757,7 +815,7 @@ namespace SS.Levels
 
 		private static void SaveHeroes( Tuple<string, HeroData>[] heroes, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -776,7 +834,7 @@ namespace SS.Levels
 
 		private static void SaveExtras( Tuple<string, ExtraData>[] extras, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -795,7 +853,7 @@ namespace SS.Levels
 
 		private static void SaveResourceDeposits( Tuple<string, ResourceDepositData>[] resourceDeposits, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
@@ -817,7 +875,7 @@ namespace SS.Levels
 
 		private static void SaveSelection( Guid? highlighted, Guid?[] selected, string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string path = GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
+			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 

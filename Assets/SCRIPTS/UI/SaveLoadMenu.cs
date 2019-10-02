@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace SS.UI
 {
+	[DisallowMultipleComponent]
 	public class SaveLoadMenu : MonoBehaviour
 	{
 		public struct SaveElementData
@@ -28,7 +29,7 @@ namespace SS.UI
 		private List<SaveElementData> CollectSaves()
 		{
 			// return every save that can be loaded.
-			string[] directories = System.IO.Directory.GetDirectories( LevelManager.levelDirectoryPath );
+			string[] directories = System.IO.Directory.GetDirectories( LevelManager.levelsDirectoryPath );
 
 			List<SaveElementData> ret = new List<SaveElementData>();
 
@@ -75,14 +76,12 @@ namespace SS.UI
 
 			return ret;
 		}
-
-		// Start is called before the first frame update
+		
 		void Start()
 		{
 			this.ForceRefresh();
 		}
-
-		// Update is called once per frame
+		
 		void Update()
 		{
 
@@ -110,6 +109,9 @@ namespace SS.UI
 				Object.Destroy( this.listContentContainer.GetChild( i ).gameObject );
 			}
 		}
+		
+		// Function to go through every level button and check the ID corresponding to the displayname.
+		// If a match isn't found, then we are saving into a new level.
 
 		private GameObject SpawnSaveElement( SaveElementData data )
 		{

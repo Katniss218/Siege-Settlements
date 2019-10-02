@@ -4,41 +4,50 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DiplomacyMenuElement : MonoBehaviour
+namespace SS.UI
 {
-	[SerializeField] private Image colorImage = null;
-	[SerializeField] private Image relationImage = null;
-	
-	[SerializeField] private TextMeshProUGUI displayNameText = null;
-
-	
-	public void SetColor( Color c )
+	[DisallowMultipleComponent]
+	public class DiplomacyMenuElement : MonoBehaviour
 	{
-		this.colorImage.color = c;
-	}
+		[SerializeField] private Image colorImage = null;
+		[SerializeField] private Image relationImage = null;
 
-	public void SetRelation( DiplomaticRelation rel )
-	{
-		if( rel == DiplomaticRelation.Ally )
-		{
-			relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_ally" );
-		}
-		else if( rel == DiplomaticRelation.Neutral )
-		{
-			relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_neutral" );
-		}
-		else if( rel == DiplomaticRelation.Enemy )
-		{
-			relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_enemy" );
-		}
-		else
-		{
-			throw new System.Exception( "Invalid DiplomaticRelation" );
-		}
-	}
+		[SerializeField] private TextMeshProUGUI displayNameText = null;
 
-	public void SetDisplayname( string t )
-	{
-		this.displayNameText.text = t;
+
+		public void MarkAsPlayer()
+		{
+			Object.Destroy( this.relationImage.gameObject );
+		}
+
+		public void SetColor( Color c )
+		{
+			this.colorImage.color = c;
+		}
+
+		public void SetRelation( DiplomaticRelation relation )
+		{
+			if( relation == DiplomaticRelation.Ally )
+			{
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_ally" );
+			}
+			else if( relation == DiplomaticRelation.Neutral )
+			{
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_neutral" );
+			}
+			else if( relation == DiplomaticRelation.Enemy )
+			{
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_enemy" );
+			}
+			else
+			{
+				throw new System.Exception( "Invalid DiplomaticRelation" );
+			}
+		}
+
+		public void SetDisplayname( string t )
+		{
+			this.displayNameText.text = t;
+		}
 	}
 }
