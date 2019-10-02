@@ -55,6 +55,10 @@ namespace SS.Modules
 
 		private bool IsPaymentDone()
 		{
+			if( resourcesRemaining == null )
+			{
+				return true;
+			}
 			foreach( var kvp in this.resourcesRemaining )
 			{
 				if( kvp.Value > 0 )
@@ -69,6 +73,11 @@ namespace SS.Modules
 
 		public void ReceivePayment( string id, int amount )
 		{
+			if( resourcesRemaining == null )
+			{
+				Debug.LogWarning( "The payment of " + amount + "x '" + id + "' was not needed." );
+				return;
+			}
 			if( this.resourcesRemaining.ContainsKey( id ) )
 			{
 				this.resourcesRemaining[id] -= amount;
