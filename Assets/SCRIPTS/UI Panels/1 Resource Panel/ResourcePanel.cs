@@ -50,34 +50,19 @@ namespace SS.UI
 
 		private void AddEntry( string id, Sprite i, int amount )
 		{
-			GameObject container;
-			RectTransform containerTransform;
-			GameObjectUtils.RectTransform( maskedListTransform, id, Vector2.zero, new Vector2( maskedListTransform.sizeDelta.x, 28 ), Vector2.up, Vector2.zero, Vector2.zero, out container, out containerTransform );
+			GameObject container = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Resource (UI)" ), maskedListTransform );
+			container.name = "resource: '" + id + "'";
 
-#warning switch this to prefab.
-			GameObject iconGameObject;
-			RectTransform iconTransform;
-			GameObjectUtils.RectTransform( containerTransform, "Icon", Vector2.zero, new Vector2( 28, 28 ), Vector2.zero, Vector2.zero, Vector2.zero, out iconGameObject, out iconTransform );
-
-			Image iconImage = iconGameObject.AddComponent<Image>();
+			Transform iconTransform = container.transform.Find( "Icon" );
+			Image iconImage = iconTransform.GetComponent<Image>();
 			iconImage.sprite = i;
 
-			GameObject textGameObject;
-			RectTransform textTransform;
-			GameObjectUtils.RectTransform( containerTransform, "Amount", Vector2.zero, new Vector2( maskedListTransform.sizeDelta.x - 28, 28 ), Vector2.one, Vector2.one, Vector2.one, out textGameObject, out textTransform );
-
-			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
+			Transform textTransform = container.transform.Find( "Amount" );
+			TextMeshProUGUI textText = textTransform.GetComponent<TextMeshProUGUI>();
 			textText.text = amount.ToString();
-			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
-			textText.color = FontManager.darkColor;
-			textText.fontSize = 14;
-			textText.alignment = TextAlignmentOptions.Right;
-			textText.enableWordWrapping = true;
-			textText.overflowMode = TextOverflowModes.Overflow;
 
-			textTransform.sizeDelta = new Vector2( maskedListTransform.sizeDelta.x - 28, 28 );
 
-			entries.Add( id, new ResourceListEntry() { container = containerTransform, text = textText } );
+			entries.Add( id, new ResourceListEntry() { container = container.transform, text = textText } );
 		}
 
 		public void UpdateResourceEntry( string id, int amount )
