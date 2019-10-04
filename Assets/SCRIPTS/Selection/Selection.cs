@@ -133,6 +133,11 @@ namespace SS
 			}
 			else
 			{
+				if( !SelectionPanel.instance.gameObject.activeSelf )
+					SelectionPanel.instance.gameObject.SetActive( true );
+				if( !ActionPanel.instance.gameObject.activeSelf )
+					ActionPanel.instance.gameObject.SetActive( true );
+
 				__Select( obj );
 				__Highlight( obj );
 			}
@@ -172,6 +177,9 @@ namespace SS
 			
 			highlighted = null;
 			selected.Clear();
+
+			SelectionPanel.instance.gameObject.SetActive( false );
+			ActionPanel.instance.gameObject.SetActive( false );
 		}
 
 		public static void Purge()

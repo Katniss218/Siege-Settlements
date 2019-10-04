@@ -415,6 +415,11 @@ namespace SS.Levels
 
 			SelectionPanel.instance.SetMode( selectionPanelMode );
 
+			// Set inactive.
+			SelectionPanel.instance.gameObject.SetActive( false );
+			ActionPanel.instance.gameObject.SetActive( false );
+			// ^ Will get set active if something gets selected.
+
 			if( selected != null )
 			{
 				for( int i = 0; i < selected.Length; i++ )
