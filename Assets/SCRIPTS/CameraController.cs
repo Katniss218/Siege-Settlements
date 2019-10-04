@@ -23,7 +23,19 @@ namespace SS
 
 		[SerializeField] private float scrollMargin = 80.0f;
 
-		private int size;
+		private int __size;
+		public int size
+		{
+			get
+			{
+				return this.__size;
+			}
+			set
+			{
+				this.__size = value;
+				this.camera.orthographicSize = value;
+			}
+		}
 
 		new public Camera camera { get; private set; }
 
@@ -43,19 +55,16 @@ namespace SS
 		void Start()
 		{
 			this.size = defaultSize;
-			this.camera.orthographicSize = this.size;
 		}
 
 		private void ZoomIn()
 		{
 			this.size = Mathf.Clamp( --size, minSize, maxSize );
-			this.camera.orthographicSize = this.size;
 		}
 
 		private void ZoomOut()
 		{
 			this.size = Mathf.Clamp( ++size, minSize, maxSize );
-			this.camera.orthographicSize = this.size;
 		}
 
 		private void Rotate( float amount )
@@ -71,7 +80,7 @@ namespace SS
 		private void ResetCam()
 		{
 			this.size = defaultSize;
-			this.camera.orthographicSize = this.size;
+
 			this.transform.rotation = Quaternion.Euler( defaultRotX, defaultRotY, defaultRotZ );
 		}
 

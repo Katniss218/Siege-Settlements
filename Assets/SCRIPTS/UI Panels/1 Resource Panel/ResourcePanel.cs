@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace SS.UI
 {
+	[DisallowMultipleComponent]
 	public class ResourcePanel : MonoBehaviour
 	{
 		private struct ResourceListEntry
@@ -16,16 +17,22 @@ namespace SS.UI
 			public Transform container;
 		}
 
-		Dictionary<string, ResourceListEntry> entries = new Dictionary<string, ResourceListEntry>();
+		private Dictionary<string, ResourceListEntry> entries = new Dictionary<string, ResourceListEntry>();
 
 		[SerializeField] private RectTransform maskedListTransform = null;
 
+
+		public static ResourcePanel instance { get; private set; }
+		
 		void Awake()
 		{
-			
+			if( instance != null )
+			{
+				throw new System.Exception( "There is another resource panel active" );
+			}
+			instance = this;
 		}
 
-		// Start is called before the first frame update
 		void Start()
 		{
 			ResourceDefinition[] definedRes = DefinitionManager.GetAllResources();
@@ -36,7 +43,6 @@ namespace SS.UI
 			}
 		}
 
-		// Update is called once per frame
 		void Update()
 		{
 
@@ -47,18 +53,19 @@ namespace SS.UI
 			GameObject container;
 			RectTransform containerTransform;
 			GameObjectUtils.RectTransform( maskedListTransform, id, Vector2.zero, new Vector2( maskedListTransform.sizeDelta.x, 28 ), Vector2.up, Vector2.zero, Vector2.zero, out container, out containerTransform );
-			
+
+#warning switch this to prefab.
 			GameObject iconGameObject;
 			RectTransform iconTransform;
 			GameObjectUtils.RectTransform( containerTransform, "Icon", Vector2.zero, new Vector2( 28, 28 ), Vector2.zero, Vector2.zero, Vector2.zero, out iconGameObject, out iconTransform );
 
 			Image iconImage = iconGameObject.AddComponent<Image>();
 			iconImage.sprite = i;
-			
+
 			GameObject textGameObject;
 			RectTransform textTransform;
 			GameObjectUtils.RectTransform( containerTransform, "Amount", Vector2.zero, new Vector2( maskedListTransform.sizeDelta.x - 28, 28 ), Vector2.one, Vector2.one, Vector2.one, out textGameObject, out textTransform );
-			
+
 			TextMeshProUGUI textText = textGameObject.AddComponent<TextMeshProUGUI>();
 			textText.text = amount.ToString();
 			textText.font = AssetManager.GetFont( FontManager.UI_FONT_PATH );
@@ -69,10 +76,10 @@ namespace SS.UI
 			textText.overflowMode = TextOverflowModes.Overflow;
 
 			textTransform.sizeDelta = new Vector2( maskedListTransform.sizeDelta.x - 28, 28 );
-			
+
 			entries.Add( id, new ResourceListEntry() { container = containerTransform, text = textText } );
 		}
-		
+
 		public void UpdateResourceEntry( string id, int amount )
 		{
 			ResourceListEntry entry;

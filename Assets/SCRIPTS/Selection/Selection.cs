@@ -44,7 +44,7 @@ namespace SS
 
 		private static void __Select( Selectable obj )
 		{
-			SelectionPanel.List.AddIcon( obj, obj.icon );
+			SelectionPanel.instance.list.AddIcon( obj, obj.icon );
 
 			selected.Add( obj );
 			obj.onSelect?.Invoke();
@@ -52,11 +52,11 @@ namespace SS
 
 		private static void __Deselect( Selectable obj )
 		{
-			SelectionPanel.List.RemoveIcon( obj );
+			SelectionPanel.instance.list.RemoveIcon( obj );
 
 			if( IsHighlighted( obj ) )
 			{
-				SelectionPanel.Object.Clear();
+				SelectionPanel.instance.obj.Clear();
 				highlighted = null;
 			}
 			obj.onDeselect?.Invoke();
@@ -75,7 +75,7 @@ namespace SS
 				return;
 			}
 
-			SelectionPanel.Object.Clear();
+			SelectionPanel.instance.obj.Clear();
 
 			// if there's no need to update (nothing highlighted), return.
 			if( highlighted == null )
@@ -162,8 +162,8 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			SelectionPanel.Object.Clear();
-			SelectionPanel.List.Clear();
+			SelectionPanel.instance.obj.Clear();
+			SelectionPanel.instance.list.Clear();
 			
 			for( int i = 0; i < selected.Count; i++ )
 			{

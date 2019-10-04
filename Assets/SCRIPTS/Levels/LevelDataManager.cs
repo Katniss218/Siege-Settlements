@@ -181,7 +181,7 @@ namespace SS.Levels
 			Vector3 pos = serializer.ReadVector3( "CameraData.Position" );
 			Quaternion rot = serializer.ReadQuaternion( "CameraData.Rotation" );
 
-			float orthSize = serializer.ReadFloat( "CameraData.ZoomSize" );
+			int zoomSize = serializer.ReadInt( "CameraData.ZoomSize" );
 
 			
 			if( CameraController.instance == null )
@@ -190,7 +190,7 @@ namespace SS.Levels
 			}
 
 			CameraController.instance.transform.SetPositionAndRotation( pos, rot );
-			CameraController.instance.camera.orthographicSize = orthSize;
+			CameraController.instance.size = zoomSize;
 		}
 
 		//
@@ -240,7 +240,7 @@ namespace SS.Levels
 			serializer.WriteVector3( "CameraData", "Position", CameraController.instance.transform.position );
 			serializer.WriteQuaternion( "CameraData", "Rotation", CameraController.instance.transform.rotation );
 
-			serializer.WriteFloat( "CameraData", "ZoomSize", CameraController.instance.camera.orthographicSize );
+			serializer.WriteInt( "CameraData", "ZoomSize", CameraController.instance.size );
 		}
 	}
 }

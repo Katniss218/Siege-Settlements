@@ -413,7 +413,7 @@ namespace SS.Levels
 			GameObject highlighted;
 			GameObject[] selected = GetSelected( levelIdentifier, levelSaveStateIdentifier, out highlighted, out selectionPanelMode );
 
-			SelectionPanel.SetMode( selectionPanelMode );
+			SelectionPanel.instance.SetMode( selectionPanelMode );
 
 			if( selected != null )
 			{
@@ -879,7 +879,7 @@ namespace SS.Levels
 
 			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
 
-			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.mode == SelectionPanelMode.Object ? "Object" : "List" );
+			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.instance.mode == SelectionPanelMode.Object ? "Object" : "List" );
 			if( highlighted != null )
 			{
 				serializer.WriteString( "", "HighlightedGuid", highlighted.Value.ToString( "D" ) );
