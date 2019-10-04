@@ -5,17 +5,18 @@ namespace SS
 	/// <summary>
 	/// Controls the daylight cycle - time of day, and rotation of the sun/moon lights.
 	/// </summary>
+	[DisallowMultipleComponent]
 	public class DaylightCycleController : MonoBehaviour
 	{
-		public int dayLength = 400;
-		public int nightLength = 200;
-
-		//[SerializeField] float startTime = 80;
+		public static DaylightCycleController instance { get; private set; }
 
 		[SerializeField] Light sun = null;
 		[SerializeField] Light moon = null;
 		[SerializeField] Transform sunPivot = null;
 		[SerializeField] Transform moonPivot = null;
+
+		public int dayLength = 400;
+		public int nightLength = 200;
 
 		public float sunIntensity = 0.8f;
 		public float moonIntensity = 0.1f;
@@ -69,6 +70,12 @@ namespace SS
 		{
 			this.sunTransform = this.sun.transform;
 			this.moonTransform = this.moon.transform;
+
+			if( instance != null )
+			{
+				throw new System.Exception( "There was more than 1 daylight cycle controller." );
+			}
+			instance = this;
 		}
 
 		void Start()

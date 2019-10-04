@@ -11,6 +11,8 @@ namespace SS
 		public const float defaultRotY = 45.0f;
 		public const float defaultRotZ = 0.0f;
 
+		public static CameraController instance { get; private set; }
+
 		[SerializeField] private int defaultSize = 10;
 
 		[SerializeField] private int minSize = 5;
@@ -23,12 +25,18 @@ namespace SS
 
 		private int size;
 
-		new private Camera camera;
+		new public Camera camera { get; private set; }
 
 		public bool isMovementLocked { get; set; }
 
 		void Awake()
 		{
+			if( instance != null )
+			{
+				throw new System.Exception( "There was more than 1 CameraController." );
+			}
+			instance = this;
+
 			this.camera = this.transform.GetChild( 0 ).GetComponent<Camera>();
 		}
 

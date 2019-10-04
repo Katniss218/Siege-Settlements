@@ -1,0 +1,10 @@
+﻿DisplayName = "Level 1";
+DaylightCycle =
+{
+	DayLength = 200;
+	NightLength = 100;
+	SunIntensity = 1.25;
+	MoonIntensity = 0.25;
+	SunElevationAngle = 60.0;
+	MoonElevationAngle = 60.0;
+};

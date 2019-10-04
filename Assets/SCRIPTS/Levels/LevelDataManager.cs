@@ -138,12 +138,8 @@ namespace SS.Levels
 			}
 		}
 
-		public static void LoadDaylightCycle( KFFSerializer serializer ) //string levelIdentifier )
+		public static void LoadDaylightCycle( KFFSerializer serializer )
 		{
-			//string path = LevelManager.GetLevelPath( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
-
-			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-			
 			int dayLength = serializer.ReadInt( "DaylightCycle.DayLength" );
 			int nightLength = serializer.ReadInt( "DaylightCycle.NightLength" );
 
@@ -169,45 +165,32 @@ namespace SS.Levels
 			daylightCycle.moonElevationAngle = moonElevationAngle;
 		}
 
-		public static void LoadDaylightCycleData( KFFSerializer serializer )// string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadDaylightCycleData( KFFSerializer serializer )
 		{
-			//string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
-
-			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			float time = serializer.ReadFloat( "DaylightCycleData.Time" );
-
-
-#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
-			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
-			if( daylightCycle == null )
+			
+			if( DaylightCycleController.instance == null )
 			{
 				throw new System.Exception( "Couldn't find DaylightCycleController object." );
 			}
-			daylightCycle.time = time;
+			DaylightCycleController.instance.time = time;
 		}
 
-		public static void LoadCameraData( KFFSerializer serializer )// string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadCameraData( KFFSerializer serializer )
 		{
-			//string path = LevelManager.GetLevelSaveStatePath( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
-
-			//KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			Vector3 pos = serializer.ReadVector3( "CameraData.Position" );
 			Quaternion rot = serializer.ReadQuaternion( "CameraData.Rotation" );
 
 			float orthSize = serializer.ReadFloat( "CameraData.ZoomSize" );
 
-
-#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
-			CameraController camController = Object.FindObjectOfType<CameraController>();
-			if( camController == null )
+			
+			if( CameraController.instance == null )
 			{
 				throw new System.Exception( "Couldn't find CameraController object." );
 			}
 
-			camController.transform.SetPositionAndRotation( pos, rot );
-			camController.transform.GetChild( 0 ).GetComponent<Camera>().orthographicSize = orthSize;
+			CameraController.instance.transform.SetPositionAndRotation( pos, rot );
+			CameraController.instance.camera.orthographicSize = orthSize;
 		}
 
 		//
@@ -236,32 +219,28 @@ namespace SS.Levels
 		}
 
 		public static void SaveDaylightCycleData( KFFSerializer serializer )
-		{
-#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
-			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
-			if( daylightCycle == null )
+		{			
+			if( DaylightCycleController.instance == null )
 			{
 				throw new System.Exception( "Couldn't find DaylightCycleController object." );
 			}
 
 			serializer.WriteClass( "", "DaylightCycleData" );
-			serializer.WriteFloat( "DaylightCycleData", "Time", daylightCycle.time );
+			serializer.WriteFloat( "DaylightCycleData", "Time", DaylightCycleController.instance.time );
 		}
 
 		public static void SaveCameraData( KFFSerializer serializer )
 		{
-#warning cache this so each class doesn't need to find it on it's own and possibly not be updated.
-			CameraController camController = Object.FindObjectOfType<CameraController>();
-			if( camController == null )
+			if( CameraController.instance == null )
 			{
 				throw new System.Exception( "Couldn't find CameraController object." );
 			}
 
 			serializer.WriteClass( "", "CameraData" );
-			serializer.WriteVector3( "CameraData", "Position", camController.transform.position );
-			serializer.WriteQuaternion( "CameraData", "Rotation", camController.transform.rotation );
+			serializer.WriteVector3( "CameraData", "Position", CameraController.instance.transform.position );
+			serializer.WriteQuaternion( "CameraData", "Rotation", CameraController.instance.transform.rotation );
 
-			serializer.WriteFloat( "CameraData", "ZoomSize", camController.transform.GetChild( 0 ).GetComponent<Camera>().orthographicSize );
+			serializer.WriteFloat( "CameraData", "ZoomSize", CameraController.instance.camera.orthographicSize );
 		}
 	}
 }

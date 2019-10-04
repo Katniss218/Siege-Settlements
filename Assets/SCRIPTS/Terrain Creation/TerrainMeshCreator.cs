@@ -16,14 +16,15 @@ namespace SS.TerrainCreation
 		/// How many meshes per egde? (square it to get actual mesh count)
 		private int segments = 1;
 
-		public float stepSize { get { return (float)SEGMENT_SIZE / (float)(resolution-1); } }
+		public float stepSize { get { return (float)SEGMENT_SIZE / (float)(resolution - 1); } }
 
 		private Texture2D[,] heightMaps;
-
-
+		
+		
 		public TerrainMeshCreator( byte resolution, int segments, Texture2D[,] heightMaps, float heightScale )
 		{
-			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength(1) != segments )
+
+			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
 			{
 				throw new System.Exception( "The heightMaps array was of invalid dimensions. Expected size: [segments,segments]." );
 			}
@@ -68,7 +69,7 @@ namespace SS.TerrainCreation
 				triangles[triangleIndex++] = b;
 				triangles[triangleIndex++] = c;
 			};
-			
+
 			for( int x = 0; x < resolution; x++ )
 			{
 				for( int z = 0; z < resolution; z++ )

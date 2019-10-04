@@ -638,7 +638,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					color[i, j] = AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_IDENTIFIER + "colormap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
+					color[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Colormap/row-" + (size - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
 				}
 			}
 			Texture2D[,] height = new Texture2D[size, size];
@@ -646,7 +646,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < size; j++ )
 				{
-					height[i, j] = AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_IDENTIFIER + "heightmap/row-" + (size - j) + "-col-" + (i + 1), Katniss.Utils.TextureType.Color );
+					height[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Heightmap/row-" + (size - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
 				}
 			}
 			LevelTerrainCreator.SpawnMap( height, color, 6f );

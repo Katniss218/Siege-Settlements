@@ -1,0 +1,390 @@
+﻿List =
+[
+	{
+		Id = "unit.wolf";
+		DisplayName = "Wolf";
+		MaxHealth = 40.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		MeleeModule =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.5;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.8;
+			AttackSound = "extern:Sounds/melee.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.4;
+		RotationSpeed = 120;
+		Radius = 0.25;
+		Height = 0.1875;
+		//InventorySize = 0;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/wolf_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
+	},
+	{
+		Id = "unit.light_infantry";
+		DisplayName = "Light Infantry";
+		MaxHealth = 100.0;
+		
+		Armor = // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
+		{		// so if you have 2.0 armor and attacker has 1.5 penetration, there will be 50% damage reduction.
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		MeleeModule =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.75;
+			AttackSound = "extern:Sounds/melee.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;  // The physical size of the unit (hitbox)
+		Height = 0.1875; // The physical size of the unit (hitbox)
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/light_infantry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/light_infantry_icon.png";
+	},
+	{
+		Id = "unit.heavy_infantry";
+		DisplayName = "Heavy Infantry";
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.5, // Slash
+				0.5, // Pierce
+				0.5  // Concussion
+			];
+		};
+		MeleeModule =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 4.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.52;
+			AttackSound = "extern:Sounds/melee.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.25;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/heavy_infantry_icon.png";
+	},
+	{
+		Id = "unit.light_cavalry";
+		DisplayName = "Light Cavalry";
+		MaxHealth = 130.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		MeleeModule =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 2.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.65;
+			AttackSound = "extern:Sounds/melee.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.5;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/light_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/light_cavalry_icon.png";
+	},
+	{
+		Id = "unit.heavy_cavalry";
+		DisplayName = "Heavy Cavalry";
+		MaxHealth = 130.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.5, // Slash
+				0.5, // Pierce
+				0.5  // Concussion
+			];
+		};
+		MeleeModule =
+		{
+			DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 4.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 0.6;
+			AttackCooldown = 0.47;
+			AttackSound = "extern:Sounds/melee.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.4;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/heavy_cavalry_icon.png";
+	},
+	{
+		Id = "unit.bowmen";
+		DisplayName = "Bowmen";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		RangedModule = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 5;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 1.0;
+			ArmorPenetration = 0.0;
+			AttackRange = 5.0;
+			AttackCooldown = 3.0;
+			Velocity = 2.2;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "extern:Sounds/loose.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/bowmen_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/bowmen_icon.png";
+	},
+	{
+		Id = "unit.crossbowmen";
+		DisplayName = "Crossbowmen";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		RangedModule = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 4;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 1.5;
+			ArmorPenetration = 0.0;
+			AttackRange = 6.0;
+			AttackCooldown = 3.0;
+			Velocity = 2.3;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "extern:Sounds/loose.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/crossbowmen_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/crossbowmen_icon.png";
+	},
+	{
+		Id = "unit.mounted_archers";
+		DisplayName = "Mounted Archers";
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		RangedModule = // May not exist, if IsRanged == false.
+		{
+			ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+			ProjectileCount = 4;
+			DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+			Damage = 0.9;
+			ArmorPenetration = 0.0;
+			AttackRange = 4.5;
+			AttackCooldown = 3.0;
+			Velocity = 2.2;
+			LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																   // To prevent randomization, set the specific coordinate in both fields to the same value.
+			LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+			AttackSound = "extern:Sounds/loose.wav";
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.45;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitRectangle.kff";
+		AlbedoTexture = "extern:Textures/Units/mounted_archers_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		Icon = "extern:Textures/Units/mounted_archers_icon.png";
+	},
+	{
+		Id = "unit.civilian";
+		DisplayName = "Civilian";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		IsConstructor = true;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/civilian_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
+	},
+	{
+		Id = "unit.civilian_employed";
+		DisplayName = "Employed Civilian";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		IsConstructor = false;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		//InventorySize = 45;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		Mesh = "extern:Models/UnitSquare.kff";
+		AlbedoTexture = "extern:Textures/Units/civilian_employed_albedo.png";
+		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
+		Icon = "extern:Textures/Buildings/house0_icon.png";
+	}
+];
