@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Content;
+﻿using SS.Content;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using TMPro;
@@ -19,7 +18,7 @@ namespace SS.UI
 
 		private Dictionary<string, ResourceListEntry> entries = new Dictionary<string, ResourceListEntry>();
 
-		[SerializeField] private RectTransform maskedListTransform = null;
+		[SerializeField] private Transform resourceEntryContainer = null;
 
 
 		public static ResourcePanel instance { get; private set; }
@@ -50,7 +49,7 @@ namespace SS.UI
 
 		private void AddEntry( string id, Sprite i, int amount )
 		{
-			GameObject container = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Resource (UI)" ), maskedListTransform );
+			GameObject container = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Resource (UI)" ), resourceEntryContainer );
 			container.name = "resource: '" + id + "'";
 
 			Transform iconTransform = container.transform.Find( "Icon" );

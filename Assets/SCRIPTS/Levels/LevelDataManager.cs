@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SS.Levels
 {
 	/// <summary>
-	/// Contains data, that's unique to the level, and doesn't change throuought the gameplay.
+	/// Contains data, that's unique to the level or level save state and can't be represented by any other piece of data in the level's scene.
 	/// </summary>
 	public static class LevelDataManager
 	{
@@ -14,16 +14,35 @@ namespace SS.Levels
 		//    General
 		//
 
+		/// <summary>
+		/// The number of segments of the map (Read Only).
+		/// </summary>
+		public static int mapSegments { get; private set; }
+		
+		/// <summary>
+		/// The y size of the map. In world space units (Read Only).
+		/// </summary>
+		public static float mapHeight { get; private set; }
+
 
 		//
 		//    Factions
 		//
 
+		/// <summary>
+		/// The ID of the player's faction in a currently loaded level.
+		/// </summary>
 		public const int PLAYER_FAC = 0;
 
-		public static int numFactions { get; private set; }
+		/// <summary>
+		/// Contains the amount of factions registered in the currently loaded level (Read Only).
+		/// </summary>
+		public static int factionCount { get; private set; }
 
 		static FactionDefinition[] _factions;
+		/// <summary>
+		/// Contains definitions for every faction registered in the currently loaded level (Read Only).
+		/// </summary>
 		public static FactionDefinition[] factions
 		{
 			get
@@ -32,13 +51,16 @@ namespace SS.Levels
 			}
 			set
 			{
-				// if factions are reset, reset faction data to null (expecting factino data to be set afterwards too).
+				// if factions are reset, reset faction data as well.
 				_factionData = null;
 				_factions = value;
 			}
 		}
 		
 		static FactionData[] _factionData;
+		/// <summary>
+		/// Contains data for every faction registered in the currently loaded level (Read Only).
+		/// </summary>
 		public static FactionData[] factionData
 		{
 			get
@@ -56,7 +78,11 @@ namespace SS.Levels
 		}
 
 #warning callback on when relation changes. To change the diplomacy menu icon.
+		/// <summary>
+		/// Contains relations between every faction registered in the currently loaded level (Read Only).
+		/// </summary>
 		public static RelationMap<DiplomaticRelation> diplomaticRelations { get; private set; }
+
 
 		//
 		//    Quests
@@ -69,19 +95,19 @@ namespace SS.Levels
 
 
 
-
-		//
-		//    Specialized Settings, used as extra parameters when creating level save states.
-		//
-
-		/// <summary>
-		/// Contains extra information about what to save with save states. Not everything always needs to be saved (e.g. selection).
-		/// </summary>
+		
+		
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public static void LoadMapData( KFFSerializer serializer )
+		{
+			mapSegments = serializer.ReadInt( "Map.Segments" );
+			mapHeight = serializer.ReadFloat( "Map.Height" );
+		}
 
 
 		public static void LoadFactions( string levelIdentifier )
@@ -90,11 +116,11 @@ namespace SS.Levels
 
 			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			
-			int count = serializer.Analyze( "List" ).childCount;
-			numFactions = count;
 
-			factions = new FactionDefinition[numFactions];
+			int count = serializer.Analyze( "List" ).childCount;
+			factionCount = count;
+
+			factions = new FactionDefinition[factionCount];
 			for( int i = 0; i < factions.Length; i++ )
 			{
 				factions[i] = new FactionDefinition();
@@ -111,12 +137,12 @@ namespace SS.Levels
 
 
 			int count = serializer.Analyze( "List" ).childCount;
-			if( count != numFactions )
+			if( count != factionCount )
 			{
 				throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
 			}
 
-			factionData = new FactionData[numFactions];
+			factionData = new FactionData[factionCount];
 
 			for( int i = 0; i < factionData.Length; i++ )
 			{

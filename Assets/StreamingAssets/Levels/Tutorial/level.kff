@@ -1,4 +1,9 @@
 ﻿DisplayName = "Tutorial";
+Map =
+{
+	Segments = 4;
+	Height = 6.0;
+};
 DaylightCycle =
 {
 	DayLength = 200;

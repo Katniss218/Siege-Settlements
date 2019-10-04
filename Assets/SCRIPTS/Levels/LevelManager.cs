@@ -326,7 +326,9 @@ namespace SS.Levels
 
 			DefinitionManager.LoadResourceDefinitions( levelIdentifier );
 			DefinitionManager.LoadTechnologyDefinitions( levelIdentifier );
-			
+
+			LevelDataManager.LoadMapData( serializerL );
+
 			InstantiateLevelPrefabs(); // game UI prefabs
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
@@ -633,28 +635,28 @@ namespace SS.Levels
 
 		private static void CreateTerrain()
 		{
-			const int size = 4; // the size of the map (in chunks).
+			//const int size = 4; // the size of the map (in chunks).
 
 			GameObject environment = new GameObject( "Environment" );
 
 			LevelTerrainCreator.terrainParent = environment.transform;
-			Texture2D[,] color = new Texture2D[size, size];
-			for( int i = 0; i < size; i++ )
+			Texture2D[,] color = new Texture2D[LevelDataManager.mapSegments, LevelDataManager.mapSegments];
+			for( int i = 0; i < LevelDataManager.mapSegments; i++ )
 			{
-				for( int j = 0; j < size; j++ )
+				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
-					color[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Colormap/row-" + (size - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
+					color[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Colormap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
 				}
 			}
-			Texture2D[,] height = new Texture2D[size, size];
-			for( int i = 0; i < size; i++ )
+			Texture2D[,] height = new Texture2D[LevelDataManager.mapSegments, LevelDataManager.mapSegments];
+			for( int i = 0; i < LevelDataManager.mapSegments; i++ )
 			{
-				for( int j = 0; j < size; j++ )
+				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
-					height[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Heightmap/row-" + (size - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
+					height[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Heightmap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", Katniss.Utils.TextureType.Color );
 				}
 			}
-			LevelTerrainCreator.SpawnMap( height, color, 6f );
+			LevelTerrainCreator.SpawnMap( height, color, LevelDataManager.mapHeight );
 			LevelTerrainCreator.UpdateNavMesh();
 		}
 

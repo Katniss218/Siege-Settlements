@@ -45,7 +45,7 @@ namespace SS.UI
 
 		public void Init()
 		{
-			for( int i = 0; i < LevelDataManager.numFactions; i++ )
+			for( int i = 0; i < LevelDataManager.factionCount; i++ )
 			{
 				if( i == LevelDataManager.PLAYER_FAC )
 				{

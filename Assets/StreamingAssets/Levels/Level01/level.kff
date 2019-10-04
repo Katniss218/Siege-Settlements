@@ -1,4 +1,9 @@
 ﻿DisplayName = "Level 1";
+Map =
+{
+	Segments = 3;
+	Height = 3.0;
+};
 DaylightCycle =
 {
 	DayLength = 200;
