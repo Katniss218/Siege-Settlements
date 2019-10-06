@@ -10,7 +10,6 @@ namespace SS.UI
 	[DisallowMultipleComponent]
 	public class SaveLoadMenu : MonoBehaviour
 	{
-#warning When save state is deleted the list is not refreshed.
 		public struct SaveElementData
 		{
 			public string displayName; // the string displayed on the element.

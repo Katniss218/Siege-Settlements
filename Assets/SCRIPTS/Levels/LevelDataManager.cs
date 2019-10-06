@@ -77,8 +77,7 @@ namespace SS.Levels
 				_factionData = value;
 			}
 		}
-
-#warning callback on when relation changes. To change the diplomacy menu icon.
+		
 		/// <summary>
 		/// Contains relations between every faction registered in the currently loaded level (Read Only).
 		/// </summary>
