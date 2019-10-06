@@ -32,7 +32,22 @@ namespace SS.UI
 			diplomacyMenuElement.MarkAsPlayer();
 		}
 
-		private void Start()
+		void OnEnable()
+		{
+			LevelDataManager.onRelationChanged.AddListener( this.OnRelationChangedListener );
+		}
+
+		void OnDisable()
+		{
+			LevelDataManager.onRelationChanged.RemoveListener( this.OnRelationChangedListener );
+		}
+
+		void Start()
+		{
+			ForceRefresh();
+		}
+
+		private void OnRelationChangedListener( int fac1, int fac2, DiplomaticRelation rel )
 		{
 			ForceRefresh();
 		}
@@ -53,7 +68,7 @@ namespace SS.UI
 				}
 				else
 				{
-					SpawnDiplomacyMenuElement( LevelDataManager.factions[i], LevelDataManager.diplomaticRelations[LevelDataManager.PLAYER_FAC, i] );
+					SpawnDiplomacyMenuElement( LevelDataManager.factions[i], LevelDataManager.GetRelation(LevelDataManager.PLAYER_FAC, i) );
 				}
 			}
 		}

@@ -47,7 +47,7 @@ namespace SS.Diplomacy
 			{
 				return false;
 			}
-			return LevelDataManager.diplomaticRelations.Get( fac1.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
+			return LevelDataManager.GetRelation( fac1.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Diplomacy;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS.Levels
 {
@@ -81,7 +82,22 @@ namespace SS.Levels
 		/// <summary>
 		/// Contains relations between every faction registered in the currently loaded level (Read Only).
 		/// </summary>
-		public static RelationMap<DiplomaticRelation> diplomaticRelations { get; private set; }
+		private static RelationMap<DiplomaticRelation> diplomaticRelations;
+
+		public class _UnityEvent_int_int_DiplomaticRelation : UnityEvent<int, int, DiplomaticRelation> { }
+
+		public static _UnityEvent_int_int_DiplomaticRelation onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
+
+		public static DiplomaticRelation GetRelation( int fac1, int fac2 )
+		{
+			return diplomaticRelations[fac1, fac2];
+		}
+
+		public static void SetRelation( int fac1, int fac2, DiplomaticRelation rel )
+		{
+			diplomaticRelations[fac1, fac2] = rel;
+			onRelationChanged?.Invoke( fac1, fac2, rel );
+		}
 
 
 		//
@@ -157,7 +173,7 @@ namespace SS.Levels
 			sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
 
 			diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
-
+			onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
 			for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
 			{
 				diplomaticRelations[i] = (DiplomaticRelation)array[i];
