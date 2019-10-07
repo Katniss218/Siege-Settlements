@@ -21,7 +21,7 @@ namespace SS.Extras
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
@@ -57,7 +57,7 @@ namespace SS.Extras
 			container.isStatic = true;
 			container.layer = ObjectLayer.EXTRAS;
 
-			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
+			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			gfx.isStatic = true;
 			

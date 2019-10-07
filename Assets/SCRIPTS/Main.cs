@@ -25,6 +25,8 @@ namespace SS
 	{
 		public const float DEFAULT_NAVMESH_BASE_OFFSET = -0.075f;
 
+		public const string GRAPHICS_GAMEOBJECT_NAME = "graphics";
+
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
 		public static bool isHudLocked { get; private set; }
@@ -46,24 +48,24 @@ namespace SS
 		}
 
 
-		private static Transform __worldUIs = null;
-		public static Transform worldUIs
+		private static Transform __objectHUDCanvas = null;
+		public static Transform objectHUDCanvas
 		{
 			get
 			{
-				if( __worldUIs == null )
+				if( __objectHUDCanvas == null )
 				{
 					Canvas[] canvases = FindObjectsOfType<Canvas>();
 					for( int i = 0; i < canvases.Length;i++ )
 					{
-						if( canvases[i].gameObject.CompareTag( "World UIs" ) )
+						if( canvases[i].gameObject.CompareTag( "Object HUD Canvas" ) )
 						{
-							__worldUIs = canvases[i].transform;
+							__objectHUDCanvas = canvases[i].transform;
 							break;
 						}
 					}
 				}
-				return __worldUIs;
+				return __objectHUDCanvas;
 			}
 		}
 

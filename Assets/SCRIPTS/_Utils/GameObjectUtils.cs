@@ -7,8 +7,6 @@ namespace Katniss.Utils
 {
 	public static class GameObjectUtils
 	{
-		public const string GRAPHICS_GAMEOBJECT_NAME = "graphics";
-
 		public static void RectTransform( Transform parent, string name, Vector2 pos, Vector2 size, Vector2 piv, Vector2 amin, Vector2 amax, out GameObject gameObject, out RectTransform rectTransform )
 		{
 			GameObject go = new GameObject( name );

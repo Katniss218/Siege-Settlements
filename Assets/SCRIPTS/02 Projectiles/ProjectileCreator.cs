@@ -27,7 +27,7 @@ namespace SS.Projectiles
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh.Item2;
@@ -122,7 +122,7 @@ namespace SS.Projectiles
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
+			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			
 			gfx.AddComponent<MeshFilter>();

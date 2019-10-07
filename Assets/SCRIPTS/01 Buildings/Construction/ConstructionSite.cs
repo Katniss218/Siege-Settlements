@@ -385,7 +385,7 @@ namespace SS.Buildings
 
 			Building building = gameObject.GetComponent<Building>();
 
-			MeshRenderer meshRenderer = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
+			MeshRenderer meshRenderer = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );

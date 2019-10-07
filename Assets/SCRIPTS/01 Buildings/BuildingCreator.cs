@@ -29,7 +29,7 @@ namespace SS.Buildings
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 
 
 			// Set the building's mesh and material.
@@ -111,7 +111,7 @@ namespace SS.Buildings
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = gameObject.transform.Find( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
+			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
 			
@@ -175,7 +175,7 @@ namespace SS.Buildings
 			//    GRAPHICS GAMEOBJECT
 			//
 
-			GameObject gfx = new GameObject( GameObjectUtils.GRAPHICS_GAMEOBJECT_NAME );
+			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
 			gfx.transform.SetParent( container.transform );
 			gfx.isStatic = true;
 
@@ -199,7 +199,7 @@ namespace SS.Buildings
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.carving = true;
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.worldUIs );
+			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
