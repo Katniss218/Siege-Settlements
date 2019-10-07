@@ -15,6 +15,7 @@ using SS.Units;
 using SS.Heroes;
 using SS.Levels;
 using SS.Diplomacy;
+using SS.UI;
 
 namespace SS
 {
@@ -37,6 +38,7 @@ namespace SS
 		public static _UnityEvent_bool onHudLockChange = new _UnityEvent_bool();
 
 
+#warning Move this to the new particle system.
 		private static GameObject __particleSystemInstance = null;
 		new public static GameObject particleSystem
 		{
@@ -280,7 +282,7 @@ namespace SS
 
 				onHudLockChange?.Invoke( isHudLocked );
 			}
-
+			
 			if( Input.GetKeyDown( KeyCode.Alpha1 ) )
 			{
 				if( !EventSystem.current.IsPointerOverGameObject() )
