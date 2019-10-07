@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Katniss.Utils
+namespace SS.Content
 {
 	public static class KMKFFImporter
 	{

@@ -1,10 +1,8 @@
 ﻿using KFF;
-using SS;
-using SS.Content;
 using System;
 using UnityEngine;
 
-namespace Katniss.Utils
+namespace SS.Content
 {
 	/// <summary>
 	/// Used as a project-specific KFF serializer extension.

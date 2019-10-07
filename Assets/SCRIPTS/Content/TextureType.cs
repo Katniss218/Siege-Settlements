@@ -1,4 +1,4 @@
-﻿namespace Katniss.Utils
+﻿namespace SS.Content
 {
 	public enum TextureType : byte
 	{

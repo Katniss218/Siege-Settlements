@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-namespace Katniss.Utils
+namespace SS.Content
 {
 	public static class PngImporter
 	{

@@ -4,6 +4,12 @@ namespace Katniss.Utils
 {
 	public static class Texture2DUtils
 	{
+		public enum TextureType : byte
+		{
+			Color,
+			Normal
+		}
+
 		public static Texture2D CreateBlank()
 		{
 			Texture2D texture = new Texture2D( 1, 1 );

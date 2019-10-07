@@ -1,7 +1,5 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
-using SS.Projectiles;
 using System;
 using UnityEngine;
 
@@ -11,9 +9,11 @@ namespace SS.Modules
 	{
 		public string projectileId { get; set; }
 		public int projectileCount { get; set; }
+
 		public DamageType damageType { get; set; }
 		public float damage { get; set; }
 		public float armorPenetration { get; set; }
+
 		public float attackRange { get; set; }
 		public float attackCooldown { get; set; }
 		public float velocity { get; set; }
