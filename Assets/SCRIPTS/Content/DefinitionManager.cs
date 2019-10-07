@@ -36,6 +36,9 @@ namespace SS.Content
 		private static TechnologyDefinition[] technologyDefinitions = null;
 
 
+		/// <summary>
+		/// Clears the cached definitions (typicaly used when level is unloaded).
+		/// </summary>
 		public static void Purge()
 		{
 			unitDefinitions = null;

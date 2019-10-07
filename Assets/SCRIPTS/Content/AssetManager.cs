@@ -38,6 +38,9 @@ namespace SS.Content
 		public static string sourceLevelId { get; set; }
 
 
+		/// <summary>
+		/// Clears the cached assets (typicaly used when level is unloaded).
+		/// </summary>
 		public static void Purge()
 		{
 			prefabs.Clear();
