@@ -135,7 +135,8 @@ namespace SS.Buildings
 
 					if( selectable != null )
 					{
-						Selection.ForceSelectionUIRedraw( selectable ); // force redraw to refresh after the construction site has been destroyed.
+#warning incomplete. doesn't remove the "under construction/repair".
+						//Selection.ForceSelectionUIRedraw( selectable ); // force redraw to refresh after the construction site has been destroyed.
 					}
 				}
 

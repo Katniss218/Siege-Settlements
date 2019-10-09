@@ -38,12 +38,7 @@ namespace SS
 		/// Is called when the object gets deselected.
 		/// </summary>
 		public UnityEvent onDeselect = new UnityEvent();
-
-		/// <summary>
-		/// Is called whenever the SelectionPanel.Object needs updating. Use it to create UI elements on the SelectionPanel.Object.
-		/// </summary>
-		public UnityEvent onSelectionUIRedraw = new UnityEvent();
-
+		
 
 		// Cache the existing selectables to greatly reduce load (searching objects).
 		void OnEnable()

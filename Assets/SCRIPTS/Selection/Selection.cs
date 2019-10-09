@@ -39,7 +39,7 @@ namespace SS
 
 			// Allow the newly highlighted object to create it's own UI elements.
 			// Also, this is going to clear the previous object's UI elements.
-			ForceSelectionUIRedraw( obj );
+			//ForceSelectionUIRedraw( obj );
 		}
 
 		private static void __Select( Selectable obj )
@@ -56,42 +56,22 @@ namespace SS
 
 			if( IsHighlighted( obj ) )
 			{
-				SelectionPanel.instance.obj.Clear();
+				SelectionPanel.instance.obj.ClearAll();
 				highlighted = null;
 			}
 			obj.onDeselect?.Invoke();
 		}
-
-		/// <summary>
-		/// Checks if the object is currently selected.
-		/// Forces the UI elements on the SelectionPanel.Object to recalculate according to the specified object's parameters. Call it when relevant data might be changed.
-		/// </summary>
-		/// <param name="callingObj">The object whoose SelectionPanel.Object is to be recalculated. Can be null to specify any object.</param>
-		internal static void ForceSelectionUIRedraw( Selectable callingObj )
-		{
-			// Check if the object even needs updating.
-			if( callingObj != null && !IsHighlighted( callingObj ) )
-			{
-				return;
-			}
-
-			SelectionPanel.instance.obj.Clear();
-
-			// if there's no need to update (nothing highlighted), return.
-			if( highlighted == null )
-			{
-				return;
-			}
-			highlighted.onSelectionUIRedraw?.Invoke();
-		}
-
-
+		
 		/// <summary>
 		/// Checks if the object is currently highlighted.
 		/// </summary>
 		/// <param name="obj">The object to check.</param>
 		public static bool IsHighlighted( Selectable obj )
 		{
+			if( obj == null )
+			{
+				return false;
+			}
 			return highlighted == obj;
 		}
 
@@ -167,7 +147,7 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			SelectionPanel.instance.obj.Clear();
+			SelectionPanel.instance.obj.ClearAll();
 			SelectionPanel.instance.list.Clear();
 			
 			for( int i = 0; i < selected.Count; i++ )

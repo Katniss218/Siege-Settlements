@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Content;
+﻿using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -301,8 +300,6 @@ namespace SS.Heroes
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				hud.SetHealthBarFill( damageable.healthPercent );
-
-				Selection.ForceSelectionUIRedraw( selectable );
 			} );
 
 			// Make the hero deselect itself, and destroy it's UI when killed.
@@ -320,14 +317,32 @@ namespace SS.Heroes
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 
-			// Make the hero show it's parameters on the Selection Panel, when highlighted.
-			selectable.onSelectionUIRedraw.AddListener( () =>
+			selectable.onHighlight.AddListener( () =>
 			{
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
+
+				GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
+				SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 			} );
-			
+
+			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			{
+				if( !Selection.IsHighlighted( selectable ) )
+				{
+					return;
+				}
+				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
+				if( healthUI != null )
+				{
+					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+				}
+			} );
+
+
 			// Make the unit update it's UI's position every frame.
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{

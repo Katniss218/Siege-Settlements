@@ -94,11 +94,16 @@ namespace SS.UI
 			GameObject obj = Object.Instantiate( UIUtils.text, parent );
 			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
 
+			EditText( obj, text );
+			
+			return obj;
+		}
+
+		public static void EditText( GameObject obj, string newText )
+		{
 			TextMeshProUGUI textMesh = obj.GetComponent<TextMeshProUGUI>();
 
-			textMesh.text = text;
-
-			return obj;
+			textMesh.text = newText;
 		}
 
 		public static GameObject InstantiateIcon( Transform parent, GenericUIData basicData, Sprite icon )
@@ -112,6 +117,7 @@ namespace SS.UI
 
 			return obj;
 		}
+#warning TODO! - Add the rest of the methods.
 
 		public static GameObject InstantiateTextButton( Transform parent, GenericUIData basicData, string text, UnityAction onClick )
 		{

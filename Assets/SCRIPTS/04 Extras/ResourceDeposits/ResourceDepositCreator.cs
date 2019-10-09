@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Content;
+﻿using SS.Content;
 using SS.Modules.Inventories;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;

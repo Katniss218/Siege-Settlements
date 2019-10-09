@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Content;
+﻿using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -294,7 +293,6 @@ namespace SS.Buildings
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
-				Selection.ForceSelectionUIRedraw( selectable );
 			} );
 
 			// When the building dies:
@@ -314,18 +312,44 @@ namespace SS.Buildings
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-
-			// Make the building show it's parameters on the Selection Panel, when highlighted.
-			selectable.onSelectionUIRedraw.AddListener( () =>
+			
+			selectable.onHighlight.AddListener( () =>
 			{
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), building.displayName );
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), building.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "building.display_name", nameUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
+
 				if( !Building.IsUsable( damageable ) )
 				{
-					UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
+					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
+					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
 				}
 			} );
-			
+
+			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			{
+				if( !Selection.IsHighlighted( selectable ) )
+				{
+					return;
+				}
+				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
+				if( healthUI != null )
+				{
+					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+				}
+
+				// if it is now usable, but was unusable before - remove the unusable flag.
+				if( Building.IsUsable( damageable ) )
+				{
+					if( SelectionPanel.instance.obj.GetElement( "building.unusable_flag" ) != null )
+					{
+						SelectionPanel.instance.obj.Clear( "building.unusable_flag" );
+					}
+				}
+			} );
+
 
 			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>

@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Buildings;
+﻿using SS.Buildings;
 using SS.Content;
 using SS.Modules.Inventories;
 using SS.Levels;
@@ -70,14 +69,15 @@ namespace SS.Units
 			Selectable selectable = gameObject.GetComponent<Selectable>();
 			selectable.icon = def.icon.Item2;
 
-			// If the unit is constructor (civilian), make it show the build menu, hide it otherwise (if present).
+			// If the unit is constructor (civilian), make it show the build menu.
 			if( def.isConstructor )
 			{
-				selectable.onSelectionUIRedraw.AddListener( ConstructorOnSelect );
+				selectable.onHighlight.AddListener( ConstructorOnSelect );
 			}
+			// If the unit was constructor before (listener is added), but it's not a constructor anymore - remove listener.
 			else
 			{
-				selectable.onSelectionUIRedraw.RemoveListener( ConstructorOnSelect );
+				selectable.onHighlight.RemoveListener( ConstructorOnSelect );
 			}
 			
 			// Set the unit's health.
@@ -367,8 +367,6 @@ namespace SS.Units
 			{
 				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				hud.SetHealthBarFill( damageable.healthPercent );
-
-				Selection.ForceSelectionUIRedraw( selectable );
 			} );
 
 			// Make the unit deselect itself, and destroy it's UI when killed.
@@ -390,13 +388,29 @@ namespace SS.Units
 				}
 			} );
 
-			// Make the unit show it's parameters on the Selection Panel, when highlighted.
-			selectable.onSelectionUIRedraw.AddListener( () =>
+			selectable.onHighlight.AddListener( () =>
 			{
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
-				UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
+			} );
+
+			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			{
+				if( !Selection.IsHighlighted( selectable ) )
+				{
+					return;
+				}
+				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
+				if( healthUI != null )
+				{
+					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+				}
 			} );
 			
+
 			// Make the unit update it's UI's position every frame.
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
 			{
@@ -507,6 +521,7 @@ namespace SS.Units
 
 		private static void ConstructorOnSelect()
 		{
+#warning update list on unlock.
 			const string TEXT = "Select building to place...";
 
 			BuildingDefinition[] registeredBuildings = DefinitionManager.GetAllBuildings();
@@ -536,8 +551,11 @@ namespace SS.Units
 				}
 			}
 			// Create the actual UI.
-			UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
-			UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
+
+			GameObject listUI = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+			SelectionPanel.instance.obj.RegisterElement( "constr.list", listUI.transform );
 		}
 	}
 }

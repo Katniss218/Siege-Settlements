@@ -59,7 +59,7 @@ namespace SS.UI
 		
 		public static SelectionPanel instance { get; private set; }
 
-		
+
 
 		
 		[SerializeField] private SPObject __obj = null;
