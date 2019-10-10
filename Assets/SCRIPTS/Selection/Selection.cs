@@ -94,7 +94,12 @@ namespace SS
 			{
 				throw new System.Exception( "Attempted to highlight object that is NOT selected." );
 			}
-			__Highlight( obj );
+			if( !IsHighlighted( obj ) )
+			{
+				// Clear and highlight.
+				SelectionPanel.instance.obj.ClearAll();
+				__Highlight( obj );
+			}
 		}
 
 		/// <summary>
@@ -117,9 +122,14 @@ namespace SS
 					SelectionPanel.instance.gameObject.SetActive( true );
 				if( !ActionPanel.instance.gameObject.activeSelf )
 					ActionPanel.instance.gameObject.SetActive( true );
-
+				
 				__Select( obj );
-				__Highlight( obj );
+				if( !IsHighlighted( obj ) )
+				{
+					// Clear and highlight new.
+					SelectionPanel.instance.obj.ClearAll();
+					__Highlight( obj );
+				}
 			}
 		}
 
