@@ -89,6 +89,9 @@ namespace SS.UI
 			}
 		}
 
+
+
+
 		public static GameObject InstantiateText( Transform parent, GenericUIData basicData, string text )
 		{
 			GameObject obj = Object.Instantiate( UIUtils.text, parent );
@@ -98,7 +101,6 @@ namespace SS.UI
 			
 			return obj;
 		}
-
 		public static void EditText( GameObject obj, string newText )
 		{
 			TextMeshProUGUI textMesh = obj.GetComponent<TextMeshProUGUI>();
@@ -106,64 +108,88 @@ namespace SS.UI
 			textMesh.text = newText;
 		}
 
+
 		public static GameObject InstantiateIcon( Transform parent, GenericUIData basicData, Sprite icon )
 		{
 			GameObject obj = Object.Instantiate( UIUtils.icon, parent );
 			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
 
-			Image imageComp = obj.GetComponent<Image>();
-
-			imageComp.sprite = icon;
+			EditIcon( obj, icon );
 
 			return obj;
 		}
-#warning TODO! - Add the rest of the methods.
+		public static void EditIcon( GameObject obj, Sprite newIcon )
+		{
+			Image imageComp = obj.GetComponent<Image>();
+
+			imageComp.sprite = newIcon;
+		}
+
 
 		public static GameObject InstantiateTextButton( Transform parent, GenericUIData basicData, string text, UnityAction onClick )
 		{
 			GameObject obj = Object.Instantiate( textButton, parent );
 			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
 
-			TextMeshProUGUI textMesh = obj.transform.GetChild( 0 ).GetComponent<TextMeshProUGUI>();
-
-			textMesh.text = text;
-
-			Button button = obj.GetComponent<Button>();
-			button.onClick.AddListener( onClick );
-			if( onClick == null )
-			{
-				button.interactable = false;
-			}
+			EditTextButton( obj, text, onClick );
 
 			return obj;
 		}
+		public static void EditTextButton( GameObject obj, string newText, UnityAction newOnClick )
+		{
+			TextMeshProUGUI textMesh = obj.transform.GetChild( 0 ).GetComponent<TextMeshProUGUI>();
+
+			textMesh.text = newText;
+
+			Button button = obj.GetComponent<Button>();
+			if( newOnClick == null )
+			{
+				button.interactable = false;
+			}
+			else
+			{
+				button.onClick.RemoveAllListeners();
+				button.onClick.AddListener( newOnClick );
+			}
+		}
+
 
 		public static GameObject InstantiateIconButton( Transform parent, GenericUIData basicData, Sprite icon, UnityAction onClick )
 		{
 			GameObject obj = Object.Instantiate( iconButton, parent );
 			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
 
-			Image imageComp = obj.GetComponent<Image>();
-
-			imageComp.sprite = icon;
-
-			Button button = obj.GetComponent<Button>();
-			button.onClick.AddListener( onClick );
-			if( onClick == null )
-			{
-				button.interactable = false;
-			}
+			EditIconButton( obj, icon, onClick );
 
 			return obj;
 		}
+		public static void EditIconButton( GameObject obj, Sprite newIcon, UnityAction newOnClick )
+		{
+			Image imageComp = obj.GetComponent<Image>();
+
+			imageComp.sprite = newIcon;
+
+			Button button = obj.GetComponent<Button>();
+			if( newOnClick == null )
+			{
+				button.interactable = false;
+			}
+			else
+			{
+				button.onClick.RemoveAllListeners();
+				button.onClick.AddListener( newOnClick );
+			}
+		}
+
 
 		public static GameObject InstantiateScrollableGrid( Transform parent, GenericUIData basicData, float cellSize, GameObject[] contents )
 		{
 			GameObject obj = Object.Instantiate( scrollableGrid, parent );
 			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
 
+			EditScrollableGrid( obj, cellSize );
+
 			Transform listT = obj.transform.Find( "Contents" );
-			listT.GetComponent<GridLayoutGroup>().cellSize = new Vector2( cellSize, cellSize );
 			for( int i = 0; i < contents.Length; i++ )
 			{
 				contents[i].transform.SetParent( listT );
@@ -171,6 +197,12 @@ namespace SS.UI
 
 			return obj;
 		}
+		public static void EditScrollableGrid( GameObject obj, float newCellSize )
+		{
+			Transform listT = obj.transform.Find( "Contents" );
+			listT.GetComponent<GridLayoutGroup>().cellSize = new Vector2( newCellSize, newCellSize );
+		}
+
 
 		public static GameObject InstantiateScrollableList( Transform parent, GenericUIData basicData, GameObject[] contents )
 		{
