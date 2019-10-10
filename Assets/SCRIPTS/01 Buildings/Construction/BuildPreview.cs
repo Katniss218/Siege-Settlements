@@ -1,8 +1,8 @@
-﻿using Katniss.Utils;
-using SS.Levels;
+﻿using SS.Levels;
 using SS.Levels.SaveStates;
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SS.Buildings
 {
@@ -26,43 +26,68 @@ namespace SS.Buildings
 		public BuildingDefinition def;
 
 		/// <summary>
-		/// The build preview will treat objects in this mask as ground.
+		/// The build preview will treat objects in this mask as ground terrain.
 		/// </summary>
-		public LayerMask groundMask;
+		public LayerMask terrainMask;
 
 		/// <summary>
 		/// The build preview will treat objects in this mask as blocking the placement.
 		/// </summary>
-		public LayerMask overlapMask;
+		public LayerMask objectsMask;
 
 		/// <summary>
 		/// The maximum difference between any 2 points (+- maxDeviation) underneath the building preview, and the position of the building preview, that will be still considered as valid placement spot.
 		/// </summary>
-		public float maxDeviation = 0.2f;
+		public float maxDeviationY = 0.2f;
 
-		private Vector3 GetOverlapHitboxCenter()
+
+		private Vector3 GetOverlapHitboxCenter( bool OffsetByDeviation )
 		{
 			const float epsilon = 0.01f;
 			Matrix4x4 localToWorldMatrix = this.transform.localToWorldMatrix;
 
-			Vector3 center = new Vector3( 0.0f, (def.size.y / 2.0f), 0.0f );
+			Vector3 center = new Vector3( 0.0f, (this.def.size.y / 2.0f), 0.0f );
+
+			if( OffsetByDeviation )
+			{
+				// Add maxDeviation, to make sure the overlap wouldn't block the (+) range of valid placement spots.
+				center.y += this.maxDeviationY / 2.0f; // add deviation in local space.
+			}
+
 			center = localToWorldMatrix.MultiplyVector( center );
 			center += this.transform.position;
-			// Add maxDeviation, to make sure the overlap wouldn't block the (+) range of valid placement spots.
-			center.y += maxDeviation;
-			// Add epsilon to make sure the collider doesn't falsly collide at still valid placement spot.
+
+			// Add epsilon to make sure the collider doesn't falsly collide with the ground at otherwise valid placement spot.
 			center.y += epsilon;
 
 			return center;
 		}
 
-		private bool IsOverlappingObjects()
+		private bool IsOverlapping()
 		{
-			Vector3 center = GetOverlapHitboxCenter();
-			if( Physics.OverlapBox( center, def.size / 2.0f, this.transform.rotation, overlapMask ).Length > 0 )
+			// Test the ground overlapping (only if the .
+			Vector3 center;
+
+			if( this.def.size.y > this.maxDeviationY )
+			{
+				// Subtract the max deviation from the height of the box.
+				Vector3 size = this.def.size - new Vector3( 0.0f, this.maxDeviationY, 0.0f );
+
+				center = this.GetOverlapHitboxCenter( true );
+
+				if( Physics.OverlapBox( center, (size / 2.0f), this.transform.rotation, this.terrainMask ).Length > 0 )
+				{
+					return true;
+				}
+			}
+
+			// Test objects overlapping with the object
+			center = this.GetOverlapHitboxCenter( false );
+			if( Physics.OverlapBox( center, (this.def.size / 2.0f), this.transform.rotation, this.objectsMask ).Length > 0 )
 			{
 				return true;
 			}
+
 			return false;
 		}
 
@@ -73,10 +98,10 @@ namespace SS.Buildings
 			// Setup the 4 corners for raycast.
 			Vector3[] pos = new Vector3[4]
 			{
-				new Vector3( -halfSize.x, maxDeviation, -halfSize.z ),
-				new Vector3( -halfSize.x, maxDeviation, halfSize.z ),
-				new Vector3( halfSize.x, maxDeviation, -halfSize.z ),
-				new Vector3( halfSize.x, maxDeviation, halfSize.z )
+				new Vector3( -halfSize.x, this.maxDeviationY, -halfSize.z ),
+				new Vector3( -halfSize.x, this.maxDeviationY, halfSize.z ),
+				new Vector3( halfSize.x, this.maxDeviationY, -halfSize.z ),
+				new Vector3( halfSize.x, this.maxDeviationY, halfSize.z )
 			};
 
 			// Setup the outputs for the 4 corners.
@@ -88,7 +113,7 @@ namespace SS.Buildings
 			for( int i = 0; i < 4; i++ )
 			{
 				pos[i] = localToWorldMatrix.MultiplyVector( pos[i] ) + this.transform.position;
-				if( !Physics.Raycast( pos[i], Vector3.down, out hitInfo, 2.0f * maxDeviation, groundMask ) )
+				if( !Physics.Raycast( pos[i], Vector3.down, out hitInfo, 2.0f * this.maxDeviationY, this.terrainMask ) )
 				{
 					// If the raycast missed, that means there is a deep chasm at the checked position.
 					return false;
@@ -100,8 +125,8 @@ namespace SS.Buildings
 			for( int i = 0; i < 4; i++ )
 			{
 				// the transform's position is always at the bottom of a building.
-				if( y[i] < this.transform.position.y - maxDeviation ) { return false; }
-				if( y[i] > this.transform.position.y + maxDeviation ) { return false; }
+				if( y[i] < this.transform.position.y - this.maxDeviationY ) { return false; }
+				if( y[i] > this.transform.position.y + this.maxDeviationY ) { return false; }
 			}
 
 			return true;
@@ -112,7 +137,7 @@ namespace SS.Buildings
 		/// </summary>
 		public bool CanBePlacedHere()
 		{
-			return !IsOverlappingObjects() && IsOnFlatGround();
+			return !this.IsOverlapping() && this.IsOnFlatGround();
 		}
 
 		void Start()
@@ -124,10 +149,10 @@ namespace SS.Buildings
 		{
 			if( Input.GetMouseButtonDown( 1 ) ) // right mouse button
 			{
-				Destroy( this.gameObject );
+				Object.Destroy( this.gameObject );
 				return;
 			}
-			if( CanBePlacedHere() )
+			if( this.CanBePlacedHere() )
 			{
 				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.green );
 
@@ -143,7 +168,7 @@ namespace SS.Buildings
 
 					BuildingCreator.Create( this.def, data );
 
-					Destroy( this.gameObject );
+					Object.Destroy( this.gameObject );
 				}
 			}
 			else
@@ -151,7 +176,7 @@ namespace SS.Buildings
 				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.red );
 			}
 		}
-		
+
 		public static GameObject Create( BuildingDefinition def )
 		{
 			GameObject gameObject = new GameObject();
@@ -164,10 +189,9 @@ namespace SS.Buildings
 
 			buildPreview.def = def;
 
-			buildPreview.groundMask = ObjectLayer.TERRAIN_MASK;
+			buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
 
-			buildPreview.overlapMask =
-				ObjectLayer.TERRAIN_MASK |
+			buildPreview.objectsMask =
 				ObjectLayer.UNITS_MASK |
 				ObjectLayer.BUILDINGS_MASK |
 				ObjectLayer.HEROES_MASK |
@@ -177,7 +201,7 @@ namespace SS.Buildings
 			meshFilter.mesh = buildPreview.def.mesh.Item2;
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
-			
+
 			preview = gameObject;
 
 			return gameObject;
@@ -187,7 +211,7 @@ namespace SS.Buildings
 		{
 			if( preview != null )
 			{
-				Destroy( preview );
+				Object.Destroy( preview );
 			}
 		}
 	}
