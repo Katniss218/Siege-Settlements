@@ -24,29 +24,9 @@ namespace SS.Buildings
 			public float remaining { get; set; }
 			public float healthToResource { get; set; }
 		}
-		/*
-		/// <summary>
-		/// An array of resource types needed for construction (Read Only).
-		/// </summary>
-		[SerializeField] private string[] resourceIds;
-
-		/// <summary>
-		/// Resources needed to progress from Building.STARTING_HEALTH_PERCENT health to 100%.
-		/// </summary>
-		[SerializeField] private int[] initialResources;
-
-		/// <summary>
-		/// An array of remaining resources, per resource type (use resourceIds[i] to get the Id) (Read Only).
-		/// </summary>
-		[SerializeField] private float[] resourcesRemaining;
-
-		/// <summary>
-		/// Each entry represents a percentage of total resources needed (initial).
-		/// </summary>
-		[SerializeField] private float[] healthToResources;
-		*/
+		
 		private Dictionary<string, ResourceInfo> resourceInfo;
-
+		
 		private Damageable damageable;
 
 		private Building building;
@@ -71,10 +51,6 @@ namespace SS.Buildings
 		{
 			foreach( var kvp in this.resourceInfo )
 			{
-
-			//}
-			//for( int i = 0; i < this.resourceIds.Length; i++ )
-			//{
 				// Skip to the matching resource.
 				if( kvp.Key != id )
 				{
@@ -92,19 +68,7 @@ namespace SS.Buildings
 					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
 				}
 
-				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
-
-				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
-				// Otherwise, heal it normally.
-				if( this.damageable.health + healAmt > this.damageable.healthMax )
-				{
-					this.damageable.health = this.damageable.healthMax;
-				}
-				else
-				{
-					this.damageable.health += healAmt;
-				}
-
+				
 				kvp.Value.remaining -= amount;
 				if( kvp.Value.remaining < 0 )
 				{
@@ -122,24 +86,34 @@ namespace SS.Buildings
 				AudioManager.PlaySound( this.building.buildSoundEffect );
 
 
-				if( this.IsDone() )
+				bool isDone = this.IsDone();
+				if( isDone )
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
 
-					Selectable selectable = this.GetComponent<Selectable>();
+					this.meshRenderer.material.SetFloat( "_Progress", 1.0f );
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // destroyimmediate so the redraw doesn't detect the construction site that's still present when using Destroy().
-
-					if( selectable != null )
-					{
-#warning incomplete. doesn't remove the "under construction/repair".
-						//Selection.ForceSelectionUIRedraw( selectable ); // force redraw to refresh after the construction site has been destroyed.
-					}
+					
+#warning (??) if received amount is rounded down, the remaining (left) decimal values are not contributing to the health?
 				}
 
+				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
+
+				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
+				// Otherwise, heal it normally.
+				if( this.damageable.health + healAmt > this.damageable.healthMax )
+				{
+					this.damageable.health = this.damageable.healthMax;
+				}
+				else
+				{
+					this.damageable.health += healAmt;
+				}
+				
 				return;
 			}
 		}
@@ -204,7 +178,7 @@ namespace SS.Buildings
 			{
 				foreach( var kvp in this.resourceInfo )
 				{
-					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * kvp.Value.healthToResource * -deltaHP;
+					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
 
 					kvp.Value.remaining += resAmt;
 				}
@@ -394,8 +368,20 @@ namespace SS.Buildings
 			constructionSite.damageable = damageable;
 			constructionSite.building = building;
 			constructionSite.meshRenderer = meshRenderer;
-			
-			if( data.resourcesRemaining != null )
+
+			// If no data about remaining resources is present - calculate them from the current health.
+			if( data.resourcesRemaining == null )
+			{
+				float deltaHP = damageable.health - damageable.healthMax;
+				foreach( var kvp in constructionSite.resourceInfo )
+				{
+					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
+
+					kvp.Value.remaining = resAmt;
+					Debug.Log( kvp.Key + ":" + kvp.Value.remaining );
+				}
+			}
+			else
 			{
 				foreach( var kvp in data.resourcesRemaining )
 				{
