@@ -1,7 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Diplomacy;
-using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,7 +9,9 @@ namespace SS
 {
 	public class SelectionController : MonoBehaviour
 	{
+		// How much the mouse needs to move before the selection is regarded as box-selection (on both axis).
 		private const float XY_THRESHOLD = 4f;
+		// How much the mouse needs to move before the selection is regarded as box-selection (combined magnitude).
 		private const float MAGN_THRESHOLD = 16f;
 
 		private enum SelectionMode : byte
@@ -19,7 +20,11 @@ namespace SS
 			Exclusive
 		}
 
+		/// <summary>
+		/// Is the controller currently box-selecting something? (Read Only).
+		/// </summary>
 		public static bool isDragging { get; private set; }
+
 
 		private static Vector2 beginDragPos;
 
