@@ -378,7 +378,6 @@ namespace SS.Buildings
 					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
 
 					kvp.Value.remaining = resAmt;
-					Debug.Log( kvp.Key + ":" + kvp.Value.remaining );
 				}
 			}
 			else
