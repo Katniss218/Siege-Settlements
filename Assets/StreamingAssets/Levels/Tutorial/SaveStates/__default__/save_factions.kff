@@ -1,2 +1,2 @@
-﻿List=[{Techs=[{Id="technology.weaponry";Progress=2;},{Id="technology.horse_riding";Progress=2;},{Id="technology.archery";Progress=2;}];},{Techs=[];}];
+﻿List=[{Techs=[{Id="technology.weaponry";Progress=0;},{Id="technology.horse_riding";Progress=0;},{Id="technology.archery";Progress=0;}];},{Techs=[];}];
 RelationMatrix=[1];

@@ -16,17 +16,12 @@ namespace SS.Modules
 	[RequireComponent( typeof( FactionMember ) )]
 	public class ResearchModule : Module, IPaymentReceiver
 	{
-		//public class UnityEvent_string_int : UnityEvent<string,int> { }
-
 		public UnityEvent onResearchBegin = new UnityEvent();
 
 		public UnityEvent onResearchProgress = new UnityEvent();
 
 		public UnityEvent onResearchEnd = new UnityEvent();
-
-		//public UnityEvent_string_int onPaymentReceived = new UnityEvent_string_int();
-
-#warning general on technology research state changed (per fac?) to redraw when buildings/etc. might have gotten unlocked.
+		
 		private ResearchModuleDefinition def;
 
 		/// <summary>
@@ -152,7 +147,7 @@ namespace SS.Modules
 					this.researchProgress -= this.researchSpeed * Time.deltaTime;
 					if( this.researchProgress <= 0 )
 					{
-						LevelDataManager.factionData[this.factionMember.factionId].techs[this.researchedTechnology.id] = TechnologyResearchProgress.Researched;
+						LevelDataManager.factionData[this.factionMember.factionId].SetTech( this.researchedTechnology.id, TechnologyResearchProgress.Researched );
 						this.researchedTechnology = null;
 						this.resourcesRemaining = null;
 						this.onResearchEnd?.Invoke();
@@ -217,6 +212,11 @@ namespace SS.Modules
 
 				this.onResearchEnd.RemoveListener( this.OnResearchEnd );
 				this.onResearchEnd.AddListener( this.OnResearchEnd );
+
+				if( this.factionMember != null )
+				{
+					LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.AddListener( OnTechStateChanged );
+				}
 			}
 		}
 		
@@ -236,6 +236,14 @@ namespace SS.Modules
 		}
 
 
+		void OnDestroy()
+		{
+			if( this.factionMember != null )
+			{
+				LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.RemoveListener( OnTechStateChanged );
+			}
+		}
+
 		private void ShowList()
 		{
 			TechnologyDefinition[] registeredTechnologies = DefinitionManager.GetAllTechnologies();
@@ -245,7 +253,7 @@ namespace SS.Modules
 			{
 				TechnologyDefinition techDef = registeredTechnologies[i];
 				// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
-				if( LevelDataManager.factionData[this.factionMember.factionId].techs[techDef.id] == TechnologyResearchProgress.Available )
+				if( LevelDataManager.factionData[this.factionMember.factionId].GetTech( techDef.id ) == TechnologyResearchProgress.Available )
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon.Item2, () =>
 					{
@@ -262,6 +270,25 @@ namespace SS.Modules
 			// Create the actual UI.
 			GameObject listGO = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "research.list", listGO.transform );
+		}
+
+		private void OnTechStateChanged( string id, TechnologyResearchProgress newProgress )
+		{
+			if( !Selection.IsHighlighted( this.selectable ) )
+			{
+				return;
+			}
+			if( this.IsPaymentDone() )
+			{
+				if( !this.isResearching )
+				{
+					if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
+					{
+						SelectionPanel.instance.obj.Clear( "research.list" );
+					}
+					this.ShowList();
+				}
+			}
 		}
 
 		private void OnResearchBegin()

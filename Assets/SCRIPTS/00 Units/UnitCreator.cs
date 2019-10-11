@@ -68,7 +68,7 @@ namespace SS.Units
 			// Set the unit's selected icon.
 			Selectable selectable = gameObject.GetComponent<Selectable>();
 			selectable.icon = def.icon.Item2;
-
+			
 			// If the unit is constructor (civilian), make it show the build menu.
 			if( def.isConstructor )
 			{
@@ -84,8 +84,7 @@ namespace SS.Units
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
-
-
+			
 			//
 			//    MODULES
 			//
@@ -142,7 +141,7 @@ namespace SS.Units
 			// Make the unit damageable.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.health = data.health;
-
+			
 			IInventory inventory = gameObject.GetComponent<IInventory>();
 			foreach( var kvp in data.items )
 			{
@@ -521,7 +520,6 @@ namespace SS.Units
 
 		private static void ConstructorOnSelect()
 		{
-#warning update list on unlock.
 			const string TEXT = "Select building to place...";
 
 			BuildingDefinition[] registeredBuildings = DefinitionManager.GetAllBuildings();
@@ -533,7 +531,7 @@ namespace SS.Units
 				BuildingDefinition buildingDef = registeredBuildings[i];
 
 				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
-				if( Technologies.TechLock.CheckLocked( buildingDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].techs ) )
+				if( Technologies.TechLock.CheckLocked( buildingDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].GetAllTechs() ) )
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, null );
 				}

@@ -4,6 +4,7 @@ using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem.Payment;
+using SS.Technologies;
 using SS.UI;
 using SS.Units;
 using System;
@@ -272,6 +273,11 @@ namespace SS.Modules
 
 				this.onTrainingEnd.RemoveListener( this.OnTrainingEnd );
 				this.onTrainingEnd.AddListener( this.OnTrainingEnd );
+
+				if( this.factionMember != null )
+				{
+					LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.AddListener( OnTechStateChanged );
+				}
 			}
 		}
 		
@@ -291,6 +297,14 @@ namespace SS.Modules
 		}
 
 
+		void OnDestroy()
+		{
+			if( this.factionMember != null )
+			{
+				LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.RemoveListener( OnTechStateChanged );
+			}
+		}
+
 		private void ShowList()
 		{
 			GameObject[] gridElements = new GameObject[this.trainableUnits.Length];
@@ -299,7 +313,7 @@ namespace SS.Modules
 			{
 				UnitDefinition unitDef = this.trainableUnits[i];
 				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
-				if( Technologies.TechLock.CheckLocked( unitDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].techs ) )
+				if( Technologies.TechLock.CheckLocked( unitDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].GetAllTechs() ) )
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, null );
 				}
@@ -314,7 +328,25 @@ namespace SS.Modules
 
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "barracks.list", list.transform );
+		}
 
+		private void OnTechStateChanged( string id, TechnologyResearchProgress newProgress )
+		{
+			if( !Selection.IsHighlighted( this.selectable ) )
+			{
+				return;
+			}
+			if( this.IsPaymentDone() )
+			{
+				if( !this.isTraining )
+				{
+					if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
+					{
+						SelectionPanel.instance.obj.Clear( "barracks.list" );
+					}
+				}
+			}
+			this.ShowList();
 		}
 
 		private void OnTrainingBegin()
