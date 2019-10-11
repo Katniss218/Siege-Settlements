@@ -29,14 +29,9 @@ namespace SS
 
 		private static void InitRect()
 		{
-			GameObject obj;
-			RectTransform t;
-#warning Change this to prefab.
-			GameObjectUtils.RectTransform( Main.canvas.transform, "SelectionRect", new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), out obj, out t );
-
-			obj.AddImageSliced( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/selection_rect" ), false );
-
-			selectionRect = t;
+			GameObject obj = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Selection Rect (UI)" ), Main.canvas.transform );
+			
+			selectionRect = obj.GetComponent<RectTransform>();
 		}
 
 		private static void BeginDrag()
