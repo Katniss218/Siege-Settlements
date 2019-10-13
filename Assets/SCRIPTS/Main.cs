@@ -15,7 +15,7 @@ using SS.Units;
 using SS.Heroes;
 using SS.Levels;
 using SS.Diplomacy;
-using SS.UI;
+using SS.InputSystem;
 
 namespace SS
 {
@@ -70,6 +70,26 @@ namespace SS
 			}
 		}
 
+		private static QueuedKeyboardInput __keyboardInput = null;
+		public static QueuedKeyboardInput keyboardInput
+		{
+			get
+			{
+				if( __keyboardInput == null ) { __keyboardInput = FindObjectOfType<QueuedKeyboardInput>(); }
+				return __keyboardInput;
+			}
+		}
+
+		private static QueuedMouseInput __mouseInput = null;
+		public static QueuedMouseInput mouseInput
+		{
+			get
+			{
+				if( __mouseInput == null ) { __mouseInput = FindObjectOfType<QueuedMouseInput>(); }
+				return __mouseInput;
+			}
+		}
+
 		private static Canvas __canvas = null;
 		public static Canvas canvas
 		{
@@ -119,16 +139,33 @@ namespace SS
 			}
 		}
 
-		public bool IsControllableByPlayer( GameObject go, int playerId )
+		public bool IsControllableByPlayer( GameObject gameObject, int playerId )
 		{
 			// Being controllable not necessarily means that you need to be selectable.
 
-			FactionMember factionMember = go.GetComponent<FactionMember>();
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 			if( factionMember == null )
 			{
 				return true;
 			}
 			return factionMember.factionId == playerId;
+		}
+
+		private void OnEnable()
+		{
+			// Register the input source.
+			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, ( InputQueue self ) =>
+			{
+				isHudLocked = !isHudLocked;
+
+				onHudLockChange?.Invoke( isHudLocked );
+			}, true );
+		}
+
+		private void OnDisable()
+		{
+			// Clear the input source.
+			Main.keyboardInput.ClearOnPress( KeyCode.Tab );
 		}
 
 		void Update()
@@ -275,12 +312,12 @@ namespace SS
 				}
 			}
 
-			if( Input.GetKeyDown( KeyCode.Tab ) )
+			/*if( Input.GetKeyDown( KeyCode.Tab ) )
 			{
 				isHudLocked = !isHudLocked;
 
 				onHudLockChange?.Invoke( isHudLocked );
-			}
+			}*/
 			
 			if( Input.GetKeyDown( KeyCode.Alpha1 ) )
 			{
