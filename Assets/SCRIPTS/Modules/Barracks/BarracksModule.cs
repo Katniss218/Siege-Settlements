@@ -276,7 +276,7 @@ namespace SS.Modules
 
 				if( this.factionMember != null )
 				{
-					LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.AddListener( OnTechStateChanged );
+					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
 				}
 			}
 		}
@@ -301,7 +301,7 @@ namespace SS.Modules
 		{
 			if( this.factionMember != null )
 			{
-				LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.RemoveListener( OnTechStateChanged );
+				LevelDataManager.onTechStateChanged.RemoveListener( OnTechStateChanged );
 			}
 		}
 
@@ -330,8 +330,12 @@ namespace SS.Modules
 			SelectionPanel.instance.obj.RegisterElement( "barracks.list", list.transform );
 		}
 
-		private void OnTechStateChanged( string id, TechnologyResearchProgress newProgress )
+		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
+			if( factionId != this.factionMember.factionId )
+			{
+				return;
+			}
 			if( !Selection.IsHighlighted( this.selectable ) )
 			{
 				return;

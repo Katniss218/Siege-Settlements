@@ -54,13 +54,14 @@ namespace SS.Levels
 			set
 			{
 				// if factions are reset, reset faction data as well.
+				// and on tech state changed, since the factions don't match.
 				_factionData = null;
 				_factions = value;
+				onTechStateChanged = new UnityEvent_int_string_TechnologyResearchProgress();
 			}
 		}
 
 
-		
 		static FactionData[] _factionData;
 		/// <summary>
 		/// Contains data for every faction registered in the currently loaded level (Read Only).
@@ -80,7 +81,33 @@ namespace SS.Levels
 				_factionData = value;
 			}
 		}
-		
+
+#warning Ugly code - a part is here and a part in the FactionData.
+		public class UnityEvent_int_string_TechnologyResearchProgress : UnityEvent<int, string, TechnologyResearchProgress> { }
+
+		public static UnityEvent_int_string_TechnologyResearchProgress onTechStateChanged = new UnityEvent_int_string_TechnologyResearchProgress();
+
+		public static void SetTech( int factionId, string id, TechnologyResearchProgress progress )
+		{
+			if( factionData[factionId].techs.TryGetValue( id, out TechnologyResearchProgress curr ) )
+			{
+				if( curr == progress )
+				{
+					return;
+				}
+				else
+				{
+					factionData[factionId].techs[id] = progress;
+					onTechStateChanged?.Invoke( factionId, id, progress );
+				}
+			}
+			else
+			{
+				throw new System.Exception( "Unknown technology '" + id + "'." );
+			}
+		}
+
+
 		/// <summary>
 		/// Contains relations between every faction registered in the currently loaded level (Read Only).
 		/// </summary>

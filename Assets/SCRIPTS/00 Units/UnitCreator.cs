@@ -13,6 +13,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using SS.Diplomacy;
+using SS.Technologies;
 
 namespace SS.Units
 {
@@ -68,23 +69,70 @@ namespace SS.Units
 			// Set the unit's selected icon.
 			Selectable selectable = gameObject.GetComponent<Selectable>();
 			selectable.icon = def.icon.Item2;
-			
-			// If the unit is constructor (civilian), make it show the build menu.
-			if( def.isConstructor )
-			{
-				selectable.onHighlight.AddListener( ConstructorOnSelect );
-			}
-			// If the unit was constructor before (listener is added), but it's not a constructor anymore - remove listener.
-			else
-			{
-				selectable.onHighlight.RemoveListener( ConstructorOnSelect );
-			}
-			
+
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+
 			// Set the unit's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
 			damageable.armor = def.armor;
-			
+
+			UnityAction<int, string, TechnologyResearchProgress> onTechChange = ( int factionId, string id, TechnologyResearchProgress newProgress ) =>
+			{
+				if( factionId != factionMember.factionId )
+				{
+					return;
+				}
+				if( factionId != LevelDataManager.PLAYER_FAC )
+				{
+					return;
+				}
+				if( !Selection.IsHighlighted( selectable ) )
+				{
+					return;
+				}
+				if( SelectionPanel.instance.obj.GetElement( "constr.list" ) != null )
+				{
+					SelectionPanel.instance.obj.Clear( "constr.list" );
+				}
+				ConstructorRefreshList();
+			};
+
+			UnityAction onDeath = () =>
+			{
+				LevelDataManager.onTechStateChanged.RemoveListener( onTechChange );
+			};
+
+			UnityAction constructorOnSelect = () =>
+			{
+				if( factionMember.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					return;
+				}
+				const string TEXT = "Select building to place...";
+
+				ConstructorRefreshList();
+
+				// Create the actual UI.
+				GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+				SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
+
+			};
+
+			// If the unit is constructor (civilian), make it show the build menu.
+			if( def.isConstructor )
+			{
+				selectable.onHighlight.AddListener( constructorOnSelect );
+				LevelDataManager.onTechStateChanged.AddListener( onTechChange );
+
+				damageable.onDeath.AddListener( onDeath );
+			}
+			// If the unit was constructor before (listener is added), but it's not a constructor anymore - remove listener.
+			else
+			{
+				selectable.onHighlight.RemoveListener( constructorOnSelect );
+			}
+
 			//
 			//    MODULES
 			//
@@ -518,10 +566,8 @@ namespace SS.Units
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void ConstructorOnSelect()
+		private static void ConstructorRefreshList()
 		{
-			const string TEXT = "Select building to place...";
-
 			BuildingDefinition[] registeredBuildings = DefinitionManager.GetAllBuildings();
 			GameObject[] gridElements = new GameObject[registeredBuildings.Length];
 
@@ -548,12 +594,9 @@ namespace SS.Units
 					} );
 				}
 			}
-			// Create the actual UI.
-			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
-			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
-
 			GameObject listUI = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "constr.list", listUI.transform );
 		}
+
 	}
 }

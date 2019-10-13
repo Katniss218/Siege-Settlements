@@ -12,15 +12,12 @@ namespace SS.Diplomacy
 	/// </summary>
 	public class FactionData : IKFFSerializable
 	{
-		public class UnityEvent_string_TechnologyResearchProgress : UnityEvent<string, TechnologyResearchProgress> { }
 
-		public UnityEvent_string_TechnologyResearchProgress onTechStateChanged = new UnityEvent_string_TechnologyResearchProgress();
-
-
+#warning Ugly code - a part is here and a part in the LevelDataManager.
 		/// <summary>
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>
-		private Dictionary<string, TechnologyResearchProgress> techs = new Dictionary<string, TechnologyResearchProgress>();
+		public Dictionary<string, TechnologyResearchProgress> techs = new Dictionary<string, TechnologyResearchProgress>();
 
 		/// <summary>
 		/// Creates a new, blank faction.
@@ -31,26 +28,6 @@ namespace SS.Diplomacy
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 		}
 		
-		public void SetTech( string id, TechnologyResearchProgress progress )
-		{
-			if( this.techs.TryGetValue( id, out TechnologyResearchProgress curr ) )
-			{
-				if( curr == progress )
-				{
-					return;
-				}
-				else
-				{
-					this.techs[id] = progress;
-					this.onTechStateChanged?.Invoke( id, progress );
-				}
-			}
-			else
-			{
-				throw new System.Exception( "Unknown technology '" + id + "'." );
-			}
-		}
-
 		public TechnologyResearchProgress GetTech( string id )
 		{
 			if( this.techs.TryGetValue( id, out TechnologyResearchProgress ret ) )

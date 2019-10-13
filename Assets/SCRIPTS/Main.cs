@@ -38,7 +38,6 @@ namespace SS
 		public static _UnityEvent_bool onHudLockChange = new _UnityEvent_bool();
 
 
-#warning Move this to the new particle system.
 		private static GameObject __particleSystemInstance = null;
 		new public static GameObject particleSystem
 		{

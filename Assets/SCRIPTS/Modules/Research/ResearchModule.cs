@@ -147,7 +147,7 @@ namespace SS.Modules
 					this.researchProgress -= this.researchSpeed * Time.deltaTime;
 					if( this.researchProgress <= 0 )
 					{
-						LevelDataManager.factionData[this.factionMember.factionId].SetTech( this.researchedTechnology.id, TechnologyResearchProgress.Researched );
+						LevelDataManager.SetTech( this.factionMember.factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
 						this.researchedTechnology = null;
 						this.resourcesRemaining = null;
 						this.onResearchEnd?.Invoke();
@@ -215,7 +215,7 @@ namespace SS.Modules
 
 				if( this.factionMember != null )
 				{
-					LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.AddListener( OnTechStateChanged );
+					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
 				}
 			}
 		}
@@ -240,7 +240,7 @@ namespace SS.Modules
 		{
 			if( this.factionMember != null )
 			{
-				LevelDataManager.factionData[this.factionMember.factionId].onTechStateChanged.RemoveListener( OnTechStateChanged );
+				LevelDataManager.onTechStateChanged.RemoveListener( OnTechStateChanged );
 			}
 		}
 
@@ -272,8 +272,12 @@ namespace SS.Modules
 			SelectionPanel.instance.obj.RegisterElement( "research.list", listGO.transform );
 		}
 
-		private void OnTechStateChanged( string id, TechnologyResearchProgress newProgress )
+		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
+			if( factionId != this.factionMember.factionId )
+			{
+				return;
+			}
 			if( !Selection.IsHighlighted( this.selectable ) )
 			{
 				return;
