@@ -1,4 +1,5 @@
-﻿using SS.Levels;
+﻿using SS.InputSystem;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using System;
 using UnityEngine;
@@ -145,31 +146,51 @@ namespace SS.Buildings
 			// hook to the events to hide the preview.
 		}
 
+		private void Inp_CancelPlacement( InputQueue self )
+		{
+			Object.Destroy( this.gameObject );
+			self.StopExecution();
+		}
+
+		private void Inp_TryPlace( InputQueue self )
+		{
+			if( this.CanBePlacedHere() )
+			{
+				BuildingData data = new BuildingData();
+				data.guid = Guid.NewGuid();
+				data.position = this.transform.position;
+				data.rotation = this.transform.rotation;
+				data.factionId = LevelDataManager.PLAYER_FAC;
+				data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
+				data.constructionSaveState = new ConstructionSiteData();
+
+				BuildingCreator.Create( this.def, data );
+
+				Object.Destroy( this.gameObject );
+			}
+			self.StopExecution();
+		}
+
+		private void OnEnable()
+		{
+			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 10.0f, this.Inp_CancelPlacement, true );
+			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 10.0f, this.Inp_TryPlace, true );
+		}
+
+		private void OnDisable()
+		{
+			if( Main.mouseInput != null )
+			{
+				Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelPlacement ); // left
+				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_TryPlace ); // right
+			}
+		}
+
 		void Update()
 		{
-			if( Input.GetMouseButtonDown( 1 ) ) // right mouse button
-			{
-				Object.Destroy( this.gameObject );
-				return;
-			}
 			if( this.CanBePlacedHere() )
 			{
 				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.green );
-
-				if( Input.GetMouseButtonDown( 0 ) ) // left mouse button
-				{
-					BuildingData data = new BuildingData();
-					data.guid = Guid.NewGuid();
-					data.position = this.transform.position;
-					data.rotation = this.transform.rotation;
-					data.factionId = LevelDataManager.PLAYER_FAC;
-					data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
-					data.constructionSaveState = new ConstructionSiteData();
-
-					BuildingCreator.Create( this.def, data );
-
-					Object.Destroy( this.gameObject );
-				}
 			}
 			else
 			{

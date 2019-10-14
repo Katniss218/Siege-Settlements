@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.InputSystem;
+using UnityEngine;
 
 namespace SS.Buildings
 {
@@ -40,18 +41,35 @@ namespace SS.Buildings
 			}
 		}
 
+		private void Inp_RotateCCW( InputQueue self )
+		{
+			this.RotateCounterClockwise();
+			self.StopExecution();
+		}
+
+		private void Inp_RotateCW( InputQueue self )
+		{
+			this.RotateClockwise();
+			self.StopExecution();
+		}
+
+		void OnEnable()
+		{
+			Main.keyboardInput.RegisterOnHold( KeyCode.Q, 40.0f, this.Inp_RotateCCW, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.E, 40.0f, this.Inp_RotateCW, true );
+		}
+
+		void OnDisable()
+		{
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.ClearOnHold( KeyCode.Q, this.Inp_RotateCCW );
+				Main.keyboardInput.ClearOnHold( KeyCode.E, this.Inp_RotateCW );
+			}
+		}
+
 		private void FixedUpdate()
 		{
-			// Rotation.
-			if( Input.GetKey( KeyCode.T ) )
-			{
-				this.RotateCounterClockwise();
-			}
-			if( Input.GetKey( KeyCode.Y ) )
-			{
-				this.RotateClockwise();
-			}
-
 			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
 				return;

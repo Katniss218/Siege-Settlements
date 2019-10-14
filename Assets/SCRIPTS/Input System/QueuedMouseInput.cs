@@ -5,36 +5,36 @@ namespace SS.InputSystem
 {
 	public class QueuedMouseInput : MonoBehaviour
 	{
-		private Dictionary<int, InputQueue> press = new Dictionary<int, InputQueue>();
-		private Dictionary<int, InputQueue> hold = new Dictionary<int, InputQueue>();
-		private Dictionary<int, InputQueue> release = new Dictionary<int, InputQueue>();
+		private Dictionary<MouseCode, InputQueue> press = new Dictionary<MouseCode, InputQueue>();
+		private Dictionary<MouseCode, InputQueue> hold = new Dictionary<MouseCode, InputQueue>();
+		private Dictionary<MouseCode, InputQueue> release = new Dictionary<MouseCode, InputQueue>();
 
-		public void ClearOnPress( int button )
+		public void ClearOnPress( MouseCode button, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.press.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
 
-		public void ClearOnHold( int button )
+		public void ClearOnHold( MouseCode button, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.hold.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
 
-		public void ClearOnRelease( int button )
+		public void ClearOnRelease( MouseCode button, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.release.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
@@ -46,42 +46,42 @@ namespace SS.InputSystem
 			this.release.Clear();
 		}
 
-		public void RegisterOnPress( int button, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnPress( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.press.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.press.Add( button, inputQueue );
 		}
 
-		public void RegisterOnHold( int button, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnHold( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.hold.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.hold.Add( button, inputQueue );
 		}
 
-		public void RegisterOnRelease( int button, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnRelease( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.release.TryGetValue( button, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.release.Add( button, inputQueue );
 		}
 
@@ -94,21 +94,21 @@ namespace SS.InputSystem
 		{
 			foreach( var kvp in this.press )
 			{
-				if( Input.GetMouseButtonDown( kvp.Key ) )
+				if( Input.GetMouseButtonDown( (int)kvp.Key ) )
 				{
 					kvp.Value.Execute();
 				}
 			}
 			foreach( var kvp in this.hold )
 			{
-				if( Input.GetMouseButton( kvp.Key ) )
+				if( Input.GetMouseButton( (int)kvp.Key ) )
 				{
 					kvp.Value.Execute();
 				}
 			}
 			foreach( var kvp in this.release )
 			{
-				if( Input.GetMouseButtonUp( kvp.Key ) )
+				if( Input.GetMouseButtonUp( (int)kvp.Key ) )
 				{
 					kvp.Value.Execute();
 				}

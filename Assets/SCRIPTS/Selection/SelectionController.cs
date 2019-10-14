@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Diplomacy;
+using SS.InputSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -148,57 +149,69 @@ namespace SS
 			throw new System.Exception( "Invalid selection mode" );
 		}
 
-
-		void Update()
+		private void OnPress( InputQueue self )
 		{
-			// If the left mouse button was pressed.
-			if( Input.GetMouseButtonDown( 0 ) )
+			oldMousePos = Input.mousePosition;
+		}
+
+		private void OnHold( InputQueue self )
+		{
+			if( !isDragging )
 			{
-				oldMousePos = Input.mousePosition;
-			}
-			// If the left mouse button was pressed.
-			if( Input.GetMouseButton( 0 ) )
-			{
-				if( !isDragging )
+				if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
+					Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
 				{
-					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
-						Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
-					{
-						BeginDrag();
-					}
-				}
-				if( isDragging )
-				{
-					UpdateDrag();
+					BeginDrag();
 				}
 			}
-			// If the left mouse button was released.
-			if( Input.GetMouseButtonUp( 0 ) )
+			if( isDragging )
 			{
-				if( isDragging )
+				UpdateDrag();
+			}
+		}
+
+		private void OnRelease( InputQueue self )
+		{
+			if( isDragging )
+			{
+				Selectable[] overlap = GetSelectablesInDragArea();
+
+				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+
+
+				EndDrag();
+			}
+			else
+			{
+				// if the click was over UI element, return.
+				if( EventSystem.current.IsPointerOverGameObject() )
 				{
-					Selectable[] overlap = GetSelectablesInDragArea();
-
-					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
-
-
-					EndDrag();
+					return;
 				}
-				else
-				{
-					// if the click was over UI element, return.
-					if( EventSystem.current.IsPointerOverGameObject() )
-					{
-						return;
-					}
-					Selectable atCursor = GetSelectableAtCursor();
-					Selectable[] array = atCursor == null ? null : new Selectable[] { atCursor };
-					HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
-				}
+				Selectable atCursor = GetSelectableAtCursor();
+				Selectable[] array = atCursor == null ? null : new Selectable[] { atCursor };
+				HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
 			}
 		}
 
 
+		void OnEnable()
+		{
+			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 50.0f, OnPress, true );
+			Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 50.0f, OnHold, true );
+			Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 50.0f, OnRelease, true );
+		}
+
+		void OnDisable()
+		{
+			if( Main.mouseInput != null )
+			{
+				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, OnPress );
+				Main.mouseInput.ClearOnHold( MouseCode.LeftMouseButton, OnHold );
+				Main.mouseInput.ClearOnRelease( MouseCode.LeftMouseButton, OnRelease );
+			}
+		}
+		
 		private static Selectable GetSelectableAtCursor()
 		{
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )

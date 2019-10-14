@@ -151,254 +151,284 @@ namespace SS
 			return factionMember.factionId == playerId;
 		}
 
+		private void Inp_Right( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit[] raycastHits = Physics.RaycastAll( Main.camera.ScreenPointToRay( Input.mousePosition ) );
+
+				Vector3? terrainHitPos = null;
+
+				ResourceDeposit hitDeposit = null;
+				Transform hitReceiverTransform = null;
+				IPaymentReceiver[] hitPaymentReceivers = null;
+
+				for( int i = 0; i < raycastHits.Length; i++ )
+				{
+					if( raycastHits[i].collider.gameObject.layer == ObjectLayer.TERRAIN )
+					{
+						terrainHitPos = raycastHits[i].point;
+					}
+					else
+					{
+						ResourceDeposit deposit = raycastHits[i].collider.GetComponent<ResourceDeposit>();
+						if( deposit != null )
+						{
+							hitDeposit = deposit;
+						}
+						IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
+						if( receivers.Length > 0 )
+						{
+							hitReceiverTransform = raycastHits[i].collider.transform;
+							hitPaymentReceivers = receivers;
+						}
+
+					}
+				}
+
+
+				if( hitDeposit == null && hitReceiverTransform == null && terrainHitPos.HasValue )
+				{
+					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
+				}
+
+				else if( hitReceiverTransform != null )
+				{
+					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
+				}
+
+				else if( hitDeposit != null )
+				{
+					AssignPickupDepositGoal( hitDeposit, Selection.selectedObjects );
+				}
+			}
+		}
+
+		private void Inp_L( InputQueue self )
+		{// Try repair mouseovered building.
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					GameObject gameObject = hitInfo.collider.gameObject;
+					if( gameObject.layer != ObjectLayer.BUILDINGS )
+					{
+						return;
+					}
+					if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
+					{
+						return;
+					}
+					if( !Building.IsRepairable( gameObject.GetComponent<Damageable>() ) )
+					{
+						return;
+					}
+
+					// If it is a building, start repair.
+					// Empty ConstructionSiteData (no resources present).
+					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
+
+					ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				}
+			}
+		}
+
+		private void Inp_K( InputQueue self )
+		{// Temporary resource payment speedup (every payment receiver to full).
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					GameObject gameObject = hitInfo.collider.gameObject;
+					if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
+					{
+						return;
+					}
+					IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
+					for( int i = 0; i < paymentReceivers.Length; i++ )
+					{
+						Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
+
+						foreach( var kvp in wantedRes )
+						{
+							paymentReceivers[i].ReceivePayment( kvp.Key, kvp.Value );
+						}
+					}
+				}
+			}
+		}
+
+		private void Inp_O( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
+
+					if( hitDeposit != null )
+					{
+
+						AssignDropoffToInventoryGoal( hitInfo, hitDeposit, Selection.selectedObjects );
+					}
+				}
+			}
+		}
+
+		private void Inp_P( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
+				}
+			}
+		}
+
+		private void Inp_Tab( InputQueue self )
+		{
+			isHudLocked = !isHudLocked;
+
+			onHudLockChange?.Invoke( isHudLocked );
+		}
+
+		private void Inp_A1( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
+					if( fac != null )
+					{
+						fac.factionId = 0;
+					}
+				}
+			}
+		}
+
+		private void Inp_A2( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
+					if( fac != null )
+					{
+						fac.factionId = 1;
+					}
+				}
+			}
+		}
+
+		private void Inp_A9( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.tree" );
+					ResourceDepositData data = new ResourceDepositData();
+					data.guid = Guid.NewGuid();
+					data.position = hitInfo.point;
+					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+					data.resources = new Dictionary<string, int>();
+					data.resources.Add( "resource.wood", 5 );
+					ResourceDepositCreator.Create( def, data );
+				}
+			}
+		}
+
+		private void Inp_A0( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.stone" );
+					ResourceDepositData data = new ResourceDepositData();
+					data.guid = Guid.NewGuid();
+					data.position = hitInfo.point;
+					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+					data.resources = new Dictionary<string, int>();
+					data.resources.Add( "resource.stone", 20 );
+					ResourceDepositCreator.Create( def, data );
+				}
+			}
+		}
+
+		private void Inp_Pause( InputQueue self )
+		{
+			if( PauseManager.isPaused )
+			{
+				PauseManager.Unpause();
+			}
+			else
+			{
+				PauseManager.Pause();
+			}
+		}
+
 		private void OnEnable()
 		{
 			// Register the input source.
-			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, ( InputQueue self ) =>
-			{
-				isHudLocked = !isHudLocked;
 
-				onHudLockChange?.Invoke( isHudLocked );
-			}, true );
+			//
+			//
+			//
+
+			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
+
+			//
+			//
+			//
+
+			Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
 		}
 
 		private void OnDisable()
 		{
-			// Clear the input source.
-			Main.keyboardInput.ClearOnPress( KeyCode.Tab );
-		}
-
-		void Update()
-		{
-			if( Input.GetMouseButtonDown( 1 ) )
+			if( Main.mouseInput != null )
 			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit[] raycastHits = Physics.RaycastAll( Main.camera.ScreenPointToRay( Input.mousePosition ) );
-
-					Vector3? terrainHitPos = null;
-
-					ResourceDeposit hitDeposit = null;
-					Transform hitReceiverTransform = null;
-					IPaymentReceiver[] hitPaymentReceivers = null;
-
-					for( int i = 0; i < raycastHits.Length; i++ )
-					{
-						if( raycastHits[i].collider.gameObject.layer == ObjectLayer.TERRAIN )
-						{
-							terrainHitPos = raycastHits[i].point;
-						}
-						else
-						{
-							ResourceDeposit deposit = raycastHits[i].collider.GetComponent<ResourceDeposit>();
-							if( deposit != null )
-							{
-								hitDeposit = deposit;
-							}
-							IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
-							if( receivers.Length > 0 )
-							{
-								hitReceiverTransform = raycastHits[i].collider.transform;
-								hitPaymentReceivers = receivers;
-							}
-
-						}
-					}
-
-
-					if( hitDeposit == null && hitReceiverTransform == null && terrainHitPos.HasValue )
-					{
-						AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
-					}
-
-					else if( hitReceiverTransform != null )
-					{
-						AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
-					}
-
-					else if( hitDeposit != null )
-					{
-						AssignPickupDepositGoal( hitDeposit, Selection.selectedObjects );
-					}
-				}
+				// Clear the input source.
+				Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, Inp_Right );
 			}
-
-			// Try repair mouseovered building.
-			if( Input.GetKeyDown( KeyCode.L ) )
+			if( Main.keyboardInput != null )
 			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						GameObject gameObject = hitInfo.collider.gameObject;
-						if( gameObject.layer != ObjectLayer.BUILDINGS )
-						{
-							return;
-						}
-						if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
-						{
-							return;
-						}
-						if( !Building.IsRepairable( gameObject.GetComponent<Damageable>() ) )
-						{
-							return;
-						}
-
-						// If it is a building, start repair.
-						// Empty ConstructionSiteData (no resources present).
-						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
-
-						ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
-					}
-				}
-			}
-
-			// Temporary resource payment speedup (every payment receiver to full).
-			if( Input.GetKeyDown( KeyCode.K ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						GameObject gameObject = hitInfo.collider.gameObject;
-						if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
-						{
-							return;
-						}
-						IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
-						for( int i = 0; i < paymentReceivers.Length; i++ )
-						{
-							Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
-
-							foreach( var kvp in wantedRes )
-							{
-								paymentReceivers[i].ReceivePayment( kvp.Key, kvp.Value );
-							}
-						}
-					}
-				}
-			}
-
-			if( Input.GetKeyDown( KeyCode.O ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
-
-						if( hitDeposit != null )
-						{
-
-							AssignDropoffToInventoryGoal( hitInfo, hitDeposit, Selection.selectedObjects );
-						}
-					}
-				}
-			}
-
-			if( Input.GetKeyDown( KeyCode.P ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
-					}
-				}
-			}
-
-			/*if( Input.GetKeyDown( KeyCode.Tab ) )
-			{
-				isHudLocked = !isHudLocked;
-
-				onHudLockChange?.Invoke( isHudLocked );
-			}*/
-			
-			if( Input.GetKeyDown( KeyCode.Alpha1 ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
-						if( fac != null )
-						{
-							fac.factionId = 0;
-						}
-					}
-				}
-			}
-			if( Input.GetKeyDown( KeyCode.Alpha2 ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
-						if( fac != null )
-						{
-							fac.factionId = 1;
-						}
-					}
-				}
-			}
-			if( Input.GetKeyDown( KeyCode.Alpha9 ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.tree" );
-						ResourceDepositData data = new ResourceDepositData();
-						data.guid = Guid.NewGuid();
-						data.position = hitInfo.point;
-						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-						data.resources = new Dictionary<string, int>();
-						data.resources.Add( "resource.wood", 5 );
-						ResourceDepositCreator.Create( def, data );
-					}
-				}
-			}
-			if( Input.GetKeyDown( KeyCode.Alpha0 ) )
-			{
-				if( !EventSystem.current.IsPointerOverGameObject() )
-				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-					{
-						ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.stone" );
-						ResourceDepositData data = new ResourceDepositData();
-						data.guid = Guid.NewGuid();
-						data.position = hitInfo.point;
-						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-						data.resources = new Dictionary<string, int>();
-						data.resources.Add( "resource.stone", 20 );
-						ResourceDepositCreator.Create( def, data );
-					}
-				}
-			}
-			if( Input.GetKeyDown( KeyCode.Pause ) )
-			{
-				if( PauseManager.isPaused )
-				{
-					PauseManager.Unpause();
-				}
-				else
-				{
-					PauseManager.Pause();
-				}
+				// Clear the input source.
+				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
+				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
+				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
+				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
+				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha9, Inp_A9 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_A0 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Pause, Inp_Pause );
 			}
 		}
-
-
+		
 		//
 		//
 		//

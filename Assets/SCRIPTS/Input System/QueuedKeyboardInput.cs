@@ -9,36 +9,36 @@ namespace SS.InputSystem
 		private Dictionary<KeyCode, InputQueue> hold = new Dictionary<KeyCode, InputQueue>();
 		private Dictionary<KeyCode, InputQueue> release = new Dictionary<KeyCode, InputQueue>();
 		
-		public void ClearOnPress( KeyCode key )
+		public void ClearOnPress( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.press.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
 		
-		public void ClearOnHold( KeyCode key )
+		public void ClearOnHold( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.hold.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
 		
-		public void ClearOnRelease( KeyCode key )
+		public void ClearOnRelease( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
 			if( this.release.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue = new InputQueue();
+				inputQueue.Remove( method );
 				return;
 			}
 		}
-
+		
 		public void ClearInputSources()
 		{
 			this.press.Clear();
@@ -46,42 +46,42 @@ namespace SS.InputSystem
 			this.release.Clear();
 		}
 
-		public void RegisterOnPress( KeyCode key, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnPress( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.press.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.press.Add( key, inputQueue );
 		}
 
-		public void RegisterOnHold( KeyCode key, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnHold( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.hold.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.hold.Add( key, inputQueue );
 		}
 
-		public void RegisterOnRelease( KeyCode key, System.Action<InputQueue> method, bool enabled )
+		public void RegisterOnRelease( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled )
 		{
 			InputQueue inputQueue;
 			if( this.release.TryGetValue( key, out inputQueue ) )
 			{
-				inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+				inputQueue.Add( method, priorityId, isEnabled );
 				return;
 			}
 			inputQueue = new InputQueue();
-			inputQueue.methods.Add( new InputQueue.InputMethod() { isEnabled = enabled, method = method } );
+			inputQueue.Add( method, priorityId, isEnabled );
 			this.release.Add( key, inputQueue );
 		}
 		

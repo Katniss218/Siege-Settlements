@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.InputSystem;
+using UnityEngine;
 
 namespace SS
 {
@@ -84,47 +85,114 @@ namespace SS
 			this.transform.rotation = Quaternion.Euler( defaultRotX, defaultRotY, defaultRotZ );
 		}
 
-		void Update()
+		private bool CanMove()
 		{
 			if( this.isMovementLocked )
 			{
-				return;
+				return false;
 			}
 			if( PauseManager.isPaused )
 			{
+				return false;
+			}
+			return true;
+		}
+
+		private void Inp_MoveLeft( InputQueue self )
+		{
+			if( !CanMove() )
+			{
 				return;
 			}
-			// Move Left-Right
-			if( Input.GetKey( KeyCode.A ) )
-			{
-				Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
-			}
-			else if( Input.GetKey( KeyCode.D ) )
-			{
-				Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
-			}
+			Translate( -speed * Time.deltaTime * size, 0.0f, 0.0f );
+		}
 
-			// Move Up-Down
-			if( Input.GetKey( KeyCode.W ) )
+		private void Inp_MoveRight( InputQueue self )
+		{
+			if( !CanMove() )
 			{
-				Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
+				return;
 			}
-			else if( Input.GetKey( KeyCode.S ) )
-			{
-				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
-			}
+			Translate( speed * Time.deltaTime * size, 0.0f, 0.0f );
+		}
 
-
-			// Rotate CCW-CW
-			if( Input.GetKey( KeyCode.Q ) )
+		private void Inp_MoveForward( InputQueue self )
+		{
+			if( !CanMove() )
 			{
-				Rotate( -rotSpeed * Time.deltaTime );
+				return;
 			}
-			else if( Input.GetKey( KeyCode.E ) )
-			{
-				Rotate( rotSpeed * Time.deltaTime );
-			}
+			Translate( 0.0f, 0.0f, speed * Time.deltaTime * size );
+		}
 
+		private void Inp_MoveBackward( InputQueue self )
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
+		}
+
+		private void Inp_RotateCCW( InputQueue self )
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			Rotate( -rotSpeed * Time.deltaTime );
+		}
+
+		private void Inp_RotateCW( InputQueue self )
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			Rotate( rotSpeed * Time.deltaTime );
+		}
+
+		private void Inp_ResetCamera( InputQueue self )
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			ResetCam();
+		}
+
+		void OnEnable()
+		{
+			Main.keyboardInput.RegisterOnHold( KeyCode.A, 50.0f, Inp_MoveLeft, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.D, 50.0f, Inp_MoveRight, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.W, 50.0f, Inp_MoveForward, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.S, 50.0f, Inp_MoveBackward, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.Q, 50.0f, Inp_RotateCCW, true );
+			Main.keyboardInput.RegisterOnHold( KeyCode.E, 50.0f, Inp_RotateCW, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Keypad5, 50.0f, Inp_ResetCamera, true );
+		}
+
+		void OnDisable()
+		{
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.ClearOnHold( KeyCode.A, Inp_MoveLeft );
+				Main.keyboardInput.ClearOnHold( KeyCode.D , Inp_MoveRight );
+				Main.keyboardInput.ClearOnHold( KeyCode.W, Inp_MoveForward );
+				Main.keyboardInput.ClearOnHold( KeyCode.S, Inp_MoveBackward );
+				Main.keyboardInput.ClearOnHold( KeyCode.Q, Inp_RotateCCW );
+				Main.keyboardInput.ClearOnHold( KeyCode.E, Inp_RotateCW );
+				Main.keyboardInput.ClearOnPress( KeyCode.Keypad5, Inp_ResetCamera );
+			}
+		}
+
+		void Update()
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			
 
 			if( UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
@@ -158,11 +226,6 @@ namespace SS
 				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}
 
-			// Reset
-			if( Input.GetKey( KeyCode.Keypad5 ) )
-			{
-				ResetCam();
-			}
 		}
 	}
 }

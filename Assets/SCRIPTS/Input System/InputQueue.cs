@@ -9,9 +9,10 @@ namespace SS.InputSystem
 		{
 			public System.Action<InputQueue> method { get; set; }
 			public bool isEnabled { get; set; }
+			public float priority { get; set; }
 		}
 
-		public List<InputMethod> methods { get; private set; }
+		private List<InputMethod> methods;
 
 		public bool isStopped { get; private set; }
 
@@ -20,14 +21,54 @@ namespace SS.InputSystem
 			this.methods = new List<InputMethod>();
 		}
 
+		public void Add( System.Action<InputQueue> method, float priority, bool isEnabled )
+		{
+			int lastBelowIndex = -1;
+			for( int i = 0; i < methods.Count; i++ )
+			{
+				if( this.methods[i].priority <= priority )
+				{
+					lastBelowIndex = i;
+				}
+			}
+			if( this.methods.Count == 0 )
+			{
+				this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+			}
+			else
+			{
+				if( lastBelowIndex == this.methods.Count - 1 )
+				{
+					this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+				}
+				else
+				{
+					this.methods.Insert( lastBelowIndex + 1, new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+				}
+			}
+		}
+
+		public bool Remove( System.Action<InputQueue> method )
+		{
+			for( int i = 0; i < methods.Count; i++ )
+			{
+				if( this.methods[i].method == method )
+				{
+					this.methods.RemoveAt( i );
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public void StopExecution()
 		{
-			isStopped = true;
+			this.isStopped = true;
 		}
 
 		public void Execute()
 		{
-			isStopped = false;
+			this.isStopped = false;
 
 			for( int i = 0; i < this.methods.Count; i++ )
 			{
