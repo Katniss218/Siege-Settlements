@@ -81,17 +81,16 @@ namespace SS
 					Object.Destroy( this );
 					return;
 				}
+				// If this inventory was emptied in the mean time, stop the AI.
+				if( this.inventory.isEmpty )
+				{
+					Object.Destroy( this );
+					return;
+				}
 				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
 				{
-					if( !this.inventory.isEmpty )
-					{
-						Vector3 direction = (this.destination.transform.position - this.transform.position).normalized;
-						this.DropOff();
-					}
-					else
-					{
-						Object.Destroy( this );
-					}
+					Vector3 direction = (this.destination.transform.position - this.transform.position).normalized;
+					this.DropOff();
 				}
 			}
 

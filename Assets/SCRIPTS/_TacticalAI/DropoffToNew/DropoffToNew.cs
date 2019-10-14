@@ -89,11 +89,11 @@ namespace SS
 				if( this.inventory.isEmpty )
 				{
 					Object.Destroy( this );
+					return;
 				}
 				if( Vector3.Distance( this.transform.position, this.destination ) < 0.75f )
 				{
 					Vector3 direction = (this.destination - this.transform.position).normalized;
-
 					if( Physics.Raycast( this.gameObject.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 					{
 						if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
@@ -103,12 +103,11 @@ namespace SS
 						}
 						this.navMeshAgent.ResetPath();
 					}
+					else
+					{
+						Object.Destroy( this );
+					}
 				}
-				else
-				{
-					Object.Destroy( this );
-				}
-
 			}
 
 			public override TAIGoalData GetData()
