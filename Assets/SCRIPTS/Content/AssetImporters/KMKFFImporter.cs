@@ -70,6 +70,7 @@ namespace SS.Content
 					newMesh.uv = uvs;
 					newMesh.SetTriangles( triangles, 0 );
 					newMesh.RecalculateBounds();
+					newMesh.RecalculateTangents();
 
 					meshes.Add( newMesh );
 				}
