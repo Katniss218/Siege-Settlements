@@ -36,7 +36,7 @@ namespace SS.Buildings
 			meshFilter.mesh = def.mesh.Item2;
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionDefinition.DefaultColor, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, def.mesh.Item2.bounds.size.y, 1.0f );
+			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionDefinition.DefaultColor, def.albedo.Item2, def.normal.Item2, null, def.metallicMap.Item2, def.roughnessMap.Item2, def.mesh.Item2.bounds.size.y, 1.0f );
 
 
 			//

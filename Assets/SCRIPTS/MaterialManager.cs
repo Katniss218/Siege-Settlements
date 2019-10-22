@@ -121,7 +121,7 @@ namespace SS
 		/// <summary>
 		/// Creates a new opaque material, that can "sink" (just like buildings under construction), with a texture overlayed on top of base color.
 		/// </summary>
-		public static Material CreateColoredConstructible( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, float metallic, float smoothness, float height, float constructionProgress )
+		public static Material CreateColoredConstructible( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, Texture2D metallicMap, Texture2D roughnessMap, float height, float constructionProgress )
 		{
 			Material material = new Material( AssetManager.GetMaterial( COLORED_CONSTRUCTIBLE_ID ) );
 
@@ -129,8 +129,8 @@ namespace SS
 			material.SetTexture( "_Albedo", overlay );
 			material.SetTexture( "_Normal", normal );
 			material.SetTexture( "_Emission", emission );
-			material.SetFloat( "_Metallic", metallic );
-			material.SetFloat( "_Smoothness", smoothness );
+			material.SetTexture( "_MetallicMap", metallicMap );
+			material.SetTexture( "_RoughnessMap", roughnessMap );
 			material.SetFloat( "_Height", height );
 			material.SetFloat( "_ConstructionProgress", constructionProgress );
 

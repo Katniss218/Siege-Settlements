@@ -36,6 +36,8 @@
 		Mesh = "extern:Models/Buildings/TownCenter.kff";
 		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house1_icon.png";
@@ -52,7 +54,7 @@
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 1.1; Y = 1.0; Z = 0.7; };
+		Size = { X = 1.25; Y = 1.05; Z = 0.9; };
 		PlacementNodes = [ ];
 		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
@@ -67,8 +69,10 @@
 		
 		TechsRequired = [];
 		Mesh = "extern:Models/Buildings/House0.kff";
-		AlbedoTexture = "extern:Textures/Buildings/House0.png";
-		NormalTexture = "extern:Textures/Buildings/House0_NRM.png";
+		AlbedoTexture = "extern:Textures/Buildings/house0_color.png";
+		NormalTexture = "extern:Textures/Buildings/house0_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house0_icon.png";
@@ -110,6 +114,8 @@
 		Mesh = "extern:Models/Buildings/House.kff";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house1_icon.png";
@@ -151,6 +157,8 @@
 		Mesh = "extern:Models/Buildings/House.kff";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house1_icon.png";
@@ -183,6 +191,8 @@
 		Mesh = "extern:Models/Buildings/Palisade_Wall.kff";
 		AlbedoTexture = "extern:Textures/Buildings/Palisade_Wall.png";
 		NormalTexture = "extern:Textures/Buildings/Palisade_Wall_NRM.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house1_icon.png";
@@ -215,6 +225,8 @@
 		Mesh = "extern:Models/Buildings/Stone_Wall.kff";
 		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house1_icon.png";

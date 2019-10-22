@@ -33,6 +33,9 @@ namespace SS.Buildings
 		public Tuple<string, Mesh> mesh { get; private set; }
 		public Tuple<string, Texture2D> albedo { get; private set; }
 		public Tuple<string, Texture2D> normal { get; private set; }
+		public Tuple<string, Texture2D> metallicMap { get; private set; }
+		public Tuple<string, Texture2D> roughnessMap { get; private set; }
+
 		public Tuple<string, AudioClip> buildSoundEffect { get; private set; }
 		public Tuple<string, AudioClip> deathSoundEffect { get; private set; }
 		public Tuple<string, Sprite> icon { get; private set; }
@@ -83,6 +86,8 @@ namespace SS.Buildings
 			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			this.metallicMap = serializer.ReadTexture2DFromAssets( "MetallicTexture", TextureType.Color );
+			this.roughnessMap = serializer.ReadTexture2DFromAssets( "RoughnessTexture", TextureType.Color );
 
 			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );
 			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
