@@ -24,6 +24,8 @@ namespace SS
 
 		[SerializeField] private float scrollMargin = 80.0f;
 
+		private bool isVertical = false;
+
 		private int __size;
 		public int size
 		{
@@ -56,6 +58,9 @@ namespace SS
 		void Start()
 		{
 			this.size = defaultSize;
+
+			this.isVertical = !false;
+			this.ToggleVertical();
 		}
 
 		private void ZoomIn()
@@ -83,6 +88,25 @@ namespace SS
 			this.size = defaultSize;
 
 			this.transform.rotation = Quaternion.Euler( defaultRotX, defaultRotY, defaultRotZ );
+		}
+
+		private const float DEFAULT_OFFSET = 20.0f;
+		private const float DEFAULT_ANGLE = 22.5f;
+
+		private void ToggleVertical()
+		{
+			this.isVertical = !this.isVertical;
+			if( this.isVertical )
+			{
+				this.camera.transform.localRotation = Quaternion.Euler( 90.0f, 0.0f, 0.0f );
+				this.camera.transform.localPosition = new Vector3( 0.0f, DEFAULT_OFFSET, 0.0f );
+			}
+			else
+			{
+				this.camera.transform.localRotation = Quaternion.Euler( 90.0f - DEFAULT_ANGLE, 0.0f, 0.0f );
+				this.camera.transform.localPosition = Vector3.zero;
+				this.camera.transform.Translate( 0.0f, 0.0f, -DEFAULT_OFFSET, Space.Self );
+			}
 		}
 
 		private bool CanMove()
@@ -161,6 +185,15 @@ namespace SS
 			ResetCam();
 		}
 
+		private void Inp_ToggleVertical( InputQueue self )
+		{
+			if( !CanMove() )
+			{
+				return;
+			}
+			this.ToggleVertical();
+		}
+
 		void OnEnable()
 		{
 			Main.keyboardInput.RegisterOnHold( KeyCode.A, 50.0f, Inp_MoveLeft, true );
@@ -170,6 +203,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnHold( KeyCode.Q, 50.0f, Inp_RotateCCW, true );
 			Main.keyboardInput.RegisterOnHold( KeyCode.E, 50.0f, Inp_RotateCW, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Keypad5, 50.0f, Inp_ResetCamera, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Keypad0, 50.0f, Inp_ToggleVertical, true );
 		}
 
 		void OnDisable()
@@ -183,6 +217,7 @@ namespace SS
 				Main.keyboardInput.ClearOnHold( KeyCode.Q, Inp_RotateCCW );
 				Main.keyboardInput.ClearOnHold( KeyCode.E, Inp_RotateCW );
 				Main.keyboardInput.ClearOnPress( KeyCode.Keypad5, Inp_ResetCamera );
+				Main.keyboardInput.ClearOnPress( KeyCode.Keypad0, Inp_ToggleVertical );
 			}
 		}
 
