@@ -327,6 +327,7 @@ namespace SS
 						fac.factionId = 1;
 					}
 				}
+				throw new Exception( "This is an exception ;)" );
 			}
 		}
 
@@ -346,6 +347,7 @@ namespace SS
 					data.resources.Add( "resource.wood", 5 );
 					ResourceDepositCreator.Create( def, data );
 				}
+				Debug.Log( "AA" );
 			}
 		}
 
@@ -365,6 +367,7 @@ namespace SS
 					data.resources.Add( "resource.stone", 20 );
 					ResourceDepositCreator.Create( def, data );
 				}
+				Debug.LogWarning( "gdrdgdr" );
 			}
 		}
 
