@@ -1,5 +1,5 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
+using System;
 using System.Text;
 using UnityEngine;
 
@@ -12,50 +12,78 @@ namespace SS.Content
 	{
 		public static Mesh LoadMesh( string filePath )
 		{
-			Mesh[] ret = KMKFFImporter.Import( filePath );
+			try
+			{
+				Mesh[] ret = KMKFFImporter.Import( filePath );
 
-			return ret[0];
+				return ret[0];
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't load mesh '" + filePath + "'." );
+			}
 		}
 
 		public static Texture2D LoadTexture2D( string filePath, TextureType type )
 		{
-			Texture2D ret = PngImporter.Import( filePath, type );
+			try
+			{
+				Texture2D ret = PngImporter.Import( filePath, type );
 
-			return ret;
+				return ret;
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't load texture '" + filePath + "'." );
+			}
 		}
 
 		public static Sprite LoadSprite( string imgPath )
 		{
-			// sprites have a texture (path.png) and KFF data file (path.kff).
-
-			string kffPath = System.IO.Path.GetDirectoryName( imgPath ) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension( imgPath ) + ".kff";
-
-			Texture2D tex = PngImporter.Import( imgPath, TextureType.Color );
-			
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( kffPath, Encoding.UTF8 );
-			Rect rect = serializer.ReadRect( "Rect" );
-			string pivotUnitMode = serializer.ReadString( "PivotUnitMode" );
-			Vector2 pivot = serializer.ReadVector2( "Pivot" );
-
-			if( pivotUnitMode == "Normalized" )
+			try
 			{
-				pivot.Scale( rect.size ); // if the pivot is given in range 0-1, scale it to the range 0-width/height
+				// sprites have a texture (path.png) and KFF data file (path.kff).
+
+				string kffPath = System.IO.Path.GetDirectoryName( imgPath ) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension( imgPath ) + ".kff";
+
+				Texture2D tex = PngImporter.Import( imgPath, TextureType.Color );
+
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( kffPath, Encoding.UTF8 );
+				Rect rect = serializer.ReadRect( "Rect" );
+				string pivotUnitMode = serializer.ReadString( "PivotUnitMode" );
+				Vector2 pivot = serializer.ReadVector2( "Pivot" );
+
+				if( pivotUnitMode == "Normalized" )
+				{
+					pivot.Scale( rect.size ); // if the pivot is given in range 0-1, scale it to the range 0-width/height
+				}
+				else if( pivotUnitMode != "Pixels" )
+				{
+					throw new Exception( "Invalid value: '" + pivotUnitMode + "', expected 'Pixels' or 'Normalized'." );
+				}
+
+				Sprite ret = Sprite.Create( tex, rect, pivot );
+
+				return ret;
 			}
-			else if( pivotUnitMode != "Pixels" )
+			catch( Exception )
 			{
-				throw new System.Exception( "Invalid value: '" + pivotUnitMode + "', expected 'Pixels' or 'Normalized'." );
+				throw new Exception( "Can't load sprite '" + imgPath + "'." );
 			}
-
-			Sprite ret = Sprite.Create( tex, rect, pivot );
-
-			return ret;
 		}
 
 		public static AudioClip LoadAudioClip( string filePath )
 		{
-			AudioClip ret = WavImporter.Import( filePath );
+			try
+			{
+				AudioClip ret = WavImporter.Import( filePath );
 
-			return ret;
+				return ret;
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't load audio clip '" + filePath + "'." );
+			}
 		}
 	}
 }

@@ -63,16 +63,28 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "units.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-			
-			UnitDefinition[] deserialized = new UnitDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new UnitDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
-			
-			unitDefinitions = deserialized;
+			try
+			{
+
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+
+				UnitDefinition[] deserialized = new UnitDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new UnitDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
+
+				unitDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load units from file '" + path + "'." );
+			}
 		}
 
 
@@ -80,16 +92,27 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "buildings.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			BuildingDefinition[] deserialized = new BuildingDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new BuildingDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				BuildingDefinition[] deserialized = new BuildingDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new BuildingDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			buildingDefinitions = deserialized;
+				buildingDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load buildings from file '" + path + "'." );
+			}
 		}
 
 
@@ -97,16 +120,27 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "projectiles.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			ProjectileDefinition[] deserialized = new ProjectileDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new ProjectileDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				ProjectileDefinition[] deserialized = new ProjectileDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new ProjectileDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			projectileDefinitions = deserialized;
+				projectileDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load projectiles from file '" + path + "'." );
+			}
 		}
 
 
@@ -114,16 +148,27 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "heroes.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			HeroDefinition[] deserialized = new HeroDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new HeroDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				HeroDefinition[] deserialized = new HeroDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new HeroDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			heroDefinitions = deserialized;
+				heroDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load heroes from file '" + path + "'." );
+			}
 		}
 
 
@@ -131,32 +176,54 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "extras.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			ExtraDefinition[] deserialized = new ExtraDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new ExtraDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				ExtraDefinition[] deserialized = new ExtraDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new ExtraDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			extraDefinitions = deserialized;
+				extraDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load extras from file '" + path + "'." );
+			}
 		}
 
 		public static void LoadResourceDepositDefinitions( string levelIdentifier )
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "resource_deposits.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new ResourceDepositDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+			
+				ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new ResourceDepositDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			resourceDepositDefinitions = deserialized;
+				resourceDepositDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load resource deposits from file '" + path + "'." );
+			}
 		}
 
 		// ///////////////////////////////////////////////
@@ -165,16 +232,27 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "resources.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			ResourceDefinition[] deserialized = new ResourceDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new ResourceDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				ResourceDefinition[] deserialized = new ResourceDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new ResourceDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			resourceDefinitions = deserialized;
+				resourceDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load resources from file '" + path + "'." );
+			}
 		}
 
 
@@ -182,16 +260,27 @@ namespace SS.Content
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "technologies.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
-
-			TechnologyDefinition[] deserialized = new TechnologyDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				deserialized[i] = new TechnologyDefinition( "<missing>" );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-			serializer.DeserializeArray( "List", deserialized );
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, FILE_ENCODING );
+				
+				TechnologyDefinition[] deserialized = new TechnologyDefinition[serializer.Analyze( "List" ).childCount];
+				for( int i = 0; i < deserialized.Length; i++ )
+				{
+					deserialized[i] = new TechnologyDefinition( "<missing>" );
+				}
+				serializer.DeserializeArray( "List", deserialized );
 
-			technologyDefinitions = deserialized;
+				technologyDefinitions = deserialized;
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load technologies from file '" + path + "'." );
+			}
 		}
 
 

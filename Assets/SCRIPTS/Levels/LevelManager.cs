@@ -310,10 +310,31 @@ namespace SS.Levels
 
 		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			KFFSerializer serializerL = KFFSerializer.ReadFromFile( GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff", DefinitionManager.FILE_ENCODING );
-			currentLevelDisplayName = serializerL.ReadString( "DisplayName" );
+			string LPath = GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
+			string LSSPath = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 
-			KFFSerializer serializerLSS = KFFSerializer.ReadFromFile( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff", DefinitionManager.FILE_ENCODING );
+			KFFSerializer serializerL;
+			KFFSerializer serializerLSS;
+
+			try
+			{
+				serializerL = KFFSerializer.ReadFromFile( LPath, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open level file '" + LPath + "' - file doesn't exist." );
+			}
+			
+			try
+			{
+				serializerLSS = KFFSerializer.ReadFromFile( LSSPath, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open level file '" + LPath + "' - file doesn't exist." );
+			}
+
+			currentLevelDisplayName = serializerL.ReadString( "DisplayName" );
 			currentLevelSaveStateDisplayName = serializerLSS.ReadString( "DisplayName" );
 			
 

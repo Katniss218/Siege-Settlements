@@ -82,7 +82,7 @@ namespace SS.Levels
 			}
 		}
 
-#warning Ugly code - a part is here and a part in the FactionData.
+#warning Ugly code - The 'techs' field is in FactionData but access to it is from here.
 		public class UnityEvent_int_string_TechnologyResearchProgress : UnityEvent<int, string, TechnologyResearchProgress> { }
 
 		public static UnityEvent_int_string_TechnologyResearchProgress onTechStateChanged = new UnityEvent_int_string_TechnologyResearchProgress();
@@ -159,53 +159,74 @@ namespace SS.Levels
 		{
 			string path = LevelManager.GetFullDataPath( levelIdentifier, "factions.kff" );
 
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
-
-			int count = serializer.Analyze( "List" ).childCount;
-			factionCount = count;
-
-			factions = new FactionDefinition[factionCount];
-			for( int i = 0; i < factions.Length; i++ )
+			if( !System.IO.File.Exists( path ) )
 			{
-				factions[i] = new FactionDefinition();
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
+			try
+			{
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-			serializer.DeserializeArray( "List", factions );
+
+				int count = serializer.Analyze( "List" ).childCount;
+				factionCount = count;
+
+				factions = new FactionDefinition[factionCount];
+				for( int i = 0; i < factions.Length; i++ )
+				{
+					factions[i] = new FactionDefinition();
+				}
+
+				serializer.DeserializeArray( "List", factions );
+			}
+			catch( System.Exception )
+			{
+				throw new System.Exception( "Can't load factions from file '" + path + "'." );
+			}
 		}
 
 		public static void LoadFactionData( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			string path = LevelManager.GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
-
-			int count = serializer.Analyze( "List" ).childCount;
-			if( count != factionCount )
+			if( !System.IO.File.Exists( path ) )
 			{
-				throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
+				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
 			}
-
-			factionData = new FactionData[factionCount];
-
-			for( int i = 0; i < factionData.Length; i++ )
+			try
 			{
-				factionData[i] = new FactionData();
+				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
+
+
+				int count = serializer.Analyze( "List" ).childCount;
+				if( count != factionCount )
+				{
+					throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
+				}
+
+				factionData = new FactionData[factionCount];
+
+				for( int i = 0; i < factionData.Length; i++ )
+				{
+					factionData[i] = new FactionData();
+				}
+
+				serializer.DeserializeArray( "List", factionData );
+
+
+				int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
+
+				sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
+
+				diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
+				onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
+				for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
+				{
+					diplomaticRelations[i] = (DiplomaticRelation)array[i];
+				}
 			}
-
-			serializer.DeserializeArray( "List", factionData );
-
-
-			int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
-
-			sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
-
-			diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
-			onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
-			for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
+			catch( System.Exception )
 			{
-				diplomaticRelations[i] = (DiplomaticRelation)array[i];
+				throw new System.Exception( "Can't load factions from file '" + path + "'." );
 			}
 		}
 
