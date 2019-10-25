@@ -43,7 +43,8 @@ namespace SS.DevConsole
 					break;
 
 				case LogType.Exception:
-					PrintLine( "<color=#dd1111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>\n<color=#dd3333>" + stackTrace + "</color>" );
+					PrintLine( "<color=#ff2111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>\n<color=#dd3333>" + stackTrace + "</color>" );
+					consoleGameObject.SetActive( true ); // If an exception is thrown - show the console.
 					break;
 			}
 		}
@@ -55,7 +56,7 @@ namespace SS.DevConsole
 				Debug.LogWarning( "The console isn't set to Rich Rext, setting to Rich Text now." );
 				output.richText = true;
 			}
-			output.text = "Console:\n\n";
+			output.text = "Console:\n\n"; // This is required to fix glitch requiring reenabling the gameObject after adding some text to the output (if it's set to blank).
 			consoleGameObject.SetActive( false );
 		}
 
