@@ -63,7 +63,7 @@ namespace SS.Modules
 		
 		private Damageable FindTarget( float searchRange )
 		{
-			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange );
+			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.OBJECTS_MASK );
 			if( col.Length == 0 )
 			{
 				return null;

@@ -41,5 +41,12 @@
 		public const int PROJECTILES_MASK = 1 << PROJECTILES;
 		public const int HEROES_MASK = 1 << HEROES;
 		public const int EXTRAS_MASK = 1 << EXTRAS;
+
+
+		public const int OBJECTS_MASK =
+				ObjectLayer.UNITS_MASK |
+				ObjectLayer.BUILDINGS_MASK |
+				ObjectLayer.HEROES_MASK |
+				ObjectLayer.EXTRAS_MASK;
 	}
 }

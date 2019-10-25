@@ -212,11 +212,7 @@ namespace SS.Buildings
 
 			buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
 
-			buildPreview.objectsMask =
-				ObjectLayer.UNITS_MASK |
-				ObjectLayer.BUILDINGS_MASK |
-				ObjectLayer.HEROES_MASK |
-				ObjectLayer.EXTRAS_MASK;
+			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
 
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 			meshFilter.mesh = buildPreview.def.mesh.Item2;
