@@ -162,6 +162,7 @@ namespace SS
 				ResourceDeposit hitDeposit = null;
 				Transform hitReceiverTransform = null;
 				IPaymentReceiver[] hitPaymentReceivers = null;
+				Damageable hitDamageable = null;
 
 				for( int i = 0; i < raycastHits.Length; i++ )
 				{
@@ -176,6 +177,7 @@ namespace SS
 						{
 							hitDeposit = deposit;
 						}
+
 						IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
 						if( receivers.Length > 0 )
 						{
@@ -183,9 +185,18 @@ namespace SS
 							hitPaymentReceivers = receivers;
 						}
 
+						Damageable damageable = raycastHits[i].collider.GetComponent<Damageable>();
+						if( damageable != null )
+						{
+							hitDamageable = damageable;
+						}
 					}
 				}
 
+				if( hitDamageable != null )
+				{
+					SetTargetToSpecified( hitDamageable, Selection.selectedObjects );
+				}
 
 				if( hitDeposit == null && hitReceiverTransform == null && terrainHitPos.HasValue )
 				{
@@ -428,12 +439,41 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Pause, Inp_Pause );
 			}
 		}
-		
+
 		//
 		//
 		//
 
-		
+		private void SetTargetToSpecified( Damageable target, Selectable[] selected )
+		{
+			List<ITargetFinder> targeters = new List<ITargetFinder>();
+
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
+				{
+					continue;
+				}
+
+				ITargetFinder[] tgt = selected[i].GetComponents<ITargetFinder>();
+				if( tgt == null )
+				{
+					continue;
+				}
+
+				for( int j = 0; j < tgt.Length; j++ )
+				{
+					targeters.Add( tgt[j] );
+				}
+			}
+
+			for( int i = 0; i < targeters.Count; i++ )
+			{
+				targeters[i].TrySetTarget( target );
+			}
+		}
+
 		private void AssignDropoffToNewGoal( RaycastHit hitInfo, Selectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();

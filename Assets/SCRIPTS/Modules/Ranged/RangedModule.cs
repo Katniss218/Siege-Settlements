@@ -9,7 +9,7 @@ using UnityEngine.AI;
 
 namespace SS.Modules
 {
-	public class RangedModule : Module
+	public class RangedModule : Module, ITargetFinder
 	{
 		private Damageable __target;
 
@@ -21,27 +21,51 @@ namespace SS.Modules
 
 		public Func<FactionMember, FactionMember, bool> canTarget { get; set; }
 
-		public Damageable GetTarget()
+		public Damageable target
 		{
-			// If the target is null, try to find new one.
-			if( this.__target == null )
+			get
 			{
-				this.__target = this.FindTarget( this.searchRange );
-			}
-			// If it's not null, but can no longer be targeted, try to find new one.
-			else if( Vector3.Distance( this.__target.transform.position, this.transform.position ) > this.searchRange )
-			{
-				this.__target = this.FindTarget( this.searchRange );
-			}
-			else
-			{
-				FactionMember targetFactionMember = this.__target.GetComponent<FactionMember>();
-				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+				if( this.CanTarget( this.__target ) )
 				{
-					this.__target = this.FindTarget( this.searchRange );
+					this.__target = null;
 				}
+				return this.__target;
+			}
+		}
+
+		public bool CanTarget( Damageable target )
+		{
+			if( target == null )
+			{
+				return false;
 			}
 
+			if( Vector3.Distance( target.transform.position, this.transform.position ) > this.searchRange )
+			{
+				return false;
+			}
+
+			FactionMember targetFactionMember = target.GetComponent<FactionMember>();
+			if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		public Damageable TrySetTarget()
+		{
+			this.__target = this.FindTarget( this.searchRange );
+			return this.__target;
+		}
+
+		public Damageable TrySetTarget( Damageable target )
+		{
+			if( this.CanTarget( target ) )
+			{
+				this.__target = target;
+			}
 			return this.__target;
 		}
 
@@ -168,16 +192,23 @@ namespace SS.Modules
 		{
 			if( this.isReadyToAttack )
 			{
-				Damageable target = this.GetTarget();
-
-				if( target != null )
+				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
+				if( !this.CanTarget( this.__target ) )
 				{
-					if( target.transform.position == this.transform.position )
-					{
-						return;
-					}
-					this.Attack( target );
+					this.__target = this.TrySetTarget();
 				}
+
+				if( this.__target == null )
+				{
+					return;
+				}
+
+				if( this.__target.transform.position == this.transform.position )
+				{
+					return;
+				}
+
+				this.Attack( this.__target );
 			}
 		}
 
