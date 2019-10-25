@@ -310,6 +310,9 @@ namespace SS.Levels
 
 		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
 		{
+			Debug.Log( "LOADING LEVEL: '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
+			System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+
 			string pathLevel = GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
 			string pathLevelSaveState = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 
@@ -366,7 +369,7 @@ namespace SS.Levels
 
 
 			// Open the relevant definition files and parse their contents.
-
+			stopWatch.Start();
 			try
 			{
 				serializerUnits = KFFSerializer.ReadFromFile( pathUnits, DefinitionManager.FILE_ENCODING );
@@ -450,6 +453,10 @@ namespace SS.Levels
 				throw new Exception( "Can't open file '" + pathFactions + "' or file is invalid." );
 			}
 
+			stopWatch.Stop();
+			Debug.Log( "def parsing: " + stopWatch.ElapsedMilliseconds + " ms" );
+			stopWatch.Reset();
+			stopWatch.Start();
 
 			// Load the definitions using serializers.
 
@@ -463,6 +470,10 @@ namespace SS.Levels
 			DefinitionManager.LoadResourceDefinitions( serializerResources );
 			DefinitionManager.LoadTechnologyDefinitions( serializerTechnologies );
 
+			stopWatch.Stop();
+			Debug.Log( "loading definitions & data: " + stopWatch.ElapsedMilliseconds + " ms" );
+			stopWatch.Reset();
+			stopWatch.Start();
 
 
 			LevelDataManager.LoadMapData( serializerLevel );
@@ -470,6 +481,11 @@ namespace SS.Levels
 			InstantiateLevelPrefabs(); // game UI prefabs
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
+
+			stopWatch.Stop();
+			Debug.Log( "terrain & map data: " + stopWatch.ElapsedMilliseconds + " ms" );
+			stopWatch.Reset();
+			stopWatch.Start();
 
 			LevelDataManager.LoadFactions( serializerFactions );
 			LevelDataManager.LoadDaylightCycle( serializerLevel );
@@ -580,10 +596,14 @@ namespace SS.Levels
 			{
 				throw new Exception( "Can't open file '" + pathSelection + "' or file is invalid." );
 			}
-		
+
+			stopWatch.Stop();
+			Debug.Log( "data parsing: " + stopWatch.ElapsedMilliseconds + " ms" );
+			stopWatch.Reset();
+			stopWatch.Start();
 
 			// Load the necessary things using serializers.
-			
+
 			var sUnits = GetSavedUnits( serializerSavedUnits );
 			var sBuildings = GetSavedBuildings( serializerSavedBuildings );
 			var sProjectiles = GetSavedProjectiles( serializerSavedProjectiles );
@@ -679,6 +699,11 @@ namespace SS.Levels
 			{
 				Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
 			}
+
+			stopWatch.Stop();
+			Debug.Log( "applying save state: " + stopWatch.ElapsedMilliseconds + " ms" );
+			stopWatch.Reset();
+			stopWatch.Start();
 
 
 			currentLevelId = levelIdentifier;
