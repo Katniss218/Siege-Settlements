@@ -155,78 +155,47 @@ namespace SS.Levels
 		}
 
 
-		public static void LoadFactions( string levelIdentifier )
+		public static void LoadFactions( KFFSerializer serializer )
 		{
-			string path = LevelManager.GetFullDataPath( levelIdentifier, "factions.kff" );
+			int count = serializer.Analyze( "List" ).childCount;
+			factionCount = count;
 
-			if( !System.IO.File.Exists( path ) )
+			factions = new FactionDefinition[factionCount];
+			for( int i = 0; i < factions.Length; i++ )
 			{
-				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
+				factions[i] = new FactionDefinition();
 			}
-			try
-			{
-				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
 
-
-				int count = serializer.Analyze( "List" ).childCount;
-				factionCount = count;
-
-				factions = new FactionDefinition[factionCount];
-				for( int i = 0; i < factions.Length; i++ )
-				{
-					factions[i] = new FactionDefinition();
-				}
-
-				serializer.DeserializeArray( "List", factions );
-			}
-			catch( System.Exception )
-			{
-				throw new System.Exception( "Can't load factions from file '" + path + "'." );
-			}
+			serializer.DeserializeArray( "List", factions );
 		}
 
-		public static void LoadFactionData( string levelIdentifier, string levelSaveStateIdentifier )
+		public static void LoadFactionData( KFFSerializer serializer )
 		{
-			string path = LevelManager.GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
-			if( !System.IO.File.Exists( path ) )
+			int count = serializer.Analyze( "List" ).childCount;
+			if( count != factionCount )
 			{
-				throw new System.Exception( "Can't open file '" + path + "' - file doesn't exist." );
+				throw new System.Exception( "The number of faction data doesn't match the number of factions of the level." );
 			}
-			try
+
+			factionData = new FactionData[factionCount];
+
+			for( int i = 0; i < factionData.Length; i++ )
 			{
-				KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
-
-				int count = serializer.Analyze( "List" ).childCount;
-				if( count != factionCount )
-				{
-					throw new System.Exception( "The number of faction data doesn't match the number of factions of this level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'." );
-				}
-
-				factionData = new FactionData[factionCount];
-
-				for( int i = 0; i < factionData.Length; i++ )
-				{
-					factionData[i] = new FactionData();
-				}
-
-				serializer.DeserializeArray( "List", factionData );
-
-
-				int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
-
-				sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
-
-				diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
-				onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
-				for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
-				{
-					diplomaticRelations[i] = (DiplomaticRelation)array[i];
-				}
+				factionData[i] = new FactionData();
 			}
-			catch( System.Exception )
+
+			serializer.DeserializeArray( "List", factionData );
+
+
+			int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
+
+			sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
+
+			diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
+			onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
+			for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
 			{
-				throw new System.Exception( "Can't load factions from file '" + path + "'." );
+				diplomaticRelations[i] = (DiplomaticRelation)array[i];
 			}
 		}
 
@@ -289,14 +258,9 @@ namespace SS.Levels
 		//
 		//
 
-		public static void SaveFactionData( string levelIdentifier, string levelSaveStateIdentifier )
+		public static void SaveFactionData( KFFSerializer serializer )
 		{
-			string path = LevelManager.GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_factions.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.SerializeArray( "", "List", factionData );
-
 			
 			sbyte[] array = new sbyte[diplomaticRelations.MatrixLength];
 			
@@ -306,8 +270,6 @@ namespace SS.Levels
 			}
 
 			serializer.WriteSByteArray( "", "RelationMatrix", array );
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
 		public static void SaveDaylightCycleData( KFFSerializer serializer )

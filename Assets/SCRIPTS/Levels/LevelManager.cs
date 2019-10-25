@@ -310,66 +310,290 @@ namespace SS.Levels
 
 		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
 		{
-			string LPath = GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
-			string LSSPath = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
+			string pathLevel = GetLevelMainDirectory( levelIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level.kff";
+			string pathLevelSaveState = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
 
-			KFFSerializer serializerL;
-			KFFSerializer serializerLSS;
+			KFFSerializer serializerLevel;
+			KFFSerializer serializerLevelSaveState;
 
 			try
 			{
-				serializerL = KFFSerializer.ReadFromFile( LPath, DefinitionManager.FILE_ENCODING );
+				serializerLevel = KFFSerializer.ReadFromFile( pathLevel, DefinitionManager.FILE_ENCODING );
 			}
 			catch( Exception )
 			{
-				throw new Exception( "Can't open level file '" + LPath + "' - file doesn't exist." );
+				throw new Exception( "Can't open level file '" + pathLevel + "' - file doesn't exist." );
 			}
 			
 			try
 			{
-				serializerLSS = KFFSerializer.ReadFromFile( LSSPath, DefinitionManager.FILE_ENCODING );
+				serializerLevelSaveState = KFFSerializer.ReadFromFile( pathLevelSaveState, DefinitionManager.FILE_ENCODING );
 			}
 			catch( Exception )
 			{
-				throw new Exception( "Can't open level file '" + LPath + "' - file doesn't exist." );
+				throw new Exception( "Can't open level file '" + pathLevel + "' - file doesn't exist." );
 			}
 
-			currentLevelDisplayName = serializerL.ReadString( "DisplayName" );
-			currentLevelSaveStateDisplayName = serializerLSS.ReadString( "DisplayName" );
-			
+			currentLevelDisplayName = serializerLevel.ReadString( "DisplayName" );
+			currentLevelSaveStateDisplayName = serializerLevelSaveState.ReadString( "DisplayName" );
 
-			DefinitionManager.LoadUnitDefinitions( levelIdentifier );
-			DefinitionManager.LoadBuildingDefinitions( levelIdentifier );
-			DefinitionManager.LoadProjectileDefinitions( levelIdentifier );
-			DefinitionManager.LoadHeroDefinitions( levelIdentifier );
-			DefinitionManager.LoadExtraDefinitions( levelIdentifier );
-			DefinitionManager.LoadResourceDepositDefinitions( levelIdentifier );
+			// Set up the paths and serializers for definition files.
 
-			DefinitionManager.LoadResourceDefinitions( levelIdentifier );
-			DefinitionManager.LoadTechnologyDefinitions( levelIdentifier );
+			string 
+				pathUnits = GetFullDataPath( levelIdentifier, "units.kff" ),
+				pathBuildings = GetFullDataPath( levelIdentifier, "buildings.kff" ),
+				pathProjectiles = GetFullDataPath( levelIdentifier, "projectiles.kff" ),
+				pathHeroes = GetFullDataPath( levelIdentifier, "heroes.kff" ),
+				pathExtras = GetFullDataPath( levelIdentifier, "extras.kff" ),
+				pathResourceDeposits = GetFullDataPath( levelIdentifier, "resource_deposits.kff" ),
 
-			LevelDataManager.LoadMapData( serializerL );
+				pathResources = GetFullDataPath( levelIdentifier, "resources.kff" ),
+				pathTechnologies = GetFullDataPath( levelIdentifier, "technologies.kff" ),
+				pathFactions = GetFullDataPath( levelIdentifier, "factions.kff" );
+
+			KFFSerializer
+				serializerUnits,
+				serializerBuildings,
+				serializerProjectiles,
+				serializerHeroes,
+				serializerExtras,
+				serializerResourceDeposits,
+
+				serializerResources,
+				serializerTechnologies,
+				
+				serializerFactions;
+
+
+			// Open the relevant definition files and parse their contents.
+
+			try
+			{
+				serializerUnits = KFFSerializer.ReadFromFile( pathUnits, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathUnits + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerBuildings = KFFSerializer.ReadFromFile( pathBuildings, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathBuildings + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerProjectiles = KFFSerializer.ReadFromFile( pathProjectiles, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathProjectiles + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerHeroes = KFFSerializer.ReadFromFile( pathHeroes, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathHeroes + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerExtras = KFFSerializer.ReadFromFile( pathExtras, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathExtras + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerResourceDeposits = KFFSerializer.ReadFromFile( pathResourceDeposits, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathResourceDeposits + "' or file is invalid." );
+			}
+
+
+			try
+			{
+				serializerResources = KFFSerializer.ReadFromFile( pathResources, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathResources + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerTechnologies = KFFSerializer.ReadFromFile( pathTechnologies, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathTechnologies + "' or file is invalid." );
+			}
+
+
+			try
+			{
+				serializerFactions = KFFSerializer.ReadFromFile( pathFactions, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathFactions + "' or file is invalid." );
+			}
+
+
+			// Load the definitions using serializers.
+
+			DefinitionManager.LoadUnitDefinitions( serializerUnits );
+			DefinitionManager.LoadBuildingDefinitions( serializerBuildings );
+			DefinitionManager.LoadProjectileDefinitions( serializerProjectiles );
+			DefinitionManager.LoadHeroDefinitions( serializerHeroes );
+			DefinitionManager.LoadExtraDefinitions( serializerExtras );
+			DefinitionManager.LoadResourceDepositDefinitions( serializerResourceDeposits );
+
+			DefinitionManager.LoadResourceDefinitions( serializerResources );
+			DefinitionManager.LoadTechnologyDefinitions( serializerTechnologies );
+
+
+
+			LevelDataManager.LoadMapData( serializerLevel );
 
 			InstantiateLevelPrefabs(); // game UI prefabs
 
 			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
 
-			LevelDataManager.LoadFactions( levelIdentifier );
-			LevelDataManager.LoadDaylightCycle( serializerL );
+			LevelDataManager.LoadFactions( serializerFactions );
+			LevelDataManager.LoadDaylightCycle( serializerLevel );
 
 
-			LevelDataManager.LoadFactionData( levelIdentifier, levelSaveStateIdentifier );
-			LevelDataManager.LoadDaylightCycleData( serializerLSS );
-			LevelDataManager.LoadCameraData( serializerLSS );
+
+			// Load the save state
+
+
+			// Set up the paths and serializers for definition files.
+
+			string
+				pathFactionData = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_factions.kff" ),
+				
+				pathSavedUnits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_units.kff" ),
+				pathSavedBuildings = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_buildings.kff" ),
+				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_projectiles.kff" ),
+				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_heroes.kff" ),
+				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_extras.kff" ),
+				pathSavedResourceDeposits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_resource_deposits.kff" ),
+				
+				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_selection.kff" );
+
+			KFFSerializer
+				serializerFactionData,
+				
+				serializerSavedUnits,
+				serializerSavedBuildings,
+				serializerSavedProjectiles,
+				serializerSavedHeroes,
+				serializerSavedExtras,
+				serializerSavedResourceDeposits,
+				
+				serializerSelection;
+
+
+			// Open the relevant definition files and parse their contents.
+
+			try
+			{
+				serializerFactionData = KFFSerializer.ReadFromFile( pathFactionData, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathFactionData + "' or file is invalid." );
+			}
+
+
+			try
+			{
+				serializerSavedUnits = KFFSerializer.ReadFromFile( pathSavedUnits, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedUnits + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSavedBuildings = KFFSerializer.ReadFromFile( pathSavedBuildings, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedBuildings + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSavedProjectiles = KFFSerializer.ReadFromFile( pathSavedProjectiles, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedProjectiles + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSavedHeroes = KFFSerializer.ReadFromFile( pathSavedHeroes, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedHeroes + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSavedExtras = KFFSerializer.ReadFromFile( pathSavedExtras, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedExtras + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSavedResourceDeposits = KFFSerializer.ReadFromFile( pathSavedResourceDeposits, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSavedResourceDeposits + "' or file is invalid." );
+			}
+
+			try
+			{
+				serializerSelection = KFFSerializer.ReadFromFile( pathSelection, DefinitionManager.FILE_ENCODING );
+			}
+			catch( Exception )
+			{
+				throw new Exception( "Can't open file '" + pathSelection + "' or file is invalid." );
+			}
+		
+
+			// Load the necessary things using serializers.
 			
-			// apply save state
+			var sUnits = GetSavedUnits( serializerSavedUnits );
+			var sBuildings = GetSavedBuildings( serializerSavedBuildings );
+			var sProjectiles = GetSavedProjectiles( serializerSavedProjectiles );
+			var sHeroes = GetSavedHeroes( serializerSavedHeroes );
+			var sExtras = GetSavedExtras( serializerSavedExtras );
+			var sResourceDeposits = GetSavedResourceDeposits( serializerSavedResourceDeposits );
 
-			var sUnits = GetSavedUnits( levelIdentifier, levelSaveStateIdentifier );
-			var sBuildings = GetSavedBuildings( levelIdentifier, levelSaveStateIdentifier );
-			var sProjectiles = GetSavedProjectiles( levelIdentifier, levelSaveStateIdentifier );
-			var sHeroes = GetSavedHeroes( levelIdentifier, levelSaveStateIdentifier );
-			var sExtras = GetSavedExtras( levelIdentifier, levelSaveStateIdentifier );
-			var sResourceDeposits = GetSavedResourceDeposits( levelIdentifier, levelSaveStateIdentifier );
+			LevelDataManager.LoadFactionData( serializerFactionData );
+			LevelDataManager.LoadDaylightCycleData( serializerLevelSaveState );
+			LevelDataManager.LoadCameraData( serializerLevelSaveState );
 
 			GameObject[] units = new GameObject[sUnits.Count];
 			GameObject[] buildings = new GameObject[sBuildings.Count];
@@ -434,15 +658,16 @@ namespace SS.Levels
 
 			SelectionPanelMode selectionPanelMode;
 			GameObject highlighted;
-			GameObject[] selected = GetSelected( levelIdentifier, levelSaveStateIdentifier, out highlighted, out selectionPanelMode );
+			GameObject[] selected = GetSelected( serializerSelection, out highlighted, out selectionPanelMode );
 
 			SelectionPanel.instance.SetMode( selectionPanelMode );
 
 			// Set inactive.
 			SelectionPanel.instance.gameObject.SetActive( false );
 			ActionPanel.instance.gameObject.SetActive( false );
-			// ^ Will get set active if something gets selected.
+			// ^ This will be set active afterwards, if something gets selected.
 
+			// Select the objects specified by save state
 			if( selected != null )
 			{
 				for( int i = 0; i < selected.Length; i++ )
@@ -462,12 +687,8 @@ namespace SS.Levels
 			lastLoadTime = Time.time;
 		}
 
-		private static List<Tuple<UnitDefinition, UnitData>> GetSavedUnits( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<UnitDefinition, UnitData>> GetSavedUnits( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<UnitDefinition, UnitData>> ret = new List<Tuple<UnitDefinition, UnitData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -485,12 +706,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static List<Tuple<BuildingDefinition, BuildingData>> GetSavedBuildings( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<BuildingDefinition, BuildingData>> GetSavedBuildings( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<BuildingDefinition, BuildingData>> ret = new List<Tuple<BuildingDefinition, BuildingData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -508,12 +725,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static List<Tuple<ProjectileDefinition, ProjectileData>> GetSavedProjectiles( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<ProjectileDefinition, ProjectileData>> GetSavedProjectiles( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<ProjectileDefinition, ProjectileData>> ret = new List<Tuple<ProjectileDefinition, ProjectileData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -531,12 +744,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static List<Tuple<HeroDefinition, HeroData>> GetSavedHeroes( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<HeroDefinition, HeroData>> GetSavedHeroes( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<HeroDefinition, HeroData>> ret = new List<Tuple<HeroDefinition, HeroData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -554,12 +763,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static List<Tuple<ExtraDefinition, ExtraData>> GetSavedExtras( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<ExtraDefinition, ExtraData>> GetSavedExtras( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<ExtraDefinition, ExtraData>> ret = new List<Tuple<ExtraDefinition, ExtraData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -577,12 +782,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static List<Tuple<ResourceDepositDefinition, ResourceDepositData>> GetSavedResourceDeposits( string levelIdentifier, string levelSaveStateIdentifier )
+		private static List<Tuple<ResourceDepositDefinition, ResourceDepositData>> GetSavedResourceDeposits( KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			List<Tuple<ResourceDepositDefinition, ResourceDepositData>> ret = new List<Tuple<ResourceDepositDefinition, ResourceDepositData>>();
 
 			int count = serializer.Analyze( "List" ).childCount;
@@ -600,12 +801,8 @@ namespace SS.Levels
 			return ret;
 		}
 
-		private static GameObject[] GetSelected( string levelIdentifier, string levelSaveStateIdentifier, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
+		private static GameObject[] GetSelected( KFFSerializer serializer, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
-
-			KFFSerializer serializer = KFFSerializer.ReadFromFile( path, DefinitionManager.FILE_ENCODING );
-
 			string sel = serializer.ReadString( "SelectionPanelMode" );
 			if( sel == "Object" )
 			{
@@ -746,23 +943,47 @@ namespace SS.Levels
 				System.IO.Directory.CreateDirectory( path );
 			}
 
-			SaveUnits( unitData, currentLevelId, newLevelSaveStateId );
-			SaveBuildings( buildingData, currentLevelId, newLevelSaveStateId );
-			SaveProjectiles( projectileData, currentLevelId, newLevelSaveStateId );
-			SaveHeroes( heroData, currentLevelId, newLevelSaveStateId );
-			SaveExtras( extraData, currentLevelId, newLevelSaveStateId );
-			SaveResourceDeposits( resourceDepositData, currentLevelId, newLevelSaveStateId );
-			
-			LevelDataManager.SaveFactionData( currentLevelId, newLevelSaveStateId );
+			// Save the level save state file.
 
-			string levelSaveStateFilePath = LevelManager.GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ) + System.IO.Path.DirectorySeparatorChar + "level_save_state.kff";
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( levelSaveStateFilePath ) );
+			string levelSaveStateFilePath = System.IO.Path.Combine( LevelManager.GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "level_save_state.kff" );
+			KFFSerializer serializerSaveState = new KFFSerializer( new KFFFile( levelSaveStateFilePath ) );
 
-			serializer.WriteString( "", "DisplayName", newLevelSaveStateDisplayName );
-			LevelDataManager.SaveDaylightCycleData( serializer );
-			LevelDataManager.SaveCameraData( serializer );
 
-			serializer.WriteToFile( levelSaveStateFilePath, DefinitionManager.FILE_ENCODING );
+			string
+				pathFactionData = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_factions.kff" ),
+				pathSavedUnits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_units.kff" ),
+				pathSavedBuildings = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_buildings.kff" ),
+				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_projectiles.kff" ),
+				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_heroes.kff" ),
+				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_extras.kff" ),
+				pathSavedResourceDeposits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_resource_deposits.kff" ),
+				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_selection.kff" );
+
+			KFFSerializer 
+				serializerFactionData = new KFFSerializer( new KFFFile( pathFactionData ) ),
+				serializerSavedUnits = new KFFSerializer( new KFFFile( pathSavedUnits ) ),
+				serializerSavedBuildings = new KFFSerializer( new KFFFile( pathSavedBuildings ) ),
+				serializerSavedProjectiles = new KFFSerializer( new KFFFile( pathSavedProjectiles ) ),
+				serializerSavedHeroes = new KFFSerializer( new KFFFile( pathSavedHeroes ) ),
+				serializerSavedExtras = new KFFSerializer( new KFFFile( pathSavedExtras ) ),
+				serializerSavedResourceDeposits = new KFFSerializer( new KFFFile( pathSavedResourceDeposits ) ),
+				
+				serializerSelection = new KFFSerializer( new KFFFile( pathSelection ) );
+
+			// Serialize the data into serializers.
+
+			serializerSaveState.WriteString( "", "DisplayName", newLevelSaveStateDisplayName );
+			LevelDataManager.SaveDaylightCycleData( serializerSaveState );
+			LevelDataManager.SaveCameraData( serializerSaveState );
+
+			LevelDataManager.SaveFactionData( serializerFactionData );
+
+			SaveUnits( unitData, serializerSavedUnits );
+			SaveBuildings( buildingData, serializerSavedBuildings );
+			SaveProjectiles( projectileData, serializerSavedProjectiles );
+			SaveHeroes( heroData, serializerSavedHeroes );
+			SaveExtras( extraData, serializerSavedExtras );
+			SaveResourceDeposits( resourceDepositData, serializerSavedResourceDeposits );
 
 			Guid? highlighted = null;
 			if( Selection.highlightedObject != null )
@@ -780,16 +1001,28 @@ namespace SS.Levels
 					selection[i] = Main.GetGuid( selectedObjs[i].gameObject );
 				}
 			}
+
+			SaveSelection( highlighted, selection, serializerSelection );
+
+
+			// Write the data in serializers to the respective files.
+
+			serializerSaveState.WriteToFile( levelSaveStateFilePath, DefinitionManager.FILE_ENCODING );
+
+			serializerFactionData.WriteToFile( pathFactionData, DefinitionManager.FILE_ENCODING );
+
+			serializerSavedUnits.WriteToFile( pathSavedUnits, DefinitionManager.FILE_ENCODING );
+			serializerSavedBuildings.WriteToFile( pathSavedBuildings, DefinitionManager.FILE_ENCODING );
+			serializerSavedProjectiles.WriteToFile( pathSavedProjectiles, DefinitionManager.FILE_ENCODING );
+			serializerSavedHeroes.WriteToFile( pathSavedHeroes, DefinitionManager.FILE_ENCODING );
+			serializerSavedExtras.WriteToFile( pathSavedExtras, DefinitionManager.FILE_ENCODING );
+			serializerSavedResourceDeposits.WriteToFile( pathSavedResourceDeposits, DefinitionManager.FILE_ENCODING );
 			
-			SaveSelection( highlighted, selection, currentLevelId, newLevelSaveStateId );
+			serializerSelection.WriteToFile( pathSelection, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveUnits( Tuple<string, UnitData>[] units, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveUnits( Tuple<string, UnitData>[] units, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_units.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < units.Length; i++ )
 			{
@@ -799,16 +1032,10 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", units[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveBuildings( Tuple<string, BuildingData>[] buildings, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveBuildings( Tuple<string, BuildingData>[] buildings, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_buildings.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < buildings.Length; i++ )
 			{
@@ -818,16 +1045,10 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", buildings[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveProjectiles( Tuple<string, ProjectileData>[] projectiles, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveProjectiles( Tuple<string, ProjectileData>[] projectiles, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_projectiles.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
@@ -837,16 +1058,10 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", projectiles[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveHeroes( Tuple<string, HeroData>[] heroes, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveHeroes( Tuple<string, HeroData>[] heroes, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_heroes.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < heroes.Length; i++ )
 			{
@@ -856,16 +1071,10 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", heroes[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveExtras( Tuple<string, ExtraData>[] extras, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveExtras( Tuple<string, ExtraData>[] extras, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_extras.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < extras.Length; i++ )
 			{
@@ -875,16 +1084,10 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", extras[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
-		private static void SaveResourceDeposits( Tuple<string, ResourceDepositData>[] resourceDeposits, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveResourceDeposits( Tuple<string, ResourceDepositData>[] resourceDeposits, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_resource_deposits.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteList( "", "List" );
 			for( int i = 0; i < resourceDeposits.Length; i++ )
 			{
@@ -894,19 +1097,13 @@ namespace SS.Levels
 
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", resourceDeposits[i].Item2 );
 			}
-
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 
 
 
 
-		private static void SaveSelection( Guid? highlighted, Guid?[] selected, string levelIdentifier, string levelSaveStateIdentifier )
+		private static void SaveSelection( Guid? highlighted, Guid?[] selected, KFFSerializer serializer )
 		{
-			string path = GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ) + System.IO.Path.DirectorySeparatorChar + "save_selection.kff";
-
-			KFFSerializer serializer = new KFFSerializer( new KFFFile( path ) );
-
 			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.instance.mode == SelectionPanelMode.Object ? "Object" : "List" );
 			if( highlighted != null )
 			{
@@ -925,7 +1122,6 @@ namespace SS.Levels
 					serializer.WriteStringArray( "", "SelectedGuids", selectedGuidStrings );
 				}
 			}
-			serializer.WriteToFile( path, DefinitionManager.FILE_ENCODING );
 		}
 	}
 }
