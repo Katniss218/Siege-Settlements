@@ -96,9 +96,7 @@ namespace SS.Buildings
 					this.meshRenderer.material.SetFloat( "_Progress", 1.0f );
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
-					Object.DestroyImmediate( this ); // destroyimmediate so the redraw doesn't detect the construction site that's still present when using Destroy().
-					
-#warning (??) if received amount is rounded down, the remaining (left) decimal values are not contributing to the health?
+					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
 				}
 
 				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
@@ -230,8 +228,8 @@ namespace SS.Buildings
 			float spacingX = collider.size.x / (numX + 1);
 			float spacingZ = collider.size.z / (numZ + 1);
 
-			Mesh corner = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Corner.kff" );
-			Mesh segment = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Segment.kff" );
+			Mesh corner = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Corner.ksm" );
+			Mesh segment = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Segment.ksm" );
 
 			Texture2D albedoS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/segment_albedo.png", TextureType.Color );
 			Texture2D normalS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/segment_normal.png", TextureType.Normal );
