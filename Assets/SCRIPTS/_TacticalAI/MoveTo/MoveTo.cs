@@ -29,9 +29,9 @@ namespace SS
 
 			private void Update()
 			{
-				if( Vector3.Distance( this.transform.position, navMeshAgent.destination ) <= navMeshAgent.stoppingDistance )
+				if( navMeshAgent.desiredVelocity.magnitude < 0.01f )
 				{
-					Destroy( this );
+					Object.Destroy( this );
 				}
 			}
 
