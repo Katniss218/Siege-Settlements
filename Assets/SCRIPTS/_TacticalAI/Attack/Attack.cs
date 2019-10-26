@@ -15,8 +15,6 @@ namespace SS
 			private Damageable targetDamageable = null;
 
 
-			private float amtCollected = 0;
-
 			private NavMeshAgent navMeshAgent = null;
 			private ITargetFinder[] targeters = null;
 			
