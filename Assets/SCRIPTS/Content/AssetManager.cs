@@ -114,7 +114,10 @@ namespace SS.Content
 
 			if( path.StartsWith( EXTERN_ASSET_IDENTIFIER ) )
 			{
-				meshes.Add( path, ExternalAssetLoader.LoadMesh( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				if( path.EndsWith( "ksm" ) )
+					meshes.Add( path, ExternalAssetLoader.LoadMesh2( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
+				else
+					meshes.Add( path, ExternalAssetLoader.LoadMesh( LevelManager.GetFullAssetsPath( sourceLevelId, path.Substring( EXTERN_ASSET_IDENTIFIER.Length ) ) ) );
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_IDENTIFIER ) )
 			{

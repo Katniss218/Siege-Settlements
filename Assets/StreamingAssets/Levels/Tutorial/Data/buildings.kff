@@ -33,7 +33,7 @@
 		// ResearchModule = { };
 		
 		TechsRequired = [];
-		Mesh = "extern:Models/Buildings/TownCenter.kff";
+		Mesh = "extern:Models/Buildings/Town_Center.ksm";
 		AlbedoTexture = "extern:Textures/Buildings/town_center.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
@@ -68,7 +68,7 @@
 		};
 		
 		TechsRequired = [];
-		Mesh = "extern:Models/Buildings/House0.kff";
+		Mesh = "extern:Models/Buildings/House0.ksm";
 		AlbedoTexture = "extern:Textures/Buildings/house0_color.png";
 		NormalTexture = "extern:Textures/Buildings/house0_normal.png";
 		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
@@ -188,7 +188,7 @@
 			{ Id = "resource.wood"; Amount = 15; }
 		];		
 		TechsRequired = [];
-		Mesh = "extern:Models/Buildings/Palisade_Wall.kff";
+		Mesh = "extern:Models/Buildings/Palisade_Wall.ksm";
 		AlbedoTexture = "extern:Textures/Buildings/palisade_wall_color.png";
 		NormalTexture = "extern:Textures/Buildings/palisade_wall_normal.png";
 		MetallicTexture = "extern:Textures/Buildings/palisade_wall_metallic.png";

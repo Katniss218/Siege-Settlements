@@ -24,6 +24,13 @@ namespace SS.Content
 			}
 		}
 
+		public static Mesh LoadMesh2( string filePath )
+		{
+			Mesh ret = KSMImporter.Import( filePath );
+		
+			return ret;
+		}
+
 		public static Texture2D LoadTexture2D( string filePath, TextureType type )
 		{
 			try
