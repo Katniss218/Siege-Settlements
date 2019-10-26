@@ -111,7 +111,7 @@
 		TechsRequired = [
 			"technology.weaponry"
 		];
-		Mesh = "extern:Models/Buildings/House.kff";
+		Mesh = "extern:Models/Buildings/Barracks.ksm";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
@@ -154,7 +154,7 @@
 		[
 			"technology.horse_riding"
 		];
-		Mesh = "extern:Models/Buildings/House.kff";
+		Mesh = "extern:Models/Buildings/Stables.ksm";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";

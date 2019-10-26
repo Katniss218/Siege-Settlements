@@ -14,7 +14,7 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 2; // 0 - opaque, 2 - displaced opaque (plant).
-		Mesh = "extern:Models/ResourceDeposits/Tree.kff";
+		Mesh = "extern:Models/ResourceDeposits/Tree.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/tree_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/tree_normal.png";
 		IsMetallic = false;
@@ -49,7 +49,7 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 2;
-		Mesh = "extern:Models/ResourceDeposits/Pine.kff";
+		Mesh = "extern:Models/ResourceDeposits/Pine.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/pine_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/pine_normal.png";
 		IsMetallic = false;
@@ -66,7 +66,7 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "extern:Models/ResourceDeposits/Wood.kff";
+		Mesh = "extern:Models/ResourceDeposits/Wood.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/wood_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/wood_normal.png";
 		IsMetallic = false;
