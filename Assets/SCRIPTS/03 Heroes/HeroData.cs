@@ -61,6 +61,11 @@ namespace SS.Levels.SaveStates
 						this.taiGoalData = new PickupDepositData();
 						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
 						break;
+
+					case TAIGoalType.Attack:
+						this.taiGoalData = new AttackData();
+						serializer.Deserialize( "TAIGoalData", this.taiGoalData );
+						break;
 				}
 			}
 		}
@@ -100,6 +105,11 @@ namespace SS.Levels.SaveStates
 				else if( this.taiGoalData is PickupDepositData )
 				{
 					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.PickupDeposit );
+					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
+				}
+				else if( this.taiGoalData is AttackData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.Attack );
 					serializer.Serialize( "", "TAIGoalData", this.taiGoalData );
 				}
 			}

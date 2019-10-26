@@ -7,6 +7,7 @@
 		DropoffToNew,
 		PickupDeposit,
 		MoveTo,
-		MakePayment
+		MakePayment,
+		Attack
 	}
 }

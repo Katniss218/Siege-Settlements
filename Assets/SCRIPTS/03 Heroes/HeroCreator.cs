@@ -160,8 +160,11 @@ namespace SS.Heroes
 				{
 					TAIGoal.PickupDeposit.AssignTAIGoal( gameObject, Main.GetGameObject( ((PickupDepositData)taiGoalData).destinationGuid ) );
 				}
+				else if( taiGoalData is AttackData )
+				{
+					TAIGoal.Attack.AssignTAIGoal( gameObject, Main.GetGameObject( ((AttackData)taiGoalData).targetGuid ) );
+				}
 			}
-
 		}
 
 		private static GameObject CreateHero()

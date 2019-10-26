@@ -193,14 +193,15 @@ namespace SS
 					}
 				}
 
-				if( hitDamageable != null )
-				{
-					SetTargetToSpecified( hitDamageable, Selection.selectedObjects );
-				}
 
-				if( hitDeposit == null && hitReceiverTransform == null && terrainHitPos.HasValue )
+				if( hitDeposit == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
 				{
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
+				}
+
+				else if( hitDamageable != null )
+				{
+					AssignAttackGoal( hitDamageable, Selection.selectedObjects );
 				}
 
 				else if( hitReceiverTransform != null )
@@ -443,10 +444,12 @@ namespace SS
 		//
 		//
 		//
-
-		private void SetTargetToSpecified( Damageable target, Selectable[] selected )
+		
+		private void AssignAttackGoal( Damageable target, Selectable[] selected )
 		{
-			List<ITargetFinder> targeters = new List<ITargetFinder>();
+			List<GameObject> movableGameObjects = new List<GameObject>();
+
+			FactionMember tarFac = target.GetComponent<FactionMember>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
@@ -455,22 +458,34 @@ namespace SS
 				{
 					continue;
 				}
-
-				ITargetFinder[] tgt = selected[i].GetComponents<ITargetFinder>();
-				if( tgt == null )
+				ITargetFinder[] targeters = selected[i].GetComponents<ITargetFinder>();
+				if( targeters == null || targeters.Length == 0 )
 				{
 					continue;
 				}
 
-				for( int j = 0; j < tgt.Length; j++ )
+				FactionMember selFac = selected[i].GetComponent<FactionMember>();
+
+				bool canTarget = false;
+				for( int j = 0; j < targeters.Length; j++ )
 				{
-					targeters.Add( tgt[j] );
+					if( targeters[j].canTarget( selFac, tarFac ) )
+					{
+						canTarget = true;
+						break;
+					}
+				}
+
+				if( canTarget )
+				{
+					movableGameObjects.Add( selected[i].gameObject );
 				}
 			}
 
-			for( int i = 0; i < targeters.Count; i++ )
+			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
-				targeters[i].TrySetTarget( target );
+				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.gameObject );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
 			}
 		}
 

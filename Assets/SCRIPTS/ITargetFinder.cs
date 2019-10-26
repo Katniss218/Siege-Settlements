@@ -6,15 +6,20 @@ namespace SS
 	public interface ITargetFinder
 	{
 		/// <summary>
+		/// Returns the current target, returns null if the target is no longer targetable.
+		/// </summary>
+		Damageable target { get; }
+
+		/// <summary>
+		/// Returns the max view distance of the target finder.
+		/// </summary>
+		float searchRange { get; }
+
+		/// <summary>
 		/// Used to check if the two faction members are hostile towards one naother.
 		/// </summary>
 		Func<FactionMember, FactionMember, bool> canTarget { get; set; }
 
-
-		/// <summary>
-		/// Returns the current target, returns null if the target is no longer targetable.
-		/// </summary>
-		Damageable target { get; }
 
 		/// <summary>
 		/// Tries to set the target to any damageable.

@@ -111,6 +111,7 @@ namespace SS
 				// if the deposit was picked up (not on the map), stop the AI.
 				if( this.destination == null )
 				{
+					this.navMeshAgent.ResetPath();
 					Object.Destroy( this );
 					return;
 				}
