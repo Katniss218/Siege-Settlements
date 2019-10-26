@@ -7,7 +7,21 @@ namespace SS
 	{
 		protected static void ClearGoal( GameObject gameObject )
 		{
-			Object.DestroyImmediate( gameObject.GetComponent<TAIGoal>() );
+			TAIGoal goal = gameObject.GetComponent<TAIGoal>();
+			Object.DestroyImmediate( goal );
+		}
+
+		public static void Assign( GameObject gameObject, TAIGoalData data )
+		{
+			if( gameObject == null )
+			{
+				return;
+			}
+			if( data == null )
+			{
+				return;
+			}
+			data.AssignTo( gameObject );
 		}
 
 		/// <summary>

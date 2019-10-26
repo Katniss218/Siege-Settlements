@@ -7,6 +7,11 @@ namespace SS
 	{
 		public Vector3 destination { get; set; }
 
+		public override void AssignTo( GameObject gameObject )
+		{
+			TAIGoal.DropoffToNew.AssignTAIGoal( gameObject, this.destination );
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

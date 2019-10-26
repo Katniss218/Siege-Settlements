@@ -8,6 +8,11 @@ namespace SS
 	{
 		public Guid destinationGuid { get; set; }
 
+		public override void AssignTo( GameObject gameObject )
+		{
+			TAIGoal.DropoffToInventory.AssignTAIGoal( gameObject, Main.GetGameObject( this.destinationGuid ) );
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

@@ -1,5 +1,4 @@
 ﻿using KFF;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS
@@ -7,6 +6,11 @@ namespace SS
 	public class MoveToData : TAIGoalData
 	{
 		public Vector3 destination { get; set; }
+
+		public override void AssignTo( GameObject gameObject )
+		{
+			TAIGoal.MoveTo.AssignTAIGoal( gameObject, this.destination );
+		}
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )

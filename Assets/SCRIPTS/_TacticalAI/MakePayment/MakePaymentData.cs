@@ -1,11 +1,17 @@
 ﻿using KFF;
 using System;
+using UnityEngine;
 
 namespace SS
 {
 	public class MakePaymentData : TAIGoalData
 	{
 		public Guid destinationGuid { get; set; }
+
+		public override void AssignTo( GameObject gameObject )
+		{
+			TAIGoal.MakePayment.AssignTAIGoal( gameObject, Main.GetGameObject( this.destinationGuid ) );
+		}
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )

@@ -1,4 +1,5 @@
 ﻿using KFF;
+using UnityEngine;
 
 namespace SS
 {
@@ -6,5 +7,7 @@ namespace SS
 	{
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
+
+		public abstract void AssignTo( GameObject gameObject );
 	}
 }
