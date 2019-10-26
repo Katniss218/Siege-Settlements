@@ -79,17 +79,11 @@ namespace SS
 				pos += 4;
 			}
 			Mesh mesh = new Mesh();
-			mesh.name = "a";
-
-			Debug.Log( vertexCount );
-			Debug.Log( faceCount );
+			mesh.name = "";
+			
 			mesh.vertices = vertices;
 			mesh.normals = normals;
 			mesh.uv = uvs;
-			for( int i = 0; i < 20; i++ ) {
-				Debug.Log( vertices[i] );
-					
-			}
 			mesh.SetTriangles( indices, 0 );
 			mesh.RecalculateBounds();
 			mesh.RecalculateTangents();
@@ -100,11 +94,12 @@ namespace SS
 		// Convert 4 bytes to an Int32.
 		private static int BytesToInt32( byte[] bytes, int offset = 0 )
 		{
-			int value = 0;
+			int value = (bytes[offset]) | (bytes[offset + 1] << 8) | (bytes[offset + 2] << 16) | bytes[offset + 3] << 24;
+			/*int value = 0;
 			for( int i = 0; i < 4; i++ )
 			{
 				value |= (bytes[offset + i]) << (i * 8); // little endian
-			}
+			}*/
 			return value;
 		}
 
@@ -119,17 +114,17 @@ namespace SS
 		struct IntFloat
 		{
 			[FieldOffset( 0 )]
-			public float FloatValue;
+			public float floatValue;
 
 			[FieldOffset( 0 )]
-			public int IntValue;
+			public int intValue;
 		}
 		
 		private static float BytesToFloat32( byte[] bytes, int offset = 0 )
 		{
 			IntFloat fl = new IntFloat();
-			fl.IntValue = BytesToInt32( bytes, offset );
-			return fl.FloatValue;
+			fl.intValue = BytesToInt32( bytes, offset );
+			return fl.floatValue;
 		}
 	}
 }
