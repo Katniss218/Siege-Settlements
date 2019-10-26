@@ -2,7 +2,7 @@
 [
 	{
 		Id = "extra.grass";
-		Mesh = "extern:Models/Extras/Cross.kff";
+		Mesh = "extern:Models/Extras/Cross.ksm";
 		AlbedoTexture = "extern:Textures/Extras/grass_side_albedo.png";
 		NormalTexture = "extern:Textures/Extras/grass_side_normal.png";
 		ShaderType = 0;

@@ -32,7 +32,7 @@
 		RotationSpeed = 200.0;
 		Radius = 0.2;
 		Height = 0.1875;
-		Mesh = "extern:Models/Hero.kff";
+		Mesh = "extern:Models/Hero.ksm";
 		AlbedoTexture = "extern:Textures/heroes/hero_albedo.png";
 		NormalTexture = "extern:Textures/Heroes/hero_normal.png";
 		Icon = "extern:Textures/Buildings/research_icon.png";

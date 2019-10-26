@@ -31,7 +31,7 @@
 		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "extern:Models/ResourceDeposits/Stone.kff";
+		Mesh = "extern:Models/ResourceDeposits/Stone.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/stone_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/stone_normal.png";
 		IsMetallic = false;
@@ -83,7 +83,7 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "extern:Models/ResourceDeposits/Iron.kff";
+		Mesh = "extern:Models/ResourceDeposits/Iron.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/iron_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/iron_normal.png";
 		IsMetallic = true;
@@ -100,7 +100,7 @@
 		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
 		// ##### \/ RENDERING \/ #####
 		ShaderType = 0;
-		Mesh = "extern:Models/ResourceDeposits/Sulphur.kff";
+		Mesh = "extern:Models/ResourceDeposits/Sulphur.ksm";
 		AlbedoTexture = "extern:Textures/ResourceDeposits/sulphur_albedo.png";
 		NormalTexture = "extern:Textures/ResourceDeposits/sulphur_normal.png";
 		IsMetallic = false;

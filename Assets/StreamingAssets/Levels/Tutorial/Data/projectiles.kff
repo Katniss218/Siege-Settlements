@@ -2,7 +2,7 @@
 [
 	{
 		Id = "projectile.arrow";
-		Mesh = "extern:Models/Arrow.kff";
+		Mesh = "extern:Models/Arrow.ksm";
 		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		HitSound = "extern:Sounds/arrow_hit.wav";

@@ -33,7 +33,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitSquare.kff";
+		Mesh = "extern:Models/UnitSquare.ksm";
 		AlbedoTexture = "extern:Textures/Units/wolf_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
 		Icon = "extern:Textures/Buildings/research_icon.png";
@@ -72,7 +72,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/light_infantry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/light_infantry_icon.png";
@@ -110,7 +110,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/heavy_infantry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/heavy_infantry_icon.png";
@@ -148,7 +148,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/light_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/light_cavalry_icon.png";
@@ -186,7 +186,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/heavy_cavalry_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/heavy_cavalry_icon.png";
@@ -232,7 +232,7 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/bowmen_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/bowmen_icon.png";
@@ -278,7 +278,7 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/crossbowmen_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/crossbowmen_icon.png";
@@ -324,7 +324,7 @@
 			"technology.archery"
 		];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitRectangle.kff";
+		Mesh = "extern:Models/UnitRectangle.ksm";
 		AlbedoTexture = "extern:Textures/Units/mounted_archers_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal.png";
 		Icon = "extern:Textures/Units/mounted_archers_icon.png";
@@ -353,7 +353,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitSquare.kff";
+		Mesh = "extern:Models/UnitSquare.ksm";
 		AlbedoTexture = "extern:Textures/Units/civilian_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
 		Icon = "extern:Textures/Buildings/research_icon.png";
@@ -382,7 +382,7 @@
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
-		Mesh = "extern:Models/UnitSquare.kff";
+		Mesh = "extern:Models/UnitSquare.ksm";
 		AlbedoTexture = "extern:Textures/Units/civilian_employed_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
 		Icon = "extern:Textures/Buildings/research_icon.png";
