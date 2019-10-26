@@ -12,20 +12,6 @@ namespace SS.Content
 	{
 		public static Mesh LoadMesh( string filePath )
 		{
-			try
-			{
-				Mesh[] ret = KMKFFImporter.Import( filePath );
-
-				return ret[0];
-			}
-			catch( Exception )
-			{
-				throw new Exception( "Can't load mesh '" + filePath + "'." );
-			}
-		}
-
-		public static Mesh LoadMesh2( string filePath )
-		{
 			Mesh ret = KSMImporter.Import( filePath );
 		
 			return ret;
