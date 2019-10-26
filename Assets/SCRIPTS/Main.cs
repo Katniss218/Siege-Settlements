@@ -342,6 +342,25 @@ namespace SS
 			}
 		}
 
+		private void Inp_A8( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( "resource_deposit.pine" );
+					ResourceDepositData data = new ResourceDepositData();
+					data.guid = Guid.NewGuid();
+					data.position = hitInfo.point;
+					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+					data.resources = new Dictionary<string, int>();
+					data.resources.Add( "resource.wood", 5 );
+					ResourceDepositCreator.Create( def, data );
+				}
+			}
+		}
+
 		private void Inp_A9( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -413,6 +432,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
@@ -435,6 +455,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_A8 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha9, Inp_A9 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_A0 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Pause, Inp_Pause );
