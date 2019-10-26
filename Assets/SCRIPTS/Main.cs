@@ -199,11 +199,6 @@ namespace SS
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
 
-				else if( hitDamageable != null )
-				{
-					AssignAttackGoal( hitDamageable, Selection.selectedObjects );
-				}
-
 				else if( hitReceiverTransform != null )
 				{
 					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
@@ -212,6 +207,11 @@ namespace SS
 				else if( hitDeposit != null )
 				{
 					AssignPickupDepositGoal( hitDeposit, Selection.selectedObjects );
+				}
+
+				else if( hitDamageable != null )
+				{
+					AssignAttackGoal( hitDamageable, Selection.selectedObjects );
 				}
 			}
 		}
