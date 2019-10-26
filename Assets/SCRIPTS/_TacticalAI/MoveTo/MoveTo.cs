@@ -58,16 +58,17 @@ namespace SS
 
 
 
-			public static Vector3 GridToWorld( Vector2Int grid, Vector3 gridCenter, float gridSpacing )
+			public static Vector3 GridToWorld( Vector2Int grid, int sizeX, int sizeZ, Vector3 gridCenter, float gridSpacing )
 			{
 				float camRotY = Main.cameraPivot.rotation.eulerAngles.y;
+				
+				Vector3 offset = new Vector3( (sizeX - 1) / 2.0f, 0, (sizeZ - 1) / 2.0f );
 
-				Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - new Vector3( gridSpacing / 2f, 0, gridSpacing / 2f );
-
+				Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - offset;
 				Vector3 gridRelativeToCenterLocalRotated = Quaternion.Euler( 0, camRotY, 0 ) * (gridRelativeToCenterLocal);
 
 				Vector3 global = gridRelativeToCenterLocalRotated * gridSpacing + gridCenter;
-				
+
 				return global;
 			}
 
@@ -101,8 +102,8 @@ namespace SS
 							return new MovementGridInfo() { positions = ret, sizeX = x + 1, sizeZ = z + 1 };
 						}
 
-						// Add the new object to the grid.
-						ret.Add( objects[i], new Vector2Int( x, z ) );
+						// Add the new object to the grid (position needs to be flipped for some reason, if it's not, the positions don't match the dimentions).
+						ret.Add( objects[i], new Vector2Int( z, x ) );
 
 						i++;
 					}

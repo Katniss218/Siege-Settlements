@@ -592,7 +592,7 @@ namespace SS
 
 			foreach( var kvp in gridInfo.positions )
 			{
-				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
+				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, gridInfo.sizeX, gridInfo.sizeZ, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
 
 				RaycastHit gridHit;
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
