@@ -1,4 +1,5 @@
-﻿using SS.InputSystem;
+﻿using SS.Diplomacy;
+using SS.InputSystem;
 using UnityEngine;
 
 namespace SS.Buildings
@@ -41,6 +42,7 @@ namespace SS.Buildings
 			}
 		}
 
+
 		private void Inp_RotateCCW( InputQueue self )
 		{
 			this.RotateCounterClockwise();
@@ -52,6 +54,7 @@ namespace SS.Buildings
 			this.RotateClockwise();
 			self.StopExecution();
 		}
+
 
 		void OnEnable()
 		{
@@ -87,7 +90,7 @@ namespace SS.Buildings
 			{
 				Vector3 cursorOnTerrain = this.transform.position; // since we are moving the obj to the cursor's position on the terrain.
 
-				Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation );
+				Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation, ObjectLayer.OBJECTS_MASK );
 
 				float nodePairMinDst = float.MaxValue;
 				Vector3? nodeSelf = null; // if null, no nodes found.
@@ -103,6 +106,17 @@ namespace SS.Buildings
 					{
 						continue;
 					}
+
+					// Disable snapping to other factions' buildings
+					FactionMember factionMember = building.GetComponent<FactionMember>();
+					if( factionMember != null )
+					{
+						if( factionMember.factionId != Levels.LevelDataManager.PLAYER_FAC )
+						{
+							continue;
+						}
+					}
+
 					Vector3[] targetNodes = building.placementNodes;
 
 					for( int j = 0; j < this.placementNodes.Length; j++ )
