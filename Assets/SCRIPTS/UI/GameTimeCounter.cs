@@ -9,9 +9,12 @@ namespace SS
 		[SerializeField] private TMP_Text textField = null;
 
 		public string format = "{0}";
+		public float gameTimeOffset = 0.0f;
 
-		private float startTime = 0;
+
+		private float startTime = 0.0f;
 		
+
 		void Start()
 		{
 			this.startTime = LevelManager.lastLoadTime;
@@ -19,7 +22,7 @@ namespace SS
 
 		private string FormatTime()
 		{
-			int timeSinceStart = (int)(Time.time - this.startTime);
+			int timeSinceStart = (int)(Time.time - this.startTime + gameTimeOffset); // time since the level load + time elapsed in previous sessions.
 
 			int hours = timeSinceStart / 3600;
 			int mins = timeSinceStart / 60 % 60;
