@@ -36,7 +36,7 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/wolf_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon.png";
+		Icon = "extern:Textures/Buildings/research_icon.png";
 	},
 	{
 		Id = "unit.light_infantry";
@@ -356,7 +356,7 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/civilian_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon.png";
+		Icon = "extern:Textures/Buildings/research_icon.png";
 	},
 	{
 		Id = "unit.civilian_employed";
@@ -385,6 +385,6 @@
 		Mesh = "extern:Models/UnitSquare.kff";
 		AlbedoTexture = "extern:Textures/Units/civilian_employed_albedo.png";
 		NormalTexture = "extern:Textures/Units/unit_normal_square.png";
-		Icon = "extern:Textures/Buildings/house0_icon.png";
+		Icon = "extern:Textures/Buildings/research_icon.png";
 	}
 ];

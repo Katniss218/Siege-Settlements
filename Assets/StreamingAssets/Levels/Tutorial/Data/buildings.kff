@@ -40,7 +40,7 @@
 		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house1_icon.png";
+		Icon = "extern:Textures/Buildings/town_center_icon.png";
 	},
 	{
 		Id = "building.house0";
@@ -75,7 +75,7 @@
 		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house0_icon.png";
+		Icon = "extern:Textures/Buildings/research_icon.png";
 	},
 	{
 		Id = "building.barracks";
@@ -118,7 +118,7 @@
 		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house1_icon.png";
+		Icon = "extern:Textures/Buildings/barracks_icon.png";
 	},
 	{
 		Id = "building.stables";
@@ -161,7 +161,7 @@
 		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house1_icon.png";
+		Icon = "extern:Textures/Buildings/stables_icon.png";
 	},
 	{
 		Id = "building.palisade_wall";
@@ -175,12 +175,12 @@
 				0.2  // Concussion
 			];
 		};
-		Size = { X = 1.25; Y = 0.55; Z = 0.25; };
+		Size = { X = 0.95; Y = 0.7; Z = 0.125; };
 		// Controls snapping to existing buildings.
 		PlacementNodes =
 		[
-			{ X = 0.75; Y = 0.25; Z = 0.0; },
-			{ X = -0.75; Y = 0.25; Z = 0.0; }
+			{ X = 0.52; Y = 0.25; Z = 0.0; },
+			{ X = -0.52; Y = 0.25; Z = 0.0; }
 		];
 		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
@@ -189,13 +189,13 @@
 		];		
 		TechsRequired = [];
 		Mesh = "extern:Models/Buildings/Palisade_Wall.kff";
-		AlbedoTexture = "extern:Textures/Buildings/Palisade_Wall.png";
-		NormalTexture = "extern:Textures/Buildings/Palisade_Wall_NRM.png";
-		MetallicTexture = "extern:Textures/Buildings/house0_metallic.png";
-		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
+		AlbedoTexture = "extern:Textures/Buildings/palisade_wall_color.png";
+		NormalTexture = "extern:Textures/Buildings/palisade_wall_normal.png";
+		MetallicTexture = "extern:Textures/Buildings/palisade_wall_metallic.png";
+		RoughnessTexture = "extern:Textures/Buildings/palisade_wall_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house1_icon.png";
+		Icon = "extern:Textures/Buildings/palisade_icon.png";
 	},
 	{
 		Id = "building.stone_wall";
@@ -229,6 +229,6 @@
 		RoughnessTexture = "extern:Textures/Buildings/house0_roughness.png";
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house1_icon.png";
+		Icon = "extern:Textures/Buildings/stone_wall_icon.png";
 	}
 ];
