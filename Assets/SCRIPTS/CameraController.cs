@@ -229,10 +229,10 @@ namespace SS
 			}
 			
 
-			if( UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
+			/*if( UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
 				return;
-			}
+			}*/
 
 			// Zoom
 			if( Input.mouseScrollDelta.y < 0 )
@@ -260,7 +260,6 @@ namespace SS
 			{
 				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}
-
 		}
 	}
 }
