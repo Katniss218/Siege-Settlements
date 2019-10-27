@@ -92,6 +92,50 @@ namespace SS
 			}
 			return (this.time / this.dayLength) * 180; // percentage of the full circle around.
 		}
+
+		private float GetSunIntensity( float time )
+		{
+			if( this.isDay )
+			{
+				float margin = this.dayLength * 0.2f;
+
+				if( time > margin && time < this.dayLength - margin )
+				{
+					return this.sunIntensity;
+				}
+				if( time < this.dayLength / 2f )
+				{
+					return Mathf.Lerp( 0f, this.sunIntensity, (time) / margin );
+				}
+				else
+				{
+					return Mathf.Lerp( this.sunIntensity, 0f, (time - this.dayLength + margin) / margin );
+				}
+			}
+			return 0f;
+		}
+
+		private float GetMoonIntensity( float time )
+		{
+			if( this.isNight )
+			{
+				float margin = this.nightLength * 0.2f;
+
+				if( time > this.dayLength + margin && time < this.dayLength + this.nightLength - margin )
+				{
+					return this.moonIntensity;
+				}
+				if( time < this.dayLength + (this.nightLength / 2f) )
+				{
+					return Mathf.Lerp( 0f, this.moonIntensity, (time - this.dayLength) / margin );
+				}
+				else
+				{
+					return Mathf.Lerp( this.moonIntensity, 0f, (time - this.dayLength - this.nightLength + margin) / margin );
+				}
+			}
+			return 0f;
+		}
 		
 		void Update()
 		{
@@ -105,17 +149,10 @@ namespace SS
 			float mAngle = sAngle + 180;
 			this.sunTransform.localRotation = Quaternion.Euler( 0, -sAngle, 0 );
 			this.moonTransform.localRotation = Quaternion.Euler( 0, -mAngle, 0 );
+			
 
-			if( this.isDay )
-			{
-				this.sun.intensity = this.sunIntensity;
-				this.moon.intensity = 0;
-			}
-			if( this.isNight )
-			{
-				this.sun.intensity = 0;
-				this.moon.intensity = this.moonIntensity;
-			}
+			this.sun.intensity = GetSunIntensity( time );
+			this.moon.intensity = GetMoonIntensity( time );
 		}
 	}
 }
