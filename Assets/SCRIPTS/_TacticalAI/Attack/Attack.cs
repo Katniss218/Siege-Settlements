@@ -19,21 +19,21 @@ namespace SS
 			private ITargetFinder[] targeters = null;
 			
 			private float attackDistance = 0.0f;
+			private float maxSearchRange = 0.0f;
 
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
 				this.targeters = this.GetComponents<ITargetFinder>();
-				float maxSearchRange = 0.0f;
 				for( int i = 0; i < this.targeters.Length; i++ )
 				{
-					if( maxSearchRange >= this.targeters[i].searchRange )
+					if( this.maxSearchRange >= this.targeters[i].searchRange )
 					{
 						continue;
 					}
-					maxSearchRange = this.targeters[i].searchRange;
+					this.maxSearchRange = this.targeters[i].searchRange;
 				}
-				this.attackDistance = maxSearchRange / 2.0f;
+				this.attackDistance = this.maxSearchRange / 2.0f;
 
 				if( this.navMeshAgent == null )
 				{
@@ -58,6 +58,13 @@ namespace SS
 					}
 				}
 
+				if( Vector3.Distance( this.transform.position, this.target.transform.position ) <= this.maxSearchRange )
+				{
+					for( int i = 0; i < this.targeters.Length; i++ )
+					{
+						this.targeters[i].TrySetTarget( this.targetDamageable );
+					}
+				}
 				this.navMeshAgent.SetDestination( this.target.transform.position );
 			}
 			

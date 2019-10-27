@@ -163,6 +163,7 @@ namespace SS
 				Transform hitReceiverTransform = null;
 				IPaymentReceiver[] hitPaymentReceivers = null;
 				Damageable hitDamageable = null;
+				FactionMember hitFactionMember = null;
 
 				for( int i = 0; i < raycastHits.Length; i++ )
 				{
@@ -190,6 +191,12 @@ namespace SS
 						{
 							hitDamageable = damageable;
 						}
+
+						FactionMember factionMember = raycastHits[i].collider.GetComponent<FactionMember>();
+						if( factionMember != null )
+						{
+							hitFactionMember = factionMember;
+						}
 					}
 				}
 
@@ -199,7 +206,7 @@ namespace SS
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
 
-				else if( hitReceiverTransform != null )
+				else if( hitReceiverTransform != null && hitFactionMember.factionId == LevelDataManager.PLAYER_FAC )
 				{
 					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
 				}
