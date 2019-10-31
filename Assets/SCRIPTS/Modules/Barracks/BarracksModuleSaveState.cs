@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Modules;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,20 +8,20 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Used to round-trip modules, to and from file.
 	/// </summary>
-	public class BarracksModuleSaveState : IKFFSerializable
+	public class BarracksModuleSaveState : ModuleData
 	{
 		public string trainedUnitId { get; set; }
 		public float trainProgress { get; set; }
-		public Dictionary<string,int> resourcesRemaining { get; set; }
-		
+		public Dictionary<string, int> resourcesRemaining { get; set; }
+
 		public Vector3 rallyPoint { get; set; }
 
-
-		public void DeserializeKFF( KFFSerializer serializer )
+		
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
 			this.trainProgress = serializer.ReadFloat( "TrainProgress" );
-			
+
 			var analysisData = serializer.Analyze( "ResourcesRemaining" );
 			this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
@@ -31,7 +32,7 @@ namespace SS.Levels.SaveStates
 			this.rallyPoint = serializer.ReadVector3( "RallyPoint" );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "TrainedUnitId", this.trainedUnitId );
 			serializer.WriteFloat( "", "TrainProgress", this.trainProgress );

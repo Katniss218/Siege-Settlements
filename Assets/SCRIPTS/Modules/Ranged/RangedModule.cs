@@ -212,8 +212,26 @@ namespace SS.Modules
 			}
 		}
 
-		public void SetDefinition( RangedModuleDefinition def )
+		public override ModuleData GetData()
 		{
+#warning TODO! - targets get saved.
+			throw new NotImplementedException( "Can't get data of a melee module." );
+		}
+
+		public override void SetDefinition( ModuleDefinition _def )
+		{
+			if( !(_def is RangedModuleDefinition) )
+			{
+				throw new Exception( "Provided definition is not of the correct type." );
+			}
+
+			if( _def == null )
+			{
+				throw new Exception( "Provided definition is null." );
+			}
+
+			RangedModuleDefinition def = (RangedModuleDefinition)_def;
+
 			this.canTarget = FactionMember.CanTargetAnother;
 			this.searchRange = def.attackRange;
 
@@ -228,6 +246,12 @@ namespace SS.Modules
 			this.localOffsetMin = def.localOffsetMin;
 			this.localOffsetMax = def.localOffsetMax;
 			this.attackSoundEffect = def.attackSoundEffect;
+		}
+
+		public override void SetData( ModuleData data )
+		{
+#warning TODO! - targets get saved.
+			throw new NotImplementedException( "Can't assign data to a melee module." );
 		}
 
 #if UNITY_EDITOR

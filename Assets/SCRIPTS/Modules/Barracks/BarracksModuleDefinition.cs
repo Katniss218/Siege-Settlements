@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Levels.SaveStates;
 using UnityEngine;
 
 namespace SS.Modules
@@ -29,8 +30,7 @@ namespace SS.Modules
 #warning Module class should have static method for adding modules to gameObjects. That method should check if it can be added or not.
 			return true;
 		}
-
-
+		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );

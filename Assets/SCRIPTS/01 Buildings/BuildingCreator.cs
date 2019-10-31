@@ -89,7 +89,7 @@ namespace SS.Buildings
 
 				if( data.barracksSaveState != null )
 				{
-					barracks.SetSaveState( data.barracksSaveState );
+					barracks.SetData( data.barracksSaveState );
 				}
 			}
 
@@ -101,7 +101,7 @@ namespace SS.Buildings
 
 				if( data.researchSaveState != null )
 				{
-					research.SetSaveState( data.researchSaveState );
+					research.SetData( data.researchSaveState );
 				}
 			}
 
@@ -377,13 +377,13 @@ namespace SS.Buildings
 			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
 			if( barracks != null )
 			{
-				data.barracksSaveState = barracks.GetSaveState();
+				data.barracksSaveState = (BarracksModuleSaveState)barracks.GetData();
 			}
 
 			ResearchModule research = gameObject.GetComponent<ResearchModule>();
 			if( research != null )
 			{
-				data.researchSaveState = research.GetSaveState();
+				data.researchSaveState = (ResearchModuleSaveState)research.GetData();
 			}
 
 			return data;

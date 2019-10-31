@@ -266,28 +266,31 @@ namespace SS.Modules.Inventories
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		/*public InventoryUnconstrainedSaveState GetSaveState()
+		public override ModuleData GetData()
 		{
-			InventoryUnconstrainedSaveState saveState = new InventoryUnconstrainedSaveState();
+#warning TODO!
+			throw new NotImplementedException( "You can't get data of an inventory." );
+		}
 
-			saveState.slotResourceAmounts = new int[this.resources.Length];
-			saveState.slotResourceIds = new string[this.resources.Length];
-			for( int i = 0; i < this.resources.Length; i++ )
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		public override void SetDefinition( ModuleDefinition _def )
+		{
+			if( !(_def is InventoryUnconstrainedDefinition) )
 			{
-				saveState.slotResourceIds[i] = this.resources[i].id;
-				saveState.slotResourceAmounts[i] = this.resources[i].amount;
+				throw new Exception( "Provided definition is not of the correct type." );
 			}
 
-			return saveState;
-		}*/
+			if( _def == null )
+			{
+				throw new Exception( "Provided definition is null." );
+			}
 
+			InventoryUnconstrainedDefinition def = (InventoryUnconstrainedDefinition)_def;
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public void SetDefinition( InventoryUnconstrainedDefinition def )
-		{
 			this.resources = new SlotGroup[def.slotCount];
 			for( int i = 0; i < this.resources.Length; i++ )
 			{
@@ -296,18 +299,11 @@ namespace SS.Modules.Inventories
 			this.slotCapacity = def.slotCapacity;
 		}
 
-		/*public void SetSaveState( InventoryUnconstrainedSaveState saveState )
+
+		public override void SetData( ModuleData saveState )
 		{
-			if( saveState.slotResourceAmounts.Length != this.resources.Length )
-			{
-				throw new Exception( "The slot count of the save state doesn't match the slot count of the inventory." );
-			}
-			for( int i = 0; i < saveState.slotResourceAmounts.Length; i++ )
-			{
-				this.resources[i].amount = saveState.slotResourceAmounts[i];
-				this.resources[i].id = saveState.slotResourceIds[i];
-			}
-#warning possibly need to call onAdd / onRemove in these.
-		}*/
+#warning TODO!
+			throw new NotImplementedException( "You can't assign data to an inventory." );
+		}
 	}
 }

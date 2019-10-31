@@ -211,7 +211,7 @@ namespace SS.Modules
 		}
 
 
-		
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -220,7 +220,7 @@ namespace SS.Modules
 		/// Creates a new BarracksModuleSaveState from a GameObject.
 		/// </summary>
 		/// <param name="unit">The GameObject to extract the save state from.</param>
-		public BarracksModuleSaveState GetSaveState()
+		public override ModuleData GetData()
 		{
 			BarracksModuleSaveState saveState = new BarracksModuleSaveState();
 
@@ -243,8 +243,20 @@ namespace SS.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public void SetDefinition( BarracksModuleDefinition def )
+		public override void SetDefinition( ModuleDefinition _def )
 		{
+			if( !(_def is BarracksModuleDefinition) )
+			{
+				throw new Exception( "Provided definition is not of the correct type." );
+			}
+
+			if( _def == null )
+			{
+				throw new Exception( "Provided definition is null." );
+			}
+
+			BarracksModuleDefinition def = (BarracksModuleDefinition)_def;
+
 			this.trainSpeed = def.trainSpeed;
 			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];
 			for( int i = 0; i < this.trainableUnits.Length; i++ )
@@ -289,19 +301,31 @@ namespace SS.Modules
 			}
 		}
 		
-		public void SetSaveState( BarracksModuleSaveState saveState )
+		public override void SetData( ModuleData _data )
 		{
-			this.resourcesRemaining = saveState.resourcesRemaining;
-			if( saveState.trainedUnitId == "" )
+			if( !(_data is BarracksModuleSaveState) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
+			BarracksModuleSaveState data = (BarracksModuleSaveState)_data;
+
+			this.resourcesRemaining = data.resourcesRemaining;
+			if( data.trainedUnitId == "" )
 			{
 				this.trainedUnit = null;
 			}
 			else
 			{
-				this.trainedUnit = DefinitionManager.GetUnit( saveState.trainedUnitId );
+				this.trainedUnit = DefinitionManager.GetUnit( data.trainedUnitId );
 			}
-			this.trainProgress = saveState.trainProgress;
-			this.rallyPoint = saveState.rallyPoint;
+			this.trainProgress = data.trainProgress;
+			this.rallyPoint = data.rallyPoint;
 		}
 
 

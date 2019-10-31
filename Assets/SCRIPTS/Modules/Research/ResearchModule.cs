@@ -168,7 +168,7 @@ namespace SS.Modules
 		/// Creates a new BarracksModuleSaveState from a GameObject.
 		/// </summary>
 		/// <param name="unit">The GameObject to extract the save state from.</param>
-		public ResearchModuleSaveState GetSaveState()
+		public override ModuleData GetData()
 		{
 			ResearchModuleSaveState saveState = new ResearchModuleSaveState();
 
@@ -191,8 +191,20 @@ namespace SS.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public void SetDefinition( ResearchModuleDefinition def )
+		public override void SetDefinition( ModuleDefinition _def )
 		{
+			if( !(_def is ResearchModuleDefinition) )
+			{
+				throw new Exception( "Provided definition is not of the correct type." );
+			}
+
+			if( _def == null )
+			{
+				throw new Exception( "Provided definition is null." );
+			}
+
+			ResearchModuleDefinition def = (ResearchModuleDefinition)_def;
+
 			this.researchSpeed = def.researchSpeed;
 			Selectable selectable = this.GetComponent<Selectable>();
 
@@ -220,19 +232,31 @@ namespace SS.Modules
 			}
 		}
 		
-		public void SetSaveState( ResearchModuleSaveState saveState )
+		public override void SetData( ModuleData _data )
 		{
-			this.resourcesRemaining = saveState.resourcesRemaining;
+			if( !(_data is ResearchModuleSaveState) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
 
-			if( saveState.researchedTechnologyId == "" )
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
+			ResearchModuleSaveState data = (ResearchModuleSaveState)_data;
+
+			this.resourcesRemaining = data.resourcesRemaining;
+
+			if( data.researchedTechnologyId == "" )
 			{
 				this.researchedTechnology = null;
 			}
 			else
 			{
-				this.researchedTechnology = DefinitionManager.GetTechnology( saveState.researchedTechnologyId );
+				this.researchedTechnology = DefinitionManager.GetTechnology( data.researchedTechnologyId );
 			}
-			this.researchProgress = saveState.researchProgress;
+			this.researchProgress = data.researchProgress;
 		}
 
 

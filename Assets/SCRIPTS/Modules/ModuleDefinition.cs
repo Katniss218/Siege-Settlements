@@ -5,8 +5,10 @@ namespace SS.Modules
 {
 	public abstract class ModuleDefinition : IKFFSerializable
 	{
+		/// <summary>
+		/// Checks if a module can be added to an object.
+		/// </summary>
 		public abstract bool CanBeAddedTo( GameObject gameObject );
-
 		
 		/*
 		public abstract ObjectType objectTypeConstraint { get; }

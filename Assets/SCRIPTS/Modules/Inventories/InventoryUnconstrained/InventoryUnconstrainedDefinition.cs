@@ -1,24 +1,27 @@
 ﻿using KFF;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules.Inventories
 {
-	public class InventoryUnconstrainedDefinition : IKFFSerializable
+	public class InventoryUnconstrainedDefinition : ModuleDefinition
 	{
-		
 		public int slotCount { get; set; }
 		public int slotCapacity { get; set; }
 
 
-		public void DeserializeKFF( KFFSerializer serializer )
+		public override bool CanBeAddedTo( GameObject gameObject )
+		{
+#warning TODO!
+			return true;
+		}
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.slotCount = serializer.ReadInt( "SlotCount" );
 			this.slotCapacity = serializer.ReadInt( "SlotCapacity" );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteInt( "", "SlotCount", this.slotCount );
 			serializer.WriteInt( "", "SlotCapacity", this.slotCapacity );

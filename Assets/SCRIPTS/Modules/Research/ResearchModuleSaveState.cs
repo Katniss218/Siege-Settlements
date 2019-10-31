@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Modules;
 using System.Collections.Generic;
 
 namespace SS.Levels.SaveStates
@@ -6,13 +7,14 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Used to round-trip modules, to and from file.
 	/// </summary>
-	public class ResearchModuleSaveState : IKFFSerializable
+	public class ResearchModuleSaveState : ModuleData
 	{
 		public string researchedTechnologyId { get; set; }
 		public float researchProgress { get; set; }
 		public Dictionary<string, int> resourcesRemaining { get; set; }
 
-		public void DeserializeKFF( KFFSerializer serializer )
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );
 			this.researchProgress = serializer.ReadFloat( "ResearchProgress" );
@@ -25,7 +27,7 @@ namespace SS.Levels.SaveStates
 			}
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "ResearchedTechnologyId", this.researchedTechnologyId );
 			serializer.WriteFloat( "", "ResearchProgress", this.researchProgress );

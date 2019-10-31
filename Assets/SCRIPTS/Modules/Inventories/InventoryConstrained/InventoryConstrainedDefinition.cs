@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Modules.Inventories
 {
-	public class InventoryConstrainedDefinition : IKFFSerializable
+	public class InventoryConstrainedDefinition : ModuleDefinition
 	{
 		public struct Slot : IKFFSerializable
 		{
@@ -30,13 +30,19 @@ namespace SS.Modules.Inventories
 		public Slot[] slots { get; set; }
 
 
-		public void DeserializeKFF( KFFSerializer serializer )
+		public override bool CanBeAddedTo( GameObject gameObject )
+		{
+#warning TODO!
+			return true;
+		}
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.slots = new Slot[serializer.Analyze( "Slots" ).childCount];
 			serializer.DeserializeArray( "Slots", this.slots );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
 		}

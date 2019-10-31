@@ -138,8 +138,26 @@ namespace SS.Modules
 			}
 		}
 
-		public void SetDefinition( MeleeModuleDefinition def )
+		public override ModuleData GetData()
 		{
+#warning TODO! - targets get saved.
+			throw new NotImplementedException( "Can't get data of a melee module." );
+		}
+
+		public override void SetDefinition( ModuleDefinition _def )
+		{
+			if( !(_def is MeleeModuleDefinition) )
+			{
+				throw new Exception( "Provided definition is not of the correct type." );
+			}
+
+			if( _def == null )
+			{
+				throw new Exception( "Provided definition is null." );
+			}
+
+			MeleeModuleDefinition def = (MeleeModuleDefinition)_def;
+
 			this.canTarget = FactionMember.CanTargetAnother;
 			this.searchRange = def.attackRange;
 			
@@ -148,6 +166,12 @@ namespace SS.Modules
 			this.damageSource = damageSource;
 			this.attackCooldown = def.attackCooldown;
 			this.attackSoundEffect = def.attackSoundEffect;
+		}
+
+		public override void SetData( ModuleData data )
+		{
+#warning TODO! - targets get saved.
+			throw new NotImplementedException( "Can't assign data to a melee module." );
 		}
 
 		/// <summary>
