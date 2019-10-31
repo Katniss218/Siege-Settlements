@@ -11,7 +11,7 @@ namespace SS.Modules.Inventories
 
 		public override bool CanBeAddedTo( GameObject gameObject )
 		{
-#warning TODO!
+#warning TODO! incomplete.
 			return true;
 		}
 

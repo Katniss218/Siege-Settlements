@@ -26,7 +26,6 @@ namespace SS.Modules
 			{
 				return false;
 			}*/
-#warning Module class should have static method for adding modules to gameObjects. That method should check if it can be added or not.
 			return true;
 		}
 

@@ -185,7 +185,7 @@ namespace SS.Modules
 							data.rotation = spawnRot;
 							data.factionId = this.factionMember.factionId;
 							data.health = this.trainedUnit.healthMax;
-							data.items = new Dictionary<string, int>();
+							data.inventoryData = new InventoryUnconstrainedData();
 
 							GameObject obj = UnitCreator.Create( this.trainedUnit, data );
 							// Move the newly spawned unit to the rally position.

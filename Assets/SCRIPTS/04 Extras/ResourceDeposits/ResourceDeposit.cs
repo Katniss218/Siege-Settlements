@@ -76,7 +76,7 @@ namespace SS.Extras
 
 		public AudioClip miningSound { get; set; }
 		
-		public IInventory inventory { get; set; }
+		public InventoryConstrained inventory { get; set; }
 		
 		
 		void Start()

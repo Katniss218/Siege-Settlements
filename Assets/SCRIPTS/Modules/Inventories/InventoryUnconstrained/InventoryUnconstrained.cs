@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.Levels.SaveStates;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -268,8 +269,11 @@ namespace SS.Modules.Inventories
 
 		public override ModuleData GetData()
 		{
-#warning TODO!
-			throw new NotImplementedException( "You can't get data of an inventory." );
+			InventoryUnconstrainedData data = new InventoryUnconstrainedData();
+
+			data.items = this.GetAll();
+
+			return data;
 		}
 
 
@@ -300,10 +304,25 @@ namespace SS.Modules.Inventories
 		}
 
 
-		public override void SetData( ModuleData saveState )
+		public override void SetData( ModuleData _data )
 		{
-#warning TODO!
-			throw new NotImplementedException( "You can't assign data to an inventory." );
+			if( !(_data is InventoryUnconstrainedData) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
+			InventoryUnconstrainedData data = (InventoryUnconstrainedData)_data;
+
+
+			foreach( var kvp in data.items )
+			{
+				this.Add( kvp.Key, kvp.Value );
+			}
 		}
 	}
 }

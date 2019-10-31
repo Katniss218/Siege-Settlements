@@ -361,8 +361,8 @@ namespace SS
 					data.guid = Guid.NewGuid();
 					data.position = hitInfo.point;
 					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-					data.resources = new Dictionary<string, int>();
-					data.resources.Add( "resource.wood", 5 );
+					data.inventoryData = new InventoryConstrainedData();
+					data.inventoryData.items.Add( "resource.wood", 5 );
 					ResourceDepositCreator.Create( def, data );
 				}
 			}
@@ -380,8 +380,8 @@ namespace SS
 					data.guid = Guid.NewGuid();
 					data.position = hitInfo.point;
 					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-					data.resources = new Dictionary<string, int>();
-					data.resources.Add( "resource.wood", 5 );
+					data.inventoryData = new InventoryConstrainedData();
+					data.inventoryData.items.Add( "resource.wood", 5 );
 					ResourceDepositCreator.Create( def, data );
 				}
 			}
@@ -399,8 +399,8 @@ namespace SS
 					data.guid = Guid.NewGuid();
 					data.position = hitInfo.point;
 					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-					data.resources = new Dictionary<string, int>();
-					data.resources.Add( "resource.stone", 20 );
+					data.inventoryData = new InventoryConstrainedData();
+					data.inventoryData.items.Add( "resource.stone", 20 );
 					ResourceDepositCreator.Create( def, data );
 				}
 			}

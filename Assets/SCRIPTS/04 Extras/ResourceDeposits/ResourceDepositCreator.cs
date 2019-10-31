@@ -49,7 +49,15 @@ namespace SS.Extras
 			NavMeshObstacle obstacle = gameObject.GetComponent<NavMeshObstacle>();
 			obstacle.size = def.size;
 			obstacle.center = new Vector3( 0f, def.size.y / 2.0f, 0f );
-			
+
+			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
+			resourceDeposit.defId = def.id;
+			resourceDeposit.displayName = def.displayName;
+			resourceDeposit.isTypeExtracted = def.isExtracted;
+			if( !def.isExtracted )
+			{
+				resourceDeposit.miningSound = def.mineSound;
+			}
 
 			InventoryConstrained depositInventory = gameObject.GetComponent<InventoryConstrained>();
 			InventoryConstrainedDefinition inventoryDef = new InventoryConstrainedDefinition();
@@ -61,41 +69,12 @@ namespace SS.Extras
 				i++;
 			}
 			depositInventory.SetDefinition( inventoryDef );
-			
-			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
-			resourceDeposit.defId = def.id;
-			resourceDeposit.displayName = def.displayName;
-			resourceDeposit.isTypeExtracted = def.isExtracted;
-			if( !def.isExtracted )
-			{
-				resourceDeposit.miningSound = def.mineSound;
-			}
+			depositInventory.SetData( data.inventoryData );
+
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
-			IInventory inventory = gameObject.GetComponent<IInventory>();
-			
-			foreach( var kvp in data.resources )
-			{
-				int capacity = inventory.GetMaxCapacity( kvp.Key );
-				if( capacity == 0 )
-				{
-					throw new Exception( "This deposit can't hold '" + kvp.Key + "'." );
-				}
-				else
-				{
-					if( capacity < kvp.Value )
-					{
-						Debug.LogWarning( "This deposit can't hold " + kvp.Value + "x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + "x resource has been lost." );
-						inventory.Add( kvp.Key, capacity );
-					}
-					else
-					{
-						inventory.Add( kvp.Key, kvp.Value );
-					}
-				}
-			}
 		}
 
 		private static GameObject CreateResourceDeposit( Guid guid )
@@ -248,7 +227,7 @@ namespace SS.Extras
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
 
-			data.resources = resourceDeposit.inventory.GetAll();
+			data.inventoryData = (InventoryConstrainedData)resourceDeposit.inventory.GetData();
 
 			return data;
 		}

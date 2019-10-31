@@ -123,7 +123,6 @@ namespace SS.Units
 				// Create the actual UI.
 				GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
 				SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
-
 			};
 
 			// If the unit is constructor (civilian), make it show the build menu.
@@ -158,13 +157,8 @@ namespace SS.Units
 				ranged.SetDefinition( def.ranged );
 			}
 			
-#warning don't know which module has which data.
-
-			IInventory inventory = gameObject.GetComponent<IInventory>();
-			foreach( var kvp in data.items )
-			{
-				inventory.Add( kvp.Key, kvp.Value );
-			}
+			InventoryUnconstrained inventory = gameObject.GetComponent<InventoryUnconstrained>();
+			inventory.SetData( data.inventoryData );
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -458,7 +452,7 @@ namespace SS.Units
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
 
-			data.items = gameObject.GetComponent<IInventory>().GetAll();
+			data.inventoryData = (InventoryUnconstrainedData)gameObject.GetComponent<InventoryUnconstrained>().GetData();
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )

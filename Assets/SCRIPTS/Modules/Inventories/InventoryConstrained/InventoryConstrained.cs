@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.Levels.SaveStates;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -212,8 +213,11 @@ namespace SS.Modules.Inventories
 		
 		public override ModuleData GetData()
 		{
-#warning TODO!
-			throw new NotImplementedException( "You can't get data of an inventory." );
+			InventoryConstrainedData data = new InventoryConstrainedData();
+
+			data.items = this.GetAll();
+
+			return data;
 		}
 
 
@@ -250,10 +254,41 @@ namespace SS.Modules.Inventories
 			}
 		}
 
-		public override void SetData( ModuleData saveState )
+		public override void SetData( ModuleData _data )
 		{
-#warning TODO!
-			throw new NotImplementedException( "You can't assign data to an inventory." );
+			if( !(_data is InventoryConstrainedData) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
+			InventoryConstrainedData data = (InventoryConstrainedData)_data;
+
+
+			foreach( var kvp in data.items )
+			{
+				int capacity = this.GetMaxCapacity( kvp.Key );
+				if( capacity == 0 )
+				{
+					throw new Exception( "This deposit can't hold '" + kvp.Key + "'." );
+				}
+				else
+				{
+					if( capacity < kvp.Value )
+					{
+						Debug.LogWarning( "This deposit can't hold " + kvp.Value + "x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + "x resource has been lost." );
+						this.Add( kvp.Key, capacity );
+					}
+					else
+					{
+						this.Add( kvp.Key, kvp.Value );
+					}
+				}
+			}
 		}
 	}
 }

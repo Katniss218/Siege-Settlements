@@ -1,6 +1,5 @@
 ﻿using KFF;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
@@ -19,7 +18,7 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 
-		public Dictionary<string, int> items { get; set; }
+		public InventoryUnconstrainedData inventoryData { get; set; }
 
 		public TAIGoalData taiGoalData { get; set; }
 
@@ -37,13 +36,8 @@ namespace SS.Levels.SaveStates
 			this.health = serializer.ReadFloat( "Health" );
 
 
-			// Cost
-			var analysisData = serializer.Analyze( "Items" );
-			this.items = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
-			{
-				this.items.Add( serializer.ReadString( new Path( "Items.{0}.Id", i ) ), serializer.ReadInt( new Path( "Items.{0}.Amount", i ) ) );
-			}
+			inventoryData = new InventoryUnconstrainedData();
+			serializer.Deserialize( "InventoryData", inventoryData );
 
 			this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
 		}
@@ -58,16 +52,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
 
-			// Cost
-			serializer.WriteList( "", "Items" );
-			int i = 0;
-			foreach( var kvp in this.items )
-			{
-				serializer.AppendClass( "Items" );
-				serializer.WriteString( new Path( "Items.{0}", i ), "Id", kvp.Key );
-				serializer.WriteInt( new Path( "Items.{0}", i ), "Amount", kvp.Value );
-				i++;
-			}
+			serializer.Serialize( "", "InventoryData", this.inventoryData );
 
 			TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
 		}

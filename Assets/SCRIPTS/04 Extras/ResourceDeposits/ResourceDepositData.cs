@@ -1,6 +1,5 @@
 ﻿using KFF;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
@@ -14,8 +13,9 @@ namespace SS.Levels.SaveStates
 
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
-		
-		public Dictionary<string,int> resources { get; set; }
+
+
+		public InventoryConstrainedData inventoryData { get; set; }
 
 
 		public void DeserializeKFF( KFFSerializer serializer )
@@ -25,13 +25,8 @@ namespace SS.Levels.SaveStates
 			this.position = serializer.ReadVector3( "Position" );
 			this.rotation = serializer.ReadQuaternion( "Rotation" );
 
-			// resources
-			var analysisData = serializer.Analyze( "Resources" );
-			this.resources = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
-			{
-				this.resources.Add( serializer.ReadString( new Path( "Resources.{0}.Id", i ) ), serializer.ReadInt( new Path( "Resources.{0}.Amount", i ) ) );
-			}
+			this.inventoryData = new InventoryConstrainedData();
+			serializer.Deserialize( "InventoryData", this.inventoryData );
 		}
 
 		public void SerializeKFF( KFFSerializer serializer )
@@ -41,16 +36,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteVector3( "", "Position", this.position );
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 
-			// resources
-			serializer.WriteList( "", "Resources" );
-			int i = 0;
-			foreach( var kvp in this.resources )
-			{
-				serializer.AppendClass( "Resources" );
-				serializer.WriteString( new Path( "Resources.{0}", i ), "Id", kvp.Key );
-				serializer.WriteInt( new Path( "Resources.{0}", i ), "Amount", kvp.Value );
-				i++;
-			}
+			serializer.Serialize( "", "InventoryData", this.inventoryData );
 		}
 	}
 }

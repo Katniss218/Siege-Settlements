@@ -1,6 +1,4 @@
 ﻿using KFF;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules.Inventories
@@ -32,7 +30,7 @@ namespace SS.Modules.Inventories
 
 		public override bool CanBeAddedTo( GameObject gameObject )
 		{
-#warning TODO!
+#warning TODO! incomplete.
 			return true;
 		}
 
