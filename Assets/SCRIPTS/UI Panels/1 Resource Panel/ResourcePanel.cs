@@ -49,7 +49,7 @@ namespace SS.UI
 
 		private void AddEntry( string id, Sprite i, int amount )
 		{
-			GameObject container = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Resource (UI)" ), resourceEntryContainer );
+			GameObject container = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Resource (UI)" ), resourceEntryContainer );
 			container.name = "resource: '" + id + "'";
 
 			Transform iconTransform = container.transform.Find( "Icon" );
@@ -79,7 +79,7 @@ namespace SS.UI
 
 		public void AddResourceEntry( ResourceDefinition resource, int startAmt = 0 )
 		{
-			AddEntry( resource.id, resource.icon.Item2, startAmt );
+			AddEntry( resource.id, resource.icon, startAmt );
 		}
 
 		public void RemoveResourceEntry( ResourceDefinition resource )

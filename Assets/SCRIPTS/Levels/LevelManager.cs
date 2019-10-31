@@ -285,7 +285,7 @@ namespace SS.Levels
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
 
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/World UI Canvas" ) );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
 
 			if( !SceneManager.GetSceneByName( "Level GUI" ).isLoaded )
 			{
@@ -626,54 +626,54 @@ namespace SS.Levels
 
 			for( int i = 0; i < units.Length; i++ )
 			{
-				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid, sUnits[i].Item1 );
+				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid );//, sUnits[i].Item1 );
 			}
 			for( int i = 0; i < buildings.Length; i++ )
 			{
-				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid, sBuildings[i].Item1 );
+				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid );//, sBuildings[i].Item1 );
 			}
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
-				projectiles[i] = ProjectileCreator.CreateEmpty( sProjectiles[i].Item2.guid, sProjectiles[i].Item1 );
+				projectiles[i] = ProjectileCreator.CreateEmpty( sProjectiles[i].Item2.guid );
 			}
 			for( int i = 0; i < heroes.Length; i++ )
 			{
-				heroes[i] = HeroCreator.CreateEmpty( sHeroes[i].Item2.guid, sHeroes[i].Item1 );
+				heroes[i] = HeroCreator.CreateEmpty( sHeroes[i].Item2.guid );
 			}
 			for( int i = 0; i < extras.Length; i++ )
 			{
-				extras[i] = ExtraCreator.CreateEmpty( sExtras[i].Item2.guid, sExtras[i].Item1 );
+				extras[i] = ExtraCreator.CreateEmpty( sExtras[i].Item2.guid );
 			}
 			for( int i = 0; i < resourceDeposits.Length; i++ )
 			{
-				resourceDeposits[i] = ResourceDepositCreator.CreateEmpty( sResourceDeposits[i].Item2.guid, sResourceDeposits[i].Item1 );
+				resourceDeposits[i] = ResourceDepositCreator.CreateEmpty( sResourceDeposits[i].Item2.guid );
 			}
 
 			// Set the data (guids stay the same).
 
 			for( int i = 0; i < units.Length; i++ )
 			{
-				UnitCreator.SetData( units[i], sUnits[i].Item2 );
+				UnitCreator.SetDefData( units[i], sUnits[i].Item1, sUnits[i].Item2 );
 			}
 			for( int i = 0; i < buildings.Length; i++ )
 			{
-				BuildingCreator.SetData( buildings[i], sBuildings[i].Item2 );
+				BuildingCreator.SetDefData( buildings[i], sBuildings[i].Item1, sBuildings[i].Item2 );
 			}
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
-				ProjectileCreator.SetData( projectiles[i], sProjectiles[i].Item2 );
+				ProjectileCreator.SetDefData( projectiles[i], sProjectiles[i].Item1, sProjectiles[i].Item2 );
 			}
 			for( int i = 0; i < heroes.Length; i++ )
 			{
-				HeroCreator.SetData( heroes[i], sHeroes[i].Item2 );
+				HeroCreator.SetDefData( heroes[i], sHeroes[i].Item1, sHeroes[i].Item2 );
 			}
 			for( int i = 0; i < extras.Length; i++ )
 			{
-				ExtraCreator.SetData( extras[i], sExtras[i].Item2 );
+				ExtraCreator.SetDefData( extras[i], sExtras[i].Item1, sExtras[i].Item2 );
 			}
 			for( int i = 0; i < resourceDeposits.Length; i++ )
 			{
-				ResourceDepositCreator.SetData( resourceDeposits[i], sResourceDeposits[i].Item2 );
+				ResourceDepositCreator.SetDefData( resourceDeposits[i], sResourceDeposits[i].Item1, sResourceDeposits[i].Item2 );
 			}
 
 			SelectionPanelMode selectionPanelMode;
@@ -888,7 +888,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
-					color[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Colormap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", TextureType.Color );
+					color[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Colormap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", TextureType.Color );
 				}
 			}
 			Texture2D[,] height = new Texture2D[LevelDataManager.mapSegments, LevelDataManager.mapSegments];
@@ -896,7 +896,7 @@ namespace SS.Levels
 			{
 				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
-					height[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Heightmap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", TextureType.Color );
+					height[i, j] = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Heightmap/row-" + (LevelDataManager.mapSegments - j) + "-col-" + (i + 1) + ".png", TextureType.Color );
 				}
 			}
 			LevelTerrainCreator.SpawnMap( height, color, LevelDataManager.mapHeight );
@@ -905,8 +905,8 @@ namespace SS.Levels
 
 		private static void InstantiateLevelPrefabs()
 		{
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Game Scene/Daylight Cycle" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/__ GAME MANAGER __" ), Vector3.zero, Quaternion.identity );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/Daylight Cycle" ), Vector3.zero, Quaternion.identity );
 		}
 
 

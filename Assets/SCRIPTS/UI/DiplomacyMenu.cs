@@ -12,7 +12,7 @@ namespace SS.UI
 
 		private void SpawnDiplomacyMenuElement( FactionDefinition def, DiplomaticRelation rel )
 		{
-			GameObject obj = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/DiplomacyElement (UI)" ), diplomacyListContents );
+			GameObject obj = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/DiplomacyElement (UI)" ), diplomacyListContents );
 
 			DiplomacyMenuElement diplomacyMenuElement = obj.GetComponent<DiplomacyMenuElement>();
 
@@ -23,7 +23,7 @@ namespace SS.UI
 
 		private void SpawnDiplomacyMenuElementPlayer( FactionDefinition def )
 		{
-			GameObject obj = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/DiplomacyElement (UI)" ), diplomacyListContents );
+			GameObject obj = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/DiplomacyElement (UI)" ), diplomacyListContents );
 
 			DiplomacyMenuElement diplomacyMenuElement = obj.GetComponent<DiplomacyMenuElement>();
 

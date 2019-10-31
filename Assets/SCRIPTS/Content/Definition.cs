@@ -1,5 +1,4 @@
-﻿
-using KFF;
+﻿using KFF;
 
 namespace SS.Content
 {
@@ -21,7 +20,7 @@ namespace SS.Content
 			}
 			this.id = id;
 		}
-
+		
 		public abstract void SerializeKFF( KFFSerializer serializer );
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 	}

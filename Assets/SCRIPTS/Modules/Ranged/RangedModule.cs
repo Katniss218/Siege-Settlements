@@ -227,7 +227,7 @@ namespace SS.Modules
 			this.velocity = def.velocity;
 			this.localOffsetMin = def.localOffsetMin;
 			this.localOffsetMax = def.localOffsetMax;
-			this.attackSoundEffect = def.attackSoundEffect.Item2;
+			this.attackSoundEffect = def.attackSoundEffect;
 		}
 
 #if UNITY_EDITOR

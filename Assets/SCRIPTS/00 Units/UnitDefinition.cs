@@ -1,8 +1,6 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
 using SS.Modules;
-using SS.Modules.Inventories;
 using SS.Technologies;
 using System;
 using System.Collections.Generic;
@@ -12,14 +10,38 @@ namespace SS.Units
 {
 	public class UnitDefinition : Definition, ITechsRequired
 	{
-		// Basic.
-		public string displayName { get; set; }
+		private string __displayName = "<missing>";
+		public string displayName
+		{
+			get { return this.__displayName; }
+			set
+			{
+				this.__displayName = value ?? throw new Exception( "'DisplayName' can't be null." );
+			}
+		}
 
-		// Health-related
-		public float healthMax { get; set; }
+
+		//--------------------------------------------------------------------
+		//  HEALTH-RELATED
+		//--------------------------------------
+
+		private float __healthMax = 1.0f;
+		public float healthMax
+		{
+			get { return this.__healthMax; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'HealthMax' can't be less than or equal to 0." );
+				}
+				this.__healthMax = value;
+			}
+		}
 
 		public Armor armor { get; set; }
-		
+
+
 
 		public MeleeModuleDefinition melee;
 
@@ -27,25 +49,106 @@ namespace SS.Units
 		
 		public bool isConstructor { get; set; }
 
-		// Movement-related
-		public float movementSpeed { get; set; }
-		public float rotationSpeed { get; set; }
 
-		public float radius { get; set; }
-		public float height { get; set; }
+		//--------------------------------------------------------------------
+		//  MOVEMENT-RELATED
+		//--------------------------------------
 
-		// Production-related.
+		private float __movementSpeed = 0.0f;
+		public float movementSpeed
+		{
+			get { return this.__movementSpeed; }
+			set
+			{
+				if( value < 0.0f )
+				{
+					throw new Exception( "'MovementSpeed' can't be less than 0." );
+				}
+				this.__movementSpeed = value;
+			}
+		}
+
+		private float __rotationSpeed = 0.0f;
+		public float rotationSpeed
+		{
+			get { return this.__rotationSpeed; }
+			set
+			{
+				if( value < 0.0f )
+				{
+					throw new Exception( "'RotationSpeed' can't be less than 0." );
+				}
+				this.__rotationSpeed = value;
+			}
+		}
+
+
+		//--------------------------------------------------------------------
+		//  SIZE-RELATED
+		//--------------------------------------
+
+		private float __radius = 0.25f;
+		public float radius
+		{
+			get { return this.__radius; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'Radius' can't be less than or equal to 0." );
+				}
+				this.__radius = value;
+			}
+		}
+
+		private float __height = 0.25f;
+		public float height
+		{
+			get { return this.__height; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'Height' can't be less than or equal to 0." );
+				}
+				this.__height = value;
+			}
+		}
+
+
+		//--------------------------------------------------------------------
+		//  PRODUCTION-RELATED
+		//--------------------------------------
+
 		public Dictionary<string, int> cost { get; private set; }
+#warning wrapper "ResourceCost" - needed to make sure that a <= 0 value can't be set (in a dict, it still can be set via a method that I have no control over).
 
-		public float buildTime { get; private set; }
+		private float __buildTime = 0.0f;
+		public float buildTime
+		{
+			get { return this.__buildTime; }
+			set
+			{
+				if( value < 0.0f )
+				{
+					throw new Exception( "'BuildTime' can't be less than 0." );
+				}
+				this.__buildTime = value;
+			}
+		}
+
 		public string[] techsRequired { get; private set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
 
-		// Display-related
-		public Tuple<string, Mesh> mesh { get; private set; }
-		public Tuple<string, Texture2D> albedo { get; private set; }
-		public Tuple<string, Texture2D> normal { get; private set; }
-		public Tuple<string, Sprite> icon { get; private set; }
 
+		//--------------------------------------------------------------------
+		//  ASSETS
+		//--------------------------------------
+
+		public AddressableAsset<Mesh> mesh { get; set; }
+		public AddressableAsset<Texture2D> albedo { get; set; }
+		public AddressableAsset<Texture2D> normal { get; set; }
+		public AddressableAsset<Sprite> icon { get; private set; }
+		
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -55,7 +158,7 @@ namespace SS.Units
 		{
 
 		}
-
+		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
@@ -140,10 +243,10 @@ namespace SS.Units
 			serializer.WriteFloat( "", "BuildTime", this.buildTime );
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
-			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
-			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
-			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
-			serializer.WriteString( "", "Icon", this.icon.Item1 );
+			serializer.WriteString( "", "Mesh", (string)this.mesh );
+			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

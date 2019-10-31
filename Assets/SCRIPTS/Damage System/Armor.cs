@@ -4,14 +4,11 @@ using UnityEngine;
 namespace SS
 {
 	/// <summary>
-	/// Represents an armor, that can reduce incoming damage by a specified amount.
+	/// Represents armor that can reduce incoming damage by a specified amount. The reduction is dependant on the damage type.
 	/// </summary>
 	public class Armor : IKFFSerializable
 	{
-		/// <summary>
-		/// Contains percentage reduction values for each type of damage. You can use DamageType enum to index it, to get the correcponding armor values.
-		/// </summary>
-		public float[] values { get; private set; }
+		private float[] values = null;
 
 		public Armor()
 		{
@@ -29,10 +26,10 @@ namespace SS
 
 			float mult = 1 - (armor - penetration);
 
-			// If the damage somehow ended up greater than before reduction, clamp it, and log warning.
+			// If the damage somehow ended up greater than before reduction, clamp it, and log a warning.
 			if( mult > 1 )
 			{
-				Debug.LogWarning( "CalculateReducedDamage: The reduced damage was greater than before reduction. Clamping the damage multiplier to 1." );
+				Debug.LogWarning( "Armor.GetMultiplier: The reduced damage was greater than before reduction. Clamping the damage multiplier to 1." );
 				mult = 1;
 			}
 			return mult;
@@ -54,7 +51,14 @@ namespace SS
 			float[] values = serializer.ReadFloatArray( "ArmorValues" );
 			if( values.Length != DamageTypeExtensions.GetNumTypes() )
 			{
-				throw new System.Exception( "Invalid Armor array, the number of damage types doesn't match the real number." );
+				throw new System.Exception( "The number of elements in damage array (" + values.Length + ") doesn't match the number of damage types (" + DamageTypeExtensions.GetNumTypes() + ")." );
+			}
+			for( int i = 0; i < values.Length; i++ )
+			{
+				if( values[i] < 0.0f )
+				{
+					throw new System.Exception( "Armor can't have negative values." );
+				}
 			}
 			this.values = values;
 		}

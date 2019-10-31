@@ -43,7 +43,7 @@ namespace SS.UI
 		{
 			this.mode = SelectionPanelMode.Object;
 
-			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/obj_lst" );
+			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/obj_lst" );
 			this.list.transform.gameObject.SetActive( false );
 			this.obj.transform.gameObject.SetActive( true );
 		}
@@ -52,7 +52,7 @@ namespace SS.UI
 		{
 			this.mode = SelectionPanelMode.List;
 
-			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/lst_obj" );
+			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/lst_obj" );
 			this.list.transform.gameObject.SetActive( true );
 			this.obj.transform.gameObject.SetActive( false );
 		}

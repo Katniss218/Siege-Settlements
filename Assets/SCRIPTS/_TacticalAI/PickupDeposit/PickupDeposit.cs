@@ -68,7 +68,7 @@ namespace SS
 							if( amountPickedUp > 0 )
 							{
 								depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
-								AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound.Item2 );
+								AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 							}
 							break; // Only pick up one resource at a time.
 						}

@@ -1,7 +1,5 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +11,7 @@ namespace SS.Technologies
 
 		public Dictionary<string, int> cost { get; private set; }
 
-		public Tuple<string, Sprite> icon { get; private set; }
+		public AddressableAsset<Sprite> icon { get; private set; }
 
 		public TechnologyDefinition( string id ) : base( id )
 		{
@@ -55,7 +53,7 @@ namespace SS.Technologies
 			}
 
 
-			serializer.WriteString( "", "Icon", this.icon.Item1 );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

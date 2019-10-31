@@ -2,8 +2,6 @@
 using SS.Content;
 using SS.Technologies;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
 
 namespace SS.Diplomacy
 {
@@ -12,8 +10,7 @@ namespace SS.Diplomacy
 	/// </summary>
 	public class FactionData : IKFFSerializable
 	{
-
-#warning Ugly code - a part is here and a part in the LevelDataManager.
+#warning Ugly code - The 'techs' field is here but access to it is from LevelDataManager.
 		/// <summary>
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>

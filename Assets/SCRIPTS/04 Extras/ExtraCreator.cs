@@ -13,7 +13,7 @@ namespace SS.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void SetExtraDefinition( GameObject gameObject, ExtraDefinition def )
+		public static void SetDefData( GameObject gameObject, ExtraDefinition def, ExtraData data )
 		{
 
 			//
@@ -23,34 +23,22 @@ namespace SS.Extras
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
+			meshFilter.mesh = def.mesh;
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
 			
-			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
+			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo, def.normal, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			Extra extra = gameObject.GetComponent<Extra>();
 			extra.defId = def.id;
 		}
-
-		private static void SetExtraData( GameObject gameObject, ExtraData data )
-		{
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			Extra extra = gameObject.GetComponent<Extra>();
-			extra.guid = data.guid;
-		}
-
-		private static GameObject CreateExtra()
+		
+		private static GameObject CreateExtra( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.isStatic = true;
@@ -95,53 +83,36 @@ namespace SS.Extras
 
 			ExtraData data = new ExtraData();
 
-			data.guid = gameObject.GetComponent<Extra>().guid;
+			Extra extra = gameObject.GetComponent<Extra>();
+			if( extra.guid == null )
+			{
+				throw new Exception( "Guid was not assigned." );
+			}
+			data.guid = extra.guid.Value;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
 
 			return data;
 		}
-
+		
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, ExtraData data )
+		public static GameObject CreateEmpty( Guid guid )
 		{
-			if( !Extra.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
-			}
-
-			SetExtraData( gameObject, data );
-		}
-
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static GameObject CreateEmpty( Guid guid, ExtraDefinition def )
-		{
-			GameObject gameObject = CreateExtra();
-
-			SetExtraDefinition( gameObject, def );
-
-			Extra extra = gameObject.GetComponent<Extra>();
-			extra.guid = guid;
-
+			GameObject gameObject = CreateExtra( guid );
+			
 			return gameObject;
 		}
 
 		public static GameObject Create( ExtraDefinition def, ExtraData data )
 		{
-			GameObject gameObject = CreateExtra();
+			GameObject gameObject = CreateExtra( data.guid );
 
-			SetExtraDefinition( gameObject, def );
-			SetExtraData( gameObject, data );
+			SetDefData( gameObject, def, data );
 
 			return gameObject;
 		}

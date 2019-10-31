@@ -20,7 +20,7 @@ namespace SS.Projectiles
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void SetProjectileDefinition( GameObject gameObject, ProjectileDefinition def )
+		public static void SetDefData( GameObject gameObject, ProjectileDefinition def, ProjectileData data )
 		{
 
 			//
@@ -30,10 +30,10 @@ namespace SS.Projectiles
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
+			meshFilter.mesh = def.mesh;
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
+			meshRenderer.material = MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
 
 
 			//
@@ -47,8 +47,8 @@ namespace SS.Projectiles
 			// Set the projectile's native parameters.
 			Projectile projectile = gameObject.GetComponent<Projectile>();
 			projectile.defId = def.id;
-			projectile.hitSound = def.hitSoundEffect.Item2;
-			projectile.missSound = def.missSoundEffect.Item2;
+			projectile.hitSound = def.hitSoundEffect;
+			projectile.missSound = def.missSoundEffect;
 			
 
 			// Set the projectile's lifetime and reset the lifetime timer.
@@ -64,14 +64,10 @@ namespace SS.Projectiles
 				Object.Destroy( particleSystem );
 			}
 			// If projectile has trail, add it.
-			if( def.hasTrail )
+			if( def.trailData != null )
 			{
-				gfx.AddParticleSystem( def.trailAmt, def.trailTexture.Item2, Color.white, def.trailStartSize, def.trailEndSize, 0.02f, def.trailLifetime );
+				gfx.AddParticleSystem( def.trailData.amount, def.trailData.texture, Color.white, def.trailData.startSize, def.trailData.endSize, 0.02f, def.trailData.lifetime );
 			}
-		}
-
-		private static void SetProjectileData( GameObject gameObject, ProjectileData data )
-		{
 
 			//
 			//    CONTAINER GAMEOBJECT
@@ -91,10 +87,6 @@ namespace SS.Projectiles
 				rigidbody.velocity = data.velocity;
 			}
 			
-			// Set the globally unique identifier.
-			Projectile projectile = gameObject.GetComponent<Projectile>();
-			projectile.guid = data.guid;
-
 			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 			factionMember.factionId = data.factionId;
@@ -102,7 +94,7 @@ namespace SS.Projectiles
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
 		}
-
+		
 		private static void MakeStuck( GameObject unstuckProjectile )
 		{
 			unstuckProjectile.GetComponent<TimerHandler>().RestartTimer(); // reset the timer to count again from after being stuck.
@@ -112,7 +104,7 @@ namespace SS.Projectiles
 			Object.Destroy( unstuckProjectile.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
 		}
 
-		private static GameObject CreateProjectile()
+		private static GameObject CreateProjectile( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.PROJECTILES;
@@ -135,6 +127,7 @@ namespace SS.Projectiles
 			//
 
 			Projectile projectile = container.AddComponent<Projectile>();
+			projectile.guid = guid;
 
 			container.AddComponent<Rigidbody>();
 
@@ -214,7 +207,12 @@ namespace SS.Projectiles
 
 			ProjectileData data = new ProjectileData();
 
-			data.guid = gameObject.GetComponent<Projectile>().guid;
+			Projectile projectile = gameObject.GetComponent<Projectile>();
+			if( projectile.guid == null )
+			{
+				throw new Exception( "Guid was not assigned." );
+			}
+			data.guid = projectile.guid.Value;
 
 			data.position = gameObject.transform.position;
 
@@ -240,44 +238,24 @@ namespace SS.Projectiles
 
 			return data;
 		}
-
+		
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public static void SetData( GameObject gameObject, ProjectileData data )
+		public static GameObject CreateEmpty( Guid guid )
 		{
-			if( !Projectile.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid projectile." );
-			}
-			SetProjectileData( gameObject, data );
-		}
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
-		public static GameObject CreateEmpty( Guid guid, ProjectileDefinition def )
-		{
-			GameObject gameObject = CreateProjectile();
-
-			SetProjectileDefinition( gameObject, def );
-
-			Projectile projectile = gameObject.GetComponent<Projectile>();
-			projectile.guid = guid;
-
+			GameObject gameObject = CreateProjectile( guid );
+			
 			return gameObject;
 		}
 
 		public static GameObject Create( ProjectileDefinition def, ProjectileData data )
 		{
-			GameObject gameObject = CreateProjectile();
+			GameObject gameObject = CreateProjectile( data.guid );
 
-			SetProjectileDefinition( gameObject, def );
-			SetProjectileData( gameObject, data );
+			SetDefData( gameObject, def, data );
 			
 			return gameObject;
 		}

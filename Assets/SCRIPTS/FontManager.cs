@@ -8,8 +8,8 @@ namespace SS
 	/// </summary>
 	public static class FontManager
 	{
-		public const string MAIN_FONT_PATH = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Chomsky SDF";
-		public const string UI_FONT_PATH = AssetManager.BUILTIN_ASSET_IDENTIFIER + "Chomsky - UI";
+		public const string MAIN_FONT_PATH = AssetManager.BUILTIN_ASSET_ID + "Chomsky SDF";
+		public const string UI_FONT_PATH = AssetManager.BUILTIN_ASSET_ID + "Chomsky - UI";
 
 		public static Color lightColor
 		{

@@ -148,6 +148,12 @@ namespace SS.Modules
 			this.factionMember = this.GetComponent<FactionMember>();
 
 			this.selectable = this.GetComponent<Selectable>();
+
+
+			if( this.GetComponent<Building>().entrance == null )
+			{
+				throw new Exception( "Can't assign barracks to a building with no entrance." );
+			}
 		}
 
 		// Update is called once per frame
@@ -205,6 +211,7 @@ namespace SS.Modules
 		}
 
 
+		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -248,11 +255,12 @@ namespace SS.Modules
 			Building building = this.GetComponent<Building>();
 			if( building == null )
 			{
+#warning this doesn't depend on barracks def, but on the building's def. And the def doesn't change.
 				this.spawnPosition = Vector3.zero;
 			}
 			else
 			{
-				this.spawnPosition = building.entrance;
+				this.spawnPosition = building.entrance.Value;
 			}
 
 			Selectable selectable = this.GetComponent<Selectable>();
@@ -315,11 +323,11 @@ namespace SS.Modules
 				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
 				if( Technologies.TechLock.CheckLocked( unitDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].GetAllTechs() ) )
 				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, null );
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon, null );
 				}
 				else
 				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon.Item2, () =>
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon, () =>
 					{
 						this.StartTraining( unitDef );
 					} );

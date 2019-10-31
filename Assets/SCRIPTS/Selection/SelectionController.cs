@@ -35,7 +35,7 @@ namespace SS
 
 		private static void InitRect()
 		{
-			GameObject obj = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Selection Rect (UI)" ), Main.canvas.transform );
+			GameObject obj = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Selection Rect (UI)" ), Main.canvas.transform );
 			
 			selectionRect = obj.GetComponent<RectTransform>();
 		}
@@ -93,13 +93,13 @@ namespace SS
 								if( !Selection.IsHighlighted( uniqueObjs[i] ) )
 								{
 									Selection.HighlightSelected( uniqueObjs[i] );
-									AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+									AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 								}
 							}
 							else
 							{
 								Selection.SelectAndHighlight( uniqueObjs[i] );
-								AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+								AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 							}
 						}
 					}
@@ -115,7 +115,7 @@ namespace SS
 					if( numSelected > 0 )
 					{
 						Selection.DeselectAll();
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
 					}
 				}
 				else
@@ -134,12 +134,12 @@ namespace SS
 						{
 							Selection.SelectAndHighlight( uniqueObjs[i] );
 							
-							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/select" ) );
+							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 							
 						}
 						else
 						{
-							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/deselect" ) );
+							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
 						}
 					}
 				}

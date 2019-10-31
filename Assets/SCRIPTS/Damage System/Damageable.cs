@@ -20,7 +20,10 @@ namespace SS
 		/// </summary>
 		public UnityEvent onDeath = new UnityEvent();
 
-		
+
+		public float lastDamageTakenTimestamp { get; private set; }
+		public float lastHealTimestamp { get; private set; }
+
 		[SerializeField]
 		private float __health;
 		/// <summary>
@@ -45,6 +48,16 @@ namespace SS
 				}
 				float diff = value - this.__health; // if new value is bigger, diff should be positive.
 				this.__health = value;
+
+				if( diff > 0 )
+				{
+					this.lastHealTimestamp = Time.time;
+				}
+				else if( diff < 0 )
+				{
+					this.lastDamageTakenTimestamp = Time.time;
+				}
+
 				this.onHealthChange?.Invoke( diff );
 
 				// If the health is 0, kill the damageable.
@@ -99,7 +112,13 @@ namespace SS
 		/// The armor of the damageable.
 		/// </summary>
 		public Armor armor { get; set; }
-		
+
+		void Awake()
+		{
+			this.lastDamageTakenTimestamp = 0.0f;
+			this.lastHealTimestamp = 0.0f;
+		}
+
 		/// <summary>
 		/// Heals this damageable to full health.
 		/// </summary>

@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
 using SS.Modules;
 using System;
@@ -9,33 +8,132 @@ namespace SS.Heroes
 {
 	public class HeroDefinition : Definition
 	{
-		public string displayName { get; set; }
-		public string displayTitle { get; set; }
+		private string __displayName = "<missing>";
+		public string displayName
+		{
+			get { return this.__displayName; }
+			set
+			{
+				this.__displayName = value ?? throw new Exception( "'DisplayName' can't be null." );
+			}
+		}
+		
+		private string __displayTitle = "<missing>";
+		public string displayTitle
+		{
+			get { return this.__displayTitle; }
+			set
+			{
+				this.__displayTitle = value ?? throw new Exception( "'DisplayTitle' can't be null." );
+			}
+		}
 
+		//--------------------------------------------------------------------
+		//  HEALTH-RELATED
+		//--------------------------------------
 
-		// Health-related
-		public float healthMax { get; set; }
+		private float __healthMax = 1.0f;
+		public float healthMax
+		{
+			get { return this.__healthMax; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'HealthMax' can't be less than or equal to 0." );
+				}
+				this.__healthMax = value;
+			}
+		}
 
 		public Armor armor { get; set; }
 
-		
+
+
 		public MeleeModuleDefinition melee;
 
 		public RangedModuleDefinition ranged;
 
 
-		// Movement-related
-		public float movementSpeed { get; set; }
-		public float rotationSpeed { get; set; }
+		//--------------------------------------------------------------------
+		//  MOVEMENT-RELATED
+		//--------------------------------------
 
-		public float radius { get; set; }
-		public float height { get; set; }
+		private float __movementSpeed = 0.0f;
+		public float movementSpeed
+		{
+			get { return this.__movementSpeed; }
+			set
+			{
+				if( value < 0.0f )
+				{
+					throw new Exception( "'MovementSpeed' can't be less than 0." );
+				}
+				this.__movementSpeed = value;
+			}
+		}
 
-		// Display-related
-		public Tuple<string, Mesh> mesh { get; private set; }
-		public Tuple<string, Texture2D> albedo { get; private set; }
-		public Tuple<string, Texture2D> normal { get; private set; }
-		public Tuple<string, Sprite> icon { get; private set; }
+		private float __rotationSpeed = 0.0f;
+		public float rotationSpeed
+		{
+			get { return this.__rotationSpeed; }
+			set
+			{
+				if( value < 0.0f )
+				{
+					throw new Exception( "'RotationSpeed' can't be less than 0." );
+				}
+				this.__rotationSpeed = value;
+			}
+		}
+
+
+		//--------------------------------------------------------------------
+		//  SIZE-RELATED
+		//--------------------------------------
+
+		private float __radius = 0.25f;
+		public float radius
+		{
+			get { return this.__radius; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'Radius' can't be less than or equal to 0." );
+				}
+				this.__radius = value;
+			}
+		}
+
+		private float __height = 0.25f;
+		public float height
+		{
+			get { return this.__height; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'Height' can't be less than or equal to 0." );
+				}
+				this.__height = value;
+			}
+		}
+
+
+		//--------------------------------------------------------------------
+		//  ASSETS
+		//--------------------------------------
+
+		public AddressableAsset<Mesh> mesh { get; set; }
+		public AddressableAsset<Texture2D> albedo { get; set; }
+		public AddressableAsset<Texture2D> normal { get; set; }
+		public AddressableAsset<Sprite> icon { get; private set; }
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public HeroDefinition( string id ) : base( id )
 		{
@@ -101,10 +199,10 @@ namespace SS.Heroes
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
 
-			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
-			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
-			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
-			serializer.WriteString( "", "Icon", this.icon.Item1 );
+			serializer.WriteString( "", "Mesh", (string)this.mesh );
+			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

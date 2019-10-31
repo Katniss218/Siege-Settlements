@@ -118,11 +118,11 @@ namespace SS.UI
 			GameObject obj;
 			if( data.isSaveState )
 			{
-				obj = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Level Save State (UI)" ), this.listContentContainer );
+				obj = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Level Save State (UI)" ), this.listContentContainer );
 			}
 			else
 			{
-				obj = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Level (UI)" ), this.listContentContainer );
+				obj = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Level (UI)" ), this.listContentContainer );
 			}
 
 			TextMeshProUGUI textMeshPro = obj.transform.GetChild( 0 ).GetChild( 0 ).GetComponent<TextMeshProUGUI>();

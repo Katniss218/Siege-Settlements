@@ -14,37 +14,37 @@ namespace SS.Content
 		/// <summary>
 		/// Loads a Texture2D from assets, using a KFF serializer.
 		/// </summary>
-		public static Tuple<string, Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type )
+		public static AddressableAsset<Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Texture2D>( assetPath, AssetManager.GetTexture2D( assetPath, type ) );
+			return new AddressableAsset<Texture2D>( assetPath, AssetManager.GetTexture2D( assetPath, type ) );
 		}
 		
 		/// <summary>
 		/// Loads a Sprite from assets, using a KFF serializer.
 		/// </summary>
-		public static Tuple<string, Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Sprite>( assetPath, AssetManager.GetSprite( assetPath ) );
+			return new AddressableAsset<Sprite>( assetPath, AssetManager.GetSprite( assetPath ) );
 		}
 
 		/// <summary>
 		/// Loads a Mesh from assets, using a KFF serializer.
 		/// </summary>
-		public static Tuple<string, Mesh> ReadMeshFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<Mesh> ReadMeshFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, Mesh>( assetPath, AssetManager.GetMesh( assetPath ) );
+			return new AddressableAsset<Mesh>( assetPath, AssetManager.GetMesh( assetPath ) );
 		}
 
 		/// <summary>
 		/// Loads an AudioClip from assets, using a KFF serializer.
 		/// </summary>
-		public static Tuple<string, AudioClip> ReadAudioClipFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<AudioClip> ReadAudioClipFromAssets( this KFFSerializer serializer, string kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
-			return new Tuple<string, AudioClip>( assetPath, AssetManager.GetAudioClip( assetPath ) );
+			return new AddressableAsset<AudioClip>( assetPath, AssetManager.GetAudioClip( assetPath ) );
 		}
 	}
 }

@@ -29,15 +29,15 @@ namespace SS.UI
 		{
 			if( relation == DiplomaticRelation.Ally )
 			{
-				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_ally" );
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/diplo_ally" );
 			}
 			else if( relation == DiplomaticRelation.Neutral )
 			{
-				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_neutral" );
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/diplo_neutral" );
 			}
 			else if( relation == DiplomaticRelation.Enemy )
 			{
-				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Textures/diplo_enemy" );
+				this.relationImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/diplo_enemy" );
 			}
 			else
 			{

@@ -43,7 +43,7 @@ namespace SS
 		{
 			get
 			{
-				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Particle System" ) ); }
+				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Particle System" ) ); }
 				return __particleSystemInstance;
 			}
 		}
@@ -249,7 +249,7 @@ namespace SS
 					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
 
 					ConstructionSite.BeginConstructionOrRepair( gameObject, constructionSiteData );
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 				}
 			}
 		}
@@ -513,7 +513,7 @@ namespace SS
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
 				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -544,7 +544,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -596,7 +596,7 @@ namespace SS
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -642,7 +642,7 @@ namespace SS
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
 					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 				}
 				else
 				{
@@ -697,7 +697,7 @@ namespace SS
 				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
 
 				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -766,7 +766,7 @@ namespace SS
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -777,32 +777,56 @@ namespace SS
 			Unit unit = obj.GetComponent<Unit>();
 			if( unit != null )
 			{
-				return unit.guid;
+				if( unit.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return unit.guid.Value;
 			}
 			Building building = obj.GetComponent<Building>();
 			if( building != null )
 			{
-				return building.guid;
+				if( building.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return building.guid.Value;
 			}
 			ResourceDeposit deposit = obj.GetComponent<ResourceDeposit>();
 			if( deposit != null )
 			{
-				return deposit.guid;
+				if( deposit.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return deposit.guid.Value;
 			}
 			Hero hero = obj.GetComponent<Hero>();
 			if( hero != null )
 			{
-				return hero.guid;
+				if( hero.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return hero.guid.Value;
 			}
 			Projectile projectile = obj.GetComponent<Projectile>();
 			if( projectile != null )
 			{
-				return projectile.guid;
+				if( projectile.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return projectile.guid.Value;
 			}
 			Extra extra = obj.GetComponent<Extra>();
 			if( extra != null )
 			{
-				return extra.guid;
+				if( extra.guid == null )
+				{
+					throw new Exception( "Guid not assigned." );
+				}
+				return extra.guid.Value;
 			}
 			throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
 		}

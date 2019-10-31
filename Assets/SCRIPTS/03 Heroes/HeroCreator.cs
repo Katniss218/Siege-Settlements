@@ -24,7 +24,7 @@ namespace SS.Heroes
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void SetHeroDefinition( GameObject gameObject, HeroDefinition def )
+		public static void SetDefData( GameObject gameObject, HeroDefinition def, HeroData data )
 		{
 			//
 			//    GRAPHICS GAMEOBJECT
@@ -35,15 +35,17 @@ namespace SS.Heroes
 
 			// Set the hero's mesh and material.
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
+			meshFilter.mesh = def.mesh;
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
+			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo, def.normal, null, 0.0f, 0.25f, 0.0f );
 
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
+			// Set the position/movement information.
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			// Set the hero's size.
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
@@ -52,7 +54,7 @@ namespace SS.Heroes
 
 			// Set the hero's selected icon.
 			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon.Item2;
+			selectable.icon = def.icon;
 
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
@@ -60,6 +62,7 @@ namespace SS.Heroes
 			navMeshAgent.height = def.height;
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
+			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the hero's native parameters.
 			Hero hero = gameObject.GetComponent<Hero>();
@@ -69,72 +72,35 @@ namespace SS.Heroes
 			
 			hero.hudGameObject.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
 			hero.hudGameObject.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
-			
+
+			// Set the faction id.
+			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			factionMember.factionId = data.factionId;
+
 			// Set the hero's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
+			damageable.health = data.health;
 			damageable.armor = def.armor;
 
 
 			//
 			//    MODULES
 			//
-
-			// Remove old melee module (if present).
-			MeleeModule melee = gameObject.GetComponent<MeleeModule>();
-			if( melee != null )
-			{
-				Object.Destroy( melee );
-			}
+			
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				melee = gameObject.AddComponent<MeleeModule>();
+				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
 				melee.SetDefinition( def.melee );
 			}
 
-			// Remove old ranged module (if present).
-			RangedModule ranged = gameObject.GetComponent<RangedModule>();
-			if( ranged != null )
-			{
-				Object.Destroy( ranged );
-			}
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				ranged = gameObject.AddComponent<RangedModule>();
+				RangedModule ranged = gameObject.AddComponent<RangedModule>();
 				ranged.SetDefinition( def.ranged );
 			}
-		}
-
-		private static void SetHeroData( GameObject gameObject, HeroData data )
-		{
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
-
-			// Set the globally unique identifier.
-			Hero hero = gameObject.GetComponent<Hero>();
-			hero.guid = data.guid;
-
-			// Set the faction id.
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			factionMember.factionId = data.factionId;
-
-			// Make the unit damageable.
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-			damageable.health = data.health;
-
-			//
-			//    MODULES
-			//
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -142,8 +108,8 @@ namespace SS.Heroes
 				TAIGoal.Assign( gameObject, taiGoalData );
 			}
 		}
-
-		private static GameObject CreateHero()
+		
+		private static GameObject CreateHero( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.HEROES;
@@ -168,6 +134,7 @@ namespace SS.Heroes
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 
 			Hero hero = container.AddComponent<Hero>();
+			hero.guid = guid;
 
 			// Make the hero selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
@@ -184,7 +151,7 @@ namespace SS.Heroes
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			hero.hudGameObject = hudGameObject;
@@ -360,7 +327,12 @@ namespace SS.Heroes
 
 			HeroData data = new HeroData();
 
-			data.guid = gameObject.GetComponent<Hero>().guid;
+			Hero hero = gameObject.GetComponent<Hero>();
+			if( hero.guid == null )
+			{
+				throw new Exception( "Guid was not assigned." );
+			}
+			data.guid = hero.guid.Value;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
@@ -379,43 +351,23 @@ namespace SS.Heroes
 
 			return data;
 		}
-
+		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, HeroData data )
+		public static GameObject CreateEmpty( Guid guid )
 		{
-			if( !Hero.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid hero." );
-			}
-
-			SetHeroData( gameObject, data );
-		}
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static GameObject CreateEmpty( Guid guid, HeroDefinition def )
-		{
-			GameObject gameObject = CreateHero();
-
-			SetHeroDefinition( gameObject, def );
-
-			Hero hero = gameObject.GetComponent<Hero>();
-			hero.guid = guid;
-
+			GameObject gameObject = CreateHero( guid );
+			
 			return gameObject;
 		}
 
 		public static GameObject Create( HeroDefinition def, HeroData data )
 		{
-			GameObject gameObject = CreateHero();
+			GameObject gameObject = CreateHero( data.guid );
 
-			SetHeroDefinition( gameObject, def );
-			SetHeroData( gameObject, data );
+			SetDefData( gameObject, def, data );
 
 			return gameObject;
 		}

@@ -8,7 +8,7 @@ DaylightCycle =
 {
 	DayLength = 300;
 	NightLength = 200;
-	SunIntensity = 2.0;
+	SunIntensity = 1.75;
 	MoonIntensity = 0.15;
 	SunElevationAngle = 60.0;
 	MoonElevationAngle = 60.0;

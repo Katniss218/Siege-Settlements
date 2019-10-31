@@ -19,7 +19,17 @@ namespace SS.Modules
 		public float velocity { get; set; }
 		public Vector3 localOffsetMin { get; set; }
 		public Vector3 localOffsetMax { get; set; }
-		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
+
+		public override bool CanBeAddedTo( GameObject gameObject )
+		{
+			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
+			{
+				return false;
+			}
+			return true;
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -50,7 +60,7 @@ namespace SS.Modules
 			serializer.WriteVector3( "", "LocalOffsetMin", this.localOffsetMin );
 			serializer.WriteVector3( "", "LocalOffsetMax", this.localOffsetMax );
 
-			serializer.WriteString( "", "AttackSound", this.attackSoundEffect.Item1 );
+			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
 		}
 	}
 }

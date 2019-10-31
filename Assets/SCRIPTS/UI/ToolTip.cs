@@ -75,11 +75,11 @@ namespace SS.UI
 
 		private static void Init() // creates the tooptip structure (hidden).
 		{
-			GameObject tooltipGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/ToolTip Container" ), Main.canvas.transform );
+			GameObject tooltipGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/ToolTip Container" ), Main.canvas.transform );
 			
 			toolTipTransform = tooltipGameObject.GetComponent<RectTransform>();
 			
-			GameObject title = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/Title" ), toolTipTransform );
+			GameObject title = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/Title" ), toolTipTransform );
 
 			titleText = title.GetComponent<TextMeshProUGUI>();
 
@@ -193,7 +193,7 @@ namespace SS.UI
 				Init();
 			}
 
-			GameObject element = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/Text" ), toolTipTransform );
+			GameObject element = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/Text" ), toolTipTransform );
 
 			TextMeshProUGUI textText = element.transform.Find( "Text" ).GetComponent<TextMeshProUGUI>();
 			textText.text = text ?? "";
@@ -218,7 +218,7 @@ namespace SS.UI
 				Init();
 			}
 
-			GameObject element = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/Icon" ), toolTipTransform );
+			GameObject element = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/Icon" ), toolTipTransform );
 
 			Image iconImage = element.transform.Find( "Icon - Wrapper" ).Find( "Icon" ).GetComponent<Image>();
 			iconImage.sprite = icon;
@@ -240,7 +240,7 @@ namespace SS.UI
 				Init();
 			}
 
-			GameObject element = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/Text(Text)" ), toolTipTransform );
+			GameObject element = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/Text(Text)" ), toolTipTransform );
 
 			Transform labelTransform = element.transform.Find( "Label" );
 			LayoutElement labelLayoutElement = labelTransform.GetComponent<LayoutElement>();
@@ -276,7 +276,7 @@ namespace SS.UI
 				Init();
 			}
 
-			GameObject element = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Tooltip Elements/Text(Icon)" ), toolTipTransform );
+			GameObject element = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/Text(Icon)" ), toolTipTransform );
 
 			Transform labelTransform = element.transform.Find( "Label - Wrapper" );
 			LayoutElement labelLayoutElement = labelTransform.GetComponent<LayoutElement>();

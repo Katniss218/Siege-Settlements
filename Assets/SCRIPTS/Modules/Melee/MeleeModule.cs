@@ -147,7 +147,7 @@ namespace SS.Modules
 
 			this.damageSource = damageSource;
 			this.attackCooldown = def.attackCooldown;
-			this.attackSoundEffect = def.attackSoundEffect.Item2;
+			this.attackSoundEffect = def.attackSoundEffect;
 		}
 
 		/// <summary>

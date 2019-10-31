@@ -28,8 +28,9 @@ namespace SS.Units
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void SetUnitDefinition( GameObject gameObject, UnitDefinition def )
+		public static void SetDefData( GameObject gameObject, UnitDefinition def, UnitData data )
 		{
+
 			//
 			//    GRAPHICS GAMEOBJECT
 			//
@@ -39,16 +40,19 @@ namespace SS.Units
 
 			// Set the unit's mesh and material.
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
+			meshFilter.mesh = def.mesh;
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.0f );
+			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo, def.normal, null, 0.0f, 0.25f, 0.0f );
 
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-			
+
+			// Set the position/movement information.
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+
 			// Set the unit's size.
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
@@ -60,6 +64,7 @@ namespace SS.Units
 			navMeshAgent.height = def.height;
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
+			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the unit's native parameters.
 			Unit unit = gameObject.GetComponent<Unit>();
@@ -68,13 +73,15 @@ namespace SS.Units
 
 			// Set the unit's selected icon.
 			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon.Item2;
+			selectable.icon = def.icon;
 
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			factionMember.factionId = data.factionId;
 
 			// Set the unit's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
+			damageable.health = data.health;
 			damageable.armor = def.armor;
 
 			UnityAction<int, string, TechnologyResearchProgress> onTechChange = ( int factionId, string id, TechnologyResearchProgress newProgress ) =>
@@ -136,69 +143,28 @@ namespace SS.Units
 			//
 			//    MODULES
 			//
-
-			// Remove old melee module (if present).
-			MeleeModule melee = gameObject.GetComponent<MeleeModule>();
-			if( melee != null )
-			{
-				Object.Destroy( melee );
-			}
+			
 			// If the new unit is melee, setup the melee module.
 			if( def.melee != null )
 			{
-				melee = gameObject.AddComponent<MeleeModule>();
+				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
 				melee.SetDefinition( def.melee );
 			}
-
-			// Remove old ranged module (if present).
-			RangedModule ranged = gameObject.GetComponent<RangedModule>();
-			if( ranged != null )
-			{
-				Object.Destroy( ranged );
-			}
+			
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
-				ranged = gameObject.AddComponent<RangedModule>();
+				RangedModule ranged = gameObject.AddComponent<RangedModule>();
 				ranged.SetDefinition( def.ranged );
 			}
-		}
-
-		private static void SetUnitData( GameObject gameObject, UnitData data )
-		{
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
-
-
-			// Set the globally unique identifier.
-			Unit unit = gameObject.GetComponent<Unit>();
-			unit.guid = data.guid;
-
-			// Set the faction id.
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			factionMember.factionId = data.factionId;
-
-			// Make the unit damageable.
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-			damageable.health = data.health;
 			
+#warning don't know which module has which data.
+
 			IInventory inventory = gameObject.GetComponent<IInventory>();
 			foreach( var kvp in data.items )
 			{
 				inventory.Add( kvp.Key, kvp.Value );
 			}
-
-			//
-			//    MODULES
-			//
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -207,7 +173,7 @@ namespace SS.Units
 			}
 		}
 
-		private static GameObject CreateUnit()
+		private static GameObject CreateUnit( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.UNITS;
@@ -232,6 +198,7 @@ namespace SS.Units
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 
 			Unit unit = container.AddComponent<Unit>();
+			unit.guid = guid;
 
 			// Make the unit selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
@@ -247,7 +214,7 @@ namespace SS.Units
 			navMeshAgent.stoppingDistance = DEFAULT_STOPPING_DISTANCE;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
-			GameObject hudGameObject = Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_IDENTIFIER + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
@@ -345,7 +312,7 @@ namespace SS.Units
 					{
 						continue;
 					}
-					hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon.Item2; // this can be null.
+					hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
 					hudAmount.text = kvp.Value.ToString();
 
 					hudResourceIcon.gameObject.SetActive( true );
@@ -369,7 +336,7 @@ namespace SS.Units
 						{
 							continue;
 						}
-						hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon.Item2; // this can be null.
+						hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
 						hudAmount.text = kvp.Value.ToString();
 						break;
 					}
@@ -475,7 +442,12 @@ namespace SS.Units
 
 			UnitData data = new UnitData();
 
-			data.guid = gameObject.GetComponent<Unit>().guid;
+			Unit unit = gameObject.GetComponent<Unit>();
+			if( unit.guid == null )
+			{
+				throw new Exception( "Guid not assigned." );
+			}
+			data.guid = unit.guid.Value;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
@@ -504,39 +476,23 @@ namespace SS.Units
 
 
 
-		public static void SetData( GameObject gameObject, UnitData data )
-		{
-			if( !Unit.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid unit." );
-			}
-
-			SetUnitData( gameObject, data );
-		}
-
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public static GameObject CreateEmpty( Guid guid, UnitDefinition def )
+		public static GameObject CreateEmpty( Guid guid )
 		{
-			GameObject gameObject = CreateUnit();
-
-			SetUnitDefinition( gameObject, def );
-
-			Unit unit = gameObject.GetComponent<Unit>();
-			unit.guid = guid;
-
+			GameObject gameObject = CreateUnit( guid );
+			
 			return gameObject;
 		}
 
 		public static GameObject Create( UnitDefinition def, UnitData data )
 		{
-			GameObject gameObject = CreateUnit();
+			GameObject gameObject = CreateUnit( data.guid );
 
-			SetUnitDefinition( gameObject, def );
-			SetUnitData( gameObject, data );
+			SetDefData( gameObject, def, data );
 
 			return gameObject;
 		}
@@ -559,11 +515,11 @@ namespace SS.Units
 				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
 				if( Technologies.TechLock.CheckLocked( buildingDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].GetAllTechs() ) )
 				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, null );
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, null );
 				}
 				else
 				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon.Item2, () =>
+					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, () =>
 					{
 						if( BuildPreview.isActive )
 						{

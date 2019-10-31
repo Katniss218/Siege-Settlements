@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
 using System;
 using UnityEngine;
@@ -8,13 +7,23 @@ namespace SS.Extras
 {
 	public class ExtraDefinition : Definition
 	{
+
+		//--------------------------------------------------------------------
+		//  ASSETS
+		//--------------------------------------
+
 		public MaterialType shaderType { get; set; }
 
-		public Tuple<string, Mesh> mesh { get; private set; }
-		public Tuple<string, Texture2D> albedo { get; private set; }
-		public Tuple<string, Texture2D> normal { get; private set; }
+		public AddressableAsset<Mesh> mesh { get; set; }
+		public AddressableAsset<Texture2D> albedo { get; set; }
+		public AddressableAsset<Texture2D> normal { get; set; }
 		public float metallic { get; set; }
 		public float smoothness { get; set; }
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public ExtraDefinition( string id ) : base( id )
 		{
@@ -40,9 +49,9 @@ namespace SS.Extras
 
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
 
-			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
-			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
-			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "Mesh", (string)this.mesh );
+			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteFloat( "", "Metallic", this.metallic );
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 		}

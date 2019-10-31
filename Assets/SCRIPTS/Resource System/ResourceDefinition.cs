@@ -19,15 +19,15 @@ namespace SS.ResourceSystem
 		/// <summary>
 		/// The icon of this resource.
 		/// </summary>
-		public Tuple<string, Sprite> icon { get; private set; }
+		public AddressableAsset<Sprite> icon { get; private set; }
 
 		/// <summary>
 		/// The default deposit type.
 		/// </summary>
 		public string defaultDeposit { get; set; }
 
-		public Tuple<string, AudioClip> pickupSound { get; private set; }
-		public Tuple<string, AudioClip> dropoffSound { get; private set; }
+		public AddressableAsset<AudioClip> pickupSound { get; private set; }
+		public AddressableAsset<AudioClip> dropoffSound { get; private set; }
 
 		public ResourceDefinition( string id ) : base( id )
 		{
@@ -54,10 +54,10 @@ namespace SS.ResourceSystem
 
 			serializer.WriteString( "", "DefaultDeposit", this.defaultDeposit );
 
-			serializer.WriteString( "", "Icon", this.icon.Item1 );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 
-			serializer.WriteString( "", "PickupSound", this.pickupSound.Item1 );
-			serializer.WriteString( "", "DropoffSound", this.dropoffSound.Item1 );
+			serializer.WriteString( "", "PickupSound", (string)this.pickupSound );
+			serializer.WriteString( "", "DropoffSound", (string)this.dropoffSound );
 		}
 	}
 }

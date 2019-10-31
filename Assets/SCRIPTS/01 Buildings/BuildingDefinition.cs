@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
 using SS.Modules;
 using SS.Technologies;
@@ -12,34 +11,89 @@ namespace SS.Buildings
 	[Serializable]
 	public class BuildingDefinition : Definition, ITechsRequired
 	{
-		public string displayName { get; set; }
+		private string __displayName = "<missing>";
+		public string displayName
+		{
+			get { return this.__displayName; }
+			set
+			{
+				this.__displayName = value ?? throw new Exception( "'DisplayName' can't be null." );
+			}
+		}
 
-		public float healthMax { get; set; }
+		//--------------------------------------------------------------------
+		//  HEALTH-RELATED
+		//--------------------------------------
+
+		private float __healthMax = 1.0f;
+		public float healthMax
+		{
+			get { return this.__healthMax; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'HealthMax' can't be less than or equal to 0." );
+				}
+				this.__healthMax = value;
+			}
+		}
 
 		public Armor armor { get; set; }
 
-		public Vector3 size { get; set; }
+
+		//--------------------------------------------------------------------
+		//  SIZE-RELATED
+		//--------------------------------------
+
+		private Vector3 __size = new Vector3( 0.25f, 0.25f, 0.25f );
+		public Vector3 size
+		{
+			get { return this.__size; }
+			set
+			{
+				if( value.x <= 0.0f
+				 || value.y <= 0.0f
+				 || value.z <= 0.0f )
+				{
+					throw new Exception( "'Size' can't have values less than or equal to 0." );
+				}
+				this.__size = value;
+			}
+		}
+
 
 		public Vector3[] placementNodes { get; set; } // len = 0, if empty
 
-		public Vector3 entrance { get; set; }
+		public Vector3? entrance = null;
+
 
 		public Dictionary<string, int> cost { get; private set; }
 		
+
 		public BarracksModuleDefinition barracks;
 		public ResearchModuleDefinition research;
 		public string[] techsRequired { get; private set; } // the default techs required to unlock.
-		
-		public Tuple<string, Mesh> mesh { get; private set; }
-		public Tuple<string, Texture2D> albedo { get; private set; }
-		public Tuple<string, Texture2D> normal { get; private set; }
-		public Tuple<string, Texture2D> metallicMap { get; private set; }
-		public Tuple<string, Texture2D> roughnessMap { get; private set; }
 
-		public Tuple<string, AudioClip> buildSoundEffect { get; private set; }
-		public Tuple<string, AudioClip> deathSoundEffect { get; private set; }
-		public Tuple<string, Sprite> icon { get; private set; }
 
+		//--------------------------------------------------------------------
+		//  ASSETS
+		//--------------------------------------
+
+		public AddressableAsset<Mesh> mesh { get; set; }
+		public AddressableAsset<Texture2D> albedo { get; set; }
+		public AddressableAsset<Texture2D> normal { get; set; }
+		public AddressableAsset<Texture2D> metallicMap { get; set; }
+		public AddressableAsset<Texture2D> roughnessMap { get; set; }
+
+		public AddressableAsset<AudioClip> buildSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> deathSoundEffect { get; private set; }
+		public AddressableAsset<Sprite> icon { get; private set; }
+
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public BuildingDefinition( string id ) : base( id )
 		{
@@ -58,7 +112,10 @@ namespace SS.Buildings
 
 			this.placementNodes = serializer.ReadVector3Array( "PlacementNodes" );
 
-			this.entrance = serializer.ReadVector3( "Entrance" );
+			if( serializer.Analyze( "Entrance" ).isSuccess )
+			{
+				this.entrance = serializer.ReadVector3( "Entrance" );
+			}
 
 			// Cost
 			var analysisData = serializer.Analyze( "Cost" );
@@ -106,7 +163,10 @@ namespace SS.Buildings
 
 			serializer.WriteVector3Array( "", "PlacementNodes", this.placementNodes );
 
-			serializer.WriteVector3( "", "Entrance", this.entrance );
+			if( this.entrance != null )
+			{
+				serializer.WriteVector3( "", "Entrance", this.entrance.Value );
+			}
 
 			// Cost
 			serializer.WriteList( "", "Cost" );
@@ -131,13 +191,15 @@ namespace SS.Buildings
 
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
-			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
-			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
-			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "Mesh", (string)this.mesh );
+			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			serializer.WriteString( "", "MetallicTexture", (string)this.metallicMap );
+			serializer.WriteString( "", "RoughnessTexture", (string)this.roughnessMap );
 
-			serializer.WriteString( "", "BuildSound", this.buildSoundEffect.Item1 );
-			serializer.WriteString( "", "DeathSound", this.deathSoundEffect.Item1 );
-			serializer.WriteString( "", "Icon", this.icon.Item1 );
+			serializer.WriteString( "", "BuildSound", (string)this.buildSoundEffect );
+			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

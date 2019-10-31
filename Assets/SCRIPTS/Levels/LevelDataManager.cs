@@ -1,5 +1,4 @@
 ﻿using KFF;
-using SS.Content;
 using SS.Diplomacy;
 using SS.Technologies;
 using UnityEngine;
@@ -82,7 +81,7 @@ namespace SS.Levels
 			}
 		}
 
-#warning Ugly code - The 'techs' field is in FactionData but access to it is from here.
+#warning Ugly code - The 'techs' field is in FactionData but access to it is from here since the event can't be per faction.
 		public class UnityEvent_int_string_TechnologyResearchProgress : UnityEvent<int, string, TechnologyResearchProgress> { }
 
 		public static UnityEvent_int_string_TechnologyResearchProgress onTechStateChanged = new UnityEvent_int_string_TechnologyResearchProgress();

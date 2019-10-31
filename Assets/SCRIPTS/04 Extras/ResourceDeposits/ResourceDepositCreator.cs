@@ -21,7 +21,7 @@ namespace SS.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-		private static void SetResourceDepositDefinition( GameObject gameObject, ResourceDepositDefinition def )
+		public static void SetDefData( GameObject gameObject, ResourceDepositDefinition def, ResourceDepositData data )
 		{
 
 			//
@@ -31,15 +31,16 @@ namespace SS.Extras
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh.Item2;
+			meshFilter.mesh = def.mesh;
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo.Item2, def.normal.Item2, null, 0.0f, 0.25f );
+			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo, def.normal, null, 0.0f, 0.25f, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
 
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
+			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 			collider.size = def.size;
@@ -67,24 +68,14 @@ namespace SS.Extras
 			resourceDeposit.isTypeExtracted = def.isExtracted;
 			if( !def.isExtracted )
 			{
-				resourceDeposit.miningSound = def.mineSound.Item2;
+				resourceDeposit.miningSound = def.mineSound;
 			}
-		}
-
-		private static void SetResourceDepositData( GameObject gameObject, ResourceDepositData data )
-		{
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-
 			IInventory inventory = gameObject.GetComponent<IInventory>();
-
-			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
-			resourceDeposit.guid = data.guid;
-
+			
 			foreach( var kvp in data.resources )
 			{
 				int capacity = inventory.GetMaxCapacity( kvp.Key );
@@ -107,7 +98,7 @@ namespace SS.Extras
 			}
 		}
 
-		private static GameObject CreateResourceDeposit()
+		private static GameObject CreateResourceDeposit( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.EXTRAS;
@@ -137,6 +128,7 @@ namespace SS.Extras
 			InventoryConstrained depositInventory = container.AddComponent<InventoryConstrained>();
 
 			ResourceDeposit resourceDeposit = container.AddComponent<ResourceDeposit>();
+			resourceDeposit.guid = guid;
 			resourceDeposit.inventory = depositInventory;
 
 			UnityAction<GameObject> showTooltip = ( GameObject gameObject ) =>
@@ -156,7 +148,7 @@ namespace SS.Extras
 					foreach( var kvp in itemsInDeposit )
 					{
 						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-						ToolTip.AddText( resourceDef.icon.Item2, kvp.Value.ToString() + "/" + deposit.inventory.GetMaxCapacity( kvp.Key ) );
+						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() + "/" + deposit.inventory.GetMaxCapacity( kvp.Key ) );
 					}
 					ToolTip.ShowAt( Input.mousePosition );
 				}
@@ -247,7 +239,11 @@ namespace SS.Extras
 			ResourceDepositData data = new ResourceDepositData();
 
 			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
-			data.guid = resourceDeposit.guid;
+			if( resourceDeposit.guid == null )
+			{
+				throw new Exception( "Guid was not assigned." );
+			}
+			data.guid = resourceDeposit.guid.Value;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
@@ -256,46 +252,23 @@ namespace SS.Extras
 
 			return data;
 		}
-
-
+		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, ResourceDepositData data )
+		public static GameObject CreateEmpty( Guid guid )
 		{
-			if( !ResourceDeposit.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid resource deposit." );
-			}
-
-			SetResourceDepositData( gameObject, data );
-		}
-
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static GameObject CreateEmpty( Guid guid, ResourceDepositDefinition def )
-		{
-			GameObject gameObject = CreateResourceDeposit();
-
-			SetResourceDepositDefinition( gameObject, def );
-
-			ResourceDeposit resourceDeposit = gameObject.GetComponent<ResourceDeposit>();
-			resourceDeposit.guid = guid;
-
+			GameObject gameObject = CreateResourceDeposit( guid );
+			
 			return gameObject;
 		}
 
 		public static GameObject Create( ResourceDepositDefinition def, ResourceDepositData data )
 		{
-			GameObject gameObject = CreateResourceDeposit();
+			GameObject gameObject = CreateResourceDeposit( data.guid );
 
-			SetResourceDepositDefinition( gameObject, def );
-			SetResourceDepositData( gameObject, data );
+			SetDefData( gameObject, def, data );
 
 			return gameObject;
 		}

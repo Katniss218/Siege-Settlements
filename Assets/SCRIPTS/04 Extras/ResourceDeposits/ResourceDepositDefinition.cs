@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using KFF;
+﻿using KFF;
 using SS.Content;
 using System;
 using System.Collections.Generic;
@@ -9,24 +8,60 @@ namespace SS.Extras
 {
 	public class ResourceDepositDefinition : Definition
 	{
-		public string displayName { get; set; }
+		private string __displayName = "<missing>";
+		public string displayName
+		{
+			get { return this.__displayName; }
+			set
+			{
+				this.__displayName = value ?? throw new Exception( "'DisplayName' can't be null." );
+			}
+		}
 
 		public Dictionary<string, int> resources { get; private set; }
 
 		public bool isExtracted { get; set; }
 
-		public Vector3 size { get; set; }
+
+		//--------------------------------------------------------------------
+		//  SIZE-RELATED
+		//--------------------------------------
+
+		private Vector3 __size = new Vector3( 0.25f, 0.25f, 0.25f );
+		public Vector3 size
+		{
+			get { return this.__size; }
+			set
+			{
+				if( value.x <= 0.0f
+				 || value.y <= 0.0f
+				 || value.z <= 0.0f )
+				{
+					throw new Exception( "'Size' can't have values less than or equal to 0." );
+				}
+				this.__size = value;
+			}
+		}
+
+
+		//--------------------------------------------------------------------
+		//  ASSETS
+		//--------------------------------------
 
 		public MaterialType shaderType { get; set; }
 
-		public Tuple<string, Mesh> mesh { get; private set; }
-		public Tuple<string, Texture2D> albedo { get; private set; }
-		public Tuple<string, Texture2D> normal { get; private set; }
+		public AddressableAsset<Mesh> mesh { get; set; }
+		public AddressableAsset<Texture2D> albedo { get; set; }
+		public AddressableAsset<Texture2D> normal { get; set; }
 		public bool isMetallic { get; set; }
 		public float smoothness { get; set; }
 
-		public Tuple<string, AudioClip> mineSound { get; private set; }
+		public AddressableAsset<AudioClip> mineSound { get; private set; }
 
+
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public ResourceDepositDefinition( string id ) : base( id )
 		{
@@ -82,15 +117,15 @@ namespace SS.Extras
 			serializer.WriteBool( "", "IsExtracted", this.isExtracted );
 			if( !this.isExtracted )
 			{
-				serializer.WriteString( "", "MineSound", this.mineSound.Item1 );
+				serializer.WriteString( "", "MineSound", (string)this.mineSound );
 			}
 
 			serializer.WriteVector3( "", "Size", this.size );
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
 
-			serializer.WriteString( "", "Mesh", this.mesh.Item1 );
-			serializer.WriteString( "", "AlbedoTexture", this.albedo.Item1 );
-			serializer.WriteString( "", "NormalTexture", this.normal.Item1 );
+			serializer.WriteString( "", "Mesh", (string)this.mesh );
+			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteBool( "", "IsMetallic", this.isMetallic );
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
 

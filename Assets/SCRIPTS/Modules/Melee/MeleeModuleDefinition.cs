@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using System;
 using UnityEngine;
 
 namespace SS.Modules
@@ -13,7 +12,17 @@ namespace SS.Modules
 
 		public float attackRange { get; set; }
 		public float attackCooldown { get; set; }
-		public Tuple<string, AudioClip> attackSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
+
+		public override bool CanBeAddedTo( GameObject gameObject )
+		{
+			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
+			{
+				return false;
+			}
+			return true;
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -34,7 +43,7 @@ namespace SS.Modules
 
 			serializer.WriteFloat( "", "AttackRange", this.attackRange );
 			serializer.WriteFloat( "", "AttackCooldown", this.attackCooldown );
-			serializer.WriteString( "", "AttackSound", this.attackSoundEffect.Item1 );
+			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
 		}
 	}
 }

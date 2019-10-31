@@ -215,7 +215,7 @@ namespace SS.Buildings
 			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
 
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-			meshFilter.mesh = buildPreview.def.mesh.Item2;
+			meshFilter.mesh = buildPreview.def.mesh;
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
 

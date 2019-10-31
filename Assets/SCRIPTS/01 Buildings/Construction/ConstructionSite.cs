@@ -228,13 +228,13 @@ namespace SS.Buildings
 			float spacingX = collider.size.x / (numX + 1);
 			float spacingZ = collider.size.z / (numZ + 1);
 
-			Mesh corner = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Corner.ksm" );
-			Mesh segment = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_IDENTIFIER + "Models/ConstructionSites/Segment.ksm" );
+			Mesh corner = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_ID + "Models/ConstructionSites/Corner.ksm" );
+			Mesh segment = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_ID + "Models/ConstructionSites/Segment.ksm" );
 
-			Texture2D albedoS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/segment_albedo.png", TextureType.Color );
-			Texture2D normalS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/segment_normal.png", TextureType.Normal );
-			Texture2D albedoC = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/corner_albedo.png", TextureType.Color );
-			Texture2D normalC = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_IDENTIFIER + "Textures/ConstructionSites/corner_normal.png", TextureType.Normal );
+			Texture2D albedoS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Textures/ConstructionSites/segment_albedo.png", TextureType.Color );
+			Texture2D normalS = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Textures/ConstructionSites/segment_normal.png", TextureType.Normal );
+			Texture2D albedoC = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Textures/ConstructionSites/corner_albedo.png", TextureType.Color );
+			Texture2D normalC = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Textures/ConstructionSites/corner_normal.png", TextureType.Normal );
 
 			GameObject constructionSiteGfx = new GameObject( "construction_site_graphics" );
 			constructionSiteGfx.transform.SetParent( gameObject.transform );
