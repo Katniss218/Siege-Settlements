@@ -2,13 +2,12 @@
 using SS.Buildings;
 using SS.Extras;
 using SS.Heroes;
-using SS.Levels;
 using SS.Projectiles;
 using SS.ResourceSystem;
 using SS.Technologies;
 using SS.Units;
+using System;
 using System.Text;
-using UnityEngine;
 
 namespace SS.Content
 {
@@ -163,6 +162,10 @@ namespace SS.Content
 
 		public static UnitDefinition GetUnit( string id )
 		{
+			if( unitDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < unitDefinitions.Length; i++ )
 			{
 				if( unitDefinitions[i].id == id )
@@ -170,11 +173,15 @@ namespace SS.Content
 					return unitDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A unit with an id '" + id + "' is not registered." );
+			throw new Exception( "A unit with an id '" + id + "' is not registered." );
 		}
 
 		public static UnitDefinition[] GetAllUnits()
 		{
+			if( unitDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			UnitDefinition[] ret = new UnitDefinition[unitDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -186,6 +193,10 @@ namespace SS.Content
 
 		public static BuildingDefinition GetBuilding( string id )
 		{
+			if( buildingDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < buildingDefinitions.Length; i++ )
 			{
 				if( buildingDefinitions[i].id == id )
@@ -193,11 +204,15 @@ namespace SS.Content
 					return buildingDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A building with an id '" + id + "' is not registered." );
+			throw new Exception( "A building with an id '" + id + "' is not registered." );
 		}
 
 		public static BuildingDefinition[] GetAllBuildings()
 		{
+			if( buildingDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			BuildingDefinition[] ret = new BuildingDefinition[buildingDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -209,6 +224,10 @@ namespace SS.Content
 
 		public static ProjectileDefinition GetProjectile( string id )
 		{
+			if( projectileDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < projectileDefinitions.Length; i++ )
 			{
 				if( projectileDefinitions[i].id == id )
@@ -216,11 +235,15 @@ namespace SS.Content
 					return projectileDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A projectile with an id '" + id + "' is not registered." );
+			throw new Exception( "A projectile with an id '" + id + "' is not registered." );
 		}
 
 		public static ProjectileDefinition[] GetAllProjectiles()
 		{
+			if( projectileDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			ProjectileDefinition[] ret = new ProjectileDefinition[projectileDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -232,6 +255,10 @@ namespace SS.Content
 
 		public static HeroDefinition GetHero( string id )
 		{
+			if( heroDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < heroDefinitions.Length; i++ )
 			{
 				if( heroDefinitions[i].id == id )
@@ -239,11 +266,15 @@ namespace SS.Content
 					return heroDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A hero with an id '" + id + "' is not registered." );
+			throw new Exception( "A hero with an id '" + id + "' is not registered." );
 		}
 
 		public static HeroDefinition[] GetAllHeroes()
 		{
+			if( heroDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			HeroDefinition[] ret = new HeroDefinition[heroDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -255,6 +286,10 @@ namespace SS.Content
 
 		public static ExtraDefinition GetExtra( string id )
 		{
+			if( extraDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < extraDefinitions.Length; i++ )
 			{
 				if( extraDefinitions[i].id == id )
@@ -262,11 +297,15 @@ namespace SS.Content
 					return extraDefinitions[i];
 				}
 			}
-			throw new System.Exception( "An extra with an id '" + id + "' is not registered." );
+			throw new Exception( "An extra with an id '" + id + "' is not registered." );
 		}
 
 		public static ExtraDefinition[] GetAllExtras()
 		{
+			if( extraDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			ExtraDefinition[] ret = new ExtraDefinition[extraDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -278,6 +317,10 @@ namespace SS.Content
 
 		public static ResourceDepositDefinition GetResourceDeposit( string id )
 		{
+			if( resourceDepositDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < resourceDepositDefinitions.Length; i++ )
 			{
 				if( resourceDepositDefinitions[i].id == id )
@@ -285,11 +328,15 @@ namespace SS.Content
 					return resourceDepositDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A resource deposit with an id '" + id + "' is not registered." );
+			throw new Exception( "A resource deposit with an id '" + id + "' is not registered." );
 		}
 
 		public static ResourceDepositDefinition[] GetAllResourceDeposits()
 		{
+			if( resourceDepositDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			ResourceDepositDefinition[] ret = new ResourceDepositDefinition[extraDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -302,6 +349,10 @@ namespace SS.Content
 
 		public static ResourceDefinition GetResource( string id )
 		{
+			if( resourceDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < resourceDefinitions.Length; i++ )
 			{
 				if( resourceDefinitions[i].id == id )
@@ -309,11 +360,15 @@ namespace SS.Content
 					return resourceDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A resource with an id '" + id + "' is not registered." );
+			throw new Exception( "A resource with an id '" + id + "' is not registered." );
 		}
 
 		public static ResourceDefinition[] GetAllResources()
 		{
+			if( resourceDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			ResourceDefinition[] ret = new ResourceDefinition[resourceDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
@@ -325,6 +380,10 @@ namespace SS.Content
 
 		public static TechnologyDefinition GetTechnology( string id )
 		{
+			if( technologyDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			for( int i = 0; i < technologyDefinitions.Length; i++ )
 			{
 				if( technologyDefinitions[i].id == id )
@@ -332,11 +391,15 @@ namespace SS.Content
 					return technologyDefinitions[i];
 				}
 			}
-			throw new System.Exception( "A technology with an id '" + id + "' is not registered." );
+			throw new Exception( "A technology with an id '" + id + "' is not registered." );
 		}
 
 		public static TechnologyDefinition[] GetAllTechnologies()
 		{
+			if( technologyDefinitions == null )
+			{
+				throw new Exception( "Definitions haven't been loaded yet." );
+			}
 			TechnologyDefinition[] ret = new TechnologyDefinition[technologyDefinitions.Length];
 			for( int i = 0; i < ret.Length; i++ )
 			{
