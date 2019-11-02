@@ -18,6 +18,9 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 
+		public MeleeModuleData meleeData { get; set; }
+		public RangedModuleData rangedData { get; set; }
+
 		public InventoryUnconstrainedData inventoryData { get; set; }
 
 		public TAIGoalData taiGoalData { get; set; }
@@ -34,8 +37,19 @@ namespace SS.Levels.SaveStates
 
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
+			
+			if( serializer.Analyze( "MeleeModuleData").isSuccess )
+			{
+				this.meleeData = new MeleeModuleData();
+				serializer.Deserialize( "MeleeModuleData", this.meleeData );
+			}
 
-
+			if( serializer.Analyze( "RangedModuleData" ).isSuccess )
+			{
+				this.rangedData = new RangedModuleData();
+				serializer.Deserialize( "RangedModuleData", this.rangedData );
+			}
+			
 			inventoryData = new InventoryUnconstrainedData();
 			serializer.Deserialize( "InventoryData", inventoryData );
 
@@ -51,6 +65,16 @@ namespace SS.Levels.SaveStates
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
+
+			if( this.meleeData != null )
+			{
+				serializer.Serialize( "", "MeleeModuleData", this.meleeData );
+			}
+
+			if( this.rangedData != null )
+			{
+				serializer.Serialize( "", "RangedModuleData", this.rangedData );
+			}
 
 			serializer.Serialize( "", "InventoryData", this.inventoryData );
 

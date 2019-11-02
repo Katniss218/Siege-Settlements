@@ -1,4 +1,5 @@
 ﻿using SS.Diplomacy;
+using SS.Levels.SaveStates;
 using System;
 using UnityEngine;
 
@@ -140,8 +141,13 @@ namespace SS.Modules
 
 		public override ModuleData GetData()
 		{
-#warning TODO! - targets get saved.
-			throw new NotImplementedException( "Can't get data of a melee module." );
+			MeleeModuleData data = new MeleeModuleData();
+
+			if( this.target != null )
+			{
+				data.targetGuid = Main.GetGuid( this.target.gameObject );
+			}
+			return data;
 		}
 
 		public override void SetDefinition( ModuleDefinition _def )
@@ -168,10 +174,24 @@ namespace SS.Modules
 			this.attackSoundEffect = def.attackSoundEffect;
 		}
 
-		public override void SetData( ModuleData data )
+		public override void SetData( ModuleData _data )
 		{
-#warning TODO! - targets get saved.
-			throw new NotImplementedException( "Can't assign data to a melee module." );
+			if( !(_data is MeleeModuleData) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
+			MeleeModuleData data = (MeleeModuleData)_data;
+
+			if( data.targetGuid != null )
+			{
+				this.TrySetTarget( Main.GetGameObject( data.targetGuid.Value ).GetComponent<Damageable>() );
+			}
 		}
 
 		/// <summary>

@@ -93,6 +93,10 @@ namespace SS.Heroes
 			{
 				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
 				melee.SetDefinition( def.melee );
+				if( data.meleeData != null )
+				{
+					melee.SetData( data.meleeData );
+				}
 			}
 
 			// If the new unit is ranged, setup the ranged module.
@@ -100,6 +104,10 @@ namespace SS.Heroes
 			{
 				RangedModule ranged = gameObject.AddComponent<RangedModule>();
 				ranged.SetDefinition( def.ranged );
+				if( data.rangedData != null )
+				{
+					ranged.SetData( data.rangedData );
+				}
 			}
 
 			TAIGoalData taiGoalData = data.taiGoalData;
@@ -342,6 +350,18 @@ namespace SS.Heroes
 
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
+
+			MeleeModule meleeModule = gameObject.GetComponent<MeleeModule>();
+			if( meleeModule != null )
+			{
+				data.meleeData = (MeleeModuleData)meleeModule.GetData();
+			}
+
+			RangedModule rangedModule = gameObject.GetComponent<RangedModule>();
+			if( rangedModule != null )
+			{
+				data.rangedData = (RangedModuleData)rangedModule.GetData();
+			}
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )
