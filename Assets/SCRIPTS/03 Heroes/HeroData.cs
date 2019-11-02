@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -18,8 +19,8 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 
-		public MeleeModuleData meleeData { get; set; }
-		public RangedModuleData rangedData { get; set; }
+		public ModuleData meleeData { get; set; }
+		public ModuleData rangedData { get; set; }
 
 		public TAIGoalData taiGoalData { get; set; }
 

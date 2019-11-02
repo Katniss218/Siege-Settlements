@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace SS.Levels.SaveStates
 		public Quaternion rotation { get; set; }
 
 
-		public InventoryConstrainedData inventoryData { get; set; }
+		public ModuleData inventoryData { get; set; }
 
 
 		public void DeserializeKFF( KFFSerializer serializer )

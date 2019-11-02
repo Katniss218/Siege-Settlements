@@ -43,9 +43,9 @@ namespace SS.Units
 
 
 
-		public MeleeModuleDefinition melee;
+		public ModuleDefinition melee;
 
-		public RangedModuleDefinition ranged;
+		public ModuleDefinition ranged;
 		
 		public bool isConstructor { get; set; }
 

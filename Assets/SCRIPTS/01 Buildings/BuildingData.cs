@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -20,8 +21,8 @@ namespace SS.Levels.SaveStates
 		
 		public ConstructionSiteData constructionSaveState { get; set; }
 
-		public BarracksModuleSaveState barracksSaveState { get; set; }
-		public ResearchModuleSaveState researchSaveState { get; set; }
+		public ModuleData barracksSaveState { get; set; }
+		public ModuleData researchSaveState { get; set; }
 		
 
 		public void DeserializeKFF( KFFSerializer serializer )

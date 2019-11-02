@@ -57,8 +57,9 @@ namespace SS
 						ResourceDepositData data = new ResourceDepositData();
 						data.position = position;
 						data.rotation = Quaternion.identity;
-						data.inventoryData = new InventoryConstrainedData();
-						data.inventoryData.items = dict;
+						InventoryConstrainedData invData = new InventoryConstrainedData();
+						invData.items = dict;
+						data.inventoryData = invData;
 
 						ResourceDepositCreator.Create( newDepositDef, data );
 

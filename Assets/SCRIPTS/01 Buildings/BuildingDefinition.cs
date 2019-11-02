@@ -71,8 +71,8 @@ namespace SS.Buildings
 		public Dictionary<string, int> cost { get; private set; }
 		
 
-		public BarracksModuleDefinition barracks;
-		public ResearchModuleDefinition research;
+		public ModuleDefinition barracks;
+		public ModuleDefinition research;
 		public string[] techsRequired { get; private set; } // the default techs required to unlock.
 
 
