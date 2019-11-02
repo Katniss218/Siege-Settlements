@@ -148,6 +148,10 @@ namespace SS.Units
 			{
 				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
 				melee.SetDefinition( def.melee );
+				if( data.meleeData != null )
+				{
+					melee.SetData( data.meleeData );
+				}
 			}
 			
 			// If the new unit is ranged, setup the ranged module.
@@ -155,6 +159,10 @@ namespace SS.Units
 			{
 				RangedModule ranged = gameObject.AddComponent<RangedModule>();
 				ranged.SetDefinition( def.ranged );
+				if( data.rangedData != null )
+				{
+					ranged.SetData( data.rangedData );
+				}
 			}
 			
 			InventoryUnconstrained inventory = gameObject.GetComponent<InventoryUnconstrained>();
@@ -451,6 +459,18 @@ namespace SS.Units
 
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
+
+			MeleeModule meleeModule = gameObject.GetComponent<MeleeModule>();
+			if( meleeModule != null )
+			{
+				data.meleeData = (MeleeModuleData)meleeModule.GetData();
+			}
+
+			RangedModule rangedModule = gameObject.GetComponent<RangedModule>();
+			if( rangedModule != null )
+			{
+				data.rangedData = (RangedModuleData)rangedModule.GetData();
+			}
 
 			data.inventoryData = (InventoryUnconstrainedData)gameObject.GetComponent<InventoryUnconstrained>().GetData();
 
