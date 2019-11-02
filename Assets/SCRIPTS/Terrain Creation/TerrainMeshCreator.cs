@@ -96,9 +96,10 @@ namespace SS.TerrainCreation
 			Mesh mesh = new Mesh();
 			mesh.vertices = verts;
 			mesh.uv = uvs;
-			mesh.triangles = triangles;
+			mesh.SetTriangles( triangles, 0 );
 			mesh.RecalculateNormals();
-
+			mesh.RecalculateTangents();
+			
 			return mesh;
 		}
 	}
