@@ -68,13 +68,8 @@ namespace SS.Extras
 				inventoryDef.slots[i] = new InventoryConstrainedDefinition.Slot() { resourceId = kvp.Key, capacity = kvp.Value };
 				i++;
 			}
-			depositInventory.SetDefinition( inventoryDef );
-			depositInventory.SetData( data.inventoryData );
 
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
+			depositInventory.SetDefData( inventoryDef, data.inventoryData );
 		}
 
 		private static GameObject CreateResourceDeposit( Guid guid )

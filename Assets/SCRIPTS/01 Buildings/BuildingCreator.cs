@@ -85,24 +85,14 @@ namespace SS.Buildings
 			if( def.barracks != null )
 			{
 				BarracksModule barracks = gameObject.AddComponent<BarracksModule>();
-				barracks.SetDefinition( def.barracks );
-
-				if( data.barracksSaveState != null )
-				{
-					barracks.SetData( data.barracksSaveState );
-				}
+				barracks.SetDefData( def.barracks , data.barracksSaveState );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.research != null )
 			{
 				ResearchModule research = gameObject.AddComponent<ResearchModule>();
-				research.SetDefinition( def.research );
-
-				if( data.researchSaveState != null )
-				{
-					research.SetData( data.researchSaveState );
-				}
+				research.SetDefData( def.research, data.researchSaveState );
 			}
 
 			//

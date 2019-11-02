@@ -190,20 +190,29 @@ namespace SS.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
-		public override void SetDefinition( ModuleDefinition _def )
+
+		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
 			if( !(_def is ResearchModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
-
 			if( _def == null )
 			{
 				throw new Exception( "Provided definition is null." );
 			}
 
+			if( !(_data is ResearchModuleSaveState) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
 			ResearchModuleDefinition def = (ResearchModuleDefinition)_def;
+			ResearchModuleSaveState data = (ResearchModuleSaveState)_data;
 
 			this.researchSpeed = def.researchSpeed;
 			Selectable selectable = this.GetComponent<Selectable>();
@@ -230,21 +239,7 @@ namespace SS.Modules
 					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
 				}
 			}
-		}
-		
-		public override void SetData( ModuleData _data )
-		{
-			if( !(_data is ResearchModuleSaveState) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
 
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-
-			ResearchModuleSaveState data = (ResearchModuleSaveState)_data;
 
 			this.resourcesRemaining = data.resourcesRemaining;
 
@@ -258,7 +253,7 @@ namespace SS.Modules
 			}
 			this.researchProgress = data.researchProgress;
 		}
-
+		
 
 		void OnDestroy()
 		{

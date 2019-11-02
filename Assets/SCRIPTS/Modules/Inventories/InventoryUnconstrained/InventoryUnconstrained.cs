@@ -281,19 +281,28 @@ namespace SS.Modules.Inventories
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public override void SetDefinition( ModuleDefinition _def )
+		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
 			if( !(_def is InventoryUnconstrainedDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
-
 			if( _def == null )
 			{
 				throw new Exception( "Provided definition is null." );
 			}
 
+			if( !(_data is InventoryUnconstrainedData) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
 			InventoryUnconstrainedDefinition def = (InventoryUnconstrainedDefinition)_def;
+			InventoryUnconstrainedData data = (InventoryUnconstrainedData)_data;
 
 			this.resources = new SlotGroup[def.slotCount];
 			for( int i = 0; i < this.resources.Length; i++ )
@@ -301,22 +310,6 @@ namespace SS.Modules.Inventories
 				this.resources[i] = new SlotGroup( "", 0 );
 			}
 			this.slotCapacity = def.slotCapacity;
-		}
-
-
-		public override void SetData( ModuleData _data )
-		{
-			if( !(_data is InventoryUnconstrainedData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-
-			InventoryUnconstrainedData data = (InventoryUnconstrainedData)_data;
 
 
 			foreach( var kvp in data.items )

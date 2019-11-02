@@ -8,8 +8,9 @@ namespace SS.Modules
 	public abstract class Module : MonoBehaviour
 	{
 		public abstract ModuleData GetData();
-		
-		public abstract void SetDefinition( ModuleDefinition def );
-		public abstract void SetData( ModuleData data );
+
+		public abstract void SetDefData( ModuleDefinition def, ModuleData data );
+		//public abstract void SetDefinition( ModuleDefinition def );
+		//public abstract void SetData( ModuleData data );
 	}
 }

@@ -223,19 +223,28 @@ namespace SS.Modules
 			return data;
 		}
 
-		public override void SetDefinition( ModuleDefinition _def )
+		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
 			if( !(_def is RangedModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
-
 			if( _def == null )
 			{
 				throw new Exception( "Provided definition is null." );
 			}
 
+			if( !(_data is RangedModuleData) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+
 			RangedModuleDefinition def = (RangedModuleDefinition)_def;
+			RangedModuleData data = (RangedModuleData)_data;
 
 			this.canTarget = FactionMember.CanTargetAnother;
 			this.searchRange = def.attackRange;
@@ -251,28 +260,13 @@ namespace SS.Modules
 			this.localOffsetMin = def.localOffsetMin;
 			this.localOffsetMax = def.localOffsetMax;
 			this.attackSoundEffect = def.attackSoundEffect;
-		}
-
-		public override void SetData( ModuleData _data )
-		{
-			if( !(_data is RangedModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-
-			RangedModuleData data = (RangedModuleData)_data;
 
 			if( data.targetGuid != null )
 			{
 				this.TrySetTarget( Main.GetGameObject( data.targetGuid.Value ).GetComponent<Damageable>() );
 			}
 		}
-
+		
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()

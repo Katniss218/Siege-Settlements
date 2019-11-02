@@ -92,22 +92,14 @@ namespace SS.Heroes
 			if( def.melee != null )
 			{
 				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
-				melee.SetDefinition( def.melee );
-				if( data.meleeData != null )
-				{
-					melee.SetData( data.meleeData );
-				}
+				melee.SetDefData( def.melee, data.meleeData );
 			}
 
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
 				RangedModule ranged = gameObject.AddComponent<RangedModule>();
-				ranged.SetDefinition( def.ranged );
-				if( data.rangedData != null )
-				{
-					ranged.SetData( data.rangedData );
-				}
+				ranged.SetDefData( def.ranged, data.rangedData );
 			}
 
 			TAIGoalData taiGoalData = data.taiGoalData;

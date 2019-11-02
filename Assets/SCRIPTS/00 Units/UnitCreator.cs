@@ -147,26 +147,22 @@ namespace SS.Units
 			if( def.melee != null )
 			{
 				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
-				melee.SetDefinition( def.melee );
-				if( data.meleeData != null )
-				{
-					melee.SetData( data.meleeData );
-				}
+				melee.SetDefData( def.melee, data.meleeData );
 			}
 			
 			// If the new unit is ranged, setup the ranged module.
 			if( def.ranged != null )
 			{
 				RangedModule ranged = gameObject.AddComponent<RangedModule>();
-				ranged.SetDefinition( def.ranged );
-				if( data.rangedData != null )
-				{
-					ranged.SetData( data.rangedData );
-				}
+				ranged.SetDefData( def.ranged, data.rangedData );
 			}
 			
 			InventoryUnconstrained inventory = gameObject.GetComponent<InventoryUnconstrained>();
-			inventory.SetData( data.inventoryData );
+
+			InventoryUnconstrainedDefinition inventoryDef = new InventoryUnconstrainedDefinition();
+			inventoryDef.slotCapacity = 10;
+			inventoryDef.slotCount = 1;
+			inventory.SetDefData( inventoryDef, data.inventoryData );
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -299,11 +295,7 @@ namespace SS.Units
 
 			// Add inventory.
 			InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
-			InventoryUnconstrainedDefinition inventoryDef = new InventoryUnconstrainedDefinition();
-			inventoryDef.slotCapacity = 10;
-			inventoryDef.slotCount = 1;
-			inventory.SetDefinition( inventoryDef );
-
+			
 			// Make the inventory update the HUD wien resources are added/removed.
 			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
 			{

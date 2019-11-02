@@ -150,12 +150,22 @@ namespace SS.Modules
 			this.selectable = this.GetComponent<Selectable>();
 
 
-			if( this.GetComponent<Building>().entrance == null )
+
+			Building building = this.GetComponent<Building>();
+			if( building == null )
 			{
-				throw new Exception( "Can't assign barracks to a building with no entrance." );
+				this.spawnPosition = Vector3.zero;
+			}
+			else
+			{
+				if( building.entrance == null )
+				{
+					throw new Exception( "Can't assign barracks to a building with no entrance." );
+				}
+				this.spawnPosition = building.entrance.Value;
 			}
 		}
-
+		
 		// Update is called once per frame
 		void Update()
 		{
@@ -243,36 +253,34 @@ namespace SS.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public override void SetDefinition( ModuleDefinition _def )
+		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
 			if( !(_def is BarracksModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
-
 			if( _def == null )
 			{
 				throw new Exception( "Provided definition is null." );
 			}
 
+			if( !(_data is BarracksModuleSaveState) )
+			{
+				throw new Exception( "Provided data is not of the correct type." );
+			}
+			if( _data == null )
+			{
+				throw new Exception( "Provided data is null." );
+			}
+			
 			BarracksModuleDefinition def = (BarracksModuleDefinition)_def;
+			BarracksModuleSaveState data = (BarracksModuleSaveState)_data;
 
 			this.trainSpeed = def.trainSpeed;
 			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];
 			for( int i = 0; i < this.trainableUnits.Length; i++ )
 			{
 				this.trainableUnits[i] = DefinitionManager.GetUnit( def.trainableUnits[i] );
-			}
-
-			Building building = this.GetComponent<Building>();
-			if( building == null )
-			{
-#warning this doesn't depend on barracks def, but on the building's def. And the def doesn't change.
-				this.spawnPosition = Vector3.zero;
-			}
-			else
-			{
-				this.spawnPosition = building.entrance.Value;
 			}
 
 			Selectable selectable = this.GetComponent<Selectable>();
@@ -299,21 +307,6 @@ namespace SS.Modules
 					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
 				}
 			}
-		}
-		
-		public override void SetData( ModuleData _data )
-		{
-			if( !(_data is BarracksModuleSaveState) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-
-			BarracksModuleSaveState data = (BarracksModuleSaveState)_data;
 
 			this.resourcesRemaining = data.resourcesRemaining;
 			if( data.trainedUnitId == "" )
@@ -327,8 +320,7 @@ namespace SS.Modules
 			this.trainProgress = data.trainProgress;
 			this.rallyPoint = data.rallyPoint;
 		}
-
-
+		
 		void OnDestroy()
 		{
 			if( this.factionMember != null )

@@ -112,6 +112,8 @@ namespace SS.Modules
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
+
+			this.canTarget = FactionMember.CanTargetAnother;
 		}
 
 		private void Start()
@@ -150,50 +152,44 @@ namespace SS.Modules
 			return data;
 		}
 
-		public override void SetDefinition( ModuleDefinition _def )
+		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
 			if( !(_def is MeleeModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
-
 			if( _def == null )
 			{
 				throw new Exception( "Provided definition is null." );
 			}
 
-			MeleeModuleDefinition def = (MeleeModuleDefinition)_def;
-
-			this.canTarget = FactionMember.CanTargetAnother;
-			this.searchRange = def.attackRange;
-			
-			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
-
-			this.damageSource = damageSource;
-			this.attackCooldown = def.attackCooldown;
-			this.attackSoundEffect = def.attackSoundEffect;
-		}
-
-		public override void SetData( ModuleData _data )
-		{
 			if( !(_data is MeleeModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
 			}
-
 			if( _data == null )
 			{
 				throw new Exception( "Provided data is null." );
 			}
 
+			MeleeModuleDefinition def = (MeleeModuleDefinition)_def;
 			MeleeModuleData data = (MeleeModuleData)_data;
+
+			this.searchRange = def.attackRange;
+			
+			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
+			this.damageSource = damageSource;
+
+			this.attackCooldown = def.attackCooldown;
+			this.attackSoundEffect = def.attackSoundEffect;
+
 
 			if( data.targetGuid != null )
 			{
 				this.TrySetTarget( Main.GetGameObject( data.targetGuid.Value ).GetComponent<Damageable>() );
 			}
 		}
-
+		
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
 		/// </summary>
