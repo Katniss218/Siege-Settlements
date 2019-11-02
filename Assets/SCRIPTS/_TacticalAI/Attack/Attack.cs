@@ -8,7 +8,7 @@ namespace SS
 		public class Attack : TAIGoal
 		{
 			/// <summary>
-			/// The deposit to move to and pick up.
+			/// The object to attack.
 			/// </summary>
 			public GameObject target { get; private set; }
 
