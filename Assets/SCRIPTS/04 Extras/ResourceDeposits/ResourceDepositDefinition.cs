@@ -78,7 +78,13 @@ namespace SS.Extras
 			this.resources = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.resources.Add( serializer.ReadString( "Resources." + i + ".Id" ), serializer.ReadInt( "Resources." + i + ".Capacity" ) );
+				string id = serializer.ReadString( new Path( "Resources.{0}.Id", i ) );
+				int amt = serializer.ReadInt( new Path( "Resources.{0}.Capacity", i ) );
+				if( amt < 1 )
+				{
+					throw new Exception( "Can't have Resource with capacity less than or equal to 0." );
+				}
+				this.resources.Add( id, amt );
 			}
 
 			this.isExtracted = serializer.ReadBool( "IsExtracted" );

@@ -122,7 +122,13 @@ namespace SS.Buildings
 			this.cost = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.cost.Add( serializer.ReadString( new Path( "Cost.{0}.Id", i ) ), serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) ) );
+				string id = serializer.ReadString( new Path( "Cost.{0}.Id", i ) );
+				int amt = serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) );
+				if( amt < 1 )
+				{
+					throw new Exception( "Can't have cost with amount less than or equal to 0." );
+				}
+				this.cost.Add( id, amt );
 			}
 
 			if( serializer.Analyze( "BarracksModule" ).isSuccess )

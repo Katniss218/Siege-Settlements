@@ -121,7 +121,6 @@ namespace SS.Units
 		//--------------------------------------
 
 		public Dictionary<string, int> cost { get; private set; }
-#warning wrapper "ResourceCost" - needed to make sure that a <= 0 value can't be set (in a dict, it still can be set via a method that I have no control over).
 
 		private float __buildTime = 0.0f;
 		public float buildTime
@@ -193,7 +192,13 @@ namespace SS.Units
 			this.cost = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
-				this.cost.Add( serializer.ReadString( new Path( "Cost.{0}.Id", i ) ), serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) ) );
+				string id = serializer.ReadString( new Path( "Cost.{0}.Id", i ) );
+				int amt = serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) );
+				if( amt < 1 )
+				{
+					throw new Exception( "Can't have cost with amount less than or equal to 0." );
+				}
+				this.cost.Add( id, amt );
 			}
 
 			this.buildTime = serializer.ReadFloat( "BuildTime" );
