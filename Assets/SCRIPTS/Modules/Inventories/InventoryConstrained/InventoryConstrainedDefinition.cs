@@ -30,7 +30,10 @@ namespace SS.Modules.Inventories
 
 		public override bool CanBeAddedTo( GameObject gameObject )
 		{
-#warning TODO! incomplete.
+			if( gameObject.GetComponent<IInventory>() != null )
+			{
+				return false;
+			}
 			return true;
 		}
 
