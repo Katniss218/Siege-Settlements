@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Extras;
+using SS.Modules;
 using SS.Modules.Inventories;
 using System.Collections.Generic;
 using UnityEngine;
@@ -49,10 +50,10 @@ namespace SS
 				string idPickedUp = "";
 				int amountPickedUp = 0;
 
-				ResourceDeposit depositToCollect = this.destination.GetComponent<ResourceDeposit>();
+				ResourceDepositModule depositToCollect = this.destination.GetComponent<ResourceDepositModule>();
 				if( depositToCollect.isTypeExtracted )
 				{
-					Dictionary<string, int> resourcesInDeposit = depositToCollect.inventory.GetAll();
+					Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
 
 					foreach( var kvp in resourcesInDeposit )
 					{
@@ -67,7 +68,7 @@ namespace SS
 
 							if( amountPickedUp > 0 )
 							{
-								depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+								depositToCollect.Remove( idPickedUp, amountPickedUp );
 								AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 							}
 							break; // Only pick up one resource at a time.
@@ -76,11 +77,11 @@ namespace SS
 				}
 				else
 				{
-					amtCollected += ResourceDeposit.MINING_SPEED * Time.deltaTime;
+					amtCollected += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
 					int amtFloored = Mathf.FloorToInt( amtCollected );
 					if( amtFloored >= 1 )
 					{
-						Dictionary<string, int> resourcesInDeposit = depositToCollect.inventory.GetAll();
+						Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
 
 						foreach( var kvp in resourcesInDeposit )
 						{
@@ -96,7 +97,7 @@ namespace SS
 
 								if( amountPickedUp > 0 )
 								{
-									depositToCollect.inventory.Remove( idPickedUp, amountPickedUp );
+									depositToCollect.Remove( idPickedUp, amountPickedUp );
 									AudioManager.PlaySound( depositToCollect.miningSound );
 								}
 								break; // Only pick up one resource at a time.

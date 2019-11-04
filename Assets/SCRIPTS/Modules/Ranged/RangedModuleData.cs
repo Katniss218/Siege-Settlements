@@ -6,6 +6,8 @@ namespace SS.Levels.SaveStates
 {
 	public class RangedModuleData : ModuleData
 	{
+		public const string KFF_TYPEID = "ranged";
+
 		public Guid? targetGuid { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )

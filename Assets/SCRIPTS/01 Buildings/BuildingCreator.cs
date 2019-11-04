@@ -80,21 +80,15 @@ namespace SS.Buildings
 			//
 			//    MODULES
 			//
+
+			ModuleDefinition[] moduleDefs = def.GetAllModules();
+			ModuleData[] moduleDatas = data.GetAllModuleDatas();
+
+			for( int i =0; i < moduleDefs.Length; i++ )
+			{
+				moduleDefs[i].AddModule( gameObject, moduleDatas[i] );
+			}
 			
-			// If the new unit is melee, setup the melee module.
-			if( def.barracks != null )
-			{
-				BarracksModule barracks = gameObject.AddComponent<BarracksModule>();
-				barracks.SetDefData( def.barracks , data.barracksSaveState );
-			}
-
-			// If the new unit is ranged, setup the ranged module.
-			if( def.research != null )
-			{
-				ResearchModule research = gameObject.AddComponent<ResearchModule>();
-				research.SetDefData( def.research, data.researchSaveState );
-			}
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -367,13 +361,13 @@ namespace SS.Buildings
 			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
 			if( barracks != null )
 			{
-				data.barracksSaveState = (BarracksModuleSaveState)barracks.GetData();
+				data.barracksSaveState = (BarracksModuleData)barracks.GetData();
 			}
 
 			ResearchModule research = gameObject.GetComponent<ResearchModule>();
 			if( research != null )
 			{
-				data.researchSaveState = (ResearchModuleSaveState)research.GetData();
+				data.researchSaveState = (ResearchModuleData)research.GetData();
 			}
 
 			return data;

@@ -1,11 +1,18 @@
 ﻿using KFF;
+using SS.Buildings;
 using SS.Content;
+using SS.Heroes;
+using SS.Units;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules
 {
 	public class MeleeModuleDefinition : ModuleDefinition
 	{
+		public const string KFF_TYPEID = "melee";
+
 		public DamageType damageType { get; set; }
 		public float damage { get; set; }
 		public float armorPenetration { get; set; }
@@ -14,13 +21,17 @@ namespace SS.Modules
 		public float attackCooldown { get; set; }
 		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
 
-		public override bool CanBeAddedTo( GameObject gameObject )
+		public override bool CheckTypeDefConstraints( Type objType )
 		{
-			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
-			{
-				return false;
-			}
-			return true;
+			return
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition ) ||
+				objType == typeof( HeroDefinition );
+		}
+
+		public override bool CheckModuleDefConstraints( List<Type> modTypes )
+		{
+			return true; // no module constraints
 		}
 
 
@@ -44,6 +55,12 @@ namespace SS.Modules
 			serializer.WriteFloat( "", "AttackRange", this.attackRange );
 			serializer.WriteFloat( "", "AttackCooldown", this.attackCooldown );
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
+		}
+
+		public override void AddModule( GameObject gameObject, ModuleData data )
+		{
+			MeleeModule module = gameObject.AddComponent<MeleeModule>();
+			module.SetDefData( this, data );
 		}
 	}
 }

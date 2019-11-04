@@ -60,6 +60,7 @@ namespace SS.Extras
 			}
 		}
 
+		public string displayName { get; set; }
 
 		void OnEnable()
 		{

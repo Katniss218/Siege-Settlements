@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Diplomacy;
 using SS.Levels.SaveStates;
+using SS.Modules;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -93,8 +94,16 @@ namespace SS.Projectiles
 
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
+			
+			ModuleDefinition[] moduleDefs = def.GetAllModules();
+			ModuleData[] moduleDatas = data.GetAllModuleDatas();
+
+			for( int i = 0; i < moduleDefs.Length; i++ )
+			{
+				moduleDefs[i].AddModule( gameObject, moduleDatas[i] );
+			}
 		}
-		
+
 		private static void MakeStuck( GameObject unstuckProjectile )
 		{
 			unstuckProjectile.GetComponent<TimerHandler>().RestartTimer(); // reset the timer to count again from after being stuck.

@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Content;
 using SS.Modules;
 using System;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Contains every information to successfully round-trip a hero, to and from file.
 	/// </summary>
-	public class HeroData : IKFFSerializable
+	public class HeroData : ObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -18,14 +19,11 @@ namespace SS.Levels.SaveStates
 		public int factionId { get; set; }
 
 		public float health { get; set; }
-
-		public ModuleData meleeData { get; set; }
-		public ModuleData rangedData { get; set; }
-
+		
 		public TAIGoalData taiGoalData { get; set; }
 
 
-		public void DeserializeKFF( KFFSerializer serializer )
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
 
@@ -35,22 +33,12 @@ namespace SS.Levels.SaveStates
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
 			
-			if( serializer.Analyze( "MeleeModuleData").isSuccess )
-			{
-				this.meleeData = new MeleeModuleData();
-				serializer.Deserialize( "MeleeModuleData", this.meleeData );
-			}
-
-			if( serializer.Analyze( "RangedModuleData" ).isSuccess )
-			{
-				this.rangedData = new RangedModuleData();
-				serializer.Deserialize( "RangedModuleData", this.rangedData );
-			}
-			
 			this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
 
@@ -59,18 +47,11 @@ namespace SS.Levels.SaveStates
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
-
-			if( this.meleeData != null )
-			{
-				serializer.Serialize( "", "MeleeModuleData", this.meleeData );
-			}
-
-			if( this.rangedData != null )
-			{
-				serializer.Serialize( "", "RangedModuleData", this.rangedData );
-			}
+			
 
 			TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

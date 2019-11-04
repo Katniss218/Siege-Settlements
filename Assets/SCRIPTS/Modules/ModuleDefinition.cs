@@ -1,4 +1,6 @@
 ﻿using KFF;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules
@@ -6,25 +8,17 @@ namespace SS.Modules
 	public abstract class ModuleDefinition : IKFFSerializable
 	{
 		/// <summary>
-		/// Checks if a module can be added to an object.
+		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
 		/// </summary>
-		public abstract bool CanBeAddedTo( GameObject gameObject );
-		
-		/*
-		public abstract ObjectType objectTypeConstraint { get; }
-		
-		public bool CanBeAddedTo( ObjectType objType )
-		{
-			int objTypeInt = (int)objType;
-			int objectTypeConstraintInt = (int)objectTypeConstraint;
+		public abstract bool CheckTypeDefConstraints( Type objType );
 
-			if( (objTypeInt & objectTypeConstraintInt) == objTypeInt )
-			{
-				return true;
-			}
-			return false;
-		}
-		*/
+		/// <summary>
+		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
+		/// </summary>
+		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
+
+		public abstract void AddModule( GameObject gameObject, ModuleData data );
+
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
 	}

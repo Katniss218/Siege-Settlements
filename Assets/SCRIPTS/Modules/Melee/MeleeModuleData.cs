@@ -6,6 +6,8 @@ namespace SS.Levels.SaveStates
 {
 	public class MeleeModuleData : ModuleData
 	{
+		public const string KFF_TYPEID = "melee";
+
 		public Guid? targetGuid { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )

@@ -7,8 +7,10 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Used to round-trip modules, to and from file.
 	/// </summary>
-	public class ResearchModuleSaveState : ModuleData
+	public class ResearchModuleData : ModuleData
 	{
+		public const string KFF_TYPEID = "research";
+
 		public string researchedTechnologyId { get; set; }
 		public float researchProgress { get; set; }
 		public Dictionary<string, int> resourcesRemaining { get; set; }

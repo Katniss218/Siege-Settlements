@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Content;
 using SS.Modules;
 using System;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Contains every information to (with a definition) successfully round-trip a unit, to and from file.
 	/// </summary>
-	public class UnitData : IKFFSerializable
+	public class UnitData : ObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -19,17 +20,17 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 
-		public ModuleData meleeData { get; set; }
-		public ModuleData rangedData { get; set; }
+		//public ModuleData meleeData { get; set; }
+		//public ModuleData rangedData { get; set; }
 
-		public InventoryUnconstrainedData inventoryData { get; set; }
+		//public InventoryUnconstrainedData inventoryData { get; set; }
 
 		public TAIGoalData taiGoalData { get; set; }
 
 		// when a module save state is present on the save state, and it's not present on the definition - throw an exception.
 		// not every module needs save state, but every save state needs module.
 
-		public void DeserializeKFF( KFFSerializer serializer )
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
 
@@ -39,25 +40,15 @@ namespace SS.Levels.SaveStates
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
 			
-			if( serializer.Analyze( "MeleeModuleData").isSuccess )
-			{
-				this.meleeData = new MeleeModuleData();
-				serializer.Deserialize( "MeleeModuleData", this.meleeData );
-			}
-
-			if( serializer.Analyze( "RangedModuleData" ).isSuccess )
-			{
-				this.rangedData = new RangedModuleData();
-				serializer.Deserialize( "RangedModuleData", this.rangedData );
-			}
-			
-			inventoryData = new InventoryUnconstrainedData();
-			serializer.Deserialize( "InventoryData", inventoryData );
+			//inventoryData = new InventoryUnconstrainedData();
+			//serializer.Deserialize( "InventoryData", inventoryData );
 
 			this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
 
@@ -66,20 +57,12 @@ namespace SS.Levels.SaveStates
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
-
-			if( this.meleeData != null )
-			{
-				serializer.Serialize( "", "MeleeModuleData", this.meleeData );
-			}
-
-			if( this.rangedData != null )
-			{
-				serializer.Serialize( "", "RangedModuleData", this.rangedData );
-			}
-
-			serializer.Serialize( "", "InventoryData", this.inventoryData );
+			
+			//serializer.Serialize( "", "InventoryData", this.inventoryData );
 
 			TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

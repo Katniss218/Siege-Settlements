@@ -9,7 +9,7 @@ namespace SS.ResourceSystem
 	/// <summary>
 	/// Defines a resource.
 	/// </summary>
-	public class ResourceDefinition : Definition
+	public class ResourceDefinition : AddressableDefinition
 	{
 		/// <summary>
 		/// The display name of this resource.

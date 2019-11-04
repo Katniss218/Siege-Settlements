@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Content;
 using SS.Modules;
 using System;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Contains every information to successfully round-trip a building, to and from file.
 	/// </summary>
-	public class BuildingData : IKFFSerializable
+	public class BuildingData : ObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -21,11 +22,11 @@ namespace SS.Levels.SaveStates
 		
 		public ConstructionSiteData constructionSaveState { get; set; }
 
-		public ModuleData barracksSaveState { get; set; }
-		public ModuleData researchSaveState { get; set; }
+		//public ModuleData barracksSaveState { get; set; }
+		//public ModuleData researchSaveState { get; set; }
 		
 
-		public void DeserializeKFF( KFFSerializer serializer )
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
 
@@ -40,21 +41,11 @@ namespace SS.Levels.SaveStates
 				this.constructionSaveState = new ConstructionSiteData();
 				serializer.Deserialize( "ConstructionSaveState", this.constructionSaveState );
 			}
-
-			if( serializer.Analyze( "BarracksModuleSaveState" ).isSuccess )
-			{
-				this.barracksSaveState = new BarracksModuleSaveState();
-				serializer.Deserialize( "BarracksModuleSaveState", this.barracksSaveState );
-			}
-
-			if( serializer.Analyze( "ResearchModuleSaveState" ).isSuccess )
-			{
-				this.researchSaveState = new ResearchModuleSaveState();
-				serializer.Deserialize( "ResearchModuleSaveState", this.researchSaveState );
-			}
+			
+			this.DeserializeModulesKFF( serializer );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
 
@@ -69,15 +60,7 @@ namespace SS.Levels.SaveStates
 				serializer.Serialize( "", "ConstructionSaveState", this.constructionSaveState );
 			}
 
-			if( this.barracksSaveState != null )
-			{
-				serializer.Serialize( "", "BarracksModuleSaveState", this.barracksSaveState );
-			}
-
-			if( this.researchSaveState != null )
-			{
-				serializer.Serialize( "", "ResearchModuleSaveState", this.researchSaveState );
-			}
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

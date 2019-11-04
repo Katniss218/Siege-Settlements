@@ -1,4 +1,5 @@
 ﻿using SS.Levels.SaveStates;
+using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -36,8 +37,40 @@ namespace SS.Extras
 
 			Extra extra = gameObject.GetComponent<Extra>();
 			extra.defId = def.id;
+			extra.displayName = def.displayName;
+
+			//
+			//    MODULES
+			//
+
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
+
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+			data.GetAllModules( out moduleDataIds, out moduleData );
+
+			int moduleCount = moduleDefIds.Length;
+
+			for( int i = 0; i < moduleCount; i++ )
+			{
+				for( int j = 0; j < moduleCount; j++ )
+				{
+					if( moduleDefIds[i] == moduleDataIds[j] )
+					{
+						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						break;
+					}
+					else if( j == moduleCount - 1 )
+					{
+						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					}
+				}
+			}
 		}
-		
+
 		private static GameObject CreateExtra( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
@@ -50,7 +83,7 @@ namespace SS.Extras
 			
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			
+						
 			return container;
 		}
 
@@ -92,6 +125,16 @@ namespace SS.Extras
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
+
+			//
+			// MODULES
+			//
+
+			Module[] modules = gameObject.GetComponents<Module>();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
+			}
 
 			return data;
 		}

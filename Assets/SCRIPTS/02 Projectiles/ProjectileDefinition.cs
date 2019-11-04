@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Projectiles
 {
-	public class ProjectileDefinition : Definition, IKFFSerializable
+	public class ProjectileDefinition : ObjectDefinition, IKFFSerializable
 	{
 		public class TrailData
 		{

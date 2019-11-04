@@ -1,35 +1,34 @@
-﻿using KFF;
-using SS.Levels.SaveStates;
+﻿using System;
+using System.Collections.Generic;
+using KFF;
+using SS.Buildings;
+using SS.Units;
 using UnityEngine;
 
 namespace SS.Modules
 {
 	public class BarracksModuleDefinition : ModuleDefinition
 	{
+		public const string KFF_TYPEID = "barracks";
+
 		public string[] trainableUnits { get; set; }
 		public float trainSpeed { get; set; }
 
-		public override bool CanBeAddedTo( GameObject gameObject )
+		public override bool CheckTypeDefConstraints( Type objType )
 		{
-			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<BarracksModule>() != null ) // barracks && workplace barracks
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<ResearchModule>() != null ) // barracks && workplace barracks
-			{
-				return false;
-			}
-			/*if( gameObject.GetComponent<ConstructorModule>() != null ) // allows construction of buildings, when selected.
-			{
-				return false;
-			}*/
-			return true;
+			return
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition );
 		}
-		
+
+		public override bool CheckModuleDefConstraints( List<Type> modTypes )
+		{
+			return !(
+				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
+				modTypes.Contains( typeof( BarracksModuleDefinition ) ));
+		}
+
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );
@@ -40,6 +39,12 @@ namespace SS.Modules
 		{
 			serializer.WriteFloat( "", "TrainSpeed", this.trainSpeed );
 			serializer.WriteStringArray( "", "TrainableUnits", this.trainableUnits );
+		}
+
+		public override void AddModule( GameObject gameObject, ModuleData data )
+		{
+			BarracksModule module = gameObject.AddComponent<BarracksModule>();
+			module.SetDefData( this, data );
 		}
 	}
 }

@@ -9,7 +9,7 @@ using UnityEngine;
 namespace SS.Buildings
 {
 	[Serializable]
-	public class BuildingDefinition : Definition, ITechsRequired
+	public class BuildingDefinition : ObjectDefinition, ITechsRequired
 	{
 		private string __displayName = "<missing>";
 		public string displayName
@@ -71,8 +71,8 @@ namespace SS.Buildings
 		public Dictionary<string, int> cost { get; private set; }
 		
 
-		public ModuleDefinition barracks;
-		public ModuleDefinition research;
+		//public ModuleDefinition barracks;
+		//public ModuleDefinition research;
 		public string[] techsRequired { get; private set; } // the default techs required to unlock.
 
 
@@ -130,19 +130,7 @@ namespace SS.Buildings
 				}
 				this.cost.Add( id, amt );
 			}
-
-			if( serializer.Analyze( "BarracksModule" ).isSuccess )
-			{
-				this.barracks = new BarracksModuleDefinition();
-				serializer.Deserialize( "BarracksModule", this.barracks );
-			}
 			
-			if( serializer.Analyze( "ResearchModule" ).isSuccess )
-			{
-				this.research = new ResearchModuleDefinition();
-				serializer.Deserialize( "ResearchModule", this.research );
-			}
-
 
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
 
@@ -156,6 +144,8 @@ namespace SS.Buildings
 			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
 
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -185,16 +175,7 @@ namespace SS.Buildings
 				i++;
 			}
 
-
-			if( this.barracks != null )
-			{
-				serializer.Serialize( "", "BarracksModule", this.barracks );
-			}
-			if( this.research != null )
-			{
-				serializer.Serialize( "", "ResearchModule", this.research );
-			}
-
+			
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 
 			serializer.WriteString( "", "Mesh", (string)this.mesh );
@@ -206,6 +187,8 @@ namespace SS.Buildings
 			serializer.WriteString( "", "BuildSound", (string)this.buildSoundEffect );
 			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

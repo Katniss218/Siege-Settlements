@@ -1,10 +1,18 @@
 ﻿using KFF;
+using SS.Buildings;
+using SS.Extras;
+using SS.Heroes;
+using SS.Units;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules.Inventories
 {
 	public class InventoryConstrainedDefinition : ModuleDefinition
 	{
+		public const string KFF_TYPEID = "inventory_constrained";
+
 		public struct Slot : IKFFSerializable
 		{
 			public string resourceId { get; set; }
@@ -28,14 +36,23 @@ namespace SS.Modules.Inventories
 		public Slot[] slots { get; set; }
 
 
-		public override bool CanBeAddedTo( GameObject gameObject )
+		public override bool CheckTypeDefConstraints( Type objType )
 		{
-			if( gameObject.GetComponent<IInventory>() != null )
-			{
-				return false;
-			}
-			return true;
+			return
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition ) ||
+				objType == typeof( HeroDefinition ) ||
+				objType == typeof( ExtraDefinition );
 		}
+
+		public override bool CheckModuleDefConstraints( List<Type> modTypes )
+		{
+			return !(
+				modTypes.Contains( typeof( InventoryConstrainedDefinition ) ) ||
+				modTypes.Contains( typeof( InventoryUnconstrainedDefinition ) ) ||
+				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -46,6 +63,12 @@ namespace SS.Modules.Inventories
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
+		}
+
+		public override void AddModule( GameObject gameObject, ModuleData data )
+		{
+			InventoryConstrained module = gameObject.AddComponent<InventoryConstrained>();
+			module.SetDefData( this, data );
 		}
 	}
 }

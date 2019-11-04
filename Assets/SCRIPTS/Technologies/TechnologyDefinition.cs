@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Technologies
 {
-	public class TechnologyDefinition : Definition, IKFFSerializable
+	public class TechnologyDefinition : AddressableDefinition, IKFFSerializable
 	{
 		public string displayName { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Content;
 using System;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Contains every information to successfully round-trip a projectile, to and from file.
 	/// </summary>
-	public class ProjectileData : IKFFSerializable
+	public class ProjectileData : ObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -22,9 +23,9 @@ namespace SS.Levels.SaveStates
 		public DamageType damageTypeOverride { get; set; }
 		public float damageOverride { get; set; }
 		public float armorPenetrationOverride { get; set; }
-		
 
-		public void DeserializeKFF( KFFSerializer serializer )
+
+		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
 
@@ -46,7 +47,7 @@ namespace SS.Levels.SaveStates
 			this.armorPenetrationOverride = serializer.ReadFloat( "ArmorPenetrationOverride" );
 		}
 
-		public void SerializeKFF( KFFSerializer serializer )
+		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
 

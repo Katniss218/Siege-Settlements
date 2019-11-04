@@ -16,6 +16,7 @@ using SS.Heroes;
 using SS.Levels;
 using SS.Diplomacy;
 using SS.InputSystem;
+using SS.Modules;
 
 namespace SS
 {
@@ -159,7 +160,7 @@ namespace SS
 
 				Vector3? terrainHitPos = null;
 
-				ResourceDeposit hitDeposit = null;
+				ResourceDepositModule hitDeposit = null;
 				Transform hitReceiverTransform = null;
 				IPaymentReceiver[] hitPaymentReceivers = null;
 				Damageable hitDamageable = null;
@@ -173,7 +174,7 @@ namespace SS
 					}
 					else
 					{
-						ResourceDeposit deposit = raycastHits[i].collider.GetComponent<ResourceDeposit>();
+						ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
 						if( deposit != null )
 						{
 							hitDeposit = deposit;
@@ -287,7 +288,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					ResourceDeposit hitDeposit = hitInfo.collider.GetComponent<ResourceDeposit>();
+					ResourceDepositModule hitDeposit = hitInfo.collider.GetComponent<ResourceDepositModule>();
 
 					if( hitDeposit != null )
 					{
@@ -348,7 +349,7 @@ namespace SS
 				}
 			}
 		}
-
+		/*
 		private void Inp_A8( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -408,7 +409,7 @@ namespace SS
 				}
 			}
 		}
-
+		*/
 		private void Inp_Pause( InputQueue self )
 		{
 			if( PauseManager.isPaused )
@@ -442,9 +443,9 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
+			/*Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );*/
 			Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
 		}
 
@@ -465,9 +466,9 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
-				Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_A8 );
+				/*Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_A8 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha9, Inp_A9 );
-				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_A0 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_A0 );*/
 				Main.keyboardInput.ClearOnPress( KeyCode.Pause, Inp_Pause );
 			}
 		}
@@ -551,7 +552,7 @@ namespace SS
 			}
 		}
 
-		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, ResourceDeposit hitDeposit, Selectable[] selected )
+		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, ResourceDepositModule hitDeposit, Selectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
@@ -577,13 +578,13 @@ namespace SS
 
 				foreach( var kvp in inventoryItems )
 				{
-					if( hitDeposit.inventory.GetMaxCapacity( kvp.Key ) == 0 )
+					if( hitDeposit.GetMaxCapacity( kvp.Key ) == 0 )
 					{
 						suitable = false;
 						break;
 					}
 					// don't move if the deposit doesn't have space to leave resource (inv full of that specific resource).
-					if( hitDeposit.inventory.GetMaxCapacity( kvp.Key ) == hitDeposit.inventory.Get( kvp.Key ) )
+					if( hitDeposit.GetMaxCapacity( kvp.Key ) == hitDeposit.Get( kvp.Key ) )
 					{
 						suitable = false;
 						break;
@@ -654,13 +655,13 @@ namespace SS
 			}
 		}
 
-		private void AssignPickupDepositGoal( ResourceDeposit hitDeposit, Selectable[] selected )
+		private void AssignPickupDepositGoal( ResourceDepositModule hitDeposit, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
 			// Go pick up if the inventory can hold any of the resources in the deposit.
-			Dictionary<string, int> resourcesInDeposit = hitDeposit.inventory.GetAll();
+			Dictionary<string, int> resourcesInDeposit = hitDeposit.GetAll();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -795,15 +796,6 @@ namespace SS
 				}
 				return building.guid.Value;
 			}
-			ResourceDeposit deposit = obj.GetComponent<ResourceDeposit>();
-			if( deposit != null )
-			{
-				if( deposit.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return deposit.guid.Value;
-			}
 			Hero hero = obj.GetComponent<Hero>();
 			if( hero != null )
 			{
@@ -863,12 +855,12 @@ namespace SS
 				}
 			}
 
-			ResourceDeposit[] resourceDeposits = ResourceDeposit.GetAllResourceDeposits();
-			for( int i = 0; i < resourceDeposits.Length; i++ )
+			Extra[] extras = Extra.GetAllExtras();
+			for( int i = 0; i < extras.Length; i++ )
 			{
-				if( resourceDeposits[i].guid == guid )
+				if( extras[i].guid == guid )
 				{
-					return resourceDeposits[i].gameObject;
+					return extras[i].gameObject;
 				}
 			}
 
@@ -881,14 +873,6 @@ namespace SS
 				}
 			}
 
-			Extra[] extras = Extra.GetAllExtras();
-			for( int i = 0; i < extras.Length; i++ )
-			{
-				if( extras[i].guid == guid )
-				{
-					return extras[i].gameObject;
-				}
-			}
 			return null;
 		}
 	}

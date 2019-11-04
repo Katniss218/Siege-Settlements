@@ -142,27 +142,40 @@ namespace SS.Units
 			//
 			//    MODULES
 			//
-			
-			// If the new unit is melee, setup the melee module.
-			if( def.melee != null )
-			{
-				MeleeModule melee = gameObject.AddComponent<MeleeModule>();
-				melee.SetDefData( def.melee, data.meleeData );
-			}
-			
-			// If the new unit is ranged, setup the ranged module.
-			if( def.ranged != null )
-			{
-				RangedModule ranged = gameObject.AddComponent<RangedModule>();
-				ranged.SetDefData( def.ranged, data.rangedData );
-			}
-			
-			InventoryUnconstrained inventory = gameObject.GetComponent<InventoryUnconstrained>();
 
-			InventoryUnconstrainedDefinition inventoryDef = new InventoryUnconstrainedDefinition();
-			inventoryDef.slotCapacity = 10;
-			inventoryDef.slotCount = 1;
-			inventory.SetDefData( inventoryDef, data.inventoryData );
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
+
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+			
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+			data.GetAllModules( out moduleDataIds, out moduleData );
+
+			int moduleCount = moduleDefIds.Length;
+
+			for( int i = 0; i < moduleCount; i++ )
+			{
+				for( int j = 0; j < moduleCount; j++ )
+				{
+					if( moduleDefIds[i] == moduleDataIds[j] )
+					{
+						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						break;
+					}
+					else if( j == moduleCount - 1 )
+					{
+						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					}
+				}
+			}
+
+			//InventoryUnconstrained inventory = gameObject.GetComponent<InventoryUnconstrained>();
+
+			//InventoryUnconstrainedDefinition inventoryDef = new InventoryUnconstrainedDefinition();
+			//inventoryDef.slotCapacity = 10;
+			//inventoryDef.slotCount = 1;
+			//inventory.SetDefData( inventoryDef, data.inventoryData );
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -452,6 +465,16 @@ namespace SS.Units
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
 
+			//
+			// MODULES
+			//
+
+			Module[] modules = gameObject.GetComponents<Module>();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
+			}
+			/*
 			MeleeModule meleeModule = gameObject.GetComponent<MeleeModule>();
 			if( meleeModule != null )
 			{
@@ -463,8 +486,8 @@ namespace SS.Units
 			{
 				data.rangedData = (RangedModuleData)rangedModule.GetData();
 			}
-
-			data.inventoryData = (InventoryUnconstrainedData)gameObject.GetComponent<InventoryUnconstrained>().GetData();
+			*/
+			//data.inventoryData = (InventoryUnconstrainedData)gameObject.GetComponent<InventoryUnconstrained>().GetData();
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )

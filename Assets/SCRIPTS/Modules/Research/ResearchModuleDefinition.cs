@@ -1,32 +1,31 @@
 ﻿using KFF;
+using SS.Buildings;
+using SS.Units;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules
 {
 	public class ResearchModuleDefinition : ModuleDefinition
 	{
+		public const string KFF_TYPEID = "research";
+
 		public float researchSpeed { get; set; }
 
 
-		public override bool CanBeAddedTo( GameObject gameObject )
+		public override bool CheckTypeDefConstraints( Type objType )
 		{
-			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<BarracksModule>() != null ) // barracks && workplace barracks
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<ResearchModule>() != null ) // barracks && workplace barracks
-			{
-				return false;
-			}
-			/*if( gameObject.GetComponent<ConstructorModule>() != null ) // allows construction of buildings, when selected.
-			{
-				return false;
-			}*/
-			return true;
+			return
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition );
+		}
+
+		public override bool CheckModuleDefConstraints( List<Type> modTypes )
+		{
+			return !(
+				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
+				modTypes.Contains( typeof( BarracksModuleDefinition ) ));
 		}
 
 
@@ -38,6 +37,12 @@ namespace SS.Modules
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteFloat( "", "ResearchSpeed", this.researchSpeed );
+		}
+
+		public override void AddModule( GameObject gameObject, ModuleData data )
+		{
+			ResearchModule module = gameObject.AddComponent<ResearchModule>();
+			module.SetDefData( this, data );
 		}
 	}
 }

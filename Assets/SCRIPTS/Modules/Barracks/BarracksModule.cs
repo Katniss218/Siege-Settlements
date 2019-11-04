@@ -232,7 +232,7 @@ namespace SS.Modules
 		/// <param name="unit">The GameObject to extract the save state from.</param>
 		public override ModuleData GetData()
 		{
-			BarracksModuleSaveState saveState = new BarracksModuleSaveState();
+			BarracksModuleData saveState = new BarracksModuleData();
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
 			if( this.trainedUnit == null )
@@ -264,7 +264,7 @@ namespace SS.Modules
 				throw new Exception( "Provided definition is null." );
 			}
 
-			if( !(_data is BarracksModuleSaveState) )
+			if( !(_data is BarracksModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
 			}
@@ -274,7 +274,7 @@ namespace SS.Modules
 			}
 			
 			BarracksModuleDefinition def = (BarracksModuleDefinition)_def;
-			BarracksModuleSaveState data = (BarracksModuleSaveState)_data;
+			BarracksModuleData data = (BarracksModuleData)_data;
 
 			this.trainSpeed = def.trainSpeed;
 			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];

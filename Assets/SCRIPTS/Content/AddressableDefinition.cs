@@ -2,17 +2,14 @@
 
 namespace SS.Content
 {
-	/// <summary>
-	/// An abstract class for storing data, of objects, that doesn't change.
-	/// </summary>
-	public abstract class Definition : IKFFSerializable
+	public abstract class AddressableDefinition : IKFFSerializable
 	{
 		/// <summary>
-		/// The id of this definition (Read Only).
+		/// The id (address) of this definition (Read Only).
 		/// </summary>
 		public string id { get; protected set; }
 
-		protected Definition( string id )
+		protected AddressableDefinition( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )
 			{
@@ -20,7 +17,7 @@ namespace SS.Content
 			}
 			this.id = id;
 		}
-		
+			
 		public abstract void SerializeKFF( KFFSerializer serializer );
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 	}

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace SS.Units
 {
-	public class UnitDefinition : Definition, ITechsRequired
+	public class UnitDefinition : ObjectDefinition, ITechsRequired
 	{
 		private string __displayName = "<missing>";
 		public string displayName
@@ -43,9 +43,9 @@ namespace SS.Units
 
 
 
-		public ModuleDefinition melee;
+		//public ModuleDefinition melee;
 
-		public ModuleDefinition ranged;
+		//public ModuleDefinition ranged;
 		
 		public bool isConstructor { get; set; }
 
@@ -166,19 +166,6 @@ namespace SS.Units
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
-
-			var analysisData = serializer.Analyze( "MeleeModule" );
-			if( analysisData.isSuccess )
-			{
-				this.melee = new MeleeModuleDefinition();
-				serializer.Deserialize( "MeleeModule", this.melee );
-			}
-			analysisData = serializer.Analyze( "RangedModule" );
-			if( analysisData.isSuccess )
-			{
-				this.ranged = new RangedModuleDefinition();
-				serializer.Deserialize( "RangedModule", this.ranged );
-			}
 			
 			this.isConstructor = serializer.ReadBool( "IsConstructor" );
 
@@ -188,7 +175,7 @@ namespace SS.Units
 			this.height = serializer.ReadFloat( "Height" );
 
 			// Cost
-			analysisData = serializer.Analyze( "Cost" );
+			var analysisData = serializer.Analyze( "Cost" );
 			this.cost = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{
@@ -208,6 +195,8 @@ namespace SS.Units
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -217,16 +206,7 @@ namespace SS.Units
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
-
-			if( this.melee != null )
-			{
-				serializer.Serialize( "", "MeleeModule", this.melee );
-			}
-			if( this.ranged != null )
-			{
-				serializer.Serialize( "", "RangedModule", this.ranged );
-			}
-
+			
 			serializer.WriteBool( "", "IsConstructor", this.isConstructor );
 
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
@@ -252,6 +232,8 @@ namespace SS.Units
 			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
 			serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteString( "", "Icon", (string)this.icon );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

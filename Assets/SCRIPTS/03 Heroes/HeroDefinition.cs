@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.Heroes
 {
-	public class HeroDefinition : Definition
+	public class HeroDefinition : ObjectDefinition
 	{
 		private string __displayName = "<missing>";
 		public string displayName
@@ -50,9 +50,9 @@ namespace SS.Heroes
 
 
 
-		public ModuleDefinition melee;
+		//public ModuleDefinition melee;
 
-		public ModuleDefinition ranged;
+		//public ModuleDefinition ranged;
 
 
 		//--------------------------------------------------------------------
@@ -149,21 +149,7 @@ namespace SS.Heroes
 			this.healthMax = serializer.ReadFloat( "MaxHealth" );
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
-
-
-			var analysisData = serializer.Analyze( "MeleeModule" );
-			if( analysisData.isSuccess )
-			{
-				this.melee = new MeleeModuleDefinition();
-				serializer.Deserialize( "MeleeModule", this.melee );
-			}
-			analysisData = serializer.Analyze( "RangedModule" );
-			if( analysisData.isSuccess )
-			{
-				this.ranged = new RangedModuleDefinition();
-				serializer.Deserialize( "RangedModule", this.ranged );
-			}
-
+			
 
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
@@ -174,6 +160,8 @@ namespace SS.Heroes
 			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -184,16 +172,7 @@ namespace SS.Heroes
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
-
-			if( this.melee != null )
-			{
-				serializer.Serialize( "", "MeleeModule", this.melee );
-			}
-			if( this.ranged != null )
-			{
-				serializer.Serialize( "", "RangedModule", this.ranged );
-			}
-
+			
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
@@ -203,6 +182,8 @@ namespace SS.Heroes
 			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
 			serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteString( "", "Icon", (string)this.icon );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

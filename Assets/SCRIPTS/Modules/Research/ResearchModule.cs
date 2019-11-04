@@ -170,7 +170,7 @@ namespace SS.Modules
 		/// <param name="unit">The GameObject to extract the save state from.</param>
 		public override ModuleData GetData()
 		{
-			ResearchModuleSaveState saveState = new ResearchModuleSaveState();
+			ResearchModuleData saveState = new ResearchModuleData();
 
 			saveState.resourcesRemaining = this.resourcesRemaining;
 			if( this.researchedTechnology == null )
@@ -202,7 +202,7 @@ namespace SS.Modules
 				throw new Exception( "Provided definition is null." );
 			}
 
-			if( !(_data is ResearchModuleSaveState) )
+			if( !(_data is ResearchModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
 			}
@@ -212,7 +212,7 @@ namespace SS.Modules
 			}
 
 			ResearchModuleDefinition def = (ResearchModuleDefinition)_def;
-			ResearchModuleSaveState data = (ResearchModuleSaveState)_data;
+			ResearchModuleData data = (ResearchModuleData)_data;
 
 			this.researchSpeed = def.researchSpeed;
 			Selectable selectable = this.GetComponent<Selectable>();

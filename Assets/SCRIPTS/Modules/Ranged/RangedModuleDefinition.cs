@@ -1,12 +1,18 @@
 ﻿using KFF;
+using SS.Buildings;
 using SS.Content;
+using SS.Heroes;
+using SS.Units;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Modules
 {
 	public class RangedModuleDefinition : ModuleDefinition
 	{
+		public const string KFF_TYPEID = "ranged";
+
 		public string projectileId { get; set; }
 		public int projectileCount { get; set; }
 
@@ -21,13 +27,18 @@ namespace SS.Modules
 		public Vector3 localOffsetMax { get; set; }
 		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
 
-		public override bool CanBeAddedTo( GameObject gameObject )
+
+		public override bool CheckTypeDefConstraints( Type objType )
 		{
-			if( ((ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK) & (1 << gameObject.layer)) != (1 << gameObject.layer) )
-			{
-				return false;
-			}
-			return true;
+			return
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition ) ||
+				objType == typeof( HeroDefinition );
+		}
+
+		public override bool CheckModuleDefConstraints( List<Type> modTypes )
+		{
+			return true; // no module constraints
 		}
 
 
@@ -61,6 +72,12 @@ namespace SS.Modules
 			serializer.WriteVector3( "", "LocalOffsetMax", this.localOffsetMax );
 
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
+		}
+
+		public override void AddModule( GameObject gameObject, ModuleData data )
+		{
+			RangedModule module = gameObject.AddComponent<RangedModule>();
+			module.SetDefData( this, data );
 		}
 	}
 }

@@ -6,6 +6,7 @@ using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using SS.Modules;
 
 namespace SS
 {
@@ -25,48 +26,59 @@ namespace SS
 			private IInventory inventory;
 
 
-			public static void DropOffInventory( IInventory inventory, Vector3 position )
+			public static void DropOffInventory( IInventory carrierInv, Vector3 position )
 			{
-				if( inventory.isEmpty )
+				if( carrierInv.isEmpty )
 				{
 					throw new System.Exception( "Inventory was empty." );
 				}
 
-				Dictionary<string, int> resourcesCarried = inventory.GetAll();
+				Dictionary<string, int> resourcesCarried = carrierInv.GetAll();
 
 				foreach( var kvp in resourcesCarried )
 				{
 					ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+					
+					ExtraDefinition def = DefinitionManager.GetExtra( resourceDef.defaultDeposit );
 
-					ResourceDepositDefinition newDepositDef = DefinitionManager.GetResourceDeposit( resourceDef.defaultDeposit );
-					int capacity = newDepositDef.resources[kvp.Key];
-					int remaining = kvp.Value;
-					while( remaining > 0 )
+					ResourceDepositModuleDefinition depositDef = def.GetModule<ResourceDepositModuleDefinition>();
+					int capacity = 0;
+					for( int i = 0; i < depositDef.slots.Length; i++ )
 					{
-						Dictionary<string, int> dict = new Dictionary<string, int>();
-						if( remaining >= capacity )
+						if( depositDef.slots[i].resourceId == kvp.Key )
 						{
-							dict.Add( kvp.Key, capacity );
+							capacity = depositDef.slots[i].capacity;
 						}
-						else
+					}
+					if( capacity != 0 )
+					{
+						int remaining = kvp.Value;
+						while( remaining > 0 )
 						{
-							dict.Add( kvp.Key, remaining );
+							Dictionary<string, int> itemsDict = new Dictionary<string, int>();
+							if( remaining >= capacity )
+							{
+								itemsDict.Add( kvp.Key, capacity );
+							}
+							else
+							{
+								itemsDict.Add( kvp.Key, remaining );
+							}
+							remaining -= capacity;
+
+							ExtraData data = new ExtraData();
+							data.position = position;
+							data.rotation = Quaternion.identity;
+
+							ResourceDepositModuleData depositData = new ResourceDepositModuleData();
+							depositData.items = itemsDict;
+
+							ExtraCreator.Create( def, data );
+							AudioManager.PlaySound( resourceDef.dropoffSound );
 						}
-						remaining -= capacity;
-
-						ResourceDepositData data = new ResourceDepositData();
-						data.position = position;
-						data.rotation = Quaternion.identity;
-						InventoryConstrainedData invData = new InventoryConstrainedData();
-						invData.items = dict;
-						data.inventoryData = invData;
-
-						ResourceDepositCreator.Create( newDepositDef, data );
-
-						AudioManager.PlaySound( resourceDef.dropoffSound );
 					}
 				}
-				inventory.Clear();
+				carrierInv.Clear();
 			}
 		
 			void Start()

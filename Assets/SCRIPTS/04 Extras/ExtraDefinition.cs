@@ -5,8 +5,29 @@ using UnityEngine;
 
 namespace SS.Extras
 {
-	public class ExtraDefinition : Definition
+	public class ExtraDefinition : ObjectDefinition
 	{
+		public string displayName { get; set; }
+
+		//--------------------------------------------------------------------
+		//  SIZE-RELATED
+		//--------------------------------------
+
+		private Vector3 __size = new Vector3( 0.25f, 0.25f, 0.25f );
+		public Vector3 size
+		{
+			get { return this.__size; }
+			set
+			{
+				if( value.x <= 0.0f
+				 || value.y <= 0.0f
+				 || value.z <= 0.0f )
+				{
+					throw new Exception( "'Size' can't have values less than or equal to 0." );
+				}
+				this.__size = value;
+			}
+		}
 
 		//--------------------------------------------------------------------
 		//  ASSETS
@@ -33,6 +54,9 @@ namespace SS.Extras
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
+			this.displayName = serializer.ReadString( "DisplayName" );
+
+			this.size = serializer.ReadVector3( "Size" );
 
 			this.shaderType = (MaterialType)serializer.ReadByte( "ShaderType" );
 
@@ -41,11 +65,16 @@ namespace SS.Extras
 			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.metallic = serializer.ReadFloat( "Metallic" );
 			this.smoothness = serializer.ReadFloat( "Smoothness" );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
+			serializer.WriteString( "", "DisplayName", this.displayName );
+
+			serializer.WriteVector3( "", "Size", this.size );
 
 			serializer.WriteByte( "", "ShaderType", (byte)this.shaderType );
 
@@ -54,6 +83,8 @@ namespace SS.Extras
 			serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteFloat( "", "Metallic", this.metallic );
 			serializer.WriteFloat( "", "Smoothness", this.smoothness );
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }

@@ -465,7 +465,6 @@ namespace SS.Levels
 			DefinitionManager.LoadProjectileDefinitions( serializerProjectiles );
 			DefinitionManager.LoadHeroDefinitions( serializerHeroes );
 			DefinitionManager.LoadExtraDefinitions( serializerExtras );
-			DefinitionManager.LoadResourceDepositDefinitions( serializerResourceDeposits );
 
 			DefinitionManager.LoadResourceDefinitions( serializerResources );
 			DefinitionManager.LoadTechnologyDefinitions( serializerTechnologies );
@@ -609,7 +608,6 @@ namespace SS.Levels
 			var sProjectiles = GetSavedProjectiles( serializerSavedProjectiles );
 			var sHeroes = GetSavedHeroes( serializerSavedHeroes );
 			var sExtras = GetSavedExtras( serializerSavedExtras );
-			var sResourceDeposits = GetSavedResourceDeposits( serializerSavedResourceDeposits );
 
 			LevelDataManager.LoadFactionData( serializerFactionData );
 			LevelDataManager.LoadDaylightCycleData( serializerLevelSaveState );
@@ -620,7 +618,6 @@ namespace SS.Levels
 			GameObject[] projectiles = new GameObject[sProjectiles.Count];
 			GameObject[] heroes = new GameObject[sHeroes.Count];
 			GameObject[] extras = new GameObject[sExtras.Count];
-			GameObject[] resourceDeposits = new GameObject[sResourceDeposits.Count];
 
 			// Spawn every object on the map (no data present yet, because that might need other objects's guids).
 
@@ -644,10 +641,6 @@ namespace SS.Levels
 			{
 				extras[i] = ExtraCreator.CreateEmpty( sExtras[i].Item2.guid );
 			}
-			for( int i = 0; i < resourceDeposits.Length; i++ )
-			{
-				resourceDeposits[i] = ResourceDepositCreator.CreateEmpty( sResourceDeposits[i].Item2.guid );
-			}
 
 			// Set the data (guids stay the same).
 
@@ -670,10 +663,6 @@ namespace SS.Levels
 			for( int i = 0; i < extras.Length; i++ )
 			{
 				ExtraCreator.SetDefData( extras[i], sExtras[i].Item1, sExtras[i].Item2 );
-			}
-			for( int i = 0; i < resourceDeposits.Length; i++ )
-			{
-				ResourceDepositCreator.SetDefData( resourceDeposits[i], sResourceDeposits[i].Item1, sResourceDeposits[i].Item2 );
 			}
 
 			SelectionPanelMode selectionPanelMode;
@@ -806,26 +795,7 @@ namespace SS.Levels
 
 			return ret;
 		}
-
-		private static List<Tuple<ResourceDepositDefinition, ResourceDepositData>> GetSavedResourceDeposits( KFFSerializer serializer )
-		{
-			List<Tuple<ResourceDepositDefinition, ResourceDepositData>> ret = new List<Tuple<ResourceDepositDefinition, ResourceDepositData>>();
-
-			int count = serializer.Analyze( "List" ).childCount;
-			for( int i = 0; i < count; i++ )
-			{
-				ResourceDepositData data = new ResourceDepositData();
-				serializer.Deserialize( new Path( "List.{0}.Data", i ), data );
-
-				string defId = serializer.ReadString( new Path( "List.{0}.DefinitionId", i ) );
-				ResourceDepositDefinition def = DefinitionManager.GetResourceDeposit( defId );
-
-				ret.Add( new Tuple<ResourceDepositDefinition, ResourceDepositData>( def, data ) );
-			}
-
-			return ret;
-		}
-
+		
 		private static GameObject[] GetSelected( KFFSerializer serializer, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
 		{
 			string sel = serializer.ReadString( "SelectionPanelMode" );
@@ -928,14 +898,12 @@ namespace SS.Levels
 			Projectile[] projectiles = Projectile.GetAllProjectiles();
 			Hero[] heroes = Hero.GetAllHeroes();
 			Extra[] extras = Extra.GetAllExtras();
-			ResourceDeposit[] resourceDeposits = ResourceDeposit.GetAllResourceDeposits();
 
 			Tuple<string, UnitData>[] unitData = new Tuple<string, UnitData>[units.Length];
 			Tuple<string, BuildingData> [] buildingData = new Tuple<string, BuildingData>[buildings.Length];
 			Tuple<string, ProjectileData> [] projectileData = new Tuple<string, ProjectileData>[projectiles.Length];
 			Tuple<string, HeroData> [] heroData = new Tuple<string, HeroData>[heroes.Length];
 			Tuple<string, ExtraData> [] extraData = new Tuple<string, ExtraData>[extras.Length];
-			Tuple<string, ResourceDepositData> [] resourceDepositData = new Tuple<string, ResourceDepositData>[resourceDeposits.Length];
 
 			for( int i = 0; i < unitData.Length; i++ )
 			{
@@ -956,10 +924,6 @@ namespace SS.Levels
 			for( int i = 0; i < extraData.Length; i++ )
 			{
 				extraData[i] = new Tuple<string, ExtraData>( ExtraCreator.GetDefinitionId( extras[i].gameObject ), ExtraCreator.GetData( extras[i].gameObject ) );
-			}
-			for( int i = 0; i < resourceDepositData.Length; i++ )
-			{
-				resourceDepositData[i] = new Tuple<string, ResourceDepositData>( ResourceDepositCreator.GetDefinitionId( resourceDeposits[i].gameObject ), ResourceDepositCreator.GetData( resourceDeposits[i].gameObject ) );
 			}
 
 			string path = GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId );
@@ -1008,7 +972,6 @@ namespace SS.Levels
 			SaveProjectiles( projectileData, serializerSavedProjectiles );
 			SaveHeroes( heroData, serializerSavedHeroes );
 			SaveExtras( extraData, serializerSavedExtras );
-			SaveResourceDeposits( resourceDepositData, serializerSavedResourceDeposits );
 
 			Guid? highlighted = null;
 			if( Selection.highlightedObject != null )
@@ -1110,20 +1073,7 @@ namespace SS.Levels
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", extras[i].Item2 );
 			}
 		}
-
-		private static void SaveResourceDeposits( Tuple<string, ResourceDepositData>[] resourceDeposits, KFFSerializer serializer )
-		{
-			serializer.WriteList( "", "List" );
-			for( int i = 0; i < resourceDeposits.Length; i++ )
-			{
-				serializer.AppendClass( "List" );
-
-				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", resourceDeposits[i].Item1 );
-
-				serializer.Serialize( new Path( "List.{0}", i ), "Data", resourceDeposits[i].Item2 );
-			}
-		}
-
+		
 
 
 

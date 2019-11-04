@@ -27,7 +27,6 @@ namespace SS.Content
 		private static ProjectileDefinition[] projectileDefinitions = null;
 		private static HeroDefinition[] heroDefinitions = null;
 		private static ExtraDefinition[] extraDefinitions = null;
-		private static ResourceDepositDefinition[] resourceDepositDefinitions = null;
 
 		// "Soft" definitions.
 
@@ -45,7 +44,6 @@ namespace SS.Content
 			projectileDefinitions = null;
 			heroDefinitions = null;
 			extraDefinitions = null;
-			resourceDepositDefinitions = null;
 
 			resourceDefinitions = null;
 			technologyDefinitions = null;
@@ -115,19 +113,7 @@ namespace SS.Content
 
 			extraDefinitions = deserialized;
 		}
-
-		public static void LoadResourceDepositDefinitions( KFFSerializer serializer )
-		{
-			ResourceDepositDefinition[] deserialized = new ResourceDepositDefinition[serializer.Analyze( "List" ).childCount];
-			for( int i = 0; i < deserialized.Length; i++ )
-			{
-				deserialized[i] = new ResourceDepositDefinition( "<missing>" );
-			}
-			serializer.DeserializeArray( "List", deserialized );
-
-			resourceDepositDefinitions = deserialized;
-		}
-
+		
 		// ///////////////////////////////////////////////
 
 		public static void LoadResourceDefinitions( KFFSerializer serializer )
@@ -310,37 +296,6 @@ namespace SS.Content
 			for( int i = 0; i < ret.Length; i++ )
 			{
 				ret[i] = extraDefinitions[i];
-			}
-			return ret;
-		}
-
-
-		public static ResourceDepositDefinition GetResourceDeposit( string id )
-		{
-			if( resourceDepositDefinitions == null )
-			{
-				throw new Exception( "Definitions haven't been loaded yet." );
-			}
-			for( int i = 0; i < resourceDepositDefinitions.Length; i++ )
-			{
-				if( resourceDepositDefinitions[i].id == id )
-				{
-					return resourceDepositDefinitions[i];
-				}
-			}
-			throw new Exception( "A resource deposit with an id '" + id + "' is not registered." );
-		}
-
-		public static ResourceDepositDefinition[] GetAllResourceDeposits()
-		{
-			if( resourceDepositDefinitions == null )
-			{
-				throw new Exception( "Definitions haven't been loaded yet." );
-			}
-			ResourceDepositDefinition[] ret = new ResourceDepositDefinition[extraDefinitions.Length];
-			for( int i = 0; i < ret.Length; i++ )
-			{
-				ret[i] = resourceDepositDefinitions[i];
 			}
 			return ret;
 		}
