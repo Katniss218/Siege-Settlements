@@ -83,18 +83,37 @@ namespace SS.Heroes
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
-
 			//
 			//    MODULES
 			//
 
-			ModuleDefinition[] moduleDefs = def.GetAllModules();
-			ModuleData[] moduleDatas = data.GetAllModuleDatas();
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
 
-			for( int i = 0; i < moduleDefs.Length; i++ )
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+			data.GetAllModules( out moduleDataIds, out moduleData );
+
+			int moduleCount = moduleDefIds.Length;
+
+			for( int i = 0; i < moduleCount; i++ )
 			{
-				moduleDefs[i].AddModule( gameObject, moduleDatas[i] );
+				for( int j = 0; j < moduleCount; j++ )
+				{
+					if( moduleDefIds[i] == moduleDataIds[j] )
+					{
+						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						break;
+					}
+					else if( j == moduleCount - 1 )
+					{
+						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					}
+				}
 			}
+
 
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
@@ -337,16 +356,14 @@ namespace SS.Heroes
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			data.health = damageable.health;
 
-			MeleeModule meleeModule = gameObject.GetComponent<MeleeModule>();
-			if( meleeModule != null )
-			{
-				data.meleeData = (MeleeModuleData)meleeModule.GetData();
-			}
+			//
+			// MODULES
+			//
 
-			RangedModule rangedModule = gameObject.GetComponent<RangedModule>();
-			if( rangedModule != null )
+			Module[] modules = gameObject.GetComponents<Module>();
+			for( int i = 0; i < modules.Length; i++ )
 			{
-				data.rangedData = (RangedModuleData)rangedModule.GetData();
+				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
 			}
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();

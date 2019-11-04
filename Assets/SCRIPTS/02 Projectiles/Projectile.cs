@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Projectiles
 {
-	public class Projectile : MonoBehaviour
+	public class Projectile : SSObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{

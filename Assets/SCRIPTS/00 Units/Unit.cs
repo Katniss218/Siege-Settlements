@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Units
 {
-	public class Unit : MonoBehaviour
+	public class Unit : SSObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -62,7 +62,7 @@ namespace SS.Units
 
 
 
-		public string displayName { get; set; }
+		//public string displayName { get; set; }
 
 
 		void OnEnable()

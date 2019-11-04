@@ -307,7 +307,7 @@ namespace SS.Units
 
 
 			// Add inventory.
-			InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
+			/*InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
 			
 			// Make the inventory update the HUD wien resources are added/removed.
 			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
@@ -348,7 +348,7 @@ namespace SS.Units
 						break;
 					}
 				}
-			} );
+			} );*/
 
 			// Make the unit change it's color when the faction is changed.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
@@ -383,10 +383,11 @@ namespace SS.Units
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
-				if( !inventory.isEmpty )
+#warning TODO! - inventories need to work with HUD system (assign stuff on inv's awake/start).
+				/*if( !inventory.isEmpty )
 				{
 					TAIGoal.DropoffToNew.DropOffInventory( inventory, container.transform.position );
-				}
+				}*/
 			} );
 
 			selectable.onHighlight.AddListener( () =>

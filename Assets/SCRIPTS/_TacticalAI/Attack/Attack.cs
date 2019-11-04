@@ -41,7 +41,7 @@ namespace SS
 				}
 				if( this.targeters == null || this.targeters.Length == 0 )
 				{
-					throw new System.Exception( "Can't add Attack TAI goal to: " + this.gameObject.name );
+					throw new System.Exception( "Can't add Attack TAI goal to: " + this.gameObject.name ); // nothing to get the target from.
 				}
 				if( this.target == null )
 				{

@@ -75,9 +75,8 @@ namespace SS.Modules
 					}
 
 					Dictionary<string, int> itemsInDeposit = this.GetAll();
-
-#warning can be not extra.
-					ToolTip.Create( 200.0f, this.GetComponent<Extra>().displayName );
+					
+					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
 
 					foreach( var kvp in itemsInDeposit )
 					{

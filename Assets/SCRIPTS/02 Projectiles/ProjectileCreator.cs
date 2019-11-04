@@ -94,13 +94,36 @@ namespace SS.Projectiles
 
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
-			
-			ModuleDefinition[] moduleDefs = def.GetAllModules();
-			ModuleData[] moduleDatas = data.GetAllModuleDatas();
 
-			for( int i = 0; i < moduleDefs.Length; i++ )
+			//
+			//    MODULES
+			//
+
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
+
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+			data.GetAllModules( out moduleDataIds, out moduleData );
+
+			int moduleCount = moduleDefIds.Length;
+
+			for( int i = 0; i < moduleCount; i++ )
 			{
-				moduleDefs[i].AddModule( gameObject, moduleDatas[i] );
+				for( int j = 0; j < moduleCount; j++ )
+				{
+					if( moduleDefIds[i] == moduleDataIds[j] )
+					{
+						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						break;
+					}
+					else if( j == moduleCount - 1 )
+					{
+						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					}
+				}
 			}
 		}
 
@@ -244,6 +267,16 @@ namespace SS.Projectiles
 			data.damageTypeOverride = damageSource.damageType;
 			data.damageOverride = damageSource.damage;
 			data.armorPenetrationOverride = damageSource.armorPenetration;
+
+			//
+			// MODULES
+			//
+
+			Module[] modules = gameObject.GetComponents<Module>();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
+			}
 
 			return data;
 		}

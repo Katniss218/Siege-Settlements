@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Heroes
 {
-	public class Hero : MonoBehaviour
+	public class Hero : SSObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -62,7 +62,7 @@ namespace SS.Heroes
 		}
 
 
-		public string displayName { get; set; }
+		//public string displayName { get; set; }
 		public string displayTitle { get; set; }
 
 		public GameObject hudGameObject { get; set; }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Buildings
 {
-	public class Building : MonoBehaviour
+	public class Building : SSObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -73,7 +73,7 @@ namespace SS.Buildings
 
 		public AudioClip buildSoundEffect { get; set; }
 
-		public string displayName { get; set; }
+		//public string displayName { get; set; }
 
 		public AudioClip deathSound { get; set; }
 

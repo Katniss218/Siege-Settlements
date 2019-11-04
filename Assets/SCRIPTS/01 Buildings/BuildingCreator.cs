@@ -76,19 +76,38 @@ namespace SS.Buildings
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
-
 			//
 			//    MODULES
 			//
 
-			ModuleDefinition[] moduleDefs = def.GetAllModules();
-			ModuleData[] moduleDatas = data.GetAllModuleDatas();
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
 
-			for( int i =0; i < moduleDefs.Length; i++ )
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+			data.GetAllModules( out moduleDataIds, out moduleData );
+
+			int moduleCount = moduleDefIds.Length;
+
+			for( int i = 0; i < moduleCount; i++ )
 			{
-				moduleDefs[i].AddModule( gameObject, moduleDatas[i] );
+				for( int j = 0; j < moduleCount; j++ )
+				{
+					if( moduleDefIds[i] == moduleDataIds[j] )
+					{
+						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						break;
+					}
+					else if( j == moduleCount - 1 )
+					{
+						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					}
+				}
 			}
-			
+
+
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -355,19 +374,13 @@ namespace SS.Buildings
 			}
 
 			//
-			//    MODULES
+			// MODULES
 			//
 
-			BarracksModule barracks = gameObject.GetComponent<BarracksModule>();
-			if( barracks != null )
+			Module[] modules = gameObject.GetComponents<Module>();
+			for( int i = 0; i < modules.Length; i++ )
 			{
-				data.barracksSaveState = (BarracksModuleData)barracks.GetData();
-			}
-
-			ResearchModule research = gameObject.GetComponent<ResearchModule>();
-			if( research != null )
-			{
-				data.researchSaveState = (ResearchModuleData)research.GetData();
+				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
 			}
 
 			return data;

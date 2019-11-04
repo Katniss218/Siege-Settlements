@@ -2,6 +2,8 @@
 [
 	{
 		Id = "extra.grass";
+		DisplayName = "Grass";
+		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
 		Mesh = "extern:Models/Extras/Cross.ksm";
 		AlbedoTexture = "extern:Textures/Extras/grass_side_albedo.png";
 		NormalTexture = "extern:Textures/Extras/grass_side_normal.png";
