@@ -87,32 +87,7 @@ namespace SS.Heroes
 			//    MODULES
 			//
 
-			Guid[] moduleDefIds;
-			ModuleDefinition[] moduleDefinitions;
-
-			Guid[] moduleDataIds;
-			ModuleData[] moduleData;
-
-			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
-			data.GetAllModules( out moduleDataIds, out moduleData );
-
-			int moduleCount = moduleDefIds.Length;
-
-			for( int i = 0; i < moduleCount; i++ )
-			{
-				for( int j = 0; j < moduleCount; j++ )
-				{
-					if( moduleDefIds[i] == moduleDataIds[j] )
-					{
-						moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleData[i] );
-						break;
-					}
-					else if( j == moduleCount - 1 )
-					{
-						throw new Exception( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
-					}
-				}
-			}
+			SSObjectCreator.AssignModules( gameObject, def, data );
 
 
 			TAIGoalData taiGoalData = data.taiGoalData;
@@ -360,11 +335,8 @@ namespace SS.Heroes
 			// MODULES
 			//
 
-			Module[] modules = gameObject.GetComponents<Module>();
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				data.AddModuleData( modules[i].moduleId, modules[i].GetData() );
-			}
+			SSObjectCreator.ExtractModules( gameObject, data );
+			
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )

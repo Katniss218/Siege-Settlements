@@ -195,8 +195,9 @@ namespace SS.Modules
 							data.rotation = spawnRot;
 							data.factionId = this.factionMember.factionId;
 							data.health = this.trainedUnit.healthMax;
-#warning need to have "identity" data (can created from definition, when there's no other data).
-							throw new Exception( "NOT IMPLEMENTED YET" );
+#warning need to have "identity" data (if created from definition, when there's no other data).
+#warning need to have proper modules' data created.
+							//throw new Exception( "NOT IMPLEMENTED YET" );
 							//data.inventoryData = new InventoryUnconstrainedData();
 
 							GameObject obj = UnitCreator.Create( this.trainedUnit, data );

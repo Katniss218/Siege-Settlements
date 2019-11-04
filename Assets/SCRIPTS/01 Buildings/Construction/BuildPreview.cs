@@ -163,7 +163,7 @@ namespace SS.Buildings
 				data.factionId = LevelDataManager.PLAYER_FAC;
 				data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
 				data.constructionSaveState = new ConstructionSiteData();
-
+#warning need default "identity" data (modules).
 				BuildingCreator.Create( this.def, data );
 
 				Object.Destroy( this.gameObject );
