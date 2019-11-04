@@ -210,6 +210,7 @@ namespace SS.Modules
 						}
 
 						this.trainedUnit = null;
+						this.trainProgress = 0.0f;
 						this.resourcesRemaining = null;
 						this.onTrainingEnd?.Invoke();
 					}

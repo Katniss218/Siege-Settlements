@@ -74,9 +74,10 @@ namespace SS.Modules
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
 		}
 
-		public override void AddModule( GameObject gameObject, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
 			RangedModule module = gameObject.AddComponent<RangedModule>();
+			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
 	}

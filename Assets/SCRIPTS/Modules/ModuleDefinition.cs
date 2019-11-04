@@ -17,7 +17,7 @@ namespace SS.Modules
 		/// </summary>
 		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
 
-		public abstract void AddModule( GameObject gameObject, ModuleData data );
+		public abstract void AddModule( GameObject gameObject, Guid moduleId, ModuleData data );
 
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );

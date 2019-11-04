@@ -149,6 +149,7 @@ namespace SS.Modules
 					{
 						LevelDataManager.SetTech( this.factionMember.factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
 						this.researchedTechnology = null;
+						this.researchProgress = 0.0f;
 						this.resourcesRemaining = null;
 						this.onResearchEnd?.Invoke();
 					}

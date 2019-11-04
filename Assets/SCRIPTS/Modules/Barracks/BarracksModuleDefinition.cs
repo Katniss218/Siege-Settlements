@@ -41,9 +41,10 @@ namespace SS.Modules
 			serializer.WriteStringArray( "", "TrainableUnits", this.trainableUnits );
 		}
 
-		public override void AddModule( GameObject gameObject, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
 			BarracksModule module = gameObject.AddComponent<BarracksModule>();
+			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
 	}

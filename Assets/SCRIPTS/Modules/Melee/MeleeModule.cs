@@ -144,7 +144,7 @@ namespace SS.Modules
 		public override ModuleData GetData()
 		{
 			MeleeModuleData data = new MeleeModuleData();
-
+			
 			if( this.target != null )
 			{
 				data.targetGuid = Main.GetGuid( this.target.gameObject );

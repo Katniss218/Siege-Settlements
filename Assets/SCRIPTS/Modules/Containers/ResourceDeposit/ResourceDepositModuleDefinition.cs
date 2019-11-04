@@ -79,9 +79,10 @@ namespace SS.Modules
 			}
 		}
 
-		public override void AddModule( GameObject gameObject, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
 			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
+			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
 	}

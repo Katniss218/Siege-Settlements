@@ -131,7 +131,7 @@ namespace SS.Content
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
 
-				Guid guid = Guid.ParseExact( serializer.ReadString( "Modules.{0}.ModuleId" ), "D" );
+				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
 
 				this.AddModuleData( guid, module );
 			}

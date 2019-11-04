@@ -97,7 +97,7 @@ namespace SS.Buildings
 				{
 					if( moduleDefIds[i] == moduleDataIds[j] )
 					{
-						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleData[i] );
 						break;
 					}
 					else if( j == moduleCount - 1 )

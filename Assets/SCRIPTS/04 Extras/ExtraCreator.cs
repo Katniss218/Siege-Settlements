@@ -53,6 +53,7 @@ namespace SS.Extras
 			data.GetAllModules( out moduleDataIds, out moduleData );
 
 			int moduleCount = moduleDefIds.Length;
+#warning need to take the possibility of arrays having non-equal length (some data is missing).
 
 			for( int i = 0; i < moduleCount; i++ )
 			{
@@ -60,7 +61,7 @@ namespace SS.Extras
 				{
 					if( moduleDefIds[i] == moduleDataIds[j] )
 					{
-						moduleDefinitions[i].AddModule( gameObject, moduleData[i] );
+						moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleData[i] );
 						break;
 					}
 					else if( j == moduleCount - 1 )

@@ -65,9 +65,10 @@ namespace SS.Modules.Inventories
 			serializer.SerializeArray( "", "Slots", this.slots );
 		}
 
-		public override void AddModule( GameObject gameObject, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
 			InventoryConstrained module = gameObject.AddComponent<InventoryConstrained>();
+			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
 	}

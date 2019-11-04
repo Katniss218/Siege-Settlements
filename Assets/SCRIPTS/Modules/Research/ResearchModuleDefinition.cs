@@ -39,9 +39,10 @@ namespace SS.Modules
 			serializer.WriteFloat( "", "ResearchSpeed", this.researchSpeed );
 		}
 
-		public override void AddModule( GameObject gameObject, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
 			ResearchModule module = gameObject.AddComponent<ResearchModule>();
+			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
 	}
