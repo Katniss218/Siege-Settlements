@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using KFF;
 using SS.Buildings;
+using SS.Levels.SaveStates;
 using SS.Units;
 using UnityEngine;
 
@@ -26,6 +27,12 @@ namespace SS.Modules
 			return !(
 				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
 				modTypes.Contains( typeof( BarracksModuleDefinition ) ));
+		}
+
+
+		public override ModuleData GetIdentityData()
+		{
+			return new BarracksModuleData();
 		}
 
 

@@ -2,6 +2,7 @@
 using SS.Buildings;
 using SS.Content;
 using SS.Heroes;
+using SS.Levels.SaveStates;
 using SS.Units;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,12 @@ namespace SS.Modules
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
 		{
 			return true; // no module constraints
+		}
+
+
+		public override ModuleData GetIdentityData()
+		{
+			return new RangedModuleData();
 		}
 
 

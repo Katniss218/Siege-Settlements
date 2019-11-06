@@ -195,11 +195,6 @@ namespace SS.Modules
 							data.rotation = spawnRot;
 							data.factionId = this.factionMember.factionId;
 							data.health = this.trainedUnit.healthMax;
-#warning need to have "identity" data (if created from definition, when there's no other data).
-#warning need to have proper modules' data created.
-							//throw new Exception( "NOT IMPLEMENTED YET" );
-							//data.inventoryData = new InventoryUnconstrainedData();
-
 							GameObject obj = UnitCreator.Create( this.trainedUnit, data );
 							// Move the newly spawned unit to the rally position.
 							Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;

@@ -2,6 +2,7 @@
 using SS.Buildings;
 using SS.Extras;
 using SS.Heroes;
+using SS.Levels.SaveStates;
 using SS.Units;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,12 @@ namespace SS.Modules.Inventories
 				modTypes.Contains( typeof( InventoryConstrainedDefinition ) ) ||
 				modTypes.Contains( typeof( InventoryUnconstrainedDefinition ) ) ||
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
+		}
+
+
+		public override ModuleData GetIdentityData()
+		{
+			return new InventoryUnconstrainedData();
 		}
 
 

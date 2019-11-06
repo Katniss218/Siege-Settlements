@@ -17,8 +17,13 @@ namespace SS.Modules
 		/// </summary>
 		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
 
-		public abstract void AddModule( GameObject gameObject, Guid moduleId, ModuleData data );
+		/// <summary>
+		/// Used to create identity (default) data.
+		/// </summary>
+		public abstract ModuleData GetIdentityData();
 
+		public abstract void AddModule( GameObject gameObject, Guid moduleId, ModuleData data );
+		
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
 	}

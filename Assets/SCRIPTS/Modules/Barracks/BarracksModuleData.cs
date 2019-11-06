@@ -18,7 +18,16 @@ namespace SS.Levels.SaveStates
 
 		public Vector3 rallyPoint { get; set; }
 
-		
+
+		public BarracksModuleData()
+		{
+			this.trainedUnitId = "";
+			this.trainProgress = 0.0f;
+			this.resourcesRemaining = new Dictionary<string, int>();
+			this.rallyPoint = Vector3.zero;
+		}
+
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
@@ -33,7 +42,7 @@ namespace SS.Levels.SaveStates
 
 			this.rallyPoint = serializer.ReadVector3( "RallyPoint" );
 		}
-
+		
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "TrainedUnitId", this.trainedUnitId );

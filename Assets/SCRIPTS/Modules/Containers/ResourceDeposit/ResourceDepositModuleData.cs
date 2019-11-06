@@ -11,6 +11,13 @@ namespace SS.Levels.SaveStates
 
 		public Dictionary<string, int> items { get; set; }
 
+
+		public ResourceDepositModuleData()
+		{
+			this.items = new Dictionary<string, int>();
+		}
+
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			var analysisData = serializer.Analyze( "Items" );

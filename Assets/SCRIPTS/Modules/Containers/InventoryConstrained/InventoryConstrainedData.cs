@@ -11,10 +11,12 @@ namespace SS.Levels.SaveStates
 
 		public Dictionary<string, int> items { get; set; }
 
+
 		public InventoryConstrainedData()
 		{
 			this.items = new Dictionary<string, int>();
 		}
+		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

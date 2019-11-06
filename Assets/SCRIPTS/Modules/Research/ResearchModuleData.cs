@@ -16,6 +16,14 @@ namespace SS.Levels.SaveStates
 		public Dictionary<string, int> resourcesRemaining { get; set; }
 
 
+		public ResearchModuleData()
+		{
+			this.researchedTechnologyId = "";
+			this.researchProgress = 0.0f;
+			this.resourcesRemaining = new Dictionary<string, int>();
+		}
+
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );

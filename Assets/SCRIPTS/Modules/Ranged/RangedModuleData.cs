@@ -9,6 +9,13 @@ namespace SS.Levels.SaveStates
 		public const string KFF_TYPEID = "ranged";
 
 		public Guid? targetGuid { get; set; }
+		
+
+		public RangedModuleData()
+		{
+			this.targetGuid = null;
+		}
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

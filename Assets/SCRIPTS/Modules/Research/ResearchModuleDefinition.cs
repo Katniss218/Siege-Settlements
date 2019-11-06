@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Buildings;
+using SS.Levels.SaveStates;
 using SS.Units;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,12 @@ namespace SS.Modules
 			return !(
 				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
 				modTypes.Contains( typeof( BarracksModuleDefinition ) ));
+		}
+
+
+		public override ModuleData GetIdentityData()
+		{
+			return new ResearchModuleData();
 		}
 
 

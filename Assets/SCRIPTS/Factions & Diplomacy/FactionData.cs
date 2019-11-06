@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Technologies;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SS.Diplomacy
 {
@@ -68,15 +69,15 @@ namespace SS.Diplomacy
 		{
 			serializer.WriteList( "", "Techs" );
 			int i = 0;
-			foreach( var value in this.techs )
+			foreach( var kvp in this.techs )
 			{
-				if( value.Value != TechnologyResearchProgress.Available )
+				if( kvp.Value != TechnologyResearchProgress.Available )
 				{
 					serializer.AppendClass( "Techs" );
-					serializer.WriteString( new Path( "Techs.{0}", i), "Id", value.Key );
-					serializer.WriteSByte( new Path( "Techs.{0}", i), "Progress", (sbyte)value.Value );
+					serializer.WriteString( new Path( "Techs.{0}", i), "Id", kvp.Key );
+					serializer.WriteSByte( new Path( "Techs.{0}", i), "Progress", (sbyte)kvp.Value );
+					i++;
 				}
-				i++;
 			}
 		}
 	}
