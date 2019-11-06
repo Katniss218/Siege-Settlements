@@ -6,7 +6,7 @@ namespace SS.UI
 	/// <summary>
 	/// Represents a UI, that's attached to a unit (displays health, etc.).
 	/// </summary>
-	public class HUDUnscaled : MonoBehaviour
+	public class HUDUnscaled : MonoBehaviour, IHUD
 	{
 		public Image[] colored;
 		public Image healthBar;

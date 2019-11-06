@@ -6,7 +6,7 @@ namespace SS.UI
 	/// <summary>
 	/// Represents a UI, that's attached to a unit (displays health, etc.).
 	/// </summary>
-	public class HUDScaled : MonoBehaviour
+	public class HUDScaled : MonoBehaviour, IHUD
 	{
 		// when the health is 0, the image will be filled this much.
 		[SerializeField] private float min = 0.25f;

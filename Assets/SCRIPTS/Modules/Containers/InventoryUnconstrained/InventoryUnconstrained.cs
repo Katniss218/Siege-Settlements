@@ -1,7 +1,10 @@
-﻿using SS.Levels.SaveStates;
+﻿using SS.Content;
+using SS.Levels.SaveStates;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SS.Modules.Inventories
 {
@@ -33,8 +36,7 @@ namespace SS.Modules.Inventories
 				return this.resources.Length;
 			}
 		}
-
-#warning TODO! - Needs to communicate with HUD's on units and other objects (if applicable).
+		
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
 		public _UnityEvent_string_int onAdd
 		{
@@ -51,9 +53,68 @@ namespace SS.Modules.Inventories
 
 		void Start()
 		{
-			if( this.GetComponents<IInventory>().Length > 1 )
+			SSObject obj = this.GetComponent<SSObject>();
+
+			if( obj is IHUDObject )
 			{
-				throw new Exception( "Can't have more than 1 IInventory on an object (only saving 1)." );
+				// integrate hud.
+				IHUDObject hudObj = (IHUDObject)obj;
+
+
+				Image hudResourceIcon = hudObj.hud.transform.Find( "Resource" ).Find( "Icon" ).GetComponent<Image>();
+				TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+
+				// Make the inventory update the HUD wien resources are added/removed.
+				this.onAdd.AddListener( ( string id, int amtAdded ) =>
+				{
+					// Set the icon to the first slot that contains a resource.
+					foreach( var kvp in this.GetAll() )
+					{
+						if( kvp.Key == "" )
+						{
+							continue;
+						}
+						hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
+						hudAmount.text = kvp.Value.ToString();
+
+						hudResourceIcon.gameObject.SetActive( true );
+						hudAmount.gameObject.SetActive( true );
+						break;
+					}
+				} );
+				this.onRemove.AddListener( ( string id, int amtRemoved ) =>
+				{
+					if( this.isEmpty )
+					{
+						hudResourceIcon.gameObject.SetActive( false );
+						hudAmount.gameObject.SetActive( false );
+					}
+					else
+					{
+						// Set the icon to the first slot that contains a resource.
+						foreach( var kvp in this.GetAll() )
+						{
+							if( kvp.Key == "" )
+							{
+								continue;
+							}
+							hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
+							hudAmount.text = kvp.Value.ToString();
+							break;
+						}
+					}
+				} );
+			}
+			Damageable dam = this.GetComponent<Damageable>();
+			if( dam != null )
+			{
+				dam.onDeath.AddListener( () =>
+				{
+					if( !this.isEmpty )
+					{
+						TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
+					}
+				} );
 			}
 		}
 

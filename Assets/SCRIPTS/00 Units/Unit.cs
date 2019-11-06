@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Units
 {
-	public class Unit : SSObject
+	public class Unit : SSObject, IHUDObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -25,6 +25,10 @@ namespace SS.Units
 		{
 			return _allUnits.ToArray();
 		}
+
+
+		public GameObject hud { get; set; }
+
 		
 
 		void OnEnable()

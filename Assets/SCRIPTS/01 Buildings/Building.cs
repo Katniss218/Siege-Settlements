@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Buildings
 {
-	public class Building : SSObject
+	public class Building : SSObject, IHUDObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -28,7 +28,9 @@ namespace SS.Buildings
 
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
-		
+
+
+		public GameObject hud { get; set; }
 
 		public Vector3[] placementNodes { get; set; }
 
@@ -40,6 +42,7 @@ namespace SS.Buildings
 		
 
 		public AudioClip deathSound { get; set; }
+
 
 		/// <summary>
 		/// Checks if the building is in a 'usable' state (not under construction/repair and not below 50% health).

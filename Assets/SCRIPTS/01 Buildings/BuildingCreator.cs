@@ -138,6 +138,8 @@ namespace SS.Buildings
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
+			building.hud = hudGameObject;
+
 			HUDUnscaled hud = hudGameObject.GetComponent<HUDUnscaled>();
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>

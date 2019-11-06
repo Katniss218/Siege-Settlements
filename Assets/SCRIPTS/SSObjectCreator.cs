@@ -9,7 +9,6 @@ namespace SS
 	{
 		public static void AssignModules( GameObject gameObject, ObjectDefinition def, ObjectData data )
 		{
-			Debug.Log( "Assigning modules" );
 			Guid[] moduleDefIds;
 			ModuleDefinition[] moduleDefinitions;
 
@@ -18,12 +17,12 @@ namespace SS
 
 			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
 			data.GetAllModules( out moduleDataIds, out moduleData );
-			Debug.Log( moduleDefIds.Length + ", " + moduleDataIds.Length );
+
 			for( int i = 0; i < moduleDefIds.Length; i++ )
 			{
 				if( moduleDataIds.Length == 0 )
 				{
-					Debug.LogWarning( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
 					moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleDefinitions[i].GetIdentityData() );
 					continue;
 				}
@@ -36,7 +35,7 @@ namespace SS
 					}
 					else if( j == moduleDataIds.Length - 1 )
 					{
-						Debug.LogWarning( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+						Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
 						moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleDefinitions[i].GetIdentityData() );
 					}
 				}

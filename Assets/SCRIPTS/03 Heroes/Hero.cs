@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Heroes
 {
-	public class Hero : SSObject
+	public class Hero : SSObject, IHUDObject
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -25,12 +25,12 @@ namespace SS.Heroes
 		{
 			return _allHeroes.ToArray();
 		}
-		
+
+
+		public GameObject hud { get; set; }
 
 		public string displayTitle { get; set; }
-
-		public GameObject hudGameObject { get; set; }
-
+		
 		void OnEnable()
 		{
 			_allHeroes.Add( this );

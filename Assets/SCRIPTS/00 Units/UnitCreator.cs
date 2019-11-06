@@ -198,9 +198,8 @@ namespace SS.Units
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 
-			Image hudResourceIcon = hud.transform.Find( "Resource" ).Find( "Icon" ).GetComponent<Image>();
-			TextMeshProUGUI hudAmount = hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
-
+			unit.hud = hudGameObject;
+			
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
 				if( isLocked )
@@ -272,52 +271,7 @@ namespace SS.Units
 				}
 				hudGameObject.SetActive( false );
 			} );
-
-
-			// Add inventory.
-			/*InventoryUnconstrained inventory = container.AddComponent<InventoryUnconstrained>();
 			
-			// Make the inventory update the HUD wien resources are added/removed.
-			inventory.onAdd.AddListener( ( string id, int amtAdded ) =>
-			{
-				// Set the icon to the first slot that contains a resource.
-				foreach( var kvp in inventory.GetAll() )
-				{
-					if( kvp.Key == "" )
-					{
-						continue;
-					}
-					hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-					hudAmount.text = kvp.Value.ToString();
-
-					hudResourceIcon.gameObject.SetActive( true );
-					hudAmount.gameObject.SetActive( true );
-					break;
-				}
-			} );
-			inventory.onRemove.AddListener( ( string id, int amtRemoved ) =>
-			{
-				if( inventory.isEmpty )
-				{
-					hudResourceIcon.gameObject.SetActive( false );
-					hudAmount.gameObject.SetActive( false );
-				}
-				else
-				{
-					// Set the icon to the first slot that contains a resource.
-					foreach( var kvp in inventory.GetAll() )
-					{
-						if( kvp.Key == "" )
-						{
-							continue;
-						}
-						hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-						hudAmount.text = kvp.Value.ToString();
-						break;
-					}
-				}
-			} );*/
-
 			// Make the unit change it's color when the faction is changed.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
@@ -351,11 +305,6 @@ namespace SS.Units
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
-#warning TODO! - inventories need to work with HUD system (assign stuff on inv's awake/start).
-				/*if( !inventory.isEmpty )
-				{
-					TAIGoal.DropoffToNew.DropOffInventory( inventory, container.transform.position );
-				}*/
 			} );
 
 			selectable.onHighlight.AddListener( () =>

@@ -70,8 +70,8 @@ namespace SS.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			
-			hero.hudGameObject.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
-			hero.hudGameObject.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
+			hero.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
+			hero.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
 
 			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
@@ -142,7 +142,7 @@ namespace SS.Heroes
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
-			hero.hudGameObject = hudGameObject;
+			hero.hud = hudGameObject;
 
 			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 			
