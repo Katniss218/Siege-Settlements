@@ -34,6 +34,7 @@ namespace SS.Modules.Inventories
 			}
 		}
 
+#warning TODO! - Needs to communicate with HUD's on units and other objects (if applicable).
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
 		public _UnityEvent_string_int onAdd
 		{

@@ -2,6 +2,7 @@
 using SS.Modules;
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS.Extras
 {
@@ -39,6 +40,16 @@ namespace SS.Extras
 			extra.defId = def.id;
 			extra.displayName = def.displayName;
 
+
+			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+			collider.size = def.size;
+			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
+
+			NavMeshObstacle obs = gameObject.GetComponent<NavMeshObstacle>();
+			obs.size = def.size;
+			obs.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
+			obs.carving = def.size == Vector3.zero ? false : true;
+
 			//
 			//    MODULES
 			//
@@ -58,7 +69,13 @@ namespace SS.Extras
 			
 			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-						
+
+			Extra extra = container.AddComponent<Extra>();
+
+			BoxCollider collider = container.AddComponent<BoxCollider>();
+
+			NavMeshObstacle obs = container.AddComponent<NavMeshObstacle>();
+
 			return container;
 		}
 

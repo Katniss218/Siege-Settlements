@@ -336,6 +336,8 @@ namespace SS.Modules
 				this.resources[i] = new SlotGroup( def.slots[i].resourceId, 0, def.slots[i].capacity );
 			}
 
+			this.miningSound = def.mineSound;
+			this.isTypeExtracted = def.isExtracted;
 
 			foreach( var kvp in data.items )
 			{
