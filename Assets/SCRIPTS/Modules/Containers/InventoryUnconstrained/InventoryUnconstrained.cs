@@ -51,7 +51,7 @@ namespace SS.Modules.Inventories
 
 
 
-		void Start()
+		void Awake()
 		{
 			SSObject obj = this.GetComponent<SSObject>();
 

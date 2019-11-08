@@ -60,7 +60,7 @@ namespace SS.Modules
 			get { return this.__onRemove; }
 		}
 
-		void Start()
+		void Awake()
 		{
 
 			

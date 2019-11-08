@@ -49,7 +49,7 @@ namespace SS.Modules.Inventories
 			get { return this.__onRemove; }
 		}
 
-		void Start()
+		void Awake()
 		{
 			SSObject obj = this.GetComponent<SSObject>();
 

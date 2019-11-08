@@ -39,10 +39,10 @@ namespace SS.Content
 			{
 				return false;
 			}
-			List<Type> moduleTypes = new List<Type>( this.moduleCache.Count );
+			List<Type> moduleTypes = new List<Type>();
 			for( int i = 0; i < this.moduleCache.Count; i++ )
 			{
-				moduleTypes[i] = this.moduleCache[i].moduleType;
+				moduleTypes.Add( this.moduleCache[i].moduleType );
 			}
 			if( !mod.CheckModuleDefConstraints( moduleTypes ) )
 			{
