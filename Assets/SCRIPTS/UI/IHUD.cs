@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SS.UI
 {
+	/// <summary>
+	/// Represents any HUD.
+	/// </summary>
 	public interface IHUD
 	{
 		void SetColor( Color color );

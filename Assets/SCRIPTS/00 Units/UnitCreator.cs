@@ -84,61 +84,6 @@ namespace SS.Units
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
-			UnityAction<int, string, TechnologyResearchProgress> onTechChange = ( int factionId, string id, TechnologyResearchProgress newProgress ) =>
-			{
-				if( factionId != factionMember.factionId )
-				{
-					return;
-				}
-				if( factionId != LevelDataManager.PLAYER_FAC )
-				{
-					return;
-				}
-				if( !Selection.IsHighlighted( selectable ) )
-				{
-					return;
-				}
-				if( SelectionPanel.instance.obj.GetElement( "constr.list" ) != null )
-				{
-					SelectionPanel.instance.obj.Clear( "constr.list" );
-				}
-				ConstructorRefreshList();
-			};
-
-			UnityAction onDeath = () =>
-			{
-				LevelDataManager.onTechStateChanged.RemoveListener( onTechChange );
-			};
-
-			UnityAction constructorOnSelect = () =>
-			{
-				if( factionMember.factionId != LevelDataManager.PLAYER_FAC )
-				{
-					return;
-				}
-				const string TEXT = "Select building to place...";
-
-				ConstructorRefreshList();
-
-				// Create the actual UI.
-				GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
-				SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
-			};
-
-			// If the unit is constructor (civilian), make it show the build menu.
-			if( def.isConstructor )
-			{
-				selectable.onHighlight.AddListener( constructorOnSelect );
-				LevelDataManager.onTechStateChanged.AddListener( onTechChange );
-
-				damageable.onDeath.AddListener( onDeath );
-			}
-			// If the unit was constructor before (listener is added), but it's not a constructor anymore - remove listener.
-			else
-			{
-				selectable.onHighlight.RemoveListener( constructorOnSelect );
-			}
-
 			//
 			//    MODULES
 			//
@@ -432,37 +377,7 @@ namespace SS.Units
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		private static void ConstructorRefreshList()
-		{
-			BuildingDefinition[] registeredBuildings = DefinitionManager.GetAllBuildings();
-			GameObject[] gridElements = new GameObject[registeredBuildings.Length];
-
-			// Initialize the grid elements' GameObjects.
-			for( int i = 0; i < registeredBuildings.Length; i++ )
-			{
-				BuildingDefinition buildingDef = registeredBuildings[i];
-
-				// If the unit's techs required have not been researched yet, add unclickable button, otherwise, add normal button.
-				if( Technologies.TechLock.CheckLocked( buildingDef, LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].GetAllTechs() ) )
-				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, null );
-				}
-				else
-				{
-					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, () =>
-					{
-						if( BuildPreview.isActive )
-						{
-							return;
-						}
-						BuildPreview.Create( buildingDef );
-						Selection.DeselectAll(); // deselect everything when the preview is active, to stop the player from performing other left-mouse-button input actions.
-					} );
-				}
-			}
-			GameObject listUI = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
-			SelectionPanel.instance.obj.RegisterElement( "constr.list", listUI.transform );
-		}
+		
 
 	}
 }

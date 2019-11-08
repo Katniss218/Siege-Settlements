@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using KFF;
 using SS.Buildings;
+using SS.Heroes;
 using SS.Levels.SaveStates;
 using SS.Units;
 using UnityEngine;
 
 namespace SS.Modules
 {
-	public class BarracksModuleDefinition : ModuleDefinition
+	public class ConstructorModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "barracks";
+		public const string KFF_TYPEID = "constructor";
 
-		public string[] trainableUnits { get; set; }
-		public float trainSpeed { get; set; }
+		public string[] constructibleBuildings { get; set; }
+
 
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return
 				objType == typeof( UnitDefinition ) ||
-				objType == typeof( BuildingDefinition );
+				objType == typeof( BuildingDefinition ) ||
+				objType == typeof( HeroDefinition );
 		}
 
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
@@ -30,28 +32,25 @@ namespace SS.Modules
 				modTypes.Contains( typeof( ConstructorModuleDefinition ) ));
 		}
 
-
 		public override ModuleData GetIdentityData()
 		{
-			return new BarracksModuleData();
+			return new ConstructorModuleData();
 		}
 
-
+		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );
-			this.trainableUnits = serializer.ReadStringArray( "TrainableUnits" );
+			this.constructibleBuildings = serializer.ReadStringArray( "ConstructibleBuildings" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteFloat( "", "TrainSpeed", this.trainSpeed );
-			serializer.WriteStringArray( "", "TrainableUnits", this.trainableUnits );
+			serializer.WriteStringArray( "", "ConstructibleBuildings", this.constructibleBuildings );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
-			BarracksModule module = gameObject.AddComponent<BarracksModule>();
+			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
 			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}

@@ -170,18 +170,37 @@ namespace SS.Buildings
 			self.StopExecution();
 		}
 
+		private void Inp_BlockSelectionOverride( InputQueue self )
+		{
+			// Used just to stop execution (is inserted before selection queue, so it blocks deselecting/selecting, when preview is active).
+			self.StopExecution();
+		}
+
 		private void OnEnable()
 		{
-			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 10.0f, this.Inp_CancelPlacement, true );
-			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 10.0f, this.Inp_TryPlace, true );
+			// Need to override all 3 channels of mouse input, since selection uses all 3 of them (so all 3 need to be blocked to block selection).
+			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // left
+			Main.mouseInput.RegisterOnHold( MouseCode.RightMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true );
+			Main.mouseInput.RegisterOnRelease( MouseCode.RightMouseButton, 10.0f, this.Inp_CancelPlacement, true );
+
+			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // right
+			Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true );
+			Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 10.0f, this.Inp_TryPlace, true );
 		}
 
 		private void OnDisable()
 		{
 			if( Main.mouseInput != null )
 			{
-				Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelPlacement ); // left
-				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_TryPlace ); // right
+				// The action is assigned to on release to block selection controller deselecting the object when placed
+				//    (building get's placed on press, then preview removes itself from the input, and later on release it deselects).
+				Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_BlockSelectionOverride ); // left
+				Main.mouseInput.ClearOnHold( MouseCode.RightMouseButton, this.Inp_BlockSelectionOverride );
+				Main.mouseInput.ClearOnRelease( MouseCode.RightMouseButton, this.Inp_CancelPlacement );
+
+				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_BlockSelectionOverride ); // right
+				Main.mouseInput.ClearOnHold( MouseCode.LeftMouseButton, this.Inp_BlockSelectionOverride );
+				Main.mouseInput.ClearOnRelease( MouseCode.LeftMouseButton, this.Inp_TryPlace );
 			}
 		}
 

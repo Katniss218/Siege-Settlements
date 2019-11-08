@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using SS.Content;
+using System;
 using UnityEngine;
 
 namespace SS
@@ -9,6 +8,9 @@ namespace SS
 	public class SSObject : MonoBehaviour
 	{
 		private Guid? __guid = null;
+		/// <summary>
+		/// Gets or sets the unique identifier (Guid) of the object (CAN'T be re-assigned after setting it once).
+		/// </summary>
 		public Guid? guid
 		{
 			get
@@ -26,6 +28,9 @@ namespace SS
 		}
 
 		private string __defId = null;
+		/// <summary>
+		/// Gets or sets the definition ID of the object (CAN"T be re-assigned after setting it once).
+		/// </summary>
 		public string defId
 		{
 			get
@@ -36,12 +41,15 @@ namespace SS
 			{
 				if( this.__defId != null )
 				{
-					throw new Exception( "Tried to assign definition to '" + gameObject.name + "' more than once." );
+					throw new Exception( "Tried to re-assign definition to '" + gameObject.name + "'. A definition is already assigned." );
 				}
 				this.__defId = value;
 			}
 		}
 
+		/// <summary>
+		/// Contains the display name of the object.
+		/// </summary>
 		public string displayName = "<missing>";
 	}
 }

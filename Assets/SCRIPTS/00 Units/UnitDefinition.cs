@@ -42,14 +42,6 @@ namespace SS.Units
 		public Armor armor { get; set; }
 
 
-
-		//public ModuleDefinition melee;
-
-		//public ModuleDefinition ranged;
-		
-		public bool isConstructor { get; set; }
-
-
 		//--------------------------------------------------------------------
 		//  MOVEMENT-RELATED
 		//--------------------------------------
@@ -167,8 +159,6 @@ namespace SS.Units
 			this.armor = new Armor();
 			serializer.Deserialize( "Armor", this.armor );
 			
-			this.isConstructor = serializer.ReadBool( "IsConstructor" );
-
 			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
@@ -207,8 +197,6 @@ namespace SS.Units
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );
 			
-			serializer.WriteBool( "", "IsConstructor", this.isConstructor );
-
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );

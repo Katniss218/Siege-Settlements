@@ -26,7 +26,8 @@ namespace SS.Modules
 		{
 			return !(
 				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
-				modTypes.Contains( typeof( BarracksModuleDefinition ) ));
+				modTypes.Contains( typeof( BarracksModuleDefinition ) ) ||
+				modTypes.Contains( typeof( ConstructorModuleDefinition ) ));
 		}
 
 

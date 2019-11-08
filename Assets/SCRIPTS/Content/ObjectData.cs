@@ -124,6 +124,10 @@ namespace SS.Content
 				{
 					module = new ResourceDepositModuleData();
 				}
+				else if( moduleTypeString == ConstructorModuleData.KFF_TYPEID )
+				{
+					module = new ConstructorModuleData();
+				}
 				else
 				{
 					throw new Exception( "Unknown module type '" + moduleTypeString + "'." );
@@ -176,6 +180,10 @@ namespace SS.Content
 				else if( modulesArray[i] is ResourceDepositModuleData )
 				{
 					moduleTypeString = ResourceDepositModuleData.KFF_TYPEID;
+				}
+				else if( modulesArray[i] is ConstructorModuleData )
+				{
+					moduleTypeString = ConstructorModuleData.KFF_TYPEID;
 				}
 				else
 				{
