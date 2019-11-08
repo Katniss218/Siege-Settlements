@@ -1,5 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
+using SS.Modules;
 using SS.Modules.Inventories;
 using SS.ResourceSystem;
 using System.Collections.Generic;
@@ -21,9 +22,11 @@ namespace SS
 
 			private void DropOff()
 			{
+#warning Change "default deposits" to be inventories instead of deposits?
+
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
-				IInventory destinationInventory = this.destination.GetComponent<IInventory>();
+				ResourceDepositModule destinationInventory = this.destination.GetComponent<ResourceDepositModule>();
 
 				foreach( var kvp in resourcesCarried )
 				{

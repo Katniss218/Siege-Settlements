@@ -71,6 +71,7 @@ namespace SS.Extras
 			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
 
 			Extra extra = container.AddComponent<Extra>();
+			extra.guid = guid;
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 

@@ -19,11 +19,19 @@
 
 		public static explicit operator string( AddressableAsset<T> other )
 		{
+			if( other == null )
+			{
+				return "";
+			}
 			return other.address;
 		}
 
 		public static implicit operator T( AddressableAsset<T> other )
 		{
+			if( other == null )
+			{
+				return default(T);
+			}
 			return other.asset;
 		}
 	}

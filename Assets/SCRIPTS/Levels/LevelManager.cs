@@ -348,7 +348,6 @@ namespace SS.Levels
 				pathProjectiles = GetFullDataPath( levelIdentifier, "projectiles.kff" ),
 				pathHeroes = GetFullDataPath( levelIdentifier, "heroes.kff" ),
 				pathExtras = GetFullDataPath( levelIdentifier, "extras.kff" ),
-				pathResourceDeposits = GetFullDataPath( levelIdentifier, "resource_deposits.kff" ),
 
 				pathResources = GetFullDataPath( levelIdentifier, "resources.kff" ),
 				pathTechnologies = GetFullDataPath( levelIdentifier, "technologies.kff" ),
@@ -360,7 +359,6 @@ namespace SS.Levels
 				serializerProjectiles,
 				serializerHeroes,
 				serializerExtras,
-				serializerResourceDeposits,
 
 				serializerResources,
 				serializerTechnologies,
@@ -414,16 +412,7 @@ namespace SS.Levels
 			{
 				throw new Exception( "Can't open file '" + pathExtras + "' or file is invalid." );
 			}
-
-			try
-			{
-				serializerResourceDeposits = KFFSerializer.ReadFromFile( pathResourceDeposits, DefinitionManager.FILE_ENCODING );
-			}
-			catch( Exception )
-			{
-				throw new Exception( "Can't open file '" + pathResourceDeposits + "' or file is invalid." );
-			}
-
+			
 
 			try
 			{
@@ -504,7 +493,6 @@ namespace SS.Levels
 				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_projectiles.kff" ),
 				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_heroes.kff" ),
 				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_extras.kff" ),
-				pathSavedResourceDeposits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_resource_deposits.kff" ),
 				
 				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_selection.kff" );
 
@@ -516,7 +504,6 @@ namespace SS.Levels
 				serializerSavedProjectiles,
 				serializerSavedHeroes,
 				serializerSavedExtras,
-				serializerSavedResourceDeposits,
 				
 				serializerSelection;
 
@@ -577,16 +564,7 @@ namespace SS.Levels
 			{
 				throw new Exception( "Can't open file '" + pathSavedExtras + "' or file is invalid." );
 			}
-
-			try
-			{
-				serializerSavedResourceDeposits = KFFSerializer.ReadFromFile( pathSavedResourceDeposits, DefinitionManager.FILE_ENCODING );
-			}
-			catch( Exception )
-			{
-				throw new Exception( "Can't open file '" + pathSavedResourceDeposits + "' or file is invalid." );
-			}
-
+			
 			try
 			{
 				serializerSelection = KFFSerializer.ReadFromFile( pathSelection, DefinitionManager.FILE_ENCODING );
@@ -945,7 +923,6 @@ namespace SS.Levels
 				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_projectiles.kff" ),
 				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_heroes.kff" ),
 				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_extras.kff" ),
-				pathSavedResourceDeposits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_resource_deposits.kff" ),
 				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_selection.kff" );
 
 			KFFSerializer 
@@ -955,7 +932,6 @@ namespace SS.Levels
 				serializerSavedProjectiles = new KFFSerializer( new KFFFile( pathSavedProjectiles ) ),
 				serializerSavedHeroes = new KFFSerializer( new KFFFile( pathSavedHeroes ) ),
 				serializerSavedExtras = new KFFSerializer( new KFFFile( pathSavedExtras ) ),
-				serializerSavedResourceDeposits = new KFFSerializer( new KFFFile( pathSavedResourceDeposits ) ),
 				
 				serializerSelection = new KFFSerializer( new KFFFile( pathSelection ) );
 
@@ -1004,7 +980,6 @@ namespace SS.Levels
 			serializerSavedProjectiles.WriteToFile( pathSavedProjectiles, DefinitionManager.FILE_ENCODING );
 			serializerSavedHeroes.WriteToFile( pathSavedHeroes, DefinitionManager.FILE_ENCODING );
 			serializerSavedExtras.WriteToFile( pathSavedExtras, DefinitionManager.FILE_ENCODING );
-			serializerSavedResourceDeposits.WriteToFile( pathSavedResourceDeposits, DefinitionManager.FILE_ENCODING );
 			
 			serializerSelection.WriteToFile( pathSelection, DefinitionManager.FILE_ENCODING );
 		}

@@ -34,7 +34,7 @@ namespace SS
 				}
 
 				Dictionary<string, int> resourcesCarried = carrierInv.GetAll();
-
+				
 				foreach( var kvp in resourcesCarried )
 				{
 					ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
@@ -55,25 +55,24 @@ namespace SS
 						int remaining = kvp.Value;
 						while( remaining > 0 )
 						{
-							Dictionary<string, int> itemsDict = new Dictionary<string, int>();
-							if( remaining >= capacity )
+							int resAmount = capacity;
+							if( remaining < capacity )
 							{
-								itemsDict.Add( kvp.Key, capacity );
+								resAmount = remaining;
 							}
-							else
-							{
-								itemsDict.Add( kvp.Key, remaining );
-							}
-							remaining -= capacity;
+							remaining -= resAmount;
 
 							ExtraData data = new ExtraData();
 							data.position = position;
 							data.rotation = Quaternion.identity;
+							
 
-							ResourceDepositModuleData depositData = new ResourceDepositModuleData();
-							depositData.items = itemsDict;
-
-							ExtraCreator.Create( def, data );
+							GameObject extra = ExtraCreator.Create( def, data );
+							ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
+							foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
+							{
+								resDepo.Add( slot.resourceId, resAmount );
+							}
 							AudioManager.PlaySound( resourceDef.dropoffSound );
 						}
 					}

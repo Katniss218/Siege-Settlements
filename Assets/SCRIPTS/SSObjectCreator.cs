@@ -22,7 +22,7 @@ namespace SS
 			{
 				if( moduleDataIds.Length == 0 )
 				{
-					Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+					Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found. - Creating default data." );
 					moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleDefinitions[i].GetIdentityData() );
 					continue;
 				}
@@ -35,7 +35,7 @@ namespace SS
 					}
 					else if( j == moduleDataIds.Length - 1 )
 					{
-						Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found." );
+						Debug.Log( "No module data corresponding to moduleId of '" + moduleDefIds[i].ToString( "D" ) + "' was found. - Creating default data." );
 						moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i], moduleDefinitions[i].GetIdentityData() );
 					}
 				}
