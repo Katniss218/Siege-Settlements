@@ -21,7 +21,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateOpaque( Texture2D color, Texture2D normal, Texture2D emission, float metallic, float smoothness )
 		{
-			Material material = new Material( AssetManager.GetMaterial( OPAQUE_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( OPAQUE_ID ) );
 
 			material.EnableKeyword( "_NORMALMAP" );
 			material.SetTexture( "_BaseMap", color );
@@ -38,7 +38,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateTransparent( Texture2D color, Texture2D normal, Texture2D emission, float metallic, float smoothness )
 		{
-			Material material = new Material( AssetManager.GetMaterial( TRANSPARENT_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( TRANSPARENT_ID ) );
 
 			material.SetTexture( "_Albedo", color );
 			material.SetTexture( "_Normal", normal );
@@ -54,7 +54,7 @@ namespace SS
 		/// </summary>
 		public static Material CreatePlantOpaque( Texture2D color, Texture2D normal, Texture2D emission, float metallic, float smoothness, float displacementScale )
 		{
-			Material material = new Material( AssetManager.GetMaterial( PLANT_OPAQUE_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( PLANT_OPAQUE_ID ) );
 
 			material.SetTexture( "_BaseMap", color );
 			material.SetTexture( "_BumpMap", normal );
@@ -71,7 +71,7 @@ namespace SS
 		/// </summary>
 		public static Material CreatePlantTransparent( Texture2D color, Texture2D normal, Texture2D emission, float metallic, float smoothness, float displacementScale )
 		{
-			Material material = new Material( AssetManager.GetMaterial( PLANT_TRANSPARENT_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( PLANT_TRANSPARENT_ID ) );
 
 			material.SetTexture( "_BaseMap", color );
 			material.SetTexture( "_BumpMap", normal );
@@ -88,7 +88,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateColored( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, float metallic, float smoothness )
 		{
-			Material material = new Material( AssetManager.GetMaterial( COLORED_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( COLORED_ID ) );
 
 			material.SetColor( "_FactionColor", color );
 			material.SetTexture( "_Albedo", overlay );
@@ -105,7 +105,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateColoredDestroyable( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, float metallic, float smoothness, float dest )
 		{
-			Material material = new Material( AssetManager.GetMaterial( COLORED_DESTROYABLE_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( COLORED_DESTROYABLE_ID ) );
 
 			material.SetColor( "_FactionColor", color );
 			material.SetTexture( "_Albedo", overlay );
@@ -123,7 +123,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateColoredConstructible( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, Texture2D metallicMap, Texture2D roughnessMap, float height, float constructionProgress )
 		{
-			Material material = new Material( AssetManager.GetMaterial( COLORED_CONSTRUCTIBLE_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( COLORED_CONSTRUCTIBLE_ID ) );
 
 			material.SetColor( "_FactionColor", color );
 			material.SetTexture( "_Albedo", overlay );
@@ -142,7 +142,7 @@ namespace SS
 		/// </summary>
 		public static Material CreatePlacementPreview( Color color )
 		{
-			Material material = new Material( AssetManager.GetMaterial( PLACEMENT_PREVIEW_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( PLACEMENT_PREVIEW_ID ) );
 
 			material.SetColor( "_FactionColor", color );
 
@@ -154,7 +154,7 @@ namespace SS
 		/// </summary>
 		public static Material CreateParticles( Texture2D texture, Color tint )
 		{
-			Material material = new Material( AssetManager.GetMaterial( PARTICLES_ID ) );
+			Material material = new Material( AssetManager.GetMaterialPrototype( PARTICLES_ID ) );
 
 			material.SetTexture( "_BaseMap", texture );
 			material.SetColor( "_BaseColor", tint );

@@ -28,7 +28,8 @@ namespace SS.Extras
 			meshFilter.mesh = def.mesh;
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			
+
+#warning TODO! - robust material assignment (material prototype defined along other maps).
 			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo, def.normal, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
 
 			//

@@ -1,5 +1,4 @@
-﻿using Katniss.Utils;
-using SS.Levels;
+﻿using SS.Levels;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -32,7 +31,7 @@ namespace SS.Content
 		private static Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
 		private static Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
 
-		private static Dictionary<string, Material> materials = new Dictionary<string, Material>();
+		private static Dictionary<string, Material> materialPrototypes = new Dictionary<string, Material>();
 		
 
 		/// <summary>
@@ -54,13 +53,17 @@ namespace SS.Content
 			meshes.Clear();
 			audioClips.Clear();
 
-			materials.Clear();
+			materialPrototypes.Clear();
 		}
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
 		public static AddressableAsset<GameObject> GetPrefab( string path )
 		{
 			if( prefabs.TryGetValue( path, out GameObject ret ) )
@@ -84,6 +87,10 @@ namespace SS.Content
 			return new AddressableAsset<GameObject>( path, prefabs[path] );
 		}
 
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
 		public static AddressableAsset<TMP_FontAsset> GetFont( string path )
 		{
 			if( fonts.TryGetValue( path, out TMP_FontAsset ret ) )
@@ -108,6 +115,10 @@ namespace SS.Content
 		}
 
 
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
 		public static AddressableAsset<Mesh> GetMesh( string path )
 		{
 			if( meshes.TryGetValue( path, out Mesh ret ) )
@@ -136,7 +147,11 @@ namespace SS.Content
 			throw new System.Exception( "Invalid asset identifier in path '" + path + "'." );
 		}
 
-		// load type represents what type the loader should load if the tex is not loaded.
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
+		/// <param name="loadType">The type of the texture to be loaded (if needed).</param>
 		public static AddressableAsset<Texture2D> GetTexture2D( string path, TextureType loadType )
 		{
 			if( textures.TryGetValue( path, out Texture2D ret ) )
@@ -164,6 +179,10 @@ namespace SS.Content
 			return new AddressableAsset<Texture2D>( path, textures[path] );
 		}
 
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
 		public static AddressableAsset<Sprite> GetSprite( string path )
 		{
 			if( sprites.TryGetValue( path, out Sprite ret ) )
@@ -191,6 +210,10 @@ namespace SS.Content
 			return new AddressableAsset<Sprite>( path, sprites[path] );
 		}
 
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
 		public static AddressableAsset<AudioClip> GetAudioClip( string path )
 		{
 			if( audioClips.TryGetValue( path, out AudioClip ret ) )
@@ -218,9 +241,13 @@ namespace SS.Content
 			return new AddressableAsset<AudioClip>( path, audioClips[path] );
 		}
 
-		public static AddressableAsset<Material> GetMaterial( string path )
+		/// <summary>
+		/// Gets (and loads, if necessary) an asset at the specified path.
+		/// </summary>
+		/// <param name="path">The path (external or builtin) to the asset.</param>
+		public static AddressableAsset<Material> GetMaterialPrototype( string path )
 		{
-			if( materials.TryGetValue( path, out Material ret ) )
+			if( materialPrototypes.TryGetValue( path, out Material ret ) )
 			{
 				return new AddressableAsset<Material>( path, ret );
 			}
@@ -231,14 +258,14 @@ namespace SS.Content
 			}
 			else if( path.StartsWith( BUILTIN_ASSET_ID ) )
 			{
-				materials.Add( path, Resources.Load<Material>( path.Substring( BUILTIN_ASSET_ID.Length ) ) );
+				materialPrototypes.Add( path, Resources.Load<Material>( path.Substring( BUILTIN_ASSET_ID.Length ) ) );
 			}
 			else
 			{
 				throw new System.Exception( "Invalid asset identifier in path '" + path + "'." );
 			}
 
-			return new AddressableAsset<Material>( path, materials[path] );
+			return new AddressableAsset<Material>( path, materialPrototypes[path] );
 		}
 	}
 }
