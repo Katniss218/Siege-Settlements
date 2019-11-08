@@ -6,9 +6,7 @@ using SS.Levels.SaveStates;
 using SS.Technologies;
 using SS.UI;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace SS.Modules
 {
@@ -19,9 +17,7 @@ namespace SS.Modules
 		private FactionMember factionMember;
 		
 		private Selectable selectable;
-		
-#warning Allow to switch build preview to another object when other btn is clicked.
-		
+				
 		void Awake()
 		{
 			this.selectable = this.GetComponent<Selectable>();
@@ -59,10 +55,10 @@ namespace SS.Modules
 					{
 						if( BuildPreview.isActive )
 						{
+							BuildPreview.Switch( buildingDef );
 							return;
 						}
 						BuildPreview.Create( buildingDef );
-						//Selection.DeselectAll(); // deselect everything when the preview is active, to stop the player from performing other left-mouse-button input actions.
 					} );
 				}
 			}

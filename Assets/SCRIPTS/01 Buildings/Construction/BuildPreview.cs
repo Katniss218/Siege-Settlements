@@ -242,6 +242,21 @@ namespace SS.Buildings
 			return gameObject;
 		}
 
+		public static void Switch( BuildingDefinition def )
+		{
+			BuildPreview buildPreview = preview.GetComponent<BuildPreview>();
+			BuildPreviewPositioner positioner = preview.GetComponent<BuildPreviewPositioner>();
+			positioner.placementNodes = def.placementNodes;
+
+			float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
+			positioner.nodesSearchRange = new Vector3( max, max, max );
+
+			buildPreview.def = def;
+			
+			MeshFilter meshFilter = preview.GetComponent<MeshFilter>();
+			meshFilter.mesh = buildPreview.def.mesh;
+		}
+
 		public static void Destroy()
 		{
 			if( preview != null )
