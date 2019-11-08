@@ -350,8 +350,8 @@ namespace SS.Modules
 				}
 			}
 
-			GameObject listUI = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
-			SelectionPanel.instance.obj.RegisterElement( "barracks.list", listUI.transform );
+			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 75.0f, 5.0f ), new Vector2( -150.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
+			SelectionPanel.instance.obj.RegisterElement( "barracks.list", list.transform );
 		}
 
 		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
