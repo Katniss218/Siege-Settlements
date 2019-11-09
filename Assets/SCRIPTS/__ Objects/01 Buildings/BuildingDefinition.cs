@@ -79,13 +79,7 @@ namespace SS.Buildings
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
-
-		public AddressableAsset<Mesh> mesh { get; set; }
-		public AddressableAsset<Texture2D> albedo { get; set; }
-		public AddressableAsset<Texture2D> normal { get; set; }
-		public AddressableAsset<Texture2D> metallicMap { get; set; }
-		public AddressableAsset<Texture2D> roughnessMap { get; set; }
-
+		
 		public AddressableAsset<AudioClip> buildSoundEffect { get; private set; }
 		public AddressableAsset<AudioClip> deathSoundEffect { get; private set; }
 		public AddressableAsset<Sprite> icon { get; private set; }
@@ -133,13 +127,7 @@ namespace SS.Buildings
 			
 
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
-
-			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
-			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
-			this.metallicMap = serializer.ReadTexture2DFromAssets( "MetallicTexture", TextureType.Color );
-			this.roughnessMap = serializer.ReadTexture2DFromAssets( "RoughnessTexture", TextureType.Color );
-
+			
 			this.buildSoundEffect = serializer.ReadAudioClipFromAssets( "BuildSound" );
 			this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
 
@@ -177,13 +165,7 @@ namespace SS.Buildings
 
 			
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
-
-			serializer.WriteString( "", "Mesh", (string)this.mesh );
-			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
-			serializer.WriteString( "", "NormalTexture", (string)this.normal );
-			serializer.WriteString( "", "MetallicTexture", (string)this.metallicMap );
-			serializer.WriteString( "", "RoughnessTexture", (string)this.roughnessMap );
-
+			
 			serializer.WriteString( "", "BuildSound", (string)this.buildSoundEffect );
 			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );

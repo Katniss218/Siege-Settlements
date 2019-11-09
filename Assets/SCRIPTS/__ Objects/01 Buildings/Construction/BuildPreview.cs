@@ -232,8 +232,9 @@ namespace SS.Buildings
 
 			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
 
+#warning TODO! - collect every subobject of type MESH and assign the placement preview from them.
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-			meshFilter.mesh = buildPreview.def.mesh;
+			//meshFilter.mesh = buildPreview.def.mesh;
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
 
@@ -252,9 +253,10 @@ namespace SS.Buildings
 			positioner.nodesSearchRange = new Vector3( max, max, max );
 
 			buildPreview.def = def;
-			
+
+#warning TODO! - collect every subobject of type MESH and assign the placement preview from them.
 			MeshFilter meshFilter = preview.GetComponent<MeshFilter>();
-			meshFilter.mesh = buildPreview.def.mesh;
+			//meshFilter.mesh = buildPreview.def.mesh;
 		}
 
 		public static void Destroy()

@@ -17,42 +17,42 @@ namespace SS
 
 		
 
-		public static Material CreateMaterial( MaterialDefinition data )
+		public static Material CreateMaterial( MaterialDefinition def )
 		{
-#warning depending on the base material used, it will try to load additional properties (textures, floats, etc.).
-			if( data.materialType == MaterialType.Opaque )
+			// Acts as an intermediate between MaterialDefinition and shader property names.
+			if( def.materialType == MaterialType.Opaque )
 			{
-				return CreateOpaque( data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap );
+				return CreateOpaque( def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap );
 			}
-			if( data.materialType == MaterialType.Transparent )
+			if( def.materialType == MaterialType.Transparent )
 			{
-				return CreateTransparent( data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap );
+				return CreateTransparent( def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap );
 			}
-			if( data.materialType == MaterialType.PlantOpaque )
+			if( def.materialType == MaterialType.PlantOpaque )
 			{
-				return CreatePlantOpaque( data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap, data.windDisplacementScale.Value );
+				return CreatePlantOpaque( def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap, def.windDisplacementScale.Value );
 			}
-			if( data.materialType == MaterialType.PlantTransparent )
+			if( def.materialType == MaterialType.PlantTransparent )
 			{
-				return CreatePlantTransparent( data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap, data.windDisplacementScale.Value );
+				return CreatePlantTransparent( def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap, def.windDisplacementScale.Value );
 			}
-			if( data.materialType == MaterialType.Colored )
+			if( def.materialType == MaterialType.Colored )
 			{
-				return CreateColored( default( Color ), data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap );
+				return CreateColored( default( Color ), def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap );
 			}
-			if( data.materialType == MaterialType.ColoredDestroyable )
+			if( def.materialType == MaterialType.ColoredDestroyable )
 			{
-				return CreateColoredDestroyable( default( Color ), data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap, default( float ) );
+				return CreateColoredDestroyable( default( Color ), def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap, default( float ) );
 			}
-			if( data.materialType == MaterialType.ColoredConstructible )
+			if( def.materialType == MaterialType.ColoredConstructible )
 			{
-				return CreateColoredConstructible( default( Color ), data.colorMap, data.normalMap, data.emissionMap, data.metallicMap, data.smoothnessMap, default( float ) );
+				return CreateColoredConstructible( default( Color ), def.colorMap, def.normalMap, def.emissionMap, def.metallicMap, def.smoothnessMap, default( float ) );
 			}
-			if( data.materialType == MaterialType.Particles )
+			if( def.materialType == MaterialType.Particles )
 			{
-				return CreateParticles( data.colorMap );
+				return CreateParticles( def.colorMap );
 			}
-			throw new System.Exception( "Unknown materialType '" + data.materialType + "'." );
+			throw new System.Exception( "Unknown materialType '" + def.materialType + "'." );
 		}
 
 		/// <summary>
@@ -163,25 +163,13 @@ namespace SS
 		public static Material CreateColoredConstructible( Color color, Texture2D overlay, Texture2D normal, Texture2D emission, Texture2D metallicMap, Texture2D smoothnessMap, float offsetY )
 		{
 			Material material = new Material( AssetManager.GetMaterialPrototype( COLORED_CONSTRUCTIBLE_ID ) );
-
-			string[] props = material.GetTexturePropertyNames();
-			for( int i = 0; i < props.Length; i++ )
-			{
-				Debug.Log( props[i] );
-			}
-
+			
 			material.SetColor( "_FactionColor", color );
 			material.SetTexture( "_Albedo", overlay );
 			material.SetTexture( "_Normal", normal );
 			material.SetTexture( "_Emission", emission );
 			material.SetTexture( "_MetallicMap", metallicMap );
 			material.SetTexture( "_SmoothnessMap", smoothnessMap );
-#warning replace roughness with smoothness.
-
-#warning TODO! - replace height & construction progress with offsetY.
-
-			//material.SetFloat( "_Height", height );
-			//material.SetFloat( "_ConstructionProgress", constructionProgress );
 
 			return material;
 		}
@@ -206,7 +194,6 @@ namespace SS
 			Material material = new Material( AssetManager.GetMaterialPrototype( PARTICLES_ID ) );
 
 			material.SetTexture( "_BaseMap", texture );
-			//material.SetColor( "_BaseColor", tint );
 
 			return material;
 		}

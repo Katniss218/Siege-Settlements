@@ -49,12 +49,6 @@ namespace SS.Heroes
 		public Armor armor { get; set; }
 
 
-
-		//public ModuleDefinition melee;
-
-		//public ModuleDefinition ranged;
-
-
 		//--------------------------------------------------------------------
 		//  MOVEMENT-RELATED
 		//--------------------------------------
@@ -124,10 +118,7 @@ namespace SS.Heroes
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
-
-		public AddressableAsset<Mesh> mesh { get; set; }
-		public AddressableAsset<Texture2D> albedo { get; set; }
-		public AddressableAsset<Texture2D> normal { get; set; }
+		
 		public AddressableAsset<Sprite> icon { get; private set; }
 
 
@@ -155,10 +146,7 @@ namespace SS.Heroes
 			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
 			this.radius = serializer.ReadFloat( "Radius" );
 			this.height = serializer.ReadFloat( "Height" );
-
-			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
-			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 
 			this.DeserializeModulesKFF( serializer );
@@ -177,10 +165,7 @@ namespace SS.Heroes
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
-
-			serializer.WriteString( "", "Mesh", (string)this.mesh );
-			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
-			serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
 			this.SerializeModulesKFF( serializer );

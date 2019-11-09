@@ -134,11 +134,7 @@ namespace SS.Units
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
-
-#warning TODO! - remove mesh from code.
-		//public AddressableAsset<Mesh> mesh { get; set; }
-		//public AddressableAsset<Texture2D> albedo { get; set; }
-		//public AddressableAsset<Texture2D> normal { get; set; }
+		
 		public AddressableAsset<Sprite> icon { get; private set; }
 		
 
@@ -181,10 +177,7 @@ namespace SS.Units
 
 			this.buildTime = serializer.ReadFloat( "BuildTime" );
 			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
-
-			//this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			//this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
-			//this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 
 			this.DeserializeModulesKFF( serializer );
@@ -216,10 +209,7 @@ namespace SS.Units
 
 			serializer.WriteFloat( "", "BuildTime", this.buildTime );
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
-
-			//serializer.WriteString( "", "Mesh", (string)this.mesh );
-			//serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
-			//serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
 			this.SerializeModulesKFF( serializer );
