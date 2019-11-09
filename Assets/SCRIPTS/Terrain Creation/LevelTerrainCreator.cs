@@ -45,7 +45,8 @@ namespace SS.TerrainCreation
 					meshFilter.mesh = meshes[i, j];
 
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
-					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, AssetManager.GetTexture2D( "builtin:Textures/pixel_black", TextureType.Color ), AssetManager.GetTexture2D( "builtin:Textures/pixel_black", TextureType.Color ) );
+					meshRenderer.material = new Material( AssetManager.GetMaterialPrototype( "builtin:Materials/__Terrain" ) );
+					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps[i, j] );
 
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 
