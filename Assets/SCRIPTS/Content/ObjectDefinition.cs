@@ -140,6 +140,10 @@ namespace SS.Content
 				{
 					subObjectDef = new MeshSubObjectDefinition();
 				}
+				else if( subObjectTypeString == ParticlesSubObjectDefinition.KFF_TYPEID )
+				{
+					subObjectDef = new ParticlesSubObjectDefinition();
+				}
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
 
@@ -211,10 +215,14 @@ namespace SS.Content
 			for( int i = 0; i < subObjectsArray.Length; i++ )
 			{
 				string typeString = null;
-
+				
 				if( subObjectsArray[i] is MeshSubObjectDefinition )
 				{
 					typeString = MeshSubObjectDefinition.KFF_TYPEID;
+				}
+				else if( subObjectsArray[i] is ParticlesSubObjectDefinition )
+				{
+					typeString = ParticlesSubObjectDefinition.KFF_TYPEID;
 				}
 				else
 				{

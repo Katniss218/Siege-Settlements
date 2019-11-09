@@ -6,6 +6,10 @@ namespace SS.Projectiles
 {
 	public class ProjectileDefinition : ObjectDefinition, IKFFSerializable
 	{
+		public bool getsStuckInGround { get; set; }
+
+		public float lifetime { get; set; }
+
 		public AddressableAsset<AudioClip> hitSoundEffect { get; private set; }
 		public AddressableAsset<AudioClip> missSoundEffect { get; private set; }
 
@@ -23,6 +27,10 @@ namespace SS.Projectiles
 		{
 			this.id = serializer.ReadString( "Id" );
 
+			this.getsStuckInGround = serializer.ReadBool( "GetsStuckInGround" );
+
+			this.lifetime = serializer.ReadFloat( "Lifetime" );
+
 			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
 			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
 
@@ -32,6 +40,10 @@ namespace SS.Projectiles
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
+
+			serializer.WriteBool( "", "GetsStuckInGround", this.getsStuckInGround );
+
+			serializer.WriteFloat( "", "Lifetime", this.lifetime );
 
 			serializer.WriteString( "", "HitSound", (string)this.hitSoundEffect );
 			serializer.WriteString( "", "MissSound", (string)this.missSoundEffect );

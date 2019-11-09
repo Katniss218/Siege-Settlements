@@ -8,7 +8,6 @@ namespace SS.Projectiles
 {
 	public static class ProjectileCreator
 	{
-		const float DEFAULT_LIFETIME = 15.0f;
 		const float DEFAULT_HITBOX_RADIUS = 0.0625f;
 
 		private const string GAMEOBJECT_NAME = "Projectile";
@@ -48,7 +47,7 @@ namespace SS.Projectiles
 
 			// Set the projectile's lifetime and reset the lifetime timer.
 			TimerHandler t = gameObject.GetComponent<TimerHandler>();
-			t.duration = DEFAULT_LIFETIME;
+			t.duration = def.lifetime;
 			t.RestartTimer(); // DON'T just StartTimer(), RestartTimer() in case the timer has been started before.
 			
 			if( data.isStuck )
@@ -68,6 +67,48 @@ namespace SS.Projectiles
 
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
+			
+			// Make the projectile do something when it hits objects.
+			TriggerOverlapHandler triggerOverlapHandler = gameObject.AddComponent<TriggerOverlapHandler>();
+			triggerOverlapHandler.onTriggerEnter.AddListener( ( Collider other ) =>
+			{
+				// If it hit other projectile, do nothing.
+				if( other.GetComponent<TriggerOverlapHandler>() != null ) // this can later be switched to a script editable by the player.
+				{
+					return;
+				}
+				Damageable hitDamageable = other.GetComponent<Damageable>();
+				if( hitDamageable == null )
+				{
+					if( def.getsStuckInGround )
+					{
+						if( !projectile.isStuck )
+						{
+							MakeStuck( gameObject );
+							AudioManager.PlaySound( projectile.missSound );
+						}
+					}
+					else
+					{
+						Object.Destroy( gameObject );
+						AudioManager.PlaySound( projectile.missSound );
+					}
+					return;
+				}
+
+				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.
+				FactionMember hitFactionMember = other.GetComponent<FactionMember>();
+				if( hitFactionMember != null )
+				{
+					if( hitFactionMember.factionId == factionMember.factionId )
+					{
+						return;
+					}
+				}
+				hitDamageable.TakeDamage( projectile.damageSource.damageType, projectile.damageSource.GetRandomizedDamage(), projectile.damageSource.armorPenetration );
+				AudioManager.PlaySound( projectile.hitSound );
+				Object.Destroy( gameObject );
+			} );
 
 			//
 			//    MODULES
@@ -80,9 +121,10 @@ namespace SS.Projectiles
 		{
 			unstuckProjectile.GetComponent<TimerHandler>().RestartTimer(); // reset the timer to count again from after being stuck.
 
+			unstuckProjectile.GetComponent<Projectile>().isStuck = true;
+
 			Object.Destroy( unstuckProjectile.GetComponent<RotateAlongVelocity>() );
 			Object.Destroy( unstuckProjectile.GetComponent<Rigidbody>() );
-			Object.Destroy( unstuckProjectile.transform.GetChild( 0 ).GetComponent<ParticleSystem>() );
 		}
 
 		private static GameObject CreateProjectile( Guid guid )
@@ -110,38 +152,6 @@ namespace SS.Projectiles
 			
 			// Make the projectile rotate to face the direction of flight.
 			container.AddComponent<RotateAlongVelocity>();
-
-			// Make the projectile do something when it hits objects.
-			TriggerOverlapHandler triggerOverlapHandler = container.AddComponent<TriggerOverlapHandler>();
-			triggerOverlapHandler.onTriggerEnter.AddListener( ( Collider other ) =>
-			{
-				// If it hit other projectile, do nothing.
-				if( other.GetComponent<TriggerOverlapHandler>() != null ) // this can later be switched to a script editable by the player.
-				{
-					return;
-				}
-				Damageable hitDamageable = other.GetComponent<Damageable>();
-				if( hitDamageable == null )
-				{
-					// when the projectile hits non-damageable object, it sticks into it (like an arrow).
-					MakeStuck( container );
-					AudioManager.PlaySound( projectile.missSound );
-					return;
-				}
-
-				// If it has factionMember, check if the faction is enemy, otherwise, just deal damage.
-				FactionMember hitFactionMember = other.GetComponent<FactionMember>();
-				if( hitFactionMember != null )
-				{
-					if( hitFactionMember.factionId == factionMember.factionId )
-					{
-						return;
-					}
-				}
-				hitDamageable.TakeDamage( projectile.damageSource.damageType, projectile.damageSource.GetRandomizedDamage(), projectile.damageSource.armorPenetration );
-				AudioManager.PlaySound( projectile.hitSound );
-				Object.Destroy( container );
-			} );
 
 			return container;
 		}
@@ -185,7 +195,7 @@ namespace SS.Projectiles
 			data.position = gameObject.transform.position;
 
 			Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
-			if( rigidbody == null )
+			if( projectile.isStuck )
 			{
 				data.isStuck = true;
 				data.stuckRotation = gameObject.transform.rotation;

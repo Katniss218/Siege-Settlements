@@ -26,6 +26,7 @@ namespace SS.Projectiles
 			return _allProjectiles.ToArray();
 		}
 
+		public bool isStuck { get; set; }
 		
 		public DamageSource damageSource { get; set; }
 
