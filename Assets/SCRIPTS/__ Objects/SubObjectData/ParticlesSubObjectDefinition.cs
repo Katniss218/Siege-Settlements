@@ -9,11 +9,18 @@ namespace SS.Objects.SubObjects
 	{
 		public const string KFF_TYPEID = "PARTICLES";
 		
-		public float lifetime { get; set; }
+		public bool isWorldSpace { get; set; }
+
+		public float lifetimeMin { get; set; }
+		public float lifetimeMax { get; set; }
 		public float emissionRadius { get; set; }
 		public float emissionRateTime { get; set; }
-		public float startSize { get; set; }
-		public float endSize { get; set; }
+		public float startSizeMin { get; set; }
+		public float startSizeMax { get; set; }
+		public float startSpeedMin { get; set; }
+		public float startSpeedMax { get; set; }
+
+		public Tuple<float,float>[] sizeOverLifetimeKeys { get; set; }
 
 		public AddressableAsset<Texture2D> particleTexture { get; set; }
 
@@ -25,16 +32,16 @@ namespace SS.Objects.SubObjects
 
 			child.transform.localPosition = this.localPosition;
 			child.transform.localRotation = this.localRotation;
-			
+
 
 
 
 			ParticleSystem particleSystem = child.AddComponent<ParticleSystem>();
 			ParticleSystem.MainModule main = particleSystem.main;
-			main.startSpeed = 0;
-			main.simulationSpace = ParticleSystemSimulationSpace.World;
-			main.startSize = 1.0f;
-			main.startLifetime = this.lifetime;
+			main.simulationSpace = this.isWorldSpace ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
+			main.startLifetime = new ParticleSystem.MinMaxCurve( this.lifetimeMin, this.lifetimeMax );
+			main.startSize = new ParticleSystem.MinMaxCurve( this.startSizeMin, this.startSizeMax );
+			main.startSpeed = new ParticleSystem.MinMaxCurve( this.startSpeedMin, this.startSpeedMax );
 
 			ParticleSystem.ShapeModule shape = particleSystem.shape;
 			shape.radius = this.emissionRadius;
@@ -43,8 +50,10 @@ namespace SS.Objects.SubObjects
 			ParticleSystem.SizeOverLifetimeModule sizeOverTime = particleSystem.sizeOverLifetime;
 			sizeOverTime.enabled = true;
 			AnimationCurve curve = new AnimationCurve();
-			curve.AddKey( 0.0f, this.startSize );
-			curve.AddKey( 1.0f, this.endSize );
+			for( int i = 0; i < this.sizeOverLifetimeKeys.Length; i++ )
+			{
+				curve.AddKey( this.sizeOverLifetimeKeys[i].Item1, this.sizeOverLifetimeKeys[i].Item2 );
+			}
 			sizeOverTime.size = new ParticleSystem.MinMaxCurve( 1.0f, curve );
 
 			//shape
@@ -72,12 +81,25 @@ namespace SS.Objects.SubObjects
 
 			this.localPosition = serializer.ReadVector3( "LocalPosition" );
 			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
-			
-			this.lifetime = serializer.ReadFloat( "Lifetime" );
+
+			this.isWorldSpace = serializer.ReadBool( "IsWorldSpace" );
+
+			this.lifetimeMin = serializer.ReadFloat( "LifetimeMin" );
+			this.lifetimeMax = serializer.ReadFloat( "LifetimeMax" );
 			this.emissionRadius = serializer.ReadFloat( "EmissionRadius" );
 			this.emissionRateTime = serializer.ReadFloat( "EmissionRateTime" );
-			this.startSize = serializer.ReadFloat( "StartSize" );
-			this.endSize = serializer.ReadFloat( "EndSize" );
+			this.startSizeMin = serializer.ReadFloat( "StartSizeMin" );
+			this.startSizeMax = serializer.ReadFloat( "StartSizeMax" );
+			this.startSpeedMin = serializer.ReadFloat( "StartSpeedMin" );
+			this.startSpeedMax = serializer.ReadFloat( "StartSpeedMax" );
+
+			this.sizeOverLifetimeKeys = new Tuple<float, float>[serializer.Analyze( "SizeOverLifetimeKeys" ).childCount];
+			for( int i = 0; i < this.sizeOverLifetimeKeys.Length; i++ )
+			{
+				float time = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Time", i ) );
+				float value = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Value", i ) );
+				this.sizeOverLifetimeKeys[i] = new Tuple<float, float>( time, value );
+			}
 
 			this.particleTexture = serializer.ReadTexture2DFromAssets( "ParticleTexture" );
 		}
@@ -85,12 +107,25 @@ namespace SS.Objects.SubObjects
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "SubObjectId", this.subObjectId.ToString( "D" ) );
-			
-			serializer.WriteFloat( "", "Lifetime", this.lifetime );
+
+			serializer.WriteBool( "", "IsWorldSpace", this.isWorldSpace );
+
+			serializer.WriteFloat( "", "LifetimeMin", this.lifetimeMin );
+			serializer.WriteFloat( "", "LifetimeMax", this.lifetimeMax );
 			serializer.WriteFloat( "", "EmissionRadius", this.emissionRadius );
 			serializer.WriteFloat( "", "EmissionRateTime", this.emissionRadius );
-			serializer.WriteFloat( "", "StartSize", this.startSize );
-			serializer.WriteFloat( "", "EndSize", this.endSize );
+			serializer.WriteFloat( "", "StartSizeMin", this.startSizeMin );
+			serializer.WriteFloat( "", "StartSizeMax", this.startSizeMax );
+			serializer.WriteFloat( "", "StartSpeedMin", this.startSpeedMin );
+			serializer.WriteFloat( "", "StartSpeedMax", this.startSpeedMax );
+
+			serializer.WriteList( "", "SizeOverLifetimeKeys" );
+			for( int i = 0; i < this.sizeOverLifetimeKeys.Length; i++ )
+			{
+				serializer.AppendClass( "SizeOverLifetimeKeys" );
+				serializer.WriteFloat( new Path( "SizeOverLifetimeKeys.{0}", i ), "Time", this.sizeOverLifetimeKeys[i].Item1 );
+				serializer.WriteFloat( new Path( "SizeOverLifetimeKeys.{0}", i ), "Value", this.sizeOverLifetimeKeys[i].Item2 );
+			}
 
 			serializer.WriteString( "", "ParticleTexture", (string)this.particleTexture );
 		}
