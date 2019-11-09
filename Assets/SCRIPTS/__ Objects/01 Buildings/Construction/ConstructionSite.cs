@@ -93,7 +93,7 @@ namespace SS.Buildings
 					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
 
-#warning incomplete (progress material).
+#warning incomplete (progress material) NEED TO SET OFFSET ON EVERY SINGLE SUBMODEL THAT USES MATERIALTYPE.COLOREDCONSTRUCTIBLE.
 					//this.meshRenderer.material.SetFloat( "_Progress", 1.0f );
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Content;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,7 +16,7 @@ namespace SS.TerrainCreation
 		public static Transform terrainParent;
 
 		private const int RESOLUTION = 241;
-		
+
 		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
 			int segments = heightMaps.GetLength( 0 );
@@ -41,10 +42,10 @@ namespace SS.TerrainCreation
 					terrainSegment.isStatic = true;
 
 					MeshFilter meshFilter = terrainSegment.AddComponent<MeshFilter>();
-					meshFilter.mesh = meshes[i,j];
+					meshFilter.mesh = meshes[i, j];
 
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
-					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, null, null );
+					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, AssetManager.GetTexture2D( "builtin:Textures/pixel_black", TextureType.Color ), AssetManager.GetTexture2D( "builtin:Textures/pixel_black", TextureType.Color ) );
 
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 
@@ -58,7 +59,7 @@ namespace SS.TerrainCreation
 		public static void UpdateNavMesh()
 		{
 			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
-			
+
 			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
 
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
