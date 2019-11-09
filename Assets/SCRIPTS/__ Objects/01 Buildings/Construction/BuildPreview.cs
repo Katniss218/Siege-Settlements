@@ -1,6 +1,7 @@
 ﻿using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -13,11 +14,11 @@ namespace SS.Buildings
 		{
 			get
 			{
-				return preview != null;
+				return buildPreviewInstanceGameObject != null;
 			}
 		}
 
-		private static GameObject preview;
+		private static GameObject buildPreviewInstanceGameObject;
 
 
 
@@ -206,13 +207,21 @@ namespace SS.Buildings
 
 		void Update()
 		{
+			MeshRenderer[] renderers = this.GetComponentsInChildren<MeshRenderer>();
+
 			if( this.CanBePlacedHere() )
 			{
-				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.green );
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetColor( "_FactionColor", Color.green );
+				}
 			}
 			else
 			{
-				this.GetComponent<MeshRenderer>().material.SetColor( "_FactionColor", Color.red );
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetColor( "_FactionColor", Color.red );
+				}
 			}
 		}
 
@@ -232,23 +241,37 @@ namespace SS.Buildings
 
 			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
 
-#warning TODO! - need to add every subobject of type mesh.
-#warning TODO! - collect every subobject of type MESH and assign the placement preview from them.
-			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-			//meshFilter.mesh = buildPreview.def.mesh;
-			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
+			SubObjectDefinition[] subObjectDefs;
+			def.GetAllSubObjects( out subObjectDefs );
 
-			preview = gameObject;
+			for( int i = 0; i < subObjectDefs.Length; i++ )
+			{
+				if( subObjectDefs[i] is MeshSubObjectDefinition )
+				{
+					MeshSubObjectDefinition meshSubObjDef = ( MeshSubObjectDefinition)subObjectDefs[i];
+
+					GameObject child = new GameObject( "Prev-sub" );
+
+					child.transform.SetParent( gameObject.transform );
+					child.transform.localPosition = meshSubObjDef.localPosition;
+					child.transform.localRotation = meshSubObjDef.localRotation;
+
+					MeshFilter meshFilter = child.AddComponent<MeshFilter>();
+					meshFilter.mesh = meshSubObjDef.mesh;
+					MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
+					meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
+				}
+			}
+			
+			buildPreviewInstanceGameObject = gameObject;
 
 			return gameObject;
 		}
 
 		public static void Switch( BuildingDefinition def )
 		{
-#warning remove this. this should just remove and recreate placement prev. (simplicity).
-			BuildPreview buildPreview = preview.GetComponent<BuildPreview>();
-			BuildPreviewPositioner positioner = preview.GetComponent<BuildPreviewPositioner>();
+			BuildPreview buildPreview = buildPreviewInstanceGameObject.GetComponent<BuildPreview>();
+			BuildPreviewPositioner positioner = buildPreviewInstanceGameObject.GetComponent<BuildPreviewPositioner>();
 			positioner.placementNodes = def.placementNodes;
 
 			float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
@@ -256,16 +279,39 @@ namespace SS.Buildings
 
 			buildPreview.def = def;
 
-#warning TODO! - collect every subobject of type MESH and assign the placement preview from them.
-			MeshFilter meshFilter = preview.GetComponent<MeshFilter>();
-			//meshFilter.mesh = buildPreview.def.mesh;
+			for( int i = 0; i < buildPreviewInstanceGameObject.transform.childCount; i++ )
+			{
+				Object.Destroy( buildPreviewInstanceGameObject.transform.GetChild( i ) );
+			}
+
+			SubObjectDefinition[] subObjectDefs;
+			def.GetAllSubObjects( out subObjectDefs );
+
+			for( int i = 0; i < subObjectDefs.Length; i++ )
+			{
+				if( subObjectDefs[i] is MeshSubObjectDefinition )
+				{
+					MeshSubObjectDefinition meshSubObjDef = (MeshSubObjectDefinition)subObjectDefs[i];
+
+					GameObject child = new GameObject( "Prev-sub" );
+
+					child.transform.SetParent( buildPreviewInstanceGameObject.transform );
+					child.transform.localPosition = meshSubObjDef.localPosition;
+					child.transform.localRotation = meshSubObjDef.localRotation;
+
+					MeshFilter meshFilter = child.AddComponent<MeshFilter>();
+					meshFilter.mesh = meshSubObjDef.mesh;
+					MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
+					meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
+				}
+			}
 		}
 
 		public static void Destroy()
 		{
-			if( preview != null )
+			if( buildPreviewInstanceGameObject != null )
 			{
-				Object.Destroy( preview );
+				Object.Destroy( buildPreviewInstanceGameObject );
 			}
 		}
 	}

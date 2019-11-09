@@ -5,13 +5,11 @@ namespace Katniss.Utils
 {
 	public class BallisticSolver
 	{
-		/// <summary>
-		/// Utility function used by SolveQuadratic, SolveCubic, and SolveQuartic.
-		/// </summary>
-		private static bool IsZero( double d )
+		// Checks if the number is near zero.
+		private static bool IsNearZero( double val )
 		{
 			const double epsilon = 1e-9;
-			return d > -epsilon && d < epsilon;
+			return val > -epsilon && val < epsilon;
 		}
 		
 		/// <summary>
@@ -26,20 +24,20 @@ namespace Katniss.Utils
 			double p = b / (2 * a);
 			double q = c / a;
 
-			double D = p * p - q;
+			double Delta = p * p - q;
 
-			if( IsZero( D ) )
+			if( IsNearZero( Delta ) )
 			{
 				solution0 = -p;
 				return 1;
 			}
-			else if( D < 0 )
+			else if( Delta < 0 )
 			{
 				return 0;
 			}
 			else // if (D > 0)
 			{
-				double sqrtD = Math.Sqrt( D );
+				double sqrtD = Math.Sqrt( Delta );
 
 				solution0 = sqrtD - p;
 				solution1 = -sqrtD - p;
@@ -70,11 +68,11 @@ namespace Katniss.Utils
 
 			// use Cardano's formula
 			double cbp = p * p * p;
-			double D = q * q + cbp;
+			double Delta = q * q + cbp;
 
-			if( IsZero( D ) )
+			if( IsNearZero( Delta ) )
 			{
-				if( IsZero( q ) ) // one triple solution
+				if( IsNearZero( q ) ) // one triple solution
 				{
 					solution0 = 0;
 					solutionCount = 1;
@@ -87,7 +85,7 @@ namespace Katniss.Utils
 					solutionCount = 2;
 				}
 			}
-			else if( D < 0 ) // Casus irreducibilis: three real solutions
+			else if( Delta < 0 ) // Casus irreducibilis: three real solutions
 			{
 				double phi = 1.0 / 3 * Math.Acos( -q / Math.Sqrt( -cbp ) );
 				double t = 2 * Math.Sqrt( -p );
@@ -99,7 +97,7 @@ namespace Katniss.Utils
 			}
 			else // one real solution
 			{
-				double sqrt_D = Math.Sqrt( D );
+				double sqrt_D = Math.Sqrt( Delta );
 				double u = Math.Pow( sqrt_D - q, 1.0 / 3.0 );
 				double v = -Math.Pow( sqrt_D + q, 1.0 / 3.0 );
 
@@ -153,7 +151,7 @@ namespace Katniss.Utils
 			double q = 1.0 / 8 * sqA * A - 1.0 / 2 * A * B + C;
 			double r = -3.0 / 256 * sqA * sqA + 1.0 / 16 * sqA * B - 1.0 / 4 * A * C + D;
 
-			if( IsZero( r ) )
+			if( IsNearZero( r ) )
 			{
 				// no absolute term: y(y^3 + py + q) = 0
 
@@ -181,7 +179,7 @@ namespace Katniss.Utils
 				double u = z * z - r;
 				double v = 2 * z - p;
 
-				if( IsZero( u ) )
+				if( IsNearZero( u ) )
 				{
 					u = 0;
 				}
@@ -194,7 +192,7 @@ namespace Katniss.Utils
 					return 0;
 				}
 
-				if( IsZero( v ) )
+				if( IsNearZero( v ) )
 				{
 					v = 0;
 				}
