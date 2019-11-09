@@ -44,7 +44,7 @@ namespace SS.TerrainCreation
 					meshFilter.mesh = meshes[i,j];
 
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
-					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, 0.0f, 0.125f );
+					meshRenderer.material = MaterialManager.CreateOpaque( albedoMaps[i, j], null, null, null, null );
 
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 

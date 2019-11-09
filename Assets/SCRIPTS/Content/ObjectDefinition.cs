@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Modules;
 using SS.Modules.Inventories;
+using SS.Objects.SubObjects;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,13 +23,19 @@ namespace SS.Content
 				this.moduleType = module.GetType();
 			}
 		}
-		
+				
 		private List<ModuleCacheItem> moduleCache;
 		
+		/// <summary>
+		/// The list of all sub-objects of this specific object.
+		/// </summary>
+		public List<SubObjectDefinition> subObjectCache { get; set; }
+
 
 		protected ObjectDefinition( string id ) : base( id )
 		{
 			this.moduleCache = new List<ModuleCacheItem>();
+			this.subObjectCache = new List<SubObjectDefinition>();
 		}
 
 
@@ -99,6 +106,16 @@ namespace SS.Content
 			}
 		}
 
+		public void GetAllSubObjects( out SubObjectDefinition[] defs )
+		{
+			defs = new SubObjectDefinition[this.subObjectCache.Count];
+
+			for( int i = 0; i < this.subObjectCache.Count; i++ )
+			{
+				defs[i] = this.subObjectCache[i];
+			}
+		}
+
 		/// <summary>
 		/// Adds a single module of type T to the object definition.
 		/// </summary>
@@ -114,6 +131,24 @@ namespace SS.Content
 		
 		protected void DeserializeModulesKFF( KFFSerializer serializer )
 		{
+			for( int i = 0; i < serializer.Analyze( "SubObjects").childCount; i++ )
+			{
+				string subObjectTypeString = serializer.ReadString( new Path( "SubObjects.{0}.TypeId", i ) );
+				SubObjectDefinition subObjectDef = null;
+
+				if( subObjectTypeString == MeshSubObjectDefinition.KFF_TYPEID )
+				{
+					subObjectDef = new MeshSubObjectDefinition();
+				}
+
+				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
+
+
+				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
+
+				this.subObjectCache.Add( subObjectDef );
+			}
+
 			for( int i = 0; i < serializer.Analyze( "Modules" ).childCount; i++ )
 			{
 				string moduleTypeString = serializer.ReadString( new Path( "Modules.{0}.TypeId" , i) );
@@ -167,6 +202,30 @@ namespace SS.Content
 
 		protected void SerializeModulesKFF( KFFSerializer serializer )
 		{
+			SubObjectDefinition[] subObjectsArray;
+			
+			this.GetAllSubObjects( out subObjectsArray );
+
+			serializer.SerializeArray<IKFFSerializable>( "", "SubObjects", subObjectsArray );
+
+			for( int i = 0; i < subObjectsArray.Length; i++ )
+			{
+				string typeString = null;
+
+				if( subObjectsArray[i] is MeshSubObjectDefinition )
+				{
+					typeString = MeshSubObjectDefinition.KFF_TYPEID;
+				}
+				else
+				{
+					throw new Exception( "Inknown sub-object type '" + subObjectsArray[i].GetType().Name + "'." );
+				}
+
+				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeString );
+				serializer.WriteString( new Path( "Modules.{0}", i ), "SubObjectId", subObjectsArray[i].subObjectId.ToString( "D" ) );
+			}
+
+
 			ModuleDefinition[] modulesArray;
 			Guid[] moduleIdsArray;
 			this.GetAllModules( out moduleIdsArray, out modulesArray );

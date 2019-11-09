@@ -26,9 +26,7 @@ namespace SS
 	public class Main : MonoBehaviour
 	{
 		public const float DEFAULT_NAVMESH_BASE_OFFSET = -0.075f;
-
-		public const string GRAPHICS_GAMEOBJECT_NAME = "graphics";
-
+		
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
 		public static bool isHudLocked { get; private set; }

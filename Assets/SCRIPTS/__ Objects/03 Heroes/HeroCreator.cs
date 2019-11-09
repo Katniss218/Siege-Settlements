@@ -1,6 +1,5 @@
-﻿using SS.Buildings;
-using SS.Content;
-using SS.Modules.Inventories;
+﻿using SS.Content;
+using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Modules;
@@ -10,54 +9,55 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
-using SS.Diplomacy;
-using SS.Technologies;
 
-namespace SS.Units
+namespace SS.Heroes
 {
-	public static class UnitCreator
+	public static class HeroCreator
 	{
 		private const float DEFAULT_ACCELERATION = 8.0f;
 		private const float DEFAULT_STOPPING_DISTANCE = 0.125f;
-		private const string GAMEOBJECT_NAME = "Unit";
 
-		
+		private const string GAMEOBJECT_NAME = "Hero";
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetDefData( GameObject gameObject, UnitDefinition def, UnitData data )
+		public static void SetDefData( GameObject gameObject, HeroDefinition def, HeroData data )
 		{
-
 			//
-			//    GRAPHICS GAMEOBJECT
+			//    SUB-OBJECTS
 			//
 
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+			/*
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 
 
-			// Set the unit's mesh and material.
+			// Set the hero's mesh and material.
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh;
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo, def.normal, null, 0.0f, 0.25f, 0.0f );
-
+			*/
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
-			// Set the unit's size.
+			// Set the hero's size.
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
-			
+
+			// Set the hero's selected icon.
+			Selectable selectable = gameObject.GetComponent<Selectable>();
+			selectable.icon = def.icon;
+
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			navMeshAgent.radius = def.radius;
@@ -66,19 +66,20 @@ namespace SS.Units
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
-			// Set the unit's native parameters.
-			Unit unit = gameObject.GetComponent<Unit>();
-			unit.defId = def.id;
-			unit.displayName = def.displayName;
+			// Set the hero's native parameters.
+			Hero hero = gameObject.GetComponent<Hero>();
+			hero.defId = def.id;
+			hero.displayName = def.displayName;
+			hero.displayTitle = def.displayTitle;
+			
+			hero.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
+			hero.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
 
-			// Set the unit's selected icon.
-			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon;
-
+			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 			factionMember.factionId = data.factionId;
 
-			// Set the unit's health.
+			// Set the hero's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
@@ -89,31 +90,19 @@ namespace SS.Units
 			//
 
 			SSObjectCreator.AssignModules( gameObject, def, data );
-			
+
+
 			TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
 			{
 				TAIGoal.Assign( gameObject, taiGoalData );
 			}
 		}
-
-		private static GameObject CreateUnit( Guid guid )
+		
+		private static GameObject CreateHero( Guid guid )
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
-			container.layer = ObjectLayer.UNITS;
-
-
-			//
-			//    GRAPHICS GAMEOBJECT
-			//
-
-			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-		
+			container.layer = ObjectLayer.HEROES;
 
 			//
 			//    CONTAINER GAMEOBJECT
@@ -121,29 +110,30 @@ namespace SS.Units
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
 
-			Unit unit = container.AddComponent<Unit>();
-			unit.guid = guid;
+			Hero hero = container.AddComponent<Hero>();
+			hero.guid = guid;
 
-			// Make the unit selectable.
+			// Make the hero selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
 
-			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
+			// Add a kinematic rigidbody to the hero (required by the NavMeshAgent).
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
 
-			// Add the NavMeshAgent to the unit, to make it movable.
+			// Add the NavMeshAgent to the hero, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
 			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
 			navMeshAgent.acceleration = DEFAULT_ACCELERATION;
 			navMeshAgent.stoppingDistance = DEFAULT_STOPPING_DISTANCE;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
-			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
+			hero.hud = hudGameObject;
 
-			unit.hud = hudGameObject;
+			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
 			
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
@@ -216,32 +206,32 @@ namespace SS.Units
 				}
 				hudGameObject.SetActive( false );
 			} );
-			
-			// Make the unit change it's color when the faction is changed.
+
+
+			// Make the hero change it's color when the faction is changed.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = LevelDataManager.factions[factionMember.factionId].color;
 				hud.SetColor( color );
-				meshRenderer.material.SetColor( "_FactionColor", color );
+#warning incomplete.
+				//meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
-			
 
-			// Make the unit damageable.
+			// Make the hero damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-
-			// Make the unit update it's healthbar and material when health changes.
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+#warning incomplete.
+				//meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				hud.SetHealthBarFill( damageable.healthPercent );
 			} );
 
-			// Make the unit deselect itself, and destroy it's UI when killed.
+			// Make the hero deselect itself, and destroy it's UI when killed.
 			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
-
+				
 				if( Selection.IsSelected( selectable ) )
 				{
 					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
@@ -254,11 +244,14 @@ namespace SS.Units
 
 			selectable.onHighlight.AddListener( () =>
 			{
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
 
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
+				GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
+				SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 			} );
 
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
@@ -267,13 +260,13 @@ namespace SS.Units
 				{
 					return;
 				}
-				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
+				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
 					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
 				}
 			} );
-			
+
 
 			// Make the unit update it's UI's position every frame.
 			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
@@ -284,40 +277,41 @@ namespace SS.Units
 			return container;
 		}
 
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public static string GetDefinitionId( GameObject gameObject )
 		{
-			if( !Unit.IsValid( gameObject ) )
+			if( !Hero.IsValid( gameObject ) )
 			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid unit." );
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid hero." );
 			}
 
-			Unit unit = gameObject.GetComponent<Unit>();
-			return unit.defId;
+			Hero hero = gameObject.GetComponent<Hero>();
+			return hero.defId;
 		}
 
 		/// <summary>
-		/// Creates a new UnitData from a GameObject.
+		/// Creates a new HeroData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a unit.</param>
-		public static UnitData GetData( GameObject gameObject )
+		/// <param name="gameObject">The GameObject to extract the save state from. Must be a hero.</param>
+		public static HeroData GetData( GameObject gameObject )
 		{
-			if( !Unit.IsValid( gameObject ) )
+			if( !Hero.IsValid( gameObject ) )
 			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid unit." );
+				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid hero." );
 			}
 
-			UnitData data = new UnitData();
+			HeroData data = new HeroData();
 
-			Unit unit = gameObject.GetComponent<Unit>();
-			if( unit.guid == null )
+			Hero hero = gameObject.GetComponent<Hero>();
+			if( hero.guid == null )
 			{
-				throw new Exception( "Guid not assigned." );
+				throw new Exception( "Guid was not assigned." );
 			}
-			data.guid = unit.guid.Value;
+			data.guid = hero.guid.Value;
 
 			data.position = gameObject.transform.position;
 			data.rotation = gameObject.transform.rotation;
@@ -333,7 +327,7 @@ namespace SS.Units
 			//
 
 			SSObjectCreator.ExtractModules( gameObject, data );
-
+			
 
 			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
 			if( taiGoal != null )
@@ -343,41 +337,25 @@ namespace SS.Units
 
 			return data;
 		}
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 		public static GameObject CreateEmpty( Guid guid )
 		{
-			GameObject gameObject = CreateUnit( guid );
+			GameObject gameObject = CreateHero( guid );
 			
 			return gameObject;
 		}
 
-		public static GameObject Create( UnitDefinition def, UnitData data )
+		public static GameObject Create( HeroDefinition def, HeroData data )
 		{
-			GameObject gameObject = CreateUnit( data.guid );
+			GameObject gameObject = CreateHero( data.guid );
 
 			SetDefData( gameObject, def, data );
 
 			return gameObject;
 		}
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		
-
 	}
 }

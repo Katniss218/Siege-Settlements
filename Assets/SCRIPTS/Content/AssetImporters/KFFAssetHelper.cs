@@ -14,7 +14,7 @@ namespace SS.Content
 		/// <summary>
 		/// Loads a Texture2D from assets, using a KFF serializer.
 		/// </summary>
-		public static AddressableAsset<Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type )
+		public static AddressableAsset<Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type = TextureType.Color )
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new AddressableAsset<Texture2D>( assetPath, AssetManager.GetTexture2D( assetPath, type ) );

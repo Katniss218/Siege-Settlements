@@ -7,6 +7,14 @@ namespace SS
 {
 	public static class SSObjectCreator
 	{
+		public static void AssignSubObjects( GameObject gameObject, ObjectDefinition def )
+		{
+			for( int i = 0; i < def.subObjectCache.Count; i++ )
+			{
+				def.subObjectCache[i].AddTo( gameObject );
+			}
+		}
+
 		public static void AssignModules( GameObject gameObject, ObjectDefinition def, ObjectData data )
 		{
 			Guid[] moduleDefIds;

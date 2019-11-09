@@ -24,9 +24,11 @@ namespace SS.Buildings
 		public static void SetDefData( GameObject gameObject, BuildingDefinition def, BuildingData data )
 		{
 			//
-			//    GRAPHICS GAMEOBJECT
+			//    SUB-OBJECTS
 			//
 
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+			/*
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 
 
@@ -36,7 +38,7 @@ namespace SS.Buildings
 			
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionDefinition.DefaultColor, def.albedo, def.normal, null, def.metallicMap, def.roughnessMap, ((Mesh)def.mesh).bounds.size.y, 1.0f );
-
+			*/
 
 			//
 			//    CONTAINER GAMEOBJECT
@@ -89,7 +91,8 @@ namespace SS.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-				meshRenderer.material.SetFloat( "_Progress", 1.0f );
+#warning TODO - need to set construction progress of subobjects (if applicable).
+				//meshRenderer.material.SetFloat( "_Progress", 1.0f );
 			}
 			// If the building was under construction/repair, make it under c/r.
 			else
@@ -104,22 +107,7 @@ namespace SS.Buildings
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.BUILDINGS;
 			container.isStatic = true;
-
-
-			//
-			//    GRAPHICS GAMEOBJECT
-			//
-
-			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			gfx.isStatic = true;
-
 			
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
-			
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -221,7 +209,8 @@ namespace SS.Buildings
 			{
 				Color color = LevelDataManager.factions[factionMember.factionId].color;
 				hud.SetColor( color );
-				meshRenderer.material.SetColor( "_FactionColor", color );
+#warning incomplete.
+				//meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			
 

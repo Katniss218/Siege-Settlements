@@ -30,7 +30,7 @@ namespace SS.Buildings
 		private Damageable damageable;
 
 		private Building building;
-		private MeshRenderer meshRenderer;
+		//private MeshRenderer meshRenderer;
 
 
 		private bool IsDone()
@@ -93,7 +93,8 @@ namespace SS.Buildings
 					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
 
-					this.meshRenderer.material.SetFloat( "_Progress", 1.0f );
+#warning incomplete (progress material).
+					//this.meshRenderer.material.SetFloat( "_Progress", 1.0f );
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
@@ -171,7 +172,8 @@ namespace SS.Buildings
 
 		public void OnHealthChange( float deltaHP )
 		{
-			this.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+#warning incomplete (progress material).
+			//this.meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 			if( deltaHP < 0 )
 			{
 				foreach( var kvp in this.resourceInfo )
@@ -250,7 +252,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			MeshRenderer meshRenderer = corner00.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, 0.0f, 0.2f );
+			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
 			GameObject corner01 = new GameObject( "c01" );
 			corner01.transform.SetParent( constructionSiteGfx.transform );
@@ -261,7 +263,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner01.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, 0.0f, 0.2f );
+			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
 			GameObject corner10 = new GameObject( "c10" );
 			corner10.transform.SetParent( constructionSiteGfx.transform );
@@ -272,7 +274,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner10.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, 0.0f, 0.2f );
+			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
 			GameObject corner11 = new GameObject( "c11" );
 			corner11.transform.SetParent( constructionSiteGfx.transform );
@@ -283,7 +285,7 @@ namespace SS.Buildings
 			meshFilter.mesh = corner;
 
 			meshRenderer = corner11.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, 0.0f, 0.2f );
+			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
 
 			for( int i = 0; i < numX; i++ )
@@ -300,7 +302,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line1.AddComponent<MeshRenderer>();
-				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, 0.0f, 0.2f );
+				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, null, null );
 
 				GameObject line2 = new GameObject( "X1-" + i );
 				line2.transform.SetParent( constructionSiteGfx.transform );
@@ -311,7 +313,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line2.AddComponent<MeshRenderer>();
-				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, 0.0f, 0.2f );
+				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, null, null );
 			}
 
 			for( int i = 0; i < numZ; i++ )
@@ -328,7 +330,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line1.AddComponent<MeshRenderer>();
-				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, 0.0f, 0.2f );
+				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, null, null );
 
 				GameObject line2 = new GameObject( "Z1-" + i );
 				line2.transform.SetParent( constructionSiteGfx.transform );
@@ -339,7 +341,7 @@ namespace SS.Buildings
 				meshFilter.mesh = segment;
 
 				meshRenderer = line2.AddComponent<MeshRenderer>();
-				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, 0.0f, 0.2f );
+				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, null, null );
 			}
 
 			return constructionSiteGfx;
@@ -358,14 +360,14 @@ namespace SS.Buildings
 
 			Building building = gameObject.GetComponent<Building>();
 
-			MeshRenderer meshRenderer = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
+#warning TODO! - update construction progress on valid materials.
+			//MeshRenderer meshRenderer = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).GetComponent<MeshRenderer>();
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
-			constructionSite.meshRenderer = meshRenderer;
+			//constructionSite.meshRenderer = meshRenderer;
 			constructionSite.damageable = damageable;
 			constructionSite.building = building;
-			constructionSite.meshRenderer = meshRenderer;
 
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
@@ -390,9 +392,11 @@ namespace SS.Buildings
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
 			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
-			
+
+
+#warning TODO! - material incomplete.
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
-			meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
+			//meshRenderer.material.SetFloat( "_Progress", damageable.healthPercent );
 		}
 	}
 }

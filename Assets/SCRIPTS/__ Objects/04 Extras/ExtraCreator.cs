@@ -17,24 +17,26 @@ namespace SS.Extras
 
 		public static void SetDefData( GameObject gameObject, ExtraDefinition def, ExtraData data )
 		{
-
 			//
-			//    GRAPHICS GAMEOBJECT
+			//    SUB-OBJECTS
 			//
 
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+			/*
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
 			meshFilter.mesh = def.mesh;
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-
-#warning TODO! - robust material assignment (material prototype defined along other maps).
+			
 			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo, def.normal, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
-
+			*/
+			
 			//
 			//    CONTAINER GAMEOBJECT
 			//
+
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			Extra extra = gameObject.GetComponent<Extra>();
@@ -64,12 +66,9 @@ namespace SS.Extras
 			container.isStatic = true;
 			container.layer = ObjectLayer.EXTRAS;
 
-			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			gfx.isStatic = true;
-			
-			MeshFilter meshFilter = gfx.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = gfx.AddComponent<MeshRenderer>();
+			//
+			//    CONTAINER GAMEOBJECT
+			//
 
 			Extra extra = container.AddComponent<Extra>();
 			extra.guid = guid;

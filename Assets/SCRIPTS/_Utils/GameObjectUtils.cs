@@ -66,7 +66,7 @@ namespace Katniss.Utils
 			emission.rateOverTime = amountPerSec;
 			
 			ParticleSystemRenderer renderer = gameObject.GetComponent<ParticleSystemRenderer>();
-			renderer.material = MaterialManager.CreateParticles( texture, tint );
+			renderer.material = MaterialManager.CreateParticles( texture );
 		}
 	}
 }

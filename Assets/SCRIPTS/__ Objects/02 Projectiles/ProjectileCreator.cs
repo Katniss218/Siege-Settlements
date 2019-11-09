@@ -25,9 +25,11 @@ namespace SS.Projectiles
 		{
 
 			//
-			//    GRAPHICS GAMEOBJECT
+			//    SUB-OBJECTS
 			//
 
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+			/*
 			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
 			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
@@ -35,11 +37,14 @@ namespace SS.Projectiles
 
 			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
-
+			*/
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
+
+			// Set the position/movement information.
+			gameObject.transform.SetPositionAndRotation( data.position, Quaternion.identity );
 
 			// Set the projectile's size.
 			SphereCollider col = gameObject.GetComponent<SphereCollider>();
@@ -56,27 +61,7 @@ namespace SS.Projectiles
 			TimerHandler t = gameObject.GetComponent<TimerHandler>();
 			t.duration = DEFAULT_LIFETIME;
 			t.RestartTimer(); // DON'T just StartTimer(), RestartTimer() in case the timer has been started before.
-
-
-			// Remove old trail (if present).
-			ParticleSystem particleSystem = gfx.GetComponent<ParticleSystem>();
-			if( particleSystem != null )
-			{
-				Object.Destroy( particleSystem );
-			}
-			// If projectile has trail, add it.
-			if( def.trailData != null )
-			{
-				gfx.AddParticleSystem( def.trailData.amount, def.trailData.texture, Color.white, def.trailData.startSize, def.trailData.endSize, 0.02f, def.trailData.lifetime );
-			}
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, Quaternion.identity );
-
+			
 			if( data.isStuck )
 			{
 				MakeStuck( gameObject );
@@ -115,19 +100,6 @@ namespace SS.Projectiles
 		{
 			GameObject container = new GameObject( GAMEOBJECT_NAME );
 			container.layer = ObjectLayer.PROJECTILES;
-
-
-			//
-			//    GRAPHICS GAMEOBJECT
-			//
-
-			GameObject gfx = new GameObject( Main.GRAPHICS_GAMEOBJECT_NAME );
-			gfx.transform.SetParent( container.transform );
-			
-			gfx.AddComponent<MeshFilter>();
-
-			gfx.AddComponent<MeshRenderer>();
-
 
 			//
 			//    CONTAINER GAMEOBJECT

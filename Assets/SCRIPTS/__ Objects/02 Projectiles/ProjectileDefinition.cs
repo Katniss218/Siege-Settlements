@@ -6,7 +6,7 @@ namespace SS.Projectiles
 {
 	public class ProjectileDefinition : ObjectDefinition, IKFFSerializable
 	{
-		public class TrailData
+		/*public class TrailData
 		{
 			private float __amount = 5.0f;
 			public float amount
@@ -65,14 +65,14 @@ namespace SS.Projectiles
 			}
 			
 			public AddressableAsset<Texture2D> texture { get; set; }
-		}
+		}*/
 
-		public TrailData trailData { get; set; }
+		//public TrailData trailData { get; set; }
 
-
-		public AddressableAsset<Mesh> mesh { get; set; }
-		public AddressableAsset<Texture2D> albedo { get; set; }
-		public AddressableAsset<Texture2D> normal { get; set; }
+#warning TODO! - remove mesh from code.
+		//public AddressableAsset<Mesh> mesh { get; set; }
+		//public AddressableAsset<Texture2D> albedo { get; set; }
+		//public AddressableAsset<Texture2D> normal { get; set; }
 		public AddressableAsset<AudioClip> hitSoundEffect { get; private set; }
 		public AddressableAsset<AudioClip> missSoundEffect { get; private set; }
 
@@ -84,7 +84,7 @@ namespace SS.Projectiles
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.id = serializer.ReadString( "Id" );
-			if( serializer.Analyze( "TrailData" ).isSuccess )
+			/*if( serializer.Analyze( "TrailData" ).isSuccess )
 			{
 				this.trailData = new TrailData();
 				this.trailData.amount = serializer.ReadFloat( "TrailData.Amount" );
@@ -92,24 +92,26 @@ namespace SS.Projectiles
 				this.trailData.startSize = serializer.ReadFloat( "TrailData.StartSize" );
 				this.trailData.endSize = serializer.ReadFloat( "TrailData.EndSize" );
 				this.trailData.texture = serializer.ReadTexture2DFromAssets( "TrailData.Texture", TextureType.Color );
-			}
-			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-			this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
-			this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
+			}*/
+			//this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			//this.albedo = serializer.ReadTexture2DFromAssets( "AlbedoTexture", TextureType.Color );
+			//this.normal = serializer.ReadTexture2DFromAssets( "NormalTexture", TextureType.Normal );
 			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
 			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
+
+			this.DeserializeModulesKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
-			serializer.WriteString( "", "Mesh", (string)this.mesh );
-			serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
-			serializer.WriteString( "", "NormalTexture", (string)this.normal );
+			//serializer.WriteString( "", "Mesh", (string)this.mesh );
+			//serializer.WriteString( "", "AlbedoTexture", (string)this.albedo );
+			//serializer.WriteString( "", "NormalTexture", (string)this.normal );
 			serializer.WriteString( "", "HitSound", (string)this.hitSoundEffect );
 			serializer.WriteString( "", "MissSound", (string)this.missSoundEffect );
 
-			if( this.trailData != null )
+			/*if( this.trailData != null )
 			{
 				serializer.WriteClass( "", "TrailData" );
 				serializer.WriteFloat( "TrailData", "Amount", this.trailData.amount );
@@ -117,7 +119,9 @@ namespace SS.Projectiles
 				serializer.WriteFloat( "TrailData", "StartSize", this.trailData.startSize );
 				serializer.WriteFloat( "TrailData", "EndSize", this.trailData.endSize );
 				serializer.WriteString( "TrailData", "Texture", (string)this.trailData.texture );
-			}
+			}*/
+
+			this.SerializeModulesKFF( serializer );
 		}
 	}
 }
