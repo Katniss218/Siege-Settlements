@@ -1,5 +1,4 @@
 ﻿using SS.Levels.SaveStates;
-using SS.Modules;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,16 +21,6 @@ namespace SS.Extras
 			//
 
 			SSObjectCreator.AssignSubObjects( gameObject, def );
-			/*
-			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
-			
-			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh;
-
-			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			
-			meshRenderer.material = def.shaderType == MaterialType.PlantOpaque ? MaterialManager.CreatePlantOpaque( def.albedo, def.normal, null, def.metallic, def.smoothness, 0.3333f ) : MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
-			*/
 			
 			//
 			//    CONTAINER GAMEOBJECT

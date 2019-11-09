@@ -1,7 +1,5 @@
-﻿using Katniss.Utils;
-using SS.Diplomacy;
+﻿using SS.Diplomacy;
 using SS.Levels.SaveStates;
-using SS.Modules;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -29,16 +27,7 @@ namespace SS.Projectiles
 			//
 
 			SSObjectCreator.AssignSubObjects( gameObject, def );
-			/*
-			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
 			
-			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh;
-
-			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateOpaque( def.albedo, def.normal, null, 0.0f, 0.25f );
-			*/
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//

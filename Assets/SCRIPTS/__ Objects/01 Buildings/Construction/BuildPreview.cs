@@ -232,6 +232,7 @@ namespace SS.Buildings
 
 			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
 
+#warning TODO! - need to add every subobject of type mesh.
 #warning TODO! - collect every subobject of type MESH and assign the placement preview from them.
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 			//meshFilter.mesh = buildPreview.def.mesh;
@@ -245,6 +246,7 @@ namespace SS.Buildings
 
 		public static void Switch( BuildingDefinition def )
 		{
+#warning remove this. this should just remove and recreate placement prev. (simplicity).
 			BuildPreview buildPreview = preview.GetComponent<BuildPreview>();
 			BuildPreviewPositioner positioner = preview.GetComponent<BuildPreviewPositioner>();
 			positioner.placementNodes = def.placementNodes;

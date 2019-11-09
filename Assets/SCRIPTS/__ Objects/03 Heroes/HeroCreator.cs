@@ -2,7 +2,6 @@
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Modules;
 using SS.UI;
 using System;
 using TMPro;
@@ -31,18 +30,7 @@ namespace SS.Heroes
 			//
 
 			SSObjectCreator.AssignSubObjects( gameObject, def );
-			/*
-			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
-
-
-			// Set the hero's mesh and material.
-			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh;
 			
-			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredDestroyable( FactionDefinition.DefaultColor, def.albedo, def.normal, null, 0.0f, 0.25f, 0.0f );
-			*/
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -77,10 +65,34 @@ namespace SS.Heroes
 
 			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			factionMember.factionId = data.factionId;
 
 			// Set the hero's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
+
+			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+
+			factionMember.onFactionChange.AddListener( () =>
+			{
+				Color color = LevelDataManager.factions[factionMember.factionId].color;
+
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetColor( "_FactionColor", color );
+				}
+			} );
+
+			// Make the unit update it's healthbar and material when health changes.
+			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			{
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+				}
+			} );
+
+
+			factionMember.factionId = data.factionId;
+
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
 			damageable.armor = def.armor;
@@ -207,23 +219,19 @@ namespace SS.Heroes
 				hudGameObject.SetActive( false );
 			} );
 
-
+			
 			// Make the hero change it's color when the faction is changed.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = LevelDataManager.factions[factionMember.factionId].color;
 				hud.SetColor( color );
-#warning incomplete.
-				//meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 
 			// Make the hero damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-#warning incomplete.
-				//meshRenderer.material.SetFloat( "_Dest", 1 - damageable.healthPercent );
 				hud.SetHealthBarFill( damageable.healthPercent );
 			} );
 

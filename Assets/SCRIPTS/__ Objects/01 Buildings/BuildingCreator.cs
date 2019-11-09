@@ -2,7 +2,6 @@
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Modules;
 using SS.UI;
 using System;
 using UnityEngine;
@@ -28,18 +27,7 @@ namespace SS.Buildings
 			//
 
 			SSObjectCreator.AssignSubObjects( gameObject, def );
-			/*
-			GameObject gfx = gameObject.transform.Find( Main.GRAPHICS_GAMEOBJECT_NAME ).gameObject;
-
-
-			// Set the building's mesh and material.
-			MeshFilter meshFilter = gfx.GetComponent<MeshFilter>();
-			meshFilter.mesh = def.mesh;
 			
-			MeshRenderer meshRenderer = gfx.GetComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateColoredConstructible( FactionDefinition.DefaultColor, def.albedo, def.normal, null, def.metallicMap, def.roughnessMap, ((Mesh)def.mesh).bounds.size.y, 1.0f );
-			*/
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -70,13 +58,37 @@ namespace SS.Buildings
 			
 			// Make the building belong to a faction.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			factionMember.factionId = data.factionId;
 
 			// Set the building's health.
 			Damageable damageable = gameObject.GetComponent<Damageable>();
+
+			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+
+			factionMember.onFactionChange.AddListener( () =>
+			{
+				Color color = LevelDataManager.factions[factionMember.factionId].color;
+
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetColor( "_FactionColor", color );
+				}
+			} );
+
+			// Make the unit update it's healthbar and material when health changes.
+			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			{
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+				}
+			} );
+
+			factionMember.factionId = data.factionId;
+
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
 			damageable.armor = def.armor;
+
 
 			//
 			//    MODULES
@@ -91,8 +103,10 @@ namespace SS.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-#warning TODO - need to set construction progress of subobjects (if applicable).
-				//meshRenderer.material.SetFloat( "_Progress", 1.0f );
+				for( int i = 0; i < renderers.Length; i++ )
+				{
+					renderers[i].material.SetFloat( "_YOffset", 0.0f );
+				}
 			}
 			// If the building was under construction/repair, make it under c/r.
 			else
@@ -201,16 +215,13 @@ namespace SS.Buildings
 				}
 				hudGameObject.SetActive( false );
 			} );
-
-
+			
 			// Make the building belong to a faction.
 			FactionMember factionMember = container.AddComponent<FactionMember>();
 			factionMember.onFactionChange.AddListener( () =>
 			{
 				Color color = LevelDataManager.factions[factionMember.factionId].color;
 				hud.SetColor( color );
-#warning incomplete.
-				//meshRenderer.material.SetColor( "_FactionColor", color );
 			} );
 			
 

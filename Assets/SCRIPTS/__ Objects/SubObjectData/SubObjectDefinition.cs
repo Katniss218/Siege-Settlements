@@ -10,7 +10,6 @@ namespace SS.Objects.SubObjects
 	public abstract class SubObjectDefinition : IKFFSerializable
 	{
 		public Guid subObjectId { get; set; }
-#warning pseudo-modules such as damageable, etc., need to target the specific subobject. They need to specify which object to crumble (if any). if a building doesn't specify constructible object, that functionality (growing with construction progress) should be removed.
 
 		public Vector3 localPosition { get; set; }
 		public Quaternion localRotation { get; set; }
