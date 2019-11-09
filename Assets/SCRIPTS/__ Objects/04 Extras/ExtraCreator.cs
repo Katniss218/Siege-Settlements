@@ -40,7 +40,7 @@ namespace SS.Extras
 			NavMeshObstacle obs = gameObject.GetComponent<NavMeshObstacle>();
 			obs.size = def.size;
 			obs.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-			obs.carving = def.size == Vector3.zero ? false : true;
+			obs.carving = true;
 
 			//
 			//    MODULES
