@@ -24,6 +24,8 @@ namespace SS.Modules
 		
 		private ResearchModuleDefinition def;
 
+		public TechnologyDefinition[] researchableTechnologies { get; set; }
+
 		/// <summary>
 		/// Contains the currently researched technology (Read only).
 		/// </summary>
@@ -216,6 +218,12 @@ namespace SS.Modules
 			ResearchModuleData data = (ResearchModuleData)_data;
 
 			this.researchSpeed = def.researchSpeed;
+			this.researchableTechnologies = new TechnologyDefinition[def.researchableTechnologies.Length];
+			for( int i = 0; i < this.researchableTechnologies.Length; i++ )
+			{
+				this.researchableTechnologies[i] = DefinitionManager.GetTechnology( def.researchableTechnologies[i] );
+			}
+
 			Selectable selectable = this.GetComponent<Selectable>();
 
 			// Only if the thing can be selected, display UI elements on the selection panel.
@@ -266,12 +274,13 @@ namespace SS.Modules
 
 		private void ShowList()
 		{
-			TechnologyDefinition[] registeredTechnologies = DefinitionManager.GetAllTechnologies();
-			GameObject[] gridElements = new GameObject[registeredTechnologies.Length];
+			GameObject[] gridElements = new GameObject[this.researchableTechnologies.Length];
+			//TechnologyDefinition[] registeredTechnologies = DefinitionManager.GetAllTechnologies();
+			//GameObject[] gridElements = new GameObject[registeredTechnologies.Length];
 			// Add every available technology to the list.
-			for( int i = 0; i < registeredTechnologies.Length; i++ )
+			for( int i = 0; i < this.researchableTechnologies.Length; i++ )
 			{
-				TechnologyDefinition techDef = registeredTechnologies[i];
+				TechnologyDefinition techDef = this.researchableTechnologies[i];
 				// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
 				if( LevelDataManager.factionData[this.factionMember.factionId].GetTech( techDef.id ) == TechnologyResearchProgress.Available )
 				{
