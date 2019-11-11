@@ -62,9 +62,9 @@ namespace SS.TerrainCreation
 			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
 
 			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
-
+			
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
-				NavMesh.GetSettingsByID( 0 ),
+				NavMesh.GetSettingsByIndex( 0 ),
 				buildSources,
 				new Bounds( Vector3.zero, new Vector3( 10000, 10000, 10000 ) ),
 				Vector3.down,

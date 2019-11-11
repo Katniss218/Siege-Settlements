@@ -48,7 +48,7 @@ namespace SS.Projectiles
 			// Set the projectile's lifetime and reset the lifetime timer.
 			TimerHandler t = gameObject.GetComponent<TimerHandler>();
 			t.duration = def.lifetime;
-			t.RestartTimer(); // DON'T just StartTimer(), RestartTimer() in case the timer has been started before.
+			t.StartTimer();
 			
 			if( data.isStuck )
 			{
