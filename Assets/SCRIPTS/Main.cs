@@ -560,10 +560,13 @@ namespace SS
 				}
 			}
 
+			if( movableGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
 				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -591,10 +594,13 @@ namespace SS
 				movableWithInvGameObjects.Add( selected[i].gameObject );
 			}
 
+			if( movableWithInvGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -643,10 +649,13 @@ namespace SS
 				}
 			}
 
+			if( movableWithInvGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -683,6 +692,10 @@ namespace SS
 			TAIGoal.MoveTo.MovementGridInfo gridInfo = TAIGoal.MoveTo.GetGridPositions( movableGameObjects );
 
 
+			if( gridInfo.positions.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			foreach( var kvp in gridInfo.positions )
 			{
 				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, gridInfo.sizeX, gridInfo.sizeZ, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
@@ -692,7 +705,6 @@ namespace SS
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
 					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 				}
 				else
 				{
@@ -742,12 +754,15 @@ namespace SS
 			}
 
 
+			if( movableWithInvGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
 
 				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
@@ -813,10 +828,13 @@ namespace SS
 			}
 
 
+			if( toBeAssignedGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.gameObject );
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
 		}
 
