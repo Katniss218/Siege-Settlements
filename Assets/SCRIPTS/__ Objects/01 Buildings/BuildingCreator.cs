@@ -146,6 +146,10 @@ namespace SS.Buildings
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
+				if( building.hasBeenHiddenSinceLastDamage )
+				{
+					return;
+				}
 				if( isLocked )
 				{
 					hudGameObject.SetActive( true );
@@ -184,6 +188,10 @@ namespace SS.Buildings
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
+					if( building.hasBeenHiddenSinceLastDamage )
+					{
+						return;
+					}
 					if( Selection.IsSelected( selectable ) )
 					{
 						return;
@@ -232,6 +240,11 @@ namespace SS.Buildings
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
+				if( deltaHP < 0 )
+				{
+					hudGameObject.SetActive( true );
+					building.hasBeenHiddenSinceLastDamage = true;
+				}
 			} );
 
 			// When the building dies:

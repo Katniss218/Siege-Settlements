@@ -6,6 +6,8 @@ namespace SS
 	[DisallowMultipleComponent]
 	public class SSObject : MonoBehaviour
 	{
+		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.5f;
+
 		private Guid? __guid = null;
 		/// <summary>
 		/// Gets or sets the unique identifier (Guid) of the object (CAN'T be re-assigned after setting it once).

@@ -3,23 +3,32 @@ using UnityEngine.UI;
 
 namespace SS.UI
 {
-	/// <summary>
-	/// Represents a UI, that's attached to a unit (displays health, etc.).
-	/// </summary>
-	public class HUDScaled : MonoBehaviour, IHUD
+	public class HUDScaled : HUD
 	{
-		// when the health is 0, the image will be filled this much.
-		[SerializeField] private float min = 0.25f;
-		// when the health is 1, the image will be filled this much.
-		[SerializeField] private float max = 0.75f;
+		/// <summary>
+		/// when the health is 0, the image will be filled this much.
+		/// </summary>
+		public float min = 0.25f;
+		/// <summary>
+		/// when the health is 1, the image will be filled this much.
+		/// </summary>
+		public float max = 0.75f;
 
+		/// <summary>
+		/// The list of Image components that are affected by faction color.
+		/// </summary>
 		public Image[] colored;
+
+		/// <summary>
+		/// The Image component that displays current health percent.
+		/// </summary>
 		public Image healthBar;
 		
+
 		/// <summary>
-		/// Sets the faction color tint to the specified color.
+		/// Colors the specified image components with a given faction color.
 		/// </summary>
-		public void SetColor( Color c )
+		public override void SetColor( Color c )
 		{
 			for( int i = 0; i < colored.Length; i++ )
 			{
@@ -28,9 +37,9 @@ namespace SS.UI
 		}
 
 		/// <summary>
-		/// Sets the fill amount of the health bar to the specified value (percent of health).
+		/// Sets the fill amount of the health bar to the specified value (percent of health remaining).
 		/// </summary>
-		public void SetHealthBarFill( float percentHealth )
+		public override void SetHealthBarFill( float percentHealth )
 		{
 			float scale = this.max - this.min;
 			float p = percentHealth * scale;

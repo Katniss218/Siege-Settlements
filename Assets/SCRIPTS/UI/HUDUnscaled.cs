@@ -3,18 +3,22 @@ using UnityEngine.UI;
 
 namespace SS.UI
 {
-	/// <summary>
-	/// Represents a UI, that's attached to a unit (displays health, etc.).
-	/// </summary>
-	public class HUDUnscaled : MonoBehaviour, IHUD
+	public class HUDUnscaled : HUD
 	{
+		/// <summary>
+		/// The list of Image components that are affected by faction color.
+		/// </summary>
 		public Image[] colored;
+
+		/// <summary>
+		/// The Image component that displays current health percent.
+		/// </summary>
 		public Image healthBar;
 
 		/// <summary>
 		/// Sets the faction color tint to the specified color.
 		/// </summary>
-		public void SetColor( Color c )
+		public override void SetColor( Color c )
 		{
 			for( int i = 0; i < colored.Length; i++ )
 			{
@@ -25,7 +29,7 @@ namespace SS.UI
 		/// <summary>
 		/// Sets the fill amount of the health bar to the specified value (percent of health).
 		/// </summary>
-		public void SetHealthBarFill( float percentHealth )
+		public override void SetHealthBarFill( float percentHealth )
 		{
 			this.healthBar.fillAmount = percentHealth;
 		}

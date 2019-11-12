@@ -122,7 +122,7 @@ namespace SS.Units
 
 			// Make the unit selectable.
 			Selectable selectable = container.AddComponent<Selectable>();
-
+			
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
@@ -143,6 +143,10 @@ namespace SS.Units
 			
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
+				if( unit.hasBeenHiddenSinceLastDamage )
+				{
+					return;
+				}
 				if( isLocked )
 				{
 					hudGameObject.SetActive( true );
@@ -181,6 +185,10 @@ namespace SS.Units
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
+					if( unit.hasBeenHiddenSinceLastDamage )
+					{
+						return;
+					}
 					if( Selection.IsSelected( selectable ) )
 					{
 						return;
@@ -224,11 +232,16 @@ namespace SS.Units
 
 			// Make the unit damageable.
 			Damageable damageable = container.AddComponent<Damageable>();
-
+			
 			// Make the unit update it's healthbar and material when health changes.
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
+				if( deltaHP < 0 )
+				{
+					hudGameObject.SetActive( true );
+					unit.hasBeenHiddenSinceLastDamage = true;
+				}
 			} );
 
 			// Make the unit deselect itself, and destroy it's UI when killed.

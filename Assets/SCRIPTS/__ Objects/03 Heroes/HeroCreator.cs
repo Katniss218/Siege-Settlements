@@ -149,6 +149,10 @@ namespace SS.Heroes
 			
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
+				if( hero.hasBeenHiddenSinceLastDamage )
+				{
+					return;
+				}
 				if( isLocked )
 				{
 					hudGameObject.SetActive( true );
@@ -187,6 +191,10 @@ namespace SS.Heroes
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
+					if( hero.hasBeenHiddenSinceLastDamage )
+					{
+						return;
+					}
 					if( Selection.IsSelected( selectable ) )
 					{
 						return;
@@ -233,6 +241,11 @@ namespace SS.Heroes
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				hud.SetHealthBarFill( damageable.healthPercent );
+				if( deltaHP < 0 )
+				{
+					hudGameObject.SetActive( true );
+					hero.hasBeenHiddenSinceLastDamage = true;
+				}
 			} );
 
 			// Make the hero deselect itself, and destroy it's UI when killed.
