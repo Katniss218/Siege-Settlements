@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using SS.Buildings;
 using SS.Content;
 using SS.Diplomacy;
 using SS.Levels.SaveStates;
@@ -117,6 +118,9 @@ namespace SS.Modules
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
 
+		private bool isBuilding;
+		private Damageable damageableSelf;
+
 		public bool isReadyToAttack
 		{
 			get
@@ -191,10 +195,17 @@ namespace SS.Modules
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
+			this.isBuilding = Building.IsValid( this.gameObject );
+			this.damageableSelf = this.GetComponent<Damageable>();
 		}
 
 		void Update()
 		{
+			// If it's a building and it's not usable - return, don't attack.
+			if( this.isBuilding && !Building.IsUsable( this.damageableSelf ) )
+			{
+				return;
+			}
 			if( this.isReadyToAttack )
 			{
 				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
