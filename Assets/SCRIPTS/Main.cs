@@ -547,7 +547,7 @@ namespace SS
 				bool canTarget = false;
 				for( int j = 0; j < targeters.Length; j++ )
 				{
-					if( targeters[j].canTarget( selFac, tarFac ) )
+					if( FactionMember.CanTargetAnother( selFac, tarFac ) )
 					{
 						canTarget = true;
 						break;

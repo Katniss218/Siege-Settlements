@@ -14,13 +14,7 @@ namespace SS
 		/// Returns the max view distance of the target finder.
 		/// </summary>
 		float searchRange { get; }
-
-		/// <summary>
-		/// Used to check if the two faction members are hostile towards one naother.
-		/// </summary>
-		Func<FactionMember, FactionMember, bool> canTarget { get; set; }
-
-
+		
 		/// <summary>
 		/// Tries to set the target to any damageable.
 		/// </summary>

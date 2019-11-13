@@ -19,9 +19,7 @@ namespace SS.Modules
 
 		// Recalculate the target, when the target needs to be accessed.
 		// Two types, melee and ranged. ranged takes into account the projectile trajectory, and doesn't target behind walls/etc.
-
-		public Func<FactionMember, FactionMember, bool> canTarget { get; set; }
-
+		
 		public Damageable target
 		{
 			get
@@ -47,7 +45,7 @@ namespace SS.Modules
 			}
 
 			FactionMember targetFactionMember = target.GetComponent<FactionMember>();
-			if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+			if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 			{
 				return false;
 			}
@@ -91,7 +89,7 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 				{
 					continue;
 				}
@@ -137,6 +135,15 @@ namespace SS.Modules
 			Vector3 low, high;
 			Vector3 targetVel;
 			NavMeshAgent navmeshAgent = target.GetComponent<NavMeshAgent>();
+			BoxCollider collidertarget = target.GetComponent<BoxCollider>();
+
+			Matrix4x4 enemyToWorld = target.transform.localToWorldMatrix;
+
+			Vector3 enemyCenterWorld = target.transform.position;
+			if( collidertarget != null )
+			{
+				enemyCenterWorld = enemyToWorld.MultiplyVector( new Vector3( 0.0f, collidertarget.size.y / 2.0f, 0.0f ) ) + target.transform.position;
+			}
 			if( navmeshAgent == null )
 			{
 				targetVel = Vector3.zero;
@@ -150,7 +157,7 @@ namespace SS.Modules
 			Vector3 boxCenterGlobal = toWorld.MultiplyVector( (this.localOffsetMin + this.localOffsetMax) / 2 ) + this.transform.position;
 
 #warning Needs to aim at the center of enemy hitbox.
-			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, target.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
+			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, enemyCenterWorld, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
 				Vector3 vel = low;
@@ -189,13 +196,13 @@ namespace SS.Modules
 
 		void Awake()
 		{
-			this.factionMember = this.GetComponent<FactionMember>();
 		}
 
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
 			this.isBuilding = Building.IsValid( this.gameObject );
+			this.factionMember = this.GetComponent<FactionMember>();
 			this.damageableSelf = this.GetComponent<Damageable>();
 		}
 
@@ -261,8 +268,7 @@ namespace SS.Modules
 
 			RangedModuleDefinition def = (RangedModuleDefinition)_def;
 			RangedModuleData data = (RangedModuleData)_data;
-
-			this.canTarget = FactionMember.CanTargetAnother;
+			
 			this.searchRange = def.attackRange;
 
 

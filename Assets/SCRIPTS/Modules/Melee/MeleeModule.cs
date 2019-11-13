@@ -13,8 +13,6 @@ namespace SS.Modules
 
 		public float searchRange { get; set; }
 		
-		public Func<FactionMember, FactionMember, bool> canTarget { get; set; }
-
 		public Damageable target
 		{
 			get
@@ -40,7 +38,7 @@ namespace SS.Modules
 			}
 
 			FactionMember targetFactionMember = target.GetComponent<FactionMember>();
-			if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+			if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 			{
 				return false;
 			}
@@ -83,7 +81,7 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.canTarget.Invoke( this.factionMember, targetFactionMember ) )
+				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 				{
 					continue;
 				}
@@ -115,15 +113,13 @@ namespace SS.Modules
 
 		void Awake()
 		{
-			this.factionMember = this.GetComponent<FactionMember>();
-
-			this.canTarget = FactionMember.CanTargetAnother;
 		}
 
 		private void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
 			this.isBuilding = Building.IsValid( this.gameObject );
+			this.factionMember = this.GetComponent<FactionMember>();
 			this.damageableSelf = this.GetComponent<Damageable>();
 		}
 
