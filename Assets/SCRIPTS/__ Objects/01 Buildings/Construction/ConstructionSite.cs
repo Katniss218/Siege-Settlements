@@ -99,6 +99,7 @@ namespace SS.Buildings
 					{
 						this.renderers[i].material.SetFloat( "_YOffset", 0.0f );
 					}
+					this.damageable.health = this.damageable.healthMax;
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
