@@ -1,4 +1,5 @@
 ﻿using SS.InputSystem;
+using SS.Levels;
 using UnityEngine;
 
 namespace SS
@@ -255,6 +256,26 @@ namespace SS
 			{
 				Translate( 0.0f, 0.0f, -speed * Time.deltaTime * size );
 			}
+
+			Vector3 clampedPos = this.transform.position;
+			if( clampedPos.x < 0 )
+			{
+				clampedPos.x = 0;
+			}
+			else if( clampedPos.x > LevelDataManager.mapSize )
+			{
+				clampedPos.x = LevelDataManager.mapSize;
+			}
+			
+			if( clampedPos.z < 0 )
+			{
+				clampedPos.z = 0;
+			}
+			else if( clampedPos.z > LevelDataManager.mapSize )
+			{
+				clampedPos.z = LevelDataManager.mapSize;
+			}
+			this.transform.position = clampedPos;
 		}
 	}
 }

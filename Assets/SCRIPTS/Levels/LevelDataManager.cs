@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Diplomacy;
 using SS.Technologies;
+using SS.TerrainCreation;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,7 +25,8 @@ namespace SS.Levels
 		/// The y size of the map. In world space units (Read Only).
 		/// </summary>
 		public static float mapHeight { get; private set; }
-
+	
+		public static float mapSize { get { return mapSegments * TerrainMeshCreator.SEGMENT_SIZE; } }
 
 		//
 		//    Factions
