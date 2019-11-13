@@ -2,6 +2,7 @@
   "dependencies": {
     "com.unity.analytics": "3.3.2",
     "com.unity.collab-proxy": "1.2.16",
+    "com.unity.memoryprofiler": "0.1.0-preview.8",
     "com.unity.package-manager-ui": "2.1.2",
     "com.unity.postprocessing": "2.1.7",
     "com.unity.render-pipelines.lightweight": "5.16.1",
