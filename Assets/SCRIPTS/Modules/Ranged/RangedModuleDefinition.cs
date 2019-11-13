@@ -28,6 +28,11 @@ namespace SS.Modules
 		public Vector3 localOffsetMax { get; set; }
 		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
 
+		/// <summary>
+		/// Contains a list of guids for each of the sub-objects that are rotated towards the target.
+		/// </summary>
+		public Guid[] traversibleSubObjects { get; set; }
+
 
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
@@ -63,6 +68,12 @@ namespace SS.Modules
 			this.localOffsetMax = serializer.ReadVector3( "LocalOffsetMax" );
 
 			this.attackSoundEffect = serializer.ReadAudioClipFromAssets( "AttackSound" );
+
+			this.traversibleSubObjects = new Guid[serializer.Analyze( "TraversibleSubObjects" ).childCount];
+			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+			{
+				this.traversibleSubObjects[i] = Guid.ParseExact( serializer.ReadString( new Path( "TraversibleSubObjects.{0}", i ) ), "D" );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -79,6 +90,13 @@ namespace SS.Modules
 			serializer.WriteVector3( "", "LocalOffsetMax", this.localOffsetMax );
 
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
+
+			string[] guidArray = new string[this.traversibleSubObjects.Length];
+			for( int i = 0; i < guidArray.Length; i++ )
+			{
+				guidArray[i] = this.traversibleSubObjects[i].ToString( "D" );
+			}
+			serializer.WriteStringArray( "", "TraversibleSubObjects", guidArray );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )

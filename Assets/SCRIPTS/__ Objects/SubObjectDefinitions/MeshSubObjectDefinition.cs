@@ -21,7 +21,7 @@ namespace SS.Objects.SubObjects
 
 			child.transform.localPosition = this.localPosition;
 			child.transform.localRotation = this.localRotation;
-
+			
 			MeshFilter meshFilter = child.AddComponent<MeshFilter>();
 			meshFilter.mesh = this.mesh;
 
@@ -30,6 +30,9 @@ namespace SS.Objects.SubObjects
 
 			SubObject subObject = child.AddComponent<SubObject>();
 			subObject.subObjectId = this.subObjectId;
+
+			subObject.defaultPosition = this.localPosition;
+			subObject.defaultRotation = this.localRotation;
 
 			return subObject;
 		}
@@ -51,6 +54,9 @@ namespace SS.Objects.SubObjects
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "SubObjectId", this.subObjectId.ToString( "D" ) );
+
+			serializer.WriteVector3( "", "LocalPosition", this.localPosition );
+			serializer.WriteVector3( "", "LocalRotationEuler", this.localRotation.eulerAngles );
 
 			serializer.WriteString( "", "Mesh", (string)this.mesh );
 			serializer.Serialize( "", "Material", this.materialData );

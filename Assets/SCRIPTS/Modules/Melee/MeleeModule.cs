@@ -49,6 +49,13 @@ namespace SS.Modules
 		public Damageable TrySetTarget()
 		{
 			this.__target = this.FindTarget( this.searchRange );
+			if( this.__target == null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
+			}
 			return this.__target;
 		}
 
@@ -57,6 +64,13 @@ namespace SS.Modules
 			if( this.CanTarget( target ) )
 			{
 				this.__target = target;
+			}
+			if( this.__target == null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
 			}
 			return this.__target;
 		}
@@ -103,6 +117,8 @@ namespace SS.Modules
 		private bool isBuilding;
 		private Damageable damageableSelf;
 
+		private Transform[] traversibleSubObjects { get; set; }
+
 		public bool isReadyToAttack
 		{
 			get
@@ -130,6 +146,15 @@ namespace SS.Modules
 			{
 				return;
 			}
+
+			if( this.__target != null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].rotation = Quaternion.LookRotation( (this.__target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+				}
+			}
+
 			if( this.isReadyToAttack )
 			{
 				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
@@ -190,6 +215,18 @@ namespace SS.Modules
 			this.attackCooldown = def.attackCooldown;
 			this.attackSoundEffect = def.attackSoundEffect;
 
+			this.traversibleSubObjects = new Transform[def.traversibleSubObjects.Length];
+			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+			{
+				SSObject self = this.GetComponent<SSObject>();
+
+				SubObject trav = self.GetSubObject( def.traversibleSubObjects[i] );
+				if( trav == null )
+				{
+					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
+				}
+				this.traversibleSubObjects[i] = trav.transform;
+			}
 
 			if( data.targetGuid != null )
 			{

@@ -52,5 +52,19 @@ namespace SS
 		/// Contains the display name of the object.
 		/// </summary>
 		public string displayName = "<missing>";
+
+		public SubObject GetSubObject( Guid id )
+		{
+			for( int i = 0; i < this.transform.childCount; i++ )
+			{
+				SubObject subObject = this.transform.GetChild( i ).GetComponent<SubObject>();
+
+				if( subObject.subObjectId == id )
+				{
+					return subObject;
+				}
+			}
+			return null;
+		}
 	}
 }

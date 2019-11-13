@@ -119,6 +119,8 @@ namespace SS.Modules
 		private bool isBuilding;
 		private Damageable damageableSelf;
 
+		private Transform[] traversibleSubObjects { get; set; }
+
 		public bool isReadyToAttack
 		{
 			get
@@ -156,7 +158,6 @@ namespace SS.Modules
 
 			Vector3 boxCenterGlobal = toWorld.MultiplyVector( (this.localOffsetMin + this.localOffsetMax) / 2 ) + this.transform.position;
 
-#warning Needs to aim at the center of enemy hitbox.
 			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, enemyCenterWorld, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
@@ -213,6 +214,15 @@ namespace SS.Modules
 			{
 				return;
 			}
+			
+			if( this.__target != null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].rotation = Quaternion.LookRotation( (this.__target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+				}
+			}
+
 			if( this.isReadyToAttack )
 			{
 				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
@@ -282,6 +292,19 @@ namespace SS.Modules
 			this.localOffsetMin = def.localOffsetMin;
 			this.localOffsetMax = def.localOffsetMax;
 			this.attackSoundEffect = def.attackSoundEffect;
+			
+			this.traversibleSubObjects = new Transform[def.traversibleSubObjects.Length];
+			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+			{
+				SSObject self = this.GetComponent<SSObject>();
+
+				SubObject trav = self.GetSubObject( def.traversibleSubObjects[i] );
+				if( trav == null )
+				{
+					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
+				}
+				this.traversibleSubObjects[i] = trav.transform;
+			}
 
 			if( data.targetGuid != null )
 			{
