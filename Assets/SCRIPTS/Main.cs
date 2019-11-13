@@ -261,10 +261,10 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
 					GameObject gameObject = hitInfo.collider.gameObject;
-					if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
-					{
-						return;
-					}
+					//if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
+					//{
+					//	return;
+					//}
 					IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
 					for( int i = 0; i < paymentReceivers.Length; i++ )
 					{
@@ -305,6 +305,23 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
 					AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
+				}
+			}
+		}
+
+		private void Inp_Y( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					Damageable damageable = hitInfo.collider.GetComponent<Damageable>();
+
+					if( damageable != null )
+					{
+						damageable.TakeDamageUnscaled( 99999999.99f );
+					}
 				}
 			}
 		}
@@ -482,6 +499,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
@@ -507,6 +525,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
 				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
+				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
