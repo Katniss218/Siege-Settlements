@@ -11,7 +11,6 @@ namespace SS.Diplomacy
 	/// </summary>
 	public class FactionData : IKFFSerializable
 	{
-#warning Ugly code - The 'techs' field is here but access to it is from LevelDataManager.
 		/// <summary>
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>

@@ -69,6 +69,7 @@ namespace SS.Modules
 			return this.__target;
 		}
 
+#warning weird behaviour when finding targets. seems like it can target objects further that it's max search range if they are overlapping via hitbox.
 		private Damageable FindTarget( float searchRange )
 		{
 			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.OBJECTS_MASK );
@@ -140,11 +141,15 @@ namespace SS.Modules
 			{
 				targetVel = navmeshAgent.velocity;
 			}
-			if( BallisticSolver.Solve( this.transform.position, this.velocity, target.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
+			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+
+			Vector3 boxCenterGlobal = toWorld.MultiplyVector( (this.localOffsetMin + this.localOffsetMax) / 2 ) + this.transform.position;
+
+#warning Needs to aim at the center of enemy hitbox.
+			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, target.transform.position, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
 				Vector3 pos;
 				Vector3 vel = low;
-				Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 				for( int i = 0; i < this.projectileCount; i++ )
 				{
 					pos = new Vector3(

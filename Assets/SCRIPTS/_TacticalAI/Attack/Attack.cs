@@ -35,10 +35,6 @@ namespace SS
 				}
 				this.attackDistance = this.maxSearchRange / 2.0f;
 
-				if( this.navMeshAgent == null )
-				{
-					throw new System.Exception( "Can't add Attack TAI goal to: " + this.gameObject.name );
-				}
 				if( this.targeters == null || this.targeters.Length == 0 )
 				{
 					throw new System.Exception( "Can't add Attack TAI goal to: " + this.gameObject.name ); // nothing to get the target from.
@@ -58,21 +54,36 @@ namespace SS
 					}
 				}
 
+				bool hasAcquiredTarget = false;
 				if( Vector3.Distance( this.transform.position, this.target.transform.position ) <= this.maxSearchRange )
 				{
 					for( int i = 0; i < this.targeters.Length; i++ )
 					{
-						this.targeters[i].TrySetTarget( this.targetDamageable );
+						bool f = this.targeters[i].TrySetTarget( this.targetDamageable );
+						if( !hasAcquiredTarget )
+						{
+							hasAcquiredTarget = f;
+						}
 					}
 				}
-				this.navMeshAgent.SetDestination( this.target.transform.position );
+				// Only move if none of the present targeters can target the specified unit.
+				if( !hasAcquiredTarget )
+				{
+					if( this.navMeshAgent != null )
+					{
+						this.navMeshAgent.SetDestination( this.target.transform.position );
+					}
+				}
 			}
 			
 			void Update()
 			{
 				if( this.target == null )
 				{
-					this.navMeshAgent.ResetPath();
+					if( this.navMeshAgent != null )
+					{
+						this.navMeshAgent.ResetPath();
+					}
 					Object.Destroy( this );
 					return;
 				}
@@ -82,15 +93,23 @@ namespace SS
 					{
 						this.targeters[i].TrySetTarget( this.targetDamageable );
 					}
-					this.navMeshAgent.ResetPath();
+
+					if( this.navMeshAgent != null )
+					{
+						this.navMeshAgent.ResetPath();
+					}
 				}
 				else
 				{
-					if( this.navMeshAgent.hasPath )
+					if( this.navMeshAgent != null )
 					{
-						return;
+						if( this.navMeshAgent.hasPath )
+						{
+							return;
+						}
+
+						this.navMeshAgent.SetDestination( this.target.transform.position );
 					}
-					this.navMeshAgent.SetDestination( this.target.transform.position );
 				}
 			}
 
