@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 
 namespace SS.TerrainCreation
 {
 	public static class LevelTerrainCreator
 	{
-
-		// The terrain consists of multiple terrain meshes, each with a single texture applied to it.
-		// Each texture is 4096x4096, and each mesh is 64x64 units.
-
 		static TerrainMeshCreator meshCreator;
 		public static Transform terrainParent;
 
@@ -31,7 +26,7 @@ namespace SS.TerrainCreation
 
 			meshCreator = new TerrainMeshCreator( RESOLUTION, segments, heightMaps, height );
 			Mesh[,] meshes = meshCreator.CreateMeshes();
-
+			
 			for( int i = 0; i < segments; i++ )
 			{
 				for( int j = 0; j < segments; j++ )
@@ -50,7 +45,9 @@ namespace SS.TerrainCreation
 
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 
-					terrainSegment.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
+					// this takes up to 90% of the time to assign. (5k ms for 4x4)
+					MeshCollider meshCollider = terrainSegment.AddComponent<MeshCollider>();
+					meshCollider.sharedMesh = meshes[i, j];
 				}
 			}
 		}

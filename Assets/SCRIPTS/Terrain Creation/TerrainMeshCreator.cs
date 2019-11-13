@@ -99,7 +99,7 @@ namespace SS.TerrainCreation
 			mesh.SetTriangles( triangles, 0 );
 			mesh.RecalculateNormals();
 			mesh.RecalculateTangents();
-			
+
 			return mesh;
 		}
 	}
