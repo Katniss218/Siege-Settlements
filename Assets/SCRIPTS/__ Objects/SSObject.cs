@@ -6,7 +6,7 @@ namespace SS
 	[DisallowMultipleComponent]
 	public class SSObject : MonoBehaviour
 	{
-		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.5f;
+		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.0f;
 
 		private Guid? __guid = null;
 		/// <summary>
