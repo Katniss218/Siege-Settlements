@@ -67,8 +67,7 @@ namespace SS.Modules
 			}
 			return this.__target;
 		}
-
-#warning weird behaviour when finding targets. seems like it can target objects further that it's max search range if they are overlapping via hitbox.
+		
 		private Damageable FindTarget( float searchRange )
 		{
 			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.OBJECTS_MASK );
@@ -90,6 +89,12 @@ namespace SS.Modules
 
 				// Check if the overlapped object can be targeted by this finder.
 				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
+				{
+					continue;
+				}
+
+				// Disregard potential targets, if the overlap is present, but the center is outside.
+				if( Vector3.Distance( this.transform.position, potentialTarget.transform.position ) >= searchRange )
 				{
 					continue;
 				}

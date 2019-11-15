@@ -100,6 +100,12 @@ namespace SS.Modules
 					continue;
 				}
 
+				// Disregard potential targets, if the overlap is present, but the center is outside.
+				if( Vector3.Distance( this.transform.position, potentialTarget.transform.position ) >= searchRange )
+				{
+					continue;
+				}
+
 				return potentialTarget;
 			}
 			return null;
