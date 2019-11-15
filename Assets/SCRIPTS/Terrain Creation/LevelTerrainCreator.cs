@@ -1,4 +1,5 @@
 ﻿using SS.Content;
+using SS.Levels;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -59,11 +60,20 @@ namespace SS.TerrainCreation
 			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
 
 			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
-			
+
+			NavMeshBuildSettings meshBuildSettings = NavMesh.GetSettingsByIndex( 0 );
+			meshBuildSettings.overrideVoxelSize = true;
+			meshBuildSettings.voxelSize = 0.125f;
+			meshBuildSettings.overrideTileSize = true;
+			meshBuildSettings.tileSize = 24;
+
+			Vector3 mapCenter = new Vector3( LevelDataManager.mapSize / 2.0f, LevelDataManager.mapHeight / 2.0f, LevelDataManager.mapSize / 2.0f );
+			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight, LevelDataManager.mapSize );
+
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
-				NavMesh.GetSettingsByIndex( 0 ),
+				meshBuildSettings,
 				buildSources,
-				new Bounds( Vector3.zero, new Vector3( 10000, 10000, 10000 ) ),
+				new Bounds( mapCenter, mapExtents ),
 				Vector3.down,
 				Quaternion.Euler( Vector3.up )
 			);
