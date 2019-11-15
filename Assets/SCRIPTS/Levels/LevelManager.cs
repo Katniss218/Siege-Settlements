@@ -284,7 +284,7 @@ namespace SS.Levels
 
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
-			RenderSettings.ambientLight = new Color( 0.35f, 0.35f, 0.4f );
+			RenderSettings.ambientLight = new Color( 0.25f, 0.25f, 0.28f );
 
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
 

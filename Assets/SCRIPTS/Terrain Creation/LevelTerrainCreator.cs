@@ -59,7 +59,7 @@ namespace SS.TerrainCreation
 		{
 			List<NavMeshBuildSource> buildSources = new List<NavMeshBuildSource>();
 
-			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.RenderMeshes, 0, new List<NavMeshBuildMarkup>(), buildSources );
+			NavMeshBuilder.CollectSources( terrainParent.transform, ObjectLayer.TERRAIN_MASK, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), buildSources );
 
 			NavMeshBuildSettings meshBuildSettings = NavMesh.GetSettingsByIndex( 0 );
 			meshBuildSettings.overrideVoxelSize = true;

@@ -28,6 +28,13 @@ namespace SS.Modules
 				{
 					this.__target = null;
 				}
+				if( this.__target == null )
+				{
+					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+					{
+						this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+					}
+				}
 				return this.__target;
 			}
 		}
@@ -56,6 +63,13 @@ namespace SS.Modules
 		public Damageable TrySetTarget()
 		{
 			this.__target = this.FindTarget( this.searchRange );
+			if( this.__target == null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
+			}
 			return this.__target;
 		}
 
@@ -64,6 +78,13 @@ namespace SS.Modules
 			if( this.CanTarget( target ) )
 			{
 				this.__target = target;
+			}
+			if( this.__target == null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
 			}
 			return this.__target;
 		}
