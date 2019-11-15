@@ -23,10 +23,10 @@ namespace SS.Objects.SubObjects
 			child.transform.localRotation = this.localRotation;
 			
 			MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-			meshFilter.mesh = this.mesh;
+			meshFilter.sharedMesh = this.mesh;
 
 			MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
-			meshRenderer.material = MaterialManager.CreateMaterial( this.materialData );
+			meshRenderer.sharedMaterial = MaterialManager.CreateMaterial( this.materialData );
 
 			SubObject subObject = child.AddComponent<SubObject>();
 			subObject.subObjectId = this.subObjectId;
