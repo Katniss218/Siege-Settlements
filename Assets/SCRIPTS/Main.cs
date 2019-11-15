@@ -424,6 +424,36 @@ namespace SS
 			}
 		}
 
+		private void Inp_A6( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
+					{
+						CreateDeposit( "resource_deposit.iron_ore_0", hitInfo.point );
+					}
+				}
+			}
+		}
+
+		private void Inp_A7( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
+					{
+						CreateDeposit( "resource_deposit.sulphur_ore_0", hitInfo.point );
+					}
+				}
+			}
+		}
+
 		private void Inp_A8( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -468,7 +498,7 @@ namespace SS
 				}
 			}
 		}
-		
+
 		private void Inp_Pause( InputQueue self )
 		{
 			if( PauseManager.isPaused )
@@ -505,6 +535,8 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
@@ -531,6 +563,8 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha4, Inp_A4 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha5, Inp_A5 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha6, Inp_A6 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha7, Inp_A7 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_A8 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha9, Inp_A9 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_A0 );
