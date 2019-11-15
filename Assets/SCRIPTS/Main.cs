@@ -403,27 +403,6 @@ namespace SS
 			}
 		}
 
-		private void Inp_A5( InputQueue self )
-		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						ExtraDefinition def = DefinitionManager.GetExtra( "extra.grass" );
-						ExtraData data = new ExtraData();
-						data.guid = Guid.NewGuid();
-						data.position = hitInfo.point;
-						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-
-						ExtraCreator.Create( def, data );
-					}
-				}
-			}
-		}
-
 		private void Inp_A6( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -534,7 +513,6 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
@@ -562,7 +540,6 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha4, Inp_A4 );
-				Main.keyboardInput.ClearOnPress( KeyCode.Alpha5, Inp_A5 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha6, Inp_A6 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha7, Inp_A7 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_A8 );
