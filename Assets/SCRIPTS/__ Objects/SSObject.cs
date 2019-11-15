@@ -53,6 +53,9 @@ namespace SS
 		/// </summary>
 		public string displayName = "<missing>";
 
+		/// <summary>
+		/// Returns a sub-object with specified Id. Returns null if none are present.
+		/// </summary>
 		public SubObject GetSubObject( Guid id )
 		{
 			for( int i = 0; i < this.transform.childCount; i++ )

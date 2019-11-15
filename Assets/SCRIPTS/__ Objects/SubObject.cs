@@ -11,7 +11,14 @@ namespace SS
 		/// </summary>
 		public Guid subObjectId { get; set; }
 
+		/// <summary>
+		/// The default position (in local-space) of this SubObject.
+		/// </summary>
 		public Vector3 defaultPosition { get; set; }
+
+		/// <summary>
+		/// The default position (in local-space) of this SubObject.
+		/// </summary>
 		public Quaternion defaultRotation { get; set; }
 	}
 }

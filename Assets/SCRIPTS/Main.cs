@@ -463,7 +463,7 @@ namespace SS
 				{
 					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 					{
-						CreateDeposit( "resource_deposit.stone", hitInfo.point );
+						CreateDeposit( "resource_deposit.rock_0", hitInfo.point );
 					}
 				}
 			}
