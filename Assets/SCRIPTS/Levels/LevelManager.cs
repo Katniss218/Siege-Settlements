@@ -285,9 +285,7 @@ namespace SS.Levels
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
 			RenderSettings.ambientLight = new Color( 0.25f, 0.25f, 0.28f );
-
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
-
+			
 			if( !SceneManager.GetSceneByName( "Level GUI" ).isLoaded )
 			{
 				SceneManager.LoadScene( "Level GUI", LoadSceneMode.Additive );
@@ -480,6 +478,7 @@ namespace SS.Levels
 				throw new Exception( "Can't open file '" + pathFactions + "'." );
 			}
 
+
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Definition parsing: " + sw.ElapsedMilliseconds + " ms" );
@@ -503,6 +502,8 @@ namespace SS.Levels
 			sw.Reset();
 			sw.Start();
 
+
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
 
 			LevelDataManager.LoadMapData( serializerLevel );
 			
