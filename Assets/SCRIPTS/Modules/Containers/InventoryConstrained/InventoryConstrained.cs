@@ -65,6 +65,8 @@ namespace SS.Modules.Inventories
 					}
 
 #warning if the inventory is constrained, we know which resources can be added. Display 0/capacity.
+#warning Add GetSlots method (returns null id and 0 amount, if the id is not defined yet - unconstrained empty slot).
+#warning Inventory unconstrained should allow for adding multiple of the same resource type?
 					Dictionary<string, int> items = this.GetAll();
 
 					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );

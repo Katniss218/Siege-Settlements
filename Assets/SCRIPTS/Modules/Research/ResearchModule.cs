@@ -23,7 +23,9 @@ namespace SS.Modules
 		public UnityEvent onResearchProgress = new UnityEvent();
 
 		public UnityEvent onResearchEnd = new UnityEvent();
-		
+
+		public UnityEvent onPaymentReceived { get; private set; }
+
 		private ResearchModuleDefinition def;
 
 		public TechnologyDefinition[] researchableTechnologies { get; set; }
@@ -97,15 +99,7 @@ namespace SS.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
-
-			if( Selection.IsHighlighted( this.selectable ) )
-			{
-				Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
-				if( statusUI != null )
-				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.researchedTechnology.displayName + "'): " + Status() );
-				}
-			}
+			this.onPaymentReceived?.Invoke();
 		}
 
 		public Dictionary<string, int> GetWantedResources()
@@ -146,8 +140,8 @@ namespace SS.Modules
 		void Awake()
 		{
 			this.factionMember = GetComponent<FactionMember>();
-
 			this.selectable = this.GetComponent<Selectable>();
+			this.onPaymentReceived = new UnityEvent();
 		}
 
 		// Update is called once per frame
@@ -242,15 +236,13 @@ namespace SS.Modules
 			{
 				// add.
 				selectable.onHighlight.AddListener( this.OnHighlight );
-
-				this.onResearchBegin.RemoveListener( this.OnResearchBegin );
+				
 				this.onResearchBegin.AddListener( this.OnResearchBegin );
-
-				this.onResearchProgress.RemoveListener( this.OnResearchProgress );
 				this.onResearchProgress.AddListener( this.OnResearchProgress );
-
-				this.onResearchEnd.RemoveListener( this.OnResearchEnd );
 				this.onResearchEnd.AddListener( this.OnResearchEnd );
+				
+				this.onPaymentReceived.AddListener( this.OnPaymentReceived );
+
 
 				if( this.factionMember != null )
 				{
@@ -305,8 +297,6 @@ namespace SS.Modules
 		private void ShowList()
 		{
 			GameObject[] gridElements = new GameObject[this.researchableTechnologies.Length];
-			//TechnologyDefinition[] registeredTechnologies = DefinitionManager.GetAllTechnologies();
-			//GameObject[] gridElements = new GameObject[registeredTechnologies.Length];
 			// Add every available technology to the list.
 			for( int i = 0; i < this.researchableTechnologies.Length; i++ )
 			{
@@ -351,6 +341,19 @@ namespace SS.Modules
 					}
 					this.ShowList();
 				}
+			}
+		}
+
+		private void OnPaymentReceived()
+		{
+			if( !Selection.IsHighlighted( this.selectable ) )
+			{
+				return;
+			}
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.researchedTechnology.displayName + "'): " + Status() );
 			}
 		}
 

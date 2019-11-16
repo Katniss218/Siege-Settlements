@@ -11,6 +11,7 @@ using SS.Diplomacy;
 using SS.UI;
 using System.Text;
 using SS.ResourceSystem;
+using UnityEngine.Events;
 
 namespace SS.Buildings
 {
@@ -29,6 +30,8 @@ namespace SS.Buildings
 		}
 
 		private Dictionary<string, ResourceInfo> resourceInfo;
+
+		public UnityEvent onPaymentReceived { get; private set; }
 
 		private Damageable damageable;
 		private Selectable selectable;
@@ -123,14 +126,7 @@ namespace SS.Buildings
 				}
 
 
-				if( Selection.IsHighlighted( this.selectable ) )
-				{
-					Transform statusUI = SelectionPanel.instance.obj.GetElement( "construction.status" );
-					if( statusUI != null )
-					{
-						UIUtils.EditText( statusUI.gameObject, "Waiting for resources: " + Status() );
-					}
-				}
+				this.onPaymentReceived?.Invoke();
 
 				return;
 			}
@@ -175,7 +171,13 @@ namespace SS.Buildings
 			{
 				kvp.Value.healthToResource = kvp.Value.remaining / totalResourcesNeeded;
 			}
+		}
 
+		void Awake()
+		{
+			this.damageable = this.GetComponent<Damageable>();
+			this.selectable = this.GetComponent<Selectable>();
+			this.onPaymentReceived = new UnityEvent();
 		}
 
 		// Rounds down when the decimal is <=0.5, rounds up when >0.5
@@ -187,36 +189,6 @@ namespace SS.Buildings
 				return floored;
 			}
 			return floored + 1;
-		}
-
-		public void OnHealthChange( float deltaHP )
-		{
-			for( int i = 0; i < this.renderers.Length; i++ )
-			{
-				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.height, 0.0f, damageable.healthPercent ) );
-			}
-			if( deltaHP < 0 )
-			{
-				foreach( var kvp in this.resourceInfo )
-				{
-					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
-
-					kvp.Value.remaining += resAmt;
-				}
-			}
-		}
-
-		public void OnFactionChange()
-		{
-			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
-			Color facColor = LevelDataManager.factions[this.GetComponent<FactionMember>().factionId].color;
-
-			for( int i = 0; i < constr_gfx.childCount; i++ )
-			{
-				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
-
-				meshRenderer.material.SetColor( "_FactionColor", facColor );
-			}
 		}
 
 
@@ -385,8 +357,6 @@ namespace SS.Buildings
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
 			constructionSite.renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-			constructionSite.damageable = damageable;
-			constructionSite.selectable = selectable;
 			constructionSite.building = building;
 
 			constructionSite.height = gameObject.GetComponent<BoxCollider>().size.y;
@@ -410,9 +380,13 @@ namespace SS.Buildings
 				}
 			}
 
-			// add.
-			selectable.onHighlight.AddListener( constructionSite.OnHighlight );
+			if( selectable != null )
+			{
+				// add.
+				selectable.onHighlight.AddListener( constructionSite.OnHighlight );
 
+				constructionSite.onPaymentReceived.AddListener( constructionSite.OnPaymentReceived );
+			}
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
@@ -423,6 +397,37 @@ namespace SS.Buildings
 			for( int i = 0; i < constructionSite.renderers.Length; i++ )
 			{
 				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.height, 0.0f, damageable.healthPercent ) );
+			}
+		}
+
+
+		private void OnHealthChange( float deltaHP )
+		{
+			for( int i = 0; i < this.renderers.Length; i++ )
+			{
+				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.height, 0.0f, damageable.healthPercent ) );
+			}
+			if( deltaHP < 0 )
+			{
+				foreach( var kvp in this.resourceInfo )
+				{
+					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
+
+					kvp.Value.remaining += resAmt;
+				}
+			}
+		}
+
+		private void OnFactionChange()
+		{
+			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
+			Color facColor = LevelDataManager.factions[this.GetComponent<FactionMember>().factionId].color;
+
+			for( int i = 0; i < constr_gfx.childCount; i++ )
+			{
+				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
+
+				meshRenderer.material.SetColor( "_FactionColor", facColor );
 			}
 		}
 
@@ -448,6 +453,18 @@ namespace SS.Buildings
 			return sb.ToString();
 		}
 
+		private void OnPaymentReceived()
+		{
+			if( !Selection.IsHighlighted( this.selectable ) )
+			{
+				return;
+			}
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "construction.status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources: " + Status() );
+			}
+		}
 
 		private void OnHighlight()
 		{

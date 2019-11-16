@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace SS.ResourceSystem.Payment
 {
@@ -7,6 +8,8 @@ namespace SS.ResourceSystem.Payment
 	/// </summary>
 	public interface IPaymentReceiver
 	{
+		UnityEvent onPaymentReceived { get; }
+
 		/// <summary>
 		/// Makes this payment receiver receive a payment.
 		/// </summary>

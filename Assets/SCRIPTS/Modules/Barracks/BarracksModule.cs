@@ -25,6 +25,8 @@ namespace SS.Modules
 
 		public UnityEvent onTrainingEnd = new UnityEvent();
 		
+		public UnityEvent onPaymentReceived { get; private set; }
+
 		private BarracksModuleDefinition def;
 
 		/// <summary>
@@ -111,15 +113,7 @@ namespace SS.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
-
-			if( Selection.IsHighlighted( this.selectable ) )
-			{
-				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
-				if( statusUI != null )
-				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
-				}
-			}
+			this.onPaymentReceived?.Invoke();
 		}
 
 		public Dictionary<string, int> GetWantedResources()
@@ -157,8 +151,8 @@ namespace SS.Modules
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
-
 			this.selectable = this.GetComponent<Selectable>();
+			this.onPaymentReceived = new UnityEvent();
 
 
 
@@ -302,16 +296,13 @@ namespace SS.Modules
 				// add.
 				selectable.onHighlight.AddListener( this.OnHighlight );
 
-
-				this.onTrainingBegin.RemoveListener( this.OnTrainingBegin );
-				this.onTrainingBegin.AddListener( this.OnTrainingBegin );
-
-				this.onTrainingProgress.RemoveListener( this.OnTrainingProgress );
-				this.onTrainingProgress.AddListener( this.OnTrainingProgress );
-
-				this.onTrainingEnd.RemoveListener( this.OnTrainingEnd );
-				this.onTrainingEnd.AddListener( this.OnTrainingEnd );
 				
+				this.onTrainingBegin.AddListener( this.OnTrainingBegin );
+				this.onTrainingProgress.AddListener( this.OnTrainingProgress );
+				this.onTrainingEnd.AddListener( this.OnTrainingEnd );
+
+				this.onPaymentReceived.AddListener( this.OnPaymentReceived );
+
 				if( this.factionMember != null )
 				{
 					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
@@ -407,6 +398,19 @@ namespace SS.Modules
 				}
 			}
 			this.ShowList();
+		}
+
+		private void OnPaymentReceived()
+		{
+			if( !Selection.IsHighlighted( this.selectable ) )
+			{
+				return;
+			}
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
+			}
 		}
 
 		private void OnTrainingBegin()

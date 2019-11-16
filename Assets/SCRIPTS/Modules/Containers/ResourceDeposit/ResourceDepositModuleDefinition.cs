@@ -35,8 +35,6 @@ namespace SS.Modules
 
 		public Slot[] slots { get; set; }
 
-		//public bool isExtracted { get; set; }
-
 		public AddressableAsset<AudioClip> mineSound { get; private set; }
 
 
@@ -67,12 +65,7 @@ namespace SS.Modules
 			this.slots = new Slot[serializer.Analyze( "Resources" ).childCount];
 			serializer.DeserializeArray( "Resources", this.slots );
 
-#warning todo - remove comments
-			//this.isExtracted = serializer.ReadBool( "IsExtracted" );
-			//if( !this.isExtracted )
-			//{
 			this.mineSound = serializer.ReadAudioClipFromAssets( "MineSound" );
-			//}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -80,11 +73,7 @@ namespace SS.Modules
 			// Cost
 			serializer.SerializeArray( "", "Resources", this.slots );
 
-			//serializer.WriteBool( "", "IsExtracted", this.isExtracted );
-			//if( !this.isExtracted )
-			//{
-				serializer.WriteString( "", "MineSound", (string)this.mineSound );
-			//}
+			serializer.WriteString( "", "MineSound", (string)this.mineSound );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
