@@ -65,7 +65,7 @@ namespace SS.TerrainCreation
 			meshBuildSettings.overrideVoxelSize = true;
 			meshBuildSettings.voxelSize = 0.125f;
 			meshBuildSettings.overrideTileSize = true;
-			meshBuildSettings.tileSize = 24;
+			meshBuildSettings.tileSize = 32;
 
 			Vector3 mapCenter = new Vector3( LevelDataManager.mapSize / 2.0f, LevelDataManager.mapHeight / 2.0f, LevelDataManager.mapSize / 2.0f );
 			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight, LevelDataManager.mapSize );

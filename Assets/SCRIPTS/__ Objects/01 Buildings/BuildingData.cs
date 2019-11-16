@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -21,11 +20,7 @@ namespace SS.Levels.SaveStates
 		public float health { get; set; }
 		
 		public ConstructionSiteData constructionSaveState { get; set; }
-
-		//public ModuleData barracksSaveState { get; set; }
-		//public ModuleData researchSaveState { get; set; }
 		
-
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );

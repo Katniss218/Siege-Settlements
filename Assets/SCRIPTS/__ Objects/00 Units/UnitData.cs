@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Modules;
 using System;
 using UnityEngine;
 
@@ -19,17 +18,9 @@ namespace SS.Levels.SaveStates
 		public int factionId { get; set; }
 
 		public float health { get; set; }
-
-		//public ModuleData meleeData { get; set; }
-		//public ModuleData rangedData { get; set; }
-
-		//public InventoryUnconstrainedData inventoryData { get; set; }
-
+		
 		public TAIGoalData taiGoalData { get; set; }
-
-		// when a module save state is present on the save state, and it's not present on the definition - throw an exception.
-		// not every module needs save state, but every save state needs module.
-
+		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
@@ -40,9 +31,6 @@ namespace SS.Levels.SaveStates
 			this.factionId = serializer.ReadInt( "FactionId" );
 			this.health = serializer.ReadFloat( "Health" );
 			
-			//inventoryData = new InventoryUnconstrainedData();
-			//serializer.Deserialize( "InventoryData", inventoryData );
-
 			this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
 
 			this.DeserializeModulesKFF( serializer );
@@ -58,8 +46,6 @@ namespace SS.Levels.SaveStates
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
 			
-			//serializer.Serialize( "", "InventoryData", this.inventoryData );
-
 			TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
 
 			this.SerializeModulesKFF( serializer );
