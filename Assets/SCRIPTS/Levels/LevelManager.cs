@@ -325,18 +325,26 @@ namespace SS.Levels
 			{
 				serializerLevel = KFFSerializer.ReadFromFile( pathLevel, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open level file '" + pathLevel + "' - file doesn't exist." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open level file '" + pathLevel + "'." );
 			}
 			
 			try
 			{
 				serializerLevelSaveState = KFFSerializer.ReadFromFile( pathLevelSaveState, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open level file '" + pathLevel + "' - file doesn't exist." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open level file '" + pathLevel + "'." );
 			}
 
 			currentLevelDisplayName = serializerLevel.ReadString( "DisplayName" );
@@ -374,36 +382,52 @@ namespace SS.Levels
 			{
 				serializerUnits = KFFSerializer.ReadFromFile( pathUnits, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathUnits + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathUnits + "'." );
 			}
-
+			
 			try
 			{
 				serializerBuildings = KFFSerializer.ReadFromFile( pathBuildings, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathBuildings + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathBuildings + "'." );
 			}
 
 			try
 			{
 				serializerProjectiles = KFFSerializer.ReadFromFile( pathProjectiles, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathProjectiles + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathProjectiles + "'." );
 			}
 
 			try
 			{
 				serializerHeroes = KFFSerializer.ReadFromFile( pathHeroes, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathHeroes + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathHeroes + "'." );
 			}
 
 			try
@@ -412,7 +436,7 @@ namespace SS.Levels
 			}
 			catch( Exception )
 			{
-				throw new Exception( "Can't open file '" + pathExtras + "' or file is invalid." );
+				throw new Exception( "Can't open file '" + pathExtras + "'." );
 			}
 			
 
@@ -420,18 +444,26 @@ namespace SS.Levels
 			{
 				serializerResources = KFFSerializer.ReadFromFile( pathResources, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathResources + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathResources + "'." );
 			}
 
 			try
 			{
 				serializerTechnologies = KFFSerializer.ReadFromFile( pathTechnologies, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathTechnologies + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathTechnologies + "'." );
 			}
 
 
@@ -439,9 +471,13 @@ namespace SS.Levels
 			{
 				serializerFactions = KFFSerializer.ReadFromFile( pathFactions, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathFactions + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathFactions + "'." );
 			}
 
 			sw.Stop();
@@ -520,9 +556,13 @@ namespace SS.Levels
 			{
 				serializerFactionData = KFFSerializer.ReadFromFile( pathFactionData, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathFactionData + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathFactionData + "'." );
 			}
 
 
@@ -530,54 +570,78 @@ namespace SS.Levels
 			{
 				serializerSavedUnits = KFFSerializer.ReadFromFile( pathSavedUnits, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSavedUnits + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSavedUnits + "'." );
 			}
 
 			try
 			{
 				serializerSavedBuildings = KFFSerializer.ReadFromFile( pathSavedBuildings, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSavedBuildings + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSavedBuildings + "'." );
 			}
 
 			try
 			{
 				serializerSavedProjectiles = KFFSerializer.ReadFromFile( pathSavedProjectiles, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSavedProjectiles + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSavedProjectiles + "'." );
 			}
 
 			try
 			{
 				serializerSavedHeroes = KFFSerializer.ReadFromFile( pathSavedHeroes, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSavedHeroes + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSavedHeroes + "'." );
 			}
 
 			try
 			{
 				serializerSavedExtras = KFFSerializer.ReadFromFile( pathSavedExtras, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSavedExtras + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSavedExtras + "'." );
 			}
 			
 			try
 			{
 				serializerSelection = KFFSerializer.ReadFromFile( pathSelection, DefinitionManager.FILE_ENCODING );
 			}
-			catch( Exception )
+			catch( Exception e )
 			{
-				throw new Exception( "Can't open file '" + pathSelection + "' or file is invalid." );
+				if( e is KFFException )
+				{
+					throw e;
+				}
+				throw new Exception( "Can't open file '" + pathSelection + "'." );
 			}
 
 			sw.Stop();
