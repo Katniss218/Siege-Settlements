@@ -160,12 +160,15 @@ namespace SS
 
 				GameObject hitInventoryGameObject = null;
 				IInventory hitInventory = null;
+
 				GameObject hitDepositGameObject = null;
 				ResourceDepositModule hitDeposit = null;
+
 				Transform hitReceiverTransform = null;
 				IPaymentReceiver[] hitPaymentReceivers = null;
+				FactionMember hitReceiverFactionMember = null;
+
 				Damageable hitDamageable = null;
-				FactionMember hitFactionMember = null;
 
 				for( int i = 0; i < raycastHits.Length; i++ )
 				{
@@ -176,61 +179,53 @@ namespace SS
 					else
 					{
 						ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
-						if( deposit != null )
+						if( deposit != null && hitDepositGameObject == null )
 						{
 							hitDepositGameObject = raycastHits[i].collider.gameObject;
 							hitDeposit = deposit;
 						}
 
 						IInventory inventory = raycastHits[i].collider.GetComponent<IInventory>();
-						if( inventory != null )
+						if( inventory != null && hitInventoryGameObject == null )
 						{
 							hitInventoryGameObject = raycastHits[i].collider.gameObject;
 							hitInventory = inventory;
 						}
 
 						IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
-						if( receivers.Length > 0 )
+						FactionMember recFactionMember = raycastHits[i].collider.GetComponent<FactionMember>();
+						if( receivers.Length > 0 && recFactionMember != null && hitReceiverTransform == null )
 						{
 							hitReceiverTransform = raycastHits[i].collider.transform;
 							hitPaymentReceivers = receivers;
+							hitReceiverFactionMember = recFactionMember;
 						}
 
 						Damageable damageable = raycastHits[i].collider.GetComponent<Damageable>();
-						if( damageable != null )
+						if( damageable != null && hitDamageable == null )
 						{
 							hitDamageable = damageable;
 						}
-
-						FactionMember factionMember = raycastHits[i].collider.GetComponent<FactionMember>();
-						if( factionMember != null )
-						{
-							hitFactionMember = factionMember;
-						}
 					}
 				}
-
-
+				
 				if( hitDeposit == null && hitInventory == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
 				{
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
 
-				else if( hitReceiverTransform != null && hitFactionMember.factionId == LevelDataManager.PLAYER_FAC )
+				else if( hitReceiverTransform != null && hitReceiverFactionMember.factionId == LevelDataManager.PLAYER_FAC )
 				{
 					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
 				}
-
 				else if( hitDeposit != null )
 				{
 					AssignPickupDepositGoal( hitDepositGameObject, hitDeposit, Selection.selectedObjects );
 				}
-
 				else if( hitInventory != null )
 				{
 					AssignPickupInventoryGoal( hitInventoryGameObject, hitInventory, Selection.selectedObjects );
 				}
-
 				else if( hitDamageable != null )
 				{
 					AssignAttackGoal( hitDamageable, Selection.selectedObjects );
