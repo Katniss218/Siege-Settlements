@@ -41,7 +41,7 @@ namespace SS.Levels
 		/// Contains the amount of factions registered in the currently loaded level (Read Only).
 		/// </summary>
 		public static int factionCount { get; private set; }
-
+		
 		static FactionDefinition[] _factions;
 		/// <summary>
 		/// Contains definitions for every faction registered in the currently loaded level (Read Only).
@@ -254,6 +254,21 @@ namespace SS.Levels
 			CameraController.instance.size = zoomSize;
 		}
 
+		public static void LoadTimeData( KFFSerializer serializer )
+		{
+			float timeElapsed = serializer.ReadFloat( "GameTimeElapsed" );
+
+
+			GameTimeCounter gameTimeCounter = Object.FindObjectOfType<GameTimeCounter>();
+
+			if( gameTimeCounter == null )
+			{
+				throw new System.Exception( "Couldn't find GameTimeCounter object." );
+			}
+
+			gameTimeCounter.gameTimeOffset = timeElapsed;
+		}
+
 		//
 		//
 		//
@@ -295,6 +310,19 @@ namespace SS.Levels
 			serializer.WriteQuaternion( "CameraData", "Rotation", CameraController.instance.transform.rotation );
 
 			serializer.WriteInt( "CameraData", "ZoomSize", CameraController.instance.size );
+		}
+
+
+		public static void SaveTimeData( KFFSerializer serializer )
+		{
+			GameTimeCounter gameTimeCounter = Object.FindObjectOfType<GameTimeCounter>();
+
+			if( gameTimeCounter == null )
+			{
+				throw new System.Exception( "Couldn't find GameTimeCounter object." );
+			}
+
+			serializer.WriteFloat( "", "GameTimeElapsed", gameTimeCounter.GetElapsed() );
 		}
 	}
 }

@@ -14,6 +14,10 @@ namespace SS
 
 		private float startTime = 0.0f;
 		
+		public float GetElapsed()
+		{
+			return Time.time - this.startTime + gameTimeOffset;
+		}
 
 		void Start()
 		{
@@ -22,7 +26,7 @@ namespace SS
 
 		private string FormatTime()
 		{
-			int timeSinceStart = (int)(Time.time - this.startTime + gameTimeOffset); // time since the level load + time elapsed in previous sessions.
+			int timeSinceStart = (int)this.GetElapsed(); // time since the level load + time elapsed in previous sessions.
 
 			int hours = timeSinceStart / 3600;
 			int mins = timeSinceStart / 60 % 60;

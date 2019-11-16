@@ -597,6 +597,7 @@ namespace SS.Levels
 			LevelDataManager.LoadFactionData( serializerFactionData );
 			LevelDataManager.LoadDaylightCycleData( serializerLevelSaveState );
 			LevelDataManager.LoadCameraData( serializerLevelSaveState );
+			LevelDataManager.LoadTimeData( serializerLevelSaveState );
 
 			GameObject[] units = new GameObject[sUnits.Count];
 			GameObject[] buildings = new GameObject[sBuildings.Count];
@@ -948,6 +949,7 @@ namespace SS.Levels
 			serializerSaveState.WriteString( "", "DisplayName", newLevelSaveStateDisplayName );
 			LevelDataManager.SaveDaylightCycleData( serializerSaveState );
 			LevelDataManager.SaveCameraData( serializerSaveState );
+			LevelDataManager.SaveTimeData( serializerSaveState );
 
 			LevelDataManager.SaveFactionData( serializerFactionData );
 

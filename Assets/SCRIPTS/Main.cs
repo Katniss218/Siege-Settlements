@@ -333,36 +333,34 @@ namespace SS
 			onHudLockChange?.Invoke( isHudLocked );
 		}
 
+		private static void SetFactionSelected( int fac )
+		{
+			Selectable[] selected = Selection.selectedObjects;
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				FactionMember faction = selected[i].GetComponent<FactionMember>();
+
+				if( faction == null )
+				{
+					continue;
+				}
+				faction.factionId = fac;
+			}
+		}
+
 		private void Inp_A1( InputQueue self )
 		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
-					if( fac != null )
-					{
-						fac.factionId = 0;
-					}
-				}
-			}
+			SetFactionSelected( 0 );
 		}
 
 		private void Inp_A2( InputQueue self )
 		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					FactionMember fac = hitInfo.collider.GetComponent<FactionMember>();
-					if( fac != null )
-					{
-						fac.factionId = 1;
-					}
-				}
-			}
+			SetFactionSelected( 1 );
+		}
+
+		private void Inp_A3( InputQueue self )
+		{
+			SetFactionSelected( 2 );
 		}
 
 		private static void CreateDeposit( string id, Vector3 pos )
@@ -512,6 +510,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 60.0f, Inp_A3, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
@@ -539,6 +538,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha3, Inp_A3 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha4, Inp_A4 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha6, Inp_A6 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha7, Inp_A7 );

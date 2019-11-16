@@ -8,6 +8,9 @@ using Object = UnityEngine.Object;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Diplomacy;
+using SS.UI;
+using System.Text;
+using SS.ResourceSystem;
 
 namespace SS.Buildings
 {
@@ -24,9 +27,9 @@ namespace SS.Buildings
 			public float remaining { get; set; }
 			public float healthToResource { get; set; }
 		}
-		
+
 		private Dictionary<string, ResourceInfo> resourceInfo;
-		
+
 		private Damageable damageable;
 
 		private Building building;
@@ -70,7 +73,7 @@ namespace SS.Buildings
 					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
 				}
 
-				
+
 				kvp.Value.remaining -= amount;
 				if( kvp.Value.remaining < 0 )
 				{
@@ -94,7 +97,7 @@ namespace SS.Buildings
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
-					
+
 					for( int i = 0; i < this.renderers.Length; i++ )
 					{
 						this.renderers[i].material.SetFloat( "_YOffset", 0.0f );
@@ -117,7 +120,7 @@ namespace SS.Buildings
 				{
 					this.damageable.health += healAmt;
 				}
-				
+
 				return;
 			}
 		}
@@ -125,7 +128,7 @@ namespace SS.Buildings
 		public Dictionary<string, int> GetWantedResources()
 		{
 			Dictionary<string, int> ret = new Dictionary<string, int>();
-			
+
 			foreach( var kvp in this.resourceInfo )
 			{
 				int amtRounded = SpecialRound( kvp.Value.remaining );
@@ -136,21 +139,21 @@ namespace SS.Buildings
 			}
 			return ret;
 		}
-		
+
 		/// <summary>
 		/// Assigns a cost (in resources) to fully construct the building. Resets any progression in resources.
 		/// </summary>
 		public void SetRequiredResources( Dictionary<string, int> requiredResources )
 		{
 			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources.Count );
-			
+
 			float totalResourcesNeeded = 0;
 			//int i = 0;
 			foreach( var id in requiredResources.Keys )
 			{
 				int amount = requiredResources[id];
 				this.resourceInfo.Add( id, new ResourceInfo() { initialResource = amount, remaining = amount } );
-				
+
 				totalResourcesNeeded += amount;
 
 				//i++;
@@ -366,7 +369,7 @@ namespace SS.Buildings
 			}
 
 			Building building = gameObject.GetComponent<Building>();
-			
+			Selectable selectable = gameObject.GetComponent<Selectable>();
 
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
@@ -395,17 +398,51 @@ namespace SS.Buildings
 				}
 			}
 
+			// add.
+			selectable.onHighlight.AddListener( () => { OnHighlight( constructionSite ); } );
+
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
 			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
 
-			
+
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
-			for( int i = 0;i < constructionSite.renderers.Length; i++ )
+			for( int i = 0; i < constructionSite.renderers.Length; i++ )
 			{
 				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.height, 0.0f, damageable.healthPercent ) );
 			}
+		}
+
+
+		private static string Status( ConstructionSite constructionSite )
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if( constructionSite.resourceInfo == null )
+			{
+				return "null";
+			}
+			foreach( var kvp in constructionSite.resourceInfo )
+			{
+				if( kvp.Value.remaining != 0 )
+				{
+					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+					sb.Append( kvp.Value.remaining + "x " + resDef.displayName );
+				}
+				sb.Append( ", " );
+			}
+
+			return sb.ToString();
+		}
+
+
+		private static void OnHighlight( ConstructionSite constructionSite )
+		{
+			// If the research facility is on a building, that is not usable.
+
+			GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: " + Status( constructionSite ) );
+			SelectionPanel.instance.obj.RegisterElement( "construction.status", statusGO.transform );
 		}
 	}
 }

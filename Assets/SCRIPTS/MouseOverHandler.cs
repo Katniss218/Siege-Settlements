@@ -9,7 +9,7 @@ namespace SS
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
 		public static GameObject currentObjectMouseOver { get; private set; }
-
+		
 		/// <summary>
 		/// Called when mouse starts hovering over specific object.
 		/// </summary>

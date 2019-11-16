@@ -3,12 +3,14 @@ using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
 using SS.UI;
 using SS.Units;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -328,6 +330,27 @@ namespace SS.Modules
 			}
 		}
 
+		private string Status()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if( this.resourcesRemaining == null )
+			{
+				return "null";
+			}
+			foreach( var kvp in this.resourcesRemaining )
+			{
+				if( kvp.Value != 0 )
+				{
+					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+					sb.Append( kvp.Value + "x " + resDef.displayName );
+				}
+				sb.Append( ", " );
+			}
+
+			return sb.ToString();
+		}
+
 		private void ShowList()
 		{
 			GameObject[] gridElements = new GameObject[this.trainableUnits.Length];
@@ -392,7 +415,7 @@ namespace SS.Modules
 				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 				if( statusUI != null )
 				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources: '" + this.trainedUnit.displayName + "'." );
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
 				}
 			}
 		}
@@ -462,7 +485,7 @@ namespace SS.Modules
 			}
 			else
 			{
-				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: '" + this.trainedUnit.displayName + "'." );
+				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
 				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 			}
 		}
