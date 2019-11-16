@@ -20,7 +20,7 @@ namespace SS.Modules
 		/// <summary>
 		/// If true, the resource can be mined instantly.
 		/// </summary>
-		public bool isTypeExtracted { get; set; }
+		//public bool isTypeExtracted { get; set; }
 
 		public AudioClip miningSound { get; set; }
 
@@ -62,8 +62,6 @@ namespace SS.Modules
 
 		void Awake()
 		{
-
-			
 			UnityAction<GameObject> showTooltip = ( GameObject obj ) =>
 			{
 				if( obj == gameObject )
@@ -75,7 +73,7 @@ namespace SS.Modules
 					}
 
 					Dictionary<string, int> itemsInDeposit = this.GetAll();
-					
+
 					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
 
 					foreach( var kvp in itemsInDeposit )
@@ -102,42 +100,39 @@ namespace SS.Modules
 				}
 			};
 
-
-
-			this.onAdd.AddListener((string id, int amount) =>
+			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				if(MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMouseOver == gameObject )
 				{
 					showTooltip( gameObject );
 				}
 			} );
-
-			this.onRemove.AddListener((string id, int amount) =>
+			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( this.isEmpty )
 				{
-					if(MouseOverHandler.currentObjectMouseOver == gameObject )
+					if( MouseOverHandler.currentObjectMouseOver == gameObject )
 					{
 						hideTooltip( gameObject );
 					}
-					Object.Destroy(gameObject );
+					Object.Destroy( gameObject );
 
-					MouseOverHandler.onMouseEnter.RemoveListener(showTooltip );
-					MouseOverHandler.onMouseStay.RemoveListener(moveTooltip );
-					MouseOverHandler.onMouseExit.RemoveListener(hideTooltip );
+					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
+					MouseOverHandler.onMouseStay.RemoveListener( moveTooltip );
+					MouseOverHandler.onMouseExit.RemoveListener( hideTooltip );
 				}
 				else
 				{
-					if(MouseOverHandler.currentObjectMouseOver == gameObject )
+					if( MouseOverHandler.currentObjectMouseOver == gameObject )
 					{
 						showTooltip( gameObject );
 					}
 				}
 			} );
 
-			MouseOverHandler.onMouseEnter.AddListener(showTooltip );
-			MouseOverHandler.onMouseStay.AddListener(moveTooltip );
-			MouseOverHandler.onMouseExit.AddListener(hideTooltip );
+			MouseOverHandler.onMouseEnter.AddListener( showTooltip );
+			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
+			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
 		}
 
 		public bool isEmpty
@@ -337,7 +332,7 @@ namespace SS.Modules
 			}
 
 			this.miningSound = def.mineSound;
-			this.isTypeExtracted = def.isExtracted;
+			//this.isTypeExtracted = def.isExtracted;
 
 			foreach( var kvp in data.items )
 			{

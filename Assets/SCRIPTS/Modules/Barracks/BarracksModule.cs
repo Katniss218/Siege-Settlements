@@ -111,6 +111,15 @@ namespace SS.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
+
+			if( Selection.IsHighlighted( this.selectable ) )
+			{
+				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+				if( statusUI != null )
+				{
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
+				}
+			}
 		}
 
 		public Dictionary<string, int> GetWantedResources()
@@ -302,7 +311,7 @@ namespace SS.Modules
 
 				this.onTrainingEnd.RemoveListener( this.OnTrainingEnd );
 				this.onTrainingEnd.AddListener( this.OnTrainingEnd );
-
+				
 				if( this.factionMember != null )
 				{
 					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );

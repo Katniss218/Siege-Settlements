@@ -97,6 +97,15 @@ namespace SS.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
+
+			if( Selection.IsHighlighted( this.selectable ) )
+			{
+				Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
+				if( statusUI != null )
+				{
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.researchedTechnology.displayName + "'): " + Status() );
+				}
+			}
 		}
 
 		public Dictionary<string, int> GetWantedResources()

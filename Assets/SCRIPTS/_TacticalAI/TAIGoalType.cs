@@ -8,6 +8,7 @@
 		PickupDeposit,
 		MoveTo,
 		MakePayment,
-		Attack
+		Attack,
+		PickupInventory
 	}
 }

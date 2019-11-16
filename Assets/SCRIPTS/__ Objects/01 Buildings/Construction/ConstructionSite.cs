@@ -31,6 +31,7 @@ namespace SS.Buildings
 		private Dictionary<string, ResourceInfo> resourceInfo;
 
 		private Damageable damageable;
+		private Selectable selectable;
 
 		private Building building;
 		private MeshRenderer[] renderers;
@@ -119,6 +120,16 @@ namespace SS.Buildings
 				else
 				{
 					this.damageable.health += healAmt;
+				}
+
+
+				if( Selection.IsHighlighted( this.selectable ) )
+				{
+					Transform statusUI = SelectionPanel.instance.obj.GetElement( "construction.status" );
+					if( statusUI != null )
+					{
+						UIUtils.EditText( statusUI.gameObject, "Waiting for resources: " + Status() );
+					}
 				}
 
 				return;
@@ -375,6 +386,7 @@ namespace SS.Buildings
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
 			constructionSite.renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 			constructionSite.damageable = damageable;
+			constructionSite.selectable = selectable;
 			constructionSite.building = building;
 
 			constructionSite.height = gameObject.GetComponent<BoxCollider>().size.y;
@@ -399,7 +411,7 @@ namespace SS.Buildings
 			}
 
 			// add.
-			selectable.onHighlight.AddListener( () => { OnHighlight( constructionSite ); } );
+			selectable.onHighlight.AddListener( constructionSite.OnHighlight );
 
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
@@ -415,15 +427,15 @@ namespace SS.Buildings
 		}
 
 
-		private static string Status( ConstructionSite constructionSite )
+		private string Status()
 		{
 			StringBuilder sb = new StringBuilder();
 
-			if( constructionSite.resourceInfo == null )
+			if( this.resourceInfo == null )
 			{
 				return "null";
 			}
-			foreach( var kvp in constructionSite.resourceInfo )
+			foreach( var kvp in this.resourceInfo )
 			{
 				if( kvp.Value.remaining != 0 )
 				{
@@ -437,11 +449,11 @@ namespace SS.Buildings
 		}
 
 
-		private static void OnHighlight( ConstructionSite constructionSite )
+		private void OnHighlight()
 		{
 			// If the research facility is on a building, that is not usable.
 
-			GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: " + Status( constructionSite ) );
+			GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: " + Status() );
 			SelectionPanel.instance.obj.RegisterElement( "construction.status", statusGO.transform );
 		}
 	}

@@ -22,11 +22,9 @@ namespace SS
 
 			private void DropOff()
 			{
-#warning Change "default deposits" to be inventories instead of deposits?
-
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
-				ResourceDepositModule destinationInventory = this.destination.GetComponent<ResourceDepositModule>();
+				IInventory destinationInventory = this.destination.GetComponent<IInventory>();
 
 				foreach( var kvp in resourcesCarried )
 				{

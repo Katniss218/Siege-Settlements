@@ -45,6 +45,10 @@ namespace SS
 					case TAIGoalType.Attack:
 						data = new AttackData();
 						break;
+
+					case TAIGoalType.PickupInventory:
+						data = new PickupInventoryData();
+						break;
 				}
 				if( data == null )
 				{
@@ -86,6 +90,10 @@ namespace SS
 				else if( data is AttackData )
 				{
 					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.Attack );
+				}
+				else if( data is PickupInventoryData )
+				{
+					serializer.WriteByte( "", "TAIGoalType", (byte)TAIGoalType.PickupInventory );
 				}
 				serializer.Serialize( "", "TAIGoalData", data );
 			}

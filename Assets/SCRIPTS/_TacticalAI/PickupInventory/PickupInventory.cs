@@ -11,15 +11,12 @@ namespace SS
 {
 	public abstract partial class TAIGoal
 	{
-		public class PickupDeposit : TAIGoal
+		public class PickupInventory : TAIGoal
 		{
 			/// <summary>
 			/// The deposit to move to and pick up.
 			/// </summary>
 			public GameObject destination { get; private set; }
-
-
-			private float amtCollected = 0;
 
 			private NavMeshAgent navMeshAgent;
 			private IInventory inventory;
@@ -50,61 +47,28 @@ namespace SS
 				string idPickedUp = "";
 				int amountPickedUp = 0;
 
-				ResourceDepositModule depositToCollect = this.destination.GetComponent<ResourceDepositModule>();
-				/*if( depositToCollect.isTypeExtracted )
+				IInventory inventoryToPickupFrom = this.destination.GetComponent<IInventory>();
+				Dictionary<string, int> resourcesInInventory = inventoryToPickupFrom.GetAll();
+
+				foreach( var kvp in resourcesInInventory )
 				{
-					Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
-
-					foreach( var kvp in resourcesInDeposit )
+					if( kvp.Value == 0 )
 					{
-						if( kvp.Value == 0 )
-						{
-							continue;
-						}
-						if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
-						{
-							amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
-							idPickedUp = kvp.Key;
+						continue;
+					}
+					if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
+					{
+						amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
+						idPickedUp = kvp.Key;
 
-							if( amountPickedUp > 0 )
-							{
-								depositToCollect.Remove( idPickedUp, amountPickedUp );
-								AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
-							}
-							break; // Only pick up one resource at a time.
+						if( amountPickedUp > 0 )
+						{
+							inventoryToPickupFrom.Remove( idPickedUp, amountPickedUp );
+							AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 						}
+						break; // Only pick up one resource at a time.
 					}
 				}
-				else
-				{*/
-					amtCollected += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
-					int amtFloored = Mathf.FloorToInt( amtCollected );
-					if( amtFloored >= 1 )
-					{
-						Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
-
-						foreach( var kvp in resourcesInDeposit )
-						{
-							if( kvp.Value == 0 )
-							{
-								continue;
-							}
-							if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
-							{
-								amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
-								idPickedUp = kvp.Key;
-								amtCollected -= amtFloored;
-
-								if( amountPickedUp > 0 )
-								{
-									depositToCollect.Remove( idPickedUp, amountPickedUp );
-									AudioManager.PlaySound( depositToCollect.miningSound );
-								}
-								break; // Only pick up one resource at a time.
-							}
-						}
-					}
-				//}
 			}
 
 			void Update()
@@ -128,7 +92,7 @@ namespace SS
 
 			public override TAIGoalData GetData()
 			{
-				PickupDepositData data = new PickupDepositData();
+				PickupInventoryData data = new PickupInventoryData();
 
 				data.destinationGuid = Main.GetGuid( this.destination );
 
@@ -142,7 +106,7 @@ namespace SS
 			{
 				TAIGoal.ClearGoal( gameObject );
 
-				PickupDeposit pickupDeposit = gameObject.AddComponent<TAIGoal.PickupDeposit>();
+				PickupInventory pickupDeposit = gameObject.AddComponent<TAIGoal.PickupInventory>();
 
 				pickupDeposit.destination = destination;
 			}

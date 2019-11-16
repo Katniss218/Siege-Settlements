@@ -1,9 +1,12 @@
 ﻿using SS.Content;
 using SS.Levels.SaveStates;
+using SS.ResourceSystem;
+using SS.UI;
 using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace SS.Modules.Inventories
@@ -51,57 +54,145 @@ namespace SS.Modules.Inventories
 
 		void Awake()
 		{
-			SSObject obj = this.GetComponent<SSObject>();
+			UnityAction<GameObject> showTooltip = ( GameObject obj ) =>
+			{
+				if( obj == this.gameObject )
+				{
+					IInventory inventory = obj.GetComponent<IInventory>();
+					if( inventory == null )
+					{
+						return;
+					}
 
-			if( obj is IHUDObject )
+#warning if the inventory is constrained, we know which resources can be added. Display 0/capacity.
+					Dictionary<string, int> items = this.GetAll();
+
+					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+
+					foreach( var kvp in items )
+					{
+						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() + "/" + this.GetMaxCapacity( kvp.Key ) );
+					}
+					ToolTip.ShowAt( Input.mousePosition );
+				}
+			};
+			UnityAction<GameObject> moveTooltip = ( GameObject obj ) =>
+			{
+				if( obj == this.gameObject )
+				{
+					ToolTip.MoveTo( Input.mousePosition, true );
+				}
+			};
+
+			UnityAction<GameObject> hideTooltip = ( GameObject obj ) =>
+			{
+				if( obj == this.gameObject )
+				{
+					ToolTip.Hide();
+				}
+			};
+
+			this.onAdd.AddListener( ( string id, int amount ) =>
+			{
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					showTooltip( this.gameObject );
+				}
+			} );
+			this.onRemove.AddListener( ( string id, int amount ) =>
+			{
+				if( this.isEmpty )
+				{
+					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+					{
+						hideTooltip( this.gameObject );
+					}
+				}
+				else
+				{
+					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+					{
+						showTooltip( this.gameObject );
+					}
+				}
+			} );
+
+			MouseOverHandler.onMouseEnter.AddListener( showTooltip );
+			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
+			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
+
+			Damageable damageable = this.GetComponent<Damageable>();
+			if( damageable != null )
+			{
+				damageable.onDeath.AddListener( () =>
+				{
+					hideTooltip( this.gameObject );
+					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
+					MouseOverHandler.onMouseStay.RemoveListener( moveTooltip );
+					MouseOverHandler.onMouseExit.RemoveListener( hideTooltip );
+				} );
+			}
+
+			SSObject ssObject = this.GetComponent<SSObject>();
+
+			if( ssObject is IHUDObject )
 			{
 				// integrate hud.
-				IHUDObject hudObj = (IHUDObject)obj;
+				IHUDObject hudObj = (IHUDObject)ssObject;
 
 
-				Image hudResourceIcon = hudObj.hud.transform.Find( "Resource" ).Find( "Icon" ).GetComponent<Image>();
-				TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
-
-				// Make the inventory update the HUD wien resources are added/removed.
-				this.onAdd.AddListener( ( string id, int amtAdded ) =>
+				Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
+				if( hudResourceTransform != null )
 				{
-					// Set the icon to the first slot that contains a resource.
-					foreach( var kvp in this.GetAll() )
+					Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
+					if( hudResourceIconTransform != null )
 					{
-						if( kvp.Key == "" )
+						Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
+						TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+
+						// Make the inventory update the HUD wien resources are added/removed.
+						this.onAdd.AddListener( ( string id, int amtAdded ) =>
 						{
-							continue;
-						}
-						hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-						hudAmount.text = kvp.Value.ToString();
-
-						hudResourceIcon.gameObject.SetActive( true );
-						hudAmount.gameObject.SetActive( true );
-						break;
-					}
-				} );
-				this.onRemove.AddListener( ( string id, int amtRemoved ) =>
-				{
-					if( this.isEmpty )
-					{
-						hudResourceIcon.gameObject.SetActive( false );
-						hudAmount.gameObject.SetActive( false );
-					}
-					else
-					{
 						// Set the icon to the first slot that contains a resource.
 						foreach( var kvp in this.GetAll() )
-						{
-							if( kvp.Key == "" )
 							{
-								continue;
+								if( kvp.Key == "" )
+								{
+									continue;
+								}
+								hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
+								hudAmount.text = kvp.Value.ToString();
+
+								hudResourceIcon.gameObject.SetActive( true );
+								hudAmount.gameObject.SetActive( true );
+								break;
 							}
-							hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-							hudAmount.text = kvp.Value.ToString();
-							break;
-						}
+						} );
+						this.onRemove.AddListener( ( string id, int amtRemoved ) =>
+						{
+							if( this.isEmpty )
+							{
+								hudResourceIcon.gameObject.SetActive( false );
+								hudAmount.gameObject.SetActive( false );
+							}
+							else
+							{
+							// Set the icon to the first slot that contains a resource.
+							foreach( var kvp in this.GetAll() )
+								{
+									if( kvp.Key == "" )
+									{
+										continue;
+									}
+									hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
+									hudAmount.text = kvp.Value.ToString();
+									break;
+								}
+							}
+						} );
 					}
-				} );
+				}
 			}
 			Damageable dam = this.GetComponent<Damageable>();
 			if( dam != null )

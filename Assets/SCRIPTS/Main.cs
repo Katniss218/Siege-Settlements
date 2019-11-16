@@ -158,6 +158,9 @@ namespace SS
 
 				Vector3? terrainHitPos = null;
 
+				GameObject hitInventoryGameObject = null;
+				IInventory hitInventory = null;
+				GameObject hitDepositGameObject = null;
 				ResourceDepositModule hitDeposit = null;
 				Transform hitReceiverTransform = null;
 				IPaymentReceiver[] hitPaymentReceivers = null;
@@ -175,7 +178,15 @@ namespace SS
 						ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
 						if( deposit != null )
 						{
+							hitDepositGameObject = raycastHits[i].collider.gameObject;
 							hitDeposit = deposit;
+						}
+
+						IInventory inventory = raycastHits[i].collider.GetComponent<IInventory>();
+						if( inventory != null )
+						{
+							hitInventoryGameObject = raycastHits[i].collider.gameObject;
+							hitInventory = inventory;
 						}
 
 						IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
@@ -200,7 +211,7 @@ namespace SS
 				}
 
 
-				if( hitDeposit == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
+				if( hitDeposit == null && hitInventory == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
 				{
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
@@ -212,7 +223,12 @@ namespace SS
 
 				else if( hitDeposit != null )
 				{
-					AssignPickupDepositGoal( hitDeposit, Selection.selectedObjects );
+					AssignPickupDepositGoal( hitDepositGameObject, hitDeposit, Selection.selectedObjects );
+				}
+
+				else if( hitInventory != null )
+				{
+					AssignPickupInventoryGoal( hitInventoryGameObject, hitInventory, Selection.selectedObjects );
 				}
 
 				else if( hitDamageable != null )
@@ -282,29 +298,17 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					ResourceDepositModule hitDeposit = hitInfo.collider.GetComponent<ResourceDepositModule>();
+					IInventory hitInventory = hitInfo.collider.GetComponent<IInventory>();
 
-					if( hitDeposit != null )
+					if( hitInventory != null )
 					{
 
-						AssignDropoffToInventoryGoal( hitInfo, hitDeposit, Selection.selectedObjects );
+						AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.selectedObjects );
 					}
 				}
 			}
 		}
-
-		private void Inp_P( InputQueue self )
-		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					AssignDropoffToNewGoal( hitInfo, Selection.selectedObjects );
-				}
-			}
-		}
-
+		
 		private void Inp_Y( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -463,7 +467,6 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
@@ -489,7 +492,6 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
-				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
 				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
@@ -590,7 +592,7 @@ namespace SS
 			}
 		}
 
-		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, ResourceDepositModule hitDeposit, Selectable[] selected )
+		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, IInventory hitInventory, Selectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
@@ -616,13 +618,13 @@ namespace SS
 
 				foreach( var kvp in inventoryItems )
 				{
-					if( hitDeposit.GetMaxCapacity( kvp.Key ) == 0 )
+					if( hitInventory.GetMaxCapacity( kvp.Key ) == 0 )
 					{
 						suitable = false;
 						break;
 					}
 					// don't move if the deposit doesn't have space to leave resource (inv full of that specific resource).
-					if( hitDeposit.GetMaxCapacity( kvp.Key ) == hitDeposit.Get( kvp.Key ) )
+					if( hitInventory.GetMaxCapacity( kvp.Key ) == hitInventory.Get( kvp.Key ) )
 					{
 						suitable = false;
 						break;
@@ -699,7 +701,57 @@ namespace SS
 			}
 		}
 
-		private void AssignPickupDepositGoal( ResourceDepositModule hitDeposit, Selectable[] selected )
+		private void AssignPickupInventoryGoal( GameObject hitGameObject, IInventory hitInventory, Selectable[] selected )
+		{
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
+
+			// Go pick up if the inventory can hold any of the resources in the deposit.
+			Dictionary<string, int> resourcesInDeposit = hitInventory.GetAll();
+
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
+				{
+					continue;
+				}
+				if( selected[i].GetComponent<NavMeshAgent>() == null )
+				{
+					continue;
+				}
+				IInventory inv = selected[i].GetComponent<IInventory>();
+				if( inv == null )
+				{
+					continue;
+				}
+				bool canPickupAny = false;
+				foreach( var kvp in resourcesInDeposit )
+				{
+					// if can pick up && has empty space for it.
+					if( inv.GetMaxCapacity( kvp.Key ) > 0 && inv.Get( kvp.Key ) != inv.GetMaxCapacity( kvp.Key ) )
+					{
+						canPickupAny = true;
+						break;
+					}
+				}
+
+				if( canPickupAny )
+				{
+					movableWithInvGameObjects.Add( selected[i].gameObject );
+				}
+			}
+
+
+			if( movableWithInvGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
+			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			{
+				TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitGameObject );
+			}
+		}
+		private void AssignPickupDepositGoal( GameObject hitGameObject, ResourceDepositModule hitDeposit, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -746,9 +798,7 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				IInventory inv = movableWithInvGameObjects[i].GetComponent<IInventory>();
-
-				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitDeposit.gameObject );
+				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitGameObject );
 			}
 		}
 
