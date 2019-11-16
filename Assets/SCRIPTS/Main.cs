@@ -261,10 +261,6 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
 					GameObject gameObject = hitInfo.collider.gameObject;
-					//if( !IsControllableByPlayer( gameObject, LevelDataManager.PLAYER_FAC ) )
-					//{
-					//	return;
-					//}
 					IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
 					for( int i = 0; i < paymentReceivers.Length; i++ )
 					{
@@ -363,19 +359,26 @@ namespace SS
 			SetFactionSelected( 2 );
 		}
 
-		private static void CreateDeposit( string id, Vector3 pos )
+		private static void CreateDepositRaycast( string id )
 		{
-			ExtraDefinition def = DefinitionManager.GetExtra( id );
-			ExtraData data = new ExtraData();
-			data.guid = Guid.NewGuid();
-			data.position = pos;
-			data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
-
-			GameObject extra = ExtraCreator.Create( def, data );
-			ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
-			foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
+			RaycastHit hitInfo;
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 			{
-				resDepo.Add( slot.resourceId, slot.capacity );
+				if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
+				{
+					ExtraDefinition def = DefinitionManager.GetExtra( id );
+					ExtraData data = new ExtraData();
+					data.guid = Guid.NewGuid();
+					data.position = hitInfo.point;
+					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+
+					GameObject extra = ExtraCreator.Create( def, data );
+					ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
+					foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
+					{
+						resDepo.Add( slot.resourceId, slot.capacity );
+					}
+				}
 			}
 		}
 
@@ -405,14 +408,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						CreateDeposit( "resource_deposit.iron_ore_0", hitInfo.point );
-					}
-				}
+				CreateDepositRaycast( "resource_deposit.iron_ore_0" );
 			}
 		}
 
@@ -420,14 +416,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						CreateDeposit( "resource_deposit.sulphur_ore_0", hitInfo.point );
-					}
-				}
+				CreateDepositRaycast( "resource_deposit.sulphur_ore_0" );
 			}
 		}
 
@@ -435,14 +424,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						CreateDeposit( "resource_deposit.tree", hitInfo.point );
-					}
-				}
+				CreateDepositRaycast( "resource_deposit.tree" );
 			}
 		}
 
@@ -450,14 +432,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						CreateDeposit( "resource_deposit.pine", hitInfo.point );
-					}
-				}
+				CreateDepositRaycast( "resource_deposit.pine" );
 			}
 		}
 
@@ -465,14 +440,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
-					{
-						CreateDeposit( "resource_deposit.rock_0", hitInfo.point );
-					}
-				}
+				CreateDepositRaycast( "resource_deposit.rock_0" );
 			}
 		}
 
@@ -490,18 +458,8 @@ namespace SS
 
 		private void OnEnable()
 		{
-			// Register the input source.
-
-			//
-			//
-			//
-
 			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
-
-			//
-			//
-			//
-
+			
 			Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
@@ -524,12 +482,10 @@ namespace SS
 		{
 			if( Main.mouseInput != null )
 			{
-				// Clear the input source.
 				Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, Inp_Right );
 			}
 			if( Main.keyboardInput != null )
 			{
-				// Clear the input source.
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
