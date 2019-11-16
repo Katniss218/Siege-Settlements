@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SS.Modules.Inventories
 {
-	public class InventoryUnconstrainedDefinition : ModuleDefinition
+	public class InventoryUnconstrainedModuleDefinition : ModuleDefinition
 	{
 		public const string KFF_TYPEID = "inventory_unconstrained";
 
@@ -30,15 +30,15 @@ namespace SS.Modules.Inventories
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
 		{
 			return !(
-				modTypes.Contains( typeof( InventoryConstrainedDefinition ) ) ||
-				modTypes.Contains( typeof( InventoryUnconstrainedDefinition ) ) ||
+				modTypes.Contains( typeof( InventoryConstrainedModuleDefinition ) ) ||
+				modTypes.Contains( typeof( InventoryUnconstrainedModuleDefinition ) ) ||
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
 
 		public override ModuleData GetIdentityData()
 		{
-			return new InventoryUnconstrainedData();
+			return new InventoryUnconstrainedModuleData();
 		}
 
 
@@ -56,7 +56,7 @@ namespace SS.Modules.Inventories
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
-			InventoryUnconstrained module = gameObject.AddComponent<InventoryUnconstrained>();
+			InventoryUnconstrainedModule module = gameObject.AddComponent<InventoryUnconstrainedModule>();
 			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}

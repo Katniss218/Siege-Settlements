@@ -14,7 +14,7 @@ namespace SS.Modules.Inventories
 	/// <summary>
 	/// An inventory that can hold arbitrary resource in each of the slots (as long as there are no duplicate ids).
 	/// </summary>
-	public sealed class InventoryUnconstrained : Module, IInventory
+	public sealed class InventoryUnconstrainedModule : Module, IInventory
 	{
 		private struct SlotGroup
 		{
@@ -65,16 +65,22 @@ namespace SS.Modules.Inventories
 					{
 						return;
 					}
-
-#warning if the inventory is unconstrained, we know the amount of slots to which resources can be added. Display 0/capacity with empty icon.
-					Dictionary<string, int> items = this.GetAll();
+					
+					Tuple<string, int>[] items = this.GetSlots();
 
 					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
 
-					foreach( var kvp in items )
+					foreach( Tuple<string, int> item in items )
 					{
-						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() + "/" + this.GetMaxCapacity( kvp.Key ) );
+						if( item.Item1 == "" )
+						{
+							ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), item.Item2 + "/" + this.slotCapacity );
+						}
+						else
+						{
+							ResourceDefinition resourceDef = DefinitionManager.GetResource( item.Item1 );
+							ToolTip.AddText( resourceDef.icon, item.Item2 + "/" + this.GetMaxCapacity( item.Item1 ) );
+						}
 					}
 					ToolTip.ShowAt( Input.mousePosition );
 				}
@@ -269,6 +275,16 @@ namespace SS.Modules.Inventories
 			return ret;
 		}
 
+		public Tuple<string, int>[] GetSlots()
+		{
+			Tuple<string, int>[] ret = new Tuple<string, int>[this.resources.Length];
+			for( int i = 0; i < this.resources.Length; i++ )
+			{
+				ret[i] = new Tuple<string, int>( this.resources[i].id, this.resources[i].amount );
+			}
+			return ret;
+		}
+
 		public int GetMaxCapacity( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )
@@ -421,7 +437,7 @@ namespace SS.Modules.Inventories
 
 		public override ModuleData GetData()
 		{
-			InventoryUnconstrainedData data = new InventoryUnconstrainedData();
+			InventoryUnconstrainedModuleData data = new InventoryUnconstrainedModuleData();
 
 			data.items = this.GetAll();
 
@@ -435,7 +451,7 @@ namespace SS.Modules.Inventories
 
 		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
-			if( !(_def is InventoryUnconstrainedDefinition) )
+			if( !(_def is InventoryUnconstrainedModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
@@ -444,7 +460,7 @@ namespace SS.Modules.Inventories
 				throw new Exception( "Provided definition is null." );
 			}
 
-			if( !(_data is InventoryUnconstrainedData) )
+			if( !(_data is InventoryUnconstrainedModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
 			}
@@ -453,8 +469,8 @@ namespace SS.Modules.Inventories
 				throw new Exception( "Provided data is null." );
 			}
 
-			InventoryUnconstrainedDefinition def = (InventoryUnconstrainedDefinition)_def;
-			InventoryUnconstrainedData data = (InventoryUnconstrainedData)_data;
+			InventoryUnconstrainedModuleDefinition def = (InventoryUnconstrainedModuleDefinition)_def;
+			InventoryUnconstrainedModuleData data = (InventoryUnconstrainedModuleData)_data;
 
 			this.resources = new SlotGroup[def.slotCount];
 			for( int i = 0; i < this.resources.Length; i++ )

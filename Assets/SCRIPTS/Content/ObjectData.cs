@@ -112,13 +112,13 @@ namespace SS.Content
 				{
 					module = new ResearchModuleData();
 				}
-				else if( moduleTypeString == InventoryConstrainedData.KFF_TYPEID )
+				else if( moduleTypeString == InventoryConstrainedModuleData.KFF_TYPEID )
 				{
-					module = new InventoryConstrainedData();
+					module = new InventoryConstrainedModuleData();
 				}
-				else if( moduleTypeString == InventoryUnconstrainedData.KFF_TYPEID )
+				else if( moduleTypeString == InventoryUnconstrainedModuleData.KFF_TYPEID )
 				{
-					module = new InventoryUnconstrainedData();
+					module = new InventoryUnconstrainedModuleData();
 				}
 				else if( moduleTypeString == ResourceDepositModuleData.KFF_TYPEID )
 				{
@@ -169,13 +169,13 @@ namespace SS.Content
 				{
 					moduleTypeString = ResearchModuleData.KFF_TYPEID;
 				}
-				else if( modulesArray[i] is InventoryConstrainedData )
+				else if( modulesArray[i] is InventoryConstrainedModuleData )
 				{
-					moduleTypeString = InventoryConstrainedData.KFF_TYPEID;
+					moduleTypeString = InventoryConstrainedModuleData.KFF_TYPEID;
 				}
-				else if( modulesArray[i] is InventoryUnconstrainedData )
+				else if( modulesArray[i] is InventoryUnconstrainedModuleData )
 				{
-					moduleTypeString = InventoryUnconstrainedData.KFF_TYPEID;
+					moduleTypeString = InventoryUnconstrainedModuleData.KFF_TYPEID;
 				}
 				else if( modulesArray[i] is ResourceDepositModuleData )
 				{

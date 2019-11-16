@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace SS.Modules.Inventories
@@ -25,12 +26,17 @@ namespace SS.Modules.Inventories
 		int Get( string id );
 
 		/// <summary>
-		/// Returns every resource contained in the inventory.
+		/// Returns every resource currently contained in the inventory.
 		/// </summary>
 		Dictionary<string, int> GetAll();
 
 		/// <summary>
-		/// Returns the max amount of specified resource that the inventory can hold.
+		/// Returns every slot in the inventory.
+		/// </summary>
+		Tuple<string, int>[] GetSlots();
+
+		/// <summary>
+		/// Returns the max amount of specified resource that the inventory can currently hold.
 		/// </summary>
 		// Returns 0 if the resource can't be contained.
 		int GetMaxCapacity( string id );

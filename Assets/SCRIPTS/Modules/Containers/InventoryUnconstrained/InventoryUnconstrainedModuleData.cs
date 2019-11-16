@@ -5,18 +5,18 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	public class InventoryConstrainedData : ModuleData
+	public class InventoryUnconstrainedModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "inventory_constrained";
+		public const string KFF_TYPEID = "inventory_unconstrained";
 
 		public Dictionary<string, int> items { get; set; }
 
 
-		public InventoryConstrainedData()
+		public InventoryUnconstrainedModuleData()
 		{
 			this.items = new Dictionary<string, int>();
 		}
-		
+
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
