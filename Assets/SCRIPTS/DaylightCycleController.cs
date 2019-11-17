@@ -8,6 +8,8 @@ namespace SS
 	[DisallowMultipleComponent]
 	public class DaylightCycleController : MonoBehaviour
 	{
+		private const float DAY_NIGHT_EASE_MARGIN = 0.2f;
+
 		public static DaylightCycleController instance { get; private set; }
 
 		[SerializeField] Light sun = null;
@@ -23,6 +25,8 @@ namespace SS
 
 		public float sunElevationAngle = 60;
 		public float moonElevationAngle = 60;
+
+		public Color ambientLightColor = Color.black;
 
 		/// <summary>
 		/// The total length of the day and night combined.
@@ -97,7 +101,7 @@ namespace SS
 		{
 			if( this.isDay )
 			{
-				float margin = this.dayLength * 0.2f;
+				float margin = this.dayLength * DAY_NIGHT_EASE_MARGIN;
 
 				if( time > margin && time < this.dayLength - margin )
 				{
@@ -119,7 +123,7 @@ namespace SS
 		{
 			if( this.isNight )
 			{
-				float margin = this.nightLength * 0.2f;
+				float margin = this.nightLength * DAY_NIGHT_EASE_MARGIN;
 
 				if( time > this.dayLength + margin && time < this.dayLength + this.nightLength - margin )
 				{
@@ -135,6 +139,49 @@ namespace SS
 				}
 			}
 			return 0f;
+		}
+
+		private Color GetAmbientColor( float time )
+		{
+			if( this.isDay )
+			{
+				float margin = this.dayLength * (DAY_NIGHT_EASE_MARGIN / 2.0f);
+
+				float multiplier = 1.0f;
+				if( time > margin && time < this.dayLength - margin )
+				{
+					return this.ambientLightColor;
+				}
+				if( time < this.dayLength / 2f )
+				{
+					multiplier = Mathf.Lerp( 2.5f, 1.0f, (time) / margin );
+				}
+				else
+				{
+					multiplier = Mathf.Lerp( 1.0f, 2.5f, (time - this.dayLength + margin) / margin );
+				}
+				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
+			}
+			if( this.isNight )
+			{
+				float margin = this.nightLength * (DAY_NIGHT_EASE_MARGIN / 2.0f);
+
+				float multiplier = 4.0f;
+				if( time > this.dayLength + margin && time < this.dayLength + this.nightLength - margin )
+				{
+					return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
+				}
+				if( time < this.dayLength + (this.nightLength / 2f) )
+				{
+					multiplier = Mathf.Lerp( 2.5f, 4.0f, (time - this.dayLength) / margin );
+				}
+				else
+				{
+					multiplier = Mathf.Lerp( 4.0f, 2.5f, (time - this.dayLength - this.nightLength + margin) / margin );
+				}
+				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
+			}
+			throw new System.Exception( "Error -invalid time value." );
 		}
 		
 		void Update()
@@ -153,6 +200,8 @@ namespace SS
 
 			this.sun.intensity = GetSunIntensity( time );
 			this.moon.intensity = GetMoonIntensity( time );
+
+			RenderSettings.ambientLight = this.GetAmbientColor( this.time );// new Color( 0.25f, 0.25f, 0.28f );
 		}
 	}
 }

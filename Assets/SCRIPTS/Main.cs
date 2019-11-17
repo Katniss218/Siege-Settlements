@@ -890,59 +890,10 @@ namespace SS
 				throw new Exception( "Specified SSObject doesn't have Guid assigned to it." );
 			}
 			return obj.guid.Value;
-			/*
-
-			Unit unit = obj.GetComponent<Unit>();
-			if( unit != null )
-			{
-				if( unit.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return unit.guid.Value;
-			}
-			Building building = obj.GetComponent<Building>();
-			if( building != null )
-			{
-				if( building.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return building.guid.Value;
-			}
-			Hero hero = obj.GetComponent<Hero>();
-			if( hero != null )
-			{
-				if( hero.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return hero.guid.Value;
-			}
-			Projectile projectile = obj.GetComponent<Projectile>();
-			if( projectile != null )
-			{
-				if( projectile.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return projectile.guid.Value;
-			}
-			Extra extra = obj.GetComponent<Extra>();
-			if( extra != null )
-			{
-				if( extra.guid == null )
-				{
-					throw new Exception( "Guid not assigned." );
-				}
-				return extra.guid.Value;
-			}*/
-			//throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
 		}
 
 		public static SSObject GetSSObject( Guid guid )
 		{
-#warning optimize this.
 			Unit[] units = Unit.GetAllUnits();
 			for( int i = 0; i < units.Length; i++ )
 			{

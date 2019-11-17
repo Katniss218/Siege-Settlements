@@ -289,7 +289,6 @@ namespace SS.Levels
 
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
-			RenderSettings.ambientLight = new Color( 0.25f, 0.25f, 0.28f );
 			
 			if( SceneManager.GetSceneByName( "MainMenu" ).isLoaded )
 			{
@@ -678,11 +677,11 @@ namespace SS.Levels
 
 			for( int i = 0; i < units.Length; i++ )
 			{
-				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid );//, sUnits[i].Item1 );
+				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid );
 			}
 			for( int i = 0; i < buildings.Length; i++ )
 			{
-				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid );//, sBuildings[i].Item1 );
+				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid );
 			}
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
@@ -729,7 +728,7 @@ namespace SS.Levels
 			// Set inactive.
 			SelectionPanel.instance.gameObject.SetActive( false );
 			ActionPanel.instance.gameObject.SetActive( false );
-			// ^ This will be set active afterwards, if something gets selected.
+			// ^ This will be set to active when something gets selected by the selection loading process (hidden by default, if selection is empty).
 
 			// Select the objects specified by save state
 			if( selected != null )
@@ -1071,7 +1070,6 @@ namespace SS.Levels
 				serializer.AppendClass( "List" );
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", units[i].Item1 );
-
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", units[i].Item2 );
 			}
 		}
@@ -1084,7 +1082,6 @@ namespace SS.Levels
 				serializer.AppendClass( "List" );
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", buildings[i].Item1 );
-
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", buildings[i].Item2 );
 			}
 		}
@@ -1097,7 +1094,6 @@ namespace SS.Levels
 				serializer.AppendClass( "List" );
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", projectiles[i].Item1 );
-
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", projectiles[i].Item2 );
 			}
 		}
@@ -1110,7 +1106,6 @@ namespace SS.Levels
 				serializer.AppendClass( "List" );
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", heroes[i].Item1 );
-
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", heroes[i].Item2 );
 			}
 		}
@@ -1123,7 +1118,6 @@ namespace SS.Levels
 				serializer.AppendClass( "List" );
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", extras[i].Item1 );
-
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", extras[i].Item2 );
 			}
 		}
