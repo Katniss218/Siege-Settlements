@@ -282,15 +282,15 @@ namespace SS.Levels
 			}
 			AssetManager.sourceLevelId = levelIdentifier;
 
-			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
-			SceneManager.SetActiveScene( loadedLevelScene.Value );
-			RenderSettings.ambientLight = new Color( 0.25f, 0.25f, 0.28f );
-			
 			if( !SceneManager.GetSceneByName( "Level GUI" ).isLoaded )
 			{
 				SceneManager.LoadScene( "Level GUI", LoadSceneMode.Additive );
 			}
 
+			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
+			SceneManager.SetActiveScene( loadedLevelScene.Value );
+			RenderSettings.ambientLight = new Color( 0.25f, 0.25f, 0.28f );
+			
 			if( SceneManager.GetSceneByName( "MainMenu" ).isLoaded )
 			{
 				AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
@@ -495,25 +495,29 @@ namespace SS.Levels
 
 			DefinitionManager.LoadResourceDefinitions( serializerResources );
 			DefinitionManager.LoadTechnologyDefinitions( serializerTechnologies );
-
+			
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Loading data & assets: " + sw.ElapsedMilliseconds + " ms" );
 			sw.Reset();
 			sw.Start();
-
+			
 
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
 
 			LevelDataManager.LoadMapData( serializerLevel );
 			
 			InstantiateLevelPrefabs(); // game UI prefabs
-			
-			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
-
 
 			LevelDataManager.LoadFactions( serializerFactions );
 			LevelDataManager.LoadDaylightCycle( serializerLevel );
+
+			sw.Stop();
+			totalLoadTime += sw.ElapsedMilliseconds;
+			Debug.Log( "Loading level-scene prefabs: " + sw.ElapsedMilliseconds + " ms" );
+			sw.Reset();
+			sw.Start();
+			CreateTerrain(); // create "env" organizational gameobject, and load terrain from files.
 
 
 			sw.Stop();
