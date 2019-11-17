@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Units
+namespace SS.Objects.Units
 {
 	public class UnitDefinition : ObjectDefinition, ITechsRequired
 	{

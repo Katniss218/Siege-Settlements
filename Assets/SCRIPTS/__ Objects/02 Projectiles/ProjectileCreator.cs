@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace SS.Projectiles
+namespace SS.Objects.Projectiles
 {
 	public static class ProjectileCreator
 	{

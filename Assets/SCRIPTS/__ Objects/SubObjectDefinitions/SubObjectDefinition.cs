@@ -10,7 +10,7 @@ namespace SS.Objects.SubObjects
 	public abstract class SubObjectDefinition : IKFFSerializable
 	{
 		/// <summary>
-		/// The ID of that Sub-Object.
+		/// The Identifier of this Sub-Object.
 		/// </summary>
 		public Guid subObjectId { get; set; }
 

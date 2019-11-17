@@ -1,6 +1,7 @@
-﻿using SS.Buildings;
+﻿using SS.Objects.Buildings;
 using SS.Diplomacy;
 using SS.Levels.SaveStates;
+using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
 
@@ -102,6 +103,7 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
+#warning executing this static method is painfully slow - only on the ranged module seems like (due to naturally more objects? - view range bigger).
 				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 				{
 					continue;

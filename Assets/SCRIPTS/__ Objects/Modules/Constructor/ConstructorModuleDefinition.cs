@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using KFF;
-using SS.Buildings;
-using SS.Heroes;
+using SS.Objects.Buildings;
+using SS.Objects.Heroes;
 using SS.Levels.SaveStates;
-using SS.Units;
+using SS.Objects.Units;
 using UnityEngine;
 
 namespace SS.Modules

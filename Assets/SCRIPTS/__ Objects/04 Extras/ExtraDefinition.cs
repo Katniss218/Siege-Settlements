@@ -3,7 +3,7 @@ using SS.Content;
 using System;
 using UnityEngine;
 
-namespace SS.Extras
+namespace SS.Objects.Extras
 {
 	public class ExtraDefinition : ObjectDefinition
 	{

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	public class Building : SSObject, IHUDObject
 	{
@@ -88,6 +87,9 @@ namespace SS.Buildings
 
 		void Update()
 		{
+#warning only update when camera has moved or transform has changed.
+			hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;

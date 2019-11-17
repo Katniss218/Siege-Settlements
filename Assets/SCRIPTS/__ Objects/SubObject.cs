@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Objects.SubObjects
 {
 	[DisallowMultipleComponent]
 	public class SubObject : MonoBehaviour

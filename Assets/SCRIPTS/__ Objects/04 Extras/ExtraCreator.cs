@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace SS.Extras
+namespace SS.Objects.Extras
 {
 	public static class ExtraCreator
 	{

@@ -4,7 +4,7 @@ using SS.Modules;
 using System;
 using UnityEngine;
 
-namespace SS.Heroes
+namespace SS.Objects.Heroes
 {
 	public class HeroDefinition : ObjectDefinition
 	{

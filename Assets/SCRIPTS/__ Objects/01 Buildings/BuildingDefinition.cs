@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	[Serializable]
 	public class BuildingDefinition : ObjectDefinition, ITechsRequired

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Units
+namespace SS.Objects.Units
 {
 	public class Unit : SSObject, IHUDObject
 	{
@@ -43,6 +43,9 @@ namespace SS.Units
 
 		void Update()
 		{
+#warning only update when camera has moved or transform has changed.
+			hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;

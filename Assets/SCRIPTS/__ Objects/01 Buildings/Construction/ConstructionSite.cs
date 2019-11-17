@@ -13,7 +13,7 @@ using System.Text;
 using SS.ResourceSystem;
 using UnityEngine.Events;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	/// <summary>
 	/// Represents a building that's being constructed.

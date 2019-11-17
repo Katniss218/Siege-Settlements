@@ -9,7 +9,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	public class BuildingCreator
 	{
@@ -301,14 +301,6 @@ namespace SS.Buildings
 					}
 				}
 			} );
-
-
-			// Make the unit update it's UI's position every frame (buildings are static but the camera is not).
-			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
-			{
-				hud.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
-			};
-
 
 			return container;
 		}

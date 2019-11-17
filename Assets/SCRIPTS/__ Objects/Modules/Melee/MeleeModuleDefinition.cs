@@ -1,9 +1,9 @@
 ﻿using KFF;
-using SS.Buildings;
+using SS.Objects.Buildings;
 using SS.Content;
-using SS.Heroes;
+using SS.Objects.Heroes;
 using SS.Levels.SaveStates;
-using SS.Units;
+using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

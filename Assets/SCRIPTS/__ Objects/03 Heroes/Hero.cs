@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Heroes
+namespace SS.Objects.Heroes
 {
 	public class Hero : SSObject, IHUDObject
 	{

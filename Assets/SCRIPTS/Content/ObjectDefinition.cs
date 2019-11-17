@@ -26,10 +26,7 @@ namespace SS.Content
 				
 		private List<ModuleCacheItem> moduleCache;
 		
-		/// <summary>
-		/// The list of all sub-objects of this specific object.
-		/// </summary>
-		public List<SubObjectDefinition> subObjectCache { get; set; }
+		private List<SubObjectDefinition> subObjectCache { get; set; }
 
 
 		protected ObjectDefinition( string id ) : base( id )
@@ -126,9 +123,31 @@ namespace SS.Content
 				throw new Exception( "This module type can't be added to this object." );
 			}
 
+			for( int i = 0; i < this.moduleCache.Count; i++ )
+			{
+				if( this.moduleCache[i].moduleId == moduleId )
+				{
+					throw new Exception( "A module with id '" + moduleId + "' has already been added to this object." );
+				}
+			}
 			this.moduleCache.Add( new ModuleCacheItem( moduleId, module ) );
 		}
-		
+
+		/// <summary>
+		/// Adds a single module of type T to the object definition.
+		/// </summary>
+		public void AddSubObject<T>( T subObject ) where T : SubObjectDefinition
+		{
+			for( int i = 0; i < this.moduleCache.Count; i++ )
+			{
+				if( this.subObjectCache[i].subObjectId == subObject.subObjectId )
+				{
+					throw new Exception( "A module with id '" + subObject.subObjectId + "' has already been added to this object." );
+				}
+			}
+			this.subObjectCache.Add( subObject );
+		}
+
 		protected void DeserializeModulesKFF( KFFSerializer serializer )
 		{
 			for( int i = 0; i < serializer.Analyze( "SubObjects").childCount; i++ )
@@ -148,8 +167,8 @@ namespace SS.Content
 				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
 
 
-				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
-
+				Guid subObjectId = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
+				
 				this.subObjectCache.Add( subObjectDef );
 			}
 
@@ -198,9 +217,9 @@ namespace SS.Content
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
 
 
-				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
-
-				this.AddModule( guid, module );
+				Guid moduleId = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
+				
+				this.AddModule( moduleId, module );
 			}
 		}
 

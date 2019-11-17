@@ -1,10 +1,9 @@
 ﻿using SS.Diplomacy;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace SS.Projectiles
+namespace SS.Objects.Projectiles
 {
 	public class Projectile : SSObject
 	{

@@ -1,9 +1,10 @@
 ﻿using Katniss.Utils;
-using SS.Buildings;
+using SS.Objects.Buildings;
 using SS.Content;
 using SS.Diplomacy;
 using SS.Levels.SaveStates;
-using SS.Projectiles;
+using SS.Objects.SubObjects;
+using SS.Objects.Projectiles;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -92,6 +93,7 @@ namespace SS.Modules
 		private Damageable FindTarget( float searchRange )
 		{
 			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.OBJECTS_MASK );
+			
 			if( col.Length == 0 )
 			{
 				return null;
@@ -109,19 +111,22 @@ namespace SS.Modules
 				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
+#warning executing this static method is painfully slow.
+				return null;
+				/*if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
 				{
 					continue;
-				}
+				}*/
 
 				// Disregard potential targets, if the overlap is present, but the center is outside.
 				if( Vector3.Distance( this.transform.position, potentialTarget.transform.position ) >= searchRange )
 				{
 					continue;
 				}
-
+				
 				return potentialTarget;
 			}
+
 			return null;
 		}
 
@@ -252,6 +257,7 @@ namespace SS.Modules
 			if( this.isReadyToAttack )
 			{
 				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
+				
 				if( !this.CanTarget( this.__target ) )
 				{
 					this.__target = this.TrySetTarget();

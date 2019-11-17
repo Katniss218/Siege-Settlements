@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Extras;
+using SS.Objects.Extras;
 using SS.Levels.SaveStates;
 using SS.Modules.Inventories;
 using System;

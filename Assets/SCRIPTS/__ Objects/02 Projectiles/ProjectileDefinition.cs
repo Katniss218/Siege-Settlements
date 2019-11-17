@@ -2,7 +2,7 @@
 using SS.Content;
 using UnityEngine;
 
-namespace SS.Projectiles
+namespace SS.Objects.Projectiles
 {
 	public class ProjectileDefinition : ObjectDefinition, IKFFSerializable
 	{

@@ -2,7 +2,7 @@
 using SS.InputSystem;
 using UnityEngine;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	/// <summary>
 	/// Component used to position the build preview in the scene.

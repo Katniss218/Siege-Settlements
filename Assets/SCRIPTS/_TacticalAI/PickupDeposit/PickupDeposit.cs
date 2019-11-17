@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Extras;
+using SS.Objects.Extras;
 using SS.Modules;
 using SS.Modules.Inventories;
 using System.Collections.Generic;

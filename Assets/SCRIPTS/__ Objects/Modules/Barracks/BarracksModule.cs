@@ -1,4 +1,4 @@
-﻿using SS.Buildings;
+﻿using SS.Objects.Buildings;
 using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
@@ -7,7 +7,7 @@ using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
 using SS.UI;
-using SS.Units;
+using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using System.Text;

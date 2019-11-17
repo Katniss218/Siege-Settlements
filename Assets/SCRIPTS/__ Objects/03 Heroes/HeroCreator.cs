@@ -10,7 +10,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
-namespace SS.Heroes
+namespace SS.Objects.Heroes
 {
 	public static class HeroCreator
 	{

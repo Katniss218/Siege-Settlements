@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using KFF;
-using SS.Buildings;
+using SS.Objects.Buildings;
 using SS.Levels.SaveStates;
-using SS.Units;
+using SS.Objects.Units;
 using UnityEngine;
 
 namespace SS.Modules

@@ -1,5 +1,6 @@
 ﻿using SS.Content;
 using SS.Modules;
+using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
 
@@ -9,9 +10,13 @@ namespace SS
 	{
 		public static void AssignSubObjects( GameObject gameObject, ObjectDefinition def )
 		{
-			for( int i = 0; i < def.subObjectCache.Count; i++ )
+			SubObjectDefinition[] subObjectDefinitions;
+
+			def.GetAllSubObjects( out subObjectDefinitions );
+
+			for( int i = 0; i < subObjectDefinitions.Length; i++ )
 			{
-				def.subObjectCache[i].AddTo( gameObject );
+				subObjectDefinitions[i].AddTo( gameObject );
 			}
 		}
 

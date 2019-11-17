@@ -9,7 +9,7 @@ using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.Diplomacy;
 
-namespace SS.Units
+namespace SS.Objects.Units
 {
 	public static class UnitCreator
 	{
@@ -281,13 +281,6 @@ namespace SS.Units
 				}
 			} );
 			
-
-			// Make the unit update it's UI's position every frame.
-			container.AddComponent<EveryFrameSingle>().onUpdate = () =>
-			{
-				hud.transform.position = Main.camera.WorldToScreenPoint( container.transform.position );
-			};
-
 			return container;
 		}
 

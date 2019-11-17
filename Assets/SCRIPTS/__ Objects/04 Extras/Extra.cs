@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Extras
+namespace SS.Objects.Extras
 {
 	public class Extra : SSObject
 	{

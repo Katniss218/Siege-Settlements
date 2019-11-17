@@ -6,7 +6,7 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace SS.Buildings
+namespace SS.Objects.Buildings
 {
 	public class BuildPreview : MonoBehaviour
 	{

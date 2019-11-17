@@ -1,11 +1,11 @@
 ﻿using KFF;
-using SS.Buildings;
-using SS.Extras;
-using SS.Heroes;
-using SS.Projectiles;
+using SS.Objects.Buildings;
+using SS.Objects.Extras;
+using SS.Objects.Heroes;
+using SS.Objects.Projectiles;
 using SS.ResourceSystem;
 using SS.Technologies;
-using SS.Units;
+using SS.Objects.Units;
 using System;
 using System.Text;
 

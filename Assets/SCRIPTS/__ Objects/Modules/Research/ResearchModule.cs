@@ -1,4 +1,4 @@
-﻿using SS.Buildings;
+﻿using SS.Objects.Buildings;
 using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
