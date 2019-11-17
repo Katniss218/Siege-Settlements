@@ -37,6 +37,13 @@ namespace SS
 				{
 					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
+					return;
+				}
+				if( this.destination == this.gameObject )
+				{
+					Debug.LogWarning( "Destination assigned to itself: " + this.gameObject.name );
+					Object.Destroy( this );
+					return;
 				}
 
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
@@ -86,6 +93,7 @@ namespace SS
 					this.navMeshAgent.ResetPath();
 
 					this.PickUp();
+					Object.Destroy( this );
 				}
 			}
 

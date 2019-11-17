@@ -1,6 +1,5 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Modules;
 using SS.Modules.Inventories;
 using SS.ResourceSystem;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ namespace SS
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 				IInventory destinationInventory = this.destination.GetComponent<IInventory>();
-
+				
 				foreach( var kvp in resourcesCarried )
 				{
 					int maxCapacity = destinationInventory.GetMaxCapacity( kvp.Key );
@@ -69,6 +68,13 @@ namespace SS
 				{
 					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
+					return;
+				}
+				if( this.destination == this.gameObject )
+				{
+					Debug.LogWarning( "Destination assigned to itself: " + this.gameObject.name );
+					Object.Destroy( this );
+					return;
 				}
 
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
@@ -92,6 +98,7 @@ namespace SS
 				{
 					Vector3 direction = (this.destination.transform.position - this.transform.position).normalized;
 					this.DropOff();
+					Object.Destroy( this );
 				}
 			}
 

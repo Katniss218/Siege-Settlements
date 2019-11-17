@@ -113,7 +113,11 @@ namespace SS
 						{
 							Vector3 depositPosition = hitInfo.point;
 							DropOffInventory( this.inventory, depositPosition );
+
+							Object.Destroy( this );
 						}
+
+						// Clear the path, when it's in range.
 						this.navMeshAgent.ResetPath();
 					}
 					else

@@ -35,6 +35,13 @@ namespace SS
 				{
 					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
+					return;
+				}
+				if( this.destination == this.gameObject )
+				{
+					Debug.LogWarning( "Destination assigned to itself: " + this.gameObject.name );
+					Object.Destroy( this );
+					return;
 				}
 
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
@@ -87,11 +94,12 @@ namespace SS
 
 				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
 				{
+					// Clear the path, when it's in range.
 					this.navMeshAgent.ResetPath();
 
 					if( this.inventory != null )
 					{
-						Pay( this.destination );
+						this.Pay( this.destination );
 					}
 					Object.Destroy( this );
 				}

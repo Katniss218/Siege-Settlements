@@ -17,6 +17,7 @@ using SS.Levels;
 using SS.Diplomacy;
 using SS.InputSystem;
 using SS.Modules;
+using Object = UnityEngine.Object;
 
 namespace SS
 {
@@ -160,6 +161,7 @@ namespace SS
 
 				GameObject hitInventoryGameObject = null;
 				IInventory hitInventory = null;
+				FactionMember hitInventoryFactionMember = null;
 
 				GameObject hitDepositGameObject = null;
 				ResourceDepositModule hitDeposit = null;
@@ -178,6 +180,8 @@ namespace SS
 					}
 					else
 					{
+						FactionMember factionMember = raycastHits[i].collider.GetComponent<FactionMember>();
+
 						ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
 						if( deposit != null && hitDepositGameObject == null )
 						{
@@ -190,15 +194,15 @@ namespace SS
 						{
 							hitInventoryGameObject = raycastHits[i].collider.gameObject;
 							hitInventory = inventory;
+							hitInventoryFactionMember = factionMember;
 						}
 
 						IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
-						FactionMember recFactionMember = raycastHits[i].collider.GetComponent<FactionMember>();
-						if( receivers.Length > 0 && recFactionMember != null && hitReceiverTransform == null )
+						if( receivers.Length > 0 && hitReceiverTransform == null )
 						{
 							hitReceiverTransform = raycastHits[i].collider.transform;
 							hitPaymentReceivers = receivers;
-							hitReceiverFactionMember = recFactionMember;
+							hitReceiverFactionMember = factionMember;
 						}
 
 						Damageable damageable = raycastHits[i].collider.GetComponent<Damageable>();
@@ -213,8 +217,8 @@ namespace SS
 				{
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
-
-				else if( hitReceiverTransform != null && hitReceiverFactionMember.factionId == LevelDataManager.PLAYER_FAC )
+				
+				else if( hitReceiverTransform != null && (hitReceiverFactionMember == null || hitReceiverFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
 				{
 					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
 				}
@@ -222,7 +226,7 @@ namespace SS
 				{
 					AssignPickupDepositGoal( hitDepositGameObject, hitDeposit, Selection.selectedObjects );
 				}
-				else if( hitInventory != null )
+				else if( hitInventory != null && (hitInventoryFactionMember == null || hitInventoryFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
 				{
 					AssignPickupInventoryGoal( hitInventoryGameObject, hitInventory, Selection.selectedObjects );
 				}
@@ -295,9 +299,9 @@ namespace SS
 				{
 					IInventory hitInventory = hitInfo.collider.GetComponent<IInventory>();
 
+
 					if( hitInventory != null )
 					{
-
 						AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.selectedObjects );
 					}
 				}
@@ -313,6 +317,11 @@ namespace SS
 				{
 					Damageable damageable = hitInfo.collider.GetComponent<Damageable>();
 
+					//if( damageable == null )
+					//{
+					//	Object.Destroy( hitInfo.collider.gameObject );
+					//}
+					//else
 					if( damageable != null )
 					{
 						damageable.TakeDamageUnscaled( 99999999.99f );

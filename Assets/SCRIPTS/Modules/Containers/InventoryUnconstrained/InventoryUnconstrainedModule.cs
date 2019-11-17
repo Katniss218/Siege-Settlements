@@ -295,7 +295,7 @@ namespace SS.Modules.Inventories
 				}
 				if( this.resources[i].id == id )
 				{
-					return slotCapacity;
+					return this.slotCapacity;
 				}
 			}
 			// Empty slot is present.

@@ -40,6 +40,13 @@ namespace SS
 				{
 					Debug.LogWarning( "Not assigned destination to: " + this.gameObject.name );
 					Object.Destroy( this );
+					return;
+				}
+				if( this.destination == this.gameObject )
+				{
+					Debug.LogWarning( "Destination assigned to itself: " + this.gameObject.name );
+					Object.Destroy( this );
+					return;
 				}
 
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
@@ -51,7 +58,9 @@ namespace SS
 				int amountPickedUp = 0;
 
 				ResourceDepositModule depositToCollect = this.destination.GetComponent<ResourceDepositModule>();
-				/*if( depositToCollect.isTypeExtracted )
+				amtCollected += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
+				int amtFloored = Mathf.FloorToInt( amtCollected );
+				if( amtFloored >= 1 )
 				{
 					Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
 
@@ -63,48 +72,19 @@ namespace SS
 						}
 						if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
 						{
-							amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
+							amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
 							idPickedUp = kvp.Key;
+							amtCollected -= amtFloored;
 
 							if( amountPickedUp > 0 )
 							{
 								depositToCollect.Remove( idPickedUp, amountPickedUp );
-								AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
+								AudioManager.PlaySound( depositToCollect.miningSound );
 							}
 							break; // Only pick up one resource at a time.
 						}
 					}
 				}
-				else
-				{*/
-					amtCollected += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
-					int amtFloored = Mathf.FloorToInt( amtCollected );
-					if( amtFloored >= 1 )
-					{
-						Dictionary<string, int> resourcesInDeposit = depositToCollect.GetAll();
-
-						foreach( var kvp in resourcesInDeposit )
-						{
-							if( kvp.Value == 0 )
-							{
-								continue;
-							}
-							if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
-							{
-								amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
-								idPickedUp = kvp.Key;
-								amtCollected -= amtFloored;
-
-								if( amountPickedUp > 0 )
-								{
-									depositToCollect.Remove( idPickedUp, amountPickedUp );
-									AudioManager.PlaySound( depositToCollect.miningSound );
-								}
-								break; // Only pick up one resource at a time.
-							}
-						}
-					}
-				//}
 			}
 
 			void Update()
