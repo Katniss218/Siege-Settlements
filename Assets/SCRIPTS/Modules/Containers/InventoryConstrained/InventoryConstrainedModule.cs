@@ -29,9 +29,9 @@ namespace SS.Modules.Inventories
 				this.slotCapacity = capacity;
 			}
 		}
-		
+
 		private SlotGroup[] resources;
-		
+
 		public int slotCount
 		{
 			get
@@ -52,85 +52,84 @@ namespace SS.Modules.Inventories
 			get { return this.__onRemove; }
 		}
 
+
+		private void ShowTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+
+			Tuple<string, int>[] items = this.GetSlots();
+
+			ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+
+			foreach( Tuple<string, int> item in items )
+			{
+				ResourceDefinition resourceDef = DefinitionManager.GetResource( item.Item1 );
+				ToolTip.AddText( resourceDef.icon, item.Item2 + " / " + this.GetMaxCapacity( item.Item1 ) );
+			}
+			ToolTip.ShowAt( Input.mousePosition );
+		}
+
+		private void MoveTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+
+			ToolTip.MoveTo( Input.mousePosition, true );
+		}
+
+		private void HideTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+
+			ToolTip.Hide();
+		}
+
+
 		void Awake()
 		{
-			UnityAction<GameObject> showTooltip = ( GameObject obj ) =>
-			{
-				if( obj == this.gameObject )
-				{
-					Tuple<string, int>[] items = this.GetSlots();
-
-					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
-
-					foreach( Tuple<string, int> item in items )
-					{
-						
-						ResourceDefinition resourceDef = DefinitionManager.GetResource( item.Item1 );
-						ToolTip.AddText( resourceDef.icon, item.Item2 + "/" + this.GetMaxCapacity( item.Item1 ) );
-						
-					}
-					ToolTip.ShowAt( Input.mousePosition );
-				}
-			};
-			UnityAction<GameObject> moveTooltip = ( GameObject obj ) =>
-			{
-				if( obj == this.gameObject )
-				{
-					ToolTip.MoveTo( Input.mousePosition, true );
-				}
-			};
-
-			UnityAction<GameObject> hideTooltip = ( GameObject obj ) =>
-			{
-				if( obj == this.gameObject )
-				{
-					ToolTip.Hide();
-				}
-			};
-
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					showTooltip( this.gameObject );
-				}
+				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( this.isEmpty )
 				{
-					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-					{
-						hideTooltip( this.gameObject );
-					}
+					this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
 				}
 				else
 				{
-					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-					{
-						showTooltip( this.gameObject );
-					}
+					this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
 				}
 			} );
 
-			MouseOverHandler.onMouseEnter.AddListener( showTooltip );
-			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
-			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
+			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
+			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
+			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
 
 			Damageable damageable = this.GetComponent<Damageable>();
 			if( damageable != null )
 			{
 				damageable.onDeath.AddListener( () =>
 				{
-					hideTooltip( this.gameObject );
-					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
-					MouseOverHandler.onMouseStay.RemoveListener( moveTooltip );
-					MouseOverHandler.onMouseExit.RemoveListener( hideTooltip );
+					this.HideTooltip( this.gameObject );
+					MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
+					MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
+					MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
 				} );
 			}
 
-			SSObject ssObject = this.GetComponent<SSObject>();
 
+
+			SSObject ssObject = this.GetComponent<SSObject>();
 			if( ssObject is IHUDObject )
 			{
 				// integrate hud.
@@ -149,8 +148,8 @@ namespace SS.Modules.Inventories
 						// Make the inventory update the HUD wien resources are added/removed.
 						this.onAdd.AddListener( ( string id, int amtAdded ) =>
 						{
-						// Set the icon to the first slot that contains a resource.
-						foreach( var kvp in this.GetAll() )
+							// Set the icon to the first slot that contains a resource.
+							foreach( var kvp in this.GetAll() )
 							{
 								if( kvp.Key == "" )
 								{
@@ -173,8 +172,8 @@ namespace SS.Modules.Inventories
 							}
 							else
 							{
-							// Set the icon to the first slot that contains a resource.
-							foreach( var kvp in this.GetAll() )
+								// Set the icon to the first slot that contains a resource.
+								foreach( var kvp in this.GetAll() )
 								{
 									if( kvp.Key == "" )
 									{
@@ -201,7 +200,7 @@ namespace SS.Modules.Inventories
 				} );
 			}
 		}
-		
+
 		public bool isEmpty
 		{
 			get
@@ -235,7 +234,7 @@ namespace SS.Modules.Inventories
 			// Resource is not present.
 			return 0;
 		}
-		
+
 		public Dictionary<string, int> GetAll()
 		{
 			if( this.isEmpty )
@@ -368,7 +367,7 @@ namespace SS.Modules.Inventories
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+
 		public override ModuleData GetData()
 		{
 			InventoryConstrainedModuleData data = new InventoryConstrainedModuleData();
@@ -405,7 +404,7 @@ namespace SS.Modules.Inventories
 
 			InventoryConstrainedModuleDefinition def = (InventoryConstrainedModuleDefinition)_def;
 			InventoryConstrainedModuleData data = (InventoryConstrainedModuleData)_data;
-			
+
 			this.resources = new SlotGroup[def.slots.Length];
 			for( int i = 0; i < this.resources.Length; i++ )
 			{

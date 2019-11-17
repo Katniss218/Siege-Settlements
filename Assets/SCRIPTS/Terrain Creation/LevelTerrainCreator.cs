@@ -8,10 +8,13 @@ namespace SS.TerrainCreation
 {
 	public static class LevelTerrainCreator
 	{
-		static TerrainMeshCreator meshCreator;
+		public const int RESOLUTION = 241;
+
 		public static Transform terrainParent;
 
-		private const int RESOLUTION = 241;
+		private static TerrainMeshCreator meshCreator;
+		private static NavMeshDataInstance navMeshDataInstance;
+
 
 		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
 		{
@@ -53,7 +56,7 @@ namespace SS.TerrainCreation
 			}
 		}
 
-		static NavMeshDataInstance navMeshDataInstance;
+
 
 		public static void UpdateNavMesh()
 		{

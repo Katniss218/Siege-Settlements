@@ -60,79 +60,74 @@ namespace SS.Modules
 			get { return this.__onRemove; }
 		}
 
+
+		private void ShowTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+			
+			Dictionary<string, int> itemsInDeposit = this.GetAll();
+
+			ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+
+			foreach( var kvp in itemsInDeposit )
+			{
+				ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+				ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() + " / " + this.GetMaxCapacity( kvp.Key ) );
+			}
+			ToolTip.ShowAt( Input.mousePosition );
+		}
+
+		private void MoveTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+
+			ToolTip.MoveTo( Input.mousePosition, true );
+		}
+
+		private void HideTooltip( GameObject mouseoveredObj )
+		{
+			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+
+			ToolTip.Hide();
+		}
+
+
 		void Awake()
 		{
-			UnityAction<GameObject> showTooltip = ( GameObject obj ) =>
-			{
-				if( obj == gameObject )
-				{
-					ResourceDepositModule deposit = obj.GetComponent<ResourceDepositModule>();
-					if( deposit == null )
-					{
-						return;
-					}
-
-					Dictionary<string, int> itemsInDeposit = this.GetAll();
-
-					ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
-
-					foreach( var kvp in itemsInDeposit )
-					{
-						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() + "/" + this.GetMaxCapacity( kvp.Key ) );
-					}
-					ToolTip.ShowAt( Input.mousePosition );
-				}
-			};
-			UnityAction<GameObject> moveTooltip = ( GameObject obj ) =>
-			{
-				if( obj == gameObject )
-				{
-					ToolTip.MoveTo( Input.mousePosition, true );
-				}
-			};
-
-			UnityAction<GameObject> hideTooltip = ( GameObject obj ) =>
-			{
-				if( obj == gameObject )
-				{
-					ToolTip.Hide();
-				}
-			};
-
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
-				{
-					showTooltip( gameObject );
-				}
+				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( this.isEmpty )
 				{
-					if( MouseOverHandler.currentObjectMouseOver == gameObject )
-					{
-						hideTooltip( gameObject );
-					}
+					this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
 					Object.Destroy( gameObject );
 
-					MouseOverHandler.onMouseEnter.RemoveListener( showTooltip );
-					MouseOverHandler.onMouseStay.RemoveListener( moveTooltip );
-					MouseOverHandler.onMouseExit.RemoveListener( hideTooltip );
+					MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
+					MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
+					MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
+
 				}
 				else
 				{
-					if( MouseOverHandler.currentObjectMouseOver == gameObject )
-					{
-						showTooltip( gameObject );
-					}
+					this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
 				}
 			} );
 
-			MouseOverHandler.onMouseEnter.AddListener( showTooltip );
-			MouseOverHandler.onMouseStay.AddListener( moveTooltip );
-			MouseOverHandler.onMouseExit.AddListener( hideTooltip );
+			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
+			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
+			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
 		}
 
 		public bool isEmpty
