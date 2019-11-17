@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.Modules
 {
-	public class MeleeModule : Module, ITargetFinder
+	public class MeleeModule : SSModuleOptional, ITargetFinder
 	{
 		private Damageable __target;
 
@@ -186,7 +186,7 @@ namespace SS.Modules
 			
 			if( this.target != null )
 			{
-				data.targetGuid = Main.GetGuid( this.target.gameObject );
+				data.targetGuid = Main.GetGuid( this.target.GetComponent<SSObject>() );
 			}
 			return data;
 		}
@@ -225,9 +225,7 @@ namespace SS.Modules
 			this.traversibleSubObjects = new Transform[def.traversibleSubObjects.Length];
 			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 			{
-				SSObject self = this.GetComponent<SSObject>();
-
-				SubObject trav = self.GetSubObject( def.traversibleSubObjects[i] );
+				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
 				if( trav == null )
 				{
 					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
@@ -237,7 +235,7 @@ namespace SS.Modules
 
 			if( data.targetGuid != null )
 			{
-				this.TrySetTarget( Main.GetGameObject( data.targetGuid.Value ).GetComponent<Damageable>() );
+				this.TrySetTarget( Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>() );
 			}
 		}
 		

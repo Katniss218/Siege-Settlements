@@ -14,7 +14,7 @@ namespace SS.Modules.Inventories
 	/// <summary>
 	/// An inventory that has slots constrained to single resource ID.
 	/// </summary>
-	public sealed class InventoryConstrainedModule : Module, IInventory
+	public sealed class InventoryConstrainedModule : SSModuleOptional, IInventory
 	{
 		private struct SlotGroup
 		{
@@ -62,7 +62,7 @@ namespace SS.Modules.Inventories
 
 			Tuple<string, int>[] items = this.GetSlots();
 
-			ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+			ToolTip.Create( 200.0f, this.ssObject.displayName );
 
 			foreach( Tuple<string, int> item in items )
 			{
@@ -128,12 +128,11 @@ namespace SS.Modules.Inventories
 			}
 
 
-
-			SSObject ssObject = this.GetComponent<SSObject>();
-			if( ssObject is IHUDObject )
+			
+			if( this.ssObject is IHUDObject )
 			{
 				// integrate hud.
-				IHUDObject hudObj = (IHUDObject)ssObject;
+				IHUDObject hudObj = (IHUDObject)this.ssObject;
 
 
 				Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );

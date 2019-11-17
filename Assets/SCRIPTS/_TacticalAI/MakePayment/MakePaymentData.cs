@@ -10,7 +10,7 @@ namespace SS
 
 		public override void AssignTo( GameObject gameObject )
 		{
-			TAIGoal.MakePayment.AssignTAIGoal( gameObject, Main.GetGameObject( this.destinationGuid ) );
+			TAIGoal.MakePayment.AssignTAIGoal( gameObject, Main.GetSSObject( this.destinationGuid ) );
 		}
 
 

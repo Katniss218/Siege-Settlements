@@ -9,6 +9,8 @@ namespace SS
 	/// </summary>
 	public class Damageable : MonoBehaviour
 	{
+#warning add accessor for SSObject (interface?) for SSModule and SSModuleOptional.
+
 		public class _UnityEvent_float : UnityEvent<float> { }
 		/// <summary>
 		/// Fires when the 'health' value is changed.

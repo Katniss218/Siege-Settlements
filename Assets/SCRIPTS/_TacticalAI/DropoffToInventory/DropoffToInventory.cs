@@ -12,7 +12,7 @@ namespace SS
 	{
 		public class DropoffToInventory : TAIGoal
 		{
-			public GameObject destination { get; private set; }
+			public SSObject destination { get; private set; }
 
 
 			private NavMeshAgent navMeshAgent;
@@ -114,7 +114,7 @@ namespace SS
 			/// <summary>
 			/// Assigns a new DropoffToInventory TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
+			public static void AssignTAIGoal( GameObject gameObject, SSObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 

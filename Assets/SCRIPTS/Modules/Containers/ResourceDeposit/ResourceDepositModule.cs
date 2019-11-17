@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Modules
 {
-	public class ResourceDepositModule : Module
+	public class ResourceDepositModule : SSModuleOptional
 	{
 		public const float MINING_SPEED = 2.0f;
 
@@ -70,7 +70,7 @@ namespace SS.Modules
 			
 			Dictionary<string, int> itemsInDeposit = this.GetAll();
 
-			ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+			ToolTip.Create( 200.0f, this.ssObject.displayName );
 
 			foreach( var kvp in itemsInDeposit )
 			{

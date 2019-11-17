@@ -56,13 +56,13 @@ namespace SS
 		/// <summary>
 		/// Returns a sub-object with specified Id. Returns null if none are present.
 		/// </summary>
-		public SubObject GetSubObject( Guid id )
+		public SubObject GetSubObject( Guid subObjectId )
 		{
 			for( int i = 0; i < this.transform.childCount; i++ )
 			{
 				SubObject subObject = this.transform.GetChild( i ).GetComponent<SubObject>();
 
-				if( subObject.subObjectId == id )
+				if( subObject.subObjectId == subObjectId )
 				{
 					return subObject;
 				}

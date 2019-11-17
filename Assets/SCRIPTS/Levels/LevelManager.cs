@@ -225,12 +225,12 @@ namespace SS.Levels
 
 			asyncOperation.completed += ( AsyncOperation oper ) =>
 			{
-				UnloadLevel_AfterAsync( loadMenu );
+				UnloadLevel_AfterUnloadLV( loadMenu );
 				onAfterLevelUnloaded?.Invoke();
 			};
 		}
 
-		private static void UnloadLevel_AfterAsync( bool loadMenu )
+		private static void UnloadLevel_AfterUnloadLV( bool loadMenu )
 		{
 			DefinitionManager.Purge();
 			AssetManager.Purge();
@@ -296,18 +296,18 @@ namespace SS.Levels
 				AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
 				asyncOperation.completed += ( AsyncOperation oper ) =>
 				{
-					LoadLevel_AfterAsync( levelIdentifier, levelSaveStateIdentifier );
+					LoadLevel_AfterUnloadMM( levelIdentifier, levelSaveStateIdentifier );
 					onAfterSceneLoaded?.Invoke();
 				};
 			}
 			else
 			{
-				LoadLevel_AfterAsync( levelIdentifier, levelSaveStateIdentifier );
+				LoadLevel_AfterUnloadMM( levelIdentifier, levelSaveStateIdentifier );
 				onAfterSceneLoaded?.Invoke();
 			}
 		}
 
-		private static void LoadLevel_AfterAsync( string levelIdentifier, string levelSaveStateIdentifier )
+		private static void LoadLevel_AfterUnloadMM( string levelIdentifier, string levelSaveStateIdentifier )
 		{
 			Debug.Log( "LOADING LEVEL: '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -717,8 +717,8 @@ namespace SS.Levels
 			}
 
 			SelectionPanelMode selectionPanelMode;
-			GameObject highlighted;
-			GameObject[] selected = GetSelected( serializerSelection, out highlighted, out selectionPanelMode );
+			SSObject highlighted;
+			SSObject[] selected = GetSelected( serializerSelection, out highlighted, out selectionPanelMode );
 
 			SelectionPanel.instance.SetMode( selectionPanelMode );
 
@@ -848,7 +848,7 @@ namespace SS.Levels
 			return ret;
 		}
 		
-		private static GameObject[] GetSelected( KFFSerializer serializer, out GameObject highlight, out SelectionPanelMode selectionPanelMode )
+		private static SSObject[] GetSelected( KFFSerializer serializer, out SSObject highlight, out SelectionPanelMode selectionPanelMode )
 		{
 			string sel = serializer.ReadString( "SelectionPanelMode" );
 			if( sel == "Object" )
@@ -871,7 +871,7 @@ namespace SS.Levels
 
 			int count = serializer.Analyze( "SelectedGuids" ).childCount;
 
-			GameObject[] ret = new GameObject[count];
+			SSObject[] ret = new SSObject[count];
 
 			if( serializer.Analyze( "HighlightedGuid" ).isFail )
 			{
@@ -879,13 +879,13 @@ namespace SS.Levels
 			}
 			else
 			{
-				highlight = Main.GetGameObject( Guid.ParseExact( serializer.ReadString( "HighlightedGuid" ), "D" ) );
+				highlight = Main.GetSSObject( Guid.ParseExact( serializer.ReadString( "HighlightedGuid" ), "D" ) );
 			}
 
 
 			for( int i = 0; i < count; i++ )
 			{
-				ret[i] = Main.GetGameObject( Guid.ParseExact( serializer.ReadString( new Path( "SelectedGuids.{0}", i ) ), "D" ) );
+				ret[i] = Main.GetSSObject( Guid.ParseExact( serializer.ReadString( new Path( "SelectedGuids.{0}", i ) ), "D" ) );
 				
 			}
 
@@ -1027,7 +1027,7 @@ namespace SS.Levels
 			Guid? highlighted = null;
 			if( Selection.highlightedObject != null )
 			{
-				highlighted = Main.GetGuid( Selection.highlightedObject.gameObject );
+				highlighted = Main.GetGuid( Selection.highlightedObject.GetComponent<SSObject>() );
 			}
 			Guid?[] selection = null;
 			var selectedObjs = Selection.selectedObjects;
@@ -1037,7 +1037,7 @@ namespace SS.Levels
 
 				for( int i = 0; i < selectedObjs.Length; i++ )
 				{
-					selection[i] = Main.GetGuid( selectedObjs[i].gameObject );
+					selection[i] = Main.GetGuid( selectedObjs[i].GetComponent<SSObject>() );
 				}
 			}
 

@@ -17,7 +17,7 @@ using UnityEngine.Events;
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class BarracksModule : Module, IPaymentReceiver
+	public class BarracksModule : SSModuleOptional, IPaymentReceiver
 	{
 		public UnityEvent onTrainingBegin = new UnityEvent();
 

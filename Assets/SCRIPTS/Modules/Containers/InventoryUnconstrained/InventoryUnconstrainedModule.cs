@@ -14,7 +14,7 @@ namespace SS.Modules.Inventories
 	/// <summary>
 	/// An inventory that can hold arbitrary resource in each of the slots (as long as there are no duplicate ids).
 	/// </summary>
-	public sealed class InventoryUnconstrainedModule : Module, IInventory
+	public sealed class InventoryUnconstrainedModule : SSModuleOptional, IInventory
 	{
 		private struct SlotGroup
 		{
@@ -62,7 +62,7 @@ namespace SS.Modules.Inventories
 
 			Tuple<string, int>[] items = this.GetSlots();
 
-			ToolTip.Create( 200.0f, this.GetComponent<SSObject>().displayName );
+			ToolTip.Create( 200.0f, this.ssObject.displayName );
 
 			foreach( Tuple<string, int> item in items )
 			{
@@ -135,12 +135,11 @@ namespace SS.Modules.Inventories
 			}
 	
 
-
-			SSObject ssObject = this.GetComponent<SSObject>();
-			if( ssObject is IHUDObject )
+			
+			if( this.ssObject is IHUDObject )
 			{
 				// integrate hud.
-				IHUDObject hudObj = (IHUDObject)ssObject;
+				IHUDObject hudObj = (IHUDObject)this.ssObject;
 
 				Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
 				if( hudResourceTransform != null )

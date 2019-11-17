@@ -10,7 +10,7 @@ namespace SS
 			/// <summary>
 			/// The object to attack.
 			/// </summary>
-			public GameObject target { get; private set; }
+			public SSObject target { get; private set; }
 
 			private Damageable targetDamageable = null;
 
@@ -126,7 +126,7 @@ namespace SS
 			/// <summary>
 			/// Assigns a new PickupDeposit TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, GameObject target )
+			public static void AssignTAIGoal( GameObject gameObject, SSObject target )
 			{
 				TAIGoal.ClearGoal( gameObject );
 

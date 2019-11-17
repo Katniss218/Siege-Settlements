@@ -159,11 +159,11 @@ namespace SS
 
 				Vector3? terrainHitPos = null;
 
-				GameObject hitInventoryGameObject = null;
+				SSObject hitInventorySSObject = null;
 				IInventory hitInventory = null;
 				FactionMember hitInventoryFactionMember = null;
 
-				GameObject hitDepositGameObject = null;
+				SSObject hitDepositSSObject = null;
 				ResourceDepositModule hitDeposit = null;
 
 				Transform hitReceiverTransform = null;
@@ -183,16 +183,16 @@ namespace SS
 						FactionMember factionMember = raycastHits[i].collider.GetComponent<FactionMember>();
 
 						ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
-						if( deposit != null && hitDepositGameObject == null )
+						if( deposit != null && hitDepositSSObject == null )
 						{
-							hitDepositGameObject = raycastHits[i].collider.gameObject;
+							hitDepositSSObject = raycastHits[i].collider.GetComponent<SSObject>();
 							hitDeposit = deposit;
 						}
 
 						IInventory inventory = raycastHits[i].collider.GetComponent<IInventory>();
-						if( inventory != null && hitInventoryGameObject == null )
+						if( inventory != null && hitInventorySSObject == null )
 						{
-							hitInventoryGameObject = raycastHits[i].collider.gameObject;
+							hitInventorySSObject = raycastHits[i].collider.GetComponent<SSObject>();
 							hitInventory = inventory;
 							hitInventoryFactionMember = factionMember;
 						}
@@ -224,11 +224,11 @@ namespace SS
 				}
 				else if( hitDeposit != null )
 				{
-					AssignPickupDepositGoal( hitDepositGameObject, hitDeposit, Selection.selectedObjects );
+					AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.selectedObjects );
 				}
 				else if( hitInventory != null && (hitInventoryFactionMember == null || hitInventoryFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
 				{
-					AssignPickupInventoryGoal( hitInventoryGameObject, hitInventory, Selection.selectedObjects );
+					AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.selectedObjects );
 				}
 				else if( hitDamageable != null )
 				{
@@ -558,7 +558,7 @@ namespace SS
 			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
-				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.gameObject );
+				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.GetComponent<SSObject>() );
 			}
 		}
 
@@ -647,7 +647,7 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.gameObject );
+				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.GetComponent<SSObject>() );
 			}
 		}
 
@@ -705,7 +705,7 @@ namespace SS
 			}
 		}
 
-		private void AssignPickupInventoryGoal( GameObject hitGameObject, IInventory hitInventory, Selectable[] selected )
+		private void AssignPickupInventoryGoal( SSObject hitSSObject, IInventory hitInventory, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -752,10 +752,10 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitGameObject );
+				TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
-		private void AssignPickupDepositGoal( GameObject hitGameObject, ResourceDepositModule hitDeposit, Selectable[] selected )
+		private void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, Selectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -802,7 +802,7 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitGameObject );
+				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
 
@@ -874,13 +874,23 @@ namespace SS
 			}
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
-				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.gameObject );
+				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.GetComponent<SSObject>() );
 			}
 		}
 
-		public static Guid GetGuid( GameObject obj )
+		public static Guid GetGuid( SSObject obj )
 		{
 			// gets guid of object.
+			if( obj == null )
+			{
+				throw new Exception( "Obj was null." );
+			}
+			if( obj.guid == null )
+			{
+				throw new Exception( "Specified SSObject doesn't have Guid assigned to it." );
+			}
+			return obj.guid.Value;
+			/*
 
 			Unit unit = obj.GetComponent<Unit>();
 			if( unit != null )
@@ -926,18 +936,19 @@ namespace SS
 					throw new Exception( "Guid not assigned." );
 				}
 				return extra.guid.Value;
-			}
-			throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
+			}*/
+			//throw new Exception( "Specified Gameobject is not valid and doesn't have a GUID." );
 		}
 
-		public static GameObject GetGameObject( Guid guid )
+		public static SSObject GetSSObject( Guid guid )
 		{
+#warning optimize this.
 			Unit[] units = Unit.GetAllUnits();
 			for( int i = 0; i < units.Length; i++ )
 			{
 				if( units[i].guid == guid )
 				{
-					return units[i].gameObject;
+					return units[i];
 				}
 			}
 
@@ -946,7 +957,7 @@ namespace SS
 			{
 				if( buildings[i].guid == guid )
 				{
-					return buildings[i].gameObject;
+					return buildings[i];
 				}
 			}
 
@@ -955,7 +966,7 @@ namespace SS
 			{
 				if( heroes[i].guid == guid )
 				{
-					return heroes[i].gameObject;
+					return heroes[i];
 				}
 			}
 
@@ -964,7 +975,7 @@ namespace SS
 			{
 				if( extras[i].guid == guid )
 				{
-					return extras[i].gameObject;
+					return extras[i];
 				}
 			}
 
@@ -973,7 +984,7 @@ namespace SS
 			{
 				if( projectiles[i].guid == guid )
 				{
-					return projectiles[i].gameObject;
+					return projectiles[i];
 				}
 			}
 

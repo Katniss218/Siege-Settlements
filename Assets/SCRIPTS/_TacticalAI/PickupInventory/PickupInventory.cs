@@ -16,7 +16,7 @@ namespace SS
 			/// <summary>
 			/// The deposit to move to and pick up.
 			/// </summary>
-			public GameObject destination { get; private set; }
+			public SSObject destination { get; private set; }
 
 			private NavMeshAgent navMeshAgent;
 			private IInventory inventory;
@@ -110,7 +110,7 @@ namespace SS
 			/// <summary>
 			/// Assigns a new PickupDeposit TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
+			public static void AssignTAIGoal( GameObject gameObject, SSObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 

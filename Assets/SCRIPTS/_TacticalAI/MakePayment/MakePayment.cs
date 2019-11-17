@@ -13,7 +13,7 @@ namespace SS
 	{
 		public class MakePayment : TAIGoal
 		{
-			public GameObject destination { get; private set; }
+			public SSObject destination { get; private set; }
 
 			private NavMeshAgent navMeshAgent;
 			private IInventory inventory;
@@ -50,7 +50,7 @@ namespace SS
 			}
 
 			// pays first ipayment receiver on the object. if has resources left in inv, pays the 2nd, etc.
-			private void Pay( GameObject gameObject )
+			private void Pay( SSObject gameObject )
 			{
 				IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
 
@@ -118,7 +118,7 @@ namespace SS
 			/// <summary>
 			/// Assigns a new MakePayment TAI goal to the GameObject.
 			/// </summary>
-			public static void AssignTAIGoal( GameObject gameObject, GameObject destination )
+			public static void AssignTAIGoal( GameObject gameObject, SSObject destination )
 			{
 				TAIGoal.ClearGoal( gameObject );
 
