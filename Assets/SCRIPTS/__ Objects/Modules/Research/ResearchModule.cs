@@ -16,7 +16,7 @@ using UnityEngine.Events;
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class ResearchModule : SSModuleOptional, IPaymentReceiver
+	public class ResearchModule : SSModule, IPaymentReceiver
 	{
 		public UnityEvent onResearchBegin = new UnityEvent();
 

@@ -52,7 +52,7 @@ namespace SS
 
 		public static void ExtractModules( GameObject gameObject, ObjectData data )
 		{
-			SSModuleOptional[] modules = gameObject.GetComponents<SSModuleOptional>();
+			SSModule[] modules = gameObject.GetComponents<SSModule>();
 			for( int i = 0; i < modules.Length; i++ )
 			{
 				ModuleData moduleData = modules[i].GetData();

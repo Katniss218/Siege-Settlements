@@ -56,7 +56,7 @@ namespace SS.Heroes
 
 			// Set the hero's native parameters.
 			Hero hero = gameObject.GetComponent<Hero>();
-			hero.defId = def.id;
+			hero.definitionId = def.id;
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			
@@ -302,18 +302,7 @@ namespace SS.Heroes
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static string GetDefinitionId( GameObject gameObject )
-		{
-			if( !Hero.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid hero." );
-			}
-
-			Hero hero = gameObject.GetComponent<Hero>();
-			return hero.defId;
-		}
-
+		
 		/// <summary>
 		/// Creates a new HeroData from a GameObject.
 		/// </summary>

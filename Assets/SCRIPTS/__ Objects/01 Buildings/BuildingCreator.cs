@@ -48,7 +48,7 @@ namespace SS.Buildings
 			
 			// Set the building's native parameters.
 			Building building = gameObject.GetComponent<Building>();
-			building.defId = def.id;
+			building.definitionId = def.id;
 			building.entrance = def.entrance;
 			building.placementNodes = def.placementNodes;
 			building.StartToEndConstructionCost = def.cost;
@@ -317,18 +317,7 @@ namespace SS.Buildings
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static string GetDefinitionId( GameObject gameObject )
-		{
-			if( !Building.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid building." );
-			}
-
-			Building building = gameObject.GetComponent<Building>();
-			return building.defId;
-		}
-
+		
 		/// <summary>
 		/// Creates a new BuildingData from a GameObject.
 		/// </summary>

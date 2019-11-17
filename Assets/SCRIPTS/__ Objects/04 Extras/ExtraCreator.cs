@@ -29,7 +29,7 @@ namespace SS.Extras
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			Extra extra = gameObject.GetComponent<Extra>();
-			extra.defId = def.id;
+			extra.definitionId = def.id;
 			extra.displayName = def.displayName;
 
 
@@ -73,18 +73,7 @@ namespace SS.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static string GetDefinitionId( GameObject gameObject )
-		{
-			if( !Extra.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
-			}
-
-			Extra extra = gameObject.GetComponent<Extra>();
-			return extra.defId;
-		}
-
+		
 		/// <summary>
 		/// Creates a new ExtraData from a GameObject.
 		/// </summary>

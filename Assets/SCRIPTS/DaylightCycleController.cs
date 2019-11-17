@@ -162,7 +162,7 @@ namespace SS
 				}
 				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
 			}
-			if( this.isNight )
+			else
 			{
 				float margin = this.nightLength * (DAY_NIGHT_EASE_MARGIN / 2.0f);
 
@@ -181,7 +181,6 @@ namespace SS
 				}
 				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
 			}
-			throw new System.Exception( "Error -invalid time value." );
 		}
 		
 		void Update()
@@ -201,7 +200,7 @@ namespace SS
 			this.sun.intensity = GetSunIntensity( time );
 			this.moon.intensity = GetMoonIntensity( time );
 
-			RenderSettings.ambientLight = this.GetAmbientColor( this.time );// new Color( 0.25f, 0.25f, 0.28f );
+			RenderSettings.ambientLight = this.GetAmbientColor( this.time );
 		}
 	}
 }

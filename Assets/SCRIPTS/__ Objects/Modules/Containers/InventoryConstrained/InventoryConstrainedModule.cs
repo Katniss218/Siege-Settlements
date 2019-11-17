@@ -14,7 +14,7 @@ namespace SS.Modules.Inventories
 	/// <summary>
 	/// An inventory that has slots constrained to single resource ID.
 	/// </summary>
-	public sealed class InventoryConstrainedModule : SSModuleOptional, IInventory
+	public sealed class InventoryConstrainedModule : SSModule, IInventory
 	{
 		private struct SlotGroup
 		{

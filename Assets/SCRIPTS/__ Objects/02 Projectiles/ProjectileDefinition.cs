@@ -8,6 +8,8 @@ namespace SS.Projectiles
 	{
 		public bool canGetStuck { get; set; }
 
+		public string displayName { get; set; }
+
 		public float blastRadius { get; set; } // set to 0 for no blast.
 
 		public float lifetime { get; set; }
@@ -29,6 +31,8 @@ namespace SS.Projectiles
 		{
 			this.id = serializer.ReadString( "Id" );
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			this.canGetStuck = serializer.ReadBool( "CanGetStuck" );
 
 			this.blastRadius = serializer.ReadFloat( "BlastRadius" );
@@ -44,6 +48,8 @@ namespace SS.Projectiles
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "Id", this.id );
+
+			serializer.WriteString( "", "DisplayName", this.displayName );
 
 			serializer.WriteBool( "", "CanGetStuck", this.canGetStuck );
 

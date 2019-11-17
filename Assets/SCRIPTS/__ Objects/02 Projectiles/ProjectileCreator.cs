@@ -38,7 +38,8 @@ namespace SS.Projectiles
 			
 			// Set the projectile's native parameters.
 			Projectile projectile = gameObject.GetComponent<Projectile>();
-			projectile.defId = def.id;
+			projectile.definitionId = def.id;
+			projectile.displayName = def.displayName;
 			projectile.hitSound = def.hitSoundEffect;
 			projectile.missSound = def.missSoundEffect;
 			projectile.blastRadius = def.blastRadius;
@@ -127,18 +128,7 @@ namespace SS.Projectiles
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static string GetDefinitionId( GameObject gameObject )
-		{
-			if( !Projectile.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid projectile." );
-			}
-
-			Projectile projectile = gameObject.GetComponent<Projectile>();
-			return projectile.defId;
-		}
-
+		
 		/// <summary>
 		/// Creates a new ProjectileData from a GameObject.
 		/// </summary>

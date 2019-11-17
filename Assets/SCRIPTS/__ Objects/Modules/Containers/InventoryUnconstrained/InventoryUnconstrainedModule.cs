@@ -14,7 +14,7 @@ namespace SS.Modules.Inventories
 	/// <summary>
 	/// An inventory that can hold arbitrary resource in each of the slots (as long as there are no duplicate ids).
 	/// </summary>
-	public sealed class InventoryUnconstrainedModule : SSModuleOptional, IInventory
+	public sealed class InventoryUnconstrainedModule : SSModule, IInventory
 	{
 		private struct SlotGroup
 		{

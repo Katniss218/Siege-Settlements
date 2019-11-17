@@ -289,7 +289,7 @@ namespace SS.Levels
 
 			loadedLevelScene = SceneManager.CreateScene( "Level - '" + levelIdentifier + ":" + levelSaveStateIdentifier + "'" );
 			SceneManager.SetActiveScene( loadedLevelScene.Value );
-			
+
 			if( SceneManager.GetSceneByName( "MainMenu" ).isLoaded )
 			{
 				AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync( "MainMenu" );
@@ -962,23 +962,23 @@ namespace SS.Levels
 
 			for( int i = 0; i < unitData.Length; i++ )
 			{
-				unitData[i] = new Tuple<string, UnitData>( UnitCreator.GetDefinitionId( units[i].gameObject ), UnitCreator.GetData( units[i].gameObject ) );
+				unitData[i] = new Tuple<string, UnitData>( units[i].definitionId, UnitCreator.GetData( units[i].gameObject ) );
 			}
 			for( int i = 0; i < buildingData.Length; i++ )
 			{
-				buildingData[i] = new Tuple<string, BuildingData>( BuildingCreator.GetDefinitionId( buildings[i].gameObject ), BuildingCreator.GetData( buildings[i].gameObject ) );
+				buildingData[i] = new Tuple<string, BuildingData>( buildings[i].definitionId, BuildingCreator.GetData( buildings[i].gameObject ) );
 			}
 			for( int i = 0; i < projectileData.Length; i++ )
 			{
-				projectileData[i] = new Tuple<string, ProjectileData>( ProjectileCreator.GetDefinitionId( projectiles[i].gameObject ), ProjectileCreator.GetData( projectiles[i].gameObject ) );
+				projectileData[i] = new Tuple<string, ProjectileData>( projectiles[i].definitionId, ProjectileCreator.GetData( projectiles[i].gameObject ) );
 			}
 			for( int i = 0; i < heroData.Length; i++ )
 			{
-				heroData[i] = new Tuple<string, HeroData>( HeroCreator.GetDefinitionId( heroes[i].gameObject ), HeroCreator.GetData( heroes[i].gameObject ) );
+				heroData[i] = new Tuple<string, HeroData>( heroes[i].definitionId, HeroCreator.GetData( heroes[i].gameObject ) );
 			}
 			for( int i = 0; i < extraData.Length; i++ )
 			{
-				extraData[i] = new Tuple<string, ExtraData>( ExtraCreator.GetDefinitionId( extras[i].gameObject ), ExtraCreator.GetData( extras[i].gameObject ) );
+				extraData[i] = new Tuple<string, ExtraData>( extras[i].definitionId, ExtraCreator.GetData( extras[i].gameObject ) );
 			}
 
 			string path = GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId );

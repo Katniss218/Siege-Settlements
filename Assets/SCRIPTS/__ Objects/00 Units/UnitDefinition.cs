@@ -9,6 +9,7 @@ namespace SS.Units
 {
 	public class UnitDefinition : ObjectDefinition, ITechsRequired
 	{
+#warning Each object definition type can specify required modules & optional modules.
 		private string __displayName = "<missing>";
 		public string displayName
 		{

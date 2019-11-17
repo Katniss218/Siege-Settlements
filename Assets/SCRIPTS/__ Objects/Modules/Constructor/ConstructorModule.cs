@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SS.Modules
 {
-	public class ConstructorModule : SSModuleOptional
+	public class ConstructorModule : SSModule
 	{
 		public BuildingDefinition[] constructibleBuildings { get; set; }
 

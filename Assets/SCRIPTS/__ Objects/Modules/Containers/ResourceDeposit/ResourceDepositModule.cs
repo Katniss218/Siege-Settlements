@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Modules
 {
-	public class ResourceDepositModule : SSModuleOptional
+	public class ResourceDepositModule : SSModule
 	{
 		public const float MINING_SPEED = 2.0f;
 

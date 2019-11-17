@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.Modules
 {
-	public class MeleeModule : SSModuleOptional, ITargetFinder
+	public class MeleeModule : SSModule, ITargetFinder
 	{
 		private Damageable __target;
 
@@ -25,7 +25,7 @@ namespace SS.Modules
 				{
 					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 					{
-						this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
 					}
 				}
 				return this.__target;
@@ -60,7 +60,7 @@ namespace SS.Modules
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
 				}
 			}
 			return this.__target;
@@ -76,7 +76,7 @@ namespace SS.Modules
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
 				}
 			}
 			return this.__target;
@@ -124,7 +124,7 @@ namespace SS.Modules
 		private bool isBuilding;
 		private Damageable damageableSelf;
 
-		private Transform[] traversibleSubObjects { get; set; }
+		private SubObject[] traversibleSubObjects { get; set; }
 
 		public bool isReadyToAttack
 		{
@@ -158,7 +158,7 @@ namespace SS.Modules
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].rotation = Quaternion.LookRotation( (this.__target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.__target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
 			}
 
@@ -222,15 +222,17 @@ namespace SS.Modules
 			this.attackCooldown = def.attackCooldown;
 			this.attackSoundEffect = def.attackSoundEffect;
 
-			this.traversibleSubObjects = new Transform[def.traversibleSubObjects.Length];
+			this.traversibleSubObjects = new SubObject[def.traversibleSubObjects.Length];
 			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 			{
 				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
+
 				if( trav == null )
 				{
 					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 				}
-				this.traversibleSubObjects[i] = trav.transform;
+
+				this.traversibleSubObjects[i] = trav;
 			}
 
 			if( data.targetGuid != null )
