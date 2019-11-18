@@ -129,10 +129,10 @@ namespace SS.Modules.Inventories
 
 
 			
-			if( this.ssObject is IHUDObject )
+			if( this.ssObject is IHUDHolder )
 			{
 				// integrate hud.
-				IHUDObject hudObj = (IHUDObject)this.ssObject;
+				IHUDHolder hudObj = (IHUDHolder)this.ssObject;
 
 
 				Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );

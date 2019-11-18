@@ -539,7 +539,7 @@ namespace SS
 				bool canTarget = false;
 				for( int j = 0; j < targeters.Length; j++ )
 				{
-					if( FactionMember.CanTargetAnother( selFac, tarFac ) )
+					if( selFac.CanTargetAnother( tarFac ) )
 					{
 						canTarget = true;
 						break;
@@ -890,6 +890,11 @@ namespace SS
 				throw new Exception( "Specified SSObject doesn't have Guid assigned to it." );
 			}
 			return obj.guid.Value;
+		}
+
+		public static bool IsInRange( Vector3 pos1, Vector3 pos2, float threshold )
+		{
+			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
 		}
 
 		public static SSObject GetSSObject( Guid guid )

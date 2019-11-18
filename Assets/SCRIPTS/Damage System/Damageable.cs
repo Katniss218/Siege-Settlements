@@ -4,6 +4,11 @@ using UnityEngine.Events;
 
 namespace SS
 {
+	public interface IDamageable
+	{
+		Damageable damageable { get; }
+	}
+
 	/// <summary>
 	/// Represents objects that can be damaged.
 	/// </summary>

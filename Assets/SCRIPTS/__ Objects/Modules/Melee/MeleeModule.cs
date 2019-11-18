@@ -44,9 +44,8 @@ namespace SS.Modules
 			{
 				return false;
 			}
-
-			FactionMember targetFactionMember = target.GetComponent<FactionMember>();
-			if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
+			
+			if( !this.factionMember.CanTargetAnother( target.GetComponent<FactionMember>() ) )
 			{
 				return false;
 			}
@@ -85,31 +84,24 @@ namespace SS.Modules
 		
 		private Damageable FindTarget( float searchRange )
 		{
-			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.OBJECTS_MASK );
+			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK );
 			if( col.Length == 0 )
 			{
 				return null;
 			}
-			
+
+			Vector3 thisPosition = this.transform.position;
 			for( int i = 0; i < col.Length; i++ )
 			{
-				// If the overlapped object can't be damaged.
-				Damageable potentialTarget = col[i].GetComponent<Damageable>();
-				if( potentialTarget == null )
-				{
-					continue;
-				}
-
-				FactionMember targetFactionMember = col[i].GetComponent<FactionMember>();
+				SSObject ssObject = col[i].GetComponent<SSObject>();
 
 				// Check if the overlapped object can be targeted by this finder.
-#warning executing this static method is painfully slow - only on the ranged module seems like (due to naturally more objects? - view range bigger).
-				if( !FactionMember.CanTargetAnother( this.factionMember, targetFactionMember ) )
+				if( !this.factionMember.CanTargetAnother( (ssObject as IFactionMember).factionMember ) )
 				{
 					continue;
 				}
 				
-				return potentialTarget;
+				return (ssObject as IDamageable).damageable;
 			}
 			return null;
 		}

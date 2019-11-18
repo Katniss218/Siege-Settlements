@@ -90,7 +90,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( FactionMember.CanTargetAnother( factionMemberOther, this.factionMember ) )
+					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
 					{
 						damageableOther.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 
@@ -111,7 +111,7 @@ namespace SS.Objects.Projectiles
 						continue;
 					}
 					FactionMember facM = overlap[i].GetComponent<FactionMember>();
-					if( FactionMember.CanTargetAnother( factionMemberOther, this.factionMember ) )
+					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
 					{
 						float distance = Vector3.Distance( this.transform.position, overlap[i].transform.position );
 						if( distance >= this.blastRadius )
@@ -136,7 +136,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( FactionMember.CanTargetAnother( factionMemberOther, this.factionMember ) )
+					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
 					{
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );

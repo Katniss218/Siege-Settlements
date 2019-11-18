@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using SS.Diplomacy;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObject, IHUDObject
+	public class Hero : SSObject, IHUDHolder, IFactionMember, IDamageable
 	{
 		public static bool IsValid( GameObject gameObject )
 		{
@@ -34,15 +35,25 @@ namespace SS.Objects.Heroes
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
 		private Selectable selectable = null;
-		private Damageable damageable = null;
+		public Damageable damageable { get; set; }
+		public FactionMember factionMember { get; set; }
 
 
 		void Start()
 		{
 			this.selectable = this.GetComponent<Selectable>();
 			this.damageable = this.GetComponent<Damageable>();
+			this.factionMember = this.GetComponent<FactionMember>();
 		}
 
+
+		void FixedUpdate()
+		{
+			if( hud.activeSelf )
+			{
+				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+			}
+		}
 
 		void Update()
 		{
