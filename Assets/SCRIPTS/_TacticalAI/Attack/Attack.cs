@@ -118,7 +118,7 @@ namespace SS
 			{
 				AttackData data = new AttackData();
 
-				data.targetGuid = Main.GetGuid( this.target );
+				data.targetGuid = this.target.guid.Value;
 
 				return data;
 			}

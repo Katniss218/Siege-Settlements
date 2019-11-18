@@ -272,7 +272,7 @@ namespace SS.Modules
 
 			if( this.target != null )
 			{
-				data.targetGuid = Main.GetGuid( this.target.GetComponent<SSObject>() );
+				data.targetGuid = this.target.GetComponent<SSObject>().guid.Value;
 			}
 			return data;
 		}

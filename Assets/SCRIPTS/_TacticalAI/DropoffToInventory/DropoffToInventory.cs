@@ -106,7 +106,7 @@ namespace SS
 			{
 				DropoffToInventoryData data = new DropoffToInventoryData();
 
-				data.destinationGuid = Main.GetGuid( this.destination );
+				data.destinationGuid = this.destination.guid.Value;
 
 				return data;
 			}

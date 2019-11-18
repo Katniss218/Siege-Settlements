@@ -102,7 +102,7 @@ namespace SS
 			{
 				PickupInventoryData data = new PickupInventoryData();
 
-				data.destinationGuid = Main.GetGuid( this.destination );
+				data.destinationGuid = this.destination.guid.Value;
 
 				return data;
 			}

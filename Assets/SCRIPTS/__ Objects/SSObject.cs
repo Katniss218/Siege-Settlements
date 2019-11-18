@@ -17,78 +17,44 @@ namespace SS
 		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.0f;
 
 
-		public static List<SSObject> allSSObjects = new List<SSObject>();
+		private static List<SSObject> allSSObjects = new List<SSObject>();
+		
+		private static List<Unit> allUnits = new List<Unit>();
+		private static List<Building> allBuildings = new List<Building>();
+		private static List<Projectile> allProjectiles = new List<Projectile>();
+		private static List<Hero> allHeroes = new List<Hero>();
+		private static List<Extra> allExtras = new List<Extra>();
 
-		public static List<Unit> allUnits = new List<Unit>();
-		public static List<Building> allBuildings = new List<Building>();
-		public static List<Projectile> allProjectiles = new List<Projectile>();
-		public static List<Hero> allHeroes = new List<Hero>();
-		public static List<Extra> allExtras = new List<Extra>();
+		public static SSObject[] GetAllSSObjects()
+		{
+			return allSSObjects.ToArray();
+		}
 
+		public static Unit[] GetAllUnits()
+		{
+			return allUnits.ToArray();
+		}
+		public static Building[] GetAllBuildings()
+		{
+			return allBuildings.ToArray();
+		}
+		public static Projectile[] GetAllProjectiles()
+		{
+			return allProjectiles.ToArray();
+		}
+		public static Hero[] GetAllHeroes()
+		{
+			return allHeroes.ToArray();
+		}
+		public static Extra[] GetAllExtras()
+		{
+			return allExtras.ToArray();
+		}
 
 
 		private Guid? __guid = null;
 		private string __definitionId = null;
-
-		protected virtual void OnEnable()
-		{
-			allSSObjects.Add( this );
-			if( this is Unit )
-			{
-				allUnits.Add( this as Unit );
-				return;
-			}
-			if( this is Building )
-			{
-				allBuildings.Add( this as Building );
-				return;
-			}
-			if( this is Projectile )
-			{
-				allProjectiles.Add( this as Projectile );
-				return;
-			}
-			if( this is Hero )
-			{
-				allHeroes.Add( this as Hero );
-				return;
-			}
-			if( this is Extra )
-			{
-				allExtras.Add( this as Extra );
-				return;
-			}
-		}
-
-		protected virtual void OnDisable()
-		{
-			allSSObjects.Remove( this );
-			if( this is Unit )
-			{
-				allUnits.Remove( this as Unit );
-				return;
-			}
-			if( this is Building )
-			{
-				allBuildings.Remove( this as Building );
-				return;
-			}
-			if( this is Projectile )
-			{
-				allProjectiles.Remove( this as Projectile );
-				return;
-			}
-			if( this is Hero )
-			{
-				allHeroes.Remove( this as Hero );
-				return;
-			}
-			if( this is Extra )
-			{
-				allExtras.Remove( this as Extra );
-				return;
-			}
-		}
+		private string __displayName = "<missing>";
 
 		/// <summary>
 		/// Gets or sets the unique identifier (Guid) of the object (CAN'T be re-assigned after setting it once).
@@ -129,9 +95,8 @@ namespace SS
 		}
 
 		/// <summary>
-		/// Contains the display name of the object.
+		/// Gets or sets the display name of the object.
 		/// </summary>
-		private string __displayName = "<missing>";
 		public virtual string displayName
 		{
 			get
@@ -234,6 +199,67 @@ namespace SS
 		{
 			T[] modules = this.GetComponents<T>();
 			return modules;
+		}
+
+
+		protected virtual void OnEnable()
+		{
+			allSSObjects.Add( this );
+			if( this is Unit )
+			{
+				allUnits.Add( this as Unit );
+				return;
+			}
+			if( this is Building )
+			{
+				allBuildings.Add( this as Building );
+				return;
+			}
+			if( this is Projectile )
+			{
+				allProjectiles.Add( this as Projectile );
+				return;
+			}
+			if( this is Hero )
+			{
+				allHeroes.Add( this as Hero );
+				return;
+			}
+			if( this is Extra )
+			{
+				allExtras.Add( this as Extra );
+				return;
+			}
+		}
+
+		protected virtual void OnDisable()
+		{
+			allSSObjects.Remove( this );
+			if( this is Unit )
+			{
+				allUnits.Remove( this as Unit );
+				return;
+			}
+			if( this is Building )
+			{
+				allBuildings.Remove( this as Building );
+				return;
+			}
+			if( this is Projectile )
+			{
+				allProjectiles.Remove( this as Projectile );
+				return;
+			}
+			if( this is Hero )
+			{
+				allHeroes.Remove( this as Hero );
+				return;
+			}
+			if( this is Extra )
+			{
+				allExtras.Remove( this as Extra );
+				return;
+			}
 		}
 	}
 }

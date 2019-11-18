@@ -948,11 +948,11 @@ namespace SS.Levels
 		/// <param name="saveSettings">The additional settings that define the behaviour of the method.</param>
 		public static void SaveScene( string newLevelSaveStateDisplayName, string newLevelSaveStateId )
 		{
-			Unit[] units = SSObject.allUnits.ToArray();
-			Building[] buildings = SSObject.allBuildings.ToArray();
-			Projectile[] projectiles = SSObject.allProjectiles.ToArray();
-			Hero[] heroes = SSObject.allHeroes.ToArray();
-			Extra[] extras = SSObject.allExtras.ToArray();
+			Unit[] units = SSObject.GetAllUnits();
+			Building[] buildings = SSObject.GetAllBuildings();
+			Projectile[] projectiles = SSObject.GetAllProjectiles();
+			Hero[] heroes = SSObject.GetAllHeroes();
+			Extra[] extras = SSObject.GetAllExtras();
 
 			Tuple<string, UnitData>[] unitData = new Tuple<string, UnitData>[units.Length];
 			Tuple<string, BuildingData> [] buildingData = new Tuple<string, BuildingData>[buildings.Length];
@@ -1030,7 +1030,7 @@ namespace SS.Levels
 			Guid? highlighted = null;
 			if( Selection.highlightedObject != null )
 			{
-				highlighted = Main.GetGuid( Selection.highlightedObject.GetComponent<SSObject>() );
+				highlighted = Selection.highlightedObject.GetComponent<SSObject>().guid.Value;
 			}
 			Guid?[] selection = null;
 			var selectedObjs = Selection.selectedObjects;
@@ -1040,7 +1040,7 @@ namespace SS.Levels
 
 				for( int i = 0; i < selectedObjs.Length; i++ )
 				{
-					selection[i] = Main.GetGuid( selectedObjs[i].GetComponent<SSObject>() );
+					selection[i] = selectedObjs[i].GetComponent<SSObject>().guid.Value;
 				}
 			}
 

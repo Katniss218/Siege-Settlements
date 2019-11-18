@@ -110,7 +110,7 @@ namespace SS
 			{
 				MakePaymentData data = new MakePaymentData();
 				
-				data.destinationGuid = Main.GetGuid( this.destination );
+				data.destinationGuid = this.destination.guid.Value;
 
 				return data;
 			}

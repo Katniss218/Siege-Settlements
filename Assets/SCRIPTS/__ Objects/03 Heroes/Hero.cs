@@ -8,7 +8,11 @@ namespace SS.Objects.Heroes
 	{
 		public GameObject hud { get; set; }
 
+		private string __displayTitle = "<missing>";
 
+		/// <summary>
+		/// Gets or sets the display name of this Hero.
+		/// </summary>
 		public override string displayName
 		{
 			get => base.displayName;
@@ -19,7 +23,9 @@ namespace SS.Objects.Heroes
 			}
 		}
 
-		private string __displayTitle = "<missing>";
+		/// <summary>
+		/// Gets or sets the display title of this Hero.
+		/// </summary>
 		public string displayTitle
 		{
 			get

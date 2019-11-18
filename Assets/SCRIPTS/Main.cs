@@ -877,21 +877,7 @@ namespace SS
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.GetComponent<SSObject>() );
 			}
 		}
-
-		public static Guid GetGuid( SSObject obj )
-		{
-			// gets guid of object.
-			if( obj == null )
-			{
-				throw new Exception( "Obj was null." );
-			}
-			if( obj.guid == null )
-			{
-				throw new Exception( "Specified SSObject doesn't have Guid assigned to it." );
-			}
-			return obj.guid.Value;
-		}
-
+		
 		public static bool IsInRange( Vector3 pos1, Vector3 pos2, float threshold )
 		{
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
@@ -899,11 +885,13 @@ namespace SS
 
 		public static SSObject GetSSObject( Guid guid )
 		{
-			for( int i = 0; i < SSObject.allSSObjects.Count; i++ )
+			SSObject[] ssObjectArray = SSObject.GetAllSSObjects();
+
+			for( int i = 0; i < ssObjectArray.Length; i++ )
 			{
-				if( SSObject.allSSObjects[i].guid == guid )
+				if( ssObjectArray[i].guid == guid )
 				{
-					return SSObject.allSSObjects[i];
+					return ssObjectArray[i];
 				}
 			}
 			return null;
