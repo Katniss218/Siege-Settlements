@@ -291,40 +291,34 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Creates a new UnitData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a unit.</param>
-		public static UnitData GetData( GameObject gameObject )
+		/// <param name="unit">The GameObject to extract the save state from. Must be a unit.</param>
+		public static UnitData GetData( Unit unit )
 		{
-			if( !Unit.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid unit." );
-			}
-
-			UnitData data = new UnitData();
-
-			Unit unit = gameObject.GetComponent<Unit>();
 			if( unit.guid == null )
 			{
 				throw new Exception( "Guid not assigned." );
 			}
+
+			UnitData data = new UnitData();
 			data.guid = unit.guid.Value;
 
-			data.position = gameObject.transform.position;
-			data.rotation = gameObject.transform.rotation;
+			data.position = unit.transform.position;
+			data.rotation = unit.transform.rotation;
 
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			FactionMember factionMember = unit.GetComponent<FactionMember>();
 			data.factionId = factionMember.factionId;
 
-			Damageable damageable = gameObject.GetComponent<Damageable>();
+			Damageable damageable = unit.GetComponent<Damageable>();
 			data.health = damageable.health;
 
 			//
 			// MODULES
 			//
 
-			SSObjectCreator.ExtractModules( gameObject, data );
+			SSObjectCreator.ExtractModulesToData( unit, data );
 
 
-			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
+			TAIGoal taiGoal = unit.GetComponent<TAIGoal>();
 			if( taiGoal != null )
 			{
 				data.taiGoalData = taiGoal.GetData();

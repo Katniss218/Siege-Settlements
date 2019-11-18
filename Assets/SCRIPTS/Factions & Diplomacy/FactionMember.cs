@@ -8,6 +8,8 @@ namespace SS.Diplomacy
 	{
 		FactionMember factionMember { get; }
 	}
+
+	[DisallowMultipleComponent]
 	/// <summary>
 	/// The object that belongs to a faction.
 	/// </summary>

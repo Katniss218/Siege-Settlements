@@ -9,6 +9,7 @@ namespace SS
 		Damageable damageable { get; }
 	}
 
+	[DisallowMultipleComponent]
 	/// <summary>
 	/// Represents objects that can be damaged.
 	/// </summary>

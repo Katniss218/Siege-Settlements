@@ -1,5 +1,4 @@
 ﻿using SS.Diplomacy;
-using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -7,26 +6,6 @@ namespace SS.Objects.Projectiles
 {
 	public class Projectile : SSObject
 	{
-		public static bool IsValid( GameObject gameObject )
-		{
-			if( gameObject.layer != ObjectLayer.PROJECTILES )
-			{
-				return false;
-			} 
-			if( gameObject.GetComponent<Projectile>() == null )
-			{
-				return false;
-			}
-			return true;
-		}
-
-		private static List<Projectile> _allProjectiles = new List<Projectile>();
-
-		public static Projectile[] GetAllProjectiles()
-		{
-			return _allProjectiles.ToArray();
-		}
-		
 		public bool isStuck { get; set; }
 
 		public float blastRadius { get; set; }
@@ -143,17 +122,6 @@ namespace SS.Objects.Projectiles
 					}
 				}
 			}
-		}
-
-
-		void OnEnable()
-		{
-			_allProjectiles.Add( this );
-		}
-
-		void OnDisable()
-		{
-			_allProjectiles.Remove( this );
 		}
 	}
 }

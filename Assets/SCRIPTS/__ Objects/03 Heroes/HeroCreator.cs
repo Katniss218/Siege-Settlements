@@ -60,9 +60,6 @@ namespace SS.Objects.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			
-			hero.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = def.displayName;
-			hero.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = def.displayTitle;
-
 			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 
@@ -299,40 +296,34 @@ namespace SS.Objects.Heroes
 		/// <summary>
 		/// Creates a new HeroData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a hero.</param>
-		public static HeroData GetData( GameObject gameObject )
+		/// <param name="hero">The GameObject to extract the save state from. Must be a hero.</param>
+		public static HeroData GetData( Hero hero )
 		{
-			if( !Hero.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid hero." );
-			}
-
-			HeroData data = new HeroData();
-
-			Hero hero = gameObject.GetComponent<Hero>();
 			if( hero.guid == null )
 			{
 				throw new Exception( "Guid was not assigned." );
 			}
+
+			HeroData data = new HeroData();
 			data.guid = hero.guid.Value;
 
-			data.position = gameObject.transform.position;
-			data.rotation = gameObject.transform.rotation;
+			data.position = hero.transform.position;
+			data.rotation = hero.transform.rotation;
 
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			FactionMember factionMember = hero.GetComponent<FactionMember>();
 			data.factionId = factionMember.factionId;
 
-			Damageable damageable = gameObject.GetComponent<Damageable>();
+			Damageable damageable = hero.GetComponent<Damageable>();
 			data.health = damageable.health;
 
 			//
 			// MODULES
 			//
 
-			SSObjectCreator.ExtractModules( gameObject, data );
+			SSObjectCreator.ExtractModulesToData( hero, data );
 			
 
-			TAIGoal taiGoal = gameObject.GetComponent<TAIGoal>();
+			TAIGoal taiGoal = hero.GetComponent<TAIGoal>();
 			if( taiGoal != null )
 			{
 				data.taiGoalData = taiGoal.GetData();

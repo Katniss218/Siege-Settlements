@@ -55,9 +55,9 @@ namespace SS
 			}
 		}
 
-		public static void ExtractModules( GameObject gameObject, ObjectData data )
+		public static void ExtractModulesToData( SSObject ssObject, ObjectData data )
 		{
-			SSModule[] modules = gameObject.GetComponents<SSModule>();
+			SSModule[] modules = ssObject.GetModules();
 			for( int i = 0; i < modules.Length; i++ )
 			{
 				ModuleData moduleData = modules[i].GetData();

@@ -1,35 +1,37 @@
 ﻿using SS.Diplomacy;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace SS.Objects.Heroes
 {
 	public class Hero : SSObject, IHUDHolder, IFactionMember, IDamageable
 	{
-		public static bool IsValid( GameObject gameObject )
-		{
-			if( gameObject.layer != ObjectLayer.HEROES )
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<Hero>() == null )
-			{
-				return false;
-			}
-			return true;
-		}
-
-		private static List<Hero> _allHeroes = new List<Hero>();
-
-		public static Hero[] GetAllHeroes()
-		{
-			return _allHeroes.ToArray();
-		}
-
-
 		public GameObject hud { get; set; }
 
-		public string displayTitle { get; set; }
+
+		public override string displayName
+		{
+			get => base.displayName;
+			set
+			{
+				this.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
+				base.displayName = value;
+			}
+		}
+
+		private string __displayTitle = "<missing>";
+		public string displayTitle
+		{
+			get
+			{
+				return this.__displayTitle;
+			}
+			set
+			{
+				this.__displayTitle = value;
+				this.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = value;
+			}
+		}
 
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
@@ -78,16 +80,6 @@ namespace SS.Objects.Heroes
 				this.hud.SetActive( false );
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
-		}
-
-		void OnEnable()
-		{
-			_allHeroes.Add( this );
-		}
-
-		void OnDisable()
-		{
-			_allHeroes.Remove( this );
 		}
 	}
 }

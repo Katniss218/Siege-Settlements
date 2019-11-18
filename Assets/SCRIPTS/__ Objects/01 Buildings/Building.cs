@@ -6,26 +6,6 @@ namespace SS.Objects.Buildings
 {
 	public class Building : SSObject, IHUDHolder, IFactionMember, IDamageable
 	{
-		public static bool IsValid( GameObject gameObject )
-		{
-			if( gameObject.layer != ObjectLayer.BUILDINGS )
-			{
-				return false;
-			}
-			if( gameObject.GetComponent<Building>() == null )
-			{
-				return false;
-			}
-			return true;
-		}
-
-		private static List<Building> _allBuildings = new List<Building>();
-
-		public static Building[] GetAllBuildings()
-		{
-			return _allBuildings.ToArray();
-		}
-
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
 
@@ -120,18 +100,7 @@ namespace SS.Objects.Buildings
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}
-
-
-		void OnEnable()
-		{
-			_allBuildings.Add( this );
-		}
-
-		void OnDisable()
-		{
-			_allBuildings.Remove( this );
-		}
-
+		
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()

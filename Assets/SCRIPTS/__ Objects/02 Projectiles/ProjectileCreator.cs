@@ -132,30 +132,24 @@ namespace SS.Objects.Projectiles
 		/// <summary>
 		/// Creates a new ProjectileData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a projectile.</param>
-		public static ProjectileData GetData( GameObject gameObject )
+		/// <param name="projectile">The GameObject to extract the save state from. Must be a projectile.</param>
+		public static ProjectileData GetData( Projectile projectile )
 		{
-			if( !Projectile.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid projectile." );
-			}
-
-			ProjectileData data = new ProjectileData();
-
-			Projectile projectile = gameObject.GetComponent<Projectile>();
 			if( projectile.guid == null )
 			{
 				throw new Exception( "Guid was not assigned." );
 			}
+
+			ProjectileData data = new ProjectileData();
 			data.guid = projectile.guid.Value;
 
-			data.position = gameObject.transform.position;
+			data.position = projectile.transform.position;
 
-			Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
+			Rigidbody rigidbody = projectile.GetComponent<Rigidbody>();
 			if( projectile.isStuck )
 			{
 				data.isStuck = true;
-				data.stuckRotation = gameObject.transform.rotation;
+				data.stuckRotation = projectile.transform.rotation;
 			}
 			else
 			{
@@ -163,10 +157,10 @@ namespace SS.Objects.Projectiles
 				data.velocity = rigidbody.velocity;
 			}
 
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			FactionMember factionMember = projectile.GetComponent<FactionMember>();
 			data.factionId = factionMember.factionId;
 
-			DamageSource damageSource = gameObject.GetComponent<Projectile>().damageSource;
+			DamageSource damageSource = projectile.GetComponent<Projectile>().damageSource;
 			data.damageTypeOverride = damageSource.damageType;
 			data.damageOverride = damageSource.damage;
 			data.armorPenetrationOverride = damageSource.armorPenetration;
@@ -175,7 +169,7 @@ namespace SS.Objects.Projectiles
 			// MODULES
 			//
 
-			SSObjectCreator.ExtractModules( gameObject, data );
+			SSObjectCreator.ExtractModulesToData( projectile, data );
 
 
 			return data;

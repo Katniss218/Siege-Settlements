@@ -222,7 +222,7 @@ namespace SS.Modules
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
-			this.isBuilding = Building.IsValid( this.gameObject );
+			this.isBuilding = (this.ssObject is Building);
 			this.factionMember = this.GetComponent<FactionMember>();
 			this.damageableSelf = this.GetComponent<Damageable>();
 		}

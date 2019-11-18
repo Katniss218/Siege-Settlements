@@ -948,11 +948,11 @@ namespace SS.Levels
 		/// <param name="saveSettings">The additional settings that define the behaviour of the method.</param>
 		public static void SaveScene( string newLevelSaveStateDisplayName, string newLevelSaveStateId )
 		{
-			Unit[] units = Unit.GetAllUnits();
-			Building[] buildings = Building.GetAllBuildings();
-			Projectile[] projectiles = Projectile.GetAllProjectiles();
-			Hero[] heroes = Hero.GetAllHeroes();
-			Extra[] extras = Extra.GetAllExtras();
+			Unit[] units = SSObject.allUnits.ToArray();
+			Building[] buildings = SSObject.allBuildings.ToArray();
+			Projectile[] projectiles = SSObject.allProjectiles.ToArray();
+			Hero[] heroes = SSObject.allHeroes.ToArray();
+			Extra[] extras = SSObject.allExtras.ToArray();
 
 			Tuple<string, UnitData>[] unitData = new Tuple<string, UnitData>[units.Length];
 			Tuple<string, BuildingData> [] buildingData = new Tuple<string, BuildingData>[buildings.Length];
@@ -962,23 +962,23 @@ namespace SS.Levels
 
 			for( int i = 0; i < unitData.Length; i++ )
 			{
-				unitData[i] = new Tuple<string, UnitData>( units[i].definitionId, UnitCreator.GetData( units[i].gameObject ) );
+				unitData[i] = new Tuple<string, UnitData>( units[i].definitionId, UnitCreator.GetData( units[i] ) );
 			}
 			for( int i = 0; i < buildingData.Length; i++ )
 			{
-				buildingData[i] = new Tuple<string, BuildingData>( buildings[i].definitionId, BuildingCreator.GetData( buildings[i].gameObject ) );
+				buildingData[i] = new Tuple<string, BuildingData>( buildings[i].definitionId, BuildingCreator.GetData( buildings[i] ) );
 			}
 			for( int i = 0; i < projectileData.Length; i++ )
 			{
-				projectileData[i] = new Tuple<string, ProjectileData>( projectiles[i].definitionId, ProjectileCreator.GetData( projectiles[i].gameObject ) );
+				projectileData[i] = new Tuple<string, ProjectileData>( projectiles[i].definitionId, ProjectileCreator.GetData( projectiles[i] ) );
 			}
 			for( int i = 0; i < heroData.Length; i++ )
 			{
-				heroData[i] = new Tuple<string, HeroData>( heroes[i].definitionId, HeroCreator.GetData( heroes[i].gameObject ) );
+				heroData[i] = new Tuple<string, HeroData>( heroes[i].definitionId, HeroCreator.GetData( heroes[i] ) );
 			}
 			for( int i = 0; i < extraData.Length; i++ )
 			{
-				extraData[i] = new Tuple<string, ExtraData>( extras[i].definitionId, ExtraCreator.GetData( extras[i].gameObject ) );
+				extraData[i] = new Tuple<string, ExtraData>( extras[i].definitionId, ExtraCreator.GetData( extras[i] ) );
 			}
 
 			string path = GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId );

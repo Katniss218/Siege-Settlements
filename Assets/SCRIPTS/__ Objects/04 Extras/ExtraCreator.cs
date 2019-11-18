@@ -77,31 +77,25 @@ namespace SS.Objects.Extras
 		/// <summary>
 		/// Creates a new ExtraData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be an extra.</param>
-		public static ExtraData GetData( GameObject gameObject )
+		/// <param name="extra">The GameObject to extract the save state from. Must be an extra.</param>
+		public static ExtraData GetData( Extra extra )
 		{
-			if( !Extra.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid extra." );
-			}
-
-			ExtraData data = new ExtraData();
-
-			Extra extra = gameObject.GetComponent<Extra>();
 			if( extra.guid == null )
 			{
 				throw new Exception( "Guid was not assigned." );
 			}
+
+			ExtraData data = new ExtraData();
 			data.guid = extra.guid.Value;
 
-			data.position = gameObject.transform.position;
-			data.rotation = gameObject.transform.rotation;
+			data.position = extra.transform.position;
+			data.rotation = extra.transform.rotation;
 
 			//
 			// MODULES
 			//
 
-			SSObjectCreator.ExtractModules( gameObject, data );
+			SSObjectCreator.ExtractModulesToData( extra, data );
 
 
 			return data;

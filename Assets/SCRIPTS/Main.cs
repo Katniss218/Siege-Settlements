@@ -899,51 +899,13 @@ namespace SS
 
 		public static SSObject GetSSObject( Guid guid )
 		{
-			Unit[] units = Unit.GetAllUnits();
-			for( int i = 0; i < units.Length; i++ )
+			for( int i = 0; i < SSObject.allSSObjects.Count; i++ )
 			{
-				if( units[i].guid == guid )
+				if( SSObject.allSSObjects[i].guid == guid )
 				{
-					return units[i];
+					return SSObject.allSSObjects[i];
 				}
 			}
-
-			Building[] buildings = Building.GetAllBuildings();
-			for( int i = 0; i < buildings.Length; i++ )
-			{
-				if( buildings[i].guid == guid )
-				{
-					return buildings[i];
-				}
-			}
-
-			Hero[] heroes = Hero.GetAllHeroes();
-			for( int i = 0; i < heroes.Length; i++ )
-			{
-				if( heroes[i].guid == guid )
-				{
-					return heroes[i];
-				}
-			}
-
-			Extra[] extras = Extra.GetAllExtras();
-			for( int i = 0; i < extras.Length; i++ )
-			{
-				if( extras[i].guid == guid )
-				{
-					return extras[i];
-				}
-			}
-
-			Projectile[] projectiles = Projectile.GetAllProjectiles();
-			for( int i = 0; i < projectiles.Length; i++ )
-			{
-				if( projectiles[i].guid == guid )
-				{
-					return projectiles[i];
-				}
-			}
-
 			return null;
 		}
 	}

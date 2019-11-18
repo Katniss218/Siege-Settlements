@@ -1,5 +1,10 @@
 ﻿using SS.Modules;
+using SS.Objects.Buildings;
+using SS.Objects.Extras;
+using SS.Objects.Heroes;
+using SS.Objects.Projectiles;
 using SS.Objects.SubObjects;
+using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +16,79 @@ namespace SS
 	{
 		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.0f;
 
+
+		public static List<SSObject> allSSObjects = new List<SSObject>();
+
+		public static List<Unit> allUnits = new List<Unit>();
+		public static List<Building> allBuildings = new List<Building>();
+		public static List<Projectile> allProjectiles = new List<Projectile>();
+		public static List<Hero> allHeroes = new List<Hero>();
+		public static List<Extra> allExtras = new List<Extra>();
+
+
+
 		private Guid? __guid = null;
 		private string __definitionId = null;
+
+		protected virtual void OnEnable()
+		{
+			allSSObjects.Add( this );
+			if( this is Unit )
+			{
+				allUnits.Add( this as Unit );
+				return;
+			}
+			if( this is Building )
+			{
+				allBuildings.Add( this as Building );
+				return;
+			}
+			if( this is Projectile )
+			{
+				allProjectiles.Add( this as Projectile );
+				return;
+			}
+			if( this is Hero )
+			{
+				allHeroes.Add( this as Hero );
+				return;
+			}
+			if( this is Extra )
+			{
+				allExtras.Add( this as Extra );
+				return;
+			}
+		}
+
+		protected virtual void OnDisable()
+		{
+			allSSObjects.Remove( this );
+			if( this is Unit )
+			{
+				allUnits.Remove( this as Unit );
+				return;
+			}
+			if( this is Building )
+			{
+				allBuildings.Remove( this as Building );
+				return;
+			}
+			if( this is Projectile )
+			{
+				allProjectiles.Remove( this as Projectile );
+				return;
+			}
+			if( this is Hero )
+			{
+				allHeroes.Remove( this as Hero );
+				return;
+			}
+			if( this is Extra )
+			{
+				allExtras.Remove( this as Extra );
+				return;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the unique identifier (Guid) of the object (CAN'T be re-assigned after setting it once).
@@ -55,7 +131,18 @@ namespace SS
 		/// <summary>
 		/// Contains the display name of the object.
 		/// </summary>
-		public string displayName = "<missing>";
+		private string __displayName = "<missing>";
+		public virtual string displayName
+		{
+			get
+			{
+				return this.__displayName;
+			}
+			set
+			{
+				this.__displayName = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets a SubObject with specified Id. Returns null if none are present.

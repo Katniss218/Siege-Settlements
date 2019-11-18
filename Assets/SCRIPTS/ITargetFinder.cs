@@ -1,7 +1,4 @@
-﻿using SS.Diplomacy;
-using System;
-
-namespace SS
+﻿namespace SS
 {
 	public interface ITargetFinder
 	{
@@ -15,6 +12,7 @@ namespace SS
 		/// </summary>
 		float searchRange { get; }
 		
+
 		/// <summary>
 		/// Tries to set the target to any damageable.
 		/// </summary>

@@ -313,32 +313,27 @@ namespace SS.Objects.Buildings
 		/// <summary>
 		/// Creates a new BuildingData from a GameObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to extract the save state from. Must be a building.</param>
-		public static BuildingData GetData( GameObject gameObject )
+		/// <param name="building">The GameObject to extract the save state from. Must be a building.</param>
+		public static BuildingData GetData( Building building )
 		{
-			if( !Building.IsValid( gameObject ) )
-			{
-				throw new Exception( "GameObject '" + gameObject.name + "' is not a valid building." );
-			}
-
-			BuildingData data = new BuildingData();
-			Building building = gameObject.GetComponent<Building>();
 			if( building.guid == null )
 			{
 				throw new Exception( "Guid was not assigned." );
 			}
+
+			BuildingData data = new BuildingData();
 			data.guid = building.guid.Value;
 
-			data.position = gameObject.transform.position;
-			data.rotation = gameObject.transform.rotation;
+			data.position = building.transform.position;
+			data.rotation = building.transform.rotation;
 			
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			FactionMember factionMember = building.GetComponent<FactionMember>();
 			data.factionId = factionMember.factionId;
 
-			Damageable damageable = gameObject.GetComponent<Damageable>();
+			Damageable damageable = building.GetComponent<Damageable>();
 			data.health = damageable.health;
 
-			ConstructionSite constructionSite = gameObject.GetComponent<ConstructionSite>();
+			ConstructionSite constructionSite = building.GetComponent<ConstructionSite>();
 			if( constructionSite != null )
 			{
 				data.constructionSaveState = constructionSite.GetSaveState();
@@ -348,7 +343,7 @@ namespace SS.Objects.Buildings
 			// MODULES
 			//
 
-			SSObjectCreator.ExtractModules( gameObject, data );
+			SSObjectCreator.ExtractModulesToData( building, data );
 
 
 			return data;
