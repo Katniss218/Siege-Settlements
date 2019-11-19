@@ -14,6 +14,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using SS.Objects;
 
 namespace SS.Levels
 {

@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS
+namespace SS.Objects
 {
 	[DisallowMultipleComponent]
 	public class SSObject : MonoBehaviour

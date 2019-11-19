@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Modules.Inventories;
+using SS.Objects;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,7 +24,6 @@ namespace SS
 			{
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule destinationInventory = this.destination.GetComponent<InventoryModule>();
 				
 				foreach( var kvp in resourcesCarried )
@@ -56,7 +56,6 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-#warning TODO! - replace with ssobject getmodule.
 				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{

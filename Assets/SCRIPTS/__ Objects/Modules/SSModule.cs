@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.Objects;
+using System;
 using UnityEngine;
 
 namespace SS.Modules

@@ -18,6 +18,7 @@ using SS.Diplomacy;
 using SS.InputSystem;
 using SS.Modules;
 using Object = UnityEngine.Object;
+using SS.Objects;
 
 namespace SS
 {
@@ -188,8 +189,7 @@ namespace SS
 							hitDepositSSObject = raycastHits[i].collider.GetComponent<SSObject>();
 							hitDeposit = deposit;
 						}
-
-#warning replace with ssobject getmodule.
+						
 						InventoryModule inventory = raycastHits[i].collider.GetComponent<InventoryModule>();
 						if( inventory != null && hitInventorySSObject == null )
 						{
@@ -298,7 +298,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-#warning TODO! - replace with ssobject getmodule.
+#warning implement some sort of object.isUsable (can put items into building that is not usable).
 					InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
 
 
@@ -598,7 +598,6 @@ namespace SS
 				{
 					continue;
 				}
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
 				if( inv == null )
 				{
@@ -635,7 +634,6 @@ namespace SS
 				{
 					continue;
 				}
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
 				if( inv == null )
 				{
@@ -750,7 +748,6 @@ namespace SS
 				{
 					continue;
 				}
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
 				if( inv == null )
 				{
@@ -796,7 +793,6 @@ namespace SS
 				{
 					continue;
 				}
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
 				if( inv == null )
 				{
@@ -856,7 +852,6 @@ namespace SS
 				{
 					continue;
 				}
-#warning TODO! - replace with ssobject getmodule.
 				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
 				if( inv == null )
 				{

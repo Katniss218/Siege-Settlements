@@ -139,14 +139,7 @@ namespace SS.Modules.Inventories
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
-				if( this.isEmpty )
-				{
-					this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
-				}
-				else
-				{
-					this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
-				}
+				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
 			} );
 
 			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
@@ -363,25 +356,29 @@ namespace SS.Modules.Inventories
 			}
 
 			// array of indices to the slots. (necessary since we want to fill up non-empty slots before filling up empty ones).
-			List<int> indices = new List<int>();
+			List<int> indicesEmpty = new List<int>();
+			List<int> indicesFull = new List<int>();
 			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
 					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						indices.Add( i );
+						indicesEmpty.Add( i );
 					}
 				}
 				else
 				{// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
 					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
-#warning						 flip the array to add to the first slot first.
-						indices.Insert( 0, i );
+						indicesFull.Add( i );
 					}
 				}
 			}
+			List<int> indices = new List<int>();
+			indices.AddRange( indicesFull );
+			indices.AddRange( indicesEmpty );
+
 			int amountRemaining = amountMax;
 			for( int i = 0; i < indices.Count; i++ )
 			{
@@ -392,13 +389,14 @@ namespace SS.Modules.Inventories
 				this.slotGroups[index].amount += amountAdded;
 				this.slotGroups[index].id = id;
 				amountRemaining -= amountAdded;
-				this.onAdd?.Invoke( id, amountAdded );
 
 				if( amountRemaining == 0 )
 				{
+					this.onAdd?.Invoke( id, amountMax );
 					return amountMax;
 				}
 			}
+			this.onAdd?.Invoke( id, amountMax - amountRemaining );
 			return amountMax - amountRemaining;
 		}
 
@@ -430,33 +428,32 @@ namespace SS.Modules.Inventories
 						this.slotGroups[i].id = "";
 					}
 					amountLeftToRemove -= amountRemoved;
-					this.onRemove?.Invoke( id, amountRemoved );
 					
 					if( amountLeftToRemove == 0 )
 					{
+						this.onRemove?.Invoke( id, amountMax );
 						return amountMax;
 					}
 				}
 			}
+			this.onRemove?.Invoke( id, amountMax - amountLeftToRemove );
 			return amountMax - amountLeftToRemove;
 		}
 
 		public void Clear()
 		{
-#warning TODO! - call events based on the item type, not each slot.
-			Tuple<string, int>[] res = new Tuple<string, int>[this.slotCount];
+			Dictionary<string, int> res = this.GetAll();
 
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				res[i] = new Tuple<string, int>( this.slotGroups[i].id, this.slotGroups[i].amount );
 				this.slotGroups[i].id = "";
 				this.slotGroups[i].amount = 0;
 			}
 
-			// Call the event after clearing, once per each type.
-			for( int i = 0; i < res.Length; i++ )
+			// Call the event after clearing, once per each type removed.
+			foreach( var kvp in res )
 			{
-				this.onRemove?.Invoke( res[i].Item1, res[i].Item2 ); // be consistent, both inventories call after adding/removing.
+				this.onRemove?.Invoke( kvp.Key, kvp.Value ); // be consistent, all methods shall invoke after adding/removing.
 			}
 		}
 
@@ -524,9 +521,6 @@ namespace SS.Modules.Inventories
 				{
 					this.slotGroups[i].id = data.items[i].id;
 					this.slotGroups[i].amount = data.items[i].amount;
-
-#warning TODO! - call events based on the item type, not each slot. (don't call with slot args, slots gan be accessed directly)
-					this.onAdd?.Invoke( data.items[i].id, data.items[i].amount );
 				}
 			}
 		}

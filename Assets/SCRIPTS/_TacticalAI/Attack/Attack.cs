@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.Objects;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS

@@ -1,5 +1,6 @@
 ﻿using SS.Content;
 using SS.Modules;
+using SS.Objects;
 using SS.Objects.SubObjects;
 using System;
 using UnityEngine;

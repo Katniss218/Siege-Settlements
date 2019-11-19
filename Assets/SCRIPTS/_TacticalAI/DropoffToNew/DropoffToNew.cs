@@ -88,7 +88,6 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-#warning TODO! - replace with ssobject getmodule.
 				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{

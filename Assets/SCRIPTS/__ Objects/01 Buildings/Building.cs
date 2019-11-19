@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObject, IHUDHolder, IDamageable, IFactionMember, IObstacle
+	public class Building : SSObject, IHUDHolder, IDamageable, IUsableToggle, IFactionMember, IObstacle
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -24,21 +24,18 @@ namespace SS.Objects.Buildings
 
 		public AudioClip deathSound { get; set; }
 
-
-		/// <summary>
-		/// Checks if the building is in a 'usable' state (not under construction/repair and not below 50% health).
-		/// </summary>
-		public static bool IsUsable( Damageable building )
+		public bool CheckUsable()
 		{
 			// If not under construction/repair.
-			if( building.GetComponent<ConstructionSite>() == null )
+			if( this.GetComponent<ConstructionSite>() == null )
 			{
-				return building.healthPercent >= 0.5f;
+				return this.damageable.healthPercent >= 0.5f;
 			}
 			// If under construction/repair.
 			return false;
 		}
 		
+
 		/// <summary>
 		/// Checks if the building can be repaired (repair hasn't started already).
 		/// </summary>

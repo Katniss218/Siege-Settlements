@@ -136,10 +136,7 @@ namespace SS.Modules
 
 		private float lastAttackTimestamp;
 		private FactionMember factionMember;
-
-		private bool isBuilding;
-		private Damageable damageableSelf;
-
+		
 		private SubObject[] traversibleSubObjects { get; set; }
 
 		public bool isReadyToAttack
@@ -223,15 +220,13 @@ namespace SS.Modules
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
-			this.isBuilding = (this.ssObject is Building);
 			this.factionMember = this.GetComponent<FactionMember>();
-			this.damageableSelf = this.GetComponent<Damageable>();
 		}
 
 		void Update()
 		{
-			// If it's a building and it's not usable - return, don't attack.
-			if( this.isBuilding && !Building.IsUsable( this.damageableSelf ) )
+			// If it's not usable - return, don't attack.
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
 			{
 				return;
 			}

@@ -273,7 +273,7 @@ namespace SS.Objects.Buildings
 				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
 				SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
-				if( !Building.IsUsable( damageable ) )
+				if( !building.CheckUsable() )
 				{
 					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
@@ -292,9 +292,10 @@ namespace SS.Objects.Buildings
 					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
 				}
 
-				// if it is now usable, but was unusable before - remove the unusable flag.
-				if( Building.IsUsable( damageable ) )
+				// If the health change changed the usability (health is above threshold).
+				if( building.CheckUsable() )
 				{
+					// If the building was not usable before the health change.
 					if( SelectionPanel.instance.obj.GetElement( "building.unusable_flag" ) != null )
 					{
 						SelectionPanel.instance.obj.Clear( "building.unusable_flag" );

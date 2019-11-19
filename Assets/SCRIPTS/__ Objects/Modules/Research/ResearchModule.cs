@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
+using SS.Objects;
 
 namespace SS.Modules
 {
@@ -408,19 +409,12 @@ namespace SS.Modules
 
 		private void OnHighlight()
 		{
-			// If the research facility is on a building, that is not usable.
-			if( this.selectable.gameObject.layer == ObjectLayer.BUILDINGS )
+			// If it's not usable - return, don't research anything.
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
 			{
-				Damageable damageable = this.GetComponent<Damageable>();
-
-				if( damageable != null )
-				{
-					if( !Building.IsUsable( damageable ) )
-					{
-						return;
-					}
-				}
+				return;
 			}
+
 			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;

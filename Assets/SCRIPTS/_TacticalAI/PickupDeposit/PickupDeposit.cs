@@ -1,11 +1,10 @@
 ﻿using Katniss.Utils;
-using SS.Content;
-using SS.Objects.Extras;
 using SS.Modules;
 using SS.Modules.Inventories;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using SS.Objects;
 
 namespace SS
 {
@@ -27,7 +26,6 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-#warning TODO! - replace with ssobject getmodule.
 				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{

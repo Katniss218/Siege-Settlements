@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Content;
 using SS.Modules.Inventories;
+using SS.Objects;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
@@ -45,7 +46,6 @@ namespace SS
 				}
 
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-#warning TODO! - replace with ssobject getmodule.
 				this.inventory = this.GetComponent<InventoryModule>();
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
