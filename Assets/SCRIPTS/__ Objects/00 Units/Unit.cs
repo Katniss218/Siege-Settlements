@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObject, IHUDHolder, IFactionMember, IDamageable
+	public class Unit : SSObject, IHUDHolder, IDamageable, IFactionMember
 	{
 		public GameObject hud { get; set; }
 

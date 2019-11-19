@@ -8,6 +8,7 @@ using SS.Objects.Projectiles;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using SS.Objects;
 
 namespace SS.Modules
 {

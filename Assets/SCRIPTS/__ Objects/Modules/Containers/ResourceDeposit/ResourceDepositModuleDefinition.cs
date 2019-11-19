@@ -47,8 +47,7 @@ namespace SS.Modules
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
 		{
 			return !(
-				modTypes.Contains( typeof( InventoryConstrainedModuleDefinition ) ) ||
-				modTypes.Contains( typeof( InventoryUnconstrainedModuleDefinition ) ) ||
+				modTypes.Contains( typeof( InventoryModuleDefinition ) ) ||
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObject, IHUDHolder, IFactionMember, IDamageable
+	public class Hero : SSObject, IHUDHolder, IDamageable, IFactionMember
 	{
 		public GameObject hud { get; set; }
 

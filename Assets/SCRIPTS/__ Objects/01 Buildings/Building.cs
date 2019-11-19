@@ -1,10 +1,11 @@
 ﻿using SS.Diplomacy;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObject, IHUDHolder, IFactionMember, IDamageable
+	public class Building : SSObject, IHUDHolder, IDamageable, IFactionMember, IObstacle
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -58,13 +59,16 @@ namespace SS.Objects.Buildings
 		private Selectable selectable = null;
 		public Damageable damageable { get; set; }
 		public FactionMember factionMember { get; set; }
-
-
+		public NavMeshObstacle obstacle { get; private set; }
+		new public BoxCollider collider { get; private set; }
+		
 		void Start()
 		{
 			this.selectable = this.GetComponent<Selectable>();
 			this.damageable = this.GetComponent<Damageable>();
 			this.factionMember = this.GetComponent<FactionMember>();
+			this.obstacle = this.GetComponent<NavMeshObstacle>();
+			this.collider = this.GetComponent<BoxCollider>();
 		}
 
 

@@ -22,12 +22,13 @@ namespace SS
 			private float amtCollected = 0;
 
 			private NavMeshAgent navMeshAgent;
-			private IInventory inventory;
+			private InventoryModule inventory;
 
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.inventory = this.GetComponent<IInventory>();
+#warning TODO! - replace with ssobject getmodule.
+				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{
 					throw new System.Exception( "Can't add PickupDeposit TAI goal to: " + this.gameObject.name );

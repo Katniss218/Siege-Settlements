@@ -4,11 +4,6 @@ using UnityEngine.Events;
 
 namespace SS.Diplomacy
 {
-	public interface IFactionMember
-	{
-		FactionMember factionMember { get; }
-	}
-
 	[DisallowMultipleComponent]
 	/// <summary>
 	/// The object that belongs to a faction.

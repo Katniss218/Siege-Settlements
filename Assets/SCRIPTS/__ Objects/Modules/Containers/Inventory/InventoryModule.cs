@@ -11,32 +11,39 @@ using UnityEngine.UI;
 
 namespace SS.Modules.Inventories
 {
+	public class _UnityEvent_string_int : UnityEvent<string, int> { }
+
 	/// <summary>
 	/// An inventory that has slots constrained to single resource ID.
 	/// </summary>
-	public sealed class InventoryConstrainedModule : SSModule, IInventory
+	public sealed class InventoryModule : SSModule
 	{
-		private struct SlotGroup
+		public struct SlotGroup
 		{
-			public readonly string id;
+			public readonly string slotId;
+			public string resourceId;
 			public int amount;
 			public readonly int slotCapacity;
 
-			public SlotGroup( string id, int amount, int capacity )
+			public bool isConstrained { get { return this.slotId != ""; } }
+			public bool isEmpty { get { return this.amount == 0 || this.resourceId == ""; } }
+
+			public SlotGroup( string slotId, int slotCapacity )
 			{
-				this.id = id;
-				this.amount = amount;
-				this.slotCapacity = capacity;
+				this.slotId = slotId ?? "";
+				this.resourceId = "";
+				this.slotCapacity = slotCapacity;
+				this.amount = 0;
 			}
 		}
 
-		private SlotGroup[] resources;
+		private SlotGroup[] slotGroups;
 
 		public int slotCount
 		{
 			get
 			{
-				return this.resources.Length;
+				return this.slotGroups.Length;
 			}
 		}
 
@@ -59,15 +66,28 @@ namespace SS.Modules.Inventories
 			{
 				return;
 			}
-
-			Tuple<string, int>[] items = this.GetSlots();
-
+			
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
-
-			foreach( Tuple<string, int> item in items )
+			
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				ResourceDefinition resourceDef = DefinitionManager.GetResource( item.Item1 );
-				ToolTip.AddText( resourceDef.icon, item.Item2 + " / " + this.GetMaxCapacity( item.Item1 ) );
+				if( this.slotGroups[i].isEmpty )
+				{
+					if( this.slotGroups[i].isConstrained )
+					{
+						ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].slotId );
+						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+					}
+					else
+					{
+						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+					}
+				}
+				else
+				{
+					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].resourceId );
+					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+				}
 			}
 			ToolTip.ShowAt( Input.mousePosition );
 		}
@@ -205,9 +225,9 @@ namespace SS.Modules.Inventories
 			get
 			{
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
-				for( int i = 0; i < this.resources.Length; i++ )
+				for( int i = 0; i < this.slotGroups.Length; i++ )
 				{
-					if( this.resources[i].amount != 0 )
+					if( this.slotGroups[i].amount != 0 )
 					{
 						return false;
 					}
@@ -223,15 +243,15 @@ namespace SS.Modules.Inventories
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			int total = 0;
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].resourceId == id )
 				{
-					return this.resources[i].amount;
+					total += this.slotGroups[i].amount;
 				}
 			}
-			// Resource is not present.
-			return 0;
+			return total;
 		}
 
 		public Dictionary<string, int> GetAll()
@@ -241,21 +261,20 @@ namespace SS.Modules.Inventories
 				return new Dictionary<string, int>();
 			}
 			Dictionary<string, int> ret = new Dictionary<string, int>();
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				ret.Add( this.resources[i].id, this.resources[i].amount );
+				if( this.slotGroups[i].isEmpty )
+				{
+					continue;
+				}
+				ret.Add( this.slotGroups[i].resourceId, this.slotGroups[i].amount );
 			}
 			return ret;
 		}
 
-		public Tuple<string, int>[] GetSlots()
+		public SlotGroup[] GetSlots()
 		{
-			Tuple<string, int>[] ret = new Tuple<string, int>[this.resources.Length];
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				ret[i] = new Tuple<string, int>( this.resources[i].id, this.resources[i].amount );
-			}
-			return ret;
+			return this.slotGroups;
 		}
 
 		public int GetMaxCapacity( string id )
@@ -265,15 +284,26 @@ namespace SS.Modules.Inventories
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			int total = 0;
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].isEmpty )
 				{
-					return this.resources[i].slotCapacity;
+					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
+					{
+						total += this.slotGroups[i].slotCapacity;
+					}
+				}
+				else
+				{
+					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
+					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].resourceId == id) || this.slotGroups[i].slotId == id )
+					{
+						total += this.slotGroups[i].slotCapacity - this.slotGroups[i].amount;
+					}
 				}
 			}
-			// No slot with the specified id.
-			return 0;
+			return total;
 		}
 
 		public int Add( string id, int amountMax )
@@ -286,28 +316,44 @@ namespace SS.Modules.Inventories
 			{
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
-
-
-			for( int i = 0; i < this.resources.Length; i++ )
+			
+			// array of indices to the slots. (necessary since we want to fill up non-empty slots before filling up empty ones).
+			List<int> indices = new List<int>();
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].isEmpty )
 				{
-					int spaceLeft = this.resources[i].slotCapacity - this.resources[i].amount;
-					if( spaceLeft < amountMax )
+					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						this.resources[i].amount = this.resources[i].slotCapacity;
-						this.onAdd?.Invoke( id, spaceLeft );
-						return spaceLeft;
+						indices.Add( i );
 					}
-					else
+				}
+				else
+				{// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
+					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].resourceId == id) || this.slotGroups[i].slotId == id )
 					{
-						this.resources[i].amount += amountMax;
-						this.onAdd?.Invoke( id, amountMax );
-						return amountMax;
+						indices.Insert( 0, i );
 					}
 				}
 			}
-			throw new Exception( "The inventory doesn't contain any slots that can hold '" + id + "'." );
+			int amountRemaining = amountMax;
+			for( int i = 0; i < indices.Count; i++ )
+			{
+				int index = indices[i];
+				int spaceInSlot = this.slotGroups[index].slotCapacity - this.slotGroups[index].amount;
+				int amountAdded = spaceInSlot > amountRemaining ? amountRemaining : spaceInSlot;
+
+				this.slotGroups[index].amount += amountAdded;
+				this.slotGroups[index].resourceId = id;
+				amountRemaining -= amountAdded;
+				this.onAdd?.Invoke( id, amountAdded );
+
+				if( amountRemaining == 0 )
+				{
+					return amountMax;
+				}
+			}
+			return amountMax - amountRemaining;
 		}
 
 		public int Remove( string id, int amountMax )
@@ -321,36 +367,48 @@ namespace SS.Modules.Inventories
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			int amountRemoved = 0;
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].isEmpty )
 				{
-					int spaceOccupied = this.resources[i].amount;
-					if( spaceOccupied <= amountMax )
+					continue;
+				}
+				if( this.slotGroups[i].resourceId == id )
+				{
+					if( this.slotGroups[i].amount <= amountMax )
 					{
-						this.resources[i].amount = 0;
+						int spaceOccupied = this.slotGroups[i].amount;
+						this.slotGroups[i].amount = 0;
+						this.slotGroups[i].resourceId = "";
+						amountRemoved += spaceOccupied;
 						this.onRemove?.Invoke( id, spaceOccupied );
-						return spaceOccupied;
 					}
 					else
 					{
-						this.resources[i].amount -= amountMax;
+						this.slotGroups[i].amount -= amountMax;
+						amountRemoved += amountMax;
 						this.onRemove?.Invoke( id, amountMax );
-						return amountMax;
+					}
+					if( amountRemoved == amountMax )
+					{
+						return amountRemoved;
 					}
 				}
 			}
-			throw new Exception( "The inventory doesn't contain any slots that can hold '" + id + "'." );
+			return amountRemoved;
 		}
 
 		public void Clear()
 		{
-			Tuple<string, int>[] res = new Tuple<string, int>[this.resources.Length];
+#warning TODO! - call events based on the item type, not each slot.
+			Tuple<string, int>[] res = new Tuple<string, int>[this.slotGroups.Length];
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				res[i] = new Tuple<string, int>( this.resources[i].id, this.resources[i].amount );
-				this.resources[i].amount = 0;
+				res[i] = new Tuple<string, int>( this.slotGroups[i].resourceId, this.slotGroups[i].amount );
+				this.slotGroups[i].resourceId = "";
+				this.slotGroups[i].amount = 0;
 			}
 
 			// Call the event after clearing, once per each type.
@@ -369,9 +427,13 @@ namespace SS.Modules.Inventories
 
 		public override ModuleData GetData()
 		{
-			InventoryConstrainedModuleData data = new InventoryConstrainedModuleData();
+			InventoryModuleData data = new InventoryModuleData();
 
-			data.items = this.GetAll();
+			data.items = new InventoryModuleData.SlotData[this.slotGroups.Length];
+			for( int i = 0; i < data.items.Length; i++ )
+			{
+				data.items[i] = new InventoryModuleData.SlotData( this.slotGroups[i] );
+			}
 
 			return data;
 		}
@@ -383,7 +445,7 @@ namespace SS.Modules.Inventories
 
 		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
-			if( !(_def is InventoryConstrainedModuleDefinition) )
+			if( !(_def is InventoryModuleDefinition) )
 			{
 				throw new Exception( "Provided definition is not of the correct type." );
 			}
@@ -392,7 +454,7 @@ namespace SS.Modules.Inventories
 				throw new Exception( "Provided definition is null." );
 			}
 
-			if( !(_data is InventoryConstrainedModuleData) )
+			if( !(_data is InventoryModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
 			}
@@ -401,43 +463,23 @@ namespace SS.Modules.Inventories
 				throw new Exception( "Provided data is null." );
 			}
 
-			InventoryConstrainedModuleDefinition def = (InventoryConstrainedModuleDefinition)_def;
-			InventoryConstrainedModuleData data = (InventoryConstrainedModuleData)_data;
+			InventoryModuleDefinition def = (InventoryModuleDefinition)_def;
+			InventoryModuleData data = (InventoryModuleData)_data;
 
-			this.resources = new SlotGroup[def.slots.Length];
-			for( int i = 0; i < this.resources.Length; i++ )
+			this.slotGroups = new SlotGroup[def.slots.Length];
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				for( int j = 0; j < def.slots.Length; j++ )
-				{
-					if( this.resources[j].id == def.slots[i].resourceId )
-					{
-						throw new Exception( "Can't have multiple slots with the same resource id." ); // because that doesn't make sense, just use bigger slot.
-					}
-				}
-
-				this.resources[i] = new SlotGroup( def.slots[i].resourceId, 0, def.slots[i].capacity );
+				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].slotCapacity );
 			}
 
 
-			foreach( var kvp in data.items )
+			for( int i = 0; i < data.items.Length; i++ )
 			{
-				int capacity = this.GetMaxCapacity( kvp.Key );
-				if( capacity == 0 )
-				{
-					throw new Exception( "This deposit can't hold '" + kvp.Key + "'." );
-				}
-				else
-				{
-					if( capacity < kvp.Value )
-					{
-						Debug.LogWarning( "This deposit can't hold " + kvp.Value + "x '" + kvp.Key + "'. - " + (kvp.Value - capacity) + "x resource has been lost." );
-						this.Add( kvp.Key, capacity );
-					}
-					else
-					{
-						this.Add( kvp.Key, kvp.Value );
-					}
-				}
+				this.slotGroups[i].resourceId = data.items[i].resourceId;
+				this.slotGroups[i].amount = data.items[i].resourceAmount;
+
+#warning TODO! - call events based on the item type, not each slot. (don't call with slot args, slots gan be accessed directly)
+				this.onAdd?.Invoke( data.items[i].resourceId, data.items[i].resourceAmount );
 			}
 		}
 	}

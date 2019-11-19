@@ -16,13 +16,13 @@ namespace SS
 			public SSObject destination { get; private set; }
 
 			private NavMeshAgent navMeshAgent;
-			private IInventory inventory;
+			private InventoryModule inventory;
 
 
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.inventory = this.GetComponent<IInventory>();
+				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{
 					throw new System.Exception( "Can't add MakePayment TAI goal to: " + this.gameObject.name );
@@ -45,7 +45,8 @@ namespace SS
 				}
 
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.inventory = this.GetComponent<IInventory>();
+#warning TODO! - replace with ssobject getmodule.
+				this.inventory = this.GetComponent<InventoryModule>();
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 

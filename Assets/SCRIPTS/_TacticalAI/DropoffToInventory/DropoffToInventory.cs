@@ -16,14 +16,15 @@ namespace SS
 
 
 			private NavMeshAgent navMeshAgent;
-			private IInventory inventory;
+			private InventoryModule inventory;
 
 
 			private void DropOff()
 			{
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
-				IInventory destinationInventory = this.destination.GetComponent<IInventory>();
+#warning TODO! - replace with ssobject getmodule.
+				InventoryModule destinationInventory = this.destination.GetComponent<InventoryModule>();
 				
 				foreach( var kvp in resourcesCarried )
 				{
@@ -55,7 +56,8 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.inventory = this.GetComponent<IInventory>();
+#warning TODO! - replace with ssobject getmodule.
+				this.inventory = this.GetComponent<InventoryModule>();
 				if( this.navMeshAgent == null )
 				{
 					throw new System.Exception( "Can't add DropoffToInventory TAI goal to: " + this.gameObject.name );

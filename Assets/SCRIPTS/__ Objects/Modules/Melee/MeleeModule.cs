@@ -4,6 +4,7 @@ using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
+using SS.Objects;
 
 namespace SS.Modules
 {

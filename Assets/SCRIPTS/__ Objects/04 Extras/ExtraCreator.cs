@@ -34,13 +34,17 @@ namespace SS.Objects.Extras
 
 
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+			collider.isTrigger = !def.isObstacle;
 			collider.size = def.size;
 			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 
-			NavMeshObstacle obs = gameObject.GetComponent<NavMeshObstacle>();
-			obs.size = def.size;
-			obs.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-			obs.carving = true;
+			if( def.isObstacle )
+			{
+				NavMeshObstacle obs = gameObject.AddComponent<NavMeshObstacle>();
+				obs.size = def.size;
+				obs.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
+				obs.carving = true;
+			}
 
 			//
 			//    MODULES
@@ -63,9 +67,7 @@ namespace SS.Objects.Extras
 			extra.guid = guid;
 
 			BoxCollider collider = container.AddComponent<BoxCollider>();
-
-			NavMeshObstacle obs = container.AddComponent<NavMeshObstacle>();
-
+			
 			return container;
 		}
 
@@ -90,7 +92,7 @@ namespace SS.Objects.Extras
 
 			data.position = extra.transform.position;
 			data.rotation = extra.transform.rotation;
-
+			
 			//
 			// MODULES
 			//

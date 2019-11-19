@@ -13,6 +13,8 @@ namespace SS.Objects.Extras
 		//  SIZE-RELATED
 		//--------------------------------------
 
+		public bool isObstacle { get; set; }
+
 		private Vector3 __size = new Vector3( 0.25f, 0.25f, 0.25f );
 		public Vector3 size
 		{
@@ -44,6 +46,7 @@ namespace SS.Objects.Extras
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
 
+			this.isObstacle = serializer.ReadBool( "IsObstacle" );
 			this.size = serializer.ReadVector3( "Size" );
 			
 			this.DeserializeModulesKFF( serializer );
@@ -54,6 +57,7 @@ namespace SS.Objects.Extras
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 
+			serializer.WriteBool( "", "IsObstacle", this.isObstacle );
 			serializer.WriteVector3( "", "Size", this.size );
 			
 			this.SerializeModulesKFF( serializer );

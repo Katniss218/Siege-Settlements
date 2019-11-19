@@ -4,7 +4,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Projectiles
 {
-	public class Projectile : SSObject
+	public class Projectile : SSObject, IFactionMember
 	{
 		public bool isStuck { get; set; }
 

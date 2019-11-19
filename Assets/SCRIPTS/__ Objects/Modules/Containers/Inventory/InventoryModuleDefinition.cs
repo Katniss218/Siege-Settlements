@@ -10,31 +10,31 @@ using UnityEngine;
 
 namespace SS.Modules.Inventories
 {
-	public class InventoryConstrainedModuleDefinition : ModuleDefinition
+	public class InventoryModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "inventory_constrained";
+		public const string KFF_TYPEID = "inventory";
 
-		public struct Slot : IKFFSerializable
+		public struct SlotDefinition : IKFFSerializable
 		{
-			public string resourceId { get; set; }
-			public int capacity { get; set; }
+			public string slotId { get; set; }
+			public int slotCapacity { get; set; }
 
 
 			public void DeserializeKFF( KFFSerializer serializer )
 			{
-				this.resourceId = serializer.ReadString( "ResourceId" );
-				this.capacity = serializer.ReadInt( "Capacity" );
+				this.slotId = serializer.ReadString( "SlotId" );
+				this.slotCapacity = serializer.ReadInt( "SlotCapacity" );
 			}
 
 			public void SerializeKFF( KFFSerializer serializer )
 			{
-				serializer.WriteString( "", "ResourceId", this.resourceId );
-				serializer.WriteInt( "", "Capacity", this.capacity );
+				serializer.WriteString( "", "SlotId", this.slotId );
+				serializer.WriteInt( "", "SlotCapacity", this.slotCapacity );
 			}
 		}
 
 
-		public Slot[] slots { get; set; }
+		public SlotDefinition[] slots { get; set; }
 
 
 		public override bool CheckTypeDefConstraints( Type objType )
@@ -49,21 +49,20 @@ namespace SS.Modules.Inventories
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
 		{
 			return !(
-				modTypes.Contains( typeof( InventoryConstrainedModuleDefinition ) ) ||
-				modTypes.Contains( typeof( InventoryUnconstrainedModuleDefinition ) ) ||
+				modTypes.Contains( typeof( InventoryModuleDefinition ) ) ||
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
 
 		public override ModuleData GetIdentityData()
 		{
-			return new InventoryConstrainedModuleData();
+			return new InventoryModuleData();
 		}
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.slots = new Slot[serializer.Analyze( "Slots" ).childCount];
+			this.slots = new SlotDefinition[serializer.Analyze( "Slots" ).childCount];
 			serializer.DeserializeArray( "Slots", this.slots );
 		}
 
@@ -74,7 +73,7 @@ namespace SS.Modules.Inventories
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
 		{
-			InventoryConstrainedModule module = gameObject.AddComponent<InventoryConstrainedModule>();
+			InventoryModule module = gameObject.AddComponent<InventoryModule>();
 			module.moduleId = moduleId;
 			module.SetDefData( this, data );
 		}
