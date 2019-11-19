@@ -875,7 +875,7 @@ namespace SS
 					bool hasWantedItem_s = false;
 					foreach( var kvp in wantedRes )
 					{
-						Debug.Log( "Wanted:" + kvp.Key + ", " + kvp.Value );
+						Debug.Log( paymentReceiverTransform.gameObject.name + " wants: " + kvp.Value + "x " + kvp.Key );
 						if( inv.Get( kvp.Key ) > 0 )
 						{
 							hasWantedItem_s = true;

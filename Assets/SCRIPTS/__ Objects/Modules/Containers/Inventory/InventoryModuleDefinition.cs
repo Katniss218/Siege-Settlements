@@ -17,19 +17,27 @@ namespace SS.Modules.Inventories
 		public struct SlotDefinition : IKFFSerializable
 		{
 			public string slotId { get; set; }
-			public int slotCapacity { get; set; }
+			public int capacity { get; set; }
+
+
+			public SlotDefinition( InventoryModule.SlotGroup slotGroup )
+			{
+				this.slotId = slotGroup.slotId;
+				this.capacity = slotGroup.capacity;
+			}
+
 
 
 			public void DeserializeKFF( KFFSerializer serializer )
 			{
 				this.slotId = serializer.ReadString( "SlotId" );
-				this.slotCapacity = serializer.ReadInt( "SlotCapacity" );
+				this.capacity = serializer.ReadInt( "Capacity" );
 			}
 
 			public void SerializeKFF( KFFSerializer serializer )
 			{
 				serializer.WriteString( "", "SlotId", this.slotId );
-				serializer.WriteInt( "", "SlotCapacity", this.slotCapacity );
+				serializer.WriteInt( "", "Capacity", this.capacity );
 			}
 		}
 

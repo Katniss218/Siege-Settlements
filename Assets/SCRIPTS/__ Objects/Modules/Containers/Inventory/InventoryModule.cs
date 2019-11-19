@@ -1,5 +1,6 @@
 ﻿using SS.Content;
 using SS.Levels.SaveStates;
+using SS.Objects;
 using SS.ResourceSystem;
 using SS.UI;
 using System;
@@ -12,33 +13,46 @@ using UnityEngine.UI;
 namespace SS.Modules.Inventories
 {
 	public class _UnityEvent_string_int : UnityEvent<string, int> { }
-
-	/// <summary>
-	/// An inventory that has slots constrained to single resource ID.
-	/// </summary>
+	
 	public sealed class InventoryModule : SSModule
 	{
 		public struct SlotGroup
 		{
 			public readonly string slotId;
-			public string resourceId;
+			public string id;
 			public int amount;
-			public readonly int slotCapacity;
+			public readonly int capacity;
 
 			public bool isConstrained { get { return this.slotId != ""; } }
-			public bool isEmpty { get { return this.amount == 0 || this.resourceId == ""; } }
+			public bool isEmpty { get { return this.amount == 0 || this.id == ""; } }
 
 			public SlotGroup( string slotId, int slotCapacity )
 			{
 				this.slotId = slotId ?? "";
-				this.resourceId = "";
-				this.slotCapacity = slotCapacity;
+				this.id = "";
+				this.capacity = slotCapacity;
 				this.amount = 0;
 			}
 		}
 
 		private SlotGroup[] slotGroups;
 
+		/// <summary>
+		/// Returns a copy of every slot in the inventory.
+		/// </summary>
+		public SlotGroup[] GetSlots()
+		{
+			SlotGroup[] ret = new SlotGroup[this.slotCount];
+			for( int i = 0; i < this.slotCount; i++ )
+			{
+				ret[i] = this.slotGroups[i];
+			}
+			return ret;
+		}
+
+		/// <summary>
+		/// Returns the amount of slots of this inventory.
+		/// </summary>
 		public int slotCount
 		{
 			get
@@ -47,18 +61,23 @@ namespace SS.Modules.Inventories
 			}
 		}
 
+
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
+		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
+
 		public _UnityEvent_string_int onAdd
 		{
 			get { return this.__onAdd; }
 		}
-
-		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
 		public _UnityEvent_string_int onRemove
 		{
 			get { return this.__onRemove; }
 		}
 
+		//##=====================================================##
+
+		#region TOOLTIP INTEGRATION
+		//
 
 		private void ShowTooltip( GameObject mouseoveredObj )
 		{
@@ -66,27 +85,27 @@ namespace SS.Modules.Inventories
 			{
 				return;
 			}
-			
+
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
-			
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+
+			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
 					if( this.slotGroups[i].isConstrained )
 					{
 						ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].slotId );
-						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
 					}
 					else
 					{
-						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
 					}
 				}
 				else
 				{
-					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].resourceId );
-					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].slotCapacity );
+					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].id );
+					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
 				}
 			}
 			ToolTip.ShowAt( Input.mousePosition );
@@ -111,9 +130,8 @@ namespace SS.Modules.Inventories
 
 			ToolTip.Hide();
 		}
-
-
-		void Awake()
+		
+		private void RegisterTooltip()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
@@ -146,77 +164,102 @@ namespace SS.Modules.Inventories
 					MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
 				} );
 			}
+		}
 
-
+		//
+		#endregion
 			
-			if( this.ssObject is IHUDHolder )
+		//##=====================================================##
+
+		#region HUD INTEGRATION
+		//
+
+		private void RegisterHUD()
+		{
+			// integrate hud.
+			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
+
+
+			Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
+			if( hudResourceTransform != null )
 			{
-				// integrate hud.
-				IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
-
-				Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
-				if( hudResourceTransform != null )
+				Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
+				if( hudResourceIconTransform != null )
 				{
-					Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
-					if( hudResourceIconTransform != null )
-					{
-						Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
-						TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+					Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
+					TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
 
-						// Make the inventory update the HUD wien resources are added/removed.
-						this.onAdd.AddListener( ( string id, int amtAdded ) =>
+					// Make the inventory update the HUD wien resources are added/removed.
+					this.onAdd.AddListener( ( string id, int amtAdded ) =>
+					{
+						for( int i = 0; i < this.slotCount; i++ )
 						{
-							// Set the icon to the first slot that contains a resource.
-							foreach( var kvp in this.GetAll() )
+							if( this.slotGroups[i].isEmpty )
 							{
-								if( kvp.Key == "" )
+								continue;
+							}
+							hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon; // this can be null.
+							hudAmount.text = "" + this.slotGroups[i].amount;
+
+							hudResourceIcon.gameObject.SetActive( true );
+							hudAmount.gameObject.SetActive( true );
+							break;
+						}
+					} );
+					this.onRemove.AddListener( ( string id, int amtRemoved ) =>
+					{
+						if( this.isEmpty )
+						{
+							hudResourceIcon.gameObject.SetActive( false );
+							hudAmount.gameObject.SetActive( false );
+						}
+						else
+						{
+							for( int i = 0; i < this.slotCount; i++ )
+							{
+								if( this.slotGroups[i].isEmpty )
 								{
 									continue;
 								}
-								hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-								hudAmount.text = kvp.Value.ToString();
-
-								hudResourceIcon.gameObject.SetActive( true );
-								hudAmount.gameObject.SetActive( true );
+								hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon; // this can be null.
+								hudAmount.text = "" + this.slotGroups[i].amount;
 								break;
 							}
-						} );
-						this.onRemove.AddListener( ( string id, int amtRemoved ) =>
-						{
-							if( this.isEmpty )
-							{
-								hudResourceIcon.gameObject.SetActive( false );
-								hudAmount.gameObject.SetActive( false );
-							}
-							else
-							{
-								// Set the icon to the first slot that contains a resource.
-								foreach( var kvp in this.GetAll() )
-								{
-									if( kvp.Key == "" )
-									{
-										continue;
-									}
-									hudResourceIcon.sprite = DefinitionManager.GetResource( kvp.Key ).icon; // this can be null.
-									hudAmount.text = kvp.Value.ToString();
-									break;
-								}
-							}
-						} );
-					}
+						}
+					} );
 				}
 			}
-			Damageable dam = this.GetComponent<Damageable>();
-			if( dam != null )
+		}
+
+		//
+		#endregion
+		
+		//##=====================================================##
+
+		private void RegisterDropOnDeath()
+		{
+			(this.ssObject as IDamageable).damageable.onDeath.AddListener( () =>
 			{
-				dam.onDeath.AddListener( () =>
+				if( !this.isEmpty )
 				{
-					if( !this.isEmpty )
-					{
-						TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
-					}
-				} );
+					TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
+				}
+			} );
+		}
+
+
+		void Awake()
+		{
+			// needs to be registered on Awake(), since the resources (data) are assigned before Start() happens.
+			this.RegisterTooltip();
+
+			if( this.ssObject is IHUDHolder )
+			{
+				this.RegisterHUD();
+			}
+			if( this.ssObject is IDamageable )
+			{
+				this.RegisterDropOnDeath();
 			}
 		}
 
@@ -225,9 +268,9 @@ namespace SS.Modules.Inventories
 			get
 			{
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
-				for( int i = 0; i < this.slotGroups.Length; i++ )
+				for( int i = 0; i < this.slotCount; i++ )
 				{
-					if( this.slotGroups[i].amount != 0 )
+					if( !this.slotGroups[i].isEmpty )
 					{
 						return false;
 					}
@@ -244,9 +287,9 @@ namespace SS.Modules.Inventories
 			}
 
 			int total = 0;
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].resourceId == id )
+				if( this.slotGroups[i].id == id )
 				{
 					total += this.slotGroups[i].amount;
 				}
@@ -261,22 +304,17 @@ namespace SS.Modules.Inventories
 				return new Dictionary<string, int>();
 			}
 			Dictionary<string, int> ret = new Dictionary<string, int>();
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
 					continue;
 				}
-				ret.Add( this.slotGroups[i].resourceId, this.slotGroups[i].amount );
+				ret.Add( this.slotGroups[i].id, this.slotGroups[i].amount );
 			}
 			return ret;
 		}
-
-		public SlotGroup[] GetSlots()
-		{
-			return this.slotGroups;
-		}
-
+		
 		public int GetMaxCapacity( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )
@@ -285,21 +323,21 @@ namespace SS.Modules.Inventories
 			}
 
 			int total = 0;
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
 					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].slotCapacity;
+						total += this.slotGroups[i].capacity;
 					}
 				}
 				else
 				{
 					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
-					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].resourceId == id) || this.slotGroups[i].slotId == id )
+					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].slotCapacity - this.slotGroups[i].amount;
+						total += this.slotGroups[i].capacity - this.slotGroups[i].amount;
 					}
 				}
 			}
@@ -316,10 +354,10 @@ namespace SS.Modules.Inventories
 			{
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
-			
+
 			// array of indices to the slots. (necessary since we want to fill up non-empty slots before filling up empty ones).
 			List<int> indices = new List<int>();
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
@@ -330,7 +368,7 @@ namespace SS.Modules.Inventories
 				}
 				else
 				{// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
-					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].resourceId == id) || this.slotGroups[i].slotId == id )
+					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
 						indices.Insert( 0, i );
 					}
@@ -340,11 +378,11 @@ namespace SS.Modules.Inventories
 			for( int i = 0; i < indices.Count; i++ )
 			{
 				int index = indices[i];
-				int spaceInSlot = this.slotGroups[index].slotCapacity - this.slotGroups[index].amount;
+				int spaceInSlot = this.slotGroups[index].capacity - this.slotGroups[index].amount;
 				int amountAdded = spaceInSlot > amountRemaining ? amountRemaining : spaceInSlot;
 
 				this.slotGroups[index].amount += amountAdded;
-				this.slotGroups[index].resourceId = id;
+				this.slotGroups[index].id = id;
 				amountRemaining -= amountAdded;
 				this.onAdd?.Invoke( id, amountAdded );
 
@@ -368,19 +406,19 @@ namespace SS.Modules.Inventories
 			}
 
 			int amountRemoved = 0;
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
 				{
 					continue;
 				}
-				if( this.slotGroups[i].resourceId == id )
+				if( this.slotGroups[i].id == id )
 				{
 					if( this.slotGroups[i].amount <= amountMax )
 					{
 						int spaceOccupied = this.slotGroups[i].amount;
 						this.slotGroups[i].amount = 0;
-						this.slotGroups[i].resourceId = "";
+						this.slotGroups[i].id = "";
 						amountRemoved += spaceOccupied;
 						this.onRemove?.Invoke( id, spaceOccupied );
 					}
@@ -402,12 +440,12 @@ namespace SS.Modules.Inventories
 		public void Clear()
 		{
 #warning TODO! - call events based on the item type, not each slot.
-			Tuple<string, int>[] res = new Tuple<string, int>[this.slotGroups.Length];
+			Tuple<string, int>[] res = new Tuple<string, int>[this.slotCount];
 
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
-				res[i] = new Tuple<string, int>( this.slotGroups[i].resourceId, this.slotGroups[i].amount );
-				this.slotGroups[i].resourceId = "";
+				res[i] = new Tuple<string, int>( this.slotGroups[i].id, this.slotGroups[i].amount );
+				this.slotGroups[i].id = "";
 				this.slotGroups[i].amount = 0;
 			}
 
@@ -429,7 +467,7 @@ namespace SS.Modules.Inventories
 		{
 			InventoryModuleData data = new InventoryModuleData();
 
-			data.items = new InventoryModuleData.SlotData[this.slotGroups.Length];
+			data.items = new InventoryModuleData.SlotData[this.slotCount];
 			for( int i = 0; i < data.items.Length; i++ )
 			{
 				data.items[i] = new InventoryModuleData.SlotData( this.slotGroups[i] );
@@ -467,19 +505,19 @@ namespace SS.Modules.Inventories
 			InventoryModuleData data = (InventoryModuleData)_data;
 
 			this.slotGroups = new SlotGroup[def.slots.Length];
-			for( int i = 0; i < this.slotGroups.Length; i++ )
+			for( int i = 0; i < this.slotCount; i++ )
 			{
-				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].slotCapacity );
+				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].capacity );
 			}
 
 
 			for( int i = 0; i < data.items.Length; i++ )
 			{
-				this.slotGroups[i].resourceId = data.items[i].resourceId;
-				this.slotGroups[i].amount = data.items[i].resourceAmount;
+				this.slotGroups[i].id = data.items[i].id;
+				this.slotGroups[i].amount = data.items[i].amount;
 
 #warning TODO! - call events based on the item type, not each slot. (don't call with slot args, slots gan be accessed directly)
-				this.onAdd?.Invoke( data.items[i].resourceId, data.items[i].resourceAmount );
+				this.onAdd?.Invoke( data.items[i].id, data.items[i].amount );
 			}
 		}
 	}

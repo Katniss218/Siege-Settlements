@@ -8,52 +8,45 @@ namespace SS.Levels.SaveStates
 	{
 		public struct SlotData : IKFFSerializable
 		{
-			public string resourceId { get; set; }
-			public int resourceAmount { get; set; }
+			public string id { get; set; }
+			public int amount { get; set; }
+
 
 			public SlotData( InventoryModule.SlotGroup slotGroup )
 			{
-				this.resourceId = slotGroup.resourceId;
-				this.resourceAmount = slotGroup.amount;
+				this.id = slotGroup.id;
+				this.amount = slotGroup.amount;
 			}
+
 
 			public void DeserializeKFF( KFFSerializer serializer )
 			{
-				this.resourceId = serializer.ReadString( "ResourceId" );
-				this.resourceAmount = serializer.ReadInt( "ResourceAmount" );
+				this.id = serializer.ReadString( "Id" );
+				this.amount = serializer.ReadInt( "Amount" );
 			}
 
 			public void SerializeKFF( KFFSerializer serializer )
 			{
-				serializer.WriteString( "", "ResourceId", this.resourceId );
-				serializer.WriteInt( "", "ResourceAmount", this.resourceAmount );
+				serializer.WriteString( "", "Id", this.id );
+				serializer.WriteInt( "", "Amount", this.amount );
 			}
 		}
 
 		public const string KFF_TYPEID = "inventory";
 
 		public SlotData[] items { get; set; }
-		//public Dictionary<string, int> items { get; set; }
 
 
 		public InventoryModuleData()
 		{
-			//this.items = new Dictionary<string, int>();
+
 		}
 		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			var analysisData = serializer.Analyze( "Items" );
-			this.items = new SlotData[analysisData.childCount];
-			for( int i = 0; i < analysisData.childCount; i++ )
-			{
-				this.items[i] = new SlotData()
-				{
-					resourceId = serializer.ReadString( new Path( "Items.{0}.Id", i ) ),
-					resourceAmount = serializer.ReadInt( new Path( "Items.{0}.Amount", i ) )
-				};
-			}
+			this.items = new SlotData[serializer.Analyze( "Slots" ).childCount];
+			serializer.DeserializeArray( "Slots", this.items );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

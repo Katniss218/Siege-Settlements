@@ -26,6 +26,11 @@ namespace SS
 			private InventoryModule inventory;
 
 
+			/// <summary>
+			/// Drops every resource in the inventory as a default Resource Deposit for that resource type.
+			/// </summary>
+			/// <param name="carrierInv">The inventory that should be dropped.</param>
+			/// <param name="position">The position of the newly spawned deposits.</param>
 			public static void DropOffInventory( InventoryModule carrierInv, Vector3 position )
 			{
 				if( carrierInv.isEmpty )
