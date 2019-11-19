@@ -9,7 +9,7 @@ namespace SS.Objects.Projectiles
 		public bool isStuck { get; set; }
 
 		public float blastRadius { get; set; }
-		
+
 		public DamageSource damageSource { get; set; }
 
 		public AudioClip hitSound { get; set; }
@@ -50,28 +50,27 @@ namespace SS.Objects.Projectiles
 			if( canGetStuck )
 			{
 				this.MakeStuck();
-				AudioManager.PlaySound( this.missSound );
 			}
 			else
 			{
 				Object.Destroy( gameObject );
-				AudioManager.PlaySound( this.missSound );
 			}
+			AudioManager.PlaySound( this.missSound );
 		}
 
-		public void DamageAndStuckLogic( Damageable damageableOther, FactionMember factionMemberOther, bool canGetStuck )
+		public void DamageAndStuckLogic( Damageable hitDamageable, FactionMember hitFactionMember, bool canGetStuck )
 		{
 			if( this.blastRadius == 0.0f )
 			{
-				if( damageableOther == null )
+				if( hitDamageable == null )
 				{
 					this.__MakeStuckOrDestroy( canGetStuck );
 				}
 				else
 				{
-					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
+					if( this.factionMember.CanTargetAnother( hitFactionMember ) )
 					{
-						damageableOther.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+						hitDamageable.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );
@@ -80,42 +79,41 @@ namespace SS.Objects.Projectiles
 			}
 			else
 			{
-				Collider[] overlap = Physics.OverlapSphere( this.transform.position, this.blastRadius );
+				// only masking the damageable ones.
+				Collider[] col = Physics.OverlapSphere( this.transform.position, this.blastRadius, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK );
 
-				for( int i = 0; i < overlap.Length; i++ )
+				for( int i = 0; i < col.Length; i++ )
 				{
-					Damageable dam = overlap[i].GetComponent<Damageable>();
-					if( dam == null )
+					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
+					if( !this.factionMember.CanTargetAnother( (potentialDamagee as IFactionMember).factionMember ) )
 					{
 						continue;
 					}
-					FactionMember facM = overlap[i].GetComponent<FactionMember>();
-					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
+
+					float distance = Vector3.Distance( this.transform.position, col[i].transform.position );
+					if( distance >= this.blastRadius )
 					{
-						float distance = Vector3.Distance( this.transform.position, overlap[i].transform.position );
-						if( distance >= this.blastRadius )
-						{
-							continue;
-						}
-
-						float damageScale = (distance / this.blastRadius);
-
-						float damageScaledToDist = this.damageSource.GetRandomizedDamage() * damageScale;
-						if( damageScaledToDist <= 0 )
-						{
-							continue;
-						}
-						dam.TakeDamage( this.damageSource.damageType, damageScaledToDist, this.damageSource.armorPenetration );
+						continue;
 					}
+
+					float damageScale = (distance / this.blastRadius);
+
+					float damageScaledToDist = this.damageSource.GetRandomizedDamage() * damageScale;
+					if( damageScaledToDist <= 0 )
+					{
+						Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
+						continue;
+					}
+					(potentialDamagee as IDamageable).damageable.TakeDamage( this.damageSource.damageType, damageScaledToDist, this.damageSource.armorPenetration );
 				}
 
-				if( damageableOther == null )
+				if( hitDamageable == null )
 				{
 					this.__MakeStuckOrDestroy( canGetStuck );
 				}
 				else
 				{
-					if( this.factionMember.CanTargetAnother( factionMemberOther ) )
+					if( this.factionMember.CanTargetAnother( hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );
