@@ -70,9 +70,11 @@ namespace SS
 						amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
 						idPickedUp = kvp.Key;
 
+						Debug.Log( amountPickedUp + "x " + idPickedUp );
 						if( amountPickedUp > 0 )
 						{
-							inventoryToPickupFrom.Remove( idPickedUp, amountPickedUp );
+							int amtRemoved = inventoryToPickupFrom.Remove( idPickedUp, amountPickedUp );
+							Debug.Log( "R: " + amtRemoved + "x " + idPickedUp );
 							AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 						}
 						break; // Only pick up one resource at a time.

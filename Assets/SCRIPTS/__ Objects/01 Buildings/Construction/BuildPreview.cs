@@ -281,7 +281,7 @@ namespace SS.Objects.Buildings
 
 			for( int i = 0; i < buildPreviewInstanceGameObject.transform.childCount; i++ )
 			{
-				Object.Destroy( buildPreviewInstanceGameObject.transform.GetChild( i ) );
+				Object.Destroy( buildPreviewInstanceGameObject.transform.GetChild( i ).gameObject );
 			}
 
 			SubObjectDefinition[] subObjectDefs;

@@ -1,37 +1,54 @@
 ﻿using SS.Diplomacy;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObject, IHUDHolder, IDamageable, IFactionMember
+	public class Unit : SSObject, IHUDHolder, IDamageable, IFactionMember, IPointerEnterHandler
 	{
 		public GameObject hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
-		private Selectable selectable = null;
-		public Damageable damageable { get; set; }
-		public FactionMember factionMember { get; set; }
-
-
-		void Start()
+		private Selectable __selectable = null;
+		public Selectable selectable
 		{
-			this.selectable = this.GetComponent<Selectable>();
-			if( this.selectable == null )
+			get
 			{
-				throw new System.Exception( "Invalid Unit." );
-			}
-			this.damageable = this.GetComponent<Damageable>();
-			if( this.damageable == null )
-			{
-				throw new System.Exception( "Invalid Unit." );
-			}
-			this.factionMember = this.GetComponent<FactionMember>();
-			if( this.factionMember == null )
-			{
-				throw new System.Exception( "Invalid Unit." );
+				if( this.__selectable == null )
+				{
+					this.__selectable = this.GetComponent<Selectable>();
+				}
+				return this.__selectable;
 			}
 		}
+
+		private Damageable __damageable = null;
+		public Damageable damageable
+		{
+			get
+			{
+				if( this.__damageable == null )
+				{
+					this.__damageable = this.GetComponent<Damageable>();
+				}
+				return this.__damageable;
+			}
+		}
+
+		private FactionMember __factionMember = null;
+		public FactionMember factionMember
+		{
+			get
+			{
+				if( this.__factionMember == null )
+				{
+					this.__factionMember = this.GetComponent<FactionMember>();
+				}
+				return this.__factionMember;
+			}
+		}
+
 
 		void FixedUpdate()
 		{
@@ -64,6 +81,11 @@ namespace SS.Objects.Units
 				this.hud.SetActive( false );
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
+		}
+
+		public void OnPointerEnter( PointerEventData eventData )
+		{
+			Debug.Log( this.definitionId );
 		}
 	}
 }

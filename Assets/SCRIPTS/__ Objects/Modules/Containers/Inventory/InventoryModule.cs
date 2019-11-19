@@ -11,9 +11,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace SS.Modules.Inventories
-{
-	public class _UnityEvent_string_int : UnityEvent<string, int> { }
-	
+{	
 	public sealed class InventoryModule : SSModule
 	{
 		public struct SlotGroup
@@ -61,6 +59,8 @@ namespace SS.Modules.Inventories
 			}
 		}
 
+
+		public class _UnityEvent_string_int : UnityEvent<string, int> { }
 
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
 		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
@@ -310,7 +310,14 @@ namespace SS.Modules.Inventories
 				{
 					continue;
 				}
-				ret.Add( this.slotGroups[i].id, this.slotGroups[i].amount );
+				if( ret.ContainsKey( this.slotGroups[i].id ) )
+				{
+					ret[this.slotGroups[i].id] += this.slotGroups[i].amount;
+				}
+				else
+				{
+					ret.Add( this.slotGroups[i].id, this.slotGroups[i].amount );
+				}
 			}
 			return ret;
 		}
@@ -370,6 +377,7 @@ namespace SS.Modules.Inventories
 				{// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
 					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
+#warning						 flip the array to add to the first slot first.
 						indices.Insert( 0, i );
 					}
 				}
@@ -405,7 +413,7 @@ namespace SS.Modules.Inventories
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 
-			int amountRemoved = 0;
+			int amountLeftToRemove = amountMax;
 			for( int i = 0; i < this.slotCount; i++ )
 			{
 				if( this.slotGroups[i].isEmpty )
@@ -414,27 +422,23 @@ namespace SS.Modules.Inventories
 				}
 				if( this.slotGroups[i].id == id )
 				{
-					if( this.slotGroups[i].amount <= amountMax )
+					int amountRemoved = this.slotGroups[i].amount > amountLeftToRemove ? amountLeftToRemove : this.slotGroups[i].amount;
+
+					this.slotGroups[i].amount -= amountRemoved;
+					if( this.slotGroups[i].amount == 0 )
 					{
-						int spaceOccupied = this.slotGroups[i].amount;
-						this.slotGroups[i].amount = 0;
 						this.slotGroups[i].id = "";
-						amountRemoved += spaceOccupied;
-						this.onRemove?.Invoke( id, spaceOccupied );
 					}
-					else
+					amountLeftToRemove -= amountRemoved;
+					this.onRemove?.Invoke( id, amountRemoved );
+					
+					if( amountLeftToRemove == 0 )
 					{
-						this.slotGroups[i].amount -= amountMax;
-						amountRemoved += amountMax;
-						this.onRemove?.Invoke( id, amountMax );
-					}
-					if( amountRemoved == amountMax )
-					{
-						return amountRemoved;
+						return amountMax;
 					}
 				}
 			}
-			return amountRemoved;
+			return amountMax - amountLeftToRemove;
 		}
 
 		public void Clear()
@@ -510,14 +514,20 @@ namespace SS.Modules.Inventories
 				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].capacity );
 			}
 
-
-			for( int i = 0; i < data.items.Length; i++ )
+			if( data.items != null )
 			{
-				this.slotGroups[i].id = data.items[i].id;
-				this.slotGroups[i].amount = data.items[i].amount;
+				if( data.items.Length != def.slots.Length )
+				{
+					throw new Exception( "Inventory slot count is not the same as data's slot count. Can't match the slots." );
+				}
+				for( int i = 0; i < data.items.Length; i++ )
+				{
+					this.slotGroups[i].id = data.items[i].id;
+					this.slotGroups[i].amount = data.items[i].amount;
 
 #warning TODO! - call events based on the item type, not each slot. (don't call with slot args, slots gan be accessed directly)
-				this.onAdd?.Invoke( data.items[i].id, data.items[i].amount );
+					this.onAdd?.Invoke( data.items[i].id, data.items[i].amount );
+				}
 			}
 		}
 	}

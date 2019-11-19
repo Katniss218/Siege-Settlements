@@ -16,14 +16,7 @@ namespace SS.Modules
 	public class ResourceDepositModule : SSModule
 	{
 		public const float MINING_SPEED = 2.0f;
-
-		/// <summary>
-		/// If true, the resource can be mined instantly.
-		/// </summary>
-		//public bool isTypeExtracted { get; set; }
-
-		public AudioClip miningSound { get; set; }
-
+		
 		private struct SlotGroup
 		{
 			public readonly string id;
@@ -38,6 +31,8 @@ namespace SS.Modules
 			}
 		}
 
+		public AudioClip miningSound { get; set; }
+
 		private SlotGroup[] resources;
 
 		public int slotCount
@@ -48,13 +43,15 @@ namespace SS.Modules
 			}
 		}
 
+		public class _UnityEvent_string_int : UnityEvent<string, int> { }
+
 		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
+		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
+
 		public _UnityEvent_string_int onAdd
 		{
 			get { return this.__onAdd; }
 		}
-
-		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
 		public _UnityEvent_string_int onRemove
 		{
 			get { return this.__onRemove; }

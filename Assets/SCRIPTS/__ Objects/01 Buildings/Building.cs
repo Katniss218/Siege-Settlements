@@ -56,19 +56,69 @@ namespace SS.Objects.Buildings
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
-		private Selectable selectable = null;
-		public Damageable damageable { get; set; }
-		public FactionMember factionMember { get; set; }
-		public NavMeshObstacle obstacle { get; private set; }
-		new public BoxCollider collider { get; private set; }
-		
-		void Start()
+		private Selectable __selectable = null;
+		public Selectable selectable
 		{
-			this.selectable = this.GetComponent<Selectable>();
-			this.damageable = this.GetComponent<Damageable>();
-			this.factionMember = this.GetComponent<FactionMember>();
-			this.obstacle = this.GetComponent<NavMeshObstacle>();
-			this.collider = this.GetComponent<BoxCollider>();
+			get
+			{
+				if( this.__selectable == null )
+				{
+					this.__selectable = this.GetComponent<Selectable>();
+				}
+				return this.__selectable;
+			}
+		}
+
+		private Damageable __damageable = null;
+		public Damageable damageable
+		{
+			get
+			{
+				if( this.__damageable == null )
+				{
+					this.__damageable = this.GetComponent<Damageable>();
+				}
+				return this.__damageable;
+			}
+		}
+
+		private FactionMember __factionMember = null;
+		public FactionMember factionMember
+		{
+			get
+			{
+				if( this.__factionMember == null )
+				{
+					this.__factionMember = this.GetComponent<FactionMember>();
+				}
+				return this.__factionMember;
+			}
+		}
+
+		private NavMeshObstacle __obstacle = null;
+		public NavMeshObstacle obstacle
+		{
+			get
+			{
+				if( this.__obstacle == null )
+				{
+					this.__obstacle = this.GetComponent<NavMeshObstacle>();
+				}
+				return this.__obstacle;
+			}
+		}
+
+		private BoxCollider __collider = null;
+		new public BoxCollider collider
+		{
+			get
+			{
+				if( this.__collider == null )
+				{
+					this.__collider = this.GetComponent<BoxCollider>();
+				}
+				return this.__collider;
+			}
 		}
 
 
