@@ -43,7 +43,7 @@ namespace SS.UI
 		{
 			this.mode = SelectionPanelMode.Object;
 
-			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/obj_lst" );
+			this.selectionPanelImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/SelectionPanel" );
 			this.list.transform.gameObject.SetActive( false );
 			this.obj.transform.gameObject.SetActive( true );
 		}
@@ -52,7 +52,7 @@ namespace SS.UI
 		{
 			this.mode = SelectionPanelMode.List;
 
-			this.switcherImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/lst_obj" );
+			this.selectionPanelImage.sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/SelectionPanelList" );
 			this.list.transform.gameObject.SetActive( true );
 			this.obj.transform.gameObject.SetActive( false );
 		}
@@ -84,7 +84,7 @@ namespace SS.UI
 
 		
 
-		[SerializeField] private Image switcherImage = null;
+		[SerializeField] private Image selectionPanelImage = null;
 
 
 		private void Awake()
