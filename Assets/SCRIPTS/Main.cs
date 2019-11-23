@@ -298,7 +298,6 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-#warning implement some sort of object.isUsable (can put items into building that is not usable).
 					InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
 
 

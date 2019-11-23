@@ -25,12 +25,14 @@ namespace SS
 		/// </summary>
 		public static bool isDragging { get; private set; }
 
+		private bool pressOriginatedOnUI = false;
 
 		private static Vector2 beginDragPos;
 
 		private static RectTransform selectionRect = null;
 
 		private static Vector3 oldMousePos;
+
 
 		private static void InitRect()
 		{
@@ -150,6 +152,8 @@ namespace SS
 
 		private void OnPress( InputQueue self )
 		{
+			this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
+			
 			oldMousePos = Input.mousePosition;
 		}
 
@@ -157,8 +161,13 @@ namespace SS
 		{
 			if( !isDragging )
 			{
+				// Don't start drags that began over UI elements (required to not bug selection rect).
+				if( pressOriginatedOnUI )
+				{
+					return;
+				}
 				if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
-					Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
+				Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
 				{
 					BeginDrag();
 				}
@@ -173,6 +182,11 @@ namespace SS
 		{
 			if( isDragging )
 			{
+				// Don't process drags that began over UI elements.
+				if( pressOriginatedOnUI )
+				{
+					return;
+				}
 				Selectable[] overlap = GetSelectablesInDragArea();
 
 				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
@@ -182,8 +196,8 @@ namespace SS
 			}
 			else
 			{
-				// if the click was over UI element, return.
-				if( EventSystem.current.IsPointerOverGameObject() )
+				// Don't process clicks that began over UI elements.
+				if( pressOriginatedOnUI )
 				{
 					return;
 				}

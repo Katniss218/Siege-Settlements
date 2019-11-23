@@ -13,14 +13,41 @@ namespace SS
 	{
 		public class DropoffToInventory : TAIGoal
 		{
-			public SSObject destination { get; private set; }
+			private SSObject __destination = null;
+			public SSObject destination
+			{
+				get
+				{
+					return this.__destination;
+				}
+				set
+				{
+					if( value != null )
+					{
+						if( value is IUsableToggle && !(value as IUsableToggle).CheckUsable() )
+						{
+							Debug.LogWarning( "Tried to dropoff items to inventory that is not usable." );
+							Destroy( this );
+							return;
+						}
+						if( value.GetComponent<InventoryModule>() == null )
+						{
+							Debug.LogWarning( "Tried to dropoff items to non-inventory." );
+							Destroy( this );
+							return;
+						}
+					}
+					this.__destination = value;
+				}
+			}
+
 
 
 			private NavMeshAgent navMeshAgent;
 			private InventoryModule inventory;
 
 
-			private void DropOff()
+			private void OnArrival()
 			{
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
@@ -97,8 +124,10 @@ namespace SS
 				}
 				if( PhysicsDistance.OverlapInRange( this.transform, this.destination.transform, 0.75f ) )
 				{
-					Vector3 direction = (this.destination.transform.position - this.transform.position).normalized;
-					this.DropOff();
+					// Clear the path, when it's in range.
+					this.navMeshAgent.ResetPath();
+					
+					this.OnArrival();
 					Object.Destroy( this );
 				}
 			}

@@ -12,10 +12,36 @@ namespace SS
 	{
 		public class PickupDeposit : TAIGoal
 		{
+			private SSObject __destination = null;
 			/// <summary>
 			/// The deposit to move to and pick up.
 			/// </summary>
-			public SSObject destination { get; private set; }
+			public SSObject destination
+			{
+				get
+				{
+					return this.__destination;
+				}
+				set
+				{
+					if( value != null )
+					{
+						if( value is IUsableToggle && !(value as IUsableToggle).CheckUsable() )
+						{
+							Debug.LogWarning( "Tried to pickup items from deposit that is not usable." );
+							Destroy( this );
+							return;
+						}
+						if( value.GetComponent<ResourceDepositModule>() == null )
+						{
+							Debug.LogWarning( "Tried to pickup items from non-deposit." );
+							Destroy( this );
+							return;
+						}
+					}
+					this.__destination = value;
+				}
+			}
 
 
 			private float amtCollected = 0;
@@ -51,7 +77,7 @@ namespace SS
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 
-			private void PickUp()
+			private void OnArrival()
 			{
 				string idPickedUp = "";
 				int amountPickedUp = 0;
@@ -100,7 +126,7 @@ namespace SS
 					// Clear the path, when it's in range of the deposit.
 					this.navMeshAgent.ResetPath();
 
-					this.PickUp();
+					this.OnArrival();
 				}
 			}
 

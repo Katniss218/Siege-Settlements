@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS.UI
 {
@@ -6,6 +8,8 @@ namespace SS.UI
 	public class ActionPanel : MonoBehaviour
 	{
 		public static ActionPanel instance { get; private set; }
+
+		private Dictionary<string, Transform> actionButtons = new Dictionary<string, Transform>();
 
 		void Awake()
 		{
@@ -15,15 +19,38 @@ namespace SS.UI
 			}
 			instance = this;
 		}
-		
-		void Start()
-		{
 
+
+		public void CreateButton( string id, Sprite icon, UnityAction onClick )
+		{
+#warning incomplete.
+		}
+
+		public Transform GetActionButton( string id )
+		{
+			if( this.actionButtons.TryGetValue( id, out Transform ret ) )
+			{
+				return ret;
+			}
+			return null;
 		}
 		
-		void Update()
+		public void ClearAll()
 		{
-
+			foreach( Transform obj in this.actionButtons.Values )
+			{
+				Object.Destroy( obj.gameObject );
+			}
+			this.actionButtons.Clear();
+		}
+		
+		public void Clear( string id )
+		{
+			if( this.actionButtons.TryGetValue( id, out Transform obj ) )
+			{
+				Object.Destroy( obj.gameObject );
+				this.actionButtons.Remove( id );
+			}
 		}
 	}
 }

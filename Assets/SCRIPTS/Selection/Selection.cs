@@ -56,7 +56,7 @@ namespace SS
 
 			if( IsHighlighted( obj ) )
 			{
-				SelectionPanel.instance.obj.ClearAll();
+				SelectionPanel.instance.obj.ClearAll( true );
 				highlighted = null;
 			}
 			obj.onDeselect?.Invoke();
@@ -97,7 +97,7 @@ namespace SS
 			if( !IsHighlighted( obj ) )
 			{
 				// Clear and highlight.
-				SelectionPanel.instance.obj.ClearAll();
+				SelectionPanel.instance.obj.ClearAll( false );
 				__Highlight( obj );
 			}
 		}
@@ -127,7 +127,7 @@ namespace SS
 				if( !IsHighlighted( obj ) )
 				{
 					// Clear and highlight new.
-					SelectionPanel.instance.obj.ClearAll();
+					SelectionPanel.instance.obj.ClearAll( false );
 					__Highlight( obj );
 				}
 			}
@@ -157,7 +157,7 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			SelectionPanel.instance.obj.ClearAll();
+			SelectionPanel.instance.obj.ClearAll( true );
 			SelectionPanel.instance.list.Clear();
 			
 			for( int i = 0; i < selected.Count; i++ )

@@ -93,6 +93,17 @@ namespace SS.Objects.Units
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
+			selectable.onHighlight.AddListener( () =>
+			{
+				SelectionPanel.instance.obj.SetIcon( def.icon );
+
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
+			} );
+
 			//
 			//    MODULES
 			//
@@ -257,15 +268,6 @@ namespace SS.Objects.Units
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
-			} );
-
-			selectable.onHighlight.AddListener( () =>
-			{
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
-
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
 			} );
 
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>

@@ -14,7 +14,19 @@ namespace SS
 	{
 		public class MakePayment : TAIGoal
 		{
-			public SSObject destination { get; private set; }
+			private SSObject __destination = null;
+			public SSObject destination
+			{
+				get
+				{
+					return this.__destination;
+				}
+				set
+				{
+					this.__destination = value;
+				}
+			}
+
 
 			private NavMeshAgent navMeshAgent;
 			private InventoryModule inventory;
@@ -44,16 +56,14 @@ namespace SS
 					Object.Destroy( this );
 					return;
 				}
-
-				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.inventory = this.GetComponent<InventoryModule>();
+				
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 
 			// pays first ipayment receiver on the object. if has resources left in inv, pays the 2nd, etc.
-			private void Pay( SSObject gameObject )
+			private void OnArrival()
 			{
-				IPaymentReceiver[] paymentReceivers = gameObject.GetComponents<IPaymentReceiver>();
+				IPaymentReceiver[] paymentReceivers = this.destination.GetComponents<IPaymentReceiver>();
 
 				for( int i = 0; i < paymentReceivers.Length; i++ )
 				{
@@ -97,11 +107,8 @@ namespace SS
 				{
 					// Clear the path, when it's in range.
 					this.navMeshAgent.ResetPath();
-
-					if( this.inventory != null )
-					{
-						this.Pay( this.destination );
-					}
+					
+					this.OnArrival();
 					Object.Destroy( this );
 				}
 			}

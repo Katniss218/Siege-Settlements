@@ -1,6 +1,7 @@
 ﻿using SS.InputSystem;
 using SS.Levels;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace SS
 {
@@ -228,16 +229,19 @@ namespace SS
 			{
 				return;
 			}
-			
-			
-			// Zoom
-			if( Input.mouseScrollDelta.y < 0 )
+
+
+			if( EventSystem.current != null && !EventSystem.current.IsPointerOverGameObject() )
 			{
-				ZoomOut();
-			}
-			else if( Input.mouseScrollDelta.y > 0 )
-			{
-				ZoomIn();
+				// Zoom
+				if( Input.mouseScrollDelta.y < 0 )
+				{
+					ZoomOut();
+				}
+				else if( Input.mouseScrollDelta.y > 0 )
+				{
+					ZoomIn();
+				}
 			}
 
 			if( Input.mousePosition.x < scrollMargin )

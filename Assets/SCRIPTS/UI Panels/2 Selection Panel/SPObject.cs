@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SS.UI
 {
@@ -7,6 +8,27 @@ namespace SS.UI
 	public class SPObject : MonoBehaviour
 	{
 		private Dictionary<string, Transform> elements = new Dictionary<string, Transform>();
+
+		[SerializeField] private Image highlightedObjIcon;
+		[SerializeField] private Transform modulesList;
+
+		public void SetIcon( Sprite icon )
+		{
+			this.highlightedObjIcon.sprite = icon;
+			if( !this.highlightedObjIcon.gameObject.activeSelf )
+			{
+				this.highlightedObjIcon.gameObject.SetActive( true );
+			}
+		}
+
+		public void ClearIcon()
+		{
+			if( this.highlightedObjIcon.gameObject.activeSelf )
+			{
+				this.highlightedObjIcon.gameObject.SetActive( false );
+			}
+			this.highlightedObjIcon.sprite = null;
+		}
 
 		/// <summary>
 		/// Registers an element 'element' using an id 'id'.
@@ -53,13 +75,17 @@ namespace SS.UI
 		/// <summary>
 		/// Clears every UI element that belongs to highlighted objects.
 		/// </summary>
-		public void ClearAll()
+		public void ClearAll( bool clearIcon )
 		{
 			foreach( Transform obj in this.elements.Values )
 			{
 				Object.Destroy( obj.gameObject );
 			}
 			this.elements.Clear();
+			if( clearIcon )
+			{
+				this.ClearIcon();
+			}
 		}
 
 		/// <summary>

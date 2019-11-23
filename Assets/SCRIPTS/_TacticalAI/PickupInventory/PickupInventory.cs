@@ -1,7 +1,5 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Objects.Extras;
-using SS.Modules;
 using SS.Modules.Inventories;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +12,37 @@ namespace SS
 	{
 		public class PickupInventory : TAIGoal
 		{
+			private SSObject __destination = null;
 			/// <summary>
-			/// The deposit to move to and pick up.
+			/// The inventory to move to and pick up.
 			/// </summary>
-			public SSObject destination { get; private set; }
+			public SSObject destination
+			{
+				get
+				{
+					return this.__destination;
+				}
+				set
+				{
+					if( value != null )
+					{
+						if( value is IUsableToggle && !(value as IUsableToggle).CheckUsable() )
+						{
+							Debug.LogWarning( "Tried to pickup items from inventory that is not usable." );
+							Destroy( this );
+							return;
+						}
+						if( value.GetComponent<InventoryModule>() == null )
+						{
+							Debug.LogWarning( "Tried to pickup items from non-inventory." );
+							Destroy( this );
+							return;
+						}
+					}
+					this.__destination = value;
+				}
+			}
+
 
 			private NavMeshAgent navMeshAgent;
 			private InventoryModule inventory;
@@ -50,7 +75,7 @@ namespace SS
 				this.navMeshAgent.SetDestination( this.destination.transform.position );
 			}
 
-			private void PickUp()
+			private void OnArrival()
 			{
 				string idPickedUp = "";
 				int amountPickedUp = 0;
@@ -95,7 +120,7 @@ namespace SS
 					// Clear the path, when it's in range of the deposit.
 					this.navMeshAgent.ResetPath();
 
-					this.PickUp();
+					this.OnArrival();
 					Object.Destroy( this );
 				}
 			}

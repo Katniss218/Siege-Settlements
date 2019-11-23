@@ -36,10 +36,11 @@ namespace SS.UI
 		{
 			ResourceDefinition[] definedRes = DefinitionManager.GetAllResources();
 
-			for( int i = 0; i < definedRes.Length; i++ )
-			{
-				AddResourceEntry( definedRes[i] );
-			}
+			this.SetEntries( definedRes );
+			//for( int i = 0; i < definedRes.Length; i++ )
+			//{
+			//	AddResourceEntry( definedRes[i] );
+			//}
 		}
 
 		void Update()
@@ -77,10 +78,18 @@ namespace SS.UI
 			}
 		}
 
-		public void AddResourceEntry( ResourceDefinition resource, int startAmt = 0 )
+		public void SetEntries( ResourceDefinition[] resources )
 		{
-			AddEntry( resource.id, resource.icon, startAmt );
+			for( int i = 0; i < resources.Length; i++ )
+			{
+				this.AddEntry( resources[i].id, resources[i].icon, 0 );
+			}
 		}
+
+		//public void AddResourceEntry( ResourceDefinition resource, int startAmt = 0 )
+		//{
+		//	AddEntry( resource.id, resource.icon, startAmt );
+		//}
 
 		public void RemoveResourceEntry( ResourceDefinition resource )
 		{

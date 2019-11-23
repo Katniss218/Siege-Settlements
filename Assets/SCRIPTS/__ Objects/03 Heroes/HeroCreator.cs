@@ -93,6 +93,21 @@ namespace SS.Objects.Heroes
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
+
+			selectable.onHighlight.AddListener( () =>
+			{
+				SelectionPanel.instance.obj.SetIcon( def.icon );
+
+				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
+				SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
+
+				GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
+				SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
+
+				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
+				SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
+			} );
+
 			//
 			//    MODULES
 			//
@@ -258,19 +273,7 @@ namespace SS.Objects.Heroes
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-
-			selectable.onHighlight.AddListener( () =>
-			{
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
-
-				GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
-				SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
-
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
-			} );
-
+			
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				if( !Selection.IsHighlighted( selectable ) )
