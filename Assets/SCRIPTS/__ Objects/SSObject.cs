@@ -215,8 +215,8 @@ namespace SS.Objects
 			if( this is SSObjectSelectable )
 			{
 				allSelectables.Add( this as SSObjectSelectable );
-				return;
 			}
+
 			if( this is Unit )
 			{
 				allUnits.Add( this as Unit );
@@ -250,8 +250,8 @@ namespace SS.Objects
 			if( this is SSObjectSelectable )
 			{
 				allSelectables.Remove( this as SSObjectSelectable );
-				return;
 			}
+
 			if( this is Unit )
 			{
 				allUnits.Remove( this as Unit );

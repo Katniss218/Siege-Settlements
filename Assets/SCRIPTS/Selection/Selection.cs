@@ -73,6 +73,10 @@ namespace SS
 			int numSelected = 0;
 			for( int i = 0; i < objs.Length; i++ )
 			{
+				if( objs[i] == null )
+				{
+					continue;
+				}
 				if( selected.Contains( objs[i] ) )
 				{
 					continue;

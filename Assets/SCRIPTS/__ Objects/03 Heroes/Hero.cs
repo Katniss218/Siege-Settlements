@@ -68,7 +68,6 @@ namespace SS.Objects.Heroes
 				return this.__factionMember;
 			}
 		}
-
 		
 		void Update()
 		{

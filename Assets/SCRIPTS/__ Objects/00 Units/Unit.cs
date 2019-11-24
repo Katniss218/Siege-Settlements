@@ -36,8 +36,7 @@ namespace SS.Objects.Units
 				return this.__factionMember;
 			}
 		}
-
-
+		
 		void Update()
 		{
 			if( hud.activeSelf )

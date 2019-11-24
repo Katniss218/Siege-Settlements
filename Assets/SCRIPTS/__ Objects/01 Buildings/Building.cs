@@ -105,7 +105,6 @@ namespace SS.Objects.Buildings
 				return this.__collider;
 			}
 		}
-
 		
 		void Update()
 		{
