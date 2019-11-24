@@ -50,22 +50,18 @@ namespace SS
 		{
 			return selected.Contains( obj );
 		}
-
-		/// <summary>
-		/// Selects an object, and highlights it.
-		/// </summary>
-		/// <param name="obj">The object to select.</param>
-		public static void Select( SSObjectSelectable obj )
+		
+		public static int TrySelect( SSObjectSelectable[] objs )
 		{
-			if( obj == null )
+			if( objs == null )
 			{
-				return;
+				return 0;
 			}
-			if( selected.Contains( obj ) )
+			if( objs.Length == 0 )
 			{
-				Debug.LogWarning( "Attempted to select object that is already selected." );
-				return;
+				return 0;
 			}
+			
 			if( !SelectionPanel.instance.gameObject.activeSelf )
 			{
 				SelectionPanel.instance.gameObject.SetActive( true );
@@ -74,17 +70,27 @@ namespace SS
 			{
 				ActionPanel.instance.gameObject.SetActive( true );
 			}
+			int numSelected = 0;
+			for( int i = 0; i < objs.Length; i++ )
+			{
+				if( selected.Contains( objs[i] ) )
+				{
+					continue;
+				}
+				SelectionPanel.instance.list.AddIcon( objs[i], objs[i].icon );
+				selected.Add( objs[i] );
 
-			SelectionPanel.instance.list.AddIcon( obj, obj.icon );
-			selected.Add( obj );
-			
+				numSelected++;
+				objs[i].onSelect?.Invoke();
+			}
+
 			if( selected.Count == 1 )
 			{
 #warning Fix batch-selecting object displaying the first one.
 
-				Display( obj as ISelectDisplayHandler );
+				Display( objs[0] as ISelectDisplayHandler );
 
-				SSModule[] modules = obj.GetModules();
+				SSModule[] modules = objs[0].GetModules();
 
 				for( int i = 0; i < modules.Length; i++ )
 				{
@@ -95,8 +101,13 @@ namespace SS
 					SelectionPanel.instance.obj.AddModuleButton( modules[i] );
 				}
 			}
-
-			obj.onSelect?.Invoke();
+			else
+			{
+				SelectionPanel.instance.obj.ClearModules();
+				SelectionPanel.instance.obj.ClearIcon();
+				SelectionPanel.instance.obj.displayNameText.text = "Group";
+			}
+			return numSelected;
 		}
 
 		/// <summary>
@@ -118,12 +129,20 @@ namespace SS
 			SelectionPanel.instance.list.RemoveIcon( obj );
 
 			if( IsDisplayed( obj ) )
+#warning what if module is displayed? It needs to deselect.
 			{
 				SelectionPanel.instance.obj.ClearModules();
+				SelectionPanel.instance.obj.ClearIcon();
+				SelectionPanel.instance.obj.displayNameText.text = "Group";
 			}
 			if( selected.Count == 1 )
 			{
 				Display( selected[0] as ISelectDisplayHandler );
+			}
+			else if( selected.Count == 0 )
+			{
+				SelectionPanel.instance.gameObject.SetActive( false );
+				ActionPanel.instance.gameObject.SetActive( false );
 			}
 
 			obj.onDeselect?.Invoke();
@@ -138,6 +157,7 @@ namespace SS
 			SelectionPanel.instance.obj.ClearIcon();
 			SelectionPanel.instance.obj.ClearModules();
 			SelectionPanel.instance.obj.displayNameText.text = "";
+
 			SelectionPanel.instance.list.Clear();
 
 			for( int i = 0; i < selected.Count; i++ )

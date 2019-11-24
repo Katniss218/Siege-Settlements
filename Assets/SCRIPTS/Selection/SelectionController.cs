@@ -81,23 +81,9 @@ namespace SS
 			{
 				if( uniqueSelectables != null )
 				{
-					bool playSelect = false;
-					for( int i = 0; i < uniqueSelectables.Length; i++ )
-					{
-						if( uniqueSelectables[i] == null )
-						{
-							continue;
-						}
+					int numSelected = Selection.TrySelect( uniqueSelectables );
 
-						if( Selection.IsSelected( uniqueSelectables[i] ) )
-						{
-							continue;
-						}
-
-						Selection.Select( uniqueSelectables[i] );
-						playSelect = true;
-					}
-					if( playSelect )
+					if( numSelected > 0 )
 					{
 						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 					}
@@ -121,7 +107,6 @@ namespace SS
 				else
 				{
 					SSObjectSelectable[] selectedObjs = Selection.selectedObjects;
-					bool playSelect = false;
 					bool playDeselect = false;
 
 					for( int i = 0; i < selectedObjs.Length; i++ )
@@ -140,21 +125,9 @@ namespace SS
 							playDeselect = true;
 						}
 					}
-					for( int i = 0; i < uniqueSelectables.Length; i++ )
-					{
-						if( uniqueSelectables[i] == null )
-						{
-							continue;
-						}
-						
-						if( Selection.IsSelected( uniqueSelectables[i] ) )
-						{
-							continue;
-						}
-						Selection.Select( uniqueSelectables[i] );
-						playSelect = true;
-					}
-					if( playSelect )
+					int numSelected = Selection.TrySelect( uniqueSelectables );
+
+					if( numSelected > 0 )
 					{
 						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 					}

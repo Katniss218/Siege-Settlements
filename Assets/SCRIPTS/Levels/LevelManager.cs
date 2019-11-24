@@ -721,8 +721,7 @@ namespace SS.Levels
 			}
 
 			SelectionPanelMode selectionPanelMode;
-			SSObject highlighted;
-			SSObject[] selected = GetSelected( serializerSelection, out highlighted, out selectionPanelMode );
+			SSObjectSelectable[] selected = GetSelected( serializerSelection, out selectionPanelMode );
 
 			SelectionPanel.instance.SetMode( selectionPanelMode );
 
@@ -736,7 +735,7 @@ namespace SS.Levels
 			{
 				for( int i = 0; i < selected.Length; i++ )
 				{
-					Selection.Select( selected[i] as SSObjectSelectable );
+					Selection.TrySelect( selected );
 				}
 			}
 
@@ -848,7 +847,7 @@ namespace SS.Levels
 			return ret;
 		}
 		
-		private static SSObject[] GetSelected( KFFSerializer serializer, out SSObject highlight, out SelectionPanelMode selectionPanelMode )
+		private static SSObjectSelectable[] GetSelected( KFFSerializer serializer, out SelectionPanelMode selectionPanelMode )
 		{
 			string sel = serializer.ReadString( "SelectionPanelMode" );
 			if( sel == "Object" )
@@ -865,27 +864,17 @@ namespace SS.Levels
 			}
 			if( serializer.Analyze( "SelectedGuids" ).isFail )
 			{
-				highlight = null;
 				return null;
 			}
 
 			int count = serializer.Analyze( "SelectedGuids" ).childCount;
 
-			SSObject[] ret = new SSObject[count];
-
-			if( serializer.Analyze( "HighlightedGuid" ).isFail )
-			{
-				highlight = null;
-			}
-			else
-			{
-				highlight = Main.GetSSObject( Guid.ParseExact( serializer.ReadString( "HighlightedGuid" ), "D" ) );
-			}
-
+			SSObjectSelectable[] ret = new SSObjectSelectable[count];
+			
 
 			for( int i = 0; i < count; i++ )
 			{
-				ret[i] = Main.GetSSObject( Guid.ParseExact( serializer.ReadString( new Path( "SelectedGuids.{0}", i ) ), "D" ) );
+				ret[i] = (SSObjectSelectable)Main.GetSSObject( Guid.ParseExact( serializer.ReadString( new Path( "SelectedGuids.{0}", i ) ), "D" ) );
 				
 			}
 
