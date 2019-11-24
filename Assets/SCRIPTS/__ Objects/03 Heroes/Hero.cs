@@ -81,17 +81,14 @@ namespace SS.Objects.Heroes
 			}
 		}
 
-
-		void FixedUpdate()
+		
+		void Update()
 		{
 			if( hud.activeSelf )
 			{
 				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
-		}
 
-		void Update()
-		{
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;
