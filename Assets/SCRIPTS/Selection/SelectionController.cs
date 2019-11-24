@@ -1,6 +1,7 @@
 ﻿using SS.Content;
 using SS.Diplomacy;
 using SS.InputSystem;
+using SS.Objects;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,8 +17,8 @@ namespace SS
 
 		private enum SelectionMode : byte
 		{
-			Additive,
-			Exclusive
+			Add,
+			Replace
 		}
 
 		/// <summary>
@@ -73,9 +74,9 @@ namespace SS
 			selectionRect.gameObject.SetActive( false );
 		}
 
-		private static void HandleSelecting( Selectable[] uniqueObjs, SelectionMode selectionMode )
+		private static void HandleSelecting( SSObjectSelectable[] uniqueObjs, SelectionMode selectionMode )
 		{
-			if( selectionMode == SelectionMode.Additive )
+			if( selectionMode == SelectionMode.Add )
 			{
 				if( uniqueObjs != null )
 				{
@@ -87,28 +88,21 @@ namespace SS
 						}
 
 						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
-						if( factionOfSelectable != null )
+						if( factionOfSelectable == null )
 						{
-							if( Selection.IsSelected( uniqueObjs[i] ) )
-							{
-								if( !Selection.IsHighlighted( uniqueObjs[i] ) )
-								{
-									Selection.HighlightSelected( uniqueObjs[i] );
-									AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
-								}
-							}
-							else
-							{
-								Selection.SelectAndHighlight( uniqueObjs[i] );
-								AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
-							}
+							continue;
+						}
+						if( !Selection.IsSelected( uniqueObjs[i] ) )
+						{
+							Selection.Select( uniqueObjs[i] );
+							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 						}
 					}
 				}
 				return;
 			}
 			// No Shift - deselect all and select at cursor (if possible).
-			if( selectionMode == SelectionMode.Exclusive )
+			if( selectionMode == SelectionMode.Replace )
 			{
 				if( uniqueObjs == null )
 				{
@@ -133,7 +127,7 @@ namespace SS
 						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
 						if( factionOfSelectable != null )
 						{
-							Selection.SelectAndHighlight( uniqueObjs[i] );
+							Selection.Select( uniqueObjs[i] );
 							
 							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 							
@@ -187,9 +181,9 @@ namespace SS
 				{
 					return;
 				}
-				Selectable[] overlap = GetSelectablesInDragArea();
+				SSObjectSelectable[] overlap = GetSelectablesInDragArea();
 
-				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 
 
 				EndDrag();
@@ -201,9 +195,9 @@ namespace SS
 				{
 					return;
 				}
-				Selectable atCursor = GetSelectableAtCursor();
-				Selectable[] array = atCursor == null ? null : new Selectable[] { atCursor };
-				HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Additive : SelectionMode.Exclusive );
+				SSObjectSelectable atCursor = GetSelectableAtCursor();
+				SSObjectSelectable[] array = atCursor == null ? null : new SSObjectSelectable[] { atCursor };
+				HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 			}
 		}
 
@@ -225,12 +219,12 @@ namespace SS
 			}
 		}
 		
-		private static Selectable GetSelectableAtCursor()
+		private static SSObjectSelectable GetSelectableAtCursor()
 		{
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{
 				// Returns null if the mouse is over non-selectable object.
-				return hitInfo.collider.GetComponent<Selectable>();
+				return hitInfo.collider.GetComponent<SSObjectSelectable>();
 			}
 			return null;
 		}
@@ -252,11 +246,11 @@ namespace SS
 			return ret;
 		}
 
-		private static Selectable[] GetSelectablesInDragArea()
+		private static SSObjectSelectable[] GetSelectablesInDragArea()
 		{
-			Selectable[] selectables = Selectable.GetAllInScene();
+			SSObjectSelectable[] selectables = SSObject.GetAllSelectables();
 
-			List<Selectable> ret = new List<Selectable>();
+			List<SSObjectSelectable> ret = new List<SSObjectSelectable>();
 
 			Bounds viewportBounds = GetViewportBounds( Main.camera, new Vector3( beginDragPos.x, beginDragPos.y, 0 ), Input.mousePosition );
 

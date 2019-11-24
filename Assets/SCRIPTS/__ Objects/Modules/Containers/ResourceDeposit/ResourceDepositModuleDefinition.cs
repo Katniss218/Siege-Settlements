@@ -65,6 +65,7 @@ namespace SS.Modules
 			serializer.DeserializeArray( "Resources", this.slots );
 
 			this.mineSound = serializer.ReadAudioClipFromAssets( "MineSound" );
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -73,6 +74,7 @@ namespace SS.Modules
 			serializer.SerializeArray( "", "Resources", this.slots );
 
 			serializer.WriteString( "", "MineSound", (string)this.mineSound );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )

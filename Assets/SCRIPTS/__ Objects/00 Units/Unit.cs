@@ -1,28 +1,16 @@
 ﻿using SS.Diplomacy;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObject, IHUDHolder, IDamageable, IFactionMember, IPointerEnterHandler
+	public class Unit : SSObjectSelectable, IHUDHolder, IDamageable, IFactionMember, IPointerEnterHandler
 	{
 		public GameObject hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
-
-		private Selectable __selectable = null;
-		public Selectable selectable
-		{
-			get
-			{
-				if( this.__selectable == null )
-				{
-					this.__selectable = this.GetComponent<Selectable>();
-				}
-				return this.__selectable;
-			}
-		}
-
+		
 		private Damageable __damageable = null;
 		public Damageable damageable
 		{
@@ -48,7 +36,7 @@ namespace SS.Objects.Units
 				return this.__factionMember;
 			}
 		}
-		
+
 
 		void Update()
 		{
@@ -65,7 +53,7 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-			if( Selection.IsSelected( this.selectable ) )
+			if( Selection.IsSelected( this ) )
 			{
 				return;
 			}
@@ -83,6 +71,17 @@ namespace SS.Objects.Units
 		public void OnPointerEnter( PointerEventData eventData )
 		{
 			Debug.Log( this.definitionId );
+		}
+
+		public override void OnDisplay()
+		{
+			SelectionPanel.instance.obj.SetIcon( this.icon );
+
+			GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayName );
+			SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
+			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
 		}
 	}
 }

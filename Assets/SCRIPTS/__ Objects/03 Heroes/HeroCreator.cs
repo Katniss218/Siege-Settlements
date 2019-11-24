@@ -40,10 +40,7 @@ namespace SS.Objects.Heroes
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
-
-			// Set the hero's selected icon.
-			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon;
+			
 
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
@@ -58,7 +55,8 @@ namespace SS.Objects.Heroes
 			hero.definitionId = def.id;
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
-			
+			hero.icon = def.icon;
+
 			// Set the faction id.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 
@@ -93,21 +91,7 @@ namespace SS.Objects.Heroes
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
-
-			selectable.onHighlight.AddListener( () =>
-			{
-				SelectionPanel.instance.obj.SetIcon( def.icon );
-
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
-
-				GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), hero.displayTitle );
-				SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
-
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
-			} );
-
+			
 			//
 			//    MODULES
 			//
@@ -135,10 +119,7 @@ namespace SS.Objects.Heroes
 
 			Hero hero = container.AddComponent<Hero>();
 			hero.guid = guid;
-
-			// Make the hero selectable.
-			Selectable selectable = container.AddComponent<Selectable>();
-
+			
 			// Add a kinematic rigidbody to the hero (required by the NavMeshAgent).
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
@@ -170,7 +151,7 @@ namespace SS.Objects.Heroes
 				}
 				else
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( hero ) )
 					{
 						return;
 					}
@@ -189,7 +170,7 @@ namespace SS.Objects.Heroes
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( hero ) )
 					{
 						return;
 					}
@@ -206,7 +187,7 @@ namespace SS.Objects.Heroes
 					{
 						return;
 					}
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( hero ) )
 					{
 						return;
 					}
@@ -218,7 +199,7 @@ namespace SS.Objects.Heroes
 			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
 			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
 
-			selectable.onSelect.AddListener( () =>
+			hero.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -228,7 +209,7 @@ namespace SS.Objects.Heroes
 				hudGameObject.SetActive( true );
 			} );
 
-			selectable.onDeselect.AddListener( () =>
+			hero.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -264,9 +245,9 @@ namespace SS.Objects.Heroes
 			{
 				Object.Destroy( hud.gameObject );
 				
-				if( Selection.IsSelected( selectable ) )
+				if( Selection.IsSelected( hero ) )
 				{
-					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+					Selection.Deselect( hero );
 				}
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
@@ -276,7 +257,7 @@ namespace SS.Objects.Heroes
 			
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				if( !Selection.IsHighlighted( selectable ) )
+				if( !Selection.IsDisplayed( hero ) )
 				{
 					return;
 				}

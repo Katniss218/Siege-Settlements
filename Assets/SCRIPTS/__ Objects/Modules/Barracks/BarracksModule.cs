@@ -18,7 +18,7 @@ using SS.Objects;
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class BarracksModule : SSModule, IPaymentReceiver
+	public class BarracksModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
 	{
 		public UnityEvent onTrainingBegin = new UnityEvent();
 
@@ -75,7 +75,6 @@ namespace SS.Modules
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-		private Selectable selectable;
 		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -152,11 +151,8 @@ namespace SS.Modules
 		void Awake()
 		{
 			this.factionMember = this.GetComponent<FactionMember>();
-			this.selectable = this.GetComponent<Selectable>();
 			this.onPaymentReceived = new UnityEvent();
-
-
-
+			
 			Building building = this.GetComponent<Building>();
 			if( building == null )
 			{
@@ -170,6 +166,17 @@ namespace SS.Modules
 				}
 				this.spawnPosition = building.entrance.Value;
 			}
+
+			this.onTrainingBegin.AddListener( this.OnTrainingBegin );
+			this.onTrainingProgress.AddListener( this.OnTrainingProgress );
+			this.onTrainingEnd.AddListener( this.OnTrainingEnd );
+
+			this.onPaymentReceived.AddListener( this.OnPaymentReceived );
+
+			if( this.factionMember != null )
+			{
+				LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
+			}
 		}
 		
 		// Update is called once per frame
@@ -180,8 +187,6 @@ namespace SS.Modules
 				// If we are building something
 				if( this.isTraining )
 				{
-					Selectable selectable = this.GetComponent<Selectable>();
-
 					this.trainProgress -= this.trainSpeed * Time.deltaTime;
 					if( this.trainProgress <= 0 )
 					{
@@ -281,34 +286,15 @@ namespace SS.Modules
 			BarracksModuleDefinition def = (BarracksModuleDefinition)_def;
 			BarracksModuleData data = (BarracksModuleData)_data;
 
+			this.icon = def.icon;
 			this.trainSpeed = def.trainSpeed;
 			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];
 			for( int i = 0; i < this.trainableUnits.Length; i++ )
 			{
 				this.trainableUnits[i] = DefinitionManager.GetUnit( def.trainableUnits[i] );
 			}
-
-			Selectable selectable = this.GetComponent<Selectable>();
-
-			if( selectable != null )
-			{
-				// if applied before, remove.
-				selectable.onHighlight.RemoveListener( this.OnHighlight );
-				// add.
-				selectable.onHighlight.AddListener( this.OnHighlight );
-
-				
-				this.onTrainingBegin.AddListener( this.OnTrainingBegin );
-				this.onTrainingProgress.AddListener( this.OnTrainingProgress );
-				this.onTrainingEnd.AddListener( this.OnTrainingEnd );
-
-				this.onPaymentReceived.AddListener( this.OnPaymentReceived );
-
-				if( this.factionMember != null )
-				{
-					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
-				}
-			}
+			
+			// ------          DATA
 
 			this.resourcesRemaining = data.resourcesRemaining;
 			if( data.trainedUnitId == "" )
@@ -384,7 +370,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -403,7 +389,7 @@ namespace SS.Modules
 
 		private void OnPaymentReceived()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -416,7 +402,7 @@ namespace SS.Modules
 
 		private void OnTrainingBegin()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -436,7 +422,7 @@ namespace SS.Modules
 
 		private void OnTrainingProgress()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -449,7 +435,7 @@ namespace SS.Modules
 
 		private void OnTrainingEnd()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -463,7 +449,26 @@ namespace SS.Modules
 			this.ShowList();
 		}
 
-		private void OnHighlight()
+#if UNITY_EDITOR
+
+		void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.blue;
+
+			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
+
+			Gizmos.DrawSphere( spawnPos, 0.1f );
+
+			Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+
+			Gizmos.color = Color.cyan;
+			Gizmos.DrawSphere( rallyPos, 0.15f );
+			Gizmos.DrawLine( spawnPos, rallyPos );
+		}
+#endif
+
+		public void OnDisplay()
 		{
 			// If it's not usable - return, don't train anything.
 			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
@@ -496,24 +501,5 @@ namespace SS.Modules
 				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 			}
 		}
-
-#if UNITY_EDITOR
-
-		void OnDrawGizmosSelected()
-		{
-			Gizmos.color = Color.blue;
-
-			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
-
-			Gizmos.DrawSphere( spawnPos, 0.1f );
-
-			Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
-
-			Gizmos.color = Color.cyan;
-			Gizmos.DrawSphere( rallyPos, 0.15f );
-			Gizmos.DrawLine( spawnPos, rallyPos );
-		}
-#endif
 	}
 }

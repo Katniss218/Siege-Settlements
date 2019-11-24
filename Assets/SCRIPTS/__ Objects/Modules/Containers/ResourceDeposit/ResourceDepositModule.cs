@@ -1,8 +1,5 @@
-﻿using SS;
-using SS.Content;
-using SS.Objects.Extras;
+﻿using SS.Content;
 using SS.Levels.SaveStates;
-using SS.Modules.Inventories;
 using SS.ResourceSystem;
 using SS.UI;
 using System;
@@ -309,6 +306,7 @@ namespace SS.Modules
 			ResourceDepositModuleDefinition def = (ResourceDepositModuleDefinition)_def;
 			ResourceDepositModuleData data = (ResourceDepositModuleData)_data;
 
+			this.icon = def.icon;
 			this.resources = new SlotGroup[def.slots.Length];
 			for( int i = 0; i < this.resources.Length; i++ )
 			{
@@ -324,7 +322,8 @@ namespace SS.Modules
 			}
 
 			this.miningSound = def.mineSound;
-			//this.isTypeExtracted = def.isExtracted;
+
+			// -----           DATA
 
 			foreach( var kvp in data.items )
 			{

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using SS.Objects;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,17 +7,8 @@ namespace SS
 	/// <summary>
 	/// Add this to any object to make it selectable by the player.
 	/// </summary>
-	public class Selectable : MonoBehaviour
+	public abstract class SSObjectSelectable : SSObject, ISelectDisplayHandler
 	{
-		private static List<Selectable> __everySelectable = new List<Selectable>();
-
-		/// <summary>
-		/// Returns every selectable object in the scene that's currently active and enabled.
-		/// </summary>
-		public static Selectable[] GetAllInScene()
-		{
-			return __everySelectable.ToArray();
-		}
 
 		/// <summary>
 		/// The icon that is shown on the list of all selected objects.
@@ -39,16 +30,6 @@ namespace SS
 		/// </summary>
 		public UnityEvent onDeselect = new UnityEvent();
 
-
-		// Cache the existing selectables to greatly reduce load (searching objects).
-		void OnEnable()
-		{
-			__everySelectable.Add( this );
-		}
-
-		void OnDisable()
-		{
-			__everySelectable.Remove( this );
-		}
+		public abstract void OnDisplay();
 	}
 }

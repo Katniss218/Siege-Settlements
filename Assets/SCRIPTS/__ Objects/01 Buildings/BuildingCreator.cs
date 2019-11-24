@@ -41,11 +41,7 @@ namespace SS.Objects.Buildings
 			NavMeshObstacle navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
 			navMeshObstacle.size = def.size;
 			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-
-			// Set the building's selected icon.
-			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon;
-			
+						
 			// Set the building's native parameters.
 			Building building = gameObject.GetComponent<Building>();
 			building.definitionId = def.id;
@@ -55,7 +51,8 @@ namespace SS.Objects.Buildings
 			building.buildSoundEffect = def.buildSoundEffect;
 			building.displayName = def.displayName;
 			building.deathSound = def.deathSoundEffect;
-			
+			building.icon = def.icon;
+
 			// Make the building belong to a faction.
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 
@@ -88,24 +85,7 @@ namespace SS.Objects.Buildings
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
 			damageable.armor = def.armor;
-
-			selectable.onHighlight.AddListener( () =>
-			{
-				SelectionPanel.instance.obj.SetIcon( def.icon );
-
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), building.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "building.display_name", nameUI.transform );
-
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
-
-				if( !building.CheckUsable() )
-				{
-					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
-					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
-				}
-			} );
-
+			
 			//
 			//    MODULES
 			//
@@ -146,10 +126,7 @@ namespace SS.Objects.Buildings
 
 			Building building = container.AddComponent<Building>();
 			building.guid = guid;
-
-			// Make the building selectable.
-			Selectable selectable = container.AddComponent<Selectable>();
-
+			
 			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.carving = true;
 
@@ -172,7 +149,7 @@ namespace SS.Objects.Buildings
 				}
 				else
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( building ) )
 					{
 						return;
 					}
@@ -191,7 +168,7 @@ namespace SS.Objects.Buildings
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( building ) )
 					{
 						return;
 					}
@@ -208,7 +185,7 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( building ) )
 					{
 						return;
 					}
@@ -220,7 +197,7 @@ namespace SS.Objects.Buildings
 			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
 			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
 
-			selectable.onSelect.AddListener( () =>
+			building.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -230,7 +207,7 @@ namespace SS.Objects.Buildings
 				hudGameObject.SetActive( true );
 			} );
 
-			selectable.onDeselect.AddListener( () =>
+			building.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -270,9 +247,9 @@ namespace SS.Objects.Buildings
 			damageable.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
-				if( Selection.IsSelected( selectable ) )
+				if( Selection.IsSelected( building ) )
 				{
-					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+					Selection.Deselect( building ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				AudioManager.PlaySound( building.deathSound );
 				// Remove the now unused listeners.
@@ -283,7 +260,7 @@ namespace SS.Objects.Buildings
 			
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				if( !Selection.IsHighlighted( selectable ) )
+				if( !Selection.IsDisplayed( building ) )
 				{
 					return;
 				}

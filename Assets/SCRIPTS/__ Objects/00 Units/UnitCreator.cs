@@ -55,10 +55,8 @@ namespace SS.Objects.Units
 			Unit unit = gameObject.GetComponent<Unit>();
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
-
-			// Set the unit's selected icon.
-			Selectable selectable = gameObject.GetComponent<Selectable>();
-			selectable.icon = def.icon;
+			unit.icon = def.icon;
+			
 
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 
@@ -93,16 +91,30 @@ namespace SS.Objects.Units
 			damageable.health = data.health;
 			damageable.armor = def.armor;
 
-			selectable.onHighlight.AddListener( () =>
-			{
-				SelectionPanel.instance.obj.SetIcon( def.icon );
+#warning remove after.
 
-				GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), unit.displayName );
-				SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+			//#warning Update modules to display their properties using OnSelectDisplay and Selection.IsDisplayed.
+			//#warning remove setting up modules in defdata methods. It should only set fields that need to be modified.
 
-				GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)damageable.health + "/" + (int)damageable.healthMax );
-				SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
-			} );
+			//#warning buttons.
+			//#warning Only display these modules that implement ISelectDisplayable
+			// Change highlight mechanic to 'group' and 'single' selections.
+
+			//@@ When selection changes (on select/deselect or when button with module gets clicked),
+			// if now 'group' is selected, display (or update) group properties.
+			// if now 'single' is selected,
+			// --- if module IS NOT selected, call OnSelectDisplay() on the object.
+			// --- if module IS selected, call OnSelectDisplay() on the module.
+
+			//@@ When module's button is clicked, tell the selection manager to (IF THE DISPLAYED THING HAS CHANGED) hide the currently displayed thing and call OnSelectDisplay() on the clicked thing.
+
+			// Objects inherit from ISelectDisplayable interface that has method OnSelectDisplay() that is called when object/module needs to display itself.
+#warning batch selection still displays objs.
+
+#warning A way to collect common properties from selected objects.
+
+			// display: - total health / total max health
+
 
 			//
 			//    MODULES
@@ -130,10 +142,7 @@ namespace SS.Objects.Units
 
 			Unit unit = container.AddComponent<Unit>();
 			unit.guid = guid;
-
-			// Make the unit selectable.
-			Selectable selectable = container.AddComponent<Selectable>();
-			
+						
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
 			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
 			rigidbody.isKinematic = true;
@@ -164,7 +173,7 @@ namespace SS.Objects.Units
 				}
 				else
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( unit ) )
 					{
 						return;
 					}
@@ -183,7 +192,7 @@ namespace SS.Objects.Units
 				if( Main.isHudLocked ) { return; }
 				if( obj == container )
 				{
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( unit ) )
 					{
 						return;
 					}
@@ -200,7 +209,7 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					if( Selection.IsSelected( selectable ) )
+					if( Selection.IsSelected( unit ) )
 					{
 						return;
 					}
@@ -212,7 +221,7 @@ namespace SS.Objects.Units
 			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
 			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
 
-			selectable.onSelect.AddListener( () =>
+			unit.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -222,7 +231,7 @@ namespace SS.Objects.Units
 				hudGameObject.SetActive( true );
 			} );
 
-			selectable.onDeselect.AddListener( () =>
+			unit.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
@@ -260,9 +269,9 @@ namespace SS.Objects.Units
 			{
 				Object.Destroy( hud.gameObject );
 
-				if( Selection.IsSelected( selectable ) )
+				if( Selection.IsSelected( unit ) )
 				{
-					Selection.Deselect( selectable ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+					Selection.Deselect( unit ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				// Remove the now unused listeners.
 				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
@@ -272,7 +281,7 @@ namespace SS.Objects.Units
 
 			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				if( !Selection.IsHighlighted( selectable ) )
+				if( !Selection.IsDisplayed( unit ) )
 				{
 					return;
 				}

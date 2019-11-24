@@ -736,12 +736,8 @@ namespace SS.Levels
 			{
 				for( int i = 0; i < selected.Length; i++ )
 				{
-					Selection.SelectAndHighlight( selected[i].GetComponent<Selectable>() );
+					Selection.Select( selected[i] as SSObjectSelectable );
 				}
-			}
-			if( highlighted != null )
-			{
-				Selection.HighlightSelected( highlighted.GetComponent<Selectable>() );
 			}
 
 			sw.Stop();
@@ -1027,12 +1023,7 @@ namespace SS.Levels
 			SaveProjectiles( projectileData, serializerSavedProjectiles );
 			SaveHeroes( heroData, serializerSavedHeroes );
 			SaveExtras( extraData, serializerSavedExtras );
-
-			Guid? highlighted = null;
-			if( Selection.highlightedObject != null )
-			{
-				highlighted = Selection.highlightedObject.GetComponent<SSObject>().guid.Value;
-			}
+			
 			Guid?[] selection = null;
 			var selectedObjs = Selection.selectedObjects;
 			if( selectedObjs.Length > 0 )
@@ -1045,7 +1036,7 @@ namespace SS.Levels
 				}
 			}
 
-			SaveSelection( highlighted, selection, serializerSelection );
+			SaveSelection( selection, serializerSelection );
 
 
 			// Write the data in serializers to the respective files.
@@ -1126,13 +1117,9 @@ namespace SS.Levels
 
 
 
-		private static void SaveSelection( Guid? highlighted, Guid?[] selected, KFFSerializer serializer )
+		private static void SaveSelection( Guid?[] selected, KFFSerializer serializer )
 		{
 			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.instance.mode == SelectionPanelMode.Object ? "Object" : "List" );
-			if( highlighted != null )
-			{
-				serializer.WriteString( "", "HighlightedGuid", highlighted.Value.ToString( "D" ) );
-			}
 			serializer.WriteList( "", "List" );
 			if( selected != null )
 			{

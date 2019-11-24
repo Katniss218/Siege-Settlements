@@ -1,5 +1,4 @@
-﻿using SS.Objects.Buildings;
-using SS.Content;
+﻿using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -17,7 +16,7 @@ using SS.Objects;
 namespace SS.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class ResearchModule : SSModule, IPaymentReceiver
+	public class ResearchModule : SSModule, ISelectDisplayHandler,IPaymentReceiver
 	{
 		public UnityEvent onResearchBegin = new UnityEvent();
 
@@ -60,8 +59,6 @@ namespace SS.Modules
 		private FactionMember factionMember;
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
-
-		private Selectable selectable;
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -141,8 +138,19 @@ namespace SS.Modules
 		void Awake()
 		{
 			this.factionMember = GetComponent<FactionMember>();
-			this.selectable = this.GetComponent<Selectable>();
 			this.onPaymentReceived = new UnityEvent();
+
+			this.onResearchBegin.AddListener( this.OnResearchBegin );
+			this.onResearchProgress.AddListener( this.OnResearchProgress );
+			this.onResearchEnd.AddListener( this.OnResearchEnd );
+
+			this.onPaymentReceived.AddListener( this.OnPaymentReceived );
+
+
+			if( this.factionMember != null )
+			{
+				LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
+			}
 		}
 
 		// Update is called once per frame
@@ -223,6 +231,7 @@ namespace SS.Modules
 			ResearchModuleDefinition def = (ResearchModuleDefinition)_def;
 			ResearchModuleData data = (ResearchModuleData)_data;
 
+			this.icon = def.icon;
 			this.researchSpeed = def.researchSpeed;
 			this.researchableTechnologies = new TechnologyDefinition[def.researchableTechnologies.Length];
 			for( int i = 0; i < this.researchableTechnologies.Length; i++ )
@@ -230,27 +239,7 @@ namespace SS.Modules
 				this.researchableTechnologies[i] = DefinitionManager.GetTechnology( def.researchableTechnologies[i] );
 			}
 
-			Selectable selectable = this.GetComponent<Selectable>();
-
-			// Only if the thing can be selected, display UI elements on the selection panel.
-			if( selectable != null )
-			{
-				// add.
-				selectable.onHighlight.AddListener( this.OnHighlight );
-				
-				this.onResearchBegin.AddListener( this.OnResearchBegin );
-				this.onResearchProgress.AddListener( this.OnResearchProgress );
-				this.onResearchEnd.AddListener( this.OnResearchEnd );
-				
-				this.onPaymentReceived.AddListener( this.OnPaymentReceived );
-
-
-				if( this.factionMember != null )
-				{
-					LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
-				}
-			}
-
+			// ------          DATA
 
 			this.resourcesRemaining = data.resourcesRemaining;
 
@@ -328,7 +317,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -347,7 +336,7 @@ namespace SS.Modules
 
 		private void OnPaymentReceived()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -360,7 +349,7 @@ namespace SS.Modules
 
 		private void OnResearchBegin()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -380,7 +369,7 @@ namespace SS.Modules
 		
 		private void OnResearchProgress()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -393,7 +382,7 @@ namespace SS.Modules
 
 		private void OnResearchEnd()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -406,8 +395,8 @@ namespace SS.Modules
 			this.ShowList();
 		}
 
-
-		private void OnHighlight()
+		
+		public void OnDisplay()
 		{
 			// If it's not usable - return, don't research anything.
 			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )

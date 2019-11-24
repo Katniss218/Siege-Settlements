@@ -1,11 +1,12 @@
 ﻿using SS.Diplomacy;
+using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObject, IHUDHolder, IDamageable, IUsableToggle, IFactionMember, IObstacle
+	public class Building : SSObjectSelectable, IHUDHolder, IDamageable, IUsableToggle, IFactionMember, IObstacle
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -52,20 +53,7 @@ namespace SS.Objects.Buildings
 
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
-
-		private Selectable __selectable = null;
-		public Selectable selectable
-		{
-			get
-			{
-				if( this.__selectable == null )
-				{
-					this.__selectable = this.GetComponent<Selectable>();
-				}
-				return this.__selectable;
-			}
-		}
-
+		
 		private Damageable __damageable = null;
 		public Damageable damageable
 		{
@@ -134,7 +122,7 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-			if( Selection.IsSelected( this.selectable ) )
+			if( Selection.IsSelected( this ) )
 			{
 				return;
 			}
@@ -149,6 +137,23 @@ namespace SS.Objects.Buildings
 			}
 		}
 		
+		public override void OnDisplay()
+		{
+			SelectionPanel.instance.obj.SetIcon( this.icon );
+
+			GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayName );
+			SelectionPanel.instance.obj.RegisterElement( "building.display_name", nameUI.transform );
+
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
+			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
+
+			if( !this.CheckUsable() )
+			{
+				GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
+				SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
+			}
+		}
+
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()

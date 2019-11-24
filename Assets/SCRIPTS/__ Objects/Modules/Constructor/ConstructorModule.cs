@@ -10,20 +10,16 @@ using UnityEngine;
 
 namespace SS.Modules
 {
-	public class ConstructorModule : SSModule
+	public class ConstructorModule : SSModule, ISelectDisplayHandler
 	{
 		public BuildingDefinition[] constructibleBuildings { get; set; }
 
 		private FactionMember factionMember;
-		
-		private Selectable selectable;
-				
+						
 		void Awake()
 		{
-			this.selectable = this.GetComponent<Selectable>();
 			this.factionMember = this.GetComponent<FactionMember>();
-
-			this.selectable.onHighlight.AddListener( this.ConstructorOnSelect );
+			
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechChange );
 
 			Damageable damageable = this.GetComponent<Damageable>();
@@ -66,22 +62,6 @@ namespace SS.Modules
 			SelectionPanel.instance.obj.RegisterElement( "constr.list", listUI.transform );
 		}
 
-
-		private void ConstructorOnSelect()
-		{
-			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
-			const string TEXT = "Select building to place...";
-
-			ShowList();
-
-			// Create the actual UI.
-			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
-			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
-		}
-
 		
 
 
@@ -95,7 +75,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this ) )
 			{
 				return;
 			}
@@ -150,11 +130,29 @@ namespace SS.Modules
 			ConstructorModuleDefinition def = (ConstructorModuleDefinition)_def;
 			ConstructorModuleData data = (ConstructorModuleData)_data;
 
+			this.icon = def.icon;
 			this.constructibleBuildings = new BuildingDefinition[def.constructibleBuildings.Length];
 			for( int i = 0; i < this.constructibleBuildings.Length; i++ )
 			{
 				this.constructibleBuildings[i] = DefinitionManager.GetBuilding( def.constructibleBuildings[i] );
 			}
+
+			// ------          DATA
+		}
+
+		public void OnDisplay()
+		{
+			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
+			const string TEXT = "Select building to place...";
+
+			ShowList();
+
+			// Create the actual UI.
+			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
 		}
 	}
 }

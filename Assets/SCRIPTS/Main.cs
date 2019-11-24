@@ -340,7 +340,7 @@ namespace SS
 
 		private static void SetFactionSelected( int fac )
 		{
-			Selectable[] selected = Selection.selectedObjects;
+			SSObjectSelectable[] selected = Selection.selectedObjects;
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				FactionMember faction = selected[i].GetComponent<FactionMember>();
@@ -539,7 +539,7 @@ namespace SS
 		//
 		//
 		
-		private void AssignAttackGoal( Damageable target, Selectable[] selected )
+		private void AssignAttackGoal( Damageable target, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableGameObjects = new List<GameObject>();
 
@@ -586,7 +586,7 @@ namespace SS
 			}
 		}
 
-		private void AssignDropoffToNewGoal( RaycastHit hitInfo, Selectable[] selected )
+		private void AssignDropoffToNewGoal( RaycastHit hitInfo, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
@@ -620,7 +620,7 @@ namespace SS
 			}
 		}
 
-		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, Selectable[] selected )
+		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 
@@ -675,7 +675,7 @@ namespace SS
 			}
 		}
 
-		private void AssignMoveToGoal( Vector3 terrainHitPos, Selectable[] selected )
+		private void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectSelectable[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
 
@@ -729,7 +729,7 @@ namespace SS
 			}
 		}
 
-		private void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, Selectable[] selected )
+		private void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectSelectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -774,7 +774,7 @@ namespace SS
 				TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
-		private void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, Selectable[] selected )
+		private void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectSelectable[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -825,7 +825,7 @@ namespace SS
 			}
 		}
 
-		private void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, Selectable[] selected )
+		private void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, SSObjectSelectable[] selected )
 		{
 			FactionMember recFactionMember = paymentReceiverTransform.GetComponent<FactionMember>();
 			if( recFactionMember != null )

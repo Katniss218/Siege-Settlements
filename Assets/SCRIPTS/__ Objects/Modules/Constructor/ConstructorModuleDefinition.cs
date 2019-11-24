@@ -6,6 +6,7 @@ using SS.Objects.Heroes;
 using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using UnityEngine;
+using SS.Content;
 
 namespace SS.Modules
 {
@@ -41,11 +42,13 @@ namespace SS.Modules
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.constructibleBuildings = serializer.ReadStringArray( "ConstructibleBuildings" );
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteStringArray( "", "ConstructibleBuildings", this.constructibleBuildings );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )

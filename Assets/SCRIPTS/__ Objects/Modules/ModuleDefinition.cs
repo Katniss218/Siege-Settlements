@@ -7,6 +7,8 @@ namespace SS.Modules
 {
 	public abstract class ModuleDefinition : IKFFSerializable
 	{
+		public AddressableAsset<Sprite> icon { get; set; }
+
 		/// <summary>
 		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
 		/// </summary>

@@ -505,11 +505,14 @@ namespace SS.Modules.Inventories
 			InventoryModuleDefinition def = (InventoryModuleDefinition)_def;
 			InventoryModuleData data = (InventoryModuleData)_data;
 
+			this.icon = def.icon;
 			this.slotGroups = new SlotGroup[def.slots.Length];
 			for( int i = 0; i < this.slotCount; i++ )
 			{
 				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].capacity );
 			}
+
+			// ------          DATA
 
 			if( data.items != null )
 			{
@@ -524,5 +527,7 @@ namespace SS.Modules.Inventories
 				}
 			}
 		}
+
+#warning TODO! - inventories display items when displayed.
 	}
 }

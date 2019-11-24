@@ -1,5 +1,4 @@
-﻿using SS.Objects.Buildings;
-using SS.Diplomacy;
+﻿using SS.Diplomacy;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
 using System;
@@ -204,6 +203,7 @@ namespace SS.Modules
 			MeleeModuleDefinition def = (MeleeModuleDefinition)_def;
 			MeleeModuleData data = (MeleeModuleData)_data;
 
+			this.icon = def.icon;
 			this.searchRange = def.attackRange;
 			
 			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
@@ -216,13 +216,7 @@ namespace SS.Modules
 			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 			{
 				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
-
-				if( trav == null )
-				{
-					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
-				}
-
-				this.traversibleSubObjects[i] = trav;
+				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
 
 			if( data.targetGuid != null )

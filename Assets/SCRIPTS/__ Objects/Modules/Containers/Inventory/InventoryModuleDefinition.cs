@@ -7,6 +7,7 @@ using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using SS.Content;
 
 namespace SS.Modules.Inventories
 {
@@ -72,11 +73,13 @@ namespace SS.Modules.Inventories
 		{
 			this.slots = new SlotDefinition[serializer.Analyze( "Slots" ).childCount];
 			serializer.DeserializeArray( "Slots", this.slots );
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )

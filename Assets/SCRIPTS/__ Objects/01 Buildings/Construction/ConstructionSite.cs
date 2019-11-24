@@ -34,7 +34,6 @@ namespace SS.Objects.Buildings
 		public UnityEvent onPaymentReceived { get; private set; }
 
 		private Damageable damageable;
-		private Selectable selectable;
 
 		private Building building;
 		private MeshRenderer[] renderers;
@@ -176,7 +175,6 @@ namespace SS.Objects.Buildings
 		void Awake()
 		{
 			this.damageable = this.GetComponent<Damageable>();
-			this.selectable = this.GetComponent<Selectable>();
 			this.onPaymentReceived = new UnityEvent();
 		}
 
@@ -350,14 +348,11 @@ namespace SS.Objects.Buildings
 			{
 				throw new Exception( gameObject.name + " - Building is not repairable." );
 			}
-
-			Building building = gameObject.GetComponent<Building>();
-			Selectable selectable = gameObject.GetComponent<Selectable>();
-
+			
 			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
-			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
+			constructionSite.building = gameObject.GetComponent<Building>();
+			constructionSite.SetRequiredResources( constructionSite.building.StartToEndConstructionCost );
 			constructionSite.renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-			constructionSite.building = building;
 
 			constructionSite.height = gameObject.GetComponent<BoxCollider>().size.y;
 
@@ -380,13 +375,11 @@ namespace SS.Objects.Buildings
 				}
 			}
 
-			if( selectable != null )
-			{
-				// add.
-				selectable.onHighlight.AddListener( constructionSite.OnHighlight );
+			// add.
+			constructionSite.building.onHighlight.AddListener( constructionSite.OnHighlight );
+			constructionSite.onPaymentReceived.AddListener( constructionSite.OnPaymentReceived );
+			
 
-				constructionSite.onPaymentReceived.AddListener( constructionSite.OnPaymentReceived );
-			}
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
@@ -455,7 +448,7 @@ namespace SS.Objects.Buildings
 
 		private void OnPaymentReceived()
 		{
-			if( !Selection.IsHighlighted( this.selectable ) )
+			if( !Selection.IsDisplayed( this.building ) )
 			{
 				return;
 			}

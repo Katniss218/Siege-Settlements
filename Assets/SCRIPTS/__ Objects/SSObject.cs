@@ -18,6 +18,8 @@ namespace SS.Objects
 
 
 		private static List<SSObject> allSSObjects = new List<SSObject>();
+
+		private static List<SSObjectSelectable> allSelectables = new List<SSObjectSelectable>();
 		
 		private static List<Unit> allUnits = new List<Unit>();
 		private static List<Building> allBuildings = new List<Building>();
@@ -28,6 +30,11 @@ namespace SS.Objects
 		public static SSObject[] GetAllSSObjects()
 		{
 			return allSSObjects.ToArray();
+		}
+
+		public static SSObjectSelectable[] GetAllSelectables()
+		{
+			return allSelectables.ToArray();
 		}
 
 		public static Unit[] GetAllUnits()
@@ -205,6 +212,11 @@ namespace SS.Objects
 		protected virtual void OnEnable()
 		{
 			allSSObjects.Add( this );
+			if( this is SSObjectSelectable )
+			{
+				allSelectables.Add( this as SSObjectSelectable );
+				return;
+			}
 			if( this is Unit )
 			{
 				allUnits.Add( this as Unit );
@@ -235,6 +247,11 @@ namespace SS.Objects
 		protected virtual void OnDisable()
 		{
 			allSSObjects.Remove( this );
+			if( this is SSObjectSelectable )
+			{
+				allSelectables.Remove( this as SSObjectSelectable );
+				return;
+			}
 			if( this is Unit )
 			{
 				allUnits.Remove( this as Unit );

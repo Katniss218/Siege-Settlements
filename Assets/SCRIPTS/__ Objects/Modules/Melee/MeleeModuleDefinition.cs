@@ -62,6 +62,7 @@ namespace SS.Modules
 			{
 				this.traversibleSubObjects[i] = Guid.ParseExact( serializer.ReadString( new Path( "TraversibleSubObjects.{0}", i ) ), "D" );
 			}
+			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -80,6 +81,7 @@ namespace SS.Modules
 				guidArray[i] = this.traversibleSubObjects[i].ToString( "D" );
 			}
 			serializer.WriteStringArray( "", "TraversibleSubObjects", guidArray );
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 
 		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )

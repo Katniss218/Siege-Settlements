@@ -1,4 +1,6 @@
-﻿using SS.UI;
+﻿using SS.Modules;
+using SS.Objects;
+using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,107 +8,56 @@ namespace SS
 {
 	public class Selection
 	{
-		private static List<Selectable> selected = new List<Selectable>();
+		private static List<SSObjectSelectable> selected = new List<SSObjectSelectable>();
 
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
-		public static Selectable[] selectedObjects
+		public static SSObjectSelectable[] selectedObjects
 		{
 			get
 			{
 				return selected.ToArray();
 			}
 		}
-
-		private static Selectable highlighted = null;
-
-		/// <summary>
-		/// Contains the object that is currently highlighted.
-		/// </summary>
-		public static Selectable highlightedObject
-		{
-			get
-			{
-				return highlighted;
-			}
-		}
 		
-		private static void __Highlight( Selectable obj )
-		{
-			highlighted = obj;
-			obj.onHighlight?.Invoke();
+		private static ISelectDisplayHandler displayedObject = null;
 
-			// Allow the newly highlighted object to create it's own UI elements.
-			// Also, this is going to clear the previous object's UI elements.
-			//ForceSelectionUIRedraw( obj );
-		}
-
-		private static void __Select( Selectable obj )
-		{
-			SelectionPanel.instance.list.AddIcon( obj, obj.icon );
-
-			selected.Add( obj );
-			obj.onSelect?.Invoke();
-		}
-
-		private static void __Deselect( Selectable obj )
-		{
-			SelectionPanel.instance.list.RemoveIcon( obj );
-
-			if( IsHighlighted( obj ) )
-			{
-				SelectionPanel.instance.obj.ClearAll( true );
-				highlighted = null;
-			}
-			obj.onDeselect?.Invoke();
-		}
 		
-		/// <summary>
-		/// Checks if the object is currently highlighted.
-		/// </summary>
-		/// <param name="obj">The object to check.</param>
-		public static bool IsHighlighted( Selectable obj )
+		public static bool IsDisplayed( ISelectDisplayHandler obj )
 		{
-			if( obj == null )
-			{
-				return false;
-			}
-			return highlighted == obj;
+			return displayedObject == obj ;
 		}
+
+		public static void Display( ISelectDisplayHandler obj )
+		{
+			if( displayedObject != null ) // clear previously displayed.
+			{
+#warning displaying another module on the same object shouldn't clear object's name.
+				SelectionPanel.instance.obj.ClearAll( false );
+			}
+			displayedObject = obj;
+			if( obj != null )
+			{
+				obj.OnDisplay();
+			}
+		}
+
 
 		/// <summary>
 		/// Checks if the object is currently selected.
 		/// </summary>
 		/// <param name="obj">The object to check.</param>
-		public static bool IsSelected( Selectable obj )
+		public static bool IsSelected( SSObjectSelectable obj )
 		{
 			return selected.Contains( obj );
-		}
-
-		/// <summary>
-		/// Highlights the specified object. OBJECT NEEDS TO BE ALREADY SELECTED.
-		/// </summary>
-		/// <param name="obj">The selected object to highlight.</param>
-		public static void HighlightSelected( Selectable obj )
-		{
-			if( !selected.Contains( obj ) )
-			{
-				throw new System.Exception( "Attempted to highlight object that is NOT selected." );
-			}
-			if( !IsHighlighted( obj ) )
-			{
-				// Clear and highlight.
-				SelectionPanel.instance.obj.ClearAll( false );
-				__Highlight( obj );
-			}
 		}
 
 		/// <summary>
 		/// Selects an object, and highlights it.
 		/// </summary>
 		/// <param name="obj">The object to select.</param>
-		public static void SelectAndHighlight( Selectable obj )
+		public static void Select( SSObjectSelectable obj )
 		{
 			if( obj == null )
 			{
@@ -114,30 +65,51 @@ namespace SS
 			}
 			if( selected.Contains( obj ) )
 			{
-				Debug.LogWarning( "Attempted to select object that is selected." );
+				Debug.LogWarning( "Attempted to select object that is already selected." );
+				return;
 			}
-			else
+			if( !SelectionPanel.instance.gameObject.activeSelf )
 			{
-				if( !SelectionPanel.instance.gameObject.activeSelf )
-					SelectionPanel.instance.gameObject.SetActive( true );
-				if( !ActionPanel.instance.gameObject.activeSelf )
-					ActionPanel.instance.gameObject.SetActive( true );
-				
-				__Select( obj );
-				if( !IsHighlighted( obj ) )
+				SelectionPanel.instance.gameObject.SetActive( true );
+			}
+			if( !ActionPanel.instance.gameObject.activeSelf )
+			{
+				ActionPanel.instance.gameObject.SetActive( true );
+			}
+
+			SelectionPanel.instance.list.AddIcon( obj, obj.icon );
+			selected.Add( obj );
+			
+			if( selected.Count == 1 )
+			{
+#warning what if we batch-select several objects? (first will get displayed and then rest is selected).
+				Display( obj as ISelectDisplayHandler );
+			}
+
+			SSModule[] modules = obj.GetModules();
+
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				if( modules[i] is ISelectDisplayHandler )
 				{
-					// Clear and highlight new.
-					SelectionPanel.instance.obj.ClearAll( false );
-					__Highlight( obj );
+#warning clicking on object's icon displays object's properties.
+
+					ISelectDisplayHandler moduleSelectDisplayHandler = (ISelectDisplayHandler)modules[i];
+					GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.modulesList, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), modules[i].icon, () =>
+					{
+						Display( moduleSelectDisplayHandler );
+					} );
 				}
 			}
+
+			obj.onSelect?.Invoke();
 		}
 
 		/// <summary>
 		/// Deselects an object.
 		/// </summary>
 		/// <param name="obj">The object to deselect.</param>
-		public static void Deselect( Selectable obj )
+		public static void Deselect( SSObjectSelectable obj )
 		{
 			if( obj == null )
 			{
@@ -149,7 +121,21 @@ namespace SS
 				return;
 			}
 
-			__Deselect( obj );
+			SelectionPanel.instance.list.RemoveIcon( obj );
+
+			if( IsDisplayed( obj ) )
+			{
+				for( int i = 0; i < SelectionPanel.instance.obj.modulesList.childCount; i++ )
+				{
+					Object.Destroy( SelectionPanel.instance.obj.modulesList.GetChild( i ).gameObject );
+				}
+			}
+			if( selected.Count == 1 )
+			{
+				Display( selected[0] as ISelectDisplayHandler );
+			}
+
+			obj.onDeselect?.Invoke();
 		}
 		
 		/// <summary>
@@ -159,13 +145,17 @@ namespace SS
 		{
 			SelectionPanel.instance.obj.ClearAll( true );
 			SelectionPanel.instance.list.Clear();
-			
+#warning TODO! - move this to SPObject.
+			for( int i = 0; i < SelectionPanel.instance.obj.modulesList.childCount; i++ )
+			{
+				Object.Destroy( SelectionPanel.instance.obj.modulesList.GetChild( i ).gameObject );
+			}
+
 			for( int i = 0; i < selected.Count; i++ )
 			{
 				selected[i].onDeselect?.Invoke();
 			}
 			
-			highlighted = null;
 			selected.Clear();
 
 			SelectionPanel.instance.gameObject.SetActive( false );
@@ -174,7 +164,6 @@ namespace SS
 
 		public static void Purge()
 		{
-			highlighted = null;
 			selected.Clear();
 		}
 	}

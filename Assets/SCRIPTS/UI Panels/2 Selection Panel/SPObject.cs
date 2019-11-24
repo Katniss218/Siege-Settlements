@@ -9,8 +9,11 @@ namespace SS.UI
 	{
 		private Dictionary<string, Transform> elements = new Dictionary<string, Transform>();
 
-		[SerializeField] private Image highlightedObjIcon;
-		[SerializeField] private Transform modulesList;
+		[SerializeField] private Image highlightedObjIcon = null;
+		[SerializeField] private Transform _modulesList = null;
+
+		public Transform modulesList { get { return this._modulesList; } }
+
 
 		public void SetIcon( Sprite icon )
 		{

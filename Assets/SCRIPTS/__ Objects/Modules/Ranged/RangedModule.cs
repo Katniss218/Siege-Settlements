@@ -1,5 +1,4 @@
 ﻿using Katniss.Utils;
-using SS.Objects.Buildings;
 using SS.Content;
 using SS.Diplomacy;
 using SS.Levels.SaveStates;
@@ -314,13 +313,7 @@ namespace SS.Modules
 			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 			{
 				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
-
-				if( trav == null )
-				{
-					throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
-				}
-
-				this.traversibleSubObjects[i] = trav;
+				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
 
 			if( data.targetGuid != null )

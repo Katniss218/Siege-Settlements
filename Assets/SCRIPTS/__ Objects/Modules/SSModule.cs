@@ -9,6 +9,8 @@ namespace SS.Modules
 		private SSObject __ssObject = null;
 		private Guid __moduleId = Guid.Empty;
 
+		public Sprite icon { get; set; }
+
 		/// <summary>
 		/// Returns the SSObject that this module is added to. Throws an exception if N/A.
 		/// </summary>

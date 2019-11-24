@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +7,7 @@ namespace SS.UI
 	[DisallowMultipleComponent]
 	public class SPList : MonoBehaviour
 	{
-		private Dictionary<Selectable, GameObject> icons = new Dictionary<Selectable, GameObject>();
+		private Dictionary<SSObjectSelectable, GameObject> icons = new Dictionary<SSObjectSelectable, GameObject>();
 
 		void Start()
 		{
@@ -25,7 +24,7 @@ namespace SS.UI
 		/// </summary>
 		/// <param name="obj">The object to associate the icon with.</param>
 		/// <param name="icon">The icon to display.</param>
-		public void AddIcon( Selectable obj, Sprite icon )
+		public void AddIcon( SSObjectSelectable obj, Sprite icon )
 		{
 			if( obj == null )
 			{
@@ -46,7 +45,7 @@ namespace SS.UI
 		/// Removes an icon associated with the specified object. Also, un-associates the object with any icon.
 		/// </summary>
 		/// <param name="obj">The object whose icon to remove.</param>
-		public void RemoveIcon( Selectable obj )
+		public void RemoveIcon( SSObjectSelectable obj )
 		{
 			if( obj == null )
 			{
