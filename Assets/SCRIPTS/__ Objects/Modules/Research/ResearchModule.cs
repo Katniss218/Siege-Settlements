@@ -327,7 +327,7 @@ namespace SS.Modules
 				{
 					if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
 					{
-						SelectionPanel.instance.obj.Clear( "research.list" );
+						SelectionPanel.instance.obj.ClearElement( "research.list" );
 					}
 					this.ShowList();
 				}
@@ -355,7 +355,7 @@ namespace SS.Modules
 			}
 			if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
 			{
-				SelectionPanel.instance.obj.Clear( "research.list" );
+				SelectionPanel.instance.obj.ClearElement( "research.list" );
 			}
 			if( !this.IsPaymentDone() )
 			{

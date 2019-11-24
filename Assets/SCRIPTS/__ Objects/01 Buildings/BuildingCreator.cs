@@ -276,7 +276,7 @@ namespace SS.Objects.Buildings
 					// If the building was not usable before the health change.
 					if( SelectionPanel.instance.obj.GetElement( "building.unusable_flag" ) != null )
 					{
-						SelectionPanel.instance.obj.Clear( "building.unusable_flag" );
+						SelectionPanel.instance.obj.ClearElement( "building.unusable_flag" );
 					}
 				}
 			} );

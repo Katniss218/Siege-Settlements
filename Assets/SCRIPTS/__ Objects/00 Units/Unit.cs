@@ -77,8 +77,7 @@ namespace SS.Objects.Units
 		{
 			SelectionPanel.instance.obj.SetIcon( this.icon );
 
-			GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayName );
-			SelectionPanel.instance.obj.RegisterElement( "unit.name", nameUI.transform );
+			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );

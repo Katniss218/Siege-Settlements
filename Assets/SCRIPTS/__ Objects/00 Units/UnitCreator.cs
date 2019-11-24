@@ -92,10 +92,7 @@ namespace SS.Objects.Units
 			damageable.armor = def.armor;
 
 #warning remove after.
-
-			//#warning Update modules to display their properties using OnSelectDisplay and Selection.IsDisplayed.
-			//#warning remove setting up modules in defdata methods. It should only set fields that need to be modified.
-
+			
 			//#warning buttons.
 			//#warning Only display these modules that implement ISelectDisplayable
 			// Change highlight mechanic to 'group' and 'single' selections.
@@ -112,7 +109,6 @@ namespace SS.Objects.Units
 #warning batch selection still displays objs.
 
 #warning A way to collect common properties from selected objects.
-
 			// display: - total health / total max health
 
 

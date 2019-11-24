@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SS.Modules;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,10 +12,26 @@ namespace SS.UI
 		private Dictionary<string, Transform> elements = new Dictionary<string, Transform>();
 
 		[SerializeField] private Image highlightedObjIcon = null;
-		[SerializeField] private Transform _modulesList = null;
+		[SerializeField] private Transform _moduleUITransform = null;
+		[SerializeField] private TextMeshProUGUI _displayNameText = null;
 
-		public Transform modulesList { get { return this._modulesList; } }
+		public Transform moduleUITransform { get { return this._moduleUITransform; } }
+		public TextMeshProUGUI displayNameText { get { return this._displayNameText; } }
 
+
+		void Start()
+		{
+			this.displayNameText.text = "";
+			this.ClearIcon();
+			this.highlightedObjIcon.GetComponent<Button>().onClick.AddListener( () =>
+			{
+				ISelectDisplayHandler displayed = Selection.displayedObject;
+				if( displayed is SSModule )
+				{
+					Selection.Display( (displayed as SSModule).ssObject as ISelectDisplayHandler );
+				}
+			} );
+		}
 
 		public void SetIcon( Sprite icon )
 		{
@@ -75,27 +93,42 @@ namespace SS.UI
 			return null;
 		}
 
-		/// <summary>
-		/// Clears every UI element that belongs to highlighted objects.
-		/// </summary>
-		public void ClearAll( bool clearIcon )
+		public void ClearAllElements()
 		{
 			foreach( Transform obj in this.elements.Values )
 			{
 				Object.Destroy( obj.gameObject );
 			}
 			this.elements.Clear();
-			if( clearIcon )
-			{
-				this.ClearIcon();
-			}
 		}
 
+		public void AddModuleButton( Modules.SSModule module )
+		{
+			if( !(module is ISelectDisplayHandler) )
+			{
+				throw new System.Exception( "Module must implement ISelectDisplayHandler" );
+			}
+
+			ISelectDisplayHandler moduleSelectDisplayHandler = (ISelectDisplayHandler)module;
+			GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
+			{
+				Selection.Display( moduleSelectDisplayHandler );
+			} );
+		}
+
+		public void ClearModules()
+		{
+			for( int i = 0; i < this.moduleUITransform.childCount; i++ )
+			{
+				Object.Destroy( this.moduleUITransform.GetChild( i ).gameObject );
+			}
+		}
+		
 		/// <summary>
 		/// Clears the UI element that was registered using the specified id.
 		/// </summary>
 		/// <param name="id">The id to check.</param>
-		public void Clear( string id )
+		public void ClearElement( string id )
 		{
 			if( this.elements.TryGetValue( id, out Transform obj ) )
 			{

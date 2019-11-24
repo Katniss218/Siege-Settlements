@@ -104,8 +104,7 @@ namespace SS.Objects.Heroes
 		{
 			SelectionPanel.instance.obj.SetIcon( this.icon );
 
-			GameObject nameUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 395.0f, 40.0f ), new Vector2( 400.0f, 40.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayName );
-			SelectionPanel.instance.obj.RegisterElement( "hero.name", nameUI.transform );
+			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );

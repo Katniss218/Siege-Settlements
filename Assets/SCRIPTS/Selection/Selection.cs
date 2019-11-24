@@ -1,5 +1,4 @@
 ﻿using SS.Modules;
-using SS.Objects;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +20,7 @@ namespace SS
 			}
 		}
 		
-		private static ISelectDisplayHandler displayedObject = null;
+		public static ISelectDisplayHandler displayedObject { get; private set; } = null;
 
 		
 		public static bool IsDisplayed( ISelectDisplayHandler obj )
@@ -33,8 +32,7 @@ namespace SS
 		{
 			if( displayedObject != null ) // clear previously displayed.
 			{
-#warning displaying another module on the same object shouldn't clear object's name.
-				SelectionPanel.instance.obj.ClearAll( false );
+				SelectionPanel.instance.obj.ClearAllElements();
 			}
 			displayedObject = obj;
 			if( obj != null )
@@ -82,23 +80,19 @@ namespace SS
 			
 			if( selected.Count == 1 )
 			{
-#warning what if we batch-select several objects? (first will get displayed and then rest is selected).
+#warning Fix batch-selecting object displaying the first one.
+
 				Display( obj as ISelectDisplayHandler );
-			}
 
-			SSModule[] modules = obj.GetModules();
+				SSModule[] modules = obj.GetModules();
 
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				if( modules[i] is ISelectDisplayHandler )
+				for( int i = 0; i < modules.Length; i++ )
 				{
-#warning clicking on object's icon displays object's properties.
-
-					ISelectDisplayHandler moduleSelectDisplayHandler = (ISelectDisplayHandler)modules[i];
-					GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.modulesList, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), modules[i].icon, () =>
+					if( !(modules[i] is ISelectDisplayHandler) )
 					{
-						Display( moduleSelectDisplayHandler );
-					} );
+						continue;
+					}
+					SelectionPanel.instance.obj.AddModuleButton( modules[i] );
 				}
 			}
 
@@ -125,10 +119,7 @@ namespace SS
 
 			if( IsDisplayed( obj ) )
 			{
-				for( int i = 0; i < SelectionPanel.instance.obj.modulesList.childCount; i++ )
-				{
-					Object.Destroy( SelectionPanel.instance.obj.modulesList.GetChild( i ).gameObject );
-				}
+				SelectionPanel.instance.obj.ClearModules();
 			}
 			if( selected.Count == 1 )
 			{
@@ -143,13 +134,11 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			SelectionPanel.instance.obj.ClearAll( true );
+			SelectionPanel.instance.obj.ClearAllElements();
+			SelectionPanel.instance.obj.ClearIcon();
+			SelectionPanel.instance.obj.ClearModules();
+			SelectionPanel.instance.obj.displayNameText.text = "";
 			SelectionPanel.instance.list.Clear();
-#warning TODO! - move this to SPObject.
-			for( int i = 0; i < SelectionPanel.instance.obj.modulesList.childCount; i++ )
-			{
-				Object.Destroy( SelectionPanel.instance.obj.modulesList.GetChild( i ).gameObject );
-			}
 
 			for( int i = 0; i < selected.Count; i++ )
 			{

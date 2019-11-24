@@ -380,7 +380,7 @@ namespace SS.Modules
 				{
 					if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
 					{
-						SelectionPanel.instance.obj.Clear( "barracks.list" );
+						SelectionPanel.instance.obj.ClearElement( "barracks.list" );
 					}
 				}
 			}
@@ -408,7 +408,7 @@ namespace SS.Modules
 			}
 			if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
 			{
-				SelectionPanel.instance.obj.Clear( "barracks.list" );
+				SelectionPanel.instance.obj.ClearElement( "barracks.list" );
 			}
 			if( !this.IsPaymentDone() )
 			{

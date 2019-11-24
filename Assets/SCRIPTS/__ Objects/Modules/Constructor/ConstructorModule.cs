@@ -81,7 +81,7 @@ namespace SS.Modules
 			}
 			if( SelectionPanel.instance.obj.GetElement( "constr.list" ) != null )
 			{
-				SelectionPanel.instance.obj.Clear( "constr.list" );
+				SelectionPanel.instance.obj.ClearElement( "constr.list" );
 			}
 			ShowList();
 		}

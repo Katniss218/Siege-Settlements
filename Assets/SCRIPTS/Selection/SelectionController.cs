@@ -74,68 +74,93 @@ namespace SS
 			selectionRect.gameObject.SetActive( false );
 		}
 
-		private static void HandleSelecting( SSObjectSelectable[] uniqueObjs, SelectionMode selectionMode )
+		private static void HandleSelecting( SSObjectSelectable[] uniqueSelectables, SelectionMode selectionMode )
 		{
+			// Select selectables on the list (if not selected).
 			if( selectionMode == SelectionMode.Add )
 			{
-				if( uniqueObjs != null )
+				if( uniqueSelectables != null )
 				{
-					for( int i = 0; i < uniqueObjs.Length; i++ )
+					bool playSelect = false;
+					for( int i = 0; i < uniqueSelectables.Length; i++ )
 					{
-						if( uniqueObjs[i] == null )
+						if( uniqueSelectables[i] == null )
 						{
 							continue;
 						}
 
-						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
-						if( factionOfSelectable == null )
+						if( Selection.IsSelected( uniqueSelectables[i] ) )
 						{
 							continue;
 						}
-						if( !Selection.IsSelected( uniqueObjs[i] ) )
-						{
-							Selection.Select( uniqueObjs[i] );
-							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
-						}
+
+						Selection.Select( uniqueSelectables[i] );
+						playSelect = true;
+					}
+					if( playSelect )
+					{
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
 					}
 				}
 				return;
 			}
-			// No Shift - deselect all and select at cursor (if possible).
+			// Deselect already selected that are not present on the list.
+			// Select selectables on the list (if not selected).
 			if( selectionMode == SelectionMode.Replace )
 			{
-				if( uniqueObjs == null )
+				if( uniqueSelectables == null )
 				{
-					int numSelected = Selection.selectedObjects.Length;
-					if( numSelected > 0 )
+					if( Selection.selectedObjects.Length == 0 )
 					{
-						Selection.DeselectAll();
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
+						return;
 					}
+
+					Selection.DeselectAll();
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
 				}
 				else
 				{
-					Selection.DeselectAll();
+					SSObjectSelectable[] selectedObjs = Selection.selectedObjects;
+					bool playSelect = false;
+					bool playDeselect = false;
 
-					for( int i = 0; i < uniqueObjs.Length; i++ )
+					for( int i = 0; i < selectedObjs.Length; i++ )
 					{
-						if( uniqueObjs[i] == null )
+						bool isToBeSelected = false;
+						for( int j = 0; j < uniqueSelectables.Length; j++ )
+						{
+							if( selectedObjs[i] == uniqueSelectables[j] )
+							{
+								isToBeSelected = true;
+							}
+						}
+						if( !isToBeSelected )
+						{
+							Selection.Deselect( selectedObjs[i] );
+							playDeselect = true;
+						}
+					}
+					for( int i = 0; i < uniqueSelectables.Length; i++ )
+					{
+						if( uniqueSelectables[i] == null )
 						{
 							continue;
 						}
 						
-						FactionMember factionOfSelectable = uniqueObjs[i].GetComponent<FactionMember>();
-						if( factionOfSelectable != null )
+						if( Selection.IsSelected( uniqueSelectables[i] ) )
 						{
-							Selection.Select( uniqueObjs[i] );
-							
-							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
-							
+							continue;
 						}
-						else
-						{
-							AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
-						}
+						Selection.Select( uniqueSelectables[i] );
+						playSelect = true;
+					}
+					if( playSelect )
+					{
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ) );
+					}
+					if( playDeselect )
+					{
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ) );
 					}
 				}
 				return;
