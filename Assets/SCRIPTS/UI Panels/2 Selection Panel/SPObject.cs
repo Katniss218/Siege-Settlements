@@ -102,11 +102,10 @@ namespace SS.UI
 			{
 				throw new System.Exception( "Module must implement ISelectDisplayHandler" );
 			}
-
-			ISelectDisplayHandler moduleSelectDisplayHandler = (ISelectDisplayHandler)module;
+			
 			GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
 			{
-				Selection.DisplayModule( module.ssObject as SSObjectSelectable, moduleSelectDisplayHandler );
+				Selection.DisplayModule( module.ssObject as SSObjectSelectable, module );
 			} );
 		}
 

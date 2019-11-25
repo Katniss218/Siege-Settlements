@@ -90,27 +90,7 @@ namespace SS.Objects.Units
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
 			damageable.armor = def.armor;
-
-#warning remove after.
 			
-			//#warning buttons.
-			//#warning Only display these modules that implement ISelectDisplayable
-			// Change highlight mechanic to 'group' and 'single' selections.
-
-			//@@ When selection changes (on select/deselect or when button with module gets clicked),
-			// if now 'group' is selected, display (or update) group properties.
-			// if now 'single' is selected,
-			// --- if module IS NOT selected, call OnSelectDisplay() on the object.
-			// --- if module IS selected, call OnSelectDisplay() on the module.
-
-			//@@ When module's button is clicked, tell the selection manager to (IF THE DISPLAYED THING HAS CHANGED) hide the currently displayed thing and call OnSelectDisplay() on the clicked thing.
-
-			// Objects inherit from ISelectDisplayable interface that has method OnSelectDisplay() that is called when object/module needs to display itself.
-
-#warning A way to collect common properties from selected objects.
-			// display: - total health / total max health
-
-
 			//
 			//    MODULES
 			//

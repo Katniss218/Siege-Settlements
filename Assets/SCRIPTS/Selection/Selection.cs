@@ -8,6 +8,32 @@ namespace SS
 {
 	public class Selection
 	{
+		private class DisplayedObjectData
+		{
+			public SSObjectSelectable obj { get; private set; } = null;
+			public ISelectDisplayHandler module { get; private set; } = null;
+			public bool isGroup { get; private set; } = false;
+
+			public static DisplayedObjectData NewGroup()
+			{
+				return new DisplayedObjectData() { obj = null, module = null, isGroup = true };
+			}
+
+			public static DisplayedObjectData NewObject( SSObjectSelectable obj )
+			{
+				return new DisplayedObjectData() { obj = obj, module = null, isGroup = true };
+			}
+
+			public static DisplayedObjectData NewObject( SSObjectSelectable obj, SSModule module )
+			{
+				if( !(module is ISelectDisplayHandler) )
+				{
+					throw new System.Exception( "Module isn't displayable." );
+				}
+				return new DisplayedObjectData() { obj = obj, module = ((ISelectDisplayHandler)module), isGroup = true };
+			}
+		}
+
 		private static List<SSObjectSelectable> selected = new List<SSObjectSelectable>();
 
 		/// <summary>
@@ -28,25 +54,71 @@ namespace SS
 
 
 		// When object is null, module also must be null.
-		// When module is not null, module also can't be null.
-		static SSObjectSelectable displayedObject { get; set; } = null;
-		static ISelectDisplayHandler displayedModule { get; set; } = null;
+		// When module is not null, object also can't be null.
+#warning bool for "group" object displayed.
+#warning make it separate, self-contained struct with all logic of keeping track of what's selected kept inside of it.
+		//static SSObjectSelectable displayedObject { get; set; } = null;
+		//static ISelectDisplayHandler displayedModule { get; set; } = null;
+		static DisplayedObjectData displayedObjectData = null;
 
-		
-		public static bool IsDisplayed( SSObjectSelectable obj )
+
+		public static bool IsDisplayed()
 		{
-			return displayedObject == obj ;
+			return displayedObjectData != null;
 		}
 
-		public static bool IsDisplayedModule( ISelectDisplayHandler module )
+		public static bool IsDisplayed( SSObjectSelectable obj )
 		{
-			return displayedModule == module;
+			if( displayedObjectData == null )
+			{
+				return false;
+			}
+			return displayedObjectData.obj == obj ;
+		}
+
+		public static bool IsDisplayedModule( SSModule module )
+		{
+			if( !(module is ISelectDisplayHandler) )
+			{
+				throw new System.Exception( "This module can't be displayed" );
+			}
+			if( displayedObjectData == null )
+			{
+				return false;
+			}
+			ISelectDisplayHandler moduleS = (ISelectDisplayHandler)module;
+			return displayedObjectData.module == moduleS;
 		}
 
 		public static void DisplayObjectDisplayed()
 		{
-			DisplayObject( displayedObject );
+			if( displayedObjectData == null )
+			{
+				return;
+			}
+			DisplayObject( displayedObjectData.obj );
 		}
+
+		/// <summary>
+		/// Displays a group, based on objects that are selected.
+		/// </summary>
+		public static void DisplayGroupSelected()
+		{
+			displayedObjectData = DisplayedObjectData.NewGroup();
+			
+			SelectionPanel.instance.obj.displayNameText.text = "Group: " + selected.Count;
+			float healthTotal = 0.0f;
+			float healthMaxTotal = 0.0f;
+			for( int i = 0; i < selected.Count; i++ )
+			{
+				Damageable dam = selected[i].GetComponent<Damageable>();
+				healthTotal += dam.health;
+				healthMaxTotal += dam.healthMax;
+			}
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Total Health: " + (int)healthTotal + "/" + (int)healthMaxTotal );
+			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
+		}
+#warning update group when any selected gets damaged (or does anything else, really). Needs static events.
 
 		/// <summary>
 		/// Displays an object.
@@ -57,11 +129,11 @@ namespace SS
 			{
 				throw new System.Exception( "Object can't be null." );
 			}
-			if( displayedObject != null ) // clear previously displayed.
-			{
-				StopDisplaying();
-			}
-			displayedObject = obj;
+			//if( displayedObjectData != null ) // clear previously displayed.
+			//{
+			//	StopDisplaying();
+			//}
+			displayedObjectData = DisplayedObjectData.NewObject( obj );
 
 			SSModule[] modules = ((SSObject)obj).GetModules();
 
@@ -80,15 +152,19 @@ namespace SS
 		/// <summary>
 		/// Displays a module on a specified object.
 		/// </summary>
-		public static void DisplayModule( SSObjectSelectable obj, ISelectDisplayHandler module )
+		public static void DisplayModule( SSObjectSelectable obj, SSModule module )
 		{
+			if( !(module is ISelectDisplayHandler) )
+			{
+				throw new System.Exception( "This module can't be displayed" );
+			}
 			if( !IsDisplayed( obj ) )
 			{
 				throw new System.Exception( "Object needs to be displayed to display it's module." );
 			}
-			displayedModule = module;
+			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
 			SelectionPanel.instance.obj.ClearAllElements();
-			module.OnDisplay();
+			(module as ISelectDisplayHandler).OnDisplay();
 		}
 		
 		/// <summary>
@@ -96,8 +172,7 @@ namespace SS
 		/// </summary>
 		public static void StopDisplaying()
 		{
-			displayedModule = null;
-			displayedObject = null;
+			displayedObjectData = null;
 			SelectionPanel.instance.obj.ClearAllElements();
 			SelectionPanel.instance.obj.ClearModules();
 			SelectionPanel.instance.obj.ClearIcon();
@@ -155,20 +230,23 @@ namespace SS
 				numSelected++;
 				objs[i].onSelect?.Invoke();
 			}
-
+			
 			if( selected.Count == 1 )
 			{
+				StopDisplaying();
+
 				DisplayObject( objs[0] );
+			}
+			else if( selected.Count == 0 )
+			{
+				SelectionPanel.instance.gameObject.SetActive( false );
+				ActionPanel.instance.gameObject.SetActive( false );
 			}
 			else
 			{
 				StopDisplaying();
-			}
 
-			if( selected.Count == 0 )
-			{
-				SelectionPanel.instance.gameObject.SetActive( false );
-				ActionPanel.instance.gameObject.SetActive( false );
+				DisplayGroupSelected();
 			}
 
 			return numSelected;
@@ -192,23 +270,28 @@ namespace SS
 
 			SelectionPanel.instance.list.RemoveIcon( obj );
 
-			if( IsDisplayed( obj ) )
+			if( IsDisplayed( obj ) || displayedObjectData.isGroup )
 			{
 				StopDisplaying();
 			}
 			if( selected.Count == 1 )
 			{
+				// clear group's elements, before readding them again.
+				//StopDisplaying();
+
 				DisplayObject( selected[0] );
 			}
-			else
-			{
-				StopDisplaying();
-			}
-
-			if( selected.Count == 0 )
+			else if( selected.Count == 0 )
 			{
 				SelectionPanel.instance.gameObject.SetActive( false );
 				ActionPanel.instance.gameObject.SetActive( false );
+			}
+			else
+			{
+				// clear group's elements, before readding them again.
+				//StopDisplaying();
+
+				DisplayGroupSelected();
 			}
 
 			obj.onDeselect?.Invoke();
