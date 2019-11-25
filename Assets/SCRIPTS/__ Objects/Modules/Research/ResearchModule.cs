@@ -317,7 +317,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -336,7 +336,7 @@ namespace SS.Modules
 
 		private void OnPaymentReceived()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -349,7 +349,7 @@ namespace SS.Modules
 
 		private void OnResearchBegin()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -369,7 +369,7 @@ namespace SS.Modules
 		
 		private void OnResearchProgress()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -382,7 +382,7 @@ namespace SS.Modules
 
 		private void OnResearchEnd()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}

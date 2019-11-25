@@ -75,7 +75,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}

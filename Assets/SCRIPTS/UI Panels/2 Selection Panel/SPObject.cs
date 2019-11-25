@@ -21,15 +21,9 @@ namespace SS.UI
 
 		void Start()
 		{
-			this.displayNameText.text = "";
-			this.ClearIcon();
 			this.highlightedObjIcon.GetComponent<Button>().onClick.AddListener( () =>
 			{
-				ISelectDisplayHandler displayed = Selection.displayedObject;
-				if( displayed is SSModule )
-				{
-					Selection.Display( (displayed as SSModule).ssObject as ISelectDisplayHandler );
-				}
+				Selection.DisplayObjectDisplayed();
 			} );
 		}
 
@@ -102,7 +96,7 @@ namespace SS.UI
 			this.elements.Clear();
 		}
 
-		public void AddModuleButton( Modules.SSModule module )
+		public void AddModuleButton( SSModule module )
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
@@ -112,7 +106,7 @@ namespace SS.UI
 			ISelectDisplayHandler moduleSelectDisplayHandler = (ISelectDisplayHandler)module;
 			GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
 			{
-				Selection.Display( moduleSelectDisplayHandler );
+				Selection.DisplayModule( module.ssObject as SSObjectSelectable, moduleSelectDisplayHandler );
 			} );
 		}
 

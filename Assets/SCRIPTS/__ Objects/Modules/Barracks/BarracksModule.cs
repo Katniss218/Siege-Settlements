@@ -370,7 +370,7 @@ namespace SS.Modules
 			{
 				return;
 			}
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -389,7 +389,7 @@ namespace SS.Modules
 
 		private void OnPaymentReceived()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -402,7 +402,7 @@ namespace SS.Modules
 
 		private void OnTrainingBegin()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -422,7 +422,7 @@ namespace SS.Modules
 
 		private void OnTrainingProgress()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
@@ -435,7 +435,7 @@ namespace SS.Modules
 
 		private void OnTrainingEnd()
 		{
-			if( !Selection.IsDisplayed( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}

@@ -1,24 +1,21 @@
-﻿using UnityEngine;
-using SS.Objects.Buildings;
-using UnityEngine.EventSystems;
-using SS.Objects.Extras;
-using SS.Modules.Inventories;
-using SS.ResourceSystem.Payment;
-using System.Collections.Generic;
-using UnityEngine.AI;
-using SS.Content;
-using UnityEngine.Events;
-using SS.Levels.SaveStates;
-using System;
-using SS.Objects.Projectiles;
-using SS.Objects.Units;
-using SS.Objects.Heroes;
-using SS.Levels;
+﻿using SS.Content;
 using SS.Diplomacy;
 using SS.InputSystem;
+using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.Modules;
-using Object = UnityEngine.Object;
+using SS.Modules.Inventories;
 using SS.Objects;
+using SS.Objects.Buildings;
+using SS.Objects.Extras;
+using SS.Objects.Heroes;
+using SS.ResourceSystem.Payment;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace SS
 {
@@ -331,6 +328,27 @@ namespace SS
 			}
 		}
 
+		private void Inp_H( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					SSObjectSelectable sel = hitInfo.collider.GetComponent<SSObjectSelectable>();
+					if( sel == null )
+					{
+						return;
+					}
+
+					if( Selection.IsSelected( sel ) )
+					{
+						Selection.Deselect( sel );
+					}
+				}
+			}
+		}
+
 		private void Inp_Tab( InputQueue self )
 		{
 			isHudLocked = !isHudLocked;
@@ -494,6 +512,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
+			Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
@@ -520,6 +539,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
 				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
+				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_H );
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );

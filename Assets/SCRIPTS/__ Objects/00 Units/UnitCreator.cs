@@ -106,7 +106,6 @@ namespace SS.Objects.Units
 			//@@ When module's button is clicked, tell the selection manager to (IF THE DISPLAYED THING HAS CHANGED) hide the currently displayed thing and call OnSelectDisplay() on the clicked thing.
 
 			// Objects inherit from ISelectDisplayable interface that has method OnSelectDisplay() that is called when object/module needs to display itself.
-#warning batch selection still displays objs.
 
 #warning A way to collect common properties from selected objects.
 			// display: - total health / total max health

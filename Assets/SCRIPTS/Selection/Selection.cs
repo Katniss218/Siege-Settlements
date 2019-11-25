@@ -1,4 +1,5 @@
 ﻿using SS.Modules;
+using SS.Objects;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,27 +20,94 @@ namespace SS
 				return selected.ToArray();
 			}
 		}
-		
-		public static ISelectDisplayHandler displayedObject { get; private set; } = null;
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+
+		// When object is null, module also must be null.
+		// When module is not null, module also can't be null.
+		static SSObjectSelectable displayedObject { get; set; } = null;
+		static ISelectDisplayHandler displayedModule { get; set; } = null;
 
 		
-		public static bool IsDisplayed( ISelectDisplayHandler obj )
+		public static bool IsDisplayed( SSObjectSelectable obj )
 		{
 			return displayedObject == obj ;
 		}
 
-		public static void Display( ISelectDisplayHandler obj )
+		public static bool IsDisplayedModule( ISelectDisplayHandler module )
 		{
+			return displayedModule == module;
+		}
+
+		public static void DisplayObjectDisplayed()
+		{
+			DisplayObject( displayedObject );
+		}
+
+		/// <summary>
+		/// Displays an object.
+		/// </summary>
+		public static void DisplayObject( SSObjectSelectable obj )
+		{
+			if( obj == null )
+			{
+				throw new System.Exception( "Object can't be null." );
+			}
 			if( displayedObject != null ) // clear previously displayed.
 			{
-				SelectionPanel.instance.obj.ClearAllElements();
+				StopDisplaying();
 			}
 			displayedObject = obj;
-			if( obj != null )
+
+			SSModule[] modules = ((SSObject)obj).GetModules();
+
+			for( int i = 0; i < modules.Length; i++ )
 			{
-				obj.OnDisplay();
+				if( !(modules[i] is ISelectDisplayHandler) )
+				{
+					continue;
+				}
+				SelectionPanel.instance.obj.AddModuleButton( modules[i] );
 			}
+		
+			obj.OnDisplay();
 		}
+
+		/// <summary>
+		/// Displays a module on a specified object.
+		/// </summary>
+		public static void DisplayModule( SSObjectSelectable obj, ISelectDisplayHandler module )
+		{
+			if( !IsDisplayed( obj ) )
+			{
+				throw new System.Exception( "Object needs to be displayed to display it's module." );
+			}
+			displayedModule = module;
+			SelectionPanel.instance.obj.ClearAllElements();
+			module.OnDisplay();
+		}
+		
+		/// <summary>
+		/// Stops displaying anything.
+		/// </summary>
+		public static void StopDisplaying()
+		{
+			displayedModule = null;
+			displayedObject = null;
+			SelectionPanel.instance.obj.ClearAllElements();
+			SelectionPanel.instance.obj.ClearModules();
+			SelectionPanel.instance.obj.ClearIcon();
+			SelectionPanel.instance.obj.displayNameText.text = "";
+		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
 		/// <summary>
@@ -90,27 +158,19 @@ namespace SS
 
 			if( selected.Count == 1 )
 			{
-#warning Fix batch-selecting object displaying the first one.
-
-				Display( objs[0] as ISelectDisplayHandler );
-
-				SSModule[] modules = objs[0].GetModules();
-
-				for( int i = 0; i < modules.Length; i++ )
-				{
-					if( !(modules[i] is ISelectDisplayHandler) )
-					{
-						continue;
-					}
-					SelectionPanel.instance.obj.AddModuleButton( modules[i] );
-				}
+				DisplayObject( objs[0] );
 			}
 			else
 			{
-				SelectionPanel.instance.obj.ClearModules();
-				SelectionPanel.instance.obj.ClearIcon();
-				SelectionPanel.instance.obj.displayNameText.text = "Group";
+				StopDisplaying();
 			}
+
+			if( selected.Count == 0 )
+			{
+				SelectionPanel.instance.gameObject.SetActive( false );
+				ActionPanel.instance.gameObject.SetActive( false );
+			}
+
 			return numSelected;
 		}
 
@@ -133,17 +193,19 @@ namespace SS
 			SelectionPanel.instance.list.RemoveIcon( obj );
 
 			if( IsDisplayed( obj ) )
-#warning what if module is displayed? It needs to deselect.
 			{
-				SelectionPanel.instance.obj.ClearModules();
-				SelectionPanel.instance.obj.ClearIcon();
-				SelectionPanel.instance.obj.displayNameText.text = "Group";
+				StopDisplaying();
 			}
 			if( selected.Count == 1 )
 			{
-				Display( selected[0] as ISelectDisplayHandler );
+				DisplayObject( selected[0] );
 			}
-			else if( selected.Count == 0 )
+			else
+			{
+				StopDisplaying();
+			}
+
+			if( selected.Count == 0 )
 			{
 				SelectionPanel.instance.gameObject.SetActive( false );
 				ActionPanel.instance.gameObject.SetActive( false );
@@ -157,10 +219,7 @@ namespace SS
 		/// </summary>
 		public static void DeselectAll()
 		{
-			SelectionPanel.instance.obj.ClearAllElements();
-			SelectionPanel.instance.obj.ClearIcon();
-			SelectionPanel.instance.obj.ClearModules();
-			SelectionPanel.instance.obj.displayNameText.text = "";
+			StopDisplaying();
 
 			SelectionPanel.instance.list.Clear();
 

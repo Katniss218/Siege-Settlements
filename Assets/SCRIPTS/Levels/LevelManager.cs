@@ -539,9 +539,7 @@ namespace SS.Levels
 				pathSavedBuildings = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_buildings.kff" ),
 				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_projectiles.kff" ),
 				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_heroes.kff" ),
-				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_extras.kff" ),
-				
-				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_selection.kff" );
+				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_extras.kff" );
 
 			KFFSerializer
 				serializerFactionData,
@@ -550,9 +548,7 @@ namespace SS.Levels
 				serializerSavedBuildings,
 				serializerSavedProjectiles,
 				serializerSavedHeroes,
-				serializerSavedExtras,
-				
-				serializerSelection;
+				serializerSavedExtras;
 
 
 			// Open the relevant definition files and parse their contents.
@@ -636,19 +632,6 @@ namespace SS.Levels
 				throw new Exception( "Can't open file '" + pathSavedExtras + "'." );
 			}
 			
-			try
-			{
-				serializerSelection = KFFSerializer.ReadFromFile( pathSelection, DefinitionManager.FILE_ENCODING );
-			}
-			catch( Exception e )
-			{
-				if( e is KFFException )
-				{
-					throw e;
-				}
-				throw new Exception( "Can't open file '" + pathSelection + "'." );
-			}
-
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Save state parsing: " + sw.ElapsedMilliseconds + " ms" );
@@ -720,25 +703,12 @@ namespace SS.Levels
 				ExtraCreator.SetDefData( extras[i], sExtras[i].Item1, sExtras[i].Item2 );
 			}
 
-			SelectionPanelMode selectionPanelMode;
-			SSObjectSelectable[] selected = GetSelected( serializerSelection, out selectionPanelMode );
-
-			SelectionPanel.instance.SetMode( selectionPanelMode );
 
 			// Set inactive.
+#warning self-contain this.
 			SelectionPanel.instance.gameObject.SetActive( false );
 			ActionPanel.instance.gameObject.SetActive( false );
-			// ^ This will be set to active when something gets selected by the selection loading process (hidden by default, if selection is empty).
-
-			// Select the objects specified by save state
-			if( selected != null )
-			{
-				for( int i = 0; i < selected.Length; i++ )
-				{
-					Selection.TrySelect( selected );
-				}
-			}
-
+			
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Spawning game objects: " + sw.ElapsedMilliseconds + " ms" );
@@ -847,40 +817,6 @@ namespace SS.Levels
 			return ret;
 		}
 		
-		private static SSObjectSelectable[] GetSelected( KFFSerializer serializer, out SelectionPanelMode selectionPanelMode )
-		{
-			string sel = serializer.ReadString( "SelectionPanelMode" );
-			if( sel == "Object" )
-			{
-				selectionPanelMode = SelectionPanelMode.Object;
-			}
-			else if( sel == "List" )
-			{
-				selectionPanelMode = SelectionPanelMode.List;
-			}
-			else
-			{
-				throw new Exception( "Invalid Selection Panel Mode: '" + sel + "'." );
-			}
-			if( serializer.Analyze( "SelectedGuids" ).isFail )
-			{
-				return null;
-			}
-
-			int count = serializer.Analyze( "SelectedGuids" ).childCount;
-
-			SSObjectSelectable[] ret = new SSObjectSelectable[count];
-			
-
-			for( int i = 0; i < count; i++ )
-			{
-				ret[i] = (SSObjectSelectable)Main.GetSSObject( Guid.ParseExact( serializer.ReadString( new Path( "SelectedGuids.{0}", i ) ), "D" ) );
-				
-			}
-
-			return ret;
-		}
-
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -985,8 +921,7 @@ namespace SS.Levels
 				pathSavedBuildings = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_buildings.kff" ),
 				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_projectiles.kff" ),
 				pathSavedHeroes = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_heroes.kff" ),
-				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_extras.kff" ),
-				pathSelection = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_selection.kff" );
+				pathSavedExtras = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( currentLevelId, newLevelSaveStateId ), "save_extras.kff" );
 
 			KFFSerializer 
 				serializerFactionData = new KFFSerializer( new KFFFile( pathFactionData ) ),
@@ -994,9 +929,7 @@ namespace SS.Levels
 				serializerSavedBuildings = new KFFSerializer( new KFFFile( pathSavedBuildings ) ),
 				serializerSavedProjectiles = new KFFSerializer( new KFFFile( pathSavedProjectiles ) ),
 				serializerSavedHeroes = new KFFSerializer( new KFFFile( pathSavedHeroes ) ),
-				serializerSavedExtras = new KFFSerializer( new KFFFile( pathSavedExtras ) ),
-				
-				serializerSelection = new KFFSerializer( new KFFFile( pathSelection ) );
+				serializerSavedExtras = new KFFSerializer( new KFFFile( pathSavedExtras ) );
 
 			// Serialize the data into serializers.
 
@@ -1013,20 +946,6 @@ namespace SS.Levels
 			SaveHeroes( heroData, serializerSavedHeroes );
 			SaveExtras( extraData, serializerSavedExtras );
 			
-			Guid?[] selection = null;
-			var selectedObjs = Selection.selectedObjects;
-			if( selectedObjs.Length > 0 )
-			{
-				selection = new Guid?[selectedObjs.Length];
-
-				for( int i = 0; i < selectedObjs.Length; i++ )
-				{
-					selection[i] = selectedObjs[i].GetComponent<SSObject>().guid.Value;
-				}
-			}
-
-			SaveSelection( selection, serializerSelection );
-
 
 			// Write the data in serializers to the respective files.
 
@@ -1039,8 +958,6 @@ namespace SS.Levels
 			serializerSavedProjectiles.WriteToFile( pathSavedProjectiles, DefinitionManager.FILE_ENCODING );
 			serializerSavedHeroes.WriteToFile( pathSavedHeroes, DefinitionManager.FILE_ENCODING );
 			serializerSavedExtras.WriteToFile( pathSavedExtras, DefinitionManager.FILE_ENCODING );
-			
-			serializerSelection.WriteToFile( pathSelection, DefinitionManager.FILE_ENCODING );
 		}
 
 		private static void SaveUnits( Tuple<string, UnitData>[] units, KFFSerializer serializer )
@@ -1100,27 +1017,6 @@ namespace SS.Levels
 
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", extras[i].Item1 );
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", extras[i].Item2 );
-			}
-		}
-		
-
-
-
-		private static void SaveSelection( Guid?[] selected, KFFSerializer serializer )
-		{
-			serializer.WriteString( "", "SelectionPanelMode", SelectionPanel.instance.mode == SelectionPanelMode.Object ? "Object" : "List" );
-			serializer.WriteList( "", "List" );
-			if( selected != null )
-			{
-				string[] selectedGuidStrings = new string[selected.Length];
-				for( int i = 0; i < selected.Length; i++ )
-				{
-					selectedGuidStrings[i] = selected[i].Value.ToString( "D" );
-				}
-				for( int i = 0; i < selected.Length; i++ )
-				{
-					serializer.WriteStringArray( "", "SelectedGuids", selectedGuidStrings );
-				}
 			}
 		}
 	}

@@ -23,7 +23,7 @@ namespace SS.UI
 
 		public void CreateButton( string id, Sprite icon, UnityAction onClick )
 		{
-#warning incomplete.
+#warning incomplete (action button).
 		}
 
 		public Transform GetActionButton( string id )
