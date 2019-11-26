@@ -1,0 +1,781 @@
+﻿List =
+[
+	{
+		Id = "unit.wolf";
+		DisplayName = "Wolf";
+		MaxHealth = 40.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "melee"; // type of the module (determines which properties below are read)
+				ModuleId = "12354537-3373-7933-4658-396678574576"; // unique ID of the module (no 2 modules on an object can share the same ID)
+				
+				// Per-Module Properties.
+				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 2.5;
+				ArmorPenetration = 0.0;
+				AttackRange = 0.6;
+				AttackCooldown = 0.8;
+				AttackSound = "extern:Sounds/melee.wav";
+				Icon = "extern:Textures/Modules/melee_icon.png";
+			}
+		];
+		MovementSpeed = 0.4;
+		RotationSpeed = 120;
+		Radius = 0.25;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitSquare.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/wolf_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal_square.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Buildings/research_icon.png";
+	},
+	{
+		Id = "unit.light_infantry";
+		DisplayName = "Light Infantry";
+		MaxHealth = 100.0;
+		
+		Armor = // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
+		{		// so if you have 2.0 armor and attacker has 1.5 penetration, there will be 50% damage reduction.
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "melee";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 2.0;
+				ArmorPenetration = 0.0;
+				AttackRange = 0.6;
+				AttackCooldown = 0.75;
+				AttackSound = "extern:Sounds/melee.wav";
+				Icon = "extern:Textures/Modules/melee_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;  // The physical size of the unit (hitbox)
+		Height = 0.1875; // The physical size of the unit (hitbox)
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/light_infantry_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/light_infantry_icon.png";
+	},
+	{
+		Id = "unit.heavy_infantry";
+		DisplayName = "Heavy Infantry";
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.5, // Slash
+				0.5, // Pierce
+				0.5  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "melee";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 2.0;
+				ArmorPenetration = 0.0;
+				AttackRange = 0.6;
+				AttackCooldown = 0.75;
+				AttackSound = "extern:Sounds/melee.wav";
+				Icon = "extern:Textures/Modules/melee_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.25;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/heavy_infantry_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/heavy_infantry_icon.png";
+	},
+	{
+		Id = "unit.light_cavalry";
+		DisplayName = "Light Cavalry";
+		MaxHealth = 130.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "melee";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 2.0;
+				ArmorPenetration = 0.0;
+				AttackRange = 0.6;
+				AttackCooldown = 0.65;
+				AttackSound = "extern:Sounds/melee.wav";
+				Icon = "extern:Textures/Modules/melee_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.5;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/light_cavalry_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/light_cavalry_icon.png";
+	},
+	{
+		Id = "unit.heavy_cavalry";
+		DisplayName = "Heavy Cavalry";
+		MaxHealth = 130.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.5, // Slash
+				0.5, // Pierce
+				0.5  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "melee";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 4.0;
+				ArmorPenetration = 0.0;
+				AttackRange = 0.6;
+				AttackCooldown = 0.47;
+				AttackSound = "extern:Sounds/melee.wav";
+				Icon = "extern:Textures/Modules/melee_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.4;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/heavy_cavalry_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/heavy_cavalry_icon.png";
+	},
+	{
+		Id = "unit.bowmen";
+		DisplayName = "Bowmen";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "ranged";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+				ProjectileCount = 5;
+				DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 1.0;
+				ArmorPenetration = 0.0;
+				AttackRange = 5.0;
+				AttackCooldown = 3.0;
+				Velocity = 2.3;
+				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
+				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				AttackSound = "extern:Sounds/loose.wav";
+				Icon = "extern:Textures/Modules/ranged_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/bowmen_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/bowmen_icon.png";
+	},
+	{
+		Id = "unit.crossbowmen";
+		DisplayName = "Crossbowmen";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "ranged";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+				ProjectileCount = 4;
+				DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 1.5;
+				ArmorPenetration = 0.0;
+				AttackRange = 6.0;
+				AttackCooldown = 3.0;
+				Velocity = 2.5;
+				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
+				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				AttackSound = "extern:Sounds/loose.wav";
+				Icon = "extern:Textures/Modules/ranged_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/crossbowmen_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/crossbowmen_icon.png";
+	},
+	{
+		Id = "unit.mounted_archers";
+		DisplayName = "Mounted Archers";
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "ranged";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
+				ProjectileCount = 4;
+				DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 0.9;
+				ArmorPenetration = 0.0;
+				AttackRange = 4.0;
+				AttackCooldown = 3.0;
+				Velocity = 2.1;
+				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
+				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				AttackSound = "extern:Sounds/loose.wav";
+				Icon = "extern:Textures/Modules/ranged_icon.png";
+			},
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		MovementSpeed = 0.45;
+		RotationSpeed = 120;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitRectangle.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/mounted_archers_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/mounted_archers_icon.png";
+	},
+	{
+		Id = "unit.civilian";
+		DisplayName = "Civilian";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		IsConstructor = true;
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.25;
+		Height = 0.1875;
+		Modules =
+		[
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			},
+			{
+				TypeId = "constructor";
+				ModuleId = "12345678-9999-6666-4658-396678574576";
+				ConstructibleBuildings =
+				[ // controls also the ordering of icons.
+					"building.town_center",
+					"building.house_0",
+					"building.small_warehouse",
+					"building.barracks",
+					"building.stables",
+					"building.siege_workshop",
+					"building.college",
+					"building.wooden_wall",
+					"building.wooden_tower",
+					"building.wooden_ballista_tower"
+				];
+				Icon = "extern:Textures/Modules/constructor_icon.png";
+			}
+		];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitSquare.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/civilian_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal_square.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/civilian_icon.png";
+	},
+	{
+		Id = "unit.civilian_employed";
+		DisplayName = "Employed Civilian";
+		MaxHealth = 70.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		MovementSpeed = 0.35;
+		RotationSpeed = 120;
+		Radius = 0.25;
+		Height = 0.1875;
+		Modules =
+		[
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 10; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; }
+		];
+		TechsRequired = [];
+		BuildTime = 3.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitSquare.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/civilian_employed_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal_square.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/employed_civilian_icon.png";
+	},
+	{
+		Id = "unit.movable_ballista";
+		DisplayName = "Movable Balista";
+		MaxHealth = 40.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Modules =
+		[
+			{
+				TypeId = "ranged";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				ProjectileId = "projectile.barrow"; // can be any defined projectile's id.
+				ProjectileCount = 1;
+				DamageType = 2; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 10;
+				ArmorPenetration = 0.0;
+				AttackRange = 3;
+				AttackCooldown = 3.0;
+				Velocity = 2.1;
+				LocalOffsetMin = { X = 0.0; Y = 0.2; Z = 0.0; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
+				LocalOffsetMax = { X = 0.0; Y = 0.2; Z = 0.0; };
+				AttackSound = "extern:Sounds/swoosh_deep.wav";
+				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
+				Icon = "extern:Textures/Modules/ranged_icon.png";
+			}
+		];
+		MovementSpeed = 0.15;
+		RotationSpeed = 160;
+		Radius = 0.375;
+		Height = 0.1875;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 4; },
+			{ Id = "resource.stone"; Amount = 4; }
+		];
+		TechsRequired = [
+			"technology.archery"
+		];
+		BuildTime = 8.0;
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/UnitSquare.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "builtin:Textures/pixel_black";
+					NormalMap = "extern:Textures/Units/unit_normal_square.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.15; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ballista_elem.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/bowmen_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		Icon = "extern:Textures/Units/movable_ballista_icon.png";
+	}
+];

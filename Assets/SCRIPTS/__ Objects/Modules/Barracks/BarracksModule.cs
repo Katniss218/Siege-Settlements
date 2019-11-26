@@ -25,8 +25,8 @@ namespace SS.Modules
 		public UnityEvent onTrainingProgress = new UnityEvent();
 
 		public UnityEvent onTrainingEnd = new UnityEvent();
-		
-		public UnityEvent onPaymentReceived { get; private set; }
+
+		public UnityEvent onPaymentReceived { get; private set; } = new UnityEvent();
 
 		private BarracksModuleDefinition def;
 
@@ -36,49 +36,86 @@ namespace SS.Modules
 		public UnitDefinition[] trainableUnits { get; set; }
 
 		/// <summary>
-		/// Contains the currently trained unit (Read only).
-		/// </summary>
-		public UnitDefinition trainedUnit { get; private set; }
-
-		/// <summary>
-		/// returns true if the barracks module is currently training a unit (after payment has been completed).
-		/// </summary>
-		public bool isTraining
-		{
-			get
-			{
-				return this.trainedUnit != null;
-			}
-		}
-
-		/// <summary>
-		/// Contains the progress of the training (Read Only).
-		/// </summary>
-		public float trainProgress { get; private set; }
-
-		/// <summary>
 		/// Contains the multiplier used as the construction speed.
 		/// </summary>
 		public float trainSpeed { get; set; }
 
-		/// <summary>
-		/// Contains the local-space position, where the units are created.
-		/// </summary>
-		public Vector3 spawnPosition { get; private set; }
+		
+
+		public UnitDefinition trainedUnit { get; private set; }
 
 		/// <summary>
 		/// Contains the local-space position, the units move towards, after creation.
 		/// </summary>
 		public Vector3 rallyPoint { get; set; }
 
+
 		private FactionMember factionMember;
+
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
+		private float trainProgressRemaining = 0.0f;
+
+		private Vector3 spawnPosition = Vector3.zero;
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+
+		void Awake()
+		{
+			this.factionMember = this.GetComponent<FactionMember>();
+
+			Building ssObjectBuilding = this.ssObject as Building;
+			if( ssObjectBuilding != null )
+			{
+				if( ssObjectBuilding.entrance == null )
+				{
+					Debug.LogWarning( "Barracks assigned to Building with no entrance: '" + ssObjectBuilding.definitionId + "'." );
+				}
+				else
+				{
+					this.spawnPosition = ssObjectBuilding.entrance.Value;
+				}
+			}
+
+			this.onTrainingBegin.AddListener( this.OnTrainingBegin );
+			this.onTrainingProgress.AddListener( this.OnTrainingProgress );
+			this.onTrainingEnd.AddListener( this.OnTrainingEnd );
+
+			this.onPaymentReceived.AddListener( this.OnPaymentReceived );
+			
+			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
+		}
 		
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		void Update()
+		{
+			if( this.IsPaymentDone() )
+			{
+				if( this.trainedUnit != null )
+				{
+					this.trainProgressRemaining -= this.trainSpeed * Time.deltaTime;
+					if( this.trainProgressRemaining <= 0 )
+					{
+						this.EndTraining( true );
+					}
+
+					else
+					{
+						this.onTrainingProgress?.Invoke();
+					}
+				}
+			}
+		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		private bool IsPaymentDone()
 		{
@@ -132,102 +169,56 @@ namespace SS.Modules
 			}
 			return ret;
 		}
+
 		
 		private void StartTraining( UnitDefinition def )
 		{
-			if( this.isTraining )
+			if( this.trainedUnit != null )
 			{
 				throw new Exception( "There is already unit being trained." );
 			}
 
 			this.trainedUnit = def;
-			this.trainProgress = def.buildTime;
+			this.trainProgressRemaining = def.buildTime;
 
 			this.resourcesRemaining = new Dictionary<string, int>( this.trainedUnit.cost );
 			this.onTrainingBegin?.Invoke();
 		}
 
-		// Start is called before the first frame update
-		void Awake()
+		private void SpawnTrainedUnit()
 		{
-			this.factionMember = this.GetComponent<FactionMember>();
-			this.onPaymentReceived = new UnityEvent();
+			// Calculate world-space spawn position.
+			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
 			
-			Building building = this.GetComponent<Building>();
-			if( building == null )
-			{
-				this.spawnPosition = Vector3.zero;
-			}
-			else
-			{
-				if( building.entrance == null )
-				{
-					throw new Exception( "Can't assign barracks to a building with no entrance." );
-				}
-				this.spawnPosition = building.entrance.Value;
-			}
-
-			this.onTrainingBegin.AddListener( this.OnTrainingBegin );
-			this.onTrainingProgress.AddListener( this.OnTrainingProgress );
-			this.onTrainingEnd.AddListener( this.OnTrainingEnd );
-
-			this.onPaymentReceived.AddListener( this.OnPaymentReceived );
-
-			if( this.factionMember != null )
-			{
-				LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
-			}
+			UnitData data = new UnitData();
+			data.guid = Guid.NewGuid();
+			data.position = spawnPos;
+			data.rotation = Quaternion.identity;
+			data.factionId = this.factionMember.factionId;
+			data.health = this.trainedUnit.healthMax;
+			GameObject obj = UnitCreator.Create( this.trainedUnit, data );
+			// Move the newly spawned unit to the rally position.
+			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+			TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPointWorld );
 		}
-		
-		// Update is called once per frame
-		void Update()
+
+		private void EndTraining( bool isSuccess )
 		{
-			if( IsPaymentDone() )
+			if( this.trainedUnit == null )
 			{
-				// If we are building something
-				if( this.isTraining )
-				{
-					this.trainProgress -= this.trainSpeed * Time.deltaTime;
-					if( this.trainProgress <= 0 )
-					{
-						// Calculate world-space spawn position.
-						Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-						Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
-
-						// Calculate world-space spawn rotation.
-						Quaternion spawnRot = Quaternion.identity;
-
-						RaycastHit hitInfo;
-						if( Physics.Raycast( new Ray( spawnPos + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down ), out hitInfo, 100f, ObjectLayer.TERRAIN_MASK ) )
-						{
-							UnitData data = new UnitData();
-							data.guid = Guid.NewGuid();
-							data.position = hitInfo.point;
-							data.rotation = spawnRot;
-							data.factionId = this.factionMember.factionId;
-							data.health = this.trainedUnit.healthMax;
-							GameObject obj = UnitCreator.Create( this.trainedUnit, data );
-							// Move the newly spawned unit to the rally position.
-							Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
-							TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPointWorld );
-						}
-						else
-						{
-							Debug.LogWarning( "No suitable position for spawning was found." );
-						}
-
-						this.trainedUnit = null;
-						this.trainProgress = 0.0f;
-						this.resourcesRemaining = null;
-						this.onTrainingEnd?.Invoke();
-					}
-
-					else
-					{
-						this.onTrainingProgress?.Invoke();
-					}
-				}
+				throw new Exception( "There is no unit being trained." );
 			}
+
+			if( isSuccess )
+			{
+				this.SpawnTrainedUnit();
+			}
+
+			this.trainedUnit = null;
+			this.trainProgressRemaining = 0.0f;
+			this.resourcesRemaining = null;
+			this.onTrainingEnd?.Invoke();
 		}
 
 
@@ -253,7 +244,7 @@ namespace SS.Modules
 			{
 				saveState.trainedUnitId = this.trainedUnit.id;
 			}
-			saveState.trainProgress = this.trainProgress;
+			saveState.trainProgress = this.trainProgressRemaining;
 
 			return saveState;
 		}
@@ -305,16 +296,13 @@ namespace SS.Modules
 			{
 				this.trainedUnit = DefinitionManager.GetUnit( data.trainedUnitId );
 			}
-			this.trainProgress = data.trainProgress;
+			this.trainProgressRemaining = data.trainProgress;
 			this.rallyPoint = data.rallyPoint;
 		}
 		
 		void OnDestroy()
 		{
-			if( this.factionMember != null )
-			{
-				LevelDataManager.onTechStateChanged.RemoveListener( OnTechStateChanged );
-			}
+			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechStateChanged );
 		}
 
 		private string Status()
@@ -376,15 +364,15 @@ namespace SS.Modules
 			}
 			if( this.IsPaymentDone() )
 			{
-				if( !this.isTraining )
+				if( this.trainedUnit == null )
 				{
 					if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
 					{
 						SelectionPanel.instance.obj.ClearElement( "barracks.list" );
 					}
+					this.ShowList();
 				}
 			}
-			this.ShowList();
 		}
 
 		private void OnPaymentReceived()
@@ -417,6 +405,10 @@ namespace SS.Modules
 				{
 					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
 				}
+				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				{
+					this.EndTraining( false );
+				} );
 			}
 		}
 
@@ -429,10 +421,10 @@ namespace SS.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
+				UIUtils.EditText( statusUI.gameObject, "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgressRemaining + " s." );
 			}
 		}
-
+		
 		private void OnTrainingEnd()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
@@ -446,7 +438,53 @@ namespace SS.Modules
 				UIUtils.EditText( statusUI.gameObject, "Select unit to make..." );
 			}
 
+			ActionPanel.instance.Clear( "barracks.ap.cancel" );
+
 			this.ShowList();
+		}
+
+		public void OnDisplay()
+		{
+			// If it's not usable - return, don't train anything.
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
+			{
+				return;
+			}
+
+			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
+			if( this.IsPaymentDone() )
+			{
+				if( this.trainedUnit != null )
+				{
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgressRemaining + " s." );
+					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+
+					ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+					{
+						this.EndTraining( false );
+					} );
+				}
+				else
+				{
+					this.ShowList();
+
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
+					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+				}
+			}
+			else
+			{
+				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
+				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+				
+				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				{
+					this.EndTraining( false );
+				} );
+			}
 		}
 
 #if UNITY_EDITOR
@@ -467,39 +505,5 @@ namespace SS.Modules
 			Gizmos.DrawLine( spawnPos, rallyPos );
 		}
 #endif
-
-		public void OnDisplay()
-		{
-			// If it's not usable - return, don't train anything.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
-			{
-				return;
-			}
-
-			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
-			if( this.IsPaymentDone() )
-			{
-				if( this.isTraining )
-				{
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training...: '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgress + " s." );
-					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
-				}
-				else
-				{
-					this.ShowList();
-
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
-					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
-				}
-			}
-			else
-			{
-				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources ('" + this.trainedUnit.displayName + "'): " + Status() );
-				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
-			}
-		}
 	}
 }

@@ -271,7 +271,7 @@ namespace SS.Objects.Buildings
 				}
 
 				// If the health change changed the usability (health is above threshold).
-				if( building.CheckUsable() )
+				if( building.IsUsable() )
 				{
 					// If the building was not usable before the health change.
 					if( SelectionPanel.instance.obj.GetElement( "building.unusable_flag" ) != null )

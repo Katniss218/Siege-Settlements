@@ -11,6 +11,8 @@ namespace SS.UI
 
 		private Dictionary<string, Transform> actionButtons = new Dictionary<string, Transform>();
 
+		[SerializeField] private Transform buttonsParent;
+
 		void Awake()
 		{
 			if( instance != null )
@@ -23,7 +25,14 @@ namespace SS.UI
 
 		public void CreateButton( string id, Sprite icon, UnityAction onClick )
 		{
-#warning incomplete (action button).
+			if( this.actionButtons.Count >= 9 )
+			{
+				Debug.LogWarning( "Tried adding more than 9 action buttons." );
+				return;
+			}
+
+			GameObject button = UIUtils.InstantiateIconButton( buttonsParent, new GenericUIData(), icon, onClick );
+			this.actionButtons.Add( id, button.transform );
 		}
 
 		public Transform GetActionButton( string id )
@@ -44,13 +53,15 @@ namespace SS.UI
 			this.actionButtons.Clear();
 		}
 		
-		public void Clear( string id )
+		public bool Clear( string id )
 		{
 			if( this.actionButtons.TryGetValue( id, out Transform obj ) )
 			{
 				Object.Destroy( obj.gameObject );
 				this.actionButtons.Remove( id );
+				return true;
 			}
+			return false;
 		}
 	}
 }

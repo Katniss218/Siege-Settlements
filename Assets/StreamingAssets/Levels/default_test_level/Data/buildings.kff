@@ -1,0 +1,674 @@
+﻿List =
+[
+	{
+		Id = "building.town_center";
+		DisplayName = "Town Center";
+		MaxHealth = 450.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 1.29; Y = 0.58; Z = 1.46; };
+		PlacementNodes = [ ];
+		Entrance = { X = 0.2; Y = 0.0; Z = -1.1; }; // Barracks use it to spawn unit at this position (local).
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 30; }
+		];		
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.civilian"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/town_center.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/town_center_color.png";
+					NormalMap = "extern:Textures/Buildings/town_center_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.4; Y = 0.55; Z = 0.57; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 2;
+				LifetimeMax = 4;
+				EmissionRateTime = 2;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.25; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/town_center_icon.png";
+	},
+	{
+		Id = "building.house_0";
+		DisplayName = "House";
+		MaxHealth = 60.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.43; Y = 0.51; Z = 0.55; };
+		PlacementNodes = [ ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/house_0.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/house_0_color.png";
+					NormalMap = "extern:Textures/Buildings/house_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = -0.2; Y = 0.48; Z = 0.06; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 2;
+				LifetimeMax = 4;
+				EmissionRateTime = 2;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.25; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house_icon.png";
+	},
+	{
+		Id = "building.small_warehouse";
+		DisplayName = "Small Warehouse";
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.72; Y = 0.62; Z = 1.03; };
+		PlacementNodes = [ ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 10; },
+			{ Id = "resource.stone"; Amount = 10; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 30; },
+					{ SlotId = ""; Capacity = 30; },
+					{ SlotId = ""; Capacity = 30; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/small_warehouse.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/small_warehouse_color.png";
+					NormalMap = "extern:Textures/Buildings/small_warehouse_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/small_warehouse_icon.png";
+	},
+	{
+		Id = "building.college";
+		DisplayName = "College";
+		MaxHealth = 200.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 1.21; Y = 0.7; Z = 1.17; };
+		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 25; },
+			{ Id = "resource.stone"; Amount = 10; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "research";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				ResearchSpeed = 1.0;
+				ResearchableTechnologies =
+				[ // controls also the ordering of icons.
+					"technology.weaponry",
+					"technology.horse_riding",
+					"technology.archery"
+				];
+				Icon = "extern:Textures/Modules/research_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/college.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/college_color.png";
+					NormalMap = "extern:Textures/Buildings/college_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/research_icon.png";
+	},
+	{
+		Id = "building.barracks";
+		DisplayName = "Barracks";
+		MaxHealth = 200.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.86; Y = 0.6; Z = 0.88; };
+		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; },
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired =
+		[
+			"technology.weaponry"
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.light_infantry",
+					"unit.heavy_infantry",
+					"unit.bowmen",
+					"unit.crossbowmen"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/barracks.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/barracks_color.png";
+					NormalMap = "extern:Textures/Buildings/barracks_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/barracks_icon.png";
+	},
+	{
+		Id = "building.stables";
+		DisplayName = "Stables";
+		MaxHealth = 200.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.87; Y = 0.6; Z = 0.85; };
+		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; },
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired =
+		[
+			"technology.horse_riding"
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.light_cavalry",
+					"unit.heavy_cavalry",
+					"unit.mounted_archers"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stables.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stables_color.png";
+					NormalMap = "extern:Textures/Buildings/stables_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/stables_icon.png";
+	},
+	{
+		Id = "building.siege_workshop";
+		DisplayName = "Siege Workshop";
+		MaxHealth = 200.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.3, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.87; Y = 0.6; Z = 0.85; };
+		PlacementNodes = [ ];
+		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; },
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired =
+		[
+			
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.movable_ballista"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/siege_workshop.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/siege_workshop_color.png";
+					NormalMap = "extern:Textures/Buildings/siege_workshop_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/siege_workshop_icon.png";
+	},
+	{
+		Id = "building.wooden_wall";
+		DisplayName = "Palisade";
+		MaxHealth = 80.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.2, // Slash
+				0.2, // Pierce
+				0.2  // Concussion
+			];
+		};
+		Size = { X = 0.65; Y = 0.37; Z = 0.085; };
+		// Controls snapping to existing buildings.
+		PlacementNodes =
+		[
+			{ X = 0.375; Y = 0.125; Z = 0.0; },
+			{ X = -0.375; Y = 0.125; Z = 0.0; }
+		];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 15; }
+		];
+		TechsRequired = [];
+		Modules = [];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_wall.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_wall_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_wall_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/palisade_icon.png";
+	},
+	{
+		Id = "building.wooden_tower";
+		DisplayName = "Wooden Tower";
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.2, // Slash
+				0.2, // Pierce
+				0.2  // Concussion
+			];
+		};
+		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		PlacementNodes = [ ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [];
+		Modules = [];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_tower_icon.png";
+	},
+	{
+		Id = "building.wooden_ballista_tower";
+		DisplayName = "Wooden Ballista Tower";
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.2, // Slash
+				0.2, // Pierce
+				0.2  // Concussion
+			];
+		};
+		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		PlacementNodes = [ ];
+		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "ranged";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				
+				ProjectileId = "projectile.barrow"; // can be any defined projectile's id.
+				ProjectileCount = 1;
+				DamageType = 2; // 0 - Slash, 1 - Pierce, 2 - Concussion
+				Damage = 10;
+				ArmorPenetration = 0.0;
+				AttackRange = 3;
+				AttackCooldown = 3.0;
+				Velocity = 2.1;
+				LocalOffsetMin = { X = 0.0; Y = 0.63; Z = 0.0; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
+				LocalOffsetMax = { X = 0.0; Y = 0.63; Z = 0.0; };
+				AttackSound = "extern:Sounds/swoosh_deep.wav";
+				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
+				Icon = "extern:Textures/Modules/ranged_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.6; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ballista_elem.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/bowmen_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+	}
+];

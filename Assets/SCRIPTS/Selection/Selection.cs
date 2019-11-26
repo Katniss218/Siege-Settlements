@@ -55,10 +55,6 @@ namespace SS
 
 		// When object is null, module also must be null.
 		// When module is not null, object also can't be null.
-#warning bool for "group" object displayed.
-#warning make it separate, self-contained struct with all logic of keeping track of what's selected kept inside of it.
-		//static SSObjectSelectable displayedObject { get; set; } = null;
-		//static ISelectDisplayHandler displayedModule { get; set; } = null;
 		static DisplayedObjectData displayedObjectData = null;
 
 
@@ -164,6 +160,7 @@ namespace SS
 			}
 			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
 			SelectionPanel.instance.obj.ClearAllElements();
+			ActionPanel.instance.ClearAll();
 			(module as ISelectDisplayHandler).OnDisplay();
 		}
 		
@@ -177,6 +174,8 @@ namespace SS
 			SelectionPanel.instance.obj.ClearModules();
 			SelectionPanel.instance.obj.ClearIcon();
 			SelectionPanel.instance.obj.displayNameText.text = "";
+
+			ActionPanel.instance.ClearAll();
 		}
 
 

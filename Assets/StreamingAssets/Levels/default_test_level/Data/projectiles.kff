@@ -1,0 +1,132 @@
+﻿List =
+[
+	{
+		Id = "projectile.arrow";
+		
+		DisplayName = "Arrow";
+		
+		CanGetStuck = true;
+		BlastRadius = 0.0;
+		Lifetime = 15.0;
+		
+		HitSound = "extern:Sounds/arrow_hit.wav";
+		MissSound = "extern:Sounds/arrow_miss.wav";
+		
+		Modules = [];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Arrow.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/Units/heavy_infantry_albedo.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "sphere";
+					Radius = 0.02;
+				};
+				
+				LifetimeMin = 0.4;
+				LifetimeMax = 0.6;
+				EmissionRateTime = 36;
+				StartSizeMin = 0.04;
+				StartSizeMax = 0.06;
+				StartSpeedMin = 0.0;
+				StartSpeedMax = 0.0;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 1.0; },
+					{ Time = 1.0; Value = 0.0; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/arrow_trail.png";
+			}
+		];
+	},
+	{
+		Id = "projectile.barrow";
+		
+		DisplayName = "Ballista Arrow";
+		
+		CanGetStuck = false;
+		BlastRadius = 1.0;
+		Lifetime = 15.0;
+		
+		HitSound = "extern:Sounds/swoosh_2.wav";
+		MissSound = "extern:Sounds/swoosh_2.wav";
+		
+		Modules = [];
+		SubObjects =
+		[
+			//{
+			//	TypeId = "MESH";
+			//	SubObjectId = "00000000-0000-0000-0001-000000000000";
+			//	LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+			//	LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+			//	
+			//	Mesh = "extern:Models/Arrow.ksm";
+			//	Material =
+			//	{
+			//		MaterialType = 0; // 0 -> 'Opaque'
+			//		ColorMap = "extern:Textures/Units/heavy_infantry_albedo.png";
+			//		NormalMap = "extern:Textures/Units/unit_normal.png";
+			//		EmissionMap = "builtin:Textures/pixel_black";
+			//		MetallicMap = "builtin:Textures/pixel_black";
+			//		SmoothnessMap = "builtin:Textures/pixel_black";
+			//	};
+			//},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "sphere";
+					Radius = 0.02;
+				};
+				
+				LifetimeMin = 0.6;
+				LifetimeMax = 0.9;
+				EmissionRateTime = 36;
+				StartSizeMin = 0.1;
+				StartSizeMax = 0.2;
+				StartSpeedMin = 0.0;
+				StartSpeedMax = 0.0;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 1.0; },
+					{ Time = 0.5; Value = 0.7; },
+					{ Time = 1.0; Value = 0.0; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/arrow_trail.png";
+			}
+		];
+	}
+];

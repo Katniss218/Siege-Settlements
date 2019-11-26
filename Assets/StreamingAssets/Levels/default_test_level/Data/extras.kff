@@ -1,0 +1,430 @@
+﻿List =
+[
+	{
+		Id = "extra.grass";
+		DisplayName = "Grass";
+		Modules =
+		[
+			
+		];
+		IsObstacle = false;
+		Size = { X = 0.2; Y = 0.2; Z = 0.2; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Extras/Cross.ksm";
+				Material =
+				{
+					MaterialType = 3; // 3 -> 'Plant Transparent'
+					ColorMap = "extern:Textures/Extras/grass_side_albedo.png";
+					NormalMap = "extern:Textures/Extras/grass_side_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+					WindDisplacementScale = 0.25;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.tree";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Tree.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/tree_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/tree_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+					WindDisplacementScale = 0.25;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.pine";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Pine.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/pine_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/pine_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+					WindDisplacementScale = 0.25;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.wood";
+		DisplayName = "Wood";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 20; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/wood_pickup.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.5; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Wood.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/wood_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/wood_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.rock_0";
+		DisplayName = "Rock";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.stone"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/pickaxe_hit_stone.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.35; Y = 0.25; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/rock_0.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/rock_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/rock_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.stone";
+		DisplayName = "Stone";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.stone"; Capacity = 20; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/stone_pickup.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.3; Y = 0.5; Z = 0.4; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Stone.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/stone_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/stone_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.iron_ore_0";
+		DisplayName = "Iron";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.iron"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/pickaxe_hit_metal.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.35; Y = 0.25; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/rock_0.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/rock_0_iron_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/rock_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/rock_0_ore.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/iron_rock_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/iron_rock_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.iron";
+		DisplayName = "Iron";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.iron"; Capacity = 20; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/iron_pickup.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Iron.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/iron_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/iron_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.sulphur_ore_0";
+		DisplayName = "Sulphur";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.sulphur"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/pickaxe_hit_stone.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.35; Y = 0.25; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/rock_0.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/rock_0_sulphur_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/rock_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/rock_0_ore.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/sulfur_rock_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/sulfur_rock_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.sulphur";
+		DisplayName = "Sulphur";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.sulphur"; Capacity = 20; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/sulphur_pickup.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.5; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/Sulphur.ksm";
+				Material =
+				{
+					MaterialType = 0; // 0 -> 'Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/sulphur_albedo.png";
+					NormalMap = "extern:Textures/ResourceDeposits/sulphur_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+	}
+];

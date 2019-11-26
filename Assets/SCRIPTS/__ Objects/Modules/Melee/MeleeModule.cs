@@ -138,7 +138,7 @@ namespace SS.Modules
 		void Update()
 		{
 			// If it's not usable - return, don't attack.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
 			{
 				return;
 			}

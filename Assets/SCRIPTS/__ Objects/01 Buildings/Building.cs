@@ -25,7 +25,7 @@ namespace SS.Objects.Buildings
 
 		public AudioClip deathSound { get; set; }
 
-		public bool CheckUsable()
+		public bool IsUsable()
 		{
 			// If not under construction/repair.
 			if( this.GetComponent<ConstructionSite>() == null )
@@ -145,7 +145,7 @@ namespace SS.Objects.Buildings
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
-			if( !this.CheckUsable() )
+			if( !this.IsUsable() )
 			{
 				GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 				SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );

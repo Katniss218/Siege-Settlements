@@ -16,12 +16,12 @@ namespace SS.Objects.Buildings
 
 		private void RotateClockwise()
 		{
-			this.transform.Rotate( 0, KBD_ROTATION_SPEED * Time.fixedDeltaTime, 0 );
+			this.transform.Rotate( 0, KBD_ROTATION_SPEED * Time.deltaTime, 0 );
 		}
 
 		private void RotateCounterClockwise()
 		{
-			this.transform.Rotate( 0, -KBD_ROTATION_SPEED * Time.fixedDeltaTime, 0 );
+			this.transform.Rotate( 0, -KBD_ROTATION_SPEED * Time.deltaTime, 0 );
 		}
 
 		private void SnapToGround()
@@ -71,10 +71,12 @@ namespace SS.Objects.Buildings
 			}
 		}
 
-		private void FixedUpdate()
+		private void Update()
 		{
 			if( UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() )
 			{
+				// Disappear the pointer.
+				this.transform.position = new Vector3( -9999.0f, -9999.0f, 3000.0f );
 				return;
 			}
 

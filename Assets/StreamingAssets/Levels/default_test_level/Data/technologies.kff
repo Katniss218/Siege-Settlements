@@ -1,0 +1,33 @@
+﻿List =
+[
+	{
+		Id = "technology.weaponry";
+		DisplayName = "Weaponry";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 5; },
+			{ Id = "resource.stone"; Amount = 5; }
+		];
+		Icon = "extern:Textures/Technologies/weaponry_icon.png";
+	},
+	{
+		Id = "technology.horse_riding";
+		DisplayName = "Horse Riding";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 5; },
+			{ Id = "resource.stone"; Amount = 5; }
+		];
+		Icon = "extern:Textures/Technologies/horse_riding_icon.png";
+	},
+	{
+		Id = "technology.archery";
+		DisplayName = "Archery";
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 6; },
+			{ Id = "resource.stone"; Amount = 4; }
+		];
+		Icon = "extern:Textures/Technologies/archery_icon.png";
+	}
+];

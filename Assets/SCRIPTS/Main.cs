@@ -25,7 +25,7 @@ namespace SS
 	public class Main : MonoBehaviour
 	{
 		public const float DEFAULT_NAVMESH_BASE_OFFSET = -0.075f;
-		
+
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
 		public static bool isHudLocked { get; private set; }
@@ -55,7 +55,7 @@ namespace SS
 				if( __objectHUDCanvas == null )
 				{
 					Canvas[] canvases = FindObjectsOfType<Canvas>();
-					for( int i = 0; i < canvases.Length;i++ )
+					for( int i = 0; i < canvases.Length; i++ )
 					{
 						if( canvases[i].gameObject.CompareTag( "Object HUD Canvas" ) )
 						{
@@ -97,7 +97,7 @@ namespace SS
 				return __canvas;
 			}
 		}
-		
+
 		private static Transform __cameraPivot = null;
 		public static Transform cameraPivot
 		{
@@ -186,7 +186,7 @@ namespace SS
 							hitDepositSSObject = raycastHits[i].collider.GetComponent<SSObject>();
 							hitDeposit = deposit;
 						}
-						
+
 						InventoryModule inventory = raycastHits[i].collider.GetComponent<InventoryModule>();
 						if( inventory != null && hitInventorySSObject == null )
 						{
@@ -210,12 +210,12 @@ namespace SS
 						}
 					}
 				}
-				
+
 				if( hitDeposit == null && hitInventory == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
 				{
 					AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 				}
-				
+
 				else if( hitReceiverTransform != null && (hitReceiverFactionMember == null || hitReceiverFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
 				{
 					AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
@@ -305,7 +305,7 @@ namespace SS
 				}
 			}
 		}
-		
+
 		private void Inp_Y( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -507,7 +507,7 @@ namespace SS
 		private void OnEnable()
 		{
 			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
-			
+
 			Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
@@ -558,7 +558,7 @@ namespace SS
 		//
 		//
 		//
-		
+
 		private void AssignAttackGoal( Damageable target, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableGameObjects = new List<GameObject>();
@@ -772,7 +772,7 @@ namespace SS
 				{
 					continue;
 				}
-				
+
 				foreach( var kvp in resourcesInDeposit )
 				{
 					// if can pick up && has empty space for it.
@@ -860,7 +860,7 @@ namespace SS
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> toBeAssignedGameObjects = new List<GameObject>();
-			
+
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
@@ -916,7 +916,7 @@ namespace SS
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.GetComponent<SSObject>() );
 			}
 		}
-		
+
 		public static bool IsInRange( Vector3 pos1, Vector3 pos2, float threshold )
 		{
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;

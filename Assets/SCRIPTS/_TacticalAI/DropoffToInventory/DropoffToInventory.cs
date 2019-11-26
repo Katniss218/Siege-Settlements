@@ -24,7 +24,7 @@ namespace SS
 				{
 					if( value != null )
 					{
-						if( value is IUsableToggle && !(value as IUsableToggle).CheckUsable() )
+						if( value is IUsableToggle && !(value as IUsableToggle).IsUsable() )
 						{
 							Debug.LogWarning( "Tried to dropoff items to inventory that is not usable." );
 							Destroy( this );

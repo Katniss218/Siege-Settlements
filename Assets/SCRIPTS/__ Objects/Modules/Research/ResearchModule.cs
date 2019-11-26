@@ -399,7 +399,7 @@ namespace SS.Modules
 		public void OnDisplay()
 		{
 			// If it's not usable - return, don't research anything.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).CheckUsable() )
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
 			{
 				return;
 			}

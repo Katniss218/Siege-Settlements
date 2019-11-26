@@ -1,0 +1,15 @@
+﻿DisplayName = "Default Test Level";
+Map =
+{
+	Segments = 4;
+	Height = 6.0;
+};
+DaylightCycle =
+{
+	DayLength = 300;
+	NightLength = 200;
+	SunIntensity = 1.75;
+	MoonIntensity = 0.075;
+	SunElevationAngle = 60.0;
+	MoonElevationAngle = 60.0;
+};

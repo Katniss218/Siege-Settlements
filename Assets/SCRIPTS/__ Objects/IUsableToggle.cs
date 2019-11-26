@@ -2,6 +2,6 @@
 {
 	interface IUsableToggle
 	{
-		bool CheckUsable();
+		bool IsUsable();
 	}
 }
