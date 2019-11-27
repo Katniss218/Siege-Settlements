@@ -1,10 +1,9 @@
 ﻿using Katniss.Utils;
-using SS.Modules;
-using SS.Modules.Inventories;
+using SS.Objects.Modules;
+using SS.Objects;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using SS.Objects;
 
 namespace SS
 {

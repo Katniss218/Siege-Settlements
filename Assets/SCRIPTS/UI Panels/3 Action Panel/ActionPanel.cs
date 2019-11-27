@@ -11,7 +11,7 @@ namespace SS.UI
 
 		private Dictionary<string, Transform> actionButtons = new Dictionary<string, Transform>();
 
-		[SerializeField] private Transform buttonsParent;
+		[SerializeField] private Transform buttonsParent = null;
 
 		void Awake()
 		{

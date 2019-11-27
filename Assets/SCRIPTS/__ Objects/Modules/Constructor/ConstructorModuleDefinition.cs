@@ -8,12 +8,10 @@ using SS.Objects.Units;
 using UnityEngine;
 using SS.Content;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class ConstructorModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "constructor";
-
 		public string[] constructibleBuildings { get; set; }
 
 

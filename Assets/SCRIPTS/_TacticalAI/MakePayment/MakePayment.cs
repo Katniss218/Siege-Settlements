@@ -1,6 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Modules.Inventories;
+using SS.Objects.Modules;
 using SS.Objects;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;

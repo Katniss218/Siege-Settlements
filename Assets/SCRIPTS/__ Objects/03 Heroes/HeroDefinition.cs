@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Modules;
+using SS.Objects.Modules;
 using System;
 using UnityEngine;
 
@@ -149,7 +149,7 @@ namespace SS.Objects.Heroes
 			
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 
-			this.DeserializeModulesKFF( serializer );
+			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -168,7 +168,7 @@ namespace SS.Objects.Heroes
 			
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
-			this.SerializeModulesKFF( serializer );
+			this.SerializeModulesAndSubObjectsKFF( serializer );
 		}
 	}
 }

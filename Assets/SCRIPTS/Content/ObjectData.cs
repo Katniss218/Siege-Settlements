@@ -1,6 +1,5 @@
 ﻿using KFF;
-using SS.Levels.SaveStates;
-using SS.Modules;
+using SS.Objects.Modules;
 using System;
 using System.Collections.Generic;
 
@@ -92,45 +91,11 @@ namespace SS.Content
 		{
 			for( int i = 0; i < serializer.Analyze( "Modules" ).childCount; i++ )
 			{
-				string moduleTypeString = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
-				ModuleData module = null;
+				string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
+				ModuleData module = ModuleData.TypeIdToDefinition( typeId );
 
-
-				if( moduleTypeString == MeleeModuleData.KFF_TYPEID )
-				{
-					module = new MeleeModuleData();
-				}
-				else if( moduleTypeString == RangedModuleData.KFF_TYPEID )
-				{
-					module = new RangedModuleData();
-				}
-				else if( moduleTypeString == BarracksModuleData.KFF_TYPEID )
-				{
-					module = new BarracksModuleData();
-				}
-				else if( moduleTypeString == ResearchModuleData.KFF_TYPEID )
-				{
-					module = new ResearchModuleData();
-				}
-				else if( moduleTypeString == InventoryModuleData.KFF_TYPEID )
-				{
-					module = new InventoryModuleData();
-				}
-				else if( moduleTypeString == ResourceDepositModuleData.KFF_TYPEID )
-				{
-					module = new ResourceDepositModuleData();
-				}
-				else if( moduleTypeString == ConstructorModuleData.KFF_TYPEID )
-				{
-					module = new ConstructorModuleData();
-				}
-				else
-				{
-					throw new Exception( "Unknown module type '" + moduleTypeString + "'." );
-				}
-
+				
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
-
 				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
 
 				this.AddModuleData( guid, module );
@@ -147,42 +112,9 @@ namespace SS.Content
 
 			for( int i = 0; i < modulesArray.Length; i++ )
 			{
-				string moduleTypeString = null;
-
-				if( modulesArray[i] is MeleeModuleData )
-				{
-					moduleTypeString = MeleeModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is RangedModuleData )
-				{
-					moduleTypeString = RangedModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is BarracksModuleData )
-				{
-					moduleTypeString = BarracksModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ResearchModuleData )
-				{
-					moduleTypeString = ResearchModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is InventoryModuleData )
-				{
-					moduleTypeString = InventoryModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ResourceDepositModuleData )
-				{
-					moduleTypeString = ResourceDepositModuleData.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ConstructorModuleData )
-				{
-					moduleTypeString = ConstructorModuleData.KFF_TYPEID;
-				}
-				else
-				{
-					throw new Exception( "Inknown module type '" + modulesArray[i].GetType().Name + "'." );
-				}
-
-				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", moduleTypeString );
+				string typeId = ModuleData.DataToTypeId( modulesArray[i] );
+				
+				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteString( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i].ToString( "D" ) );
 			}
 		}

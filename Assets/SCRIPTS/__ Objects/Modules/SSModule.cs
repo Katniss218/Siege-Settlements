@@ -1,8 +1,7 @@
-﻿using SS.Objects;
-using System;
+﻿using System;
 using UnityEngine;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public abstract class SSModule : MonoBehaviour
 	{

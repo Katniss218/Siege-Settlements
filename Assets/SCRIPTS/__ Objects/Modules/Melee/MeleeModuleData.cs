@@ -1,13 +1,11 @@
 ﻿using KFF;
-using SS.Modules;
+using SS.Objects.Modules;
 using System;
 
 namespace SS.Levels.SaveStates
 {
 	public class MeleeModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "melee";
-
 		public Guid? targetGuid { get; set; }
 		
 

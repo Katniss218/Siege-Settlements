@@ -8,12 +8,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class RangedModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "ranged";
-
 		public string projectileId { get; set; }
 		public int projectileCount { get; set; }
 

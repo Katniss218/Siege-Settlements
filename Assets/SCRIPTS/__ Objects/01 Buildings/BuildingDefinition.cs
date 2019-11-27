@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Modules;
+using SS.Objects.Modules;
 using SS.Technologies;
 using System;
 using System.Collections.Generic;
@@ -131,7 +131,7 @@ namespace SS.Objects.Buildings
 
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 
-			this.DeserializeModulesKFF( serializer );
+			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -168,7 +168,7 @@ namespace SS.Objects.Buildings
 			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
-			this.SerializeModulesKFF( serializer );
+			this.SerializeModulesAndSubObjectsKFF( serializer );
 		}
 	}
 }

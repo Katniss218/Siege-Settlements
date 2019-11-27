@@ -5,10 +5,12 @@ using System;
 using UnityEngine;
 using SS.Objects;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class MeleeModule : SSModule, ITargetFinder
 	{
+		public const string KFF_TYPEID = "melee";
+
 		private Damageable __target;
 
 

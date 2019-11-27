@@ -10,10 +10,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace SS.Modules.Inventories
+namespace SS.Objects.Modules
 {	
 	public sealed class InventoryModule : SSModule
 	{
+		public const string KFF_TYPEID = "inventory";
+
 		public struct SlotGroup
 		{
 			public readonly string slotId;

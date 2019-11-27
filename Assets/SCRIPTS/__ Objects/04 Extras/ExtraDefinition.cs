@@ -49,7 +49,7 @@ namespace SS.Objects.Extras
 			this.isObstacle = serializer.ReadBool( "IsObstacle" );
 			this.size = serializer.ReadVector3( "Size" );
 			
-			this.DeserializeModulesKFF( serializer );
+			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -60,7 +60,7 @@ namespace SS.Objects.Extras
 			serializer.WriteBool( "", "IsObstacle", this.isObstacle );
 			serializer.WriteVector3( "", "Size", this.size );
 			
-			this.SerializeModulesKFF( serializer );
+			this.SerializeModulesAndSubObjectsKFF( serializer );
 		}
 	}
 }

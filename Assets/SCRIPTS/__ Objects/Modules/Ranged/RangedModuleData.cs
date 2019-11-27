@@ -1,13 +1,11 @@
 ﻿using KFF;
-using SS.Modules;
+using SS.Objects.Modules;
 using System;
 
 namespace SS.Levels.SaveStates
 {
 	public class RangedModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "ranged";
-
 		public Guid? targetGuid { get; set; }
 		
 

@@ -1,10 +1,8 @@
 ﻿using KFF;
-using SS.Modules;
-using SS.Modules.Inventories;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SS.Content
 {
@@ -23,9 +21,9 @@ namespace SS.Content
 				this.moduleType = module.GetType();
 			}
 		}
-				
+
 		private List<ModuleCacheItem> moduleCache;
-		
+
 		private List<SubObjectDefinition> subObjectCache { get; set; }
 
 
@@ -95,7 +93,7 @@ namespace SS.Content
 		{
 			moduleIds = new Guid[this.moduleCache.Count];
 			defs = new ModuleDefinition[this.moduleCache.Count];
-			
+
 			for( int i = 0; i < this.moduleCache.Count; i++ )
 			{
 				moduleIds[i] = this.moduleCache[i].moduleId;
@@ -148,103 +146,46 @@ namespace SS.Content
 			this.subObjectCache.Add( subObject );
 		}
 
-		protected void DeserializeModulesKFF( KFFSerializer serializer )
+
+		protected void DeserializeModulesAndSubObjectsKFF( KFFSerializer serializer )
 		{
-			for( int i = 0; i < serializer.Analyze( "SubObjects").childCount; i++ )
+			for( int i = 0; i < serializer.Analyze( "SubObjects" ).childCount; i++ )
 			{
-				string subObjectTypeString = serializer.ReadString( new Path( "SubObjects.{0}.TypeId", i ) );
-				SubObjectDefinition subObjectDef = null;
-
-				if( subObjectTypeString == MeshSubObjectDefinition.KFF_TYPEID )
-				{
-					subObjectDef = new MeshSubObjectDefinition();
-				}
-				else if( subObjectTypeString == ParticlesSubObjectDefinition.KFF_TYPEID )
-				{
-					subObjectDef = new ParticlesSubObjectDefinition();
-				}
-
-				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
-
-
-				Guid subObjectId = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
+				string typeId = serializer.ReadString( new Path( "SubObjects.{0}.TypeId", i ) );
+				SubObjectDefinition subObjectDef = SubObjectDefinition.TypeIdToDefinition( typeId );
 				
+				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
+				Guid subObjectId = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
+
 				this.subObjectCache.Add( subObjectDef );
 			}
 
 			for( int i = 0; i < serializer.Analyze( "Modules" ).childCount; i++ )
 			{
-				string moduleTypeString = serializer.ReadString( new Path( "Modules.{0}.TypeId" , i) );
-				ModuleDefinition module = null;
-				
-				if( moduleTypeString == MeleeModuleDefinition.KFF_TYPEID )
-				{
-					module = new MeleeModuleDefinition();
-				}
-				else if( moduleTypeString == RangedModuleDefinition.KFF_TYPEID )
-				{
-					module = new RangedModuleDefinition();
-				}
-				else if( moduleTypeString == BarracksModuleDefinition.KFF_TYPEID )
-				{
-					module = new BarracksModuleDefinition();
-				}
-				else if( moduleTypeString == ResearchModuleDefinition.KFF_TYPEID )
-				{
-					module = new ResearchModuleDefinition();
-				}
-				else if( moduleTypeString == InventoryModuleDefinition.KFF_TYPEID )
-				{
-					module = new InventoryModuleDefinition();
-				}
-				else if( moduleTypeString == ResourceDepositModuleDefinition.KFF_TYPEID )
-				{
-					module = new ResourceDepositModuleDefinition();
-				}
-				else if( moduleTypeString == ConstructorModuleDefinition.KFF_TYPEID )
-				{
-					module = new ConstructorModuleDefinition();
-				}
-				else
-				{
-					throw new Exception( "Unknown module type '" + moduleTypeString + "'." );
-				}
+				string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
+
+				ModuleDefinition module = ModuleDefinition.TypeIdToDefinition( typeId );
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
-
-
 				Guid moduleId = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
-				
+
 				this.AddModule( moduleId, module );
 			}
 		}
 
-		protected void SerializeModulesKFF( KFFSerializer serializer )
+		protected void SerializeModulesAndSubObjectsKFF( KFFSerializer serializer )
 		{
 			SubObjectDefinition[] subObjectsArray;
-			
+
 			this.GetAllSubObjects( out subObjectsArray );
 
 			serializer.SerializeArray<IKFFSerializable>( "", "SubObjects", subObjectsArray );
 
 			for( int i = 0; i < subObjectsArray.Length; i++ )
 			{
-				string typeString = null;
-				
-				if( subObjectsArray[i] is MeshSubObjectDefinition )
-				{
-					typeString = MeshSubObjectDefinition.KFF_TYPEID;
-				}
-				else if( subObjectsArray[i] is ParticlesSubObjectDefinition )
-				{
-					typeString = ParticlesSubObjectDefinition.KFF_TYPEID;
-				}
-				else
-				{
-					throw new Exception( "Inknown sub-object type '" + subObjectsArray[i].GetType().Name + "'." );
-				}
+				string typeId = SubObjectDefinition.DefinitionToTypeId( subObjectsArray[i] );
 
-				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeString );
+				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteString( new Path( "Modules.{0}", i ), "SubObjectId", subObjectsArray[i].subObjectId.ToString( "D" ) );
 			}
 
@@ -257,42 +198,9 @@ namespace SS.Content
 
 			for( int i = 0; i < modulesArray.Length; i++ )
 			{
-				string moduleTypeString = null;
+				string typeId = ModuleDefinition.DefinitionToTypeId( modulesArray[i] );
 
-				if( modulesArray[i] is MeleeModuleDefinition )
-				{
-					moduleTypeString = MeleeModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is RangedModuleDefinition )
-				{
-					moduleTypeString = RangedModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is BarracksModuleDefinition )
-				{
-					moduleTypeString = BarracksModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ResearchModuleDefinition )
-				{
-					moduleTypeString = ResearchModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is InventoryModuleDefinition )
-				{
-					moduleTypeString = InventoryModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ResourceDepositModuleDefinition )
-				{
-					moduleTypeString = ResourceDepositModuleDefinition.KFF_TYPEID;
-				}
-				else if( modulesArray[i] is ConstructorModuleDefinition )
-				{
-					moduleTypeString = ConstructorModuleDefinition.KFF_TYPEID;
-				}
-				else
-				{
-					throw new Exception( "Inknown module type '" + modulesArray[i].GetType().Name + "'." );
-				}
-
-				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", moduleTypeString );
+				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteString( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i].ToString( "D" ) );
 			}
 		}

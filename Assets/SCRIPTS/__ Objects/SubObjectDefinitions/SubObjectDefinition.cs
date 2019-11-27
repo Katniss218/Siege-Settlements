@@ -33,5 +33,31 @@ namespace SS.Objects.SubObjects
 
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
+
+		public static SubObjectDefinition TypeIdToDefinition( string subObjectId )
+		{
+			if( subObjectId == MeshSubObjectDefinition.KFF_TYPEID )
+			{
+				return new MeshSubObjectDefinition();
+			}
+			if( subObjectId == ParticlesSubObjectDefinition.KFF_TYPEID )
+			{
+				return new ParticlesSubObjectDefinition();
+			}
+			throw new Exception( "Unknown Sub-Object Id '" + subObjectId + "'." );
+		}
+
+		public static string DefinitionToTypeId( SubObjectDefinition def )
+		{
+			if( def is MeshSubObjectDefinition )
+			{
+				return MeshSubObjectDefinition.KFF_TYPEID;
+			}
+			if( def is ParticlesSubObjectDefinition )
+			{
+				return ParticlesSubObjectDefinition.KFF_TYPEID;
+			}
+			throw new Exception( "Unknown Sub-Object type '" + def.GetType().Name + "'." );
+		}
 	}
 }

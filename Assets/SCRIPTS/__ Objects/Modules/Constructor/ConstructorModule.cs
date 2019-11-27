@@ -8,10 +8,12 @@ using SS.UI;
 using System;
 using UnityEngine;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class ConstructorModule : SSModule, ISelectDisplayHandler
 	{
+		public const string KFF_TYPEID = "constructor";
+
 		public BuildingDefinition[] constructibleBuildings { get; set; }
 
 		private FactionMember factionMember;

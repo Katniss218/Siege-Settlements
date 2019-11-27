@@ -1,18 +1,15 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Objects.Extras;
 using SS.Levels.SaveStates;
-using SS.Modules.Inventories;
+using SS.Objects.Extras;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class ResourceDepositModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "resource_deposit";
-
 		public struct Slot : IKFFSerializable
 		{
 			public string resourceId { get; set; }

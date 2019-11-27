@@ -9,10 +9,12 @@ using UnityEngine;
 using UnityEngine.AI;
 using SS.Objects;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class RangedModule : SSModule, ITargetFinder
 	{
+		public const string KFF_TYPEID = "ranged";
+
 		private Damageable __target;
 
 

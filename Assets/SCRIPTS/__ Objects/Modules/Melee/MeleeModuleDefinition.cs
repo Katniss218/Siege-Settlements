@@ -8,12 +8,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class MeleeModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "melee";
-
 		public DamageType damageType { get; set; }
 		public float damage { get; set; }
 		public float armorPenetration { get; set; }

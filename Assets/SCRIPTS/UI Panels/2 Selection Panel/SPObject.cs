@@ -1,4 +1,4 @@
-﻿using SS.Modules;
+﻿using SS.Objects.Modules;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;

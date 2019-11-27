@@ -1,12 +1,11 @@
 ﻿using SS.Content;
-using SS.Objects.Extras;
-using SS.Modules.Inventories;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
+using SS.Objects.Extras;
 using SS.ResourceSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using SS.Modules;
 
 namespace SS
 {

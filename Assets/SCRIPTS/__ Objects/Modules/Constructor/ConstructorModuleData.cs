@@ -1,22 +1,18 @@
 ﻿using KFF;
-using SS.Modules;
-using System.Collections.Generic;
-using UnityEngine;
+using SS.Objects.Modules;
 
 namespace SS.Levels.SaveStates
 {
 	public class ConstructorModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "constructor";
-
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			
+			// nothing to do here.
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			
+			// nothing to do here.
 		}
 	}
 }

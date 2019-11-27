@@ -1,6 +1,5 @@
 ﻿using KFF;
-using SS.Modules;
-using SS.Modules.Inventories;
+using SS.Objects.Modules;
 
 namespace SS.Levels.SaveStates
 {
@@ -31,9 +30,7 @@ namespace SS.Levels.SaveStates
 				serializer.WriteInt( "", "Amount", this.amount );
 			}
 		}
-
-		public const string KFF_TYPEID = "inventory";
-
+		
 		public SlotData[] items { get; set; }
 
 

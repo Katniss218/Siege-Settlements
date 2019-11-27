@@ -7,12 +7,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using SS.Content;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class ResearchModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "research";
-
 		public string[] researchableTechnologies { get; set; }
 		public float researchSpeed { get; set; }
 

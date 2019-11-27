@@ -1,4 +1,4 @@
-﻿using SS.Modules;
+﻿using SS.Objects.Modules;
 using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Heroes;

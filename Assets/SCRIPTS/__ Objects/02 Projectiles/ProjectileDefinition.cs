@@ -42,7 +42,7 @@ namespace SS.Objects.Projectiles
 			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
 			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
 
-			this.DeserializeModulesKFF( serializer );
+			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -60,7 +60,7 @@ namespace SS.Objects.Projectiles
 			serializer.WriteString( "", "HitSound", (string)this.hitSoundEffect );
 			serializer.WriteString( "", "MissSound", (string)this.missSoundEffect );
 			
-			this.SerializeModulesKFF( serializer );
+			this.SerializeModulesAndSubObjectsKFF( serializer );
 		}
 	}
 }

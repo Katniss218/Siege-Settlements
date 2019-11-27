@@ -8,10 +8,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class ResourceDepositModule : SSModule
 	{
+		public const string KFF_TYPEID = "resource_deposit";
+
 		public const float MINING_SPEED = 2.0f;
 		
 		private struct SlotGroup

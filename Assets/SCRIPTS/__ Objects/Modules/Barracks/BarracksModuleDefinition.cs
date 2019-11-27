@@ -7,12 +7,10 @@ using SS.Objects.Units;
 using UnityEngine;
 using SS.Content;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	public class BarracksModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "barracks";
-
 		public string[] trainableUnits { get; set; }
 		public float trainSpeed { get; set; }
 

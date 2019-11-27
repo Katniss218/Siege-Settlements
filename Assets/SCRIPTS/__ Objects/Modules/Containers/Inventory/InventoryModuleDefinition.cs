@@ -9,12 +9,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using SS.Content;
 
-namespace SS.Modules.Inventories
+namespace SS.Objects.Modules
 {
 	public class InventoryModuleDefinition : ModuleDefinition
 	{
-		public const string KFF_TYPEID = "inventory";
-
 		public struct SlotDefinition : IKFFSerializable
 		{
 			public string slotId { get; set; }

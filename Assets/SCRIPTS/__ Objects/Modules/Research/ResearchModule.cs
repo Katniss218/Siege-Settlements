@@ -13,20 +13,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using SS.Objects;
 
-namespace SS.Modules
+namespace SS.Objects.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
 	public class ResearchModule : SSModule, ISelectDisplayHandler,IPaymentReceiver
 	{
+		public const string KFF_TYPEID = "research";
+
 		public UnityEvent onResearchBegin = new UnityEvent();
 
 		public UnityEvent onResearchProgress = new UnityEvent();
 
 		public UnityEvent onResearchEnd = new UnityEvent();
 
-		public UnityEvent onPaymentReceived { get; private set; }
-
-		private ResearchModuleDefinition def;
+		public UnityEvent onPaymentReceived { get; private set; } = new UnityEvent();
 
 		public TechnologyDefinition[] researchableTechnologies { get; set; }
 
@@ -35,38 +35,69 @@ namespace SS.Modules
 		/// </summary>
 		public TechnologyDefinition researchedTechnology { get; private set; }
 
-		/// <summary>
-		/// Contains the progress of the research (Read Only).
-		/// </summary>
-		public float researchProgress { get; private set; }
 
 		/// <summary>
 		/// Contains the multiplier used as the construction speed.
 		/// </summary>
-		public float researchSpeed { get; set; }
+		public float researchSpeed { get; set; } = 1.0f;
 
-		/// <summary>
-		/// returns true if the research module is currently researching a technology (after payment has been completed).
-		/// </summary>
-		public bool isResearching
+
+		private FactionMember __factionMember = null;
+		public FactionMember factionMember
 		{
 			get
 			{
-				return this.researchedTechnology != null;
+				if( this.__factionMember == null )
+				{
+					this.__factionMember = this.GetComponent<FactionMember>();
+				}
+				return this.__factionMember;
 			}
 		}
 
-		private FactionMember factionMember;
+		private float researchProgressRemaining = 0.0f;
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+		
+		void Awake()
+		{
+			this.onPaymentReceived = new UnityEvent();
+			
+			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
+		}
+		
+		void Update()
+		{
+			if( IsPaymentDone() )
+			{
+				if( this.researchedTechnology == null )
+				{
+					return;
+				}
+				this.ProgressResearching();
+			}
+		}
+
+		void OnDestroy()
+		{
+			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechStateChanged );
+		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		private bool IsPaymentDone()
 		{
-			if( resourcesRemaining == null )
+			if( this.resourcesRemaining == null )
 			{
 				return true;
 			}
@@ -84,7 +115,7 @@ namespace SS.Modules
 
 		public void ReceivePayment( string id, int amount )
 		{
-			if( resourcesRemaining == null )
+			if( this.resourcesRemaining == null )
 			{
 				Debug.LogWarning( "The payment of " + amount + "x '" + id + "' was not needed." );
 				return;
@@ -97,6 +128,7 @@ namespace SS.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
+			this.PaymentReceived_UI();
 			this.onPaymentReceived?.Invoke();
 		}
 
@@ -123,58 +155,49 @@ namespace SS.Modules
 		/// <param name="def">The technology to research.</param>
 		public void StartResearching( TechnologyDefinition def )
 		{
-			if( this.isResearching )
+			if( this.researchedTechnology != null )
 			{
-				throw new Exception( "There is already technology being researched." );
+				throw new Exception( "You can't start researching technology, when another one is already being researched." );
 			}
+
 			this.researchedTechnology = def;
-			this.researchProgress = 10.0f;
+			this.researchProgressRemaining = 10.0f;
 
 			this.resourcesRemaining = new Dictionary<string, int>( this.researchedTechnology.cost );
+			this.ResearchBegin_UI();
 			this.onResearchBegin?.Invoke();
 		}
 
-		// Start is called before the first frame update
-		void Awake()
+		private void ProgressResearching()
 		{
-			this.factionMember = GetComponent<FactionMember>();
-			this.onPaymentReceived = new UnityEvent();
-
-			this.onResearchBegin.AddListener( this.OnResearchBegin );
-			this.onResearchProgress.AddListener( this.OnResearchProgress );
-			this.onResearchEnd.AddListener( this.OnResearchEnd );
-
-			this.onPaymentReceived.AddListener( this.OnPaymentReceived );
-
-
-			if( this.factionMember != null )
+			this.researchProgressRemaining -= this.researchSpeed * Time.deltaTime;
+			if( this.researchProgressRemaining <= 0 )
 			{
-				LevelDataManager.onTechStateChanged.AddListener( OnTechStateChanged );
+				this.EndResearching( true );
+			}
+			else
+			{
+				this.ResearchProgress_UI();
+				this.onResearchProgress?.Invoke();
 			}
 		}
 
-		// Update is called once per frame
-		void Update()
+		public void EndResearching( bool isSuccess )
 		{
-			if( IsPaymentDone() )
+			if( this.researchedTechnology == null )
 			{
-				if( this.isResearching )
-				{
-					this.researchProgress -= this.researchSpeed * Time.deltaTime;
-					if( this.researchProgress <= 0 )
-					{
-						LevelDataManager.SetTech( this.factionMember.factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
-						this.researchedTechnology = null;
-						this.researchProgress = 0.0f;
-						this.resourcesRemaining = null;
-						this.onResearchEnd?.Invoke();
-					}
-					else
-					{
-						this.onResearchProgress?.Invoke();
-					}
-				}
+				throw new Exception( "You can't end researching, when there's no technology being researched." );
 			}
+
+			if( isSuccess )
+			{
+				LevelDataManager.SetTech( this.factionMember.factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
+			}
+			this.researchedTechnology = null;
+			this.researchProgressRemaining = 0.0f;
+			this.resourcesRemaining = null;
+			this.ResearchEnd_UI();
+			this.onResearchEnd?.Invoke();
 		}
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -198,7 +221,7 @@ namespace SS.Modules
 			{
 				saveState.researchedTechnologyId = this.researchedTechnology.id;
 			}
-			saveState.researchProgress = this.researchProgress;
+			saveState.researchProgress = this.researchProgressRemaining;
 
 			return saveState;
 		}
@@ -251,17 +274,9 @@ namespace SS.Modules
 			{
 				this.researchedTechnology = DefinitionManager.GetTechnology( data.researchedTechnologyId );
 			}
-			this.researchProgress = data.researchProgress;
+			this.researchProgressRemaining = data.researchProgress;
 		}
 		
-
-		void OnDestroy()
-		{
-			if( this.factionMember != null )
-			{
-				LevelDataManager.onTechStateChanged.RemoveListener( OnTechStateChanged );
-			}
-		}
 
 		private string Status()
 		{
@@ -323,7 +338,7 @@ namespace SS.Modules
 			}
 			if( this.IsPaymentDone() )
 			{
-				if( !this.isResearching )
+				if( this.researchedTechnology == null )
 				{
 					if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
 					{
@@ -334,7 +349,7 @@ namespace SS.Modules
 			}
 		}
 
-		private void OnPaymentReceived()
+		private void PaymentReceived_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
 			{
@@ -347,7 +362,7 @@ namespace SS.Modules
 			}
 		}
 
-		private void OnResearchBegin()
+		private void ResearchBegin_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
 			{
@@ -367,7 +382,7 @@ namespace SS.Modules
 			}
 		}
 		
-		private void OnResearchProgress()
+		private void ResearchProgress_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
 			{
@@ -376,11 +391,11 @@ namespace SS.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgress + " s." );
+				UIUtils.EditText( statusUI.gameObject, "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgressRemaining + " s." );
 			}
 		}
 
-		private void OnResearchEnd()
+		private void ResearchEnd_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
 			{
@@ -410,9 +425,9 @@ namespace SS.Modules
 			}
 			if( this.IsPaymentDone() )
 			{
-				if( this.isResearching )
+				if( this.researchedTechnology != null )
 				{
-					GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgress + " s." );
+					GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgressRemaining + " s." );
 					SelectionPanel.instance.obj.RegisterElement( "research.status", statusGO.transform );
 				}
 				else

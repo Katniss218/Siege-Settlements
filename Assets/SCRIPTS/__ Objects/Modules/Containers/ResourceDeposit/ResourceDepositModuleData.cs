@@ -1,5 +1,5 @@
 ﻿using KFF;
-using SS.Modules;
+using SS.Objects.Modules;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +7,6 @@ namespace SS.Levels.SaveStates
 {
 	public class ResourceDepositModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "resource_deposit";
-
 		public Dictionary<string, int> items { get; set; }
 
 

@@ -179,7 +179,7 @@ namespace SS.Objects.Units
 			
 			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 
-			this.DeserializeModulesKFF( serializer );
+			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -211,7 +211,7 @@ namespace SS.Objects.Units
 			
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
-			this.SerializeModulesKFF( serializer );
+			this.SerializeModulesAndSubObjectsKFF( serializer );
 		}
 	}
 }

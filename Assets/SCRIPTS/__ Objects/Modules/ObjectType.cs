@@ -1,4 +1,4 @@
-﻿namespace SS.Modules
+﻿namespace SS.Objects.Modules
 {
 	/// <summary>
 	/// Which objects can the module be added to.

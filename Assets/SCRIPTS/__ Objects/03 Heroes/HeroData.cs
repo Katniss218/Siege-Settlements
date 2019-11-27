@@ -1,6 +1,6 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Modules;
+using SS.Objects.Modules;
 using System;
 using UnityEngine;
 

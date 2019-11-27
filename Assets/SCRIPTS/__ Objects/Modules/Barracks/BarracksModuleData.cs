@@ -1,5 +1,5 @@
 ﻿using KFF;
-using SS.Modules;
+using SS.Objects.Modules;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +10,6 @@ namespace SS.Levels.SaveStates
 	/// </summary>
 	public class BarracksModuleData : ModuleData
 	{
-		public const string KFF_TYPEID = "barracks";
-
 		public string trainedUnitId { get; set; }
 		public float trainProgress { get; set; }
 		public Dictionary<string, int> resourcesRemaining { get; set; }
