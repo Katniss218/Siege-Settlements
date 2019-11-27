@@ -16,22 +16,40 @@ namespace SS.Objects.Modules
 
 		public BuildingDefinition[] constructibleBuildings { get; set; }
 
-		private FactionMember factionMember;
-						
+		private FactionMember __factionMember = null;
+		public FactionMember factionMember
+		{
+			get
+			{
+				if( this.__factionMember == null )
+				{
+					this.__factionMember = this.GetComponent<FactionMember>();
+				}
+				return this.__factionMember;
+			}
+		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+
 		void Awake()
-		{
-			this.factionMember = this.GetComponent<FactionMember>();
-			
+		{			
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechChange );
-
-			Damageable damageable = this.GetComponent<Damageable>();
-			damageable.onDeath.AddListener( onDeath );
 		}
-		
-		void Update()
+
+		void OnDestroy()
 		{
-
+			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechChange );
 		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		private void ShowList()
 		{
@@ -85,18 +103,15 @@ namespace SS.Objects.Modules
 			{
 				SelectionPanel.instance.obj.ClearElement( "constr.list" );
 			}
-			ShowList();
-		}
-
-		private void onDeath()
-		{
-			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechChange );
+			this.ShowList();
 		}
 
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		public override ModuleData GetData()
 		{
@@ -104,10 +119,7 @@ namespace SS.Objects.Modules
 
 			return saveState;
 		}
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 
 		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
@@ -138,9 +150,13 @@ namespace SS.Objects.Modules
 			{
 				this.constructibleBuildings[i] = DefinitionManager.GetBuilding( def.constructibleBuildings[i] );
 			}
-
-			// ------          DATA
 		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		public void OnDisplay()
 		{
@@ -148,12 +164,11 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			const string TEXT = "Select building to place...";
 
-			ShowList();
+			this.ShowList();
 
 			// Create the actual UI.
-			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), TEXT );
+			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select building to place..." );
 			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
 		}
 	}

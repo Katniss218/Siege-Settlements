@@ -43,18 +43,9 @@ namespace SS.Objects.Modules
 		}
 
 		public class _UnityEvent_string_int : UnityEvent<string, int> { }
-
-		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
-		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
-
-		public _UnityEvent_string_int onAdd
-		{
-			get { return this.__onAdd; }
-		}
-		public _UnityEvent_string_int onRemove
-		{
-			get { return this.__onRemove; }
-		}
+		
+		public _UnityEvent_string_int onAdd { get; private set; } = new _UnityEvent_string_int();
+		public _UnityEvent_string_int onRemove { get; private set; } = new _UnityEvent_string_int();
 
 
 		private void ShowTooltip( GameObject mouseoveredObj )

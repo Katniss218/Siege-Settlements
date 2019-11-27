@@ -64,22 +64,14 @@ namespace SS.Objects.Modules
 
 		public class _UnityEvent_string_int : UnityEvent<string, int> { }
 
-		[SerializeField] private _UnityEvent_string_int __onAdd = new _UnityEvent_string_int();
-		[SerializeField] private _UnityEvent_string_int __onRemove = new _UnityEvent_string_int();
+		public _UnityEvent_string_int onAdd { get; private set; } = new _UnityEvent_string_int();
+		public _UnityEvent_string_int onRemove { get; private set; } = new _UnityEvent_string_int();
 
-		public _UnityEvent_string_int onAdd
-		{
-			get { return this.__onAdd; }
-		}
-		public _UnityEvent_string_int onRemove
-		{
-			get { return this.__onRemove; }
-		}
 
-		//##=====================================================##
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		#region TOOLTIP INTEGRATION
-		//
 
 		private void ShowTooltip( GameObject mouseoveredObj )
 		{
@@ -161,13 +153,11 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		//
-		#endregion
-			
-		//##=====================================================##
 
-		#region HUD INTEGRATION
-		//
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		private void RegisterHUD()
 		{
@@ -176,60 +166,65 @@ namespace SS.Objects.Modules
 
 
 			Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
-			if( hudResourceTransform != null )
+			if( hudResourceTransform == null )
 			{
-				Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
-				if( hudResourceIconTransform != null )
-				{
-					Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
-					TextMeshProUGUI hudAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
-
-					// Make the inventory update the HUD wien resources are added/removed.
-					this.onAdd.AddListener( ( string id, int amtAdded ) =>
-					{
-						for( int i = 0; i < this.slotCount; i++ )
-						{
-							if( this.slotGroups[i].isEmpty )
-							{
-								continue;
-							}
-							hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon; // this can be null.
-							hudAmount.text = "" + this.slotGroups[i].amount;
-
-							hudResourceIcon.gameObject.SetActive( true );
-							hudAmount.gameObject.SetActive( true );
-							break;
-						}
-					} );
-					this.onRemove.AddListener( ( string id, int amtRemoved ) =>
-					{
-						if( this.isEmpty )
-						{
-							hudResourceIcon.gameObject.SetActive( false );
-							hudAmount.gameObject.SetActive( false );
-						}
-						else
-						{
-							for( int i = 0; i < this.slotCount; i++ )
-							{
-								if( this.slotGroups[i].isEmpty )
-								{
-									continue;
-								}
-								hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon; // this can be null.
-								hudAmount.text = "" + this.slotGroups[i].amount;
-								break;
-							}
-						}
-					} );
-				}
+				return;
 			}
+
+			Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
+			if( hudResourceIconTransform == null )
+			{
+				return;
+			}
+
+			Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
+			TextMeshProUGUI hudResourceAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+
+			// Make the inventory update the HUD wien resources are added/removed.
+			this.onAdd.AddListener( ( string id, int amtAdded ) =>
+			{
+				for( int i = 0; i < this.slotCount; i++ )
+				{
+					if( this.slotGroups[i].isEmpty )
+					{
+						continue;
+					}
+					hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
+					hudResourceAmount.text = "" + this.slotGroups[i].amount;
+
+					hudResourceIcon.gameObject.SetActive( true );
+					hudResourceAmount.gameObject.SetActive( true );
+					break;
+				}
+			} );
+			this.onRemove.AddListener( ( string id, int amtRemoved ) =>
+			{
+				if( this.isEmpty )
+				{
+					hudResourceIcon.gameObject.SetActive( false );
+					hudResourceAmount.gameObject.SetActive( false );
+				}
+				else
+				{
+					for( int i = 0; i < this.slotCount; i++ )
+					{
+						if( this.slotGroups[i].isEmpty )
+						{
+							continue;
+						}
+						hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
+						hudResourceAmount.text = "" + this.slotGroups[i].amount;
+						break;
+					}
+				}
+			} );
 		}
 
-		//
-		#endregion
-		
-		//##=====================================================##
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		private void RegisterDropOnDeath()
 		{
@@ -460,11 +455,10 @@ namespace SS.Objects.Modules
 		}
 
 
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		public override ModuleData GetData()
 		{
@@ -480,9 +474,10 @@ namespace SS.Objects.Modules
 		}
 
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
 		{
