@@ -34,10 +34,10 @@ namespace SS
 
 		private static Vector3 oldMousePos;
 
-
+		
 		private static void InitRect()
 		{
-			GameObject obj = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Selection Rect (UI)" ), Main.canvas.transform );
+			GameObject obj = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Selection Rect (UI)" ), Main.objectHUDCanvas );
 			
 			selectionRect = obj.GetComponent<RectTransform>();
 		}
@@ -51,7 +51,7 @@ namespace SS
 
 			beginDragPos = Input.mousePosition;
 			isDragging = true;
-			Main.cameraController.isMovementLocked = true;
+			CameraController.instance.isMovementLocked = true;
 
 			selectionRect.gameObject.SetActive( true );
 		}
@@ -69,7 +69,7 @@ namespace SS
 		private static void EndDrag()
 		{
 			isDragging = false;
-			Main.cameraController.isMovementLocked = false;
+			CameraController.instance.isMovementLocked = false;
 
 			selectionRect.gameObject.SetActive( false );
 		}

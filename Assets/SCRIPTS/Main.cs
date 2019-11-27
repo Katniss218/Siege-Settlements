@@ -86,28 +86,7 @@ namespace SS
 				return __mouseInput;
 			}
 		}
-
-		private static Canvas __canvas = null;
-		public static Canvas canvas
-		{
-			get
-			{
-				if( __canvas == null )
-				{
-					Canvas [] canvases = FindObjectsOfType<Canvas>();
-					for( int i = 0; i < canvases.Length; i++ )
-					{
-						if( canvases[i].gameObject.CompareTag( "Object HUD Canvas" ) )
-						{
-							__canvas = canvases[i];
-							break;
-						}
-					}
-				}
-				return __canvas;
-			}
-		}
-
+		
 		private static Transform __cameraPivot = null;
 		public static Transform cameraPivot
 		{
@@ -120,20 +99,7 @@ namespace SS
 				return __cameraPivot;
 			}
 		}
-
-		private static CameraController __cameraController = null;
-		public static CameraController cameraController
-		{
-			get
-			{
-				if( __cameraController == null )
-				{
-					__cameraController = cameraPivot.GetComponent<CameraController>();
-				}
-				return __cameraController;
-			}
-		}
-
+		
 		private static Camera __camera = null;
 		new public static Camera camera
 		{
