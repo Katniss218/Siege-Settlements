@@ -320,6 +320,17 @@ namespace SS.Objects.Modules
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon, null );
 				}
+				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();
+				toolTipUIhandler.constructToolTip = () =>
+				{
+					ToolTip.Create( 450.0f, techDef.displayName );
+
+					foreach( var kvp in techDef.cost )
+					{
+						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() );
+					}
+				};
 			}
 			// Create the actual UI.
 			GameObject listGO = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 30.0f, 5.0f ), new Vector2( -60.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );

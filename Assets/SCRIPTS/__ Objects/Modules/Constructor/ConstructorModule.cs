@@ -7,6 +7,7 @@ using SS.Technologies;
 using SS.UI;
 using System;
 using UnityEngine;
+using SS.ResourceSystem;
 
 namespace SS.Objects.Modules
 {
@@ -77,6 +78,19 @@ namespace SS.Objects.Modules
 						BuildPreview.Create( buildingDef );
 					} );
 				}
+				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();
+				toolTipUIhandler.constructToolTip = () =>
+				{
+					ToolTip.Create( 450.0f, buildingDef.displayName );
+
+					ToolTip.AddText( "Health: " + buildingDef.healthMax );
+					ToolTip.Style.SetPadding( 100, 100 );
+					foreach( var kvp in buildingDef.cost )
+					{
+						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() );
+					}
+				};
 			}
 			GameObject listUI = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 30.0f, 5.0f ), new Vector2( -60.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "constr.list", listUI.transform );

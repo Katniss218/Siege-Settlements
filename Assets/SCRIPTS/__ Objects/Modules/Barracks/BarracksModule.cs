@@ -364,6 +364,19 @@ namespace SS.Objects.Modules
 						this.BeginTraining( unitDef );
 					} );
 				}
+				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();
+				toolTipUIhandler.constructToolTip = () =>
+				{
+					ToolTip.Create( 450.0f, unitDef.displayName );
+
+					ToolTip.AddText( "Health: " + unitDef.healthMax );
+					ToolTip.Style.SetPadding( 100, 100 );
+					foreach( var kvp in unitDef.cost )
+					{
+						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+						ToolTip.AddText( resourceDef.icon, kvp.Value.ToString() );
+					}
+				};
 			}
 
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 30.0f, 5.0f ), new Vector2( -60.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );

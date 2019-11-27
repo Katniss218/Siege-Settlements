@@ -73,9 +73,31 @@ namespace SS.UI
 			}
 		}
 
+
+		private static Canvas __canvas = null;
+		public static Canvas canvas
+		{
+			get
+			{
+				if( __canvas == null )
+				{
+					Canvas[] canvases = Object.FindObjectsOfType<Canvas>();
+					for( int i = 0; i < canvases.Length; i++ )
+					{
+						if( canvases[i].gameObject.CompareTag( "ToolTip Canvas" ) )
+						{
+							__canvas = canvases[i];
+							break;
+						}
+					}
+				}
+				return __canvas;
+			}
+		}
+
 		private static void Init() // creates the tooptip structure (hidden).
 		{
-			GameObject tooltipGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/ToolTip Container" ), Main.canvas.transform );
+			GameObject tooltipGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Tooltip Elements/ToolTip Container" ), ToolTip.canvas.transform );
 			
 			toolTipTransform = tooltipGameObject.GetComponent<RectTransform>();
 			

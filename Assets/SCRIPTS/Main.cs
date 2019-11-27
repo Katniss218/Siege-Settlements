@@ -92,7 +92,18 @@ namespace SS
 		{
 			get
 			{
-				if( __canvas == null ) { __canvas = FindObjectOfType<Canvas>(); }
+				if( __canvas == null )
+				{
+					Canvas [] canvases = FindObjectsOfType<Canvas>();
+					for( int i = 0; i < canvases.Length; i++ )
+					{
+						if( canvases[i].gameObject.CompareTag( "Object HUD Canvas" ) )
+						{
+							__canvas = canvases[i];
+							break;
+						}
+					}
+				}
 				return __canvas;
 			}
 		}

@@ -504,6 +504,7 @@ namespace SS.Levels
 			
 
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/ToolTip Canvas" ) );
 
 			LevelDataManager.LoadMapData( serializerLevel );
 			
