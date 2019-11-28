@@ -480,7 +480,21 @@ namespace SS
 			}
 		}
 
-		private void OnEnable()
+
+
+		void Start()
+		{
+			Damageable.onHealthChangeAny.AddListener( ( Damageable obj, float deltaHealth ) =>
+			{
+				if( Selection.IsDisplayedGroup() )
+				{
+					Selection.StopDisplaying();
+					Selection.DisplayGroupSelected();
+				}
+			} );
+		}
+
+		void OnEnable()
 		{
 			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
 
@@ -503,7 +517,7 @@ namespace SS
 			Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
 		}
 
-		private void OnDisable()
+		void OnDisable()
 		{
 			if( Main.mouseInput != null )
 			{
@@ -531,9 +545,11 @@ namespace SS
 			}
 		}
 
+
 		//
 		//
 		//
+
 
 		private void AssignAttackGoal( Damageable target, SSObjectSelectable[] selected )
 		{

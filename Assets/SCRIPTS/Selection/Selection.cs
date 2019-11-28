@@ -21,7 +21,7 @@ namespace SS
 
 			public static DisplayedObjectData NewObject( SSObjectSelectable obj )
 			{
-				return new DisplayedObjectData() { obj = obj, module = null, isGroup = true };
+				return new DisplayedObjectData() { obj = obj, module = null, isGroup = false };
 			}
 
 			public static DisplayedObjectData NewObject( SSObjectSelectable obj, SSModule module )
@@ -30,7 +30,7 @@ namespace SS
 				{
 					throw new System.Exception( "Module isn't displayable." );
 				}
-				return new DisplayedObjectData() { obj = obj, module = ((ISelectDisplayHandler)module), isGroup = true };
+				return new DisplayedObjectData() { obj = obj, module = ((ISelectDisplayHandler)module), isGroup = false };
 			}
 		}
 
@@ -70,6 +70,11 @@ namespace SS
 				return false;
 			}
 			return displayedObjectData.obj == obj ;
+		}
+
+		public static bool IsDisplayedGroup()
+		{
+			return displayedObjectData != null && displayedObjectData.isGroup;
 		}
 
 		public static bool IsDisplayedModule( SSModule module )
