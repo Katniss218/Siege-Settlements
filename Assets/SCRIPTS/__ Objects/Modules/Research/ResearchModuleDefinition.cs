@@ -24,10 +24,7 @@ namespace SS.Objects.Modules
 
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
 		{
-			return !(
-				modTypes.Contains( typeof( ResearchModuleDefinition ) ) ||
-				modTypes.Contains( typeof( BarracksModuleDefinition ) ) ||
-				modTypes.Contains( typeof( ConstructorModuleDefinition ) ));
+			return true;
 		}
 
 

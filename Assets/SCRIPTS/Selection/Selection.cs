@@ -92,7 +92,9 @@ namespace SS
 			{
 				return;
 			}
-			DisplayObject( displayedObjectData.obj );
+			SSObjectSelectable obj = displayedObjectData.obj;
+			StopDisplaying();
+			DisplayObject( obj );
 		}
 
 		/// <summary>
@@ -100,6 +102,7 @@ namespace SS
 		/// </summary>
 		public static void DisplayGroupSelected()
 		{
+#warning update group when any selected gets damaged (or does anything else, really). Needs static events.
 			displayedObjectData = DisplayedObjectData.NewGroup();
 			
 			SelectionPanel.instance.obj.displayNameText.text = "Group: " + selected.Count;
@@ -114,7 +117,6 @@ namespace SS
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Total Health: " + (int)healthTotal + "/" + (int)healthMaxTotal );
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
 		}
-#warning update group when any selected gets damaged (or does anything else, really). Needs static events.
 
 		/// <summary>
 		/// Displays an object.
@@ -125,10 +127,6 @@ namespace SS
 			{
 				throw new System.Exception( "Object can't be null." );
 			}
-			//if( displayedObjectData != null ) // clear previously displayed.
-			//{
-			//	StopDisplaying();
-			//}
 			displayedObjectData = DisplayedObjectData.NewObject( obj );
 
 			SSModule[] modules = ((SSObject)obj).GetModules();

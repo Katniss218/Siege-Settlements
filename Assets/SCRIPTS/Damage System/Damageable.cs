@@ -11,15 +11,20 @@ namespace SS
 	public class Damageable : MonoBehaviour
 	{
 		public class _UnityEvent_float : UnityEvent<float> { }
+		public class _UnityEvent_Damageable_float : UnityEvent<Damageable, float> { }
+		public class _UnityEvent_Damageable : UnityEvent<Damageable> { }
+
 		/// <summary>
 		/// Fires when the 'health' value is changed.
 		/// </summary>
 		public _UnityEvent_float onHealthChange = new _UnityEvent_float();
+		public static _UnityEvent_Damageable_float onHealthChangeAny = new _UnityEvent_Damageable_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
 		public UnityEvent onDeath = new UnityEvent();
+		public static _UnityEvent_Damageable onDeathAny = new _UnityEvent_Damageable();
 
 
 		public float lastDamageTakenTimestamp { get; private set; }
@@ -60,6 +65,7 @@ namespace SS
 				}
 
 				this.onHealthChange?.Invoke( diff );
+				onHealthChangeAny?.Invoke( this, diff );
 
 				// If the health is 0, kill the damageable.
 				if( this.__health == 0 )
@@ -108,7 +114,7 @@ namespace SS
 				this.health = value * this.healthMax;
 			}
 		}
-		
+
 		/// <summary>
 		/// The armor of the damageable.
 		/// </summary>
@@ -174,7 +180,7 @@ namespace SS
 				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
 			}
 
-			float reducedDamage = this.armor.CalculateReducedDamage( type, amount, armorPenetration ); 
+			float reducedDamage = this.armor.CalculateReducedDamage( type, amount, armorPenetration );
 
 			this.health -= reducedDamage;
 		}
@@ -186,6 +192,7 @@ namespace SS
 		{
 			Destroy( this.gameObject );
 			this.onDeath?.Invoke();
+			onDeathAny?.Invoke( this );
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using SS.Content;
 using SS.Levels.SaveStates;
-using SS.Objects;
 using SS.ResourceSystem;
 using SS.UI;
 using System;
@@ -12,7 +11,7 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {	
-	public sealed class InventoryModule : SSModule
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -390,10 +389,12 @@ namespace SS.Objects.Modules
 				if( amountRemaining == 0 )
 				{
 					this.onAdd?.Invoke( id, amountMax );
+					this.TryUpdateList();
 					return amountMax;
 				}
 			}
 			this.onAdd?.Invoke( id, amountMax - amountRemaining );
+			this.TryUpdateList();
 			return amountMax - amountRemaining;
 		}
 
@@ -429,11 +430,13 @@ namespace SS.Objects.Modules
 					if( amountLeftToRemove == 0 )
 					{
 						this.onRemove?.Invoke( id, amountMax );
+						this.TryUpdateList();
 						return amountMax;
 					}
 				}
 			}
 			this.onRemove?.Invoke( id, amountMax - amountLeftToRemove );
+			this.TryUpdateList();
 			return amountMax - amountLeftToRemove;
 		}
 
@@ -452,6 +455,7 @@ namespace SS.Objects.Modules
 			{
 				this.onRemove?.Invoke( kvp.Key, kvp.Value ); // be consistent, all methods shall invoke after adding/removing.
 			}
+			this.TryUpdateList();
 		}
 
 
@@ -525,6 +529,42 @@ namespace SS.Objects.Modules
 			}
 		}
 
-#warning TODO! - inventories display items when displayed.
+		private void TryUpdateList()
+		{
+			if( Selection.IsDisplayedModule( this ) )
+			{
+				if( SelectionPanel.instance.obj.GetElement( "inventory.slots" ) != null )
+				{
+					SelectionPanel.instance.obj.ClearElement( "inventory.slots" );
+				}
+				this.ShowList();
+			}
+		}
+
+		private void ShowList()
+		{
+			GameObject[] gridElements = new GameObject[this.slotCount];
+			// Initialize the grid elements' GameObjects.
+			for( int i = 0; i < this.slotCount; i++ )
+			{
+				if( this.slotGroups[i].isEmpty )
+				{
+					gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ) );
+					continue;
+				}
+				ResourceDefinition resDef = DefinitionManager.GetResource( this.slotGroups[i].id );
+				gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), resDef.icon );
+
+				UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
+			}
+
+			GameObject list = UIUtils.InstantiateScrollableList( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 30.0f, 5.0f ), new Vector2( -60.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), gridElements );
+			SelectionPanel.instance.obj.RegisterElement( "inventory.slots", list.transform );
+		}
+
+		public void OnDisplay()
+		{
+			this.ShowList();
+		}
 	}
 }
