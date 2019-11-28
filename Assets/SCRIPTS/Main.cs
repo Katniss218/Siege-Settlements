@@ -349,21 +349,37 @@ namespace SS
 
 		private void Inp_A1( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			SetFactionSelected( 0 );
 		}
 
 		private void Inp_A2( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			SetFactionSelected( 1 );
 		}
 
 		private void Inp_A3( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			SetFactionSelected( 2 );
 		}
 
 		private static void CreateDepositRaycast( string id )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 			{
@@ -387,6 +403,10 @@ namespace SS
 
 		private void Inp_A4( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				RaycastHit hitInfo;
@@ -409,6 +429,10 @@ namespace SS
 
 		private void Inp_A5( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				RaycastHit hitInfo;
@@ -430,6 +454,10 @@ namespace SS
 
 		private void Inp_A6( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				CreateDepositRaycast( "resource_deposit.iron_ore_0" );
@@ -438,6 +466,10 @@ namespace SS
 
 		private void Inp_A7( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				CreateDepositRaycast( "resource_deposit.sulphur_ore_0" );
@@ -446,6 +478,10 @@ namespace SS
 
 		private void Inp_A8( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				CreateDepositRaycast( "resource_deposit.tree" );
@@ -454,6 +490,10 @@ namespace SS
 
 		private void Inp_A9( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				CreateDepositRaycast( "resource_deposit.pine" );
@@ -462,6 +502,10 @@ namespace SS
 
 		private void Inp_A0( InputQueue self )
 		{
+			if( PauseManager.isPaused )
+			{
+				return;
+			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				CreateDepositRaycast( "resource_deposit.rock_0" );
@@ -488,6 +532,15 @@ namespace SS
 			{
 				if( Selection.IsDisplayedGroup() )
 				{
+					SSObjectSelectable ssObjectSelectable = obj.GetComponent<SSObjectSelectable>();
+					if( ssObjectSelectable  == null )
+					{
+						return;
+					}
+					if( !Selection.IsSelected( ssObjectSelectable ) )
+					{
+						return;
+					}
 					Selection.StopDisplaying();
 					Selection.DisplayGroupSelected();
 				}

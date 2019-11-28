@@ -374,11 +374,7 @@ namespace SS.Objects.Buildings
 					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
 				}
 			}
-
-			// add.
-			constructionSite.building.onHighlight.AddListener( constructionSite.OnHighlight );
-			constructionSite.onPaymentReceived.AddListener( constructionSite.OnPaymentReceived );
-			
+						
 
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
@@ -422,49 +418,6 @@ namespace SS.Objects.Buildings
 
 				meshRenderer.material.SetColor( "_FactionColor", facColor );
 			}
-		}
-
-
-		private string Status()
-		{
-			StringBuilder sb = new StringBuilder();
-
-			if( this.resourceInfo == null )
-			{
-				return "null";
-			}
-			foreach( var kvp in this.resourceInfo )
-			{
-				if( kvp.Value.remaining != 0 )
-				{
-					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-					sb.Append( kvp.Value.remaining + "x " + resDef.displayName );
-				}
-				sb.Append( ", " );
-			}
-
-			return sb.ToString();
-		}
-
-		private void OnPaymentReceived()
-		{
-			if( !Selection.IsDisplayed( this.building ) )
-			{
-				return;
-			}
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "construction.status" );
-			if( statusUI != null )
-			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources: " + Status() );
-			}
-		}
-
-		private void OnHighlight()
-		{
-			// If the research facility is on a building, that is not usable.
-
-			GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources: " + Status() );
-			SelectionPanel.instance.obj.RegisterElement( "construction.status", statusGO.transform );
 		}
 	}
 }

@@ -19,8 +19,12 @@ namespace SS.Objects.Heroes
 			get => base.displayName;
 			set
 			{
-				this.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
 				base.displayName = value;
+				this.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
+				if( Selection.IsDisplayed( this ) )
+				{
+					SelectionPanel.instance.obj.displayNameText.text = value;
+				}
 			}
 		}
 
@@ -37,6 +41,15 @@ namespace SS.Objects.Heroes
 			{
 				this.__displayTitle = value;
 				this.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = value;
+				
+				if( Selection.IsDisplayed( this ) )
+				{
+					Transform titleUI = SelectionPanel.instance.obj.GetElement( "hero.title" );
+					if( titleUI != null )
+					{
+						UIUtils.EditText( titleUI.gameObject, value );
+					}
+				}
 			}
 		}
 
@@ -108,7 +121,7 @@ namespace SS.Objects.Heroes
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
 	}

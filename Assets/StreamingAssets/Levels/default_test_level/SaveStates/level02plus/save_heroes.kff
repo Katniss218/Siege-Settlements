@@ -1,0 +1,1 @@
+﻿List=[{DefinitionId="hero.cerberos";Data={Guid="ebd31813-b198-4206-85d4-d4c92cdf0133";Position={X=4.7417373657226563;Y=-0.01250012218952179;Z=4.6425232887268066;};Rotation={X=0.0;Y=0.98368769884109497;Z=0.0;W=0.17988470196723938;};FactionId=0;Health=100.0;TAIGoalType=0;Modules=[{TypeId="ranged";ModuleId="12354537-3373-7933-4658-396678574576";}];};}];

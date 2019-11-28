@@ -3,6 +3,7 @@ using SS.Objects;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
+using SS.Levels;
 
 namespace SS
 {
@@ -235,9 +236,13 @@ namespace SS
 			
 			if( selected.Count == 1 )
 			{
-				StopDisplaying();
+				IFactionMember selectedObjsFaction = objs[0] as IFactionMember;
+				if( selectedObjsFaction == null || selectedObjsFaction.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+				{
+					StopDisplaying();
 
-				DisplayObject( objs[0] );
+					DisplayObject( objs[0] );
+				}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -278,10 +283,11 @@ namespace SS
 			}
 			if( selected.Count == 1 )
 			{
-				// clear group's elements, before readding them again.
-				//StopDisplaying();
-
-				DisplayObject( selected[0] );
+				IFactionMember selectedObjsFaction = selected[0] as IFactionMember;
+				if( selectedObjsFaction == null || selectedObjsFaction.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+				{
+					DisplayObject( selected[0] );
+				}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -290,9 +296,6 @@ namespace SS
 			}
 			else
 			{
-				// clear group's elements, before readding them again.
-				//StopDisplaying();
-
 				DisplayGroupSelected();
 			}
 
