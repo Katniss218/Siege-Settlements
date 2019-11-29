@@ -558,11 +558,17 @@ namespace SS.Objects.Modules
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // Force remove input if hidden.
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Force remove input if hidden.
 		}
-		
+
 		private void SetRally( InputQueue self )
 		{
 #warning TODO! incomplete (actually set the rally).
-			Debug.Log( "AAAA" );
+			RaycastHit hitInfo;
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.TERRAIN_MASK ) )
+			{
+				Vector3 localRallyPoint = this.transform.worldToLocalMatrix.MultiplyPoint( hitInfo.point );
+				this.rallyPoint = localRallyPoint;
+				rally.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
+			}
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // One-shot
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear cancelling (can't cancel something that's done).
 
