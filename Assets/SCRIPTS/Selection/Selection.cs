@@ -177,7 +177,7 @@ namespace SS
 			{
 				throw new System.Exception( "Object needs to be displayed to display it's module." );
 			}
-			displayedObjectData.obj.OnHide();
+			GetDisplayedThing()?.OnHide();
 			SelectionPanel.instance.obj.ClearAllElements();
 			ActionPanel.instance.ClearAll();
 			displayedObjectData = DisplayedObjectData.NewObject( obj, module );

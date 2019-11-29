@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using SS.Objects;
 using Object = UnityEngine.Object;
+using SS.InputSystem;
 
 namespace SS.Objects.Modules
 {
@@ -250,20 +251,21 @@ namespace SS.Objects.Modules
 		/// <param name="unit">The GameObject to extract the save state from.</param>
 		public override ModuleData GetData()
 		{
-			BarracksModuleData saveState = new BarracksModuleData();
+			BarracksModuleData data = new BarracksModuleData();
 
-			saveState.resourcesRemaining = this.resourcesRemaining;
+			data.resourcesRemaining = this.resourcesRemaining;
 			if( this.trainedUnit == null )
 			{
-				saveState.trainedUnitId = "";
+				data.trainedUnitId = "";
 			}
 			else
 			{
-				saveState.trainedUnitId = this.trainedUnit.id;
+				data.trainedUnitId = this.trainedUnit.id;
 			}
-			saveState.trainProgress = this.trainProgressRemaining;
+			data.trainProgress = this.trainProgressRemaining;
+			data.rallyPoint = this.rallyPoint;
 
-			return saveState;
+			return data;
 		}
 
 
@@ -522,16 +524,64 @@ namespace SS.Objects.Modules
 				} );
 			}
 
+			CreateRallyButton();
+
 			this.rally = new GameObject();
+
+			MeshFilter mf = rally.AddComponent<MeshFilter>();
+			mf.mesh = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_ID + "Models/barracks_rally_point.ksm" );
+
+			rally.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
+			rally.AddComponent<MeshRenderer>();
 #warning rally point mesh & material. Material needs to show through other objs.
 		}
 
 		GameObject rally = null;
 
+		private void CreateRallyButton()
+		{
+			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/set_rally" ), "Set Rally Point", "Press to set the rally point (units move towards it when trained).", () =>
+			{
+				if( Main.mouseInput != null )
+				{
+					Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, -5, this.SetRally, true );
+					Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, -5, this.CancelRally, true );
+				}
+				ActionPanel.instance.Clear( "barracks.ap.set_rally" );
+				// needs to set the left-mouse action to rally point.
+			} );
+		}
+
 		public void OnHide()
 		{
 			Object.Destroy( this.rally );
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // Force remove input if hidden.
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Force remove input if hidden.
 		}
+		
+		private void SetRally( InputQueue self )
+		{
+#warning TODO! incomplete (actually set the rally).
+			Debug.Log( "AAAA" );
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // One-shot
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear cancelling (can't cancel something that's done).
+
+			// (if still displayed, show the rally button again).
+			CreateRallyButton();
+
+			self.StopExecution();
+		}
+
+		private void CancelRally( InputQueue self )
+		{
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // clear set (cancel).
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // clear itself (one-shot).
+
+			CreateRallyButton();
+
+			self.StopExecution(); // stop other inputs (priority).
+		}
+
 
 #if UNITY_EDITOR
 

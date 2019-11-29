@@ -322,6 +322,10 @@ namespace SS
 					{
 						Selection.Deselect( sel );
 					}
+					else
+					{
+						Selection.TrySelect( new SSObjectSelectable[] { sel } );
+					}
 				}
 			}
 		}

@@ -11,31 +11,30 @@ namespace SS.InputSystem
 
 		public void ClearOnPress( MouseCode button, System.Action<InputQueue> method )
 		{
-			InputQueue inputQueue;
-			if( this.press.TryGetValue( button, out inputQueue ) )
+			if( this.press.TryGetValue( button, out InputQueue inputQueue ) )
 			{
 				inputQueue.Remove( method );
-				return;
 			}
 		}
 
+
+#warning Enable Input Sources (per queue)
+#warning Check if is registered (per method, input code, or both).
+#warning Methodss for adding one-shot methods (auto-remove themselves after execution, no matter if they succeeded or not).
+
 		public void ClearOnHold( MouseCode button, System.Action<InputQueue> method )
 		{
-			InputQueue inputQueue;
-			if( this.hold.TryGetValue( button, out inputQueue ) )
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
 			{
 				inputQueue.Remove( method );
-				return;
 			}
 		}
 
 		public void ClearOnRelease( MouseCode button, System.Action<InputQueue> method )
 		{
-			InputQueue inputQueue;
-			if( this.release.TryGetValue( button, out inputQueue ) )
+			if( this.release.TryGetValue( button, out InputQueue inputQueue ) )
 			{
 				inputQueue.Remove( method );
-				return;
 			}
 		}
 

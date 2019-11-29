@@ -187,6 +187,7 @@
     <Compile Include="Assets\SCRIPTS\ObjectLayer.cs" />
     <Compile Include="Assets\SCRIPTS\PauseController.cs" />
     <Compile Include="Assets\SCRIPTS\PauseManager.cs" />
+    <Compile Include="Assets\SCRIPTS\PositionerCurve.cs" />
     <Compile Include="Assets\SCRIPTS\Resource System\Payment\IPaymentReceiver.cs" />
     <Compile Include="Assets\SCRIPTS\Resource System\ResourceDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\RotateAlongVelocity.cs" />
