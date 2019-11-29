@@ -16,7 +16,7 @@ using SS.Objects;
 namespace SS.Objects.Modules
 {
 	[RequireComponent( typeof( FactionMember ) )]
-	public class ResearchModule : SSModule, ISelectDisplayHandler,IPaymentReceiver
+	public class ResearchModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
 	{
 		public const string KFF_TYPEID = "research";
 
@@ -64,14 +64,14 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		void Awake()
 		{
 			this.onPaymentReceived = new UnityEvent();
-			
+
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
 		}
-		
+
 		void Update()
 		{
 			if( IsPaymentDone() )
@@ -276,7 +276,7 @@ namespace SS.Objects.Modules
 			}
 			this.researchProgressRemaining = data.researchProgress;
 		}
-		
+
 
 		private string Status()
 		{
@@ -390,13 +390,13 @@ namespace SS.Objects.Modules
 				{
 					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.researchedTechnology.displayName + "'): " + Status() );
 				}
-				ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel research.", () =>
 				{
 					this.EndResearching( false );
 				} );
 			}
 		}
-		
+
 		private void ResearchProgress_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
@@ -423,11 +423,11 @@ namespace SS.Objects.Modules
 			}
 
 			ActionPanel.instance.Clear( "research.ap.cancel" );
-			
+
 			this.ShowList();
 		}
 
-		
+
 		public void OnDisplay()
 		{
 			// If it's not usable - return, don't research anything.
@@ -447,7 +447,7 @@ namespace SS.Objects.Modules
 					GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Researching...: '" + this.researchedTechnology.displayName + "' - " + (int)this.researchProgressRemaining + " s." );
 					SelectionPanel.instance.obj.RegisterElement( "research.status", statusGO.transform );
 
-					ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+					ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel research.", () =>
 					{
 						this.EndResearching( false );
 					} );
@@ -466,11 +466,16 @@ namespace SS.Objects.Modules
 				GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources ('" + this.researchedTechnology.displayName + "'): " + Status() );
 				SelectionPanel.instance.obj.RegisterElement( "research.status", statusGO.transform );
 
-				ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel research.", () =>
 				{
 					this.EndResearching( false );
 				} );
 			}
+		}
+
+		public void OnHide()
+		{
+
 		}
 	}
 }

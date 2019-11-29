@@ -124,5 +124,10 @@ namespace SS.Objects.Heroes
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
+
+		public override void OnHide()
+		{
+
+		}
 	}
 }

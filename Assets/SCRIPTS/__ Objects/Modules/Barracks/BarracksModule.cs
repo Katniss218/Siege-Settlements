@@ -14,6 +14,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using SS.Objects;
+using Object = UnityEngine.Object;
 
 namespace SS.Objects.Modules
 {
@@ -439,7 +440,7 @@ namespace SS.Objects.Modules
 				{
 					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.trainedUnit.displayName + "'): " + this.GetStatusString() );
 				}
-				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel production.", () =>
 				{
 					this.EndTraining( false );
 				} );
@@ -497,7 +498,7 @@ namespace SS.Objects.Modules
 					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgressRemaining + " s." );
 					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 
-					ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+					ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel production.", () =>
 					{
 						this.EndTraining( false );
 					} );
@@ -515,11 +516,21 @@ namespace SS.Objects.Modules
 				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources... ('" + this.trainedUnit.displayName + "'): " + GetStatusString() );
 				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 				
-				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), () =>
+				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Press to cancel production.", () =>
 				{
 					this.EndTraining( false );
 				} );
 			}
+
+			this.rally = new GameObject();
+#warning rally point mesh & material. Material needs to show through other objs.
+		}
+
+		GameObject rally = null;
+
+		public void OnHide()
+		{
+			Object.Destroy( this.rally );
 		}
 
 #if UNITY_EDITOR

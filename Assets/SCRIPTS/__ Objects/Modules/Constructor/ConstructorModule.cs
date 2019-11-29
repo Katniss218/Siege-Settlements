@@ -185,5 +185,10 @@ namespace SS.Objects.Modules
 			GameObject statusUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select building to place..." );
 			SelectionPanel.instance.obj.RegisterElement( "constr.status", statusUI.transform );
 		}
+
+		public void OnHide()
+		{
+
+		}
 	}
 }

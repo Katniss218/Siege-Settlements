@@ -198,14 +198,21 @@ namespace SS
 
 		void OnEnable()
 		{
-			Main.keyboardInput.RegisterOnHold( KeyCode.A, 50.0f, Inp_MoveLeft, true );
-			Main.keyboardInput.RegisterOnHold( KeyCode.D, 50.0f, Inp_MoveRight, true );
-			Main.keyboardInput.RegisterOnHold( KeyCode.W, 50.0f, Inp_MoveForward, true );
-			Main.keyboardInput.RegisterOnHold( KeyCode.S, 50.0f, Inp_MoveBackward, true );
-			Main.keyboardInput.RegisterOnHold( KeyCode.Q, 50.0f, Inp_RotateCCW, true );
-			Main.keyboardInput.RegisterOnHold( KeyCode.E, 50.0f, Inp_RotateCW, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Keypad5, 50.0f, Inp_ResetCamera, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Keypad0, 50.0f, Inp_ToggleVertical, true );
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.RegisterOnHold( KeyCode.A, 50.0f, Inp_MoveLeft, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.D, 50.0f, Inp_MoveRight, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.W, 50.0f, Inp_MoveForward, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.S, 50.0f, Inp_MoveBackward, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.LeftArrow, 50.0f, Inp_MoveLeft, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.RightArrow, 50.0f, Inp_MoveRight, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.UpArrow, 50.0f, Inp_MoveForward, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.DownArrow, 50.0f, Inp_MoveBackward, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.Q, 50.0f, Inp_RotateCCW, true );
+				Main.keyboardInput.RegisterOnHold( KeyCode.E, 50.0f, Inp_RotateCW, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Keypad5, 50.0f, Inp_ResetCamera, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Keypad0, 50.0f, Inp_ToggleVertical, true );
+			}
 		}
 
 		void OnDisable()
@@ -216,6 +223,10 @@ namespace SS
 				Main.keyboardInput.ClearOnHold( KeyCode.D , Inp_MoveRight );
 				Main.keyboardInput.ClearOnHold( KeyCode.W, Inp_MoveForward );
 				Main.keyboardInput.ClearOnHold( KeyCode.S, Inp_MoveBackward );
+				Main.keyboardInput.ClearOnHold( KeyCode.LeftArrow, Inp_MoveLeft );
+				Main.keyboardInput.ClearOnHold( KeyCode.RightArrow, Inp_MoveRight );
+				Main.keyboardInput.ClearOnHold( KeyCode.UpArrow, Inp_MoveForward );
+				Main.keyboardInput.ClearOnHold( KeyCode.DownArrow, Inp_MoveBackward );
 				Main.keyboardInput.ClearOnHold( KeyCode.Q, Inp_RotateCCW );
 				Main.keyboardInput.ClearOnHold( KeyCode.E, Inp_RotateCW );
 				Main.keyboardInput.ClearOnPress( KeyCode.Keypad5, Inp_ResetCamera );

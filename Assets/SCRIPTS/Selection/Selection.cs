@@ -58,6 +58,22 @@ namespace SS
 		// When module is not null, object also can't be null.
 		static DisplayedObjectData displayedObjectData = null;
 
+		private static ISelectDisplayHandler GetDisplayedThing()
+		{
+			if( displayedObjectData == null )
+			{
+				return null;
+			}
+			if( displayedObjectData.module != null )
+			{
+				return displayedObjectData.module;
+			}
+			if( displayedObjectData.obj != null )
+			{
+				return displayedObjectData.obj;
+			}
+			return null;
+		}
 
 		public static bool IsDisplayed()
 		{
@@ -108,7 +124,6 @@ namespace SS
 		/// </summary>
 		public static void DisplayGroupSelected()
 		{
-#warning update group when any selected gets damaged (or does anything else, really). Needs static events.
 			displayedObjectData = DisplayedObjectData.NewGroup();
 			
 			SelectionPanel.instance.obj.displayNameText.text = "Group: " + selected.Count;
@@ -162,9 +177,10 @@ namespace SS
 			{
 				throw new System.Exception( "Object needs to be displayed to display it's module." );
 			}
-			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
+			displayedObjectData.obj.OnHide();
 			SelectionPanel.instance.obj.ClearAllElements();
 			ActionPanel.instance.ClearAll();
+			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
 			(module as ISelectDisplayHandler).OnDisplay();
 		}
 		
@@ -173,6 +189,7 @@ namespace SS
 		/// </summary>
 		public static void StopDisplaying()
 		{
+			GetDisplayedThing()?.OnHide();
 			displayedObjectData = null;
 			SelectionPanel.instance.obj.ClearAllElements();
 			SelectionPanel.instance.obj.ClearModules();
@@ -277,7 +294,7 @@ namespace SS
 
 			SelectionPanel.instance.list.RemoveIcon( obj );
 
-			if( IsDisplayed( obj ) || displayedObjectData.isGroup )
+			if( IsDisplayed( obj ) || (displayedObjectData != null && displayedObjectData.isGroup) )
 			{
 				StopDisplaying();
 			}

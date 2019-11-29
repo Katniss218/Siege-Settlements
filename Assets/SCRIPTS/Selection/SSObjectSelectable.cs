@@ -31,5 +31,6 @@ namespace SS
 		public UnityEvent onDeselect = new UnityEvent();
 
 		public abstract void OnDisplay();
+		public abstract void OnHide();
 	}
 }

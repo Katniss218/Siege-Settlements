@@ -1,4 +1,5 @@
 ﻿using SS.Content;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
 using SS.UI;
@@ -78,6 +79,11 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
 
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
 
@@ -110,6 +116,11 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
 
 			ToolTip.MoveTo( Input.mousePosition, true );
 		}
@@ -117,6 +128,11 @@ namespace SS.Objects.Modules
 		private void HideTooltip( GameObject mouseoveredObj )
 		{
 			if( mouseoveredObj != this.gameObject )
+			{
+				return;
+			}
+			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}
@@ -550,6 +566,8 @@ namespace SS.Objects.Modules
 				if( this.slotGroups[i].isEmpty )
 				{
 					gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ) );
+
+					UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), " - " );
 					continue;
 				}
 				ResourceDefinition resDef = DefinitionManager.GetResource( this.slotGroups[i].id );
@@ -565,6 +583,11 @@ namespace SS.Objects.Modules
 		public void OnDisplay()
 		{
 			this.ShowList();
+		}
+
+		public void OnHide()
+		{
+
 		}
 	}
 }

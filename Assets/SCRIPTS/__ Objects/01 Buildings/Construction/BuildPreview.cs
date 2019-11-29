@@ -85,7 +85,7 @@ namespace SS.Objects.Buildings
 
 			// Test objects overlapping with the object
 			center = this.GetOverlapHitboxCenter( false );
-			if( Physics.OverlapBox( center, (this.def.size / 2.0f), this.transform.rotation, this.objectsMask ).Length > 0 )
+			if( Physics.OverlapBox( center, (this.def.size / 2.0f), this.transform.rotation, this.objectsMask, QueryTriggerInteraction.Ignore ).Length > 0 )
 			{
 				return true;
 			}

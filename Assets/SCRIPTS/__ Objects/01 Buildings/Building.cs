@@ -1,8 +1,10 @@
 ﻿using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
+using SS.ResourceSystem;
 using SS.UI;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -137,7 +139,9 @@ namespace SS.Objects.Buildings
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}
+
 		
+
 		public override void OnDisplay()
 		{
 			SelectionPanel.instance.obj.SetIcon( this.icon );
@@ -149,16 +153,28 @@ namespace SS.Objects.Buildings
 
 			if( this.factionMember.factionId == LevelDataManager.PLAYER_FAC )
 			{
+				ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
+
+				if( constructionSite != null )
+				{
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, 0.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources... " + constructionSite.GetStatusString() );
+					SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
+				}
 				if( !this.IsUsable() )
 				{
 					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( -50.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "The building is not usable (under construction/repair or <50% health)." );
 					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
 				}
-				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), () =>
+				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Press to demolish building.", () =>
 				{
 					this.damageable.Die();
 				} );
 			}
+		}
+
+		public override void OnHide()
+		{
+
 		}
 
 #if UNITY_EDITOR

@@ -45,7 +45,7 @@ namespace SS.Objects.Buildings
 		{
 			foreach( var kvp in resourceInfo )
 			{
-				int roundedAmount = SpecialRound( kvp.Value.remaining );
+				int roundedAmount = RoundExact( kvp.Value.remaining );
 
 				if( roundedAmount != 0 )
 				{
@@ -65,7 +65,7 @@ namespace SS.Objects.Buildings
 					continue;
 				}
 
-				int roundedRemaining = SpecialRound( kvp.Value.remaining );
+				int roundedRemaining = RoundExact( kvp.Value.remaining );
 				if( roundedRemaining == 0 )
 				{
 					throw new Exception( "Received resource wasn't wanted." );
@@ -109,6 +109,8 @@ namespace SS.Objects.Buildings
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
+
+					this.ConstructionComplete_UI();
 				}
 
 				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
@@ -126,8 +128,48 @@ namespace SS.Objects.Buildings
 
 
 				this.onPaymentReceived?.Invoke();
+				this.paymentReceived_UI();
 
 				return;
+			}
+		}
+
+		private void ConstructionComplete_UI()
+		{
+			if( !Selection.IsDisplayed( this.building ) )
+			{
+				return;
+			}
+
+			if( SelectionPanel.instance.obj.GetElement( "building.construction_status" ) != null )
+			{
+				SelectionPanel.instance.obj.ClearElement( "building.construction_status" );
+			}
+		}
+
+		internal string GetStatusString()
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			foreach( var kvp in this.GetWantedResources() )
+			{
+				if( kvp.Value != 0 )
+				{
+					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+					sb.Append( kvp.Value + "x " + resDef.displayName );
+				}
+				sb.Append( ", " );
+			}
+
+			return sb.ToString();
+		}
+
+		private void paymentReceived_UI()
+		{
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... " + this.GetStatusString() );
 			}
 		}
 
@@ -137,7 +179,7 @@ namespace SS.Objects.Buildings
 
 			foreach( var kvp in this.resourceInfo )
 			{
-				int amtRounded = SpecialRound( kvp.Value.remaining );
+				int amtRounded = RoundExact( kvp.Value.remaining );
 				if( amtRounded != 0 )
 				{
 					ret.Add( kvp.Key, amtRounded );
@@ -179,7 +221,7 @@ namespace SS.Objects.Buildings
 		}
 
 		// Rounds down when the decimal is <=0.5, rounds up when >0.5
-		private static int SpecialRound( float remainingResAmt )
+		private static int RoundExact( float remainingResAmt )
 		{
 			int floored = Mathf.FloorToInt( remainingResAmt );
 			if( remainingResAmt - floored <= 0.5f )

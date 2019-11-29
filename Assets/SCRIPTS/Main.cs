@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using Object = UnityEngine.Object;
 
 namespace SS
 {
@@ -40,7 +41,7 @@ namespace SS
 		{
 			get
 			{
-				if( __particleSystemInstance == null ) { __particleSystemInstance = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Particle System" ) ); }
+				if( __particleSystemInstance == null ) { __particleSystemInstance = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Particle System" ) ); }
 				return __particleSystemInstance;
 			}
 		}
@@ -72,7 +73,7 @@ namespace SS
 		{
 			get
 			{
-				if( __keyboardInput == null ) { __keyboardInput = FindObjectOfType<QueuedKeyboardInput>(); }
+				if( __keyboardInput == null ) { __keyboardInput = Object.FindObjectOfType<QueuedKeyboardInput>(); }
 				return __keyboardInput;
 			}
 		}
@@ -82,7 +83,7 @@ namespace SS
 		{
 			get
 			{
-				if( __mouseInput == null ) { __mouseInput = FindObjectOfType<QueuedMouseInput>(); }
+				if( __mouseInput == null ) { __mouseInput = Object.FindObjectOfType<QueuedMouseInput>(); }
 				return __mouseInput;
 			}
 		}
@@ -94,7 +95,7 @@ namespace SS
 			{
 				if( __cameraPivot == null )
 				{
-					__cameraPivot = FindObjectOfType<CameraController>().transform;
+					__cameraPivot = Object.FindObjectOfType<CameraController>().transform;
 				}
 				return __cameraPivot;
 			}
@@ -549,25 +550,30 @@ namespace SS
 
 		void OnEnable()
 		{
-			Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
-
-			Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 60.0f, Inp_A3, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
-			Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
+			if( Main.mouseInput != null )
+			{
+				Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 60.0f, Inp_Right, true );
+			}
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 60.0f, Inp_A3, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
+			}
 		}
 
 		void OnDisable()

@@ -23,9 +23,8 @@ namespace SS.UI
 		}
 
 
-		public void CreateButton( string id, Sprite icon, UnityAction onClick )
+		public void CreateButton( string id, Sprite icon, string displayName, string displayDescription, UnityAction onClick )
 		{
-#warning TODO! - tooltips.
 			if( this.actionButtons.Count >= 9 )
 			{
 				Debug.LogWarning( "Tried adding more than 9 action buttons." );
@@ -33,6 +32,15 @@ namespace SS.UI
 			}
 
 			GameObject button = UIUtils.InstantiateIconButton( buttonsParent, new GenericUIData(), icon, onClick );
+			ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
+			toolTipUIhandler.constructToolTip = () =>
+			{
+				ToolTip.Create( 450.0f, displayName );
+
+				ToolTip.AddText( displayDescription );
+				ToolTip.Style.SetPadding( 48, 48 );
+			};
+
 			this.actionButtons.Add( id, button.transform );
 		}
 
