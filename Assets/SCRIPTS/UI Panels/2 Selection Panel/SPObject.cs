@@ -11,39 +11,47 @@ namespace SS.UI
 	{
 		private Dictionary<string, Transform> elements = new Dictionary<string, Transform>();
 
-		[SerializeField] private Image highlightedObjIcon = null;
+		[SerializeField] private Image objIcon = null;
 		[SerializeField] private Transform _moduleUITransform = null;
 		[SerializeField] private TextMeshProUGUI _displayNameText = null;
 
 		public Transform moduleUITransform { get { return this._moduleUITransform; } }
 		public TextMeshProUGUI displayNameText { get { return this._displayNameText; } }
 
+		private Dictionary<SSModule, Image> moduleIcons = new Dictionary<SSModule, Image>();
+
+		private Image highlightedIcon = null;
 
 		void Start()
 		{
-			this.highlightedObjIcon.GetComponent<Button>().onClick.AddListener( () =>
+			this.objIcon.GetComponent<Button>().onClick.AddListener( () =>
 			{
 				Selection.DisplayObjectDisplayed();
 			} );
 		}
 
+
+
 		public void SetIcon( Sprite icon )
 		{
-			this.highlightedObjIcon.sprite = icon;
-			if( !this.highlightedObjIcon.gameObject.activeSelf )
+			this.objIcon.sprite = icon;
+			if( !this.objIcon.gameObject.activeSelf )
 			{
-				this.highlightedObjIcon.gameObject.SetActive( true );
+				this.objIcon.gameObject.SetActive( true );
 			}
+			this.UnHighlight( this.objIcon );
 		}
 
 		public void ClearIcon()
 		{
-			if( this.highlightedObjIcon.gameObject.activeSelf )
+			if( this.objIcon.gameObject.activeSelf )
 			{
-				this.highlightedObjIcon.gameObject.SetActive( false );
+				this.objIcon.gameObject.SetActive( false );
 			}
-			this.highlightedObjIcon.sprite = null;
+			this.objIcon.sprite = null;
 		}
+
+
 
 		/// <summary>
 		/// Registers an element 'element' using an id 'id'.
@@ -87,6 +95,22 @@ namespace SS.UI
 			return null;
 		}
 
+
+		/// <summary>
+		/// Clears the UI element that was registered using the specified id.
+		/// </summary>
+		/// <param name="id">The id to check.</param>
+		public bool TryClearElement( string id )
+		{
+			if( this.elements.TryGetValue( id, out Transform obj ) )
+			{
+				Object.Destroy( obj.gameObject );
+				this.elements.Remove( id );
+				return true;
+			}
+			return false;
+		}
+
 		public void ClearAllElements()
 		{
 			foreach( Transform obj in this.elements.Values )
@@ -96,37 +120,70 @@ namespace SS.UI
 			this.elements.Clear();
 		}
 
-		public void AddModuleButton( SSModule module )
+
+
+
+		public void CreateModuleButton( SSModule module )
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
 				throw new System.Exception( "Module must implement ISelectDisplayHandler" );
 			}
 			
-			GameObject ui = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
+			GameObject moduleIconGameObject = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
 			{
 				Selection.DisplayModule( module.ssObject as SSObjectSelectable, module );
 			} );
+			Image moduleIcon = moduleIconGameObject.GetComponent<Image>();
+			this.moduleIcons.Add( module, moduleIcon );
+			this.UnHighlight( moduleIcon );
 		}
 
-		public void ClearModules()
+		public void ClearAllModules()
 		{
 			for( int i = 0; i < this.moduleUITransform.childCount; i++ )
 			{
 				Object.Destroy( this.moduleUITransform.GetChild( i ).gameObject );
 			}
+			this.moduleIcons.Clear();
 		}
-		
-		/// <summary>
-		/// Clears the UI element that was registered using the specified id.
-		/// </summary>
-		/// <param name="id">The id to check.</param>
-		public void ClearElement( string id )
+
+		private void Highlight( Image image )
 		{
-			if( this.elements.TryGetValue( id, out Transform obj ) )
+			image.color = Color.white;
+		}
+
+		private void UnHighlight( Image image )
+		{
+			image.color = new Color( 0.5f, 0.5f, 0.5f, 0.85f );
+		}
+
+		/// <summary>
+		/// Hightlights the object's icon. Unhighlights any other icons.
+		/// </summary>
+		public void HighlightIcon()
+		{
+			if( this.highlightedIcon  != null )
 			{
-				Object.Destroy( obj.gameObject );
-				this.elements.Remove( id );
+				this.UnHighlight( this.highlightedIcon );
+			}
+			this.highlightedIcon = this.objIcon;
+			this.Highlight( this.objIcon );
+		}
+
+		/// <summary>
+		/// Hightlights the module's icon. Unhighlights any other icons.
+		/// </summary>
+		public void HighlightIcon( SSModule module )
+		{
+			if( this.highlightedIcon != null )
+			{
+				this.UnHighlight( this.highlightedIcon );
+			}
+			if( this.moduleIcons.TryGetValue( module, out Image icon ) )
+			{
+				this.highlightedIcon = icon;
+				this.Highlight( icon );
 			}
 		}
 	}

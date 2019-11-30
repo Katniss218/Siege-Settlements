@@ -51,7 +51,7 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public Vector3 rallyPoint { get; set; }
 
-		
+
 		private FactionMember __factionMember = null;
 		public FactionMember factionMember
 		{
@@ -72,6 +72,7 @@ namespace SS.Objects.Modules
 
 		private Vector3 spawnPosition = Vector3.zero;
 
+		private GameObject rallyPointGameObject = null;
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -401,10 +402,8 @@ namespace SS.Objects.Modules
 			{
 				if( this.trainedUnit == null )
 				{
-					if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
-					{
-						SelectionPanel.instance.obj.ClearElement( "barracks.list" );
-					}
+					SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
+					
 					this.ShowList();
 				}
 			}
@@ -430,11 +429,9 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-
-			if( SelectionPanel.instance.obj.GetElement( "barracks.list" ) != null )
-			{
-				SelectionPanel.instance.obj.ClearElement( "barracks.list" );
-			}
+			
+			SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
+			
 			if( !this.IsPaymentDone() )
 			{
 				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
@@ -525,18 +522,29 @@ namespace SS.Objects.Modules
 			}
 
 			CreateRallyButton();
-
-			this.rally = new GameObject();
+			SpawnRallyGameObject( this );
+		}
+		
+		private static void SpawnRallyGameObject( BarracksModule barracks )
+		{
+			GameObject rally = new GameObject();
 
 			MeshFilter mf = rally.AddComponent<MeshFilter>();
 			mf.mesh = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_ID + "Models/barracks_rally_point.ksm" );
 
-			rally.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
-			rally.AddComponent<MeshRenderer>();
-#warning rally point mesh & material. Material needs to show through other objs.
-		}
+			rally.transform.position = barracks.transform.localToWorldMatrix.MultiplyPoint( barracks.rallyPoint );
 
-		GameObject rally = null;
+			MeshRenderer mr = rally.AddComponent<MeshRenderer>();
+
+			mr.material = MaterialManager.CreateOpaque(
+				AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_ID + "Textures/pixel_white", TextureType.Color ),
+				null,
+				AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_ID + "Textures/pixel_white", TextureType.Color ),
+				AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_ID + "Textures/pixel_black", TextureType.Color ),
+				AssetManager.GetTexture2D( AssetManager.BUILTIN_ASSET_ID + "Textures/pixel_black", TextureType.Color )
+			);
+			barracks.rallyPointGameObject = rally;
+		}
 
 		private void CreateRallyButton()
 		{
@@ -554,23 +562,22 @@ namespace SS.Objects.Modules
 
 		public void OnHide()
 		{
-			Object.Destroy( this.rally );
+			Object.Destroy( this.rallyPointGameObject );
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // Force remove input if hidden.
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Force remove input if hidden.
 		}
 
 		private void SetRally( InputQueue self )
 		{
-#warning TODO! incomplete (actually set the rally).
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.TERRAIN_MASK ) )
 			{
 				Vector3 localRallyPoint = this.transform.worldToLocalMatrix.MultiplyPoint( hitInfo.point );
 				this.rallyPoint = localRallyPoint;
-				rally.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
+				rallyPointGameObject.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
 			}
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // One-shot
-			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear cancelling (can't cancel something that's done).
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear complement cancel (can't cancel something that's done).
 
 			// (if still displayed, show the rally button again).
 			CreateRallyButton();
@@ -580,7 +587,7 @@ namespace SS.Objects.Modules
 
 		private void CancelRally( InputQueue self )
 		{
-			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // clear set (cancel).
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // clear complement set (can't set something that's cancelled).
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // clear itself (one-shot).
 
 			CreateRallyButton();

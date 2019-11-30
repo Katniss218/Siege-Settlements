@@ -351,10 +351,8 @@ namespace SS.Objects.Modules
 			{
 				if( this.researchedTechnology == null )
 				{
-					if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
-					{
-						SelectionPanel.instance.obj.ClearElement( "research.list" );
-					}
+					SelectionPanel.instance.obj.TryClearElement( "research.list" );
+					
 					this.ShowList();
 				}
 			}
@@ -379,10 +377,8 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			if( SelectionPanel.instance.obj.GetElement( "research.list" ) != null )
-			{
-				SelectionPanel.instance.obj.ClearElement( "research.list" );
-			}
+			SelectionPanel.instance.obj.TryClearElement( "research.list" );
+			
 			if( !this.IsPaymentDone() )
 			{
 				Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );

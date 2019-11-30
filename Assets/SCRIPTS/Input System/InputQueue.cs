@@ -9,9 +9,10 @@ namespace SS.InputSystem
 		{
 			public System.Action<InputQueue> method { get; set; }
 			public bool isEnabled { get; set; }
+			public bool isOneShot { get; set; }
 			public float priority { get; set; }
 		}
-
+		
 		private List<InputMethod> methods;
 
 		public bool isStopped { get; private set; }
@@ -21,7 +22,7 @@ namespace SS.InputSystem
 			this.methods = new List<InputMethod>();
 		}
 
-		public void Add( System.Action<InputQueue> method, float priority, bool isEnabled )
+		public void Add( System.Action<InputQueue> method, float priority, bool isEnabled, bool isOneShot )
 		{
 			int lastBelowIndex = -1;
 			for( int i = 0; i < methods.Count; i++ )
@@ -33,17 +34,17 @@ namespace SS.InputSystem
 			}
 			if( this.methods.Count == 0 )
 			{
-				this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+				this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled, isOneShot = isOneShot } );
 			}
 			else
 			{
 				if( lastBelowIndex == this.methods.Count - 1 )
 				{
-					this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+					this.methods.Add( new InputMethod() { method = method, priority = priority, isEnabled = isEnabled, isOneShot = isOneShot } );
 				}
 				else
 				{
-					this.methods.Insert( lastBelowIndex + 1, new InputMethod() { method = method, priority = priority, isEnabled = isEnabled } );
+					this.methods.Insert( lastBelowIndex + 1, new InputMethod() { method = method, priority = priority, isEnabled = isEnabled, isOneShot = isOneShot } );
 				}
 			}
 		}
@@ -69,6 +70,7 @@ namespace SS.InputSystem
 		public void Execute()
 		{
 			this.isStopped = false;
+			List<InputMethod> oneShots = new List<InputMethod>();
 
 			for( int i = 0; i < this.methods.Count; i++ )
 			{
@@ -80,7 +82,15 @@ namespace SS.InputSystem
 				{
 					return;
 				}
+				if( this.methods[i].isOneShot )
+				{
+					oneShots.Add( this.methods[i] );
+				}
 				this.methods[i].method.Invoke( this );
+			}
+			for( int i = 0; i < oneShots.Count; i++ )
+			{
+				this.methods.Remove( oneShots[i] );
 			}
 		}
 

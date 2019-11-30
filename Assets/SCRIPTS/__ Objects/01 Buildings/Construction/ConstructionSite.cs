@@ -39,7 +39,7 @@ namespace SS.Objects.Buildings
 		private MeshRenderer[] renderers;
 
 
-		float height = 0.0f;
+		float buildingHeight = 0.0f;
 
 		private bool IsDone()
 		{
@@ -140,11 +140,8 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-
-			if( SelectionPanel.instance.obj.GetElement( "building.construction_status" ) != null )
-			{
-				SelectionPanel.instance.obj.ClearElement( "building.construction_status" );
-			}
+			
+			SelectionPanel.instance.obj.TryClearElement( "building.construction_status" );
 		}
 
 		internal string GetStatusString()
@@ -396,7 +393,7 @@ namespace SS.Objects.Buildings
 			constructionSite.SetRequiredResources( constructionSite.building.StartToEndConstructionCost );
 			constructionSite.renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
-			constructionSite.height = gameObject.GetComponent<BoxCollider>().size.y;
+			constructionSite.buildingHeight = gameObject.GetComponent<BoxCollider>().size.y;
 
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
@@ -427,7 +424,7 @@ namespace SS.Objects.Buildings
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
 			for( int i = 0; i < constructionSite.renderers.Length; i++ )
 			{
-				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.height, 0.0f, damageable.healthPercent ) );
+				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, damageable.healthPercent ) );
 			}
 		}
 
@@ -436,7 +433,7 @@ namespace SS.Objects.Buildings
 		{
 			for( int i = 0; i < this.renderers.Length; i++ )
 			{
-				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.height, 0.0f, damageable.healthPercent ) );
+				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.buildingHeight, 0.0f, damageable.healthPercent ) );
 			}
 			if( deltaHP < 0 )
 			{

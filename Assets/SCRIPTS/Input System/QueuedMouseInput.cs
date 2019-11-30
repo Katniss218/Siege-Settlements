@@ -9,6 +9,99 @@ namespace SS.InputSystem
 		private Dictionary<MouseCode, InputQueue> hold = new Dictionary<MouseCode, InputQueue>();
 		private Dictionary<MouseCode, InputQueue> release = new Dictionary<MouseCode, InputQueue>();
 
+
+
+		public void EnableHold( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Enable( method );
+			}
+		}
+		public void DisableHold( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Disable( method );
+			}
+		}
+
+
+		public void EnableRelease( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Enable( method );
+			}
+		}
+		public void DisableRelease( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Disable( method );
+			}
+		}
+
+
+		public void EnablePress( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Enable( method );
+			}
+		}
+		public void DisablePress( MouseCode button, System.Action<InputQueue> method )
+		{
+			if( this.hold.TryGetValue( button, out InputQueue inputQueue ) )
+			{
+				inputQueue.Disable( method );
+			}
+		}
+
+
+
+//#warning Method for adding one-shot functions (auto-remove themselves from queue after execution, no matter if they succeeded or not).
+
+
+		public void RegisterOnPress( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
+		{
+			InputQueue inputQueue;
+			if( this.press.TryGetValue( button, out inputQueue ) )
+			{
+				inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+				return;
+			}
+			inputQueue = new InputQueue();
+			inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+			this.press.Add( button, inputQueue );
+		}
+
+		public void RegisterOnHold( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
+		{
+			InputQueue inputQueue;
+			if( this.hold.TryGetValue( button, out inputQueue ) )
+			{
+				inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+				return;
+			}
+			inputQueue = new InputQueue();
+			inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+			this.hold.Add( button, inputQueue );
+		}
+
+		public void RegisterOnRelease( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
+		{
+			InputQueue inputQueue;
+			if( this.release.TryGetValue( button, out inputQueue ) )
+			{
+				inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+				return;
+			}
+			inputQueue = new InputQueue();
+			inputQueue.Add( method, priorityId, isEnabled, isOneShot );
+			this.release.Add( button, inputQueue );
+		}
+
 		public void ClearOnPress( MouseCode button, System.Action<InputQueue> method )
 		{
 			if( this.press.TryGetValue( button, out InputQueue inputQueue ) )
@@ -16,11 +109,6 @@ namespace SS.InputSystem
 				inputQueue.Remove( method );
 			}
 		}
-
-
-#warning Enable Input Sources (per queue)
-#warning Check if is registered (per method, input code, or both).
-#warning Methodss for adding one-shot methods (auto-remove themselves after execution, no matter if they succeeded or not).
 
 		public void ClearOnHold( MouseCode button, System.Action<InputQueue> method )
 		{
@@ -43,50 +131,6 @@ namespace SS.InputSystem
 			this.press.Clear();
 			this.hold.Clear();
 			this.release.Clear();
-		}
-
-		public void RegisterOnPress( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
-		{
-			InputQueue inputQueue;
-			if( this.press.TryGetValue( button, out inputQueue ) )
-			{
-				inputQueue.Add( method, priorityId, isEnabled );
-				return;
-			}
-			inputQueue = new InputQueue();
-			inputQueue.Add( method, priorityId, isEnabled );
-			this.press.Add( button, inputQueue );
-		}
-
-		public void RegisterOnHold( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
-		{
-			InputQueue inputQueue;
-			if( this.hold.TryGetValue( button, out inputQueue ) )
-			{
-				inputQueue.Add( method, priorityId, isEnabled );
-				return;
-			}
-			inputQueue = new InputQueue();
-			inputQueue.Add( method, priorityId, isEnabled );
-			this.hold.Add( button, inputQueue );
-		}
-
-		public void RegisterOnRelease( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled )
-		{
-			InputQueue inputQueue;
-			if( this.release.TryGetValue( button, out inputQueue ) )
-			{
-				inputQueue.Add( method, priorityId, isEnabled );
-				return;
-			}
-			inputQueue = new InputQueue();
-			inputQueue.Add( method, priorityId, isEnabled );
-			this.release.Add( button, inputQueue );
-		}
-
-		void Start()
-		{
-
 		}
 
 		void Update()

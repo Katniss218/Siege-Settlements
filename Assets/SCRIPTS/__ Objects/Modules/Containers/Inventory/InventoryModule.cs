@@ -549,10 +549,8 @@ namespace SS.Objects.Modules
 		{
 			if( Selection.IsDisplayedModule( this ) )
 			{
-				if( SelectionPanel.instance.obj.GetElement( "inventory.slots" ) != null )
-				{
-					SelectionPanel.instance.obj.ClearElement( "inventory.slots" );
-				}
+				SelectionPanel.instance.obj.TryClearElement( "inventory.slots" );
+				
 				this.ShowList();
 			}
 		}

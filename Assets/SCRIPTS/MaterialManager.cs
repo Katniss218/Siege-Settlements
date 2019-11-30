@@ -54,7 +54,7 @@ namespace SS
 			}
 			throw new System.Exception( "Unknown materialType '" + def.materialType + "'." );
 		}
-
+		
 		/// <summary>
 		/// Creates a new opaque material.
 		/// </summary>
@@ -65,7 +65,7 @@ namespace SS
 			material.EnableKeyword( "_NORMALMAP" );
 			material.SetTexture( "_BaseMap", color );
 			material.SetTexture( "_BumpMap", normal );
-			material.SetTexture( "_EmissionMap", emission );
+			material.SetTexture( "_Emission", emission );
 			material.SetTexture( "_MetallicMap", metallicMap );
 			material.SetTexture( "_SmoothnessMap", smoothnessMap );
 

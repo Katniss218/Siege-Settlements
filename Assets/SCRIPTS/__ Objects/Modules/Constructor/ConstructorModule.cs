@@ -113,10 +113,8 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			if( SelectionPanel.instance.obj.GetElement( "constr.list" ) != null )
-			{
-				SelectionPanel.instance.obj.ClearElement( "constr.list" );
-			}
+			SelectionPanel.instance.obj.TryClearElement( "constr.list" );
+			
 			this.ShowList();
 		}
 

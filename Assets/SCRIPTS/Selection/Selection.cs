@@ -4,6 +4,7 @@ using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using SS.Levels;
+using UnityEngine.UI;
 
 namespace SS
 {
@@ -139,6 +140,7 @@ namespace SS
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
 		}
 
+#warning Need to know which module has which icon.
 		/// <summary>
 		/// Displays an object.
 		/// </summary>
@@ -158,10 +160,11 @@ namespace SS
 				{
 					continue;
 				}
-				SelectionPanel.instance.obj.AddModuleButton( modules[i] );
+				SelectionPanel.instance.obj.CreateModuleButton( modules[i] );
 			}
-		
+			
 			obj.OnDisplay();
+			SelectionPanel.instance.obj.HighlightIcon();
 		}
 
 		/// <summary>
@@ -182,6 +185,7 @@ namespace SS
 			ActionPanel.instance.ClearAll();
 			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
 			(module as ISelectDisplayHandler).OnDisplay();
+			SelectionPanel.instance.obj.HighlightIcon( module );
 		}
 		
 		/// <summary>
@@ -192,7 +196,7 @@ namespace SS
 			GetDisplayedThing()?.OnHide();
 			displayedObjectData = null;
 			SelectionPanel.instance.obj.ClearAllElements();
-			SelectionPanel.instance.obj.ClearModules();
+			SelectionPanel.instance.obj.ClearAllModules();
 			SelectionPanel.instance.obj.ClearIcon();
 			SelectionPanel.instance.obj.displayNameText.text = "";
 
