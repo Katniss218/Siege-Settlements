@@ -34,7 +34,7 @@
 		Height = 0.1875;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 1; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -136,9 +136,9 @@
 		Armor =
 		{
 			ArmorValues = [
-				0.5, // Slash
+				0.4, // Slash
 				0.5, // Pierce
-				0.5  // Concussion
+				0.2  // Concussion
 			];
 		};
 		Modules =
@@ -171,7 +171,7 @@
 		Height = 0.1875;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 6; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -272,9 +272,9 @@
 		Armor =
 		{
 			ArmorValues = [
-				0.5, // Slash
+				0.4, // Slash
 				0.5, // Pierce
-				0.5  // Concussion
+				0.2  // Concussion
 			];
 		};
 		Modules =
@@ -307,7 +307,7 @@
 		Height = 0.1875;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 6; }
 		];
 		TechsRequired = [];
 		BuildTime = 3.0;
@@ -416,8 +416,8 @@
 		Armor =
 		{
 			ArmorValues = [
-				0.0, // Slash
-				0.0, // Pierce
+				0.1, // Slash
+				0.1, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -457,7 +457,7 @@
 		Height = 0.1875;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 6; }
 		];
 		TechsRequired = [
 			"technology.archery"
@@ -533,7 +533,7 @@
 		Height = 0.1875;
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 5; }
 		];
 		TechsRequired = [
 			"technology.archery"
@@ -700,8 +700,8 @@
 		{
 			ArmorValues = [
 				0.0, // Slash
-				0.0, // Pierce
-				0.0  // Concussion
+				0.2, // Pierce
+				0.2  // Concussion
 			];
 		};
 		Modules =

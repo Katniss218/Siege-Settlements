@@ -8,7 +8,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -106,7 +106,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -194,7 +194,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -253,7 +253,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -313,7 +313,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -377,7 +377,7 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -440,11 +440,11 @@
 		{
 			ArmorValues = [
 				0.3, // Slash
-				0.3, // Pierce
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 0.87; Y = 0.6; Z = 0.85; };
+		Size = { X = 1.05; Y = 0.6; Z = 0.85; };
 		PlacementNodes = [ ];
 		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
@@ -501,8 +501,8 @@
 		{
 			ArmorValues = [
 				0.2, // Slash
-				0.2, // Pierce
-				0.2  // Concussion
+				0.45, // Pierce
+				0.0  // Concussion
 			];
 		};
 		Size = { X = 0.65; Y = 0.37; Z = 0.085; };
@@ -551,8 +551,8 @@
 		{
 			ArmorValues = [
 				0.2, // Slash
-				0.2, // Pierce
-				0.2  // Concussion
+				0.45, // Pierce
+				0.0  // Concussion
 			];
 		};
 		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
@@ -596,8 +596,8 @@
 		{
 			ArmorValues = [
 				0.2, // Slash
-				0.2, // Pierce
-				0.2  // Concussion
+				0.45, // Pierce
+				0.0  // Concussion
 			];
 		};
 		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
