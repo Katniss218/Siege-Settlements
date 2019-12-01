@@ -8,6 +8,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using SS.Objects;
+using Random = UnityEngine.Random;
 
 namespace SS.Objects.Modules
 {
@@ -213,11 +214,7 @@ namespace SS.Objects.Modules
 
 			ProjectileCreator.Create( this.projectile, data );
 		}
-
-		void Awake()
-		{
-		}
-
+		
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
@@ -243,10 +240,14 @@ namespace SS.Objects.Modules
 			if( this.isReadyToAttack )
 			{
 				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
-				
+
 				if( !this.CanTarget( this.__target ) )
 				{
-					this.__target = this.TrySetTarget();
+					this.__target = null;
+					if( Random.Range( 0, 10 ) == 0 )
+					{
+						this.__target = this.TrySetTarget();
+					}
 				}
 
 				if( this.__target == null )

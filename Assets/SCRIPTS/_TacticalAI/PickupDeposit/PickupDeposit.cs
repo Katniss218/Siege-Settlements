@@ -94,7 +94,7 @@ namespace SS
 						{
 							continue;
 						}
-						if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
+						if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
 						{
 							amountPickedUp = this.inventory.Add( kvp.Key, amtFloored );
 							idPickedUp = kvp.Key;

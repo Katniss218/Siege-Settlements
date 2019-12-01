@@ -50,30 +50,22 @@ namespace SS
 			private void OnArrival()
 			{
 				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
-
-				InventoryModule destinationInventory = this.destination.GetComponent<InventoryModule>();
 				
+				InventoryModule destinationInventory = this.destination.GetComponent<InventoryModule>();
+
 				foreach( var kvp in resourcesCarried )
 				{
-					int maxCapacity = destinationInventory.GetMaxCapacity( kvp.Key );
-					if( maxCapacity > 0 )
+					int spaceLeftDst = destinationInventory.GetSpaceLeft( kvp.Key );
+					if( spaceLeftDst > 0 )
 					{
-						int amount = destinationInventory.Get( kvp.Key );
+						int amountCarried = kvp.Value;
+						int amountDroppedOff = spaceLeftDst < amountCarried ? spaceLeftDst : amountCarried;
+						
+						destinationInventory.Add( kvp.Key, amountDroppedOff );
+						this.inventory.Remove( kvp.Key, amountDroppedOff );
 
-						int spaceLeft = maxCapacity - amount;
-						if( spaceLeft > 0 )
-						{
-							int dropOffAmt = kvp.Value;
-							if( spaceLeft < kvp.Value )
-							{
-								dropOffAmt = spaceLeft;
-							}
-
-							destinationInventory.Add( kvp.Key, dropOffAmt );
-							this.inventory.Remove( kvp.Key, dropOffAmt );
-							ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
-							AudioManager.PlaySound( def.dropoffSound );
-						}
+						ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
+						AudioManager.PlaySound( def.dropoffSound );
 					}
 				}
 

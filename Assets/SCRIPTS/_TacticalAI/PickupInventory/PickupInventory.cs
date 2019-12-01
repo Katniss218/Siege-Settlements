@@ -89,7 +89,7 @@ namespace SS
 					{
 						continue;
 					}
-					if( this.inventory.GetMaxCapacity( kvp.Key ) != 0 )
+					if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
 					{
 						amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
 						idPickedUp = kvp.Key;
@@ -98,7 +98,7 @@ namespace SS
 						if( amountPickedUp > 0 )
 						{
 							int amtRemoved = inventoryToPickupFrom.Remove( idPickedUp, amountPickedUp );
-							Debug.Log( "R: " + amtRemoved + "x " + idPickedUp );
+							Debug.Log( "Removed: " + amtRemoved + "x " + idPickedUp );
 							AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 						}
 						break; // Only pick up one resource at a time.

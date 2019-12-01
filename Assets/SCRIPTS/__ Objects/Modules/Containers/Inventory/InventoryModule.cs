@@ -327,7 +327,7 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 		
-		public int GetMaxCapacity( string id )
+		public int GetSpaceLeft( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )
 			{

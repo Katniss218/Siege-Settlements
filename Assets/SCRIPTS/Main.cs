@@ -698,7 +698,7 @@ namespace SS
 		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
-
+			
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -721,13 +721,13 @@ namespace SS
 
 				foreach( var kvp in inventoryItems )
 				{
-					if( hitInventory.GetMaxCapacity( kvp.Key ) == 0 )
+					if( hitInventory.GetSpaceLeft( kvp.Key ) == 0 )
 					{
 						suitable = false;
 						break;
 					}
 					// don't move if the deposit doesn't have space to leave resource (inv full of that specific resource).
-					if( hitInventory.GetMaxCapacity( kvp.Key ) == hitInventory.Get( kvp.Key ) )
+					if( hitInventory.GetSpaceLeft( kvp.Key ) == hitInventory.Get( kvp.Key ) )
 					{
 						suitable = false;
 						break;
@@ -831,7 +831,7 @@ namespace SS
 				foreach( var kvp in resourcesInDeposit )
 				{
 					// if can pick up && has empty space for it.
-					if( inv.GetMaxCapacity( kvp.Key ) > 0 && inv.Get( kvp.Key ) != inv.GetMaxCapacity( kvp.Key ) )
+					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
 					{
 						movableWithInvGameObjects.Add( selected[i].gameObject );
 						break;
@@ -876,7 +876,7 @@ namespace SS
 				foreach( var kvp in resourcesInDeposit )
 				{
 					// if can pick up && has empty space for it.
-					if( inv.GetMaxCapacity( kvp.Key ) > 0 && inv.Get( kvp.Key ) != inv.GetMaxCapacity( kvp.Key ) )
+					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
 					{
 						canPickupAny = true;
 						break;
