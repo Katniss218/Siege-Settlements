@@ -11,7 +11,7 @@ namespace SS.Levels.SaveStates
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
 			// resources
-			var analysisData = serializer.Analyze( "ResourcesRemaining" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
 			this.resourcesRemaining = new Dictionary<string, float>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{

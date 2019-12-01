@@ -1,10 +1,8 @@
 ﻿using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
-using SS.ResourceSystem;
 using SS.UI;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -54,8 +52,7 @@ namespace SS.Objects.Buildings
 			// If the construction/repair is NOT being done.
 			return building.health < building.healthMax;
 		}
-
-
+		
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 		
 		private Damageable __damageable = null;
@@ -181,12 +178,15 @@ namespace SS.Objects.Buildings
 
 		private void OnDrawGizmos()
 		{
-			Gizmos.color = Color.white;
-
-			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-			for( int i = 0; i < this.placementNodes.Length; i++ )
+			if( this.placementNodes != null )
 			{
-				Gizmos.DrawSphere( toWorld.MultiplyVector( this.placementNodes[i] ) + this.transform.position, 0.05f );
+				Gizmos.color = Color.white;
+
+				Matrix4x4 toWorld = this.transform.localToWorldMatrix;
+				for( int i = 0; i < this.placementNodes.Length; i++ )
+				{
+					Gizmos.DrawSphere( toWorld.MultiplyVector( this.placementNodes[i] ) + this.transform.position, 0.05f );
+				}
 			}
 		}
 #endif

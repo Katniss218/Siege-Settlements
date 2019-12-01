@@ -43,12 +43,42 @@ namespace SS.Objects.Extras
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.id = serializer.ReadString( "Id" );
-			this.displayName = serializer.ReadString( "DisplayName" );
+			try
+			{
+				this.id = serializer.ReadString( "Id" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Id' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.isObstacle = serializer.ReadBool( "IsObstacle" );
-			this.size = serializer.ReadVector3( "Size" );
-			
+			try
+			{
+				this.displayName = serializer.ReadString( "DisplayName" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.isObstacle = serializer.ReadBool( "IsObstacle" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'IsObstacle' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.size = serializer.ReadVector3( "Size" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Size' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
 			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 

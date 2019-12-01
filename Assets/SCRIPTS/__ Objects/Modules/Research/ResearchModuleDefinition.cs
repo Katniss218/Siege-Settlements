@@ -27,6 +27,13 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			ResearchModule module = gameObject.AddComponent<ResearchModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 
 		public override ModuleData GetIdentityData()
 		{
@@ -36,9 +43,32 @@ namespace SS.Objects.Modules
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.researchSpeed = serializer.ReadFloat( "ResearchSpeed" );
-			this.researchableTechnologies = serializer.ReadStringArray( "ResearchableTechnologies" );
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.researchSpeed = serializer.ReadFloat( "ResearchSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ResearchSpeed' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.researchableTechnologies = serializer.ReadStringArray( "ResearchableTechnologies" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ResearchableTechnologies' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -46,13 +76,6 @@ namespace SS.Objects.Modules
 			serializer.WriteFloat( "", "ResearchSpeed", this.researchSpeed );
 			serializer.WriteStringArray( "", "ResearchableTechnologies", this.researchableTechnologies );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			ResearchModule module = gameObject.AddComponent<ResearchModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }

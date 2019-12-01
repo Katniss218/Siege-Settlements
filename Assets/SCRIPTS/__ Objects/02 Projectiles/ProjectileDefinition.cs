@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Content;
+using System;
 using UnityEngine;
 
 namespace SS.Objects.Projectiles
@@ -29,18 +30,68 @@ namespace SS.Objects.Projectiles
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.id = serializer.ReadString( "Id" );
+			try
+			{
+				this.id = serializer.ReadString( "Id" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Id' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.displayName = serializer.ReadString( "DisplayName" );
+			try
+			{
+				this.displayName = serializer.ReadString( "DisplayName" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.canGetStuck = serializer.ReadBool( "CanGetStuck" );
+			try
+			{
+				this.canGetStuck = serializer.ReadBool( "CanGetStuck" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'CanGetStuck' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.blastRadius = serializer.ReadFloat( "BlastRadius" );
+			try
+			{
+				this.blastRadius = serializer.ReadFloat( "BlastRadius" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'BlastRadius' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.lifetime = serializer.ReadFloat( "Lifetime" );
+			try
+			{
+				this.lifetime = serializer.ReadFloat( "Lifetime" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Lifetime' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
-			this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
+			try
+			{
+				this.hitSoundEffect = serializer.ReadAudioClipFromAssets( "HitSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'HitSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.missSoundEffect = serializer.ReadAudioClipFromAssets( "MissSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'MissSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
 			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}

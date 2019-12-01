@@ -26,6 +26,13 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			BarracksModule module = gameObject.AddComponent<BarracksModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 
 		public override ModuleData GetIdentityData()
 		{
@@ -35,9 +42,32 @@ namespace SS.Objects.Modules
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );
-			this.trainableUnits = serializer.ReadStringArray( "TrainableUnits" );
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.trainSpeed = serializer.ReadFloat( "TrainSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TrainSpeed' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.trainableUnits = serializer.ReadStringArray( "TrainableUnits" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TrainableUnits' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -45,13 +75,6 @@ namespace SS.Objects.Modules
 			serializer.WriteFloat( "", "TrainSpeed", this.trainSpeed );
 			serializer.WriteStringArray( "", "TrainableUnits", this.trainableUnits );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			BarracksModule module = gameObject.AddComponent<BarracksModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }

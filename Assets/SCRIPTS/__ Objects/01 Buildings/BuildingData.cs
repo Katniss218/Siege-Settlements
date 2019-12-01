@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	/// <summary>
-	/// Contains every information to successfully round-trip a building, to and from file.
-	/// </summary>
 	public class BuildingData : ObjectData
 	{
 		public Guid guid { get; set; }
@@ -15,7 +12,22 @@ namespace SS.Levels.SaveStates
 		public Vector3 position { get; set; }
 		public Quaternion rotation { get; set; }
 
-		public int factionId { get; set; }
+		private int __factionId = 0;
+		public int factionId
+		{
+			get
+			{
+				return this.__factionId;
+			}
+			set
+			{
+				if( value < 0 )
+				{
+					throw new Exception( "Can't set faction to outside of acceptable values." );
+				}
+				this.__factionId = value;
+			}
+		}
 
 		public float health { get; set; }
 		
@@ -23,13 +35,50 @@ namespace SS.Levels.SaveStates
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+			try
+			{
+				this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Guid' (" + serializer.file.fileName + ")." );
+			}
 
-			this.position = serializer.ReadVector3( "Position" );
-			this.rotation = serializer.ReadQuaternion( "Rotation" );
+			try
+			{
+				this.position = serializer.ReadVector3( "Position" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Position' (" + serializer.file.fileName + ")." );
+			}
 
-			this.factionId = serializer.ReadInt( "FactionId" );
-			this.health = serializer.ReadFloat( "Health" );
+			try
+			{
+				this.rotation = serializer.ReadQuaternion( "Rotation" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Rotation' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.factionId = serializer.ReadInt( "FactionId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.health = serializer.ReadFloat( "Health" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
+			}
 
 			if( serializer.Analyze( "ConstructionSaveState" ).isSuccess )
 			{

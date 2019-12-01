@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	/// <summary>
-	/// Contains every information to successfully round-trip an extra, to and from file.
-	/// </summary>
 	public class ExtraData : ObjectData
 	{
 		public Guid guid { get; set; }
@@ -17,10 +14,33 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
-			
-			this.position = serializer.ReadVector3( "Position" );
-			this.rotation = serializer.ReadQuaternion( "Rotation" );
+			try
+			{
+				this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Guid' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.position = serializer.ReadVector3( "Position" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Position' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.rotation = serializer.ReadQuaternion( "Rotation" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Rotation' (" + serializer.file.fileName + ")." );
+			}
+
 			this.DeserializeModulesKFF( serializer );
 		}
 

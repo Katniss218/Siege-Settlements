@@ -140,7 +140,6 @@ namespace SS
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
 		}
 
-#warning Need to know which module has which icon.
 		/// <summary>
 		/// Displays an object.
 		/// </summary>

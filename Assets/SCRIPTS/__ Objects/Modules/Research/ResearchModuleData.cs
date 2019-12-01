@@ -27,7 +27,7 @@ namespace SS.Levels.SaveStates
 			this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );
 			this.researchProgress = serializer.ReadFloat( "ResearchProgress" );
 
-			var analysisData = serializer.Analyze( "ResourcesRemaining" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
 			this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{

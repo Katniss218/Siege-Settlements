@@ -31,7 +31,7 @@ namespace SS.Levels.SaveStates
 			this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
 			this.trainProgress = serializer.ReadFloat( "TrainProgress" );
 
-			var analysisData = serializer.Analyze( "ResourcesRemaining" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
 			this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{

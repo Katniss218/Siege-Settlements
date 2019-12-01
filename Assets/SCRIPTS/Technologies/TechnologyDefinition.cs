@@ -24,7 +24,7 @@ namespace SS.Technologies
 			this.displayName = serializer.ReadString( "DisplayName" );
 
 			// Cost
-			var analysisData = serializer.Analyze( "Cost" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Cost" );
 			this.cost = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{

@@ -51,7 +51,7 @@ namespace SS.Diplomacy
 		
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
-			var analysisData = serializer.Analyze( "Techs" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Techs" );
 			if( analysisData.isFail )
 			{
 				throw new System.Exception( "The level file was missing per-faction technology entries." );

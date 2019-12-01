@@ -24,6 +24,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.6;
 				AttackCooldown = 0.8;
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
 				Icon = "extern:Textures/Modules/melee_icon.png";
 			}
@@ -84,6 +85,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.6;
 				AttackCooldown = 0.75;
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
 				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
@@ -152,6 +154,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.6;
 				AttackCooldown = 0.75;
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
 				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
@@ -220,6 +223,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.6;
 				AttackCooldown = 0.65;
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
 				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
@@ -288,6 +292,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.6;
 				AttackCooldown = 0.47;
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
 				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
@@ -362,6 +367,7 @@
 				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
 				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
@@ -438,6 +444,7 @@
 				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
 				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
@@ -514,6 +521,7 @@
 				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
 				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
@@ -721,8 +729,8 @@
 				LocalOffsetMin = { X = 0.0; Y = 0.2; Z = 0.0; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.0; Y = 0.2; Z = 0.0; };
-				AttackSound = "extern:Sounds/swoosh_deep.wav";
 				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
+				AttackSound = "extern:Sounds/swoosh_deep.wav";
 				Icon = "extern:Textures/Modules/ranged_icon.png";
 			}
 		];

@@ -71,10 +71,10 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildingCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildingData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildingDefinition.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Construction\BuildPreview.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Construction\BuildPreviewPositioner.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Construction\ConstructionSite.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Construction\ConstructionSiteData.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreview.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreviewPositioner.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\ConstructionSite.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\ConstructionSiteData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\02 Projectiles\Projectile.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\02 Projectiles\ProjectileCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\02 Projectiles\ProjectileData.cs" />

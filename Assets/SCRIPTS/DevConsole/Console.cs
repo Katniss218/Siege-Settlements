@@ -9,11 +9,6 @@ namespace SS.DevConsole
 		[SerializeField] private GameObject consoleGameObject = null;
 		
 		[SerializeField] private TMPro.TextMeshProUGUI output = null;
-		
-		void Inp_Tilde( InputQueue self )
-		{
-			consoleGameObject.SetActive( !consoleGameObject.activeSelf );
-		}
 
 		public void Print( string message )
 		{
@@ -26,7 +21,7 @@ namespace SS.DevConsole
 			output.text += "\n";
 		}
 
-		void HandleLog( string message, string stackTrace, LogType logType )
+		private void HandleLog( string message, string stackTrace, LogType logType )
 		{
 			switch( logType )
 			{
@@ -40,16 +35,22 @@ namespace SS.DevConsole
 
 				case LogType.Error:
 					PrintLine( "<color=#dd1111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>" );
+					consoleGameObject.SetActive( true ); // If an error is thrown - display the console.
 					break;
 
 				case LogType.Exception:
 					PrintLine( "<color=#ff2111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>\n<color=#dd3333>" + stackTrace + "</color>" );
-					consoleGameObject.SetActive( true ); // If an exception is thrown - show the console.
+					consoleGameObject.SetActive( true ); // If an exception is thrown - display the console.
 					break;
 			}
 		}
 
-		private void Awake()
+		private void Inp_Tilde( InputQueue self )
+		{
+			consoleGameObject.SetActive( !consoleGameObject.activeSelf );
+		}
+
+		void Awake()
 		{
 			if( !output.richText )
 			{
@@ -62,17 +63,20 @@ namespace SS.DevConsole
 
 		void OnEnable()
 		{
-			Main.keyboardInput.RegisterOnPress( KeyCode.BackQuote, -666.69f, Inp_Tilde, true );
-			Application.logMessageReceived += HandleLog;
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.RegisterOnPress( KeyCode.BackQuote, -666.69f, this.Inp_Tilde, true );
+			}
+			Application.logMessageReceived += this.HandleLog;
 		}
 		
 		void OnDisable()
 		{
 			if( Main.keyboardInput != null )
 			{
-				Main.keyboardInput.ClearOnPress( KeyCode.BackQuote, Inp_Tilde );
+				Main.keyboardInput.ClearOnPress( KeyCode.BackQuote, this.Inp_Tilde );
 			}
-			Application.logMessageReceived -= HandleLog;
+			Application.logMessageReceived -= this.HandleLog;
 		}
 	}
 }

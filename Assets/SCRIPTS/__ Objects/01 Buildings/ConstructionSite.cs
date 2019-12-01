@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Katniss.Utils;
 using SS.Content;
 using SS.ResourceSystem.Payment;
 using Object = UnityEngine.Object;

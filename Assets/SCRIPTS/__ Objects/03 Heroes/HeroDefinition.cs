@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Objects.Modules;
 using System;
 using UnityEngine;
 
@@ -133,21 +132,102 @@ namespace SS.Objects.Heroes
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.id = serializer.ReadString( "Id" );
-			this.displayName = serializer.ReadString( "DisplayName" );
-			this.displayTitle = serializer.ReadString( "DisplayTitle" );
+			try
+			{
+				this.id = serializer.ReadString( "Id" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Id' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.healthMax = serializer.ReadFloat( "MaxHealth" );
-			this.armor = new Armor();
-			serializer.Deserialize( "Armor", this.armor );
-			
+			try
+			{
+				this.displayName = serializer.ReadString( "DisplayName" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
-			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
-			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
-			this.radius = serializer.ReadFloat( "Radius" );
-			this.height = serializer.ReadFloat( "Height" );
-			
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.displayTitle = serializer.ReadString( "DisplayTitle" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DisplayTitle' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.healthMax = serializer.ReadFloat( "MaxHealth" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MaxHealth' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.armor = new Armor();
+				serializer.Deserialize( "Armor", this.armor );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Armor' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+
+			try
+			{
+				this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MovementSpeed' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'RotationSpeed' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.radius = serializer.ReadFloat( "Radius" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Radius' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.height = serializer.ReadFloat( "Height" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Height' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
 
 			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}

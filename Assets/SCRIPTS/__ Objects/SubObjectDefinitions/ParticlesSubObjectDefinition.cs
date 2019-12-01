@@ -205,7 +205,7 @@ namespace SS.Objects.SubObjects
 				throw new Exception( "Invalid shape '" + strShape + "'." );
 			}
 
-			var analysisData = serializer.Analyze( "VelocityOverLifetimeKeys" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "VelocityOverLifetimeKeys" );
 			if( analysisData.isSuccess )
 			{
 				this.velocityOverLifetime = new Tuple<float, Vector3>[analysisData.childCount];

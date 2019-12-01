@@ -28,6 +28,13 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 		public override ModuleData GetIdentityData()
 		{
 			return new ConstructorModuleData();
@@ -36,21 +43,29 @@ namespace SS.Objects.Modules
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.constructibleBuildings = serializer.ReadStringArray( "ConstructibleBuildings" );
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.constructibleBuildings = serializer.ReadStringArray( "ConstructibleBuildings" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ConstructibleBuildings' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteStringArray( "", "ConstructibleBuildings", this.constructibleBuildings );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }

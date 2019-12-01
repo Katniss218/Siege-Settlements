@@ -18,7 +18,7 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			var analysisData = serializer.Analyze( "Items" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Items" );
 			this.items = new Dictionary<string, int>( analysisData.childCount );
 			for( int i = 0; i < analysisData.childCount; i++ )
 			{

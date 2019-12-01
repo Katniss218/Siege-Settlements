@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	/// <summary>
-	/// Contains every information to successfully round-trip a projectile, to and from file.
-	/// </summary>
 	public class ProjectileData : ObjectData
 	{
 		public Guid guid { get; set; }
@@ -18,7 +15,22 @@ namespace SS.Levels.SaveStates
 		public Quaternion stuckRotation { get; set; }
 		public Vector3 velocity { get; set; }
 
-		public int factionId { get; set; }
+		private int __factionId = 0;
+		public int factionId
+		{
+			get
+			{
+				return this.__factionId;
+			}
+			set
+			{
+				if( value < 0 )
+				{
+					throw new Exception( "Can't set faction to outside of acceptable values." );
+				}
+				this.__factionId = value;
+			}
+		}
 
 		public DamageType damageTypeOverride { get; set; }
 		public float damageOverride { get; set; }
@@ -27,24 +39,91 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+			try
+			{
+				this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Guid' (" + serializer.file.fileName + ")." );
+			}
 
-			this.position = serializer.ReadVector3( "Position" );
-			this.isStuck = serializer.ReadBool( "IsStuck" );
+			try
+			{
+				this.position = serializer.ReadVector3( "Position" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Position' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.isStuck = serializer.ReadBool( "IsStuck" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'IsStuck' (" + serializer.file.fileName + ")." );
+			}
+
 			if( this.isStuck )
 			{
-				this.stuckRotation = serializer.ReadQuaternion( "StuckRotation" );
+				try
+				{
+					this.stuckRotation = serializer.ReadQuaternion( "StuckRotation" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'StuckRotation' (" + serializer.file.fileName + ")." );
+				}
 			}
 			else
 			{
-				this.velocity = serializer.ReadVector3( "Velocity" );
+				try
+				{
+					this.velocity = serializer.ReadVector3( "Velocity" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Velocity' (" + serializer.file.fileName + ")." );
+				}
 			}
 
-			this.factionId = serializer.ReadInt( "FactionId" );
+			try
+			{
+				this.factionId = serializer.ReadInt( "FactionId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
+			}
 
-			this.damageTypeOverride = (DamageType)serializer.ReadByte( "DamageTypeOverride" );
-			this.damageOverride = serializer.ReadFloat( "DamageOverride" );
-			this.armorPenetrationOverride = serializer.ReadFloat( "ArmorPenetrationOverride" );
+			try
+			{
+				this.damageTypeOverride = (DamageType)serializer.ReadByte( "DamageTypeOverride" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DamageTypeOverride' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.damageOverride = serializer.ReadFloat( "DamageOverride" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DamageOverride' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.armorPenetrationOverride = serializer.ReadFloat( "ArmorPenetrationOverride" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ArmorPenetrationOverride' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

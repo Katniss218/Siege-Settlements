@@ -148,36 +148,137 @@ namespace SS.Objects.Units
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.id = serializer.ReadString( "Id" );
-			this.displayName = serializer.ReadString( "DisplayName" );
-
-			this.healthMax = serializer.ReadFloat( "MaxHealth" );
-			this.armor = new Armor();
-			serializer.Deserialize( "Armor", this.armor );
-			
-			this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
-			this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
-			this.radius = serializer.ReadFloat( "Radius" );
-			this.height = serializer.ReadFloat( "Height" );
-
-			// Cost
-			var analysisData = serializer.Analyze( "Cost" );
-			this.cost = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
+			try
 			{
-				string id = serializer.ReadString( new Path( "Cost.{0}.Id", i ) );
-				int amt = serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) );
-				if( amt < 1 )
-				{
-					throw new Exception( "Can't have cost with amount less than or equal to 0." );
-				}
-				this.cost.Add( id, amt );
+				this.id = serializer.ReadString( "Id" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Id' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
-			this.buildTime = serializer.ReadFloat( "BuildTime" );
-			this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
-			
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.displayName = serializer.ReadString( "DisplayName" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.healthMax = serializer.ReadFloat( "MaxHealth" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MaxHealth' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.armor = new Armor();
+				serializer.Deserialize( "Armor", this.armor );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Armor' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MovementSpeed' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'RotationSpeed' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.radius = serializer.ReadFloat( "Radius" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Radius' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.height = serializer.ReadFloat( "Height" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Height' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			// Cost
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Cost" );
+			if( analysisData.isSuccess )
+			{
+				this.cost = new Dictionary<string, int>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						string id = serializer.ReadString( new Path( "Cost.{0}.Id", i ) );
+						int amt = serializer.ReadInt( new Path( "Cost.{0}.Amount", i ) );
+						if( amt < 1 )
+						{
+							throw new Exception( "Missing or invalid value of 'Cost' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+						}
+						this.cost.Add( id, amt );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Cost' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing or invalid value of 'Cost' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.buildTime = serializer.ReadFloat( "BuildTime" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'BuildTime' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.techsRequired = serializer.ReadStringArray( "TechsRequired" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TechsRequired' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
 
 			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}

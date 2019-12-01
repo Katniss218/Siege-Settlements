@@ -60,6 +60,13 @@ namespace SS.Objects.Modules
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			InventoryModule module = gameObject.AddComponent<InventoryModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 
 		public override ModuleData GetIdentityData()
 		{
@@ -69,22 +76,38 @@ namespace SS.Objects.Modules
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.slots = new SlotDefinition[serializer.Analyze( "Slots" ).childCount];
-			serializer.DeserializeArray( "Slots", this.slots );
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Slots" );
+			if( analysisData.isSuccess )
+			{
+				this.slots = new SlotDefinition[analysisData.childCount];
+				try
+				{
+					serializer.DeserializeArray( "Slots", this.slots );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Slots' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing or invalid value of 'Slots' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			InventoryModule module = gameObject.AddComponent<InventoryModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }

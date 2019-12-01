@@ -38,6 +38,13 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			MeleeModule module = gameObject.AddComponent<MeleeModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 
 		public override ModuleData GetIdentityData()
 		{
@@ -47,20 +54,92 @@ namespace SS.Objects.Modules
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.damageType = (DamageType)serializer.ReadByte( "DamageType" );
-			this.damage = serializer.ReadFloat( "Damage" );
-			this.armorPenetration = serializer.ReadFloat( "ArmorPenetration" );
-
-			this.attackRange = serializer.ReadFloat( "AttackRange" );
-			this.attackCooldown = serializer.ReadFloat( "AttackCooldown" );
-			this.attackSoundEffect = serializer.ReadAudioClipFromAssets( "AttackSound" );
-
-			this.traversibleSubObjects = new Guid[serializer.Analyze( "TraversibleSubObjects" ).childCount];
-			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+			try
 			{
-				this.traversibleSubObjects[i] = Guid.ParseExact( serializer.ReadString( new Path( "TraversibleSubObjects.{0}", i ) ), "D" );
+				this.damageType = (DamageType)serializer.ReadByte( "DamageType" );
 			}
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DamageType' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.damage = serializer.ReadFloat( "Damage" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Damage' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.armorPenetration = serializer.ReadFloat( "ArmorPenetration" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ArmorPenetration' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.attackRange = serializer.ReadFloat( "AttackRange" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'AttackRange' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.attackCooldown = serializer.ReadFloat( "AttackCooldown" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'AttackCooldown' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.attackSoundEffect = serializer.ReadAudioClipFromAssets( "AttackSound" );
+			}
+			catch
+			{
+				throw new Exception( "Missing 'AttackSound' (" + serializer.file.fileName + ")." );
+			}
+
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "TraversibleSubObjects" );
+			Debug.Log( analysisData.isSuccess );
+			if( analysisData.isSuccess )
+			{
+				this.traversibleSubObjects = new Guid[analysisData.childCount];
+				try
+				{
+					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+					{
+						this.traversibleSubObjects[i] = Guid.ParseExact( serializer.ReadString( new Path( "TraversibleSubObjects.{0}", i ) ), "D" );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'TraversibleSubObjects' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'TraversibleSubObjects' (" + serializer.file.fileName + ")." );
+			}
+
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -80,13 +159,6 @@ namespace SS.Objects.Modules
 			}
 			serializer.WriteStringArray( "", "TraversibleSubObjects", guidArray );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			MeleeModule module = gameObject.AddComponent<MeleeModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }

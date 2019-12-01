@@ -48,6 +48,13 @@ namespace SS.Objects.Modules
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
+		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		{
+			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
+			module.moduleId = moduleId;
+			module.SetDefData( this, data );
+		}
+
 
 		public override ModuleData GetIdentityData()
 		{
@@ -57,12 +64,41 @@ namespace SS.Objects.Modules
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			// resources
-			this.slots = new Slot[serializer.Analyze( "Resources" ).childCount];
-			serializer.DeserializeArray( "Resources", this.slots );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Resources" );
+			if( analysisData.isSuccess )
+			{
+				this.slots = new Slot[analysisData.childCount];
+				try
+				{
+					serializer.DeserializeArray( "Resources", this.slots );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Resources' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'Resources' (" + serializer.file.fileName + ")." );
+			}
 
-			this.mineSound = serializer.ReadAudioClipFromAssets( "MineSound" );
-			this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			try
+			{
+				this.mineSound = serializer.ReadAudioClipFromAssets( "MineSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'MineSound' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -72,13 +108,6 @@ namespace SS.Objects.Modules
 
 			serializer.WriteString( "", "MineSound", (string)this.mineSound );
 			serializer.WriteString( "", "Icon", (string)this.icon );
-		}
-
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
-		{
-			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
-			module.moduleId = moduleId;
-			module.SetDefData( this, data );
 		}
 	}
 }
