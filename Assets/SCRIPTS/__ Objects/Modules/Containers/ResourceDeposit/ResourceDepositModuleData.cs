@@ -1,7 +1,7 @@
 ﻿using KFF;
 using SS.Objects.Modules;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
@@ -19,10 +19,24 @@ namespace SS.Levels.SaveStates
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Items" );
-			this.items = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
+			if( analysisData.isSuccess )
 			{
-				this.items.Add( serializer.ReadString( new Path( "Items.{0}.Id", i ) ), serializer.ReadInt( new Path( "Items.{0}.Amount", i ) ) );
+				this.items = new Dictionary<string, int>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						this.items.Add( serializer.ReadString( new Path( "Items.{0}.Id", i ) ), serializer.ReadInt( new Path( "Items.{0}.Amount", i ) ) );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Items' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'Items' (" + serializer.file.fileName + ")." );
 			}
 		}
 

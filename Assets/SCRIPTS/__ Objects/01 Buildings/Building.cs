@@ -18,7 +18,11 @@ namespace SS.Objects.Buildings
 
 		public Vector3[] placementNodes { get; set; }
 
-		public Vector3? entrance { get; set; }
+#warning Entrance might not necessarily be restricted to buildings (think ships).
+		// Modules currently don't require other modules to function.
+		// Every workplace needs it's own entrance.
+		// Inside also needs it's own entrance.
+		// Barracks also need their own spawn point.
 
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 

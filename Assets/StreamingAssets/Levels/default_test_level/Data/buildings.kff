@@ -14,7 +14,6 @@
 		};
 		Size = { X = 1.29; Y = 0.58; Z = 1.46; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.2; Y = 0.0; Z = -1.1; }; // Barracks use it to spawn unit at this position (local).
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 40; },
@@ -112,7 +111,6 @@
 		};
 		Size = { X = 0.43; Y = 0.51; Z = 0.55; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; }
@@ -200,7 +198,6 @@
 		};
 		Size = { X = 0.72; Y = 0.62; Z = 1.03; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 10; },
@@ -259,7 +256,6 @@
 		};
 		Size = { X = 1.21; Y = 0.7; Z = 1.17; };
 		PlacementNodes = [ ];
-		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 25; },
@@ -319,7 +315,6 @@
 		};
 		Size = { X = 0.86; Y = 0.6; Z = 0.88; };
 		PlacementNodes = [ ];
-		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; },
@@ -383,7 +378,6 @@
 		};
 		Size = { X = 0.87; Y = 0.6; Z = 0.85; };
 		PlacementNodes = [ ];
-		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; },
@@ -446,7 +440,6 @@
 		};
 		Size = { X = 1.05; Y = 0.6; Z = 0.85; };
 		PlacementNodes = [ ];
-		Entrance = { X = -0.375; Y = 0.0; Z = -1.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; },
@@ -512,13 +505,12 @@
 			{ X = 0.375; Y = 0.125; Z = 0.0; },
 			{ X = -0.375; Y = 0.125; Z = 0.0; }
 		];
-		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 15; }
 		];
-		TechsRequired = [];
-		Modules = [];
+		TechsRequired = [ ];
+		Modules = [ ];
 		SubObjects =
 		[
 			{
@@ -557,13 +549,12 @@
 		};
 		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; }
 		];
-		TechsRequired = [];
-		Modules = [];
+		TechsRequired = [ ];
+		Modules = [ ];
 		SubObjects =
 		[
 			{
@@ -602,12 +593,11 @@
 		};
 		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
 		PlacementNodes = [ ];
-		Entrance = { X = 0.0; Y = 0.0; Z = 0.0; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 20; }
 		];
-		TechsRequired = [];
+		TechsRequired = [ ];
 		Modules =
 		[
 			{

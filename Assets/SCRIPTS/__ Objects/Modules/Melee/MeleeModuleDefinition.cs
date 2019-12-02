@@ -110,7 +110,6 @@ namespace SS.Objects.Modules
 			}
 
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "TraversibleSubObjects" );
-			Debug.Log( analysisData.isSuccess );
 			if( analysisData.isSuccess )
 			{
 				this.traversibleSubObjects = new Guid[analysisData.childCount];

@@ -81,19 +81,6 @@ namespace SS.Objects.Modules
 
 		void Awake()
 		{
-			Building ssObjectBuilding = this.ssObject as Building;
-			if( ssObjectBuilding != null )
-			{
-				if( ssObjectBuilding.entrance == null )
-				{
-					Debug.LogWarning( "Barracks assigned to Building with no entrance: '" + ssObjectBuilding.definitionId + "'." );
-				}
-				else
-				{
-					this.spawnPosition = ssObjectBuilding.entrance.Value;
-				}
-			}
-			
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
 		}
 		

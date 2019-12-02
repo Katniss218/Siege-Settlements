@@ -62,9 +62,7 @@ namespace SS.Objects.Buildings
 
 
 		public Vector3[] placementNodes { get; set; } // len = 0, if empty
-
-		public Vector3? entrance = null;
-
+		
 
 		public Dictionary<string, int> cost { get; private set; }
 		
@@ -92,7 +90,6 @@ namespace SS.Objects.Buildings
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-#warning Don't partially load levels if definitions are not loaded correctly.
 			try
 			{
 				this.id = serializer.ReadString( "Id" );
@@ -151,12 +148,7 @@ namespace SS.Objects.Buildings
 				throw new Exception( "Missing or invalid value of 'PlacementNodes' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
-
-			if( serializer.Analyze( "Entrance" ).isSuccess )
-			{
-				this.entrance = serializer.ReadVector3( "Entrance" );
-			}
-
+			
 			// Cost
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Cost" );
 			if( analysisData.isSuccess )
@@ -235,12 +227,7 @@ namespace SS.Objects.Buildings
 			serializer.WriteVector3( "", "Size", this.size );
 
 			serializer.WriteVector3Array( "", "PlacementNodes", this.placementNodes );
-
-			if( this.entrance != null )
-			{
-				serializer.WriteVector3( "", "Entrance", this.entrance.Value );
-			}
-
+			
 			// Cost
 			serializer.WriteList( "", "Cost" );
 			int i = 0;

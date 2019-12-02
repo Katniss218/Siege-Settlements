@@ -12,7 +12,7 @@ namespace SS.Diplomacy
 	{
 		[SerializeField] private int __factionId;
 		/// <summary>
-		/// Contains the identifier of the faction that this object belongs to.
+		/// Contains the index of the faction that this object belongs to.
 		/// </summary>
 		public int factionId
 		{

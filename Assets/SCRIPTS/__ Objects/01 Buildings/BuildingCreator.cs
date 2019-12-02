@@ -45,7 +45,6 @@ namespace SS.Objects.Buildings
 			// Set the building's native parameters.
 			Building building = gameObject.GetComponent<Building>();
 			building.definitionId = def.id;
-			building.entrance = def.entrance;
 			building.placementNodes = def.placementNodes;
 			building.StartToEndConstructionCost = def.cost;
 			building.buildSoundEffect = def.buildSoundEffect;

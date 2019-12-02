@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Objects.Modules;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,17 +29,55 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
-			this.trainProgress = serializer.ReadFloat( "TrainProgress" );
-
-			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
-			this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
+			try
 			{
-				this.resourcesRemaining.Add( serializer.ReadString( "ResourcesRemaining." + i + ".Id" ), serializer.ReadInt( "ResourcesRemaining." + i + ".Amount" ) );
+				this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TrainedUnitId' (" + serializer.file.fileName + ")." );
 			}
 
-			this.rallyPoint = serializer.ReadVector3( "RallyPoint" );
+			try
+			{
+				this.trainProgress = serializer.ReadFloat( "TrainProgress" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TrainProgress' (" + serializer.file.fileName + ")." );
+			}
+
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
+			if( analysisData.isSuccess )
+			{
+				this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						string id = serializer.ReadString( "ResourcesRemaining." + i + ".Id" );
+						int amount = serializer.ReadInt( "ResourcesRemaining." + i + ".Amount" );
+						this.resourcesRemaining.Add( id, amount );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.rallyPoint = serializer.ReadVector3( "RallyPoint" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'RallyPoint' (" + serializer.file.fileName + ")." );
+			}
 		}
 		
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -48,9 +87,10 @@ namespace SS.Levels.SaveStates
 
 			serializer.WriteVector3( "", "RallyPoint", this.rallyPoint );
 
-			if( resourcesRemaining != null )
+			
+			serializer.WriteList( "", "ResourcesRemaining" );
+			if( this.resourcesRemaining != null )
 			{
-				serializer.WriteList( "", "ResourcesRemaining" );
 				int i = 0;
 				foreach( var kvp in this.resourcesRemaining )
 				{

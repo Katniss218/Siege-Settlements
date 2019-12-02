@@ -171,7 +171,7 @@
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\FactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\RelationMap.cs" />
     <Compile Include="Assets\SCRIPTS\FontManager.cs" />
-    <Compile Include="Assets\SCRIPTS\IHUDObject.cs" />
+    <Compile Include="Assets\SCRIPTS\IHUDHolder.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\InputQueue.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\MouseCode.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\QueuedKeyboardInput.cs" />

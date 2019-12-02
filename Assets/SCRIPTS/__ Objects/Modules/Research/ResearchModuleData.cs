@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Objects.Modules;
+using System;
 using System.Collections.Generic;
 
 namespace SS.Levels.SaveStates
@@ -24,14 +25,45 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );
-			this.researchProgress = serializer.ReadFloat( "ResearchProgress" );
+			try
+			{
+				this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ResearchedTechnologyId' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.researchProgress = serializer.ReadFloat( "ResearchProgress" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ResearchProgress' (" + serializer.file.fileName + ")." );
+			}
 
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
-			this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
+			if( analysisData.isSuccess )
 			{
-				this.resourcesRemaining.Add( serializer.ReadString( new Path( "ResourcesRemaining.{0}.Id", i ) ), serializer.ReadInt( new Path( "ResourcesRemaining.{0}.Amount", i ) ) );
+				this.resourcesRemaining = new Dictionary<string, int>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						string id = serializer.ReadString( "ResourcesRemaining." + i + ".Id" );
+						int amount = serializer.ReadInt( "ResourcesRemaining." + i + ".Amount" );
+						this.resourcesRemaining.Add( id, amount );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
 			}
 		}
 

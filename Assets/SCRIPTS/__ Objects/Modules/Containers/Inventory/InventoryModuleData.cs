@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Objects.Modules;
+using System;
 
 namespace SS.Levels.SaveStates
 {
@@ -42,8 +43,23 @@ namespace SS.Levels.SaveStates
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.items = new SlotData[serializer.Analyze( "Slots" ).childCount];
-			serializer.DeserializeArray( "Slots", this.items );
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Slots" );
+			if( analysisData.isSuccess )
+			{
+				this.items = new SlotData[analysisData.childCount];
+				try
+				{
+					serializer.DeserializeArray( "Slots", this.items );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Slots' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing 'Slots' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
