@@ -116,6 +116,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObject.cs" />
@@ -176,7 +177,7 @@
     <Compile Include="Assets\SCRIPTS\Input System\MouseCode.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\QueuedKeyboardInput.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\QueuedMouseInput.cs" />
-    <Compile Include="Assets\SCRIPTS\ITargetFinder.cs" />
+    <Compile Include="Assets\SCRIPTS\ITargeterModule.cs" />
     <Compile Include="Assets\SCRIPTS\Levels\LevelDataManager.cs" />
     <Compile Include="Assets\SCRIPTS\Levels\LevelManager.cs" />
     <Compile Include="Assets\SCRIPTS\Main.cs" />

@@ -24,6 +24,10 @@ namespace SS.Objects.Buildings
 		// Inside also needs it's own entrance.
 		// Barracks also need their own spawn point.
 
+#warning Units can enter buildings (each building can have multiple slots for units).
+#warning Each slot has a limit to how much population can occupy it.
+			
+
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 
 		public AudioClip buildSoundEffect { get; set; }

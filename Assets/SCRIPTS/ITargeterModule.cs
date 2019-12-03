@@ -1,12 +1,7 @@
 ﻿namespace SS
 {
-	public interface ITargetFinder
+	public interface ITargeterModule
 	{
-		/// <summary>
-		/// Returns the current target, returns null if the target is no longer targetable.
-		/// </summary>
-		Damageable target { get; }
-
 		/// <summary>
 		/// Returns the max view distance of the target finder.
 		/// </summary>

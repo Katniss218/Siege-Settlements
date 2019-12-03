@@ -17,7 +17,7 @@ namespace SS
 
 
 			private NavMeshAgent navMeshAgent = null;
-			private ITargetFinder[] targeters = null;
+			private ITargeterModule[] targeters = null;
 			
 			private float attackDistance = 0.0f;
 			private float maxSearchRange = 0.0f;
@@ -25,7 +25,7 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.targeters = this.GetComponents<ITargetFinder>();
+				this.targeters = this.GetComponents<ITargeterModule>();
 				for( int i = 0; i < this.targeters.Length; i++ )
 				{
 					if( this.maxSearchRange >= this.targeters[i].searchRange )

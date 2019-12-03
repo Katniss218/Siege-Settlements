@@ -7,122 +7,29 @@ using SS.Objects.Projectiles;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
-using SS.Objects;
 using Random = UnityEngine.Random;
 
 namespace SS.Objects.Modules
 {
-	public class RangedModule : SSModule, ITargetFinder
+	public class RangedModule : SSModule, ITargeterModule
 	{
 		public const string KFF_TYPEID = "ranged";
 
-		private Damageable __target;
-
-
 		public float searchRange { get; set; }
 
-		// Recalculate the target, when the target needs to be accessed.
-		// Two types, melee and ranged. ranged takes into account the projectile trajectory, and doesn't target behind walls/etc.
-		
-		public Damageable target
-		{
-			get
-			{
-				if( this.CanTarget( this.__target ) )
-				{
-					this.__target = null;
-				}
-				if( this.__target == null )
-				{
-					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-					{
-						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-					}
-				}
-				return this.__target;
-			}
-		}
+		// it's the target finder.
 
-		public bool CanTarget( Damageable target )
-		{
-			if( target == null )
-			{
-				return false;
-			}
-
-			if( Vector3.Distance( target.transform.position, this.transform.position ) > this.searchRange )
-			{
-				return false;
-			}
-
-			if( !this.factionMember.CanTargetAnother( target.GetComponent<FactionMember>() ) )
-			{
-				return false;
-			}
-
-			return true;
-		}
-
+		private Targeter targeter;
 		public Damageable TrySetTarget()
 		{
-			this.__target = this.FindTarget( this.searchRange );
-			if( this.__target == null )
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-				}
-			}
-			return this.__target;
-		}
-
-		public Damageable TrySetTarget( Damageable target )
-		{
-			if( this.CanTarget( target ) )
-			{
-				this.__target = target;
-			}
-			if( this.__target == null )
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-				}
-			}
-			return this.__target;
+			return this.targeter.TrySetTarget( this.transform.position );
 		}
 		
-		private Damageable FindTarget( float searchRange )
+		public Damageable TrySetTarget( Damageable target )
 		{
-			Collider[] col = Physics.OverlapSphere( this.transform.position, searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK );
-			
-			if( col.Length == 0 )
-			{
-				return null;
-			}
-
-			Vector3 thisPosition = this.transform.position;
-			for( int i = 0; i < col.Length; i++ )
-			{
-				SSObject ssObject = col[i].GetComponent<SSObject>();
-
-				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( (ssObject as IFactionMember).factionMember ) )
-				{
-					continue;
-				}
-
-				// Disregard potential targets, if the overlap is present, but the center is outside.
-				if( Main.IsInRange( col[i].transform.position, thisPosition, searchRange ) )
-				{
-					return (ssObject as IDamageable).damageable;
-				}
-			}
-
-			return null;
+			return this.targeter.TrySetTarget( this.transform.position, target );
 		}
 
-		// it's the target finder.
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
@@ -137,7 +44,6 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
-		private FactionMember factionMember;
 		
 		private SubObject[] traversibleSubObjects { get; set; }
 
@@ -185,15 +91,15 @@ namespace SS.Objects.Modules
 				for( int i = 0; i < this.projectileCount; i++ )
 				{
 					pos = new Vector3(
-						UnityEngine.Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
-						UnityEngine.Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
-						UnityEngine.Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
+						Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
+						Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
+						Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
 					);
 
 					Vector3 ranVel = vel;
-					ranVel.x *= UnityEngine.Random.Range( 0.9f, 1.1f );
-					ranVel.y *= UnityEngine.Random.Range( 0.95f, 1.05f );
-					ranVel.z *= UnityEngine.Random.Range( 0.9f, 1.1f );
+					ranVel.x *= Random.Range( 0.9f, 1.1f );
+					ranVel.y *= Random.Range( 0.95f, 1.05f );
+					ranVel.z *= Random.Range( 0.9f, 1.1f );
 					this.Shoot( toWorld.MultiplyVector( pos ) + this.transform.position, ranVel );
 				}
 				AudioManager.PlaySound( this.attackSoundEffect );
@@ -207,18 +113,30 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
-			data.factionId = this.factionMember.factionId;
+			data.factionId = this.targeter.factionMember.factionId;
 			data.damageTypeOverride = this.damageSource.damageType;
 			data.damageOverride = this.damageSource.damage;
 			data.armorPenetrationOverride = this.damageSource.armorPenetration;
 
 			ProjectileCreator.Create( this.projectile, data );
 		}
-		
+
+		void Awake()
+		{
+			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
+
+			this.targeter.onTargetReset += () =>
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
+			};
+		}
+
 		void Start()
 		{
 			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
-			this.factionMember = this.GetComponent<FactionMember>();
 		}
 
 		void Update()
@@ -228,39 +146,43 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			
-			if( this.__target != null )
+
+			// Set the target to null, if can't target any longer.
+			if( !Targeter.CanTarget( this.targeter.factionMember, this.targeter.target, this.transform.position, this.searchRange ) )
+			{
+				this.targeter.target = null;
+			}
+
+			if( this.targeter.target != null )
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.__target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.targeter.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
 			}
 
 			if( this.isReadyToAttack )
 			{
-				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
-
-				if( !this.CanTarget( this.__target ) )
+				// Get target, if previous target was not targetable or no target is present - try to find a suitable one.
+				if( this.targeter.target == null )
 				{
-					this.__target = null;
 					if( Random.Range( 0, 10 ) == 0 )
 					{
-						this.__target = this.TrySetTarget();
+						this.targeter.TrySetTarget( this.transform.position );
 					}
 				}
 
-				if( this.__target == null )
+				if( this.targeter.target == null )
 				{
 					return;
 				}
 
-				if( this.__target.transform.position == this.transform.position )
+				if( this.targeter.target.transform.position == this.transform.position )
 				{
 					return;
 				}
 
-				this.Attack( this.__target );
+				this.Attack( this.targeter.target );
 			}
 		}
 
@@ -268,9 +190,9 @@ namespace SS.Objects.Modules
 		{
 			RangedModuleData data = new RangedModuleData();
 
-			if( this.target != null )
+			if( this.targeter.target != null )
 			{
-				data.targetGuid = this.target.GetComponent<SSObject>().guid.Value;
+				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid.Value;
 			}
 			return data;
 		}
@@ -319,9 +241,10 @@ namespace SS.Objects.Modules
 				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
 
+			this.targeter.searchRange = this.searchRange;
 			if( data.targetGuid != null )
 			{
-				this.TrySetTarget( Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>() );
+				this.targeter.TrySetTarget( this.transform.position, Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>() );
 			}
 		}
 		
@@ -329,11 +252,11 @@ namespace SS.Objects.Modules
 
 		private void OnDrawGizmos()
 		{
-			if( this.__target != null )
+			if( this.targeter.target != null )
 			{
-				Gizmos.color = new Color( 0.0f, 0.0f, 1.0f );
-				Gizmos.DrawSphere( this.__target.transform.position, 0.125f );
-				Gizmos.DrawLine( this.transform.position, this.__target.transform.position );
+				Gizmos.color = Color.blue;
+				Gizmos.DrawLine( this.transform.position, this.targeter.target.transform.position );
+				Gizmos.DrawSphere( this.targeter.target.transform.position, 0.125f );
 			}
 		}
 
@@ -351,9 +274,9 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < 100; i++ )
 			{
 				pos = new Vector3(
-					UnityEngine.Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
-					UnityEngine.Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
-					UnityEngine.Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
+					Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
+					Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
+					Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
 				);
 				Gizmos.DrawSphere( toWorld.MultiplyVector( pos ) + this.transform.position, 0.05f );
 			}
