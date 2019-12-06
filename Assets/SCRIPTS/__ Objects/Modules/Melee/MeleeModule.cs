@@ -6,24 +6,13 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class MeleeModule : SSModule, ITargeterModule
+	public class MeleeModule : SSModule, IAttackModule
 	{
 		public const string KFF_TYPEID = "melee";
 
 		public float searchRange { get; set; }
+		public Targeter targeter { get; private set; }
 
-		// it's the target finder.
-
-		private Targeter targeter;
-		public Damageable TrySetTarget()
-		{
-			return this.targeter.TrySetTarget( this.transform.position );
-		}
-
-		public Damageable TrySetTarget( Damageable target )
-		{
-			return this.targeter.TrySetTarget( this.transform.position, target );
-		}
 
 		public DamageSource damageSource;
 		public float attackCooldown;
@@ -31,8 +20,6 @@ namespace SS.Objects.Modules
 		
 		private float lastAttackTimestamp;
 		
-		private SubObject[] traversibleSubObjects { get; set; }
-
 		public bool isReadyToAttack
 		{
 			get
@@ -41,6 +28,16 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		private bool isReady2 = false;
+
+		private SubObject[] traversibleSubObjects { get; set; }
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+		
 		void Awake()
 		{
 			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
@@ -67,11 +64,6 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			if( !Targeter.CanTarget( this.targeter.factionMember, this.targeter.target, this.transform.position, this.searchRange ) )
-			{
-				this.targeter.target = null;
-			}
-
 			if( this.targeter.target != null )
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
@@ -80,33 +72,37 @@ namespace SS.Objects.Modules
 				}
 			}
 
-			if( this.isReadyToAttack )
+			if( this.isReady2 )
 			{
-				// Get target, if current target is not targetable or no target is present - try to find a suitable one.
-				if( !Targeter.CanTarget( this.targeter.factionMember, this.targeter.target, this.transform.position, this.searchRange ) )
-				{
-					this.targeter.TrySetTarget( this.transform.position );
-				}
-				
 				if( this.targeter.target == null )
 				{
 					return;
 				}
-				
+
 				this.Attack( this.targeter.target );
-				AudioManager.PlaySound( this.attackSoundEffect );
+			}
+
+			if( this.isReadyToAttack )
+			{
+				this.isReady2 = true;
 			}
 		}
-
+		
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
 		/// </summary>
 		public void Attack( Damageable target )
 		{
 			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+			AudioManager.PlaySound( this.attackSoundEffect );
 			this.lastAttackTimestamp = Time.time;
+			this.isReady2 = false;
 		}
 
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
 		public override ModuleData GetData()

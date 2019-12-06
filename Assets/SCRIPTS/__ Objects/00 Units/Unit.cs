@@ -1,11 +1,12 @@
 ﻿using SS.Diplomacy;
 using SS.UI;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectSelectable, IHUDHolder, IDamageable, IFactionMember, IPointerEnterHandler
+	public class Unit : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IPointerEnterHandler
 	{
 		public GameObject hud { get; set; }
 
@@ -36,7 +37,21 @@ namespace SS.Objects.Units
 				return this.__factionMember;
 			}
 		}
-		
+
+		private NavMeshAgent __navMeshAgent = null;
+		public NavMeshAgent navMeshAgent
+		{
+			get
+			{
+				if( this.__navMeshAgent == null )
+				{
+					this.__navMeshAgent = this.GetComponent<NavMeshAgent>();
+				}
+				return this.__navMeshAgent;
+			}
+		}
+
+
 		void Update()
 		{
 			if( hud.activeSelf )

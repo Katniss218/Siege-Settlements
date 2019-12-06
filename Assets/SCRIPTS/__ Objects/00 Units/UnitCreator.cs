@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.Diplomacy;
+using SS.AI;
 
 namespace SS.Objects.Units
 {
@@ -17,7 +18,7 @@ namespace SS.Objects.Units
 		private const float DEFAULT_STOPPING_DISTANCE = 0.125f;
 		private const string GAMEOBJECT_NAME = "Unit";
 
-		
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -30,7 +31,7 @@ namespace SS.Objects.Units
 			//
 
 			SSObjectCreator.AssignSubObjects( gameObject, def );
-			
+
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -42,7 +43,7 @@ namespace SS.Objects.Units
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
-			
+
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			navMeshAgent.radius = def.radius;
@@ -56,7 +57,7 @@ namespace SS.Objects.Units
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
-			
+
 
 			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
 
@@ -90,18 +91,20 @@ namespace SS.Objects.Units
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
 			damageable.armor = def.armor;
-			
+
 			//
 			//    MODULES
 			//
 
 			SSObjectCreator.AssignModules( gameObject, def, data );
-			
-			TAIGoalData taiGoalData = data.taiGoalData;
+
+			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			//tacticalGoalController.goal = new TacticalIdleGoal() { hostileMode = TacticalIdleGoal.HostileMode.ALL };
+			/*TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
 			{
 				TAIGoal.Assign( gameObject, taiGoalData );
-			}
+			}*/
 		}
 
 		private static GameObject CreateUnit( Guid guid )

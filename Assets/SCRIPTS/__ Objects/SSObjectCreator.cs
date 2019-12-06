@@ -1,11 +1,10 @@
 ﻿using SS.Content;
 using SS.Objects.Modules;
-using SS.Objects;
 using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
 
-namespace SS
+namespace SS.Objects
 {
 	public static class SSObjectCreator
 	{

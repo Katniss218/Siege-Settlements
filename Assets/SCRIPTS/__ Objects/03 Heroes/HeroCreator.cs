@@ -7,6 +7,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using SS.AI;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Heroes
@@ -99,11 +100,12 @@ namespace SS.Objects.Heroes
 			SSObjectCreator.AssignModules( gameObject, def, data );
 
 
-			TAIGoalData taiGoalData = data.taiGoalData;
+			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			/*TAIGoalData taiGoalData = data.taiGoalData;
 			if( taiGoalData != null )
 			{
 				TAIGoal.Assign( gameObject, taiGoalData );
-			}
+			}*/
 		}
 		
 		private static GameObject CreateHero( Guid guid )

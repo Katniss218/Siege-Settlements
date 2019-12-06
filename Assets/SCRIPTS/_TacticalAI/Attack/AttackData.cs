@@ -16,7 +16,14 @@ namespace SS
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.targetGuid = Guid.ParseExact( serializer.ReadString( "TargetGuid" ), "D" );
+			try
+			{
+				this.targetGuid = Guid.ParseExact( serializer.ReadString( "TargetGuid" ), "D" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TargetGuid' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

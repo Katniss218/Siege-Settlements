@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using UnityEngine;
 
 namespace SS
@@ -15,7 +16,14 @@ namespace SS
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.destination = serializer.ReadVector3( "Destination" );
+			try
+			{
+				this.destination = serializer.ReadVector3( "Destination" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Destination' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

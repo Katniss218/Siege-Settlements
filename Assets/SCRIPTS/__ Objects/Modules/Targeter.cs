@@ -6,6 +6,12 @@ namespace SS.Objects.Modules
 {
 	public class Targeter
 	{
+		public enum TargetingMode : byte
+		{
+			CLOSEST,
+			ARBITRARY
+		}
+
 		private Damageable __target;
 		public Damageable target
 		{
@@ -27,7 +33,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
-
+		public TargetingMode targetingMode { get; set; }
 		public float searchRange { get; set; }
 		public int layers { get; private set; }
 
@@ -67,7 +73,14 @@ namespace SS.Objects.Modules
 
 		public Damageable TrySetTarget( Vector3 positionSelf )
 		{
-			this.target = this.FindTarget( positionSelf );
+			if( this.targetingMode == TargetingMode.ARBITRARY )
+			{
+				this.target = this.FindTargetArbitrary( positionSelf );
+			}
+			else if( this.targetingMode == TargetingMode.CLOSEST )
+			{
+				this.target = this.FindTargetClosest( positionSelf );
+			}
 			return this.target;
 		}
 
@@ -80,7 +93,7 @@ namespace SS.Objects.Modules
 			return this.target;
 		}
 		
-		private Damageable FindTarget( Vector3 positionSelf )
+		private Damageable FindTargetArbitrary( Vector3 positionSelf )
 		{
 			Collider[] col = Physics.OverlapSphere( positionSelf, this.searchRange, this.layers );
 			if( col.Length == 0 )
@@ -90,22 +103,55 @@ namespace SS.Objects.Modules
 			
 			for( int i = 0; i < col.Length; i++ )
 			{
-				SSObject ssObject = col[i].GetComponent<SSObject>();
+				FactionMember facOther = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( (ssObject as IFactionMember).factionMember ) )
+				if( !this.factionMember.CanTargetAnother( facOther ) )
 				{
 					continue;
 				}
 
-				if( !Main.IsInRange( col[i].transform.position, positionSelf, searchRange ) )
+				if( !Main.IsInRange( col[i].transform.position, positionSelf, this.searchRange ) )
 				{
 					continue;
 				}
 
-				return (ssObject as IDamageable).damageable;
+				IDamageable ssDamageable = col[i].GetComponent<IDamageable>();
+				return ssDamageable.damageable;
 			}
 			return null;
+		}
+
+		private Damageable FindTargetClosest( Vector3 positionSelf )
+		{
+			Collider[] col = Physics.OverlapSphere( positionSelf, this.searchRange, this.layers );
+			if( col.Length == 0 )
+			{
+				return null;
+			}
+			Damageable ret = null;
+			float needThisClose = this.searchRange;
+
+			for( int i = 0; i < col.Length; i++ )
+			{
+				FactionMember facOther = col[i].GetComponent<FactionMember>();
+
+				// Check if the overlapped object can be targeted by this finder.
+				if( !this.factionMember.CanTargetAnother( facOther ) )
+				{
+					continue;
+				}
+
+				if( !Main.IsInRange( col[i].transform.position, positionSelf, needThisClose ) )
+				{
+					continue;
+				}
+
+				needThisClose = Vector3.Distance( col[i].transform.position, positionSelf );
+				IDamageable ssDamageable = col[i].GetComponent<IDamageable>();
+				ret = ssDamageable.damageable;
+			}
+			return ret;
 		}
 	}
 }

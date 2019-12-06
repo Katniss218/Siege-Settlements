@@ -627,7 +627,7 @@ namespace SS
 				{
 					continue;
 				}
-				ITargeterModule[] targeters = selected[i].GetComponents<ITargeterModule>();
+				IAttackModule[] targeters = selected[i].GetComponents<IAttackModule>();
 				if( targeters == null || targeters.Length == 0 )
 				{
 					continue;

@@ -1,4 +1,5 @@
 ﻿using SS.Objects;
+using SS.Objects.Modules;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,7 +18,7 @@ namespace SS
 
 
 			private NavMeshAgent navMeshAgent = null;
-			private ITargeterModule[] targeters = null;
+			private IAttackModule[] targeters = null;
 			
 			private float attackDistance = 0.0f;
 			private float maxSearchRange = 0.0f;
@@ -25,7 +26,7 @@ namespace SS
 			void Start()
 			{
 				this.navMeshAgent = this.GetComponent<NavMeshAgent>();
-				this.targeters = this.GetComponents<ITargeterModule>();
+				this.targeters = this.GetComponents<IAttackModule>();
 				for( int i = 0; i < this.targeters.Length; i++ )
 				{
 					if( this.maxSearchRange >= this.targeters[i].searchRange )
@@ -60,7 +61,7 @@ namespace SS
 				{
 					for( int i = 0; i < this.targeters.Length; i++ )
 					{
-						bool f = this.targeters[i].TrySetTarget( this.targetDamageable );
+						bool f = this.targeters[i].targeter.TrySetTarget( this.transform.position, this.targetDamageable );
 						if( !hasAcquiredTarget )
 						{
 							hasAcquiredTarget = f;
@@ -92,7 +93,7 @@ namespace SS
 				{
 					for( int i = 0; i < this.targeters.Length; i++ )
 					{
-						this.targeters[i].TrySetTarget( this.targetDamageable );
+						this.targeters[i].targeter.TrySetTarget( this.transform.position, this.targetDamageable );
 					}
 
 					if( this.navMeshAgent != null )

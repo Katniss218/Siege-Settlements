@@ -2,10 +2,11 @@
 using SS.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectSelectable, IHUDHolder, IDamageable, IFactionMember
+	public class Hero : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember
 	{
 		public GameObject hud { get; set; }
 
@@ -81,7 +82,21 @@ namespace SS.Objects.Heroes
 				return this.__factionMember;
 			}
 		}
-		
+
+		private NavMeshAgent __navMeshAgent = null;
+		public NavMeshAgent navMeshAgent
+		{
+			get
+			{
+				if( this.__navMeshAgent == null )
+				{
+					this.__navMeshAgent = this.GetComponent<NavMeshAgent>();
+				}
+				return this.__navMeshAgent;
+			}
+		}
+
+
 		void Update()
 		{
 			if( hud.activeSelf )

@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace SS.Objects.Modules
 {
-	public class RangedModule : SSModule, ITargeterModule
+	public class RangedModule : SSModule, IAttackModule
 	{
 		public const string KFF_TYPEID = "ranged";
 
@@ -19,34 +19,20 @@ namespace SS.Objects.Modules
 
 		// it's the target finder.
 
-		private Targeter targeter;
-		public Damageable TrySetTarget()
-		{
-			return this.targeter.TrySetTarget( this.transform.position );
-		}
-		
-		public Damageable TrySetTarget( Damageable target )
-		{
-			return this.targeter.TrySetTarget( this.transform.position, target );
-		}
+		public Targeter targeter { get; private set; }
 
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
-
 		public DamageSource damageSource;
-		
 		public float attackCooldown;
 		public float velocity;
 		public Vector3 localOffsetMin;
 		public Vector3 localOffsetMax;
-
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
 		
-		private SubObject[] traversibleSubObjects { get; set; }
-
 		public bool isReadyToAttack
 		{
 			get
@@ -54,6 +40,71 @@ namespace SS.Objects.Modules
 				return Time.time >= this.lastAttackTimestamp + this.attackCooldown;
 			}
 		}
+
+		private bool isReady2 = false;
+
+		private SubObject[] traversibleSubObjects { get; set; }
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+		void Awake()
+		{
+			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() ) { targetingMode = Targeter.TargetingMode.CLOSEST };
+
+			this.targeter.onTargetReset += () =>
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+				}
+			};
+		}
+
+		void Start()
+		{
+			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
+		}
+
+		void Update()
+		{
+			// If it's not usable - return, don't attack.
+			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
+			{
+				return;
+			}
+			
+			if( this.targeter.target != null )
+			{
+				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+				{
+					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.targeter.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+				}
+			}
+
+			if( this.isReady2 )
+			{
+				if( this.targeter.target == null )
+				{
+					return;
+				}
+
+				if( this.targeter.target.transform.position == this.transform.position )
+				{
+					return;
+				}
+
+				this.Attack( this.targeter.target );
+			}
+
+			if( this.isReadyToAttack )
+			{
+				this.isReady2 = true;
+			}
+		}
+
 
 		/// <summary>
 		/// Forces RangedComponent to shoot at the target (assumes target != null).
@@ -105,6 +156,7 @@ namespace SS.Objects.Modules
 				AudioManager.PlaySound( this.attackSoundEffect );
 			}
 			this.lastAttackTimestamp = Time.time;
+			this.isReady2 = false;
 		}
 
 		private void Shoot( Vector3 pos, Vector3 vel )
@@ -121,70 +173,11 @@ namespace SS.Objects.Modules
 			ProjectileCreator.Create( this.projectile, data );
 		}
 
-		void Awake()
-		{
-			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
 
-			this.targeter.onTargetReset += () =>
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-				}
-			};
-		}
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		void Start()
-		{
-			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
-		}
-
-		void Update()
-		{
-			// If it's not usable - return, don't attack.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
-			{
-				return;
-			}
-
-			// Set the target to null, if can't target any longer.
-			if( !Targeter.CanTarget( this.targeter.factionMember, this.targeter.target, this.transform.position, this.searchRange ) )
-			{
-				this.targeter.target = null;
-			}
-
-			if( this.targeter.target != null )
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.targeter.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
-				}
-			}
-
-			if( this.isReadyToAttack )
-			{
-				// Get target, if previous target was not targetable or no target is present - try to find a suitable one.
-				if( this.targeter.target == null )
-				{
-					if( Random.Range( 0, 10 ) == 0 )
-					{
-						this.targeter.TrySetTarget( this.transform.position );
-					}
-				}
-
-				if( this.targeter.target == null )
-				{
-					return;
-				}
-
-				if( this.targeter.target.transform.position == this.transform.position )
-				{
-					return;
-				}
-
-				this.Attack( this.targeter.target );
-			}
-		}
 
 		public override ModuleData GetData()
 		{
