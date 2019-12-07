@@ -25,6 +25,7 @@ namespace SS.AI
 				}
 				this.__goal = value;
 				this.__goal.Start( this );
+				Debug.Log( this.gameObject.name + ": Set the TacticalGoal to: " + value.GetType().Name );
 			}
 		}
 
@@ -41,7 +42,7 @@ namespace SS.AI
 			}
 		}
 
-		private static TacticalIdleGoal GetDefaultGoal()
+		public static TacticalIdleGoal GetDefaultGoal()
 		{
 			return new TacticalIdleGoal()
 			{

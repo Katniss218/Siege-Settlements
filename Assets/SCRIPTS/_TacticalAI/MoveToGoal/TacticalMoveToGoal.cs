@@ -21,7 +21,6 @@ namespace SS.AI.Goals
 		}
 
 		public DestinationType destination { get; private set; }
-
 		public Vector3? destinationPos { get; private set; }
 		public SSObject destinationObject { get; private set; }
 
@@ -41,7 +40,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-
+		
 		public void SetDestination( Vector3 destination )
 		{
 			this.destination = DestinationType.POSITION;
@@ -76,18 +75,10 @@ namespace SS.AI.Goals
 				}
 
 				// If the agent has travelled to the destination - switch back to the Idle Goal.
-				if( navMeshAgent.desiredVelocity.magnitude < 0.01f )
+				if( Vector3.Distance( currDestPos, controller.transform.position ) <= this.navMeshAgent.stoppingDistance )
 				{
-					TacticalIdleGoal idleGoal = new TacticalIdleGoal();
-					if( this.hostileMode == GoalHostileMode.ALL || this.hostileMode == GoalHostileMode.DESTINATION )
-					{
-						idleGoal.hostileMode = TacticalIdleGoal.GoalHostileMode.ALL;
-					}
-					else if( this.hostileMode == GoalHostileMode.NONE )
-					{
-						idleGoal.hostileMode = TacticalIdleGoal.GoalHostileMode.NONE;
-					}
-					controller.goal = idleGoal;
+					this.navMeshAgent.ResetPath();
+					controller.goal = TacticalGoalController.GetDefaultGoal();
 				}
 
 				this.oldDestination = currDestPos;
@@ -112,12 +103,23 @@ namespace SS.AI.Goals
 		{
 			if( hostileMode == GoalHostileMode.NONE )
 			{
-#warning TODO! - needs to stop targeting whatever it was targeting (if applicable).
+				for( int i = 0; i < this.attackModules.Length; i++ )
+				{
+					if( this.attackModules[i].targeter.target != null )
+					{
+						this.attackModules[i].targeter.target = null;
+					}
+				}
 				return;
 			}
 
 			if( hostileMode == GoalHostileMode.DESTINATION )
 			{
+				if( this.destination != DestinationType.OBJECT )
+				{
+#warning TODO! - prevent setting the hostile to DESTINATION if the destination is a position.
+					return;
+				}
 				// If it's not usable - return, don't attack.
 				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
 				{
@@ -133,14 +135,19 @@ namespace SS.AI.Goals
 					}
 				}
 
-				for( int i = 0; i < this.attackModules.Length; i++ )
+				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
 				{
-					if( this.attackModules[i].isReadyToAttack )
+					for( int i = 0; i < this.attackModules.Length; i++ )
 					{
+						if( this.attackModules[i].isReadyToAttack )
+						{
 #warning Need to prevent targeting other objects.
-						this.attackModules[i].targeter.TrySetTarget( controller.transform.position, (destinationObject as IDamageable).damageable );
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, (destinationObject as IDamageable).damageable );
+						}
 					}
 				}
+
+				return;
 			}
 
 			if( hostileMode == GoalHostileMode.ALL )
@@ -160,14 +167,16 @@ namespace SS.AI.Goals
 					}
 				}
 
-				for( int i = 0; i < this.attackModules.Length; i++ )
+				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
 				{
-					if( this.attackModules[i].isReadyToAttack )
+					for( int i = 0; i < this.attackModules.Length; i++ )
 					{
-						this.attackModules[i].targeter.TrySetTarget( controller.transform.position );
+						if( this.attackModules[i].isReadyToAttack )
+						{
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position );
+						}
 					}
 				}
-
 
 				return;
 			}
@@ -175,6 +184,16 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
+			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
+			if( this.destination == DestinationType.OBJECT )
+			{
+				if( this.destinationObject == null )
+				{
+					this.navMeshAgent.ResetPath();
+					controller.goal = TacticalGoalController.GetDefaultGoal();
+					return;
+				}
+			}
 			this.UpdatePosition( controller );
 			this.UpdateTargeting( controller );
 		}

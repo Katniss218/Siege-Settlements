@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Objects;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 

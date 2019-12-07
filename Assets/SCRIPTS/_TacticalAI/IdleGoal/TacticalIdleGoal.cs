@@ -1,5 +1,6 @@
 ﻿using SS.Objects;
 using SS.Objects.Modules;
+using UnityEngine;
 
 namespace SS.AI.Goals
 {
@@ -13,7 +14,7 @@ namespace SS.AI.Goals
 
 		public GoalHostileMode hostileMode { get; set; }
 
-		
+
 
 		private IAttackModule[] attackModules;
 
@@ -57,15 +58,17 @@ namespace SS.AI.Goals
 						this.attackModules[i].targeter.target = null;
 					}
 				}
-								
-				for( int i = 0; i < this.attackModules.Length; i++ )
+
+				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
 				{
-					if( this.attackModules[i].isReadyToAttack )
+					for( int i = 0; i < this.attackModules.Length; i++ )
 					{
-						this.attackModules[i].targeter.TrySetTarget( controller.transform.position );
+						if( this.attackModules[i].isReadyToAttack )
+						{
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position );
+						}
 					}
 				}
-				
 
 				return;
 			}
@@ -76,7 +79,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		public override TacticalGoalData GetData()
 		{
 			return new TacticalIdleGoalData()

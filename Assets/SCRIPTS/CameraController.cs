@@ -37,6 +37,10 @@ namespace SS
 			}
 			set
 			{
+				if( value <= 0 )
+				{
+					throw new System.Exception( "Camera Size must be greater then 0." );
+				}
 				this.__size = value;
 				this.camera.orthographicSize = value;
 			}

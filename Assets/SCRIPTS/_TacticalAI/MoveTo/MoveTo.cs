@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Objects;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -74,7 +75,7 @@ namespace SS
 
 			public struct MovementGridInfo
 			{
-				public Dictionary<GameObject, Vector2Int> positions;
+				public Dictionary<SSObject, Vector2Int> positions;
 
 				public int sizeX;
 				public int sizeZ;
@@ -83,12 +84,12 @@ namespace SS
 			/// <summary>
 			/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 			/// </summary>
-			public static MovementGridInfo GetGridPositions( List<GameObject> objects )
+			public static MovementGridInfo GetGridPositions( List<SSObject> objects )
 			{
 				int count = objects.Count;
 				int sideLen = Mathf.CeilToInt( Mathf.Sqrt( count ) );
 
-				Dictionary<GameObject, Vector2Int> ret = new Dictionary<GameObject, Vector2Int>();
+				Dictionary<SSObject, Vector2Int> ret = new Dictionary<SSObject, Vector2Int>();
 
 				int i = 0;
 				int x = 0, z = 0;

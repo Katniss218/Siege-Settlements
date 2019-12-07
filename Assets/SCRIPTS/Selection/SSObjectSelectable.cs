@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace SS
+namespace SS.Objects
 {
 	/// <summary>
 	/// Add this to any object to make it selectable by the player.

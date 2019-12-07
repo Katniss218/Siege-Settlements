@@ -30,7 +30,7 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 5.0;
 				AttackCooldown = 3.0;
-				Velocity = 2.5;
+				Velocity = 2.3;
 				LocalOffsetMin = { X = -0.2; Y = 0.1875; Z = -0.2; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.2; Y = 0.1875; Z = 0.2; };

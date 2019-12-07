@@ -16,6 +16,8 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
+using SS.AI;
+using SS.AI.Goals;
 
 namespace SS
 {
@@ -755,7 +757,7 @@ namespace SS
 			const float GRID_MARGIN = 0.125f;
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableGameObjects = new List<GameObject>();
+			List<SSObject> movableGameObjects = new List<SSObject>();
 
 			float biggestRadius = float.MinValue;
 
@@ -772,7 +774,7 @@ namespace SS
 				}
 
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
-				movableGameObjects.Add( selected[i].gameObject );
+				movableGameObjects.Add( selected[i] );
 				if( navMeshAgent.radius > biggestRadius )
 				{
 					biggestRadius = navMeshAgent.radius;
@@ -795,7 +797,12 @@ namespace SS
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
-					TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
+					TacticalGoalController goalController = kvp.Key.GetComponent<TacticalGoalController>();
+					TacticalMoveToGoal goal = new TacticalMoveToGoal();
+					goal.hostileMode = TacticalMoveToGoal.GoalHostileMode.NONE;
+					goal.SetDestination( gridPositionWorld );
+					goalController.goal = goal;
+					//TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
 				}
 				else
 				{

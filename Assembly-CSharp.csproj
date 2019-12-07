@@ -126,6 +126,8 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\SubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\Attack\Attack.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\Attack\AttackData.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoal.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropoffToInventory\DropoffToInventory.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropoffToInventory\DropoffToInventoryData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropoffToNew\DropoffToNew.cs" />
@@ -140,6 +142,8 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\TacticalMoveToGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickupDeposit\PickupDeposit.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickupDeposit\PickupDepositData.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\PickUpGoal\TacticalPickUpGoal.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\PickUpGoal\TacticalPickUpGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickupInventory\PickupInventory.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickupInventory\PickupInventoryData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TacticalGoal.cs" />

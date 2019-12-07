@@ -17,14 +17,106 @@ namespace SS
 		[SerializeField] Transform sunPivot = null;
 		[SerializeField] Transform moonPivot = null;
 
-		public int dayLength = 400;
-		public int nightLength = 200;
+		public int __dayLength = 400;
+		public int dayLength
+		{
+			get
+			{
+				return this.__dayLength;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new System.Exception( "Day Length must be greater than 0." );
+				}
+				this.__dayLength = value;
+			}
+		}
+		public int __nightLength = 200;
+		public int nightLength
+		{
+			get
+			{
+				return this.__nightLength;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new System.Exception( "Night Length must be greater than 0." );
+				}
+				this.__nightLength = value;
+			}
+		}
 
-		public float sunIntensity = 0.8f;
-		public float moonIntensity = 0.1f;
+		private float __sunIntensity = 0.8f;
+		public float sunIntensity
+		{
+			get
+			{
+				return this.__sunIntensity;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new System.Exception( "Sun Intensity must be greater then 0." );
+				}
+				this.__sunIntensity = value;
+			}
+		}
 
-		public float sunElevationAngle = 60;
-		public float moonElevationAngle = 60;
+		private float __moonIntensity = 0.1f;
+		public float moonIntensity
+		{
+			get
+			{
+				return this.__moonIntensity;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new System.Exception( "Moon Intensity must be greater then 0." );
+				}
+				this.__moonIntensity = value;
+			}
+		}
+
+		private float __sunElevationAngle = 60;
+		public float sunElevationAngle
+		{
+			get
+			{
+				return this.__sunElevationAngle;
+			}
+			set
+			{
+				if( value < 0 || value > 180 )
+				{
+					throw new System.Exception( "Sun Elevation Angle must be between 0 and 180." );
+				}
+				this.__sunElevationAngle = value;
+			}
+		}
+
+		private float __moonElevationAngle = 60;
+		public float moonElevationAngle
+		{
+			get
+			{
+				return this.__moonElevationAngle;
+			}
+			set
+			{
+				if( value < 0 || value > 180 )
+				{
+					throw new System.Exception( "Moon Elevation Angle must be between 0 and 180." );
+				}
+				this.__moonElevationAngle = value;
+			}
+		}
 
 		public Color ambientLightColor = Color.black;
 
@@ -51,6 +143,10 @@ namespace SS
 			}
 			set
 			{
+				if( value < 0 )
+				{
+					throw new System.Exception( "Time must be greater or equal to 0." );
+				}
 				this.__time = value % this.totalDayLength;
 			}
 		}

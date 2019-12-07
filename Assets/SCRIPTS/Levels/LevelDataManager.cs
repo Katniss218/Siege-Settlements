@@ -2,8 +2,10 @@
 using SS.Diplomacy;
 using SS.Technologies;
 using SS.TerrainCreation;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Object = UnityEngine.Object;
 
 namespace SS.Levels
 {
@@ -77,7 +79,7 @@ namespace SS.Levels
 			{
 				if( value != null && value.Length != _factions.Length )
 				{
-					throw new System.Exception( "Faction definitions array must have the same length as the faction data array." );
+					throw new Exception( "Faction definitions array must have the same length as the faction data array." );
 				}
 				_factionData = value;
 			}
@@ -103,7 +105,7 @@ namespace SS.Levels
 			}
 			else
 			{
-				throw new System.Exception( "Unknown technology '" + id + "'." );
+				throw new Exception( "Unknown technology '" + id + "'." );
 			}
 		}
 
@@ -174,7 +176,7 @@ namespace SS.Levels
 			int count = serializer.Analyze( "List" ).childCount;
 			if( count != factionCount )
 			{
-				throw new System.Exception( "The number of faction data doesn't match the number of factions of the level." );
+				throw new Exception( "The number of faction data doesn't match the number of factions of the level." );
 			}
 
 			factionData = new FactionData[factionCount];
@@ -187,11 +189,17 @@ namespace SS.Levels
 			serializer.DeserializeArray( "List", factionData );
 
 
-			int relMatCount = serializer.Analyze( "RelationMatrix" ).childCount;
+			int relMatrixLength = serializer.Analyze( "RelationMatrix" ).childCount;
 
 			sbyte[] array = serializer.ReadSByteArray( "RelationMatrix" );
 
-			diplomaticRelations = new RelationMap<DiplomaticRelation>( RelationMap<DiplomaticRelation>.GetSize( relMatCount ), DiplomaticRelation.Neutral );
+			int supposedMatrixLength = RelationMap<DiplomaticRelation>.GetMatrixLength( factionCount );
+			if( relMatrixLength != supposedMatrixLength )
+			{
+				throw new Exception( "The number of entries in the faction relation matrix doesn't match the number of factions of the level. Supposed to be " + supposedMatrixLength + "." );
+			}
+
+			diplomaticRelations = new RelationMap<DiplomaticRelation>( factionCount, DiplomaticRelation.Neutral );
 			onRelationChanged = new _UnityEvent_int_int_DiplomaticRelation();
 			for( int i = 0; i < diplomaticRelations.MatrixLength; i++ )
 			{
@@ -201,72 +209,138 @@ namespace SS.Levels
 
 		public static void LoadDaylightCycle( KFFSerializer serializer )
 		{
-			int dayLength = serializer.ReadInt( "DaylightCycle.DayLength" );
-			int nightLength = serializer.ReadInt( "DaylightCycle.NightLength" );
-
-			float sunIntensity = serializer.ReadFloat( "DaylightCycle.SunIntensity" );
-			float moonIntensity = serializer.ReadFloat( "DaylightCycle.MoonIntensity" );
-
-			float sunElevationAngle = serializer.ReadFloat( "DaylightCycle.SunElevationAngle" );
-			float moonElevationAngle = serializer.ReadFloat( "DaylightCycle.MoonElevationAngle" );
-
-
 			DaylightCycleController daylightCycle = Object.FindObjectOfType<DaylightCycleController>();
 			if( daylightCycle == null )
 			{
 				throw new System.Exception( "Couldn't find DaylightCycleController object." );
 			}
-			daylightCycle.dayLength = dayLength;
-			daylightCycle.nightLength = nightLength;
 
-			daylightCycle.sunIntensity = sunIntensity;
-			daylightCycle.moonIntensity = moonIntensity;
+			try
+			{
+				daylightCycle.dayLength = serializer.ReadInt( "DaylightCycle.DayLength" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.DayLength' (" + serializer.file.fileName + ")." );
+			}
 
-			daylightCycle.sunElevationAngle = sunElevationAngle;
-			daylightCycle.moonElevationAngle = moonElevationAngle;
+			try
+			{
+				daylightCycle.nightLength = serializer.ReadInt( "DaylightCycle.NightLength" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.NightLength' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				daylightCycle.sunIntensity = serializer.ReadFloat( "DaylightCycle.SunIntensity" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.SunIntensity' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				daylightCycle.moonIntensity = serializer.ReadFloat( "DaylightCycle.MoonIntensity" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.MoonIntensity' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				daylightCycle.sunElevationAngle = serializer.ReadFloat( "DaylightCycle.SunElevationAngle" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.SunElevationAngle' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				daylightCycle.moonElevationAngle = serializer.ReadFloat( "DaylightCycle.MoonElevationAngle" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.MoonElevationAngle' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public static void LoadDaylightCycleData( KFFSerializer serializer )
 		{
-			float time = serializer.ReadFloat( "DaylightCycleData.Time" );
-			
 			if( DaylightCycleController.instance == null )
 			{
-				throw new System.Exception( "Couldn't find DaylightCycleController object." );
+				throw new Exception( "Couldn't find DaylightCycleController object." );
 			}
-			DaylightCycleController.instance.time = time;
+
+			try
+			{
+				DaylightCycleController.instance.time = serializer.ReadFloat( "DaylightCycleData.Time" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycleData.Time' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public static void LoadCameraData( KFFSerializer serializer )
 		{
-			Vector3 pos = serializer.ReadVector3( "CameraData.Position" );
-			Quaternion rot = serializer.ReadQuaternion( "CameraData.Rotation" );
-
-			int zoomSize = serializer.ReadInt( "CameraData.ZoomSize" );
-
+			
 			
 			if( CameraController.instance == null )
 			{
-				throw new System.Exception( "Couldn't find CameraController object." );
+				throw new Exception( "Couldn't find CameraController object." );
 			}
 
-			CameraController.instance.transform.SetPositionAndRotation( pos, rot );
-			CameraController.instance.size = zoomSize;
+			try
+			{
+				CameraController.instance.transform.position = serializer.ReadVector3( "CameraData.Position" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'CameraData.Position' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				CameraController.instance.transform.rotation = serializer.ReadQuaternion( "CameraData.Rotation" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'CameraData.Rotation' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				CameraController.instance.size = serializer.ReadInt( "CameraData.ZoomSize" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'CameraData.ZoomSize' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public static void LoadTimeData( KFFSerializer serializer )
 		{
-			float timeElapsed = serializer.ReadFloat( "GameTimeElapsed" );
-
-
 			GameTimeCounter gameTimeCounter = Object.FindObjectOfType<GameTimeCounter>();
 
 			if( gameTimeCounter == null )
 			{
-				throw new System.Exception( "Couldn't find GameTimeCounter object." );
+				throw new Exception( "Couldn't find GameTimeCounter object." );
 			}
 
-			gameTimeCounter.gameTimeOffset = timeElapsed;
+			try
+			{
+				gameTimeCounter.gameTimeOffset = serializer.ReadFloat( "GameTimeElapsed" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'GameTimeElapsed' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		//
@@ -291,7 +365,7 @@ namespace SS.Levels
 		{			
 			if( DaylightCycleController.instance == null )
 			{
-				throw new System.Exception( "Couldn't find DaylightCycleController object." );
+				throw new Exception( "Couldn't find DaylightCycleController object." );
 			}
 
 			serializer.WriteClass( "", "DaylightCycleData" );
@@ -302,7 +376,7 @@ namespace SS.Levels
 		{
 			if( CameraController.instance == null )
 			{
-				throw new System.Exception( "Couldn't find CameraController object." );
+				throw new Exception( "Couldn't find CameraController object." );
 			}
 
 			serializer.WriteClass( "", "CameraData" );
@@ -319,7 +393,7 @@ namespace SS.Levels
 
 			if( gameTimeCounter == null )
 			{
-				throw new System.Exception( "Couldn't find GameTimeCounter object." );
+				throw new Exception( "Couldn't find GameTimeCounter object." );
 			}
 
 			serializer.WriteFloat( "", "GameTimeElapsed", gameTimeCounter.GetElapsed() );

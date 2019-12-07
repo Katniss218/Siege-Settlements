@@ -9,7 +9,23 @@ namespace SS
 		[SerializeField] private TMP_Text textField = null;
 
 		public string format = "{0}";
-		public float gameTimeOffset = 0.0f;
+
+		private float __gameTimeOffset = 0.0f;
+		public float gameTimeOffset
+		{
+			get
+			{
+				return this.__gameTimeOffset;
+			}
+			set
+			{
+				if( value < 0 )
+				{
+					throw new System.Exception( "GameTime Offset must be greater or equal to 0." );
+				}
+				this.__gameTimeOffset = value;
+			}
+		}
 
 
 		private float startTime = 0.0f;
