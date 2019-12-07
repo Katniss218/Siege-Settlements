@@ -34,7 +34,7 @@ namespace SS.AI.Goals
 		/// </summary>
 		public string resourceId { get; set; }
 
-		public GoalHostileMode hostileMode { get; set; }
+		public bool isHostile { get; set; }
 
 
 		private Vector3 oldDestination;
@@ -44,7 +44,7 @@ namespace SS.AI.Goals
 
 		public TacticalDropOffGoal()
 		{
-			this.hostileMode = GoalHostileMode.ALL;
+			this.isHostile = true;
 		}
 
 
@@ -62,7 +62,6 @@ namespace SS.AI.Goals
 
 		public void SetDestination( SSObject destination )
 		{
-#warning TODO! - disable assigning itself as the destination.
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = destination;
@@ -114,13 +113,7 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			if( hostileMode == GoalHostileMode.NONE )
-			{
-#warning TODO! - needs to stop targeting whatever it was targeting (if applicable).
-				return;
-			}
-
-			if( hostileMode == GoalHostileMode.ALL )
+			if( this.isHostile )
 			{
 				// If it's not usable - return, don't attack.
 				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
@@ -147,30 +140,36 @@ namespace SS.AI.Goals
 						}
 					}
 				}
-
-				return;
+			}
+			else
+			{
+				for( int i = 0; i < this.attackModules.Length; i++ )
+				{
+					if( this.attackModules[i].targeter.target != null )
+					{
+						this.attackModules[i].targeter.target = null;
+					}
+				}
 			}
 		}
 
 		private void OnArrivalObject( TacticalGoalController controller, InventoryModule destinationInventory )
 		{
 			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
-
-			//InventoryModule destinationInventory = this.destinationObject.GetModules<InventoryModule>()[0];
-
+			
 			foreach( var kvp in resourcesCarried )
 			{
-#warning TODO! - ugly code.
 				// If the goal wants a specific resource - disregard any other resources.
 				if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
 				{
 					continue;
 				}
-				int spaceLeftDst = destinationInventory.GetSpaceLeft( kvp.Key );
-				if( spaceLeftDst > 0 )
+
+				int spaceLeft = destinationInventory.GetSpaceLeft( kvp.Key );
+				if( spaceLeft > 0 )
 				{
 					int amountCarried = kvp.Value;
-					int amountDroppedOff = spaceLeftDst < amountCarried ? spaceLeftDst : amountCarried;
+					int amountDroppedOff = spaceLeft < amountCarried ? spaceLeft : amountCarried;
 
 					destinationInventory.Add( kvp.Key, amountDroppedOff );
 					this.inventory.Remove( kvp.Key, amountDroppedOff );
@@ -266,7 +265,16 @@ namespace SS.AI.Goals
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
+
+				if( this.destinationObject == controller.ssObject )
+				{
+					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
+					controller.goal = TacticalGoalController.GetDefaultGoal();
+					return;
+				}
 			}
+
+
 			this.UpdatePosition( controller );
 			this.UpdateTargeting( controller );
 
@@ -303,7 +311,7 @@ namespace SS.AI.Goals
 				destination = this.destination,
 				destinationObjectGuid = this.destinationObject.guid,
 				destinationPosition = this.destinationPos,
-				hostileMode = this.hostileMode
+				isHostile = this.isHostile
 			};
 		}
 
@@ -324,7 +332,7 @@ namespace SS.AI.Goals
 				this.destinationPos = data.destinationPosition;
 			}
 
-			this.hostileMode = data.hostileMode;
+			this.isHostile = data.isHostile;
 		}
 	}
 }

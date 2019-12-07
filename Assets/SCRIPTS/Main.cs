@@ -27,6 +27,9 @@ namespace SS
 	public class Main : MonoBehaviour
 	{
 		public const float DEFAULT_NAVMESH_BASE_OFFSET = -0.075f;
+		public const float DEFAULT_NAVMESH_ACCELERATION = 8.0f;
+		public const float DEFAULT_NAVMESH_STOPPING_DIST = 0.01f;
+		public const float DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM = 0.125f;
 
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
@@ -659,44 +662,11 @@ namespace SS
 			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
+#warning TODO! - attack.
 				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.GetComponent<SSObject>() );
 			}
 		}
-
-		private void AssignDropoffToNewGoal( RaycastHit hitInfo, SSObjectSelectable[] selected )
-		{
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
-
-			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			for( int i = 0; i < selected.Length; i++ )
-			{
-				if( !IsControllableByPlayer( selected[i].gameObject, LevelDataManager.PLAYER_FAC ) )
-				{
-					continue;
-				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
-				{
-					continue;
-				}
-				if( inv.isEmpty )
-				{
-					continue;
-				}
-
-				movableWithInvGameObjects.Add( selected[i].gameObject );
-			}
-
-			if( movableWithInvGameObjects.Count > 0 )
-			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
-			}
-			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
-			{
-				TAIGoal.DropoffToNew.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.point );
-			}
-		}
-
+		
 		private void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -748,7 +718,12 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.GetComponent<SSObject>() );
+				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalDropOffGoal goal = new TacticalDropOffGoal();
+				goal.isHostile = false;
+				goal.SetDestination( hitInfo.collider.GetComponent<SSObject>() );
+				goalController.goal = goal;
+				//TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.GetComponent<SSObject>() );
 			}
 		}
 
@@ -799,7 +774,7 @@ namespace SS
 				{
 					TacticalGoalController goalController = kvp.Key.GetComponent<TacticalGoalController>();
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
-					goal.hostileMode = TacticalMoveToGoal.GoalHostileMode.NONE;
+					goal.isHostile = false;
 					goal.SetDestination( gridPositionWorld );
 					goalController.goal = goal;
 					//TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
@@ -853,7 +828,12 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
+				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalPickUpGoal goal = new TacticalPickUpGoal();
+				goal.isHostile = false;
+				goal.destinationObject = hitSSObject;
+				goalController.goal = goal;
+			//	TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
 		private void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectSelectable[] selected )
@@ -903,7 +883,12 @@ namespace SS
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
-				TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
+				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalPickUpGoal goal = new TacticalPickUpGoal();
+				goal.isHostile = false;
+				goal.destinationObject = hitSSObject;
+				goalController.goal = goal;
+				//TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
 
@@ -975,6 +960,7 @@ namespace SS
 			}
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
+#warning TODO! - make payment
 				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.GetComponent<SSObject>() );
 			}
 		}

@@ -20,9 +20,9 @@ namespace SS.AI.Goals
 		/// Specified which resource is going to be picked up (null for all).
 		/// </summary>
 		public string resourceId { get; set; }
+		public SSObject destinationObject { get; set; }
 
-		public GoalHostileMode hostileMode { get; set; }
-		public SSObject destinationObject { get; private set; }
+		public bool isHostile { get; set; }
 
 
 		private float amountCollectedDeposit;
@@ -34,7 +34,7 @@ namespace SS.AI.Goals
 
 		public TacticalPickUpGoal()
 		{
-			this.hostileMode = GoalHostileMode.ALL;
+			this.isHostile = true;
 		}
 
 
@@ -59,19 +59,22 @@ namespace SS.AI.Goals
 			{
 				this.navMeshAgent.SetDestination( currDestPos );
 			}
+			
+			// If the agent has travelled to the destination - reset the path (but keep the goal)
+			if( this.navMeshAgent.hasPath )
+			{
+				if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+				{
+					this.navMeshAgent.ResetPath();
+				}
+			}
 
 			this.oldDestination = currDestPos;
 		}
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			if( hostileMode == GoalHostileMode.NONE )
-			{
-#warning TODO! - needs to stop targeting whatever it was targeting (if applicable).
-				return;
-			}
-
-			if( hostileMode == GoalHostileMode.ALL )
+			if( this.isHostile )
 			{
 				// If it's not usable - return, don't attack.
 				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
@@ -98,8 +101,16 @@ namespace SS.AI.Goals
 						}
 					}
 				}
-
-				return;
+			}
+			else
+			{
+				for( int i = 0; i < this.attackModules.Length; i++ )
+				{
+					if( this.attackModules[i].targeter.target != null )
+					{
+						this.attackModules[i].targeter.target = null;
+					}
+				}
 			}
 		}
 
@@ -141,11 +152,11 @@ namespace SS.AI.Goals
 				}
 			}
 
-			else
+#warning TODO! - Make sure to disable pickup goal after inventory is full (can no longer pick up).
+			/*if( amountPickedUp == 0 ) doesn't work
 			{
 				controller.goal = TacticalGoalController.GetDefaultGoal();
-			}
-#warning TODO! - Make sure to disable pickup goal after inventory is full (can no longer pick up).
+			}*/
 		}
 
 		private void OnArrivalInventory( TacticalGoalController controller, InventoryModule inventoryToPickUp )
@@ -193,6 +204,13 @@ namespace SS.AI.Goals
 				return;
 			}
 
+			if( this.destinationObject == controller.ssObject )
+			{
+				Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
+				controller.goal = TacticalGoalController.GetDefaultGoal();
+				return;
+			}
+
 			this.UpdatePosition( controller );
 			this.UpdateTargeting( controller );
 
@@ -200,7 +218,6 @@ namespace SS.AI.Goals
 			{
 				ResourceDepositModule[] deposits = this.destinationObject.GetModules<ResourceDepositModule>();
 				InventoryModule[] inventories = this.destinationObject.GetModules<InventoryModule>();
-
 				if( deposits.Length > 0 )
 				{
 #warning TODO! - ugly code.
@@ -230,7 +247,7 @@ namespace SS.AI.Goals
 			{
 				resourceId = this.resourceId,
 				destinationObjectGuid = this.destinationObject.guid,
-				hostileMode = this.hostileMode
+				isHostile = this.isHostile
 			};
 		}
 
@@ -240,7 +257,7 @@ namespace SS.AI.Goals
 
 			this.resourceId = data.resourceId;
 			this.destinationObject = Main.GetSSObject( data.destinationObjectGuid.Value );
-			this.hostileMode = data.hostileMode;
+			this.isHostile = data.isHostile;
 		}
 	}
 }

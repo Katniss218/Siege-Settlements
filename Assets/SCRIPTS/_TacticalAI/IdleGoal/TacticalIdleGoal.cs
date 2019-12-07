@@ -6,13 +6,7 @@ namespace SS.AI.Goals
 {
 	public class TacticalIdleGoal : TacticalGoal
 	{
-		public enum GoalHostileMode : byte
-		{
-			ALL,
-			NONE
-		}
-
-		public GoalHostileMode hostileMode { get; set; }
+		public bool isHostile { get; set; }
 
 
 
@@ -20,7 +14,7 @@ namespace SS.AI.Goals
 
 		public TacticalIdleGoal()
 		{
-			this.hostileMode = GoalHostileMode.ALL;
+			this.isHostile = true;
 		}
 
 
@@ -36,14 +30,9 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
-			if( hostileMode == GoalHostileMode.NONE )
+			if( this.isHostile )
 			{
-#warning TODO! - needs to stop targeting whatever it was targeting (if applicable).
-				return;
-			}
-
-			if( hostileMode == GoalHostileMode.ALL )
-			{
+#warning TODO! - optimise by having only 1 overlapsphere (the largest radius, and filtering for smaller targeters).
 				// If it's not usable - return, don't attack.
 				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
 				{
@@ -69,8 +58,16 @@ namespace SS.AI.Goals
 						}
 					}
 				}
-
-				return;
+			}
+			else
+			{
+				for( int i = 0; i < this.attackModules.Length; i++ )
+				{
+					if( this.attackModules[i].targeter.target != null )
+					{
+						this.attackModules[i].targeter.target = null;
+					}
+				}
 			}
 		}
 
@@ -84,7 +81,7 @@ namespace SS.AI.Goals
 		{
 			return new TacticalIdleGoalData()
 			{
-				hostileMode = this.hostileMode
+				isHostile = this.isHostile
 			};
 		}
 
@@ -92,7 +89,7 @@ namespace SS.AI.Goals
 		{
 			TacticalIdleGoalData data = (TacticalIdleGoalData)_data;
 
-			this.hostileMode = data.hostileMode;
+			this.isHostile = data.isHostile;
 		}
 	}
 }

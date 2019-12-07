@@ -14,8 +14,6 @@ namespace SS.Objects.Units
 {
 	public static class UnitCreator
 	{
-		private const float DEFAULT_ACCELERATION = 8.0f;
-		private const float DEFAULT_STOPPING_DISTANCE = 0.125f;
 		private const string GAMEOBJECT_NAME = "Unit";
 
 
@@ -128,8 +126,8 @@ namespace SS.Objects.Units
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
 			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
-			navMeshAgent.acceleration = DEFAULT_ACCELERATION;
-			navMeshAgent.stoppingDistance = DEFAULT_STOPPING_DISTANCE;
+			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
+			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );

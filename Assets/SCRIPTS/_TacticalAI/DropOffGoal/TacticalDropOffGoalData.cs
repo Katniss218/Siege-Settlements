@@ -12,7 +12,7 @@ namespace SS.AI.Goals
 		public Vector3? destinationPosition { get; set; }
 		public Guid? destinationObjectGuid { get; set; }
 
-		public TacticalDropOffGoal.GoalHostileMode hostileMode { get; set; }
+		public bool isHostile { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -59,7 +59,7 @@ namespace SS.AI.Goals
 
 			try
 			{
-				this.hostileMode = (TacticalDropOffGoal.GoalHostileMode)serializer.ReadByte( "HostileMode" );
+				this.isHostile = serializer.ReadBool( "IsHostile" );
 			}
 			catch
 			{
@@ -83,7 +83,7 @@ namespace SS.AI.Goals
 				serializer.WriteString( "", "DestinationObjectGuid", this.destinationObjectGuid.Value.ToString( "D" ) );
 			}
 
-			serializer.WriteByte( "", "HostileMode", (byte)this.hostileMode );
+			serializer.WriteBool( "", "IsHostile", this.isHostile );
 		}
 	}
 }

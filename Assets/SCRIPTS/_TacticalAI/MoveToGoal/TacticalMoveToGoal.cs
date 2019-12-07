@@ -12,19 +12,14 @@ namespace SS.AI.Goals
 			POSITION,
 			OBJECT
 		}
-
-		public enum GoalHostileMode : byte
-		{
-			ALL,
-			DESTINATION,
-			NONE
-		}
-
+		
 		public DestinationType destination { get; private set; }
 		public Vector3? destinationPos { get; private set; }
 		public SSObject destinationObject { get; private set; }
+		
+		public bool isHostile { get; set; }
 
-		public GoalHostileMode hostileMode { get; set; }
+
 
 		private Vector3 oldDestination;
 		private NavMeshAgent navMeshAgent;
@@ -32,7 +27,7 @@ namespace SS.AI.Goals
 
 		public TacticalMoveToGoal()
 		{
-			this.hostileMode = GoalHostileMode.ALL;
+			this.isHostile = true;
 		}
 
 
@@ -50,7 +45,6 @@ namespace SS.AI.Goals
 
 		public void SetDestination( SSObject destination )
 		{
-#warning TODO! - disable assigning itself as the destination.
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = destination;
@@ -74,11 +68,15 @@ namespace SS.AI.Goals
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
-				// If the agent has travelled to the destination - switch back to the Idle Goal.
-				if( Vector3.Distance( currDestPos, controller.transform.position ) <= this.navMeshAgent.stoppingDistance )
+				// If the agent has travelled to the destination - switch back to the default Goal.
+				if( this.navMeshAgent.hasPath )
 				{
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
+					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+					{
+						this.navMeshAgent.ResetPath();
+						controller.goal = TacticalGoalController.GetDefaultGoal();
+						return;
+					}
 				}
 
 				this.oldDestination = currDestPos;
@@ -101,56 +99,7 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			if( hostileMode == GoalHostileMode.NONE )
-			{
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( this.attackModules[i].targeter.target != null )
-					{
-						this.attackModules[i].targeter.target = null;
-					}
-				}
-				return;
-			}
-
-			if( hostileMode == GoalHostileMode.DESTINATION )
-			{
-				if( this.destination != DestinationType.OBJECT )
-				{
-#warning TODO! - prevent setting the hostile to DESTINATION if the destination is a position.
-					return;
-				}
-				// If it's not usable - return, don't attack.
-				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
-				{
-					return;
-				}
-
-				IFactionMember fac = controller.GetComponent<IFactionMember>();
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( !Targeter.CanTarget( fac.factionMember, this.attackModules[i].targeter.target, controller.transform.position, this.attackModules[i].targeter.searchRange ) )
-					{
-						this.attackModules[i].targeter.target = null;
-					}
-				}
-
-				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
-				{
-					for( int i = 0; i < this.attackModules.Length; i++ )
-					{
-						if( this.attackModules[i].isReadyToAttack )
-						{
-#warning Need to prevent targeting other objects.
-							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, (destinationObject as IDamageable).damageable );
-						}
-					}
-				}
-
-				return;
-			}
-
-			if( hostileMode == GoalHostileMode.ALL )
+			if( this.isHostile )
 			{
 				// If it's not usable - return, don't attack.
 				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
@@ -177,8 +126,16 @@ namespace SS.AI.Goals
 						}
 					}
 				}
-
-				return;
+			}
+			else
+			{
+				for( int i = 0; i < this.attackModules.Length; i++ )
+				{
+					if( this.attackModules[i].targeter.target != null )
+					{
+						this.attackModules[i].targeter.target = null;
+					}
+				}
 			}
 		}
 
@@ -190,6 +147,13 @@ namespace SS.AI.Goals
 				if( this.destinationObject == null )
 				{
 					this.navMeshAgent.ResetPath();
+					controller.goal = TacticalGoalController.GetDefaultGoal();
+					return;
+				}
+
+				if( this.destinationObject == controller.ssObject )
+				{
+					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
@@ -211,7 +175,7 @@ namespace SS.AI.Goals
 				destination = this.destination,
 				destinationObjectGuid = this.destinationObject.guid,
 				destinationPosition = this.destinationPos,
-				hostileMode = this.hostileMode
+				isHostile = this.isHostile
 			};
 		}
 
@@ -230,7 +194,7 @@ namespace SS.AI.Goals
 				this.destinationPos = data.destinationPosition;
 			}
 
-			this.hostileMode = data.hostileMode;
+			this.isHostile = data.isHostile;
 		}
 	}
 }

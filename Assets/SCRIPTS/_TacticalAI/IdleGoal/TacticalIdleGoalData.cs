@@ -5,14 +5,14 @@ namespace SS.AI.Goals
 {
 	public class TacticalIdleGoalData : TacticalGoalData
 	{
-		public TacticalIdleGoal.GoalHostileMode hostileMode { get; set; }
+		public bool isHostile { get; set; }
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			try
 			{
-				this.hostileMode = (TacticalIdleGoal.GoalHostileMode)serializer.ReadByte( "HostileMode" );
+				this.isHostile = serializer.ReadBool( "IsHostile" );
 			}
 			catch
 			{
@@ -22,7 +22,7 @@ namespace SS.AI.Goals
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteByte( "", "HostileMode", (byte)this.hostileMode );
+			serializer.WriteBool( "", "IsHostile", this.isHostile );
 		}
 	}
 }

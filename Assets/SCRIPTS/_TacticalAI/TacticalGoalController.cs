@@ -46,7 +46,7 @@ namespace SS.AI
 		{
 			return new TacticalIdleGoal()
 			{
-				hostileMode = TacticalIdleGoal.GoalHostileMode.ALL
+				isHostile = true
 			};
 		}
 		

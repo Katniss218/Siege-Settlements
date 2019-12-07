@@ -153,6 +153,8 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TAIGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TAIGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TAIGoalType.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\Target\TacticalTargetGoal.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\Target\TacticalTargetGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
