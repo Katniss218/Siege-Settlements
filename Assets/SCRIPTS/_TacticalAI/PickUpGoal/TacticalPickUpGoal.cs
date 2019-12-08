@@ -42,9 +42,18 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
+		
+		private bool IsOnValidObject( SSObject ssObject )
+		{
+			return ssObject is INavMeshAgent && ssObject.GetModules<InventoryModule>().Length > 0;
+		}
 
 		public override void Start( TacticalGoalController controller )
 		{
+			if( !IsOnValidObject( controller.ssObject ) )
+			{
+				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
+			}
 #warning TODO! - ugly code.
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
 			this.navMeshAgent = (controller.ssObject as INavMeshAgent).navMeshAgent;
@@ -76,12 +85,6 @@ namespace SS.AI.Goals
 		{
 			if( this.isHostile )
 			{
-				// If it's not usable - return, don't attack.
-				if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
-				{
-					return;
-				}
-
 				IFactionMember fac = controller.GetComponent<IFactionMember>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
@@ -97,7 +100,7 @@ namespace SS.AI.Goals
 					{
 						if( this.attackModules[i].isReadyToAttack )
 						{
-							this.attackModules[i].targeter.TrySetTarget( controller.transform.position );
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, Targeter.TargetingMode.CLOSEST );
 						}
 					}
 				}
@@ -210,6 +213,11 @@ namespace SS.AI.Goals
 				controller.goal = TacticalGoalController.GetDefaultGoal();
 				return;
 			}
+			// If it's not usable - return, don't move.
+			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
+			{
+				return;
+			}
 
 			this.UpdatePosition( controller );
 			this.UpdateTargeting( controller );
@@ -246,7 +254,7 @@ namespace SS.AI.Goals
 			return new TacticalPickUpGoalData()
 			{
 				resourceId = this.resourceId,
-				destinationObjectGuid = this.destinationObject.guid,
+				destinationObjectGuid = this.destinationObject.guid.Value,
 				isHostile = this.isHostile
 			};
 		}
@@ -256,7 +264,7 @@ namespace SS.AI.Goals
 			TacticalPickUpGoalData data = (TacticalPickUpGoalData)_data;
 
 			this.resourceId = data.resourceId;
-			this.destinationObject = Main.GetSSObject( data.destinationObjectGuid.Value );
+			this.destinationObject = Main.GetSSObject( data.destinationObjectGuid );
 			this.isHostile = data.isHostile;
 		}
 	}

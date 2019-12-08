@@ -1,4 +1,5 @@
-﻿using SS.Content;
+﻿using SS.AI;
+using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -91,6 +92,7 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.AssignModules( gameObject, def, data );
 
+			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 
 			//
 			//    CONTAINER GAMEOBJECT

@@ -662,8 +662,12 @@ namespace SS
 			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
-#warning TODO! - attack.
-				TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.GetComponent<SSObject>() );
+				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalTargetGoal goal = new TacticalTargetGoal();
+				goal.targetingMode = Targeter.TargetingMode.TARGET;
+				goal.target = target;
+				goalController.goal = goal;
+				//TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.GetComponent<SSObject>() );
 			}
 		}
 		

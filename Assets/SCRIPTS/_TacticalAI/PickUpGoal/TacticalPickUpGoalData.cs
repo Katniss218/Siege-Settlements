@@ -7,7 +7,7 @@ namespace SS.AI.Goals
 	{
 		public string resourceId { get; set; }
 
-		public Guid? destinationObjectGuid { get; set; }
+		public Guid destinationObjectGuid { get; set; }
 
 		public bool isHostile { get; set; }
 
@@ -46,7 +46,7 @@ namespace SS.AI.Goals
 		{
 			serializer.WriteString( "", "ResourceId", this.resourceId );
 
-			serializer.WriteString( "", "DestinationObjectGuid", this.destinationObjectGuid.Value.ToString( "D" ) );
+			serializer.WriteString( "", "DestinationObjectGuid", this.destinationObjectGuid.ToString( "D" ) );
 
 			serializer.WriteBool( "", "IsHostile", this.isHostile );
 		}

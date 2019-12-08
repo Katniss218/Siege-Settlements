@@ -52,7 +52,7 @@ namespace SS.Objects.Modules
 
 		void Awake()
 		{
-			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() ) { targetingMode = Targeter.TargetingMode.CLOSEST };
+			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
 
 			this.targeter.onTargetReset += () =>
 			{

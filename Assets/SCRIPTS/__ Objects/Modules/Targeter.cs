@@ -8,8 +8,9 @@ namespace SS.Objects.Modules
 	{
 		public enum TargetingMode : byte
 		{
+			ARBITRARY,
 			CLOSEST,
-			ARBITRARY
+			TARGET
 		}
 
 		private Damageable __target;
@@ -32,8 +33,7 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-
-		public TargetingMode targetingMode { get; set; }
+		
 		public float searchRange { get; set; }
 		public int layers { get; private set; }
 
@@ -70,18 +70,37 @@ namespace SS.Objects.Modules
 
 			return true;
 		}
-
-		public Damageable TrySetTarget( Vector3 positionSelf )
+		
+		public void TrySetTarget( Vector3 positionSelf, TargetingMode targetingMode, Damageable target = null )
 		{
-			if( this.targetingMode == TargetingMode.ARBITRARY )
+			if( targetingMode == TargetingMode.ARBITRARY )
 			{
 				this.target = this.FindTargetArbitrary( positionSelf );
 			}
-			else if( this.targetingMode == TargetingMode.CLOSEST )
+			else if( targetingMode == TargetingMode.CLOSEST )
 			{
 				this.target = this.FindTargetClosest( positionSelf );
 			}
-			return this.target;
+			else if( targetingMode == TargetingMode.TARGET )
+			{
+				if( target == null )
+				{
+					return;
+				}
+				// Check if the overlapped object can be targeted by this finder.
+				if( !this.factionMember.CanTargetAnother( target.GetComponent<FactionMember>() ) )
+				{
+					return;
+				}
+
+				if( !Main.IsInRange( target.transform.position, positionSelf, this.searchRange ) )
+				{
+					return;
+				}
+				
+				this.target = target;
+			}
+			return;
 		}
 
 		public Damageable TrySetTarget( Vector3 positionSelf, Damageable target )
