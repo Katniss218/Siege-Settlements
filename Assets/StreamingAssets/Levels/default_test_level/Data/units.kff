@@ -31,8 +31,7 @@
 		];
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
-		Radius = 0.25;
-		Height = 0.1875;
+		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 1; }
@@ -83,7 +82,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 2.0;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.7;
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -101,8 +100,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.375;  // The physical size of the unit (hitbox)
-		Height = 0.1875; // The physical size of the unit (hitbox)
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -152,7 +150,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 2.0;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.7;
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -170,8 +168,7 @@
 		];
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -221,7 +218,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 2.0;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.7;
 				AttackCooldown = 0.65;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -239,8 +236,7 @@
 		];
 		MovementSpeed = 0.5;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -290,7 +286,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 4.0;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.7;
 				AttackCooldown = 0.47;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -308,8 +304,7 @@
 		];
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -383,8 +378,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -460,8 +454,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -537,8 +530,7 @@
 		];
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 5; }
@@ -584,8 +576,7 @@
 		IsConstructor = true;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.25;
-		Height = 0.1875;
+		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
 		Modules =
 		[
 			{
@@ -658,8 +649,7 @@
 		};
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Radius = 0.25;
-		Height = 0.1875;
+		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
 		Modules =
 		[
 			{
@@ -736,8 +726,7 @@
 		];
 		MovementSpeed = 0.15;
 		RotationSpeed = 160;
-		Radius = 0.375;
-		Height = 0.1875;
+		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; },

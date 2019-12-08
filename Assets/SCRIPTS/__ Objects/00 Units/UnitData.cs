@@ -31,7 +31,7 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 		
-		public TAIGoalData taiGoalData { get; set; }
+		//public TAIGoalData taiGoalData { get; set; }
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -80,7 +80,7 @@ namespace SS.Levels.SaveStates
 				throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
 			}
 
-			this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
+			//this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
 
 			this.DeserializeModulesKFF( serializer );
 		}
@@ -95,7 +95,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
 			
-			TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
+			//TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
 
 			this.SerializeModulesKFF( serializer );
 		}

@@ -304,11 +304,11 @@ namespace SS.Objects.Heroes
 			SSObjectCreator.ExtractModulesToData( hero, data );
 			
 
-			TAIGoal taiGoal = hero.GetComponent<TAIGoal>();
+			/*TAIGoal taiGoal = hero.GetComponent<TAIGoal>();
 			if( taiGoal != null )
 			{
 				data.taiGoalData = taiGoal.GetData();
-			}
+			}*/
 
 			return data;
 		}

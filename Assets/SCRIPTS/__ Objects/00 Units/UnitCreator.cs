@@ -39,13 +39,13 @@ namespace SS.Objects.Units
 
 			// Set the unit's size.
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
-			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
-			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
+			collider.size = def.size;
+			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
 
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-			navMeshAgent.radius = def.radius;
-			navMeshAgent.height = def.height;
+			navMeshAgent.radius = def.size.x < def.size.z ? def.size.x * 0.5f : def.size.z * 0.5f;
+			navMeshAgent.height = def.size.y;
 			navMeshAgent.speed = def.movementSpeed;
 			navMeshAgent.angularSpeed = def.rotationSpeed;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
@@ -305,11 +305,11 @@ namespace SS.Objects.Units
 			SSObjectCreator.ExtractModulesToData( unit, data );
 
 
-			TAIGoal taiGoal = unit.GetComponent<TAIGoal>();
+			/*TAIGoal taiGoal = unit.GetComponent<TAIGoal>();
 			if( taiGoal != null )
 			{
 				data.taiGoalData = taiGoal.GetData();
-			}
+			}*/
 
 			return data;
 		}

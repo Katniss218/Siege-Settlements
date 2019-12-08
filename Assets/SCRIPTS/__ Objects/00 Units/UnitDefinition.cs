@@ -78,31 +78,19 @@ namespace SS.Objects.Units
 		//  SIZE-RELATED
 		//--------------------------------------
 
-		private float __radius = 0.25f;
-		public float radius
+		private Vector3 __size = new Vector3( 0.25f, 0.25f, 0.25f );
+		public Vector3 size
 		{
-			get { return this.__radius; }
+			get { return this.__size; }
 			set
 			{
-				if( value <= 0.0f )
+				if( value.x <= 0.0f
+				 || value.y <= 0.0f
+				 || value.z <= 0.0f )
 				{
-					throw new Exception( "'Radius' can't be less than or equal to 0." );
+					throw new Exception( "'Size' can't have values less than or equal to 0." );
 				}
-				this.__radius = value;
-			}
-		}
-
-		private float __height = 0.25f;
-		public float height
-		{
-			get { return this.__height; }
-			set
-			{
-				if( value <= 0.0f )
-				{
-					throw new Exception( "'Height' can't be less than or equal to 0." );
-				}
-				this.__height = value;
+				this.__size = value;
 			}
 		}
 
@@ -204,24 +192,15 @@ namespace SS.Objects.Units
 			{
 				throw new Exception( "Missing or invalid value of 'RotationSpeed' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
-
-
-			try
-			{
-				this.radius = serializer.ReadFloat( "Radius" );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'Radius' of '" + this.id + "' (" + serializer.file.fileName + ")." );
-			}
+			
 
 			try
 			{
-				this.height = serializer.ReadFloat( "Height" );
+				this.size = serializer.ReadVector3( "Size" );
 			}
 			catch
 			{
-				throw new Exception( "Missing or invalid value of 'Height' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+				throw new Exception( "Missing or invalid value of 'Size' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
 			// Cost
@@ -293,8 +272,7 @@ namespace SS.Objects.Units
 			
 			serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed );
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
-			serializer.WriteFloat( "", "Radius", this.radius );
-			serializer.WriteFloat( "", "Height", this.height );
+			serializer.WriteVector3( "", "Size", this.size );
 
 			// Cost
 			serializer.WriteList( "", "Cost" );

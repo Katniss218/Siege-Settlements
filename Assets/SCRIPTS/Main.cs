@@ -288,6 +288,20 @@ namespace SS
 			}
 		}
 
+		private void Inp_P( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
+					TacticalTargetGoal goal = new TacticalTargetGoal();
+					goalController.goal = goal;
+				}
+			}
+		}
+
 		private void Inp_Y( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -568,6 +582,7 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
@@ -596,6 +611,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
+				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
 				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
 				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_H );
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
@@ -664,10 +680,8 @@ namespace SS
 			{
 				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalTargetGoal goal = new TacticalTargetGoal();
-				goal.targetingMode = Targeter.TargetingMode.TARGET;
 				goal.target = target;
 				goalController.goal = goal;
-				//TAIGoal.Attack.AssignTAIGoal( movableGameObjects[i], target.GetComponent<SSObject>() );
 			}
 		}
 		
@@ -725,9 +739,9 @@ namespace SS
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalDropOffGoal goal = new TacticalDropOffGoal();
 				goal.isHostile = false;
+				goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.INVENTORY;
 				goal.SetDestination( hitInfo.collider.GetComponent<SSObject>() );
 				goalController.goal = goal;
-				//TAIGoal.DropoffToInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitInfo.collider.GetComponent<SSObject>() );
 			}
 		}
 
@@ -761,7 +775,13 @@ namespace SS
 			}
 
 			//Calculate the grid position.
-			TAIGoal.MoveTo.MovementGridInfo gridInfo = TAIGoal.MoveTo.GetGridPositions( movableGameObjects );
+
+
+
+
+
+
+			TacticalMoveToGoal.MovementGridInfo gridInfo = TacticalMoveToGoal.GetGridPositions( movableGameObjects );
 
 
 			if( gridInfo.positions.Count > 0 )
@@ -770,7 +790,7 @@ namespace SS
 			}
 			foreach( var kvp in gridInfo.positions )
 			{
-				Vector3 gridPositionWorld = TAIGoal.MoveTo.GridToWorld( kvp.Value, gridInfo.sizeX, gridInfo.sizeZ, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
+				Vector3 gridPositionWorld = TacticalMoveToGoal.GridToWorld( kvp.Value, gridInfo.sizeX, gridInfo.sizeZ, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
 
 				RaycastHit gridHit;
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
@@ -781,7 +801,6 @@ namespace SS
 					goal.isHostile = false;
 					goal.SetDestination( gridPositionWorld );
 					goalController.goal = goal;
-					//TAIGoal.MoveTo.AssignTAIGoal( kvp.Key, gridPositionWorld );
 				}
 				else
 				{
@@ -837,7 +856,6 @@ namespace SS
 				goal.isHostile = false;
 				goal.destinationObject = hitSSObject;
 				goalController.goal = goal;
-			//	TAIGoal.PickupInventory.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
 		private void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectSelectable[] selected )
@@ -892,7 +910,6 @@ namespace SS
 				goal.isHostile = false;
 				goal.destinationObject = hitSSObject;
 				goalController.goal = goal;
-				//TAIGoal.PickupDeposit.AssignTAIGoal( movableWithInvGameObjects[i], hitSSObject );
 			}
 		}
 
@@ -964,8 +981,12 @@ namespace SS
 			}
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
-#warning TODO! - make payment
-				TAIGoal.MakePayment.AssignTAIGoal( toBeAssignedGameObjects[i], paymentReceiverTransform.GetComponent<SSObject>() );
+				TacticalGoalController goalController = toBeAssignedGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalDropOffGoal goal = new TacticalDropOffGoal();
+				goal.isHostile = false;
+				goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.PAYMENT;
+				goal.SetDestination( paymentReceiverTransform.GetComponent<SSObject>() );
+				goalController.goal = goal;
 			}
 		}
 

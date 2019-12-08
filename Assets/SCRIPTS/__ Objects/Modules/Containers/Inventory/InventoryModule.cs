@@ -247,7 +247,8 @@ namespace SS.Objects.Modules
 			{
 				if( !this.isEmpty )
 				{
-					TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
+#warning TODO! - drop the items on death.
+					//TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
 				}
 			} );
 		}

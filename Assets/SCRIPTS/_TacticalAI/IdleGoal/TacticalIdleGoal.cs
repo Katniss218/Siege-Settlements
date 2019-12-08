@@ -28,20 +28,18 @@ namespace SS.AI.Goals
 		}
 
 		public override void Update( TacticalGoalController controller )
-		{
-			// If it's not usable - return, don't attack.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
-			{
-				return;
-			}
-
+		{			
 			if( this.isHostile )
 			{
 #warning TODO! - optimise by having only 1 overlapsphere (the largest radius, and filtering for smaller targeters).
-				IFactionMember fac = controller.GetComponent<IFactionMember>();
+
+				// Targeter.SetTargets( IAttackModule[] array, ... other );
+				// ???
+
+				IFactionMember fac = (IFactionMember)controller.ssObject;
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( fac.factionMember, this.attackModules[i].targeter.target, controller.transform.position, this.attackModules[i].targeter.searchRange ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}

@@ -13,6 +13,7 @@ namespace SS.Objects.Modules
 			TARGET
 		}
 
+#warning Do I even want that? The Tactical Goals are targeters.
 		private Damageable __target;
 		public Damageable target
 		{
@@ -51,7 +52,7 @@ namespace SS.Objects.Modules
 		public FactionMember factionMember { get; private set; }
 		
 
-		public static bool CanTarget( FactionMember factionMemberSelf, Damageable target, Vector3 positionSelf, float searchRange )
+		public static bool CanTarget( Vector3 positionSelf, float searchRange, Damageable target, FactionMember factionMemberSelf )
 		{
 			if( target == null )
 			{
@@ -71,50 +72,50 @@ namespace SS.Objects.Modules
 			return true;
 		}
 		
-		public void TrySetTarget( Vector3 positionSelf, TargetingMode targetingMode, Damageable target = null )
+		public Damageable TrySetTarget( Vector3 positionSelf, TargetingMode targetingMode, Damageable target = null )
 		{
 			if( targetingMode == TargetingMode.ARBITRARY )
 			{
-				this.target = this.FindTargetArbitrary( positionSelf );
+				this.target = FindTargetArbitrary( positionSelf, this.searchRange, this.layers, this.factionMember );
 			}
 			else if( targetingMode == TargetingMode.CLOSEST )
 			{
-				this.target = this.FindTargetClosest( positionSelf );
+				this.target = FindTargetClosest( positionSelf, this.searchRange, this.layers, this.factionMember );
 			}
 			else if( targetingMode == TargetingMode.TARGET )
 			{
 				if( target == null )
 				{
-					return;
+					return null;
 				}
 				// Check if the overlapped object can be targeted by this finder.
 				if( !this.factionMember.CanTargetAnother( target.GetComponent<FactionMember>() ) )
 				{
-					return;
+					return this.target;
 				}
 
 				if( !Main.IsInRange( target.transform.position, positionSelf, this.searchRange ) )
 				{
-					return;
+					return this.target;
 				}
 				
 				this.target = target;
 			}
-			return;
+			return this.target;
 		}
 
 		public Damageable TrySetTarget( Vector3 positionSelf, Damageable target )
 		{
-			if( CanTarget( this.factionMember, target, positionSelf, this.searchRange ) )
+			if( CanTarget( positionSelf, this.searchRange, target, this.factionMember ) )
 			{
 				this.target = target;
 			}
 			return this.target;
 		}
 		
-		private Damageable FindTargetArbitrary( Vector3 positionSelf )
+		public static Damageable FindTargetArbitrary( Vector3 positionSelf, float searchRange, int layerMask, FactionMember factionMemberSelf )
 		{
-			Collider[] col = Physics.OverlapSphere( positionSelf, this.searchRange, this.layers );
+			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
 			if( col.Length == 0 )
 			{
 				return null;
@@ -125,12 +126,12 @@ namespace SS.Objects.Modules
 				FactionMember facOther = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( facOther ) )
+				if( !factionMemberSelf.CanTargetAnother( facOther ) )
 				{
 					continue;
 				}
 
-				if( !Main.IsInRange( col[i].transform.position, positionSelf, this.searchRange ) )
+				if( !Main.IsInRange( col[i].transform.position, positionSelf, searchRange ) )
 				{
 					continue;
 				}
@@ -141,22 +142,23 @@ namespace SS.Objects.Modules
 			return null;
 		}
 
-		private Damageable FindTargetClosest( Vector3 positionSelf )
+		public static Damageable FindTargetClosest( Vector3 positionSelf, float searchRange, int layerMask, FactionMember factionMemberSelf )
+		//private Damageable FindTargetClosest( Vector3 positionSelf )
 		{
-			Collider[] col = Physics.OverlapSphere( positionSelf, this.searchRange, this.layers );
+			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
 			if( col.Length == 0 )
 			{
 				return null;
 			}
 			Damageable ret = null;
-			float needThisClose = this.searchRange;
+			float needThisClose = searchRange;
 
 			for( int i = 0; i < col.Length; i++ )
 			{
 				FactionMember facOther = col[i].GetComponent<FactionMember>();
 
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( facOther ) )
+				if( !factionMemberSelf.CanTargetAnother( facOther ) )
 				{
 					continue;
 				}

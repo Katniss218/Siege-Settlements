@@ -5,6 +5,7 @@ using SS.Objects;
 using SS.Objects.Extras;
 using SS.Objects.Modules;
 using SS.ResourceSystem;
+using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -25,9 +26,16 @@ namespace SS.AI.Goals
 			NONE
 		}
 
+		public enum ObjectDropOffMode : byte
+		{
+			INVENTORY,
+			PAYMENT
+		}
+
 		public DestinationType destination { get; private set; }
 		public Vector3? destinationPos { get; private set; }
 		public SSObject destinationObject { get; private set; }
+		public ObjectDropOffMode objectDropOffMode { get; set; }
 		
 		/// <summary>
 		/// Specified which resource is going to be dropped off (null for all).
@@ -65,7 +73,6 @@ namespace SS.AI.Goals
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = destination;
-			this.oldDestination = this.destinationObject.transform.position;
 		}
 
 
@@ -131,7 +138,7 @@ namespace SS.AI.Goals
 				IFactionMember fac = controller.GetComponent<IFactionMember>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( fac.factionMember, this.attackModules[i].targeter.target, controller.transform.position, this.attackModules[i].targeter.searchRange ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}
@@ -160,32 +167,74 @@ namespace SS.AI.Goals
 			}
 		}
 
-		private void OnArrivalObject( TacticalGoalController controller, InventoryModule destinationInventory )
+		private void OnArrivalObject( TacticalGoalController controller )
 		{
-			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
-			
-			foreach( var kvp in resourcesCarried )
+			if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
 			{
-				// If the goal wants a specific resource - disregard any other resources.
-				if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+				InventoryModule destinationInventory = this.destinationObject.GetModules<InventoryModule>()[0];
+
+				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
+
+				foreach( var kvp in resourcesCarried )
 				{
-					continue;
-				}
+					// If the goal wants a specific resource - disregard any other resources.
+					if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+					{
+						continue;
+					}
 
-				int spaceLeft = destinationInventory.GetSpaceLeft( kvp.Key );
-				if( spaceLeft > 0 )
-				{
-					int amountCarried = kvp.Value;
-					int amountDroppedOff = spaceLeft < amountCarried ? spaceLeft : amountCarried;
+					int spaceLeft = destinationInventory.GetSpaceLeft( kvp.Key );
+					if( spaceLeft > 0 )
+					{
+						int amountCarried = kvp.Value;
+						int amountDroppedOff = spaceLeft < amountCarried ? spaceLeft : amountCarried;
 
-					destinationInventory.Add( kvp.Key, amountDroppedOff );
-					this.inventory.Remove( kvp.Key, amountDroppedOff );
+						destinationInventory.Add( kvp.Key, amountDroppedOff );
+						this.inventory.Remove( kvp.Key, amountDroppedOff );
 
-					ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
-					AudioManager.PlaySound( def.dropoffSound );
+						ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
+						AudioManager.PlaySound( def.dropoffSound );
+					}
 				}
 			}
+			else if( this.objectDropOffMode == ObjectDropOffMode.PAYMENT )
+			{
+				IPaymentReceiver[] paymentReceivers = this.destinationObject.GetComponents<IPaymentReceiver>();
 
+				for( int i = 0; i < paymentReceivers.Length; i++ )
+				{
+					Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
+
+					foreach( var kvp in wantedRes )
+					{
+						// If the goal wants a specific resource - disregard any other resources.
+						if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+						{
+							continue;
+						}
+
+						int amountInInv = this.inventory.Get( kvp.Key );
+
+						if( amountInInv == 0 )
+						{
+							continue;
+						}
+
+						int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
+
+						this.inventory.Remove( kvp.Key, amountPayed );
+						paymentReceivers[i].ReceivePayment( kvp.Key, amountPayed );
+						ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+						AudioManager.PlaySound( resDef.dropoffSound );
+					}
+					// If there is no resources to pay (everything spent).
+					if( this.inventory.isEmpty )
+					{
+						break;
+					}
+				}
+			}
+			this.navMeshAgent.ResetPath();
 			controller.goal = TacticalGoalController.GetDefaultGoal();
 		}
 
@@ -247,15 +296,15 @@ namespace SS.AI.Goals
 						}
 					}
 					this.inventory.Clear();
-
-					controller.goal = TacticalGoalController.GetDefaultGoal();
 				}
 
 				// Clear the path, when it's in range.
 				this.navMeshAgent.ResetPath();
+				controller.goal = TacticalGoalController.GetDefaultGoal();
 			}
 			else
 			{
+				this.navMeshAgent.ResetPath();
 				controller.goal = TacticalGoalController.GetDefaultGoal();
 			}
 		}
@@ -294,9 +343,7 @@ namespace SS.AI.Goals
 			{
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, 0.75f ) )
 				{
-					InventoryModule destinationInventory = this.destinationObject.GetModules<InventoryModule>()[0];
-
-					this.OnArrivalObject( controller, destinationInventory );
+					this.OnArrivalObject( controller );
 				}
 			}
 			else if( this.destination == DestinationType.POSITION )

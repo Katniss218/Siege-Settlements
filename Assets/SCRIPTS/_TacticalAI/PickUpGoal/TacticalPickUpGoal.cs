@@ -88,7 +88,7 @@ namespace SS.AI.Goals
 				IFactionMember fac = controller.GetComponent<IFactionMember>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( fac.factionMember, this.attackModules[i].targeter.target, controller.transform.position, this.attackModules[i].targeter.searchRange ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}

@@ -16,6 +16,8 @@ using UnityEngine.Events;
 using SS.Objects;
 using Object = UnityEngine.Object;
 using SS.InputSystem;
+using SS.AI.Goals;
+using SS.AI;
 
 namespace SS.Objects.Modules
 {
@@ -204,9 +206,15 @@ namespace SS.Objects.Modules
 			data.factionId = this.factionMember.factionId;
 			data.health = this.trainedUnit.healthMax;
 			GameObject obj = UnitCreator.Create( this.trainedUnit, data );
+
 			// Move the newly spawned unit to the rally position.
 			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
-			TAIGoal.MoveTo.AssignTAIGoal( obj, rallyPointWorld );
+
+			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
+			TacticalMoveToGoal goal = new TacticalMoveToGoal();
+			goal.isHostile = false;
+			goal.SetDestination( rallyPointWorld );
+			goalController.goal = goal;
 		}
 
 		public void EndTraining( bool isSuccess )
