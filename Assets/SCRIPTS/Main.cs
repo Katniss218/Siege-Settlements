@@ -296,6 +296,10 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
 					TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
+					if( goalController == null )
+					{
+						return;
+					}
 					TacticalTargetGoal goal = new TacticalTargetGoal();
 					goalController.goal = goal;
 				}
@@ -681,6 +685,7 @@ namespace SS
 				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalTargetGoal goal = new TacticalTargetGoal();
 				goal.target = target;
+				goal.targetForced = true;
 				goalController.goal = goal;
 			}
 		}

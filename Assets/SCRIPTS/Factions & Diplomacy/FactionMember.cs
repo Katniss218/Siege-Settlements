@@ -46,5 +46,18 @@ namespace SS.Diplomacy
 			}
 			return LevelDataManager.GetRelation( this.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
+
+		internal static bool CanTarget( int fac1, FactionMember fac2 )
+		{
+			if( fac1 < 0 || fac2 == null )
+			{
+				return true;
+			}
+			if( fac1 == fac2.factionId )
+			{
+				return false;
+			}
+			return LevelDataManager.GetRelation( fac1, fac2.factionId ) == DiplomaticRelation.Enemy;
+		}
 	}
 }

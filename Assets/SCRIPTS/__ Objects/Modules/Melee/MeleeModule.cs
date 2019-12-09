@@ -24,7 +24,7 @@ namespace SS.Objects.Modules
 		{
 			get
 			{
-				return Time.time >= this.lastAttackTimestamp + this.attackCooldown;
+				return Time.time >= (this.lastAttackTimestamp + this.attackCooldown);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace SS.Objects.Modules
 
 		void Start()
 		{
-			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f );
+			this.lastAttackTimestamp = UnityEngine.Random.Range( -this.attackCooldown, 0.0f ) + Time.time;
 		}
 
 		void Update()

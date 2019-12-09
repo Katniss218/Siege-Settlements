@@ -54,7 +54,6 @@ namespace SS.AI.Goals
 			{
 				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
 			}
-#warning TODO! - ugly code.
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
 			this.navMeshAgent = (controller.ssObject as INavMeshAgent).navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
@@ -228,14 +227,12 @@ namespace SS.AI.Goals
 				InventoryModule[] inventories = this.destinationObject.GetModules<InventoryModule>();
 				if( deposits.Length > 0 )
 				{
-#warning TODO! - ugly code.
 					ResourceDepositModule depositToCollect = deposits[0];
 
 					this.OnArrivalDeposit( controller, depositToCollect );
 				}
 				else
 				{
-#warning TODO! - ugly code.
 					InventoryModule inventoryToPickUp = inventories[0];
 
 					this.OnArrivalInventory( controller, inventoryToPickUp );

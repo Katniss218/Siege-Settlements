@@ -1,10 +1,11 @@
 ﻿using SS.Diplomacy;
+using SS.Objects.Modules;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Projectiles
 {
-	public class Projectile : SSObject, IFactionMember
+	public class Projectile : SSObject
 	{
 		public bool isStuck { get; set; }
 
@@ -15,21 +16,29 @@ namespace SS.Objects.Projectiles
 		public AudioClip hitSound { get; set; }
 		public AudioClip missSound { get; set; }
 
-
-		private FactionMember _factionMember = null;
-		public FactionMember factionMember
+		public int ownerFactionIdCache = -1; // Osed when the owner is dead, but the projectile needs to keep knowing it's supposed faction Id.
+		private RangedModule __owner;
+		public RangedModule owner
 		{
 			get
 			{
-				if( this._factionMember == null )
+				return this.__owner;
+			}
+			set
+			{
+				if( value == null )
 				{
-					this._factionMember = this.GetComponent<FactionMember>();
+					this.ownerFactionIdCache = -1;
 				}
-				return this._factionMember;
+				else
+				{
+					this.ownerFactionIdCache = (value.ssObject as IFactionMember).factionMember.factionId;
+				}
+				this.__owner = value;
 			}
 		}
 
-
+		
 
 		public void MakeStuck()
 		{
@@ -68,7 +77,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( this.factionMember.CanTargetAnother( hitFactionMember ) )
+					if( FactionMember.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						hitDamageable.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 
@@ -85,7 +94,7 @@ namespace SS.Objects.Projectiles
 				for( int i = 0; i < col.Length; i++ )
 				{
 					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
-					if( !this.factionMember.CanTargetAnother( (potentialDamagee as IFactionMember).factionMember ) )
+					if( !FactionMember.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember).factionMember ) )
 					{
 						continue;
 					}
@@ -113,7 +122,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( this.factionMember.CanTargetAnother( hitFactionMember ) )
+					if( FactionMember.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );

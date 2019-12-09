@@ -353,7 +353,6 @@ namespace SS.AI.Goals
 					this.OnArrivalPosition( controller );
 				}
 			}
-#warning TODO! - drop off.
 		}
 		
 

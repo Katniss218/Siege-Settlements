@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObjectSelectable, IHUDHolder, IUsableToggle, IDamageable, IFactionMember, IObstacle
+	public class Building : SSObjectSelectable, IHUDHolder, IUsableToggle, IDamageable, IFactionMember
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;

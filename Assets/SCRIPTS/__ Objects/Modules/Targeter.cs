@@ -86,6 +86,7 @@ namespace SS.Objects.Modules
 			{
 				if( target == null )
 				{
+					this.target = null;
 					return null;
 				}
 				// Check if the overlapped object can be targeted by this finder.

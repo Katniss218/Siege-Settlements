@@ -37,7 +37,7 @@ namespace SS.Objects.Modules
 		{
 			get
 			{
-				return Time.time >= this.lastAttackTimestamp + this.attackCooldown;
+				return Time.time >= (this.lastAttackTimestamp + this.attackCooldown);
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace SS.Objects.Modules
 
 		void Start()
 		{
-			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f );
+			this.lastAttackTimestamp = Random.Range( -this.attackCooldown, 0.0f ) + Time.time;
 		}
 
 		void Update()
@@ -165,10 +165,14 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
-			data.factionId = this.targeter.factionMember.factionId;
+			data.ownerFactionIdCache = this.targeter.factionMember.factionId;
 			data.damageTypeOverride = this.damageSource.damageType;
 			data.damageOverride = this.damageSource.damage;
 			data.armorPenetrationOverride = this.damageSource.armorPenetration;
+			data.owner = new Tuple<Guid, Guid>(
+				this.ssObject.guid.Value,
+				this.moduleId
+				);
 
 			ProjectileCreator.Create( this.projectile, data );
 		}

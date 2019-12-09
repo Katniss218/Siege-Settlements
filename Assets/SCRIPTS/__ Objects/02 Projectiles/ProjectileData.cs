@@ -14,28 +14,13 @@ namespace SS.Levels.SaveStates
 		public bool isStuck { get; set; }
 		public Quaternion stuckRotation { get; set; }
 		public Vector3 velocity { get; set; }
-
-		private int __factionId = 0;
-		public int factionId
-		{
-			get
-			{
-				return this.__factionId;
-			}
-			set
-			{
-				if( value < 0 )
-				{
-					throw new Exception( "Can't set faction to outside of acceptable values." );
-				}
-				this.__factionId = value;
-			}
-		}
-
+		
 		public DamageType damageTypeOverride { get; set; }
 		public float damageOverride { get; set; }
 		public float armorPenetrationOverride { get; set; }
-
+		
+		public int ownerFactionIdCache { get; set; }
+		public Tuple<Guid,Guid> owner { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -91,15 +76,6 @@ namespace SS.Levels.SaveStates
 
 			try
 			{
-				this.factionId = serializer.ReadInt( "FactionId" );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
-			}
-
-			try
-			{
 				this.damageTypeOverride = (DamageType)serializer.ReadByte( "DamageTypeOverride" );
 			}
 			catch
@@ -124,6 +100,40 @@ namespace SS.Levels.SaveStates
 			{
 				throw new Exception( "Missing or invalid value of 'ArmorPenetrationOverride' (" + serializer.file.fileName + ")." );
 			}
+
+			try
+			{
+				this.ownerFactionIdCache = serializer.ReadInt( "FactionId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
+			}
+
+			if( serializer.Analyze( "Owner" ).isSuccess )
+			{
+				Guid ownerGuid;
+				Guid ownerModuleId;
+
+				try
+				{
+					ownerGuid = Guid.ParseExact( serializer.ReadString( "Owner.Guid" ), "D" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ArmorPenetrationOverride' (" + serializer.file.fileName + ")." );
+				}
+				try
+				{
+					ownerModuleId = Guid.ParseExact( serializer.ReadString( "Owner.ModuleId" ), "D" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ArmorPenetrationOverride' (" + serializer.file.fileName + ")." );
+				}
+
+				this.owner = new Tuple<Guid, Guid>( ownerGuid, ownerModuleId );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -141,11 +151,19 @@ namespace SS.Levels.SaveStates
 				serializer.WriteVector3( "", "Velocity", this.velocity );
 			}
 
-			serializer.WriteInt( "", "FactionId", this.factionId );
 
 			serializer.WriteByte( "", "DamageTypeOverride", (byte)this.damageTypeOverride );
 			serializer.WriteFloat( "", "DamageOverride", this.damageOverride );
 			serializer.WriteFloat( "", "ArmorPenetrationOverride", this.armorPenetrationOverride );
+
+			serializer.WriteInt( "", "FactionId", this.ownerFactionIdCache );
+
+			if( this.owner != null )
+			{
+				serializer.WriteClass( "", "Owner" );
+				serializer.WriteString( "Owner", "Guid", this.owner.Item1.ToString( "D" ) );
+				serializer.WriteString( "Owner", "ModuleId", this.owner.Item2.ToString( "D" ) );
+			}
 		}
 	}
 }

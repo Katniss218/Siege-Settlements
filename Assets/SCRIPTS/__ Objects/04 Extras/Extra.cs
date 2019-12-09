@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Extras
 {
-	public class Extra : SSObject, IObstacle
+	public class Extra : SSObject
 	{
 		public NavMeshObstacle obstacle { get; private set; }
 		new public BoxCollider collider { get; private set; }

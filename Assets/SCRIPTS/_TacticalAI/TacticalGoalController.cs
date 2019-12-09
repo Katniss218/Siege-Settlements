@@ -6,8 +6,8 @@ using UnityEngine;
 namespace SS.AI
 {
 	[DisallowMultipleComponent]
-	[RequireComponent(typeof(SSObject))]
-	[RequireComponent(typeof(IFactionMember))]
+	[RequireComponent( typeof( SSObject ) )]
+	[RequireComponent( typeof( IFactionMember ) )]
 	public class TacticalGoalController : MonoBehaviour
 	{
 		private TacticalGoal __goal { get; set; }
@@ -25,9 +25,11 @@ namespace SS.AI
 				}
 				this.__goal = value;
 				this.__goal.Start( this );
-				Debug.Log( this.gameObject.name + ": Set the TacticalGoal to: " + value.GetType().Name );
+				//Debug.Log( this.gameObject.name + ": Set the TacticalGoal to: " + value.GetType().Name );
 			}
 		}
+
+#warning TODO! - Save Tactical Goals.
 
 		private SSObject __ssObject = null;
 		public SSObject ssObject
@@ -49,7 +51,7 @@ namespace SS.AI
 				isHostile = true
 			};
 		}
-		
+
 		void Start()
 		{
 			if( this.goal == null )
@@ -57,7 +59,7 @@ namespace SS.AI
 				this.goal = GetDefaultGoal();
 			}
 		}
-		
+
 		void Update()
 		{
 			this.goal.Update( this );

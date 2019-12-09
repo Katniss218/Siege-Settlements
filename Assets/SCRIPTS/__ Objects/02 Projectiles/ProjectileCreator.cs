@@ -1,5 +1,6 @@
 ﻿using SS.Diplomacy;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -43,6 +44,15 @@ namespace SS.Objects.Projectiles
 			projectile.hitSound = def.hitSoundEffect;
 			projectile.missSound = def.missSoundEffect;
 			projectile.blastRadius = def.blastRadius;
+			if( data.owner == null )
+			{
+				projectile.owner = null;
+				projectile.ownerFactionIdCache = data.ownerFactionIdCache;
+			}
+			else
+			{
+				projectile.owner = Main.GetSSObject( data.owner.Item1 ).GetModule<RangedModule>( data.owner.Item2 );
+			}
 			
 
 			// Set the projectile's lifetime and reset the lifetime timer.
@@ -62,8 +72,8 @@ namespace SS.Objects.Projectiles
 			}
 			
 			// Set the faction id.
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			factionMember.factionId = data.factionId;
+			//FactionMember factionMember = gameObject.GetComponent<FactionMember>();
+			//factionMember.factionId = data.factionId;
 
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
@@ -158,12 +168,24 @@ namespace SS.Objects.Projectiles
 			}
 
 			FactionMember factionMember = projectile.GetComponent<FactionMember>();
-			data.factionId = factionMember.factionId;
+			data.ownerFactionIdCache = factionMember.factionId;
 
 			DamageSource damageSource = projectile.GetComponent<Projectile>().damageSource;
 			data.damageTypeOverride = damageSource.damageType;
 			data.damageOverride = damageSource.damage;
 			data.armorPenetrationOverride = damageSource.armorPenetration;
+
+			if( projectile.owner == null )
+			{
+				data.owner = null;
+			}
+			else {
+				data.owner = new Tuple<Guid, Guid>(
+#warning TODO! - public accessor should be of non-nullable type 'Guid'. Throw exception when Guid has not been set.
+				projectile.owner.ssObject.guid.Value,
+				projectile.owner.moduleId
+				);
+			}
 
 			//
 			// MODULES

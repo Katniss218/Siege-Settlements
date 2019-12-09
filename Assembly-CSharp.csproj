@@ -10,7 +10,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{97E5E7C7-7127-1F59-6943-397C6E9C9106}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -90,7 +91,6 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\IDamageable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IFactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\IObstacle.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IUsableToggle.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleData.cs" />
