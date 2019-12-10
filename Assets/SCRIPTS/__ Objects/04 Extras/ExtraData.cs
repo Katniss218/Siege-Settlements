@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	public class ExtraData : ObjectData
+	public class ExtraData : SSObjectData
 	{
 		public Guid guid { get; set; }
 

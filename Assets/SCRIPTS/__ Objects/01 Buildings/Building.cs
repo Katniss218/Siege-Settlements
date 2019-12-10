@@ -17,17 +17,7 @@ namespace SS.Objects.Buildings
 		public GameObject hud { get; set; }
 
 		public Vector3[] placementNodes { get; set; }
-
-#warning Entrance might not necessarily be restricted to buildings (think ships).
-		// Modules currently don't require other modules to function.
-		// Every workplace needs it's own entrance.
-		// Inside also needs it's own entrance.
-		// Barracks also need their own spawn point.
-
-#warning Units can enter buildings (each building can have multiple slots for units).
-#warning Each slot has a limit to how much population can occupy it.
-			
-
+		
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 
 		public AudioClip buildSoundEffect { get; set; }

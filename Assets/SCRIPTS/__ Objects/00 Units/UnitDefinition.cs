@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SS.Objects.Units
 {
-	public class UnitDefinition : ObjectDefinition, ITechsRequired
+	public class UnitDefinition : SSObjectDefinition, ITechsRequired
 	{
 		private string __displayName = "<missing>";
 		public string displayName

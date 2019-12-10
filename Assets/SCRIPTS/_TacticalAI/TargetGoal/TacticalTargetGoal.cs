@@ -7,6 +7,8 @@ namespace SS.AI.Goals
 {
 	public class TacticalTargetGoal : TacticalGoal
 	{
+		public const string KFF_TYPEID = "target";
+
 		public const float STOPPING_FRACTION = 0.75f;
 		public const float MOVING_FACTION = 0.85f;
 		
@@ -65,9 +67,9 @@ namespace SS.AI.Goals
 				}
 
 #warning SSObjectSelectable, Damageable, FactionMember, and ViewRange are basically the same. They always coexist on objects (U|B|H).
+				
 
-
-#warning TODO! - proper per-object view range.
+#warning TODO! - proper per-DFVobject view range.
 #warning TODO! - proper per-module check if it can target it.
 #warning TODO! - Start moving towards the target when the object has the target set, and is outside range. Set the target when the object is in the global view range.
 

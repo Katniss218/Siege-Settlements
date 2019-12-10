@@ -8,6 +8,13 @@ namespace SS.AI.Goals
 		public Guid? targetGuid { get; set; }
 
 
+		public override TacticalGoal GetInstance()
+		{
+			TacticalTargetGoal goal = new TacticalTargetGoal();
+			goal.SetData( this );
+			return goal;
+		}
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			if( serializer.Analyze( "TargetGuid" ).isSuccess )

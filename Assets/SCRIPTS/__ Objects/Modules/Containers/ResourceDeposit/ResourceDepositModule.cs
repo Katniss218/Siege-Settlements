@@ -88,6 +88,7 @@ namespace SS.Objects.Modules
 		}
 
 
+
 		void Awake()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
@@ -98,13 +99,7 @@ namespace SS.Objects.Modules
 			{
 				if( this.isEmpty )
 				{
-					this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
 					Object.Destroy( gameObject );
-
-					MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
-					MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
-					MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
-
 				}
 				else
 				{
@@ -116,6 +111,19 @@ namespace SS.Objects.Modules
 			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
 			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
 		}
+
+		void OnDestroy()
+		{
+			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
+			{
+				this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
+			}
+
+			MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
+			MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
+			MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
+		}
+
 
 		public bool isEmpty
 		{

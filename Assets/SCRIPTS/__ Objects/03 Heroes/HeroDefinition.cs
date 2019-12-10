@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Objects.Heroes
 {
-	public class HeroDefinition : ObjectDefinition
+	public class HeroDefinition : SSObjectDefinition
 	{
 		private string __displayName = "<missing>";
 		public string displayName

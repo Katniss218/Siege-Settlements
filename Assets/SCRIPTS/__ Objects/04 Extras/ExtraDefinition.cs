@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Objects.Extras
 {
-	public class ExtraDefinition : ObjectDefinition
+	public class ExtraDefinition : SSObjectDefinition
 	{
 		public string displayName { get; set; }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SS.Content
 {
-	public abstract class ObjectDefinition : AddressableDefinition
+	public abstract class SSObjectDefinition : AddressableDefinition
 	{
 		private struct ModuleCacheItem
 		{
@@ -27,7 +27,7 @@ namespace SS.Content
 		private List<SubObjectDefinition> subObjectCache { get; set; }
 
 
-		protected ObjectDefinition( string id ) : base( id )
+		protected SSObjectDefinition( string id ) : base( id )
 		{
 			this.moduleCache = new List<ModuleCacheItem>();
 			this.subObjectCache = new List<SubObjectDefinition>();

@@ -8,6 +8,8 @@ namespace SS.AI.Goals
 {
 	public class TacticalMoveToGoal : TacticalGoal
 	{
+		public const string KFF_TYPEID = "move_to";
+
 		public enum DestinationType : byte
 		{
 			POSITION,
@@ -157,6 +159,7 @@ namespace SS.AI.Goals
 				if( this.destinationObject == controller.ssObject )
 				{
 					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
+					this.navMeshAgent.ResetPath();
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
@@ -179,13 +182,21 @@ namespace SS.AI.Goals
 
 		public override TacticalGoalData GetData()
 		{
-			return new TacticalMoveToGoalData()
+			TacticalMoveToGoalData data = new TacticalMoveToGoalData()
 			{
-				destination = this.destination,
-				destinationObjectGuid = this.destinationObject.guid,
-				destinationPosition = this.destinationPos,
 				isHostile = this.isHostile
 			};
+			data.destination = this.destination;
+			if( this.destination == DestinationType.OBJECT )
+			{
+				data.destinationObjectGuid = this.destinationObject.guid;
+			}
+			else if( this.destination == DestinationType.POSITION )
+			{
+				data.destinationPosition = this.destinationPos;
+			}
+
+			return data;
 		}
 
 		public override void SetData( TacticalGoalData _data )

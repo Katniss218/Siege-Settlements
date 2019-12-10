@@ -8,6 +8,13 @@ namespace SS.AI.Goals
 		public bool isHostile { get; set; }
 
 
+		public override TacticalGoal GetInstance()
+		{
+			TacticalIdleGoal goal = new TacticalIdleGoal();
+			goal.SetData( this );
+			return goal;
+		}
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			try

@@ -98,11 +98,10 @@ namespace SS.Objects.Heroes
 
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-			/*TAIGoalData taiGoalData = data.taiGoalData;
-			if( taiGoalData != null )
+			if( data.tacticalGoalData != null )
 			{
-				TAIGoal.Assign( gameObject, taiGoalData );
-			}*/
+				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
+			}
 		}
 		
 		private static GameObject CreateHero( Guid guid )
@@ -302,13 +301,8 @@ namespace SS.Objects.Heroes
 			//
 
 			SSObjectCreator.ExtractModulesToData( hero, data );
-			
 
-			/*TAIGoal taiGoal = hero.GetComponent<TAIGoal>();
-			if( taiGoal != null )
-			{
-				data.taiGoalData = taiGoal.GetData();
-			}*/
+			data.tacticalGoalData = hero.GetComponent<TacticalGoalController>().goal.GetData();
 
 			return data;
 		}

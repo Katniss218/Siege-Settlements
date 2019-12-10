@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	public class ProjectileData : ObjectData
+	public class ProjectileData : SSObjectData
 	{
 		public Guid guid { get; set; }
 

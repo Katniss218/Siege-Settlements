@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.Diplomacy;
 using SS.AI;
+using SS.AI.Goals;
 
 namespace SS.Objects.Units
 {
@@ -97,12 +98,10 @@ namespace SS.Objects.Units
 			SSObjectCreator.AssignModules( gameObject, def, data );
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-			//tacticalGoalController.goal = new TacticalIdleGoal() { hostileMode = TacticalIdleGoal.HostileMode.ALL };
-			/*TAIGoalData taiGoalData = data.taiGoalData;
-			if( taiGoalData != null )
+			if( data.tacticalGoalData != null )
 			{
-				TAIGoal.Assign( gameObject, taiGoalData );
-			}*/
+				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
+			}
 		}
 
 		private static GameObject CreateUnit( Guid guid )
@@ -304,12 +303,7 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.ExtractModulesToData( unit, data );
 
-
-			/*TAIGoal taiGoal = unit.GetComponent<TAIGoal>();
-			if( taiGoal != null )
-			{
-				data.taiGoalData = taiGoal.GetData();
-			}*/
+			data.tacticalGoalData = unit.GetComponent<TacticalGoalController>().goal.GetData();
 
 			return data;
 		}

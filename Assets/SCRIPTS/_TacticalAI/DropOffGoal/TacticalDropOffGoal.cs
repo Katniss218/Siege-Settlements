@@ -14,6 +14,8 @@ namespace SS.AI.Goals
 {
 	public class TacticalDropOffGoal : TacticalGoal
 	{
+		public const string KFF_TYPEID = "drop_off";
+
 		public enum DestinationType : byte
 		{
 			POSITION,
@@ -108,8 +110,9 @@ namespace SS.AI.Goals
 				}
 
 				// If the agent has travelled to the destination - switch back to the Idle Goal.
-				if( navMeshAgent.desiredVelocity.magnitude < 0.01f )
+				if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
 				{
+					this.navMeshAgent.ResetPath();
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 				}
 
@@ -318,6 +321,7 @@ namespace SS.AI.Goals
 			{
 				if( this.destinationObject == null )
 				{
+					this.navMeshAgent.ResetPath();
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
@@ -325,6 +329,7 @@ namespace SS.AI.Goals
 				if( this.destinationObject == controller.ssObject )
 				{
 					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
+					this.navMeshAgent.ResetPath();
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
@@ -363,14 +368,22 @@ namespace SS.AI.Goals
 		
 		public override TacticalGoalData GetData()
 		{
-			return new TacticalDropOffGoalData()
+			TacticalDropOffGoalData data = new TacticalDropOffGoalData()
 			{
 				resourceId = this.resourceId,
-				destination = this.destination,
-				destinationObjectGuid = this.destinationObject.guid,
-				destinationPosition = this.destinationPos,
 				isHostile = this.isHostile
 			};
+			data.destination = this.destination;
+			if( this.destination == DestinationType.OBJECT )
+			{
+				data.destinationObjectGuid = this.destinationObject.guid;
+			}
+			else if( this.destination == DestinationType.POSITION )
+			{
+				data.destinationPosition = this.destinationPos;
+			}
+
+			return data;
 		}
 
 		public override void SetData( TacticalGoalData _data )

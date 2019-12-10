@@ -12,6 +12,13 @@ namespace SS.AI.Goals
 		public bool isHostile { get; set; }
 
 
+		public override TacticalGoal GetInstance()
+		{
+			TacticalPickUpGoal goal = new TacticalPickUpGoal();
+			goal.SetData( this );
+			return goal;
+		}
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			try

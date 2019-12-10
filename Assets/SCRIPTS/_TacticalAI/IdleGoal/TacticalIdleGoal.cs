@@ -6,6 +6,8 @@ namespace SS.AI.Goals
 {
 	public class TacticalIdleGoal : TacticalGoal
 	{
+		public const string KFF_TYPEID = "idle";
+
 		public bool isHostile { get; set; }
 
 

@@ -154,26 +154,8 @@ namespace SS.Objects.Modules
 			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
 			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
 			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
-
-			Damageable damageable = this.GetComponent<Damageable>();
-			if( damageable != null )
-			{
-				damageable.onDeath.AddListener( () =>
-				{
-					this.HideTooltip( this.gameObject );
-					MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
-					MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
-					MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
-				} );
-			}
 		}
-
-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
+		
 		private void RegisterHUD()
 		{
 			// integrate hud.
@@ -239,20 +221,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
-		private void RegisterDropOnDeath()
-		{
-			(this.ssObject as IDamageable).damageable.onDeath.AddListener( () =>
-			{
-				if( !this.isEmpty )
-				{
-#warning TODO! - drop the items on death.
-					//TAIGoal.DropoffToNew.DropOffInventory( this, this.transform.position );
-				}
-			} );
-		}
-
+		
 
 		void Awake()
 		{
@@ -263,11 +232,23 @@ namespace SS.Objects.Modules
 			{
 				this.RegisterHUD();
 			}
-			if( this.ssObject is IDamageable )
-			{
-				this.RegisterDropOnDeath();
-			}
 		}
+
+		void OnDestroy()
+		{
+			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
+			{
+				this.HideTooltip( this.gameObject );
+			}
+			MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
+			MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
+			MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
+
+
+#warning TODO! - drop the items as default deposits on death.
+		}
+
+
 
 		public bool isEmpty
 		{

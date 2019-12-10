@@ -48,5 +48,14 @@
 				ObjectLayer.BUILDINGS_MASK |
 				ObjectLayer.HEROES_MASK |
 				ObjectLayer.EXTRAS_MASK;
+
+		public const int ALL_MASK =
+			ObjectLayer.TERRAIN_MASK |
+
+			ObjectLayer.UNITS_MASK |
+			ObjectLayer.BUILDINGS_MASK |
+			ObjectLayer.PROJECTILES_MASK |
+			ObjectLayer.HEROES_MASK |
+			ObjectLayer.EXTRAS_MASK;
 	}
 }

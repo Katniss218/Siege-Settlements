@@ -379,20 +379,20 @@ namespace SS.Objects.Buildings
 		/// <summary>
 		/// Starts the construction / repair of the specified building.
 		/// </summary>
-		public static void BeginConstructionOrRepair( GameObject gameObject, ConstructionSiteData data )
+		public static void BeginConstructionOrRepair( Building building, ConstructionSiteData data )
 		{
-			Damageable damageable = gameObject.GetComponent<Damageable>();
+			Damageable damageable = building.GetComponent<Damageable>();
 			if( !Building.IsRepairable( damageable ) )
 			{
-				throw new Exception( gameObject.name + " - Building is not repairable." );
+				throw new Exception( building.name + " - Building is not repairable." );
 			}
 			
-			ConstructionSite constructionSite = gameObject.AddComponent<ConstructionSite>();
-			constructionSite.building = gameObject.GetComponent<Building>();
+			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
 			constructionSite.SetRequiredResources( constructionSite.building.StartToEndConstructionCost );
-			constructionSite.renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+			constructionSite.renderers = building.GetComponentsInChildren<MeshRenderer>();
+			constructionSite.building = building;
 
-			constructionSite.buildingHeight = gameObject.GetComponent<BoxCollider>().size.y;
+			constructionSite.buildingHeight = building.GetComponent<BoxCollider>().size.y;
 
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
@@ -415,9 +415,9 @@ namespace SS.Objects.Buildings
 						
 
 			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
-			gameObject.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
+			building.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
-			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( gameObject );
+			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject );
 
 
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).

@@ -8,7 +8,7 @@ namespace SS.Objects
 {
 	public static class SSObjectCreator
 	{
-		public static void AssignSubObjects( GameObject gameObject, ObjectDefinition def )
+		public static void AssignSubObjects( GameObject gameObject, SSObjectDefinition def )
 		{
 			SubObjectDefinition[] subObjectDefinitions;
 
@@ -20,7 +20,7 @@ namespace SS.Objects
 			}
 		}
 
-		public static void AssignModules( GameObject gameObject, ObjectDefinition def, ObjectData data )
+		public static void AssignModules( GameObject gameObject, SSObjectDefinition def, SSObjectData data )
 		{
 			Guid[] moduleDefIds;
 			ModuleDefinition[] moduleDefinitions;
@@ -55,7 +55,7 @@ namespace SS.Objects
 			}
 		}
 
-		public static void ExtractModulesToData( SSObject ssObject, ObjectData data )
+		public static void ExtractModulesToData( SSObject ssObject, SSObjectData data )
 		{
 			SSModule[] modules = ssObject.GetModules();
 			for( int i = 0; i < modules.Length; i++ )

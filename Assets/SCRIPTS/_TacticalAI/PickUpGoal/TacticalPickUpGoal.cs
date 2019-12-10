@@ -10,6 +10,8 @@ namespace SS.AI.Goals
 {
 	public class TacticalPickUpGoal : TacticalGoal
 	{
+		public const string KFF_TYPEID = "pick_up";
+
 		public enum GoalHostileMode : byte
 		{
 			ALL,
@@ -194,6 +196,7 @@ namespace SS.AI.Goals
 				}
 			}
 
+			this.navMeshAgent.ResetPath();
 			controller.goal = TacticalGoalController.GetDefaultGoal();
 		}
 
@@ -202,6 +205,7 @@ namespace SS.AI.Goals
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( this.destinationObject == null )
 			{
+				this.navMeshAgent.ResetPath();
 				controller.goal = TacticalGoalController.GetDefaultGoal();
 				return;
 			}
@@ -209,6 +213,7 @@ namespace SS.AI.Goals
 			if( this.destinationObject == controller.ssObject )
 			{
 				Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
+				this.navMeshAgent.ResetPath();
 				controller.goal = TacticalGoalController.GetDefaultGoal();
 				return;
 			}

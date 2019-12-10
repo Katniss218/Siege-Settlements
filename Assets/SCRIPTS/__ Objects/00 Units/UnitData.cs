@@ -1,11 +1,12 @@
 ﻿using KFF;
+using SS.AI.Goals;
 using SS.Content;
 using System;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	public class UnitData : ObjectData
+	public class UnitData : SSObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -31,7 +32,7 @@ namespace SS.Levels.SaveStates
 
 		public float health { get; set; }
 		
-		//public TAIGoalData taiGoalData { get; set; }
+		public TacticalGoalData tacticalGoalData { get; set; }
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -80,7 +81,7 @@ namespace SS.Levels.SaveStates
 				throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
 			}
 
-			//this.taiGoalData = TAIGoalData.DeserializeUnknownType( serializer );
+			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
 
 			this.DeserializeModulesKFF( serializer );
 		}
@@ -95,7 +96,7 @@ namespace SS.Levels.SaveStates
 			serializer.WriteInt( "", "FactionId", this.factionId );
 			serializer.WriteFloat( "", "Health", this.health );
 			
-			//TAIGoalData.SerializeUnknownType( serializer, this.taiGoalData );
+			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );
 
 			this.SerializeModulesKFF( serializer );
 		}

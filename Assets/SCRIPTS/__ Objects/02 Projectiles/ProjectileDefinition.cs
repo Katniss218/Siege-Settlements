@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Objects.Projectiles
 {
-	public class ProjectileDefinition : ObjectDefinition, IKFFSerializable
+	public class ProjectileDefinition : SSObjectDefinition, IKFFSerializable
 	{
 		public bool canGetStuck { get; set; }
 

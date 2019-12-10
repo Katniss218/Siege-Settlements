@@ -93,6 +93,10 @@ namespace SS.Objects.Buildings
 			SSObjectCreator.AssignModules( gameObject, def, data );
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			if( data.tacticalGoalData != null )
+			{
+				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
+			}
 
 			//
 			//    CONTAINER GAMEOBJECT
@@ -109,7 +113,7 @@ namespace SS.Objects.Buildings
 			else
 			{
 				// The health is set to 10% in the data passed as a parameter if the construction is fresh.
-				ConstructionSite.BeginConstructionOrRepair( gameObject, data.constructionSaveState );
+				ConstructionSite.BeginConstructionOrRepair( building, data.constructionSaveState );
 			}
 		}
 		
@@ -322,6 +326,7 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.ExtractModulesToData( building, data );
 
+			data.tacticalGoalData = building.GetComponent<TacticalGoalController>().goal.GetData();
 
 			return data;
 		}

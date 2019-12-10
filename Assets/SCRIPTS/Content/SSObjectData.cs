@@ -1,11 +1,12 @@
 ﻿using KFF;
+using SS.AI.Goals;
 using SS.Objects.Modules;
 using System;
 using System.Collections.Generic;
 
 namespace SS.Content
 {
-	public abstract class ObjectData : IKFFSerializable
+	public abstract class SSObjectData : IKFFSerializable
 	{
 		private struct ModuleCacheItem
 		{
@@ -27,7 +28,7 @@ namespace SS.Content
 
 		private List<ModuleCacheItem> moduleCache;
 		
-		protected ObjectData()
+		protected SSObjectData()
 		{
 			this.moduleCache = new List<ModuleCacheItem>();
 		}
@@ -87,16 +88,59 @@ namespace SS.Content
 			this.moduleCache.Add( new ModuleCacheItem( moduleId, module ) );
 		}
 
+		protected static TacticalGoalData DeserializeTacticalGoalKFF( KFFSerializer serializer )
+		{
+			TacticalGoalData goalData = null;
+			try
+			{
+				string typeId = serializer.ReadString( "TacticalGoal.TypeId" );
+				goalData = TacticalGoalData.TypeIdToInstance( typeId );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'TacticalGoal.TypeId' (" + serializer.file.fileName + ")." );
+			}
+
+			serializer.Deserialize<IKFFSerializable>( "TacticalGoal", goalData );
+
+			return goalData;
+		}
+
+		protected static void SerializeTacticalGoalKFF( KFFSerializer serializer, TacticalGoalData goalData )
+		{
+			serializer.Serialize<IKFFSerializable>( "", "TacticalGoal", goalData );
+
+			string typeId = TacticalGoalData.InstanceToTypeId( goalData );
+
+			serializer.WriteString( "TacticalGoal", "TypeId", typeId );
+		}
+
 		protected void DeserializeModulesKFF( KFFSerializer serializer )
 		{
 			for( int i = 0; i < serializer.Analyze( "Modules" ).childCount; i++ )
 			{
-				string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
-				ModuleData module = ModuleData.TypeIdToDefinition( typeId );
-
+				ModuleData module = null;
+				try
+				{
+					string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
+					module = ModuleData.TypeIdToDefinition( typeId );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Modules.{0}.TypeId' (" + serializer.file.fileName + ")." );
+				}
 				
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
-				Guid guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
+
+				Guid guid;
+				try
+				{
+					guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Modules.{0}.ModuleId' (" + serializer.file.fileName + ")." );
+				}
 
 				this.AddModuleData( guid, module );
 			}

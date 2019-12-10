@@ -1,11 +1,12 @@
 ﻿using KFF;
+using SS.AI.Goals;
 using SS.Content;
 using System;
 using UnityEngine;
 
 namespace SS.Levels.SaveStates
 {
-	public class BuildingData : ObjectData
+	public class BuildingData : SSObjectData
 	{
 		public Guid guid { get; set; }
 
@@ -32,7 +33,9 @@ namespace SS.Levels.SaveStates
 		public float health { get; set; }
 		
 		public ConstructionSiteData constructionSaveState { get; set; }
-		
+
+		public TacticalGoalData tacticalGoalData { get; set; }
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			try
@@ -85,7 +88,9 @@ namespace SS.Levels.SaveStates
 				this.constructionSaveState = new ConstructionSiteData();
 				serializer.Deserialize( "ConstructionSaveState", this.constructionSaveState );
 			}
-			
+
+			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
+
 			this.DeserializeModulesKFF( serializer );
 		}
 
@@ -103,6 +108,8 @@ namespace SS.Levels.SaveStates
 			{
 				serializer.Serialize( "", "ConstructionSaveState", this.constructionSaveState );
 			}
+
+			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );
 
 			this.SerializeModulesKFF( serializer );
 		}
