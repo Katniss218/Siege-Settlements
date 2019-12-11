@@ -66,18 +66,12 @@ namespace SS.AI.Goals
 					return;
 				}
 
-#warning SSObjectSelectable, Damageable, FactionMember, and ViewRange are basically the same. They always coexist on objects (U|B|H).
-				
-
-#warning TODO! - proper per-DFVobject view range.
-#warning TODO! - proper per-module check if it can target it.
-#warning TODO! - Start moving towards the target when the object has the target set, and is outside range. Set the target when the object is in the global view range.
-
-				if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= this.attackModules[0].searchRange * STOPPING_FRACTION )
+#warning TODO! - Calculate the shortest attack range.
+				if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= this.attackModules[0].attackRange * STOPPING_FRACTION )
 				{
 					this.navMeshAgent.ResetPath();
 				}
-				else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= this.attackModules[0].searchRange * MOVING_FACTION )
+				else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= this.attackModules[0].attackRange * MOVING_FACTION )
 				{
 					Vector3 currDestPos = this.target.transform.position;
 
@@ -93,7 +87,6 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			bool allCantTarget = true;
 			IFactionMember fac = controller.GetComponent<IFactionMember>();
 
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
@@ -101,34 +94,34 @@ namespace SS.AI.Goals
 			{
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}
-					else
-					{
-						allCantTarget = false;
-					}
-				}
-				
-				if( allCantTarget )
-				{
-					this.target = null;
 				}
 			}
 
-			// If the target was destroyed or can no longer be targeted - find a new target.
-			if( this.target == null )
+			// If the current target is outside of the global view range, or can't be targeted - try and find a new target.
+			if( !Targeter.CanTarget( controller.transform.position, fac.factionMember.viewRange, this.target, fac.factionMember ) )
 			{
-				this.target = Targeter.FindTargetArbitrary( controller.transform.position, this.attackModules[0].searchRange, this.attackModules[0].targeter.layers, fac.factionMember );
+				this.target = null;
 			}
-			
+
+			// If the target was destroyed or could no longer be targeted - find a new target.
+			if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
+			{
+				if( this.target == null )
+				{
+					this.target = Targeter.FindTargetClosest( controller.transform.position, fac.factionMember.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, fac.factionMember );
+				}
+			}
+
 			// Set the target of each targeter module to the goal's target.
 			for( int i = 0; i < this.attackModules.Length; i++ )
 			{
 				if( this.attackModules[i].isReadyToAttack )
 				{
-					this.attackModules[i].targeter.TrySetTarget( controller.transform.position, Targeter.TargetingMode.TARGET, this.target );
+					this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.TARGET, this.target );
 				}
 			}
 		}
@@ -148,17 +141,32 @@ namespace SS.AI.Goals
 
 		public override TacticalGoalData GetData()
 		{
-			return new TacticalTargetGoalData()
+			TacticalTargetGoalData data = new TacticalTargetGoalData();
+
+			if( this.target == null )
 			{
-				targetGuid = this.target.GetComponent<SSObject>().guid
-			};
+				data.targetGuid = null;
+			}
+			else
+			{
+				data.targetGuid = this.target.GetComponent<SSObject>().guid;
+			}
+
+			return data;
 		}
 
 		public override void SetData( TacticalGoalData _data )
 		{
 			TacticalTargetGoalData data = (TacticalTargetGoalData)_data;
-			
-			this.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
+
+			if( data.targetGuid == null )
+			{
+				this.target = null;
+			}
+			else
+			{
+				this.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
+			}
 		}
 	}
 }

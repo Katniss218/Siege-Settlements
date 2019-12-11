@@ -81,6 +81,7 @@ namespace SS.Objects.Buildings
 			} );
 
 			factionMember.factionId = data.factionId;
+			factionMember.viewRange = def.viewRange;
 
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
@@ -303,7 +304,7 @@ namespace SS.Objects.Buildings
 			}
 
 			BuildingData data = new BuildingData();
-			data.guid = building.guid.Value;
+			data.guid = building.guid;
 
 			data.position = building.transform.position;
 			data.rotation = building.transform.rotation;

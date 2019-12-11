@@ -245,7 +245,7 @@ namespace SS.Objects.Modules
 			MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
 
 
-#warning TODO! - drop the items as default deposits on death.
+#warning TODO! - drop the items as default deposits upon death.
 		}
 
 

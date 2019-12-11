@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Returns the max view distance of the target finder.
 		/// </summary>
-		float searchRange { get; }
+		float attackRange { get; }
 		
 		bool isReadyToAttack { get; }
 

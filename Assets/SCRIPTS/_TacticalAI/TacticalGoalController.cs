@@ -28,9 +28,7 @@ namespace SS.AI
 				//Debug.Log( this.gameObject.name + ": Set the TacticalGoal to: " + value.GetType().Name );
 			}
 		}
-
-#warning TODO! - Save Tactical Goals.
-
+		
 		private SSObject __ssObject = null;
 		public SSObject ssObject
 		{

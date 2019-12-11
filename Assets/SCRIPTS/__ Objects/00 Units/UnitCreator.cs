@@ -86,6 +86,7 @@ namespace SS.Objects.Units
 			} );
 
 			factionMember.factionId = data.factionId;
+			factionMember.viewRange = def.viewRange;
 
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
@@ -286,7 +287,7 @@ namespace SS.Objects.Units
 			}
 
 			UnitData data = new UnitData();
-			data.guid = unit.guid.Value;
+			data.guid = unit.guid;
 
 			data.position = unit.transform.position;
 			data.rotation = unit.transform.rotation;

@@ -10,6 +10,7 @@ namespace SS.Diplomacy
 	/// </summary>
 	public sealed class FactionMember : MonoBehaviour
 	{
+#warning This doesn't have to be a MonoBehaviour, really.
 		[SerializeField] private int __factionId;
 		/// <summary>
 		/// Contains the index of the faction that this object belongs to.
@@ -31,7 +32,9 @@ namespace SS.Diplomacy
 		/// Fired when the faction ID changes.
 		/// </summary>
 		public UnityEvent onFactionChange = new UnityEvent();
-		
+
+		public float viewRange;
+
 		// Checks if the faction members can target each other.
 		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.
 		internal bool CanTargetAnother( FactionMember fac2 )
@@ -59,5 +62,12 @@ namespace SS.Diplomacy
 			}
 			return LevelDataManager.GetRelation( fac1, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
+#if UNITY_EDITOR
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.blue;
+			Gizmos.DrawWireSphere( this.transform.position, this.viewRange );
+		}
+#endif
 	}
 }

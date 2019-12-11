@@ -66,15 +66,19 @@ namespace SS.Objects
 		/// <summary>
 		/// Gets or sets the unique identifier (Guid) of the object (CAN'T be re-assigned after setting it once).
 		/// </summary>
-		public Guid? guid
+		public Guid guid
 		{
 			get
 			{
-				return this.__guid;
+				if( this.__guid == null )
+				{
+					throw new Exception( "Guid hasn't been assigned yet." );
+				}
+				return this.__guid.Value;
 			}
 			set
 			{
-				if( this.guid != null )
+				if( this.__guid != null )
 				{
 					throw new Exception( "Tried to re-assign guid to '" + gameObject.name + "'. A guid is already assigned." );
 				}

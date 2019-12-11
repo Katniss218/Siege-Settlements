@@ -9,7 +9,6 @@ namespace SS.Objects.SubObjects
 	/// </summary>
 	public abstract class SubObjectDefinition : IKFFSerializable
 	{
-#warning Sub-Objects are just purely graphical objects.
 		/// <summary>
 		/// The Identifier of this Sub-Object.
 		/// </summary>

@@ -31,6 +31,10 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{			
+			// If the unit is in view range, but not in attack range - disregard.
+			// If unit is in view range, and in attack range - attack.
+			// If unit is outside view range - unset target.
+
 			if( this.isHostile )
 			{
 #warning TODO! - optimise by having only 1 overlapsphere (the largest radius, and filtering for smaller targeters).
@@ -41,7 +45,7 @@ namespace SS.AI.Goals
 				IFactionMember fac = (IFactionMember)controller.ssObject;
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}
@@ -53,7 +57,7 @@ namespace SS.AI.Goals
 					{
 						if( this.attackModules[i].isReadyToAttack )
 						{
-							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, Targeter.TargetingMode.CLOSEST );
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.CLOSEST );
 						}
 					}
 				}

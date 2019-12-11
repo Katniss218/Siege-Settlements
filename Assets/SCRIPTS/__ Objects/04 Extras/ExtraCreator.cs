@@ -88,7 +88,7 @@ namespace SS.Objects.Extras
 			}
 
 			ExtraData data = new ExtraData();
-			data.guid = extra.guid.Value;
+			data.guid = extra.guid;
 
 			data.position = extra.transform.position;
 			data.rotation = extra.transform.rotation;

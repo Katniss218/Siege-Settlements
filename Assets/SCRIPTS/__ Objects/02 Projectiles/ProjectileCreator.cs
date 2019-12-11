@@ -151,7 +151,7 @@ namespace SS.Objects.Projectiles
 			}
 
 			ProjectileData data = new ProjectileData();
-			data.guid = projectile.guid.Value;
+			data.guid = projectile.guid;
 
 			data.position = projectile.transform.position;
 
@@ -181,8 +181,7 @@ namespace SS.Objects.Projectiles
 			}
 			else {
 				data.owner = new Tuple<Guid, Guid>(
-#warning TODO! - public accessor should be of non-nullable type 'Guid'. Throw exception when Guid has not been set.
-				projectile.owner.ssObject.guid.Value,
+				projectile.owner.ssObject.guid,
 				projectile.owner.moduleId
 				);
 			}

@@ -84,6 +84,7 @@ namespace SS.Objects.Heroes
 
 
 			factionMember.factionId = data.factionId;
+			factionMember.viewRange = def.viewRange;
 
 			damageable.healthMax = def.healthMax;
 			damageable.health = data.health;
@@ -285,7 +286,7 @@ namespace SS.Objects.Heroes
 			}
 
 			HeroData data = new HeroData();
-			data.guid = hero.guid.Value;
+			data.guid = hero.guid;
 
 			data.position = hero.transform.position;
 			data.rotation = hero.transform.rotation;

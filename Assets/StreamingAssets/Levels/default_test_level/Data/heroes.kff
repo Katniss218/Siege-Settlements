@@ -4,6 +4,7 @@
 		Id = "hero.cerberos";
 		DisplayName = "Cerberos";
 		DisplayTitle = "The King of Darkness";
+		ViewRange = 7.0;
 		MaxHealth = 100.0;
 		Armor =
 		{

@@ -10,7 +10,7 @@ namespace SS.Objects.Modules
 	{
 		public const string KFF_TYPEID = "melee";
 
-		public float searchRange { get; set; }
+		public float attackRange { get; set; }
 		public Targeter targeter { get; private set; }
 
 
@@ -40,7 +40,7 @@ namespace SS.Objects.Modules
 		
 		void Awake()
 		{
-			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
+			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
 
 			this.targeter.onTargetReset += () =>
 			{
@@ -111,7 +111,7 @@ namespace SS.Objects.Modules
 			
 			if( this.targeter.target != null )
 			{
-				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid.Value;
+				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
 			}
 			return data;
 		}
@@ -140,7 +140,7 @@ namespace SS.Objects.Modules
 			MeleeModuleData data = (MeleeModuleData)_data;
 
 			this.icon = def.icon;
-			this.searchRange = def.attackRange;
+			this.attackRange = def.attackRange;
 			
 			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
 			this.damageSource = damageSource;
@@ -154,11 +154,10 @@ namespace SS.Objects.Modules
 				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
 				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
-
-			this.targeter.searchRange = this.searchRange;
+			
 			if( data.targetGuid != null )
 			{
-				this.targeter.TrySetTarget( this.transform.position, Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>() );
+				this.targeter.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
 			}
 		}
 		
@@ -177,7 +176,7 @@ namespace SS.Objects.Modules
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.yellow;
-			Gizmos.DrawWireSphere( this.transform.position, this.searchRange );
+			Gizmos.DrawWireSphere( this.transform.position, this.attackRange );
 		}
 #endif
 	}

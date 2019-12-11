@@ -19,6 +19,20 @@ namespace SS.Objects.Buildings
 			}
 		}
 
+		private float __viewRange = 0.0f;
+		public float viewRange
+		{
+			get { return this.__viewRange; }
+			set
+			{
+				if( value <= 0.0f )
+				{
+					throw new Exception( "'ViewRange' can't be less than or equal to 0." );
+				}
+				this.__viewRange = value;
+			}
+		}
+
 		//--------------------------------------------------------------------
 		//  HEALTH-RELATED
 		//--------------------------------------
@@ -106,6 +120,15 @@ namespace SS.Objects.Buildings
 			catch
 			{
 				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.viewRange = serializer.ReadFloat( "ViewRange" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'ViewRange' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
 
@@ -221,6 +244,7 @@ namespace SS.Objects.Buildings
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
+			serializer.WriteFloat( "", "ViewRange", this.viewRange );
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );

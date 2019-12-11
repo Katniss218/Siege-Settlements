@@ -35,13 +35,11 @@ namespace SS.Objects.Modules
 			}
 		}
 		
-		public float searchRange { get; set; }
 		public int layers { get; private set; }
 
 
-		public Targeter( float searchRange, int layers, FactionMember factionMember )
+		public Targeter( int layers, FactionMember factionMember )
 		{
-			this.searchRange = searchRange;
 			this.layers = layers;
 			this.factionMember = factionMember;
 		}
@@ -71,16 +69,16 @@ namespace SS.Objects.Modules
 
 			return true;
 		}
-		
-		public Damageable TrySetTarget( Vector3 positionSelf, TargetingMode targetingMode, Damageable target = null )
+
+		public Damageable TrySetTarget( Vector3 positionSelf, float searchRange, TargetingMode targetingMode, Damageable target = null )
 		{
 			if( targetingMode == TargetingMode.ARBITRARY )
 			{
-				this.target = FindTargetArbitrary( positionSelf, this.searchRange, this.layers, this.factionMember );
+				this.target = FindTargetArbitrary( positionSelf, searchRange, this.layers, this.factionMember );
 			}
 			else if( targetingMode == TargetingMode.CLOSEST )
 			{
-				this.target = FindTargetClosest( positionSelf, this.searchRange, this.layers, this.factionMember );
+				this.target = FindTargetClosest( positionSelf, searchRange, this.layers, this.factionMember );
 			}
 			else if( targetingMode == TargetingMode.TARGET )
 			{
@@ -95,7 +93,7 @@ namespace SS.Objects.Modules
 					return this.target;
 				}
 
-				if( !Main.IsInRange( target.transform.position, positionSelf, this.searchRange ) )
+				if( !Main.IsInRange( target.transform.position, positionSelf, searchRange ) )
 				{
 					return this.target;
 				}
@@ -105,9 +103,9 @@ namespace SS.Objects.Modules
 			return this.target;
 		}
 
-		public Damageable TrySetTarget( Vector3 positionSelf, Damageable target )
+		public Damageable TrySetTarget( Vector3 positionSelf, float searchRange, Damageable target )
 		{
-			if( CanTarget( positionSelf, this.searchRange, target, this.factionMember ) )
+			if( CanTarget( positionSelf, searchRange, target, this.factionMember ) )
 			{
 				this.target = target;
 			}
@@ -144,7 +142,6 @@ namespace SS.Objects.Modules
 		}
 
 		public static Damageable FindTargetClosest( Vector3 positionSelf, float searchRange, int layerMask, FactionMember factionMemberSelf )
-		//private Damageable FindTargetClosest( Vector3 positionSelf )
 		{
 			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
 			if( col.Length == 0 )

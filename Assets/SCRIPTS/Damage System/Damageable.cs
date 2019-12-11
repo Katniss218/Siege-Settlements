@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace SS
+namespace SS.Objects
 {
 	[DisallowMultipleComponent]
 	/// <summary>
@@ -10,6 +10,8 @@ namespace SS
 	/// </summary>
 	public class Damageable : MonoBehaviour
 	{
+#warning This doesn't have to be a MonoBehaviour, really.
+
 		public class _UnityEvent_float : UnityEvent<float> { }
 		public class _UnityEvent_Damageable_float : UnityEvent<Damageable, float> { }
 		public class _UnityEvent_Damageable : UnityEvent<Damageable> { }
@@ -122,8 +124,8 @@ namespace SS
 
 		void Awake()
 		{
-			this.lastDamageTakenTimestamp = 0.0f;
-			this.lastHealTimestamp = 0.0f;
+			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
+			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}
 
 		/// <summary>

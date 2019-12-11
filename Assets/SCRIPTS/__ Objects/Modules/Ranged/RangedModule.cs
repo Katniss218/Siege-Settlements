@@ -15,7 +15,7 @@ namespace SS.Objects.Modules
 	{
 		public const string KFF_TYPEID = "ranged";
 
-		public float searchRange { get; set; }
+		public float attackRange { get; set; }
 
 		// it's the target finder.
 
@@ -52,7 +52,7 @@ namespace SS.Objects.Modules
 
 		void Awake()
 		{
-			this.targeter = new Targeter( this.searchRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
+			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
 
 			this.targeter.onTargetReset += () =>
 			{
@@ -170,7 +170,7 @@ namespace SS.Objects.Modules
 			data.damageOverride = this.damageSource.damage;
 			data.armorPenetrationOverride = this.damageSource.armorPenetration;
 			data.owner = new Tuple<Guid, Guid>(
-				this.ssObject.guid.Value,
+				this.ssObject.guid,
 				this.moduleId
 				);
 
@@ -189,7 +189,7 @@ namespace SS.Objects.Modules
 
 			if( this.targeter.target != null )
 			{
-				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid.Value;
+				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
 			}
 			return data;
 		}
@@ -217,7 +217,7 @@ namespace SS.Objects.Modules
 			RangedModuleDefinition def = (RangedModuleDefinition)_def;
 			RangedModuleData data = (RangedModuleData)_data;
 			
-			this.searchRange = def.attackRange;
+			this.attackRange = def.attackRange;
 
 
 			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
@@ -237,11 +237,10 @@ namespace SS.Objects.Modules
 				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
 				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
-
-			this.targeter.searchRange = this.searchRange;
+			
 			if( data.targetGuid != null )
 			{
-				this.targeter.TrySetTarget( this.transform.position, Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>() );
+				this.targeter.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
 			}
 		}
 		
@@ -263,7 +262,7 @@ namespace SS.Objects.Modules
 			Gizmos.DrawWireSphere( this.transform.position, BallisticSolver.GetMaxRange( this.velocity, -Physics.gravity.y, 0.0f ) );
 
 			Gizmos.color = new Color( 1.0f, 1.0f, 0.0f );
-			Gizmos.DrawWireSphere( this.transform.position, this.searchRange );
+			Gizmos.DrawWireSphere( this.transform.position, this.attackRange );
 
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			Vector3 pos;

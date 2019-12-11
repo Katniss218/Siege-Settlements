@@ -68,16 +68,7 @@ namespace SS.AI.Goals
 			if( this.oldDestination != currDestPos )
 			{
 				this.navMeshAgent.SetDestination( currDestPos );
-			}
-			
-			// If the agent has travelled to the destination - reset the path (but keep the goal)
-			if( this.navMeshAgent.hasPath )
-			{
-				if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
-				{
-					this.navMeshAgent.ResetPath();
-				}
-			}
+			}			
 
 			this.oldDestination = currDestPos;
 		}
@@ -89,7 +80,7 @@ namespace SS.AI.Goals
 				IFactionMember fac = controller.GetComponent<IFactionMember>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].targeter.searchRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}
@@ -101,7 +92,7 @@ namespace SS.AI.Goals
 					{
 						if( this.attackModules[i].isReadyToAttack )
 						{
-							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, Targeter.TargetingMode.CLOSEST );
+							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.CLOSEST );
 						}
 					}
 				}
@@ -125,9 +116,9 @@ namespace SS.AI.Goals
 
 			this.amountCollectedDeposit += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
 			int amountCollectedFloored = Mathf.FloorToInt( amountCollectedDeposit );
+			Dictionary<string, int> resourcesInDeposit = depositToPickUp.GetAll();
 			if( amountCollectedFloored >= 1 )
 			{
-				Dictionary<string, int> resourcesInDeposit = depositToPickUp.GetAll();
 
 				foreach( var kvp in resourcesInDeposit )
 				{
@@ -155,12 +146,6 @@ namespace SS.AI.Goals
 					}
 				}
 			}
-
-#warning TODO! - Make sure to disable pickup goal after inventory is full (can no longer pick up).
-			/*if( amountPickedUp == 0 ) doesn't work
-			{
-				controller.goal = TacticalGoalController.GetDefaultGoal();
-			}*/
 		}
 
 		private void OnArrivalInventory( TacticalGoalController controller, InventoryModule inventoryToPickUp )
@@ -228,6 +213,12 @@ namespace SS.AI.Goals
 
 			if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, 0.75f ) )
 			{
+				// If the agent has travelled to the destination - reset the path (but keep the goal)
+				if( this.navMeshAgent.hasPath )
+				{
+					this.navMeshAgent.ResetPath();
+				}
+
 				ResourceDepositModule[] deposits = this.destinationObject.GetModules<ResourceDepositModule>();
 				InventoryModule[] inventories = this.destinationObject.GetModules<InventoryModule>();
 				if( deposits.Length > 0 )
@@ -256,7 +247,7 @@ namespace SS.AI.Goals
 			return new TacticalPickUpGoalData()
 			{
 				resourceId = this.resourceId,
-				destinationObjectGuid = this.destinationObject.guid.Value,
+				destinationObjectGuid = this.destinationObject.guid,
 				isHostile = this.isHostile
 			};
 		}

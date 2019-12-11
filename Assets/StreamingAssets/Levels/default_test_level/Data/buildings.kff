@@ -3,6 +3,7 @@
 	{
 		Id = "building.town_center";
 		DisplayName = "Town Center";
+		ViewRange = 7.0;
 		MaxHealth = 450.0;
 		Armor =
 		{
@@ -100,6 +101,7 @@
 	{
 		Id = "building.house_0";
 		DisplayName = "House";
+		ViewRange = 7.0;
 		MaxHealth = 60.0;
 		Armor =
 		{
@@ -187,6 +189,7 @@
 	{
 		Id = "building.small_warehouse";
 		DisplayName = "Small Warehouse";
+		ViewRange = 7.0;
 		MaxHealth = 100.0;
 		Armor =
 		{
@@ -245,6 +248,7 @@
 	{
 		Id = "building.college";
 		DisplayName = "College";
+		ViewRange = 7.0;
 		MaxHealth = 200.0;
 		Armor =
 		{
@@ -304,6 +308,7 @@
 	{
 		Id = "building.barracks";
 		DisplayName = "Barracks";
+		ViewRange = 7.0;
 		MaxHealth = 200.0;
 		Armor =
 		{
@@ -367,6 +372,7 @@
 	{
 		Id = "building.stables";
 		DisplayName = "Stables";
+		ViewRange = 7.0;
 		MaxHealth = 200.0;
 		Armor =
 		{
@@ -429,6 +435,7 @@
 	{
 		Id = "building.siege_workshop";
 		DisplayName = "Siege Workshop";
+		ViewRange = 7.0;
 		MaxHealth = 200.0;
 		Armor =
 		{
@@ -489,6 +496,7 @@
 	{
 		Id = "building.wooden_wall";
 		DisplayName = "Palisade";
+		ViewRange = 7.0;
 		MaxHealth = 80.0;
 		Armor =
 		{
@@ -538,6 +546,7 @@
 	{
 		Id = "building.wooden_tower";
 		DisplayName = "Wooden Tower";
+		ViewRange = 7.0;
 		MaxHealth = 90.0;
 		Armor =
 		{
@@ -582,6 +591,7 @@
 	{
 		Id = "building.wooden_ballista_tower";
 		DisplayName = "Wooden Ballista Tower";
+		ViewRange = 7.0;
 		MaxHealth = 90.0;
 		Armor =
 		{
