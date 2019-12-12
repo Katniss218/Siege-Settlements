@@ -1,4 +1,5 @@
 ﻿using SS.Content;
+using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
@@ -12,7 +13,7 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {	
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -73,12 +74,8 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		private void ShowTooltip( GameObject mouseoveredObj )
+		private void ShowTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
 			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
@@ -110,12 +107,8 @@ namespace SS.Objects.Modules
 			ToolTip.ShowAt( Input.mousePosition );
 		}
 
-		private void MoveTooltip( GameObject mouseoveredObj )
+		private void MoveTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
 			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
@@ -125,12 +118,8 @@ namespace SS.Objects.Modules
 			ToolTip.MoveTo( Input.mousePosition, true );
 		}
 
-		private void HideTooltip( GameObject mouseoveredObj )
+		private void HideTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
 			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
@@ -139,21 +128,39 @@ namespace SS.Objects.Modules
 
 			ToolTip.Hide();
 		}
+
 		
+		public void OnMouseEnterListener()
+		{
+			this.ShowTooltip();
+		}
+
+		public void OnMouseStayListener()
+		{
+			this.MoveTooltip();
+		}
+
+		public void OnMouseExitListener()
+		{
+			this.HideTooltip();
+		}
+
 		private void RegisterTooltip()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					this.ShowTooltip();
+				}
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
-				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					this.ShowTooltip();
+				}
 			} );
-
-			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
-			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
-			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
 		}
 		
 		private void RegisterHUD()
@@ -232,19 +239,53 @@ namespace SS.Objects.Modules
 			{
 				this.RegisterHUD();
 			}
+			this.onAdd.AddListener( ( string id, int amount ) =>
+			{
+				ResourcePanel.instance.UpdateResourceEntryDelta( id, amount );
+			} );
+			this.onRemove.AddListener( ( string id, int amount ) =>
+			{
+				ResourcePanel.instance.UpdateResourceEntryDelta( id, -amount );
+			} );
+
+			if( this.ssObject is IFactionMember )
+			{
+				IFactionMember fac = (IFactionMember)this.ssObject;
+				FactionMember facMem = fac.factionMember;
+				facMem.onFactionChange.AddListener( () =>
+				{
+					if( facMem.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						// add to the respanel.
+						for( int i = 0; i < this.slotCount; i++ )
+						{
+							if( !this.slotGroups[i].isEmpty )
+							{
+								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, this.slotGroups[i].amount );
+							}
+						}
+					}
+					else
+					{
+						// remove from the respanel
+						for( int i = 0; i < this.slotCount; i++ )
+						{
+							if( !this.slotGroups[i].isEmpty )
+							{
+								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
+							}
+						}
+					}
+				} );
+			}
 		}
 
 		void OnDestroy()
 		{
 			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
 			{
-				this.HideTooltip( this.gameObject );
+				this.HideTooltip();
 			}
-			MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
-			MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
-			MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
-
-
 #warning TODO! - drop the items as default deposits upon death.
 		}
 
@@ -523,6 +564,25 @@ namespace SS.Objects.Modules
 				{
 					this.slotGroups[i].id = data.items[i].id;
 					this.slotGroups[i].amount = data.items[i].amount;
+
+
+
+
+					if( this.ssObject is IFactionMember )
+					{
+						IFactionMember factionMember = (IFactionMember)this.ssObject;
+						if( factionMember.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+						{
+#warning TODO! - ugly.
+#warning TODO! - update when faction changes.
+							if( !this.slotGroups[i].isEmpty )
+							{
+								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, this.slotGroups[i].amount );
+							}
+						}
+					}
+
+
 				}
 			}
 		}

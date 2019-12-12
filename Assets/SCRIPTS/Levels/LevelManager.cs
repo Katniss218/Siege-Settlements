@@ -237,9 +237,6 @@ namespace SS.Levels
 			AssetManager.Purge();
 			AssetManager.sourceLevelId = null;
 			Main.onHudLockChange.RemoveAllListeners();
-			MouseOverHandler.onMouseEnter.RemoveAllListeners();
-			MouseOverHandler.onMouseExit.RemoveAllListeners();
-			MouseOverHandler.onMouseStay.RemoveAllListeners();
 
 			Selection.Purge();
 			AudioManager.StopSounds();
@@ -501,8 +498,8 @@ namespace SS.Levels
 			Debug.Log( "Loading data & assets: " + sw.ElapsedMilliseconds + " ms" );
 			sw.Reset();
 			sw.Start();
-			
 
+			ResourcePanel.instance.InitReset();
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/ToolTip Canvas" ) );
 

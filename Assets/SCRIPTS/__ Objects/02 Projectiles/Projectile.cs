@@ -1,4 +1,5 @@
 ﻿using SS.Diplomacy;
+using SS.Objects.Extras;
 using SS.Objects.Modules;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -8,6 +9,8 @@ namespace SS.Objects.Projectiles
 	public class Projectile : SSObject
 	{
 		public bool isStuck { get; set; }
+
+		public bool canGetStuck { get; set; }
 
 		public float blastRadius { get; set; }
 
@@ -65,6 +68,36 @@ namespace SS.Objects.Projectiles
 				Object.Destroy( gameObject );
 			}
 			AudioManager.PlaySound( this.missSound );
+		}
+
+		private void OnTriggerEnter( Collider other )
+		{
+			if( this.isStuck )
+			{
+				return;
+			}
+
+			SSObject otherSSObject = other.GetComponent<SSObject>();
+			// If the object that was hit is non-SSObject or another projectile, do nothing.
+			if( otherSSObject == null || otherSSObject is Projectile )
+			{
+				return;
+			}
+
+			// If the object that was hit is not solid, do nothing.
+			if( otherSSObject is Extra )
+			{
+				Extra extra = (Extra)otherSSObject;
+				if( extra.obstacle == null )
+				{
+					return;
+				}
+			}
+
+			Damageable damageableOther = other.GetComponent<Damageable>();
+			FactionMember factionMemberOther = other.GetComponent<FactionMember>();
+			
+			this.DamageAndStuckLogic( damageableOther, factionMemberOther, this.canGetStuck );
 		}
 
 		public void DamageAndStuckLogic( Damageable hitDamageable, FactionMember hitFactionMember, bool canGetStuck )

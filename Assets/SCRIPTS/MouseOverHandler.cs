@@ -4,28 +4,22 @@ using UnityEngine.EventSystems;
 
 namespace SS
 {
+	public interface IMouseOverHandlerListener
+	{
+		void OnMouseEnterListener();
+		void OnMouseStayListener();
+		void OnMouseExitListener();
+	}
+
 	public class MouseOverHandler : MonoBehaviour
 	{
+
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
 		public static GameObject currentObjectMouseOver { get; private set; }
+		private static IMouseOverHandlerListener[] currentListeners;
 		
-		/// <summary>
-		/// Called when mouse starts hovering over specific object.
-		/// </summary>
-		public static _UnityEvent_GameObject onMouseEnter = new _UnityEvent_GameObject();
-
-		/// <summary>
-		/// Called every frame, when while the mouse is hovering over specific object.
-		/// </summary>
-		public static _UnityEvent_GameObject onMouseStay = new _UnityEvent_GameObject();
-
-		/// <summary>
-		/// Called when mouse stops hovering over specific object.
-		/// </summary>
-		public static _UnityEvent_GameObject onMouseExit = new _UnityEvent_GameObject();
-
-
+		
 		void Update()
 		{
 			// If the object under mouse pointer has changed to null (stopped mouseovering).
@@ -34,17 +28,26 @@ namespace SS
 				// Only call the onMouseExit if the pointer leaves object that was there (!= null).
 				if( currentObjectMouseOver != null )
 				{
-					onMouseExit?.Invoke( currentObjectMouseOver );
+					for( int i = 0; i < currentListeners.Length; i++ )
+					{
+						currentListeners[i].OnMouseExitListener();
+					}
+					//onMouseExit?.Invoke( currentObjectMouseOver );
 
 					currentObjectMouseOver = null; // newObjectMouseOver
 				}
 			}
 			else
 			{
-				GameObject newObjectMouseOver = null;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 				{
-					newObjectMouseOver = hitInfo.collider.gameObject;
+					GameObject newObjectMouseOver = hitInfo.collider.gameObject;
+					IMouseOverHandlerListener[] newListeners = newObjectMouseOver.GetComponents<IMouseOverHandlerListener>();
+					/*IMouseOverHandlerListener newObjectMouseOver = hitInfo.collider.GetComponent<IMouseOverHandlerListener>();
+					if( newObjectMouseOver == null )
+					{
+						return;
+					}*/
 
 					// If the object under mouse pointer has not changed (the same object or still nothing).
 					if( newObjectMouseOver == currentObjectMouseOver )
@@ -52,7 +55,11 @@ namespace SS
 						// Only call the onMouseStay if the pointer hovers over object that is there (!= null).
 						if( currentObjectMouseOver != null )
 						{
-							onMouseStay?.Invoke( currentObjectMouseOver );
+							for( int i = 0; i < currentListeners.Length; i++ )
+							{
+								currentListeners[i].OnMouseStayListener();
+							}
+							//onMouseStay?.Invoke( currentObjectMouseOver );
 						}
 					}
 					// If the object under mouse pointer has changed (either to another object or stopped mouseovering).
@@ -61,15 +68,24 @@ namespace SS
 						// Only call the onMouseExit if the pointer leaves object that was there (!= null).
 						if( currentObjectMouseOver != null )
 						{
-							onMouseExit?.Invoke( currentObjectMouseOver );
+							for( int i = 0; i < currentListeners.Length; i++ )
+							{
+								currentListeners[i].OnMouseExitListener();
+							}
+							//onMouseExit?.Invoke( currentObjectMouseOver );
 						}
 
 						currentObjectMouseOver = newObjectMouseOver;
+						currentListeners = newListeners;
 
 						// Only call the onMouseEnter if the pointer enters object that is there (!= null).
 						if( currentObjectMouseOver != null )
 						{
-							onMouseEnter?.Invoke( currentObjectMouseOver );
+							for( int i = 0; i < currentListeners.Length; i++ )
+							{
+								currentListeners[i].OnMouseEnterListener();
+							}
+							//onMouseEnter?.Invoke( currentObjectMouseOver );
 						}
 					}
 				}
@@ -78,7 +94,11 @@ namespace SS
 					// Only call the onMouseExit if the pointer leaves object that was there (!= null).
 					if( currentObjectMouseOver != null )
 					{
-						onMouseExit?.Invoke( currentObjectMouseOver );
+						for( int i = 0; i < currentListeners.Length; i++ )
+						{
+							currentListeners[i].OnMouseExitListener();
+						}
+						//onMouseExit?.Invoke( currentObjectMouseOver );
 
 						currentObjectMouseOver = null;
 					}

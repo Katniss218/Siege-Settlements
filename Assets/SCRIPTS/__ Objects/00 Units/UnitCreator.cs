@@ -153,7 +153,7 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					if( MouseOverHandler.currentObjectMouseOver == container )
+					if( (object)MouseOverHandler.currentObjectMouseOver == unit )
 					{
 						return;
 					}
@@ -162,41 +162,7 @@ namespace SS.Objects.Units
 			};
 
 			Main.onHudLockChange.AddListener( onHudLockChangeListener );
-
-			UnityAction<GameObject> onMouseEnterListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( Selection.IsSelected( unit ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( true );
-				}
-			};
-
-			UnityAction<GameObject> onMouseExitListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( unit.hasBeenHiddenSinceLastDamage )
-					{
-						return;
-					}
-					if( Selection.IsSelected( unit ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( false );
-				}
-			};
-
-			// Show HUD only when mouseovered or selected.
-			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
-			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
-
+			
 			unit.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
@@ -250,8 +216,6 @@ namespace SS.Objects.Units
 					Selection.Deselect( unit ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
 				// Remove the now unused listeners.
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 

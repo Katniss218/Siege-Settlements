@@ -388,9 +388,9 @@ namespace SS.Objects.Buildings
 			}
 			
 			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
-			constructionSite.SetRequiredResources( constructionSite.building.StartToEndConstructionCost );
-			constructionSite.renderers = building.GetComponentsInChildren<MeshRenderer>();
 			constructionSite.building = building;
+			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
+			constructionSite.renderers = building.GetComponentsInChildren<MeshRenderer>();
 
 			constructionSite.buildingHeight = building.GetComponent<BoxCollider>().size.y;
 

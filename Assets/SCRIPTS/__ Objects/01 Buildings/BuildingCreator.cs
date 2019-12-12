@@ -159,7 +159,7 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					if( MouseOverHandler.currentObjectMouseOver == container )
+					if( (object)MouseOverHandler.currentObjectMouseOver == building )
 					{
 						return;
 					}
@@ -168,41 +168,7 @@ namespace SS.Objects.Buildings
 			};
 
 			Main.onHudLockChange.AddListener( onHudLockChangeListener );
-
-			UnityAction<GameObject> onMouseEnterListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( Selection.IsSelected( building ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( true );
-				}
-			};
-
-			UnityAction<GameObject> onMouseExitListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( building.hasBeenHiddenSinceLastDamage )
-					{
-						return;
-					}
-					if( Selection.IsSelected( building ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( false );
-				}
-			};
-
-			// Show HUD only when mouseovered or selected.
-			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
-			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
-
+			
 			building.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
@@ -259,8 +225,6 @@ namespace SS.Objects.Buildings
 				}
 				AudioManager.PlaySound( building.deathSound );
 				// Remove the now unused listeners.
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 			

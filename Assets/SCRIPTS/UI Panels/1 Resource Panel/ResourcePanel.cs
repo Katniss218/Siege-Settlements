@@ -10,10 +10,11 @@ namespace SS.UI
 	[DisallowMultipleComponent]
 	public class ResourcePanel : MonoBehaviour
 	{
-		private struct ResourceListEntry
+		private class ResourceListEntry
 		{
 			public TMP_Text text;
 			public Transform container;
+			public int amount;
 		}
 
 		private Dictionary<string, ResourceListEntry> entries = new Dictionary<string, ResourceListEntry>();
@@ -32,22 +33,13 @@ namespace SS.UI
 			instance = this;
 		}
 
-		void Start()
+		public void InitReset()
 		{
 			ResourceDefinition[] definedRes = DefinitionManager.GetAllResources();
-
+			
 			this.SetEntries( definedRes );
-			//for( int i = 0; i < definedRes.Length; i++ )
-			//{
-			//	AddResourceEntry( definedRes[i] );
-			//}
 		}
-
-		void Update()
-		{
-
-		}
-
+		
 		private void AddEntry( string id, Sprite i, int amount )
 		{
 			GameObject container = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Resource (UI)" ), resourceEntryContainer );
@@ -62,7 +54,7 @@ namespace SS.UI
 			textText.text = amount.ToString();
 
 
-			entries.Add( id, new ResourceListEntry() { container = container.transform, text = textText } );
+			entries.Add( id, new ResourceListEntry() { container = container.transform, text = textText, amount = amount } );
 		}
 
 		public void UpdateResourceEntry( string id, int amount )
@@ -70,11 +62,26 @@ namespace SS.UI
 			ResourceListEntry entry;
 			if( entries.TryGetValue( id, out entry ) )
 			{
-				entry.text.text = amount.ToString();
+				entry.amount = amount;
+				entry.text.text = entry.amount.ToString();
 			}
 			else
 			{
-				throw new System.Exception( "Didn't find resource " + id );
+				throw new System.Exception( "Didn't find resource '" + id + "'." );
+			}
+		}
+
+		public void UpdateResourceEntryDelta( string id, int amountDelta )
+		{
+			ResourceListEntry entry;
+			if( entries.TryGetValue( id, out entry ) )
+			{
+				entry.amount += amountDelta;
+				entry.text.text = entry.amount.ToString();
+			}
+			else
+			{
+				throw new System.Exception( "Didn't find resource '" + id + "'." );
 			}
 		}
 
@@ -85,12 +92,7 @@ namespace SS.UI
 				this.AddEntry( resources[i].id, resources[i].icon, 0 );
 			}
 		}
-
-		//public void AddResourceEntry( ResourceDefinition resource, int startAmt = 0 )
-		//{
-		//	AddEntry( resource.id, resource.icon, startAmt );
-		//}
-
+		
 		public void RemoveResourceEntry( ResourceDefinition resource )
 		{
 			ResourceListEntry entry;

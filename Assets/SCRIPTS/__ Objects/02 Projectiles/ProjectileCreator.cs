@@ -44,6 +44,7 @@ namespace SS.Objects.Projectiles
 			projectile.hitSound = def.hitSoundEffect;
 			projectile.missSound = def.missSoundEffect;
 			projectile.blastRadius = def.blastRadius;
+			projectile.canGetStuck = def.canGetStuck;
 			if( data.owner == null )
 			{
 				projectile.owner = null;
@@ -71,33 +72,9 @@ namespace SS.Objects.Projectiles
 				rigidbody.velocity = data.velocity;
 			}
 			
-			// Set the faction id.
-			//FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-			//factionMember.factionId = data.factionId;
-
 			// Set the damage information.
 			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
 			
-			// Make the projectile do something when it hits objects.
-			TriggerOverlapHandler triggerOverlapHandler = gameObject.AddComponent<TriggerOverlapHandler>();
-			triggerOverlapHandler.onTriggerEnter.AddListener( ( Collider other ) =>
-			{
-				if( projectile.isStuck )
-				{
-					return;
-				}
-				// If it hit other projectile, do nothing.
-				if( other.GetComponent<Projectile>() != null )
-				{
-					return;
-				}
-
-				Damageable damageableOther = other.GetComponent<Damageable>();
-				FactionMember factionMemberOther = other.GetComponent<FactionMember>();
-
-				projectile.DamageAndStuckLogic( damageableOther, factionMemberOther, def.canGetStuck );
-			} );
-
 			//
 			//    MODULES
 			//

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IPointerEnterHandler
+	public class Unit : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IPointerEnterHandler, IMouseOverHandlerListener
 	{
 		public GameObject hud { get; set; }
 
@@ -50,6 +50,37 @@ namespace SS.Objects.Units
 				return this.__navMeshAgent;
 			}
 		}
+
+
+		public void OnMouseEnterListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( true );
+		}
+
+		public void OnMouseStayListener()
+		{ }
+
+		public void OnMouseExitListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( this.hasBeenHiddenSinceLastDamage )
+			{
+				return;
+			}
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( false );
+		}
+
 
 
 		void Update()

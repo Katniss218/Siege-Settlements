@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Modules
 {
-	public class ResourceDepositModule : SSModule
+	public class ResourceDepositModule : SSModule, IMouseOverHandlerListener
 	{
 		public const string KFF_TYPEID = "resource_deposit";
 
@@ -48,13 +48,8 @@ namespace SS.Objects.Modules
 		public _UnityEvent_string_int onRemove { get; private set; } = new _UnityEvent_string_int();
 
 
-		private void ShowTooltip( GameObject mouseoveredObj )
+		private void ShowTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
-			
 			Dictionary<string, int> itemsInDeposit = this.GetAll();
 
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
@@ -67,33 +62,41 @@ namespace SS.Objects.Modules
 			ToolTip.ShowAt( Input.mousePosition );
 		}
 
-		private void MoveTooltip( GameObject mouseoveredObj )
+		private void MoveTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
-
 			ToolTip.MoveTo( Input.mousePosition, true );
 		}
 
-		private void HideTooltip( GameObject mouseoveredObj )
+		private void HideTooltip()
 		{
-			if( mouseoveredObj != this.gameObject )
-			{
-				return;
-			}
-
 			ToolTip.Hide();
 		}
 
 
+		
+		public void OnMouseEnterListener()
+		{
+			this.ShowTooltip();
+		}
+
+		public void OnMouseStayListener()
+		{
+			this.MoveTooltip();
+		}
+
+		public void OnMouseExitListener()
+		{
+			this.HideTooltip();
+		}
 
 		void Awake()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					this.ShowTooltip();
+				}
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
@@ -103,29 +106,25 @@ namespace SS.Objects.Modules
 				}
 				else
 				{
-					this.ShowTooltip( MouseOverHandler.currentObjectMouseOver );
+					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+					{
+						this.ShowTooltip();
+					}
 				}
 			} );
 
 #warning This is very taxing, when there are multiple resource deposits, all getting called (since every single one is getting called, no matter what).
 			// Make the function call only the object that is in question. - similarly to the built-in Unity Event System functions with interfaces
 			//        (can't use Unity's system since the usage of ispointerovergameobject to detect GUI).
-
-			MouseOverHandler.onMouseEnter.AddListener( this.ShowTooltip );
-			MouseOverHandler.onMouseStay.AddListener( this.MoveTooltip );
-			MouseOverHandler.onMouseExit.AddListener( this.HideTooltip );
+			
 		}
 
 		void OnDestroy()
 		{
 			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
 			{
-				this.HideTooltip( MouseOverHandler.currentObjectMouseOver );
+				this.HideTooltip();
 			}
-
-			MouseOverHandler.onMouseEnter.RemoveListener( this.ShowTooltip );
-			MouseOverHandler.onMouseStay.RemoveListener( this.MoveTooltip );
-			MouseOverHandler.onMouseExit.RemoveListener( this.HideTooltip );
 		}
 
 

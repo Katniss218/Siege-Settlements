@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember
+	public class Hero : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
 		public GameObject hud { get; set; }
 
@@ -96,6 +96,35 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+
+		public void OnMouseEnterListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( true );
+		}
+
+		public void OnMouseStayListener()
+		{ }
+
+		public void OnMouseExitListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( this.hasBeenHiddenSinceLastDamage )
+			{
+				return;
+			}
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( false );
+		}
 
 		void Update()
 		{

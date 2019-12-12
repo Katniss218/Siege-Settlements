@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObjectSelectable, IHUDHolder, IUsableToggle, IDamageable, IFactionMember
+	public class Building : SSObjectSelectable, IHUDHolder, IUsableToggle, IDamageable, IFactionMember, IMouseOverHandlerListener
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -104,7 +104,36 @@ namespace SS.Objects.Buildings
 				return this.__collider;
 			}
 		}
-		
+
+		public void OnMouseEnterListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( true );
+		}
+
+		public void OnMouseStayListener()
+		{ }
+
+		public void OnMouseExitListener()
+		{
+			if( Main.isHudLocked ) { return; }
+
+			if( this.hasBeenHiddenSinceLastDamage )
+			{
+				return;
+			}
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.SetActive( false );
+		}
+
 		void Update()
 		{
 			if( hud.activeSelf )

@@ -153,7 +153,7 @@ namespace SS.Objects.Heroes
 					{
 						return;
 					}
-					if( MouseOverHandler.currentObjectMouseOver == container )
+					if( (object)MouseOverHandler.currentObjectMouseOver == hero )
 					{
 						return;
 					}
@@ -162,41 +162,7 @@ namespace SS.Objects.Heroes
 			};
 
 			Main.onHudLockChange.AddListener( onHudLockChangeListener );
-
-			UnityAction<GameObject> onMouseEnterListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( Selection.IsSelected( hero ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( true );
-				}
-			};
-
-			UnityAction<GameObject> onMouseExitListener = ( GameObject obj ) =>
-			{
-				if( Main.isHudLocked ) { return; }
-				if( obj == container )
-				{
-					if( hero.hasBeenHiddenSinceLastDamage )
-					{
-						return;
-					}
-					if( Selection.IsSelected( hero ) )
-					{
-						return;
-					}
-					hudGameObject.SetActive( false );
-				}
-			};
-
-			// Show HUD only when mouseovered or selected.
-			MouseOverHandler.onMouseEnter.AddListener( onMouseEnterListener );
-			MouseOverHandler.onMouseExit.AddListener( onMouseExitListener );
-
+			
 			hero.onSelect.AddListener( () =>
 			{
 				if( Main.isHudLocked ) { return; }
@@ -248,8 +214,6 @@ namespace SS.Objects.Heroes
 					Selection.Deselect( hero );
 				}
 				// Remove the now unused listeners.
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseEnterListener );
-				MouseOverHandler.onMouseEnter.RemoveListener( onMouseExitListener );
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 			

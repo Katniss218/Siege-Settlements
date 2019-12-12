@@ -66,12 +66,27 @@ namespace SS.AI.Goals
 					return;
 				}
 
-#warning TODO! - Calculate the shortest attack range.
-				if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= this.attackModules[0].attackRange * STOPPING_FRACTION )
+				float shortestAttackRange = float.MaxValue;
+				if( this.attackModules.Length == 0 )
+				{
+					shortestAttackRange = 0.0f;
+				}
+				else
+				{
+					for( int i = 0; i < this.attackModules.Length; i++ )
+					{
+						if( shortestAttackRange > this.attackModules[i].attackRange )
+						{
+							shortestAttackRange = this.attackModules[i].attackRange;
+						}
+					}
+				}
+				
+				if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= shortestAttackRange * STOPPING_FRACTION )
 				{
 					this.navMeshAgent.ResetPath();
 				}
-				else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= this.attackModules[0].attackRange * MOVING_FACTION )
+				else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= shortestAttackRange * MOVING_FACTION )
 				{
 					Vector3 currDestPos = this.target.transform.position;
 

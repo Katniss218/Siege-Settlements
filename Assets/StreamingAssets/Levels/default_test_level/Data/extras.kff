@@ -8,7 +8,7 @@
 			
 		];
 		IsObstacle = false;
-		Size = { X = 0.2; Y = 0.2; Z = 0.2; };
+		Size = { X = 0.1875; Y = 0.0625; Z = 0.1875; };
 		SubObjects =
 		[
 			{
