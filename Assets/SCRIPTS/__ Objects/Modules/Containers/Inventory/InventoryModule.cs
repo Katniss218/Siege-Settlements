@@ -1,4 +1,5 @@
-﻿using SS.Content;
+﻿using SS.AI.Goals;
+using SS.Content;
 using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -7,6 +8,7 @@ using SS.UI;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -278,15 +280,26 @@ namespace SS.Objects.Modules
 					}
 				} );
 			}
+			if( this.ssObject is IDamageable )
+			{
+				Damageable d = ((IDamageable)this.ssObject).damageable;
+
+				d.onDeath.AddListener( () =>
+				{
+					TacticalDropOffGoal.ExtractFrom( this.transform.position, this.transform.rotation, this.GetAll() );
+				} );
+			}
 		}
 
 		void OnDestroy()
 		{
 			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
 			{
-				this.HideTooltip();
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					this.HideTooltip();
+				}
 			}
-#warning TODO! - drop the items as default deposits upon death.
 		}
 
 

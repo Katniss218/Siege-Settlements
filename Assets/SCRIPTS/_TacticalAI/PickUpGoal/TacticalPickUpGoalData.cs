@@ -32,7 +32,7 @@ namespace SS.AI.Goals
 
 			try
 			{
-				this.destinationObjectGuid = Guid.ParseExact( serializer.ReadString( "DestinationObjectGuid" ), "D" );
+				this.destinationObjectGuid = serializer.ReadGuid( "DestinationObjectGuid" );
 			}
 			catch
 			{
@@ -53,7 +53,7 @@ namespace SS.AI.Goals
 		{
 			serializer.WriteString( "", "ResourceId", this.resourceId );
 
-			serializer.WriteString( "", "DestinationObjectGuid", this.destinationObjectGuid.ToString( "D" ) );
+			serializer.WriteGuid( "", "DestinationObjectGuid", this.destinationObjectGuid );
 
 			serializer.WriteBool( "", "IsHostile", this.isHostile );
 		}

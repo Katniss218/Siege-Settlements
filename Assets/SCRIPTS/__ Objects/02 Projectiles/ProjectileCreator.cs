@@ -52,7 +52,7 @@ namespace SS.Objects.Projectiles
 			}
 			else
 			{
-				projectile.owner = Main.GetSSObject( data.owner.Item1 ).GetModule<RangedModule>( data.owner.Item2 );
+				projectile.owner = SSObject.Find( data.owner.Item1 ).GetModule<RangedModule>( data.owner.Item2 );
 			}
 			
 

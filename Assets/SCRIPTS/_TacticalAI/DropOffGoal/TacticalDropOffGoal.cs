@@ -6,9 +6,11 @@ using SS.Objects.Extras;
 using SS.Objects.Modules;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace SS.AI.Goals
 {
@@ -92,7 +94,8 @@ namespace SS.AI.Goals
 		{
 			if( !IsOnValidObject( controller.ssObject ) )
 			{
-				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
+				controller.goal = TacticalGoalController.GetDefaultGoal();
+				throw new Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
 			}
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
 			this.navMeshAgent = (controller.ssObject as INavMeshAgent).navMeshAgent;
@@ -131,6 +134,53 @@ namespace SS.AI.Goals
 				this.oldDestination = currDestPos;
 
 				return;
+			}
+		}
+
+		public static void ExtractFrom( Vector3 position, Quaternion rotation, Dictionary<string,int> resourcesCarried )
+		{
+			foreach( var kvp in resourcesCarried )
+			{
+				ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
+
+				ExtraDefinition def = DefinitionManager.GetExtra( resourceDef.defaultDeposit );
+
+				ResourceDepositModuleDefinition depositDef = def.GetModule<ResourceDepositModuleDefinition>();
+				int capacity = 0;
+				for( int i = 0; i < depositDef.slots.Length; i++ )
+				{
+					if( depositDef.slots[i].resourceId == kvp.Key )
+					{
+						capacity = depositDef.slots[i].capacity;
+					}
+				}
+				if( capacity != 0 )
+				{
+					int remaining = kvp.Value;
+					while( remaining > 0 )
+					{
+						int resAmount = capacity;
+						if( remaining < capacity )
+						{
+							resAmount = remaining;
+						}
+						remaining -= resAmount;
+
+						ExtraData data = new ExtraData();
+						data.guid = Guid.NewGuid();
+						data.position = position;
+						data.rotation = rotation;
+
+
+						GameObject extra = ExtraCreator.Create( def, data );
+						ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
+						foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
+						{
+							resDepo.Add( slot.resourceId, resAmount );
+						}
+						AudioManager.PlaySound( resourceDef.dropoffSound );
+					}
+				}
 			}
 		}
 
@@ -396,7 +446,7 @@ namespace SS.AI.Goals
 
 			if( this.destination == DestinationType.OBJECT )
 			{
-				this.destinationObject = Main.GetSSObject( data.destinationObjectGuid.Value );
+				this.destinationObject = SSObject.Find( data.destinationObjectGuid.Value );
 			}
 			else if( this.destination == DestinationType.POSITION )
 			{

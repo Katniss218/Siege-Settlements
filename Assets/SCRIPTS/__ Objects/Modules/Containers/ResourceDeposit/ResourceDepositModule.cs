@@ -123,7 +123,10 @@ namespace SS.Objects.Modules
 		{
 			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
 			{
-				this.HideTooltip();
+				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				{
+					this.HideTooltip();
+				}
 			}
 		}
 

@@ -183,6 +183,11 @@ namespace SS.AI
 				{
 					continue;
 				}
+				if( selected[i].GetComponent<NavMeshAgent>() == null )
+				{
+					continue;
+				}
+
 				Dictionary<string, int> inventoryItems = inv.GetAll();
 
 				foreach( var kvp in inventoryItems )

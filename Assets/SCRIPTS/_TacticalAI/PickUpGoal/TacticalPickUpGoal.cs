@@ -54,6 +54,7 @@ namespace SS.AI.Goals
 		{
 			if( !IsOnValidObject( controller.ssObject ) )
 			{
+				controller.goal = TacticalGoalController.GetDefaultGoal();
 				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
 			}
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
@@ -171,11 +172,9 @@ namespace SS.AI.Goals
 					amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
 					idPickedUp = kvp.Key;
 
-					Debug.Log( amountPickedUp + "x " + idPickedUp );
 					if( amountPickedUp > 0 )
 					{
 						int amtRemoved = inventoryToPickUp.Remove( idPickedUp, amountPickedUp );
-						Debug.Log( "Taken: " + amtRemoved + "x " + idPickedUp );
 						AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
 					}
 				}
@@ -257,7 +256,7 @@ namespace SS.AI.Goals
 			TacticalPickUpGoalData data = (TacticalPickUpGoalData)_data;
 
 			this.resourceId = data.resourceId;
-			this.destinationObject = Main.GetSSObject( data.destinationObjectGuid );
+			this.destinationObject = SSObject.Find( data.destinationObjectGuid );
 			this.isHostile = data.isHostile;
 		}
 	}

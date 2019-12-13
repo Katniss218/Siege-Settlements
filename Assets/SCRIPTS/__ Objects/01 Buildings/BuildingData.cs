@@ -40,7 +40,7 @@ namespace SS.Levels.SaveStates
 		{
 			try
 			{
-				this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+				this.guid = serializer.ReadGuid( "Guid" );
 			}
 			catch
 			{
@@ -96,7 +96,7 @@ namespace SS.Levels.SaveStates
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
+			serializer.WriteGuid( "", "Guid", this.guid );
 
 			serializer.WriteVector3( "", "Position", this.position );
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );

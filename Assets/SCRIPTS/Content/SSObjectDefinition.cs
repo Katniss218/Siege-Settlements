@@ -155,7 +155,7 @@ namespace SS.Content
 				SubObjectDefinition subObjectDef = SubObjectDefinition.TypeIdToDefinition( typeId );
 				
 				serializer.Deserialize<IKFFSerializable>( new Path( "SubObjects.{0}", i ), subObjectDef );
-				Guid subObjectId = Guid.ParseExact( serializer.ReadString( new Path( "SubObjects.{0}.SubObjectId", i ) ), "D" );
+				Guid subObjectId = serializer.ReadGuid( new Path( "SubObjects.{0}.SubObjectId", i ) );
 
 				this.subObjectCache.Add( subObjectDef );
 			}
@@ -167,7 +167,7 @@ namespace SS.Content
 				ModuleDefinition module = ModuleDefinition.TypeIdToDefinition( typeId );
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
-				Guid moduleId = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
+				Guid moduleId = serializer.ReadGuid( new Path( "Modules.{0}.ModuleId", i ) );
 
 				this.AddModule( moduleId, module );
 			}
@@ -186,7 +186,7 @@ namespace SS.Content
 				string typeId = SubObjectDefinition.DefinitionToTypeId( subObjectsArray[i] );
 
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
-				serializer.WriteString( new Path( "Modules.{0}", i ), "SubObjectId", subObjectsArray[i].subObjectId.ToString( "D" ) );
+				serializer.WriteGuid( new Path( "Modules.{0}", i ), "SubObjectId", subObjectsArray[i].subObjectId );
 			}
 
 
@@ -201,7 +201,7 @@ namespace SS.Content
 				string typeId = ModuleDefinition.DefinitionToTypeId( modulesArray[i] );
 
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
-				serializer.WriteString( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i].ToString( "D" ) );
+				serializer.WriteGuid( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i] );
 			}
 		}
 	}

@@ -40,7 +40,7 @@ namespace SS.Objects.SubObjects
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.subObjectId = Guid.ParseExact( serializer.ReadString( "SubObjectId" ), "D" );
+			this.subObjectId = serializer.ReadGuid( "SubObjectId" );
 
 			this.localPosition = serializer.ReadVector3( "LocalPosition" );
 			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
@@ -53,7 +53,7 @@ namespace SS.Objects.SubObjects
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "SubObjectId", this.subObjectId.ToString( "D" ) );
+			serializer.WriteGuid( "", "SubObjectId", this.subObjectId );
 
 			serializer.WriteVector3( "", "LocalPosition", this.localPosition );
 			serializer.WriteVector3( "", "LocalRotationEuler", this.localRotation.eulerAngles );

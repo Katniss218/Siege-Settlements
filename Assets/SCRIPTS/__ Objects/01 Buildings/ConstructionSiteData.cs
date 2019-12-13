@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using System.Collections.Generic;
 
 namespace SS.Levels.SaveStates
@@ -12,10 +13,30 @@ namespace SS.Levels.SaveStates
 		{
 			// resources
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "ResourcesRemaining" );
-			this.resourcesRemaining = new Dictionary<string, float>( analysisData.childCount );
-			for( int i = 0; i < analysisData.childCount; i++ )
+			if( analysisData.isSuccess )
 			{
-				this.resourcesRemaining.Add( serializer.ReadString( new Path( "ResourcesRemaining.{0}.Id", i ) ), serializer.ReadFloat( new Path( "ResourcesRemaining.{0}.Amount", i ) ) );
+				this.resourcesRemaining = new Dictionary<string, float>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						string id = serializer.ReadString( new Path( "ResourcesRemaining.{0}.Id", i ) );
+						int amt = serializer.ReadInt( new Path( "ResourcesRemaining.{0}.Amount", i ) );
+						if( amt < 0 )
+						{
+							throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
+						}
+						this.resourcesRemaining.Add( id, amt );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
+				}
+			}
+			else
+			{
+				throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
 			}
 		}
 

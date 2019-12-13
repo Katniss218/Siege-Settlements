@@ -240,7 +240,7 @@ namespace SS.Objects.Modules
 			
 			if( data.targetGuid != null )
 			{
-				this.targeter.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
+				this.targeter.target = (SSObject.Find( data.targetGuid.Value ) as IDamageable)?.damageable;
 			}
 		}
 		

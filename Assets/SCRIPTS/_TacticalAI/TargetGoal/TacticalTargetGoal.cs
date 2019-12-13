@@ -180,7 +180,7 @@ namespace SS.AI.Goals
 			}
 			else
 			{
-				this.target = Main.GetSSObject( data.targetGuid.Value ).GetComponent<Damageable>();
+				this.target = SSObject.Find( data.targetGuid.Value ).GetComponent<Damageable>();
 			}
 		}
 	}

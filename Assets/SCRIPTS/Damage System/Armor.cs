@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using UnityEngine;
 
 namespace SS
@@ -51,13 +52,13 @@ namespace SS
 			float[] values = serializer.ReadFloatArray( "ArmorValues" );
 			if( values.Length != DamageTypeExtensions.GetNumTypes() )
 			{
-				throw new System.Exception( "The number of elements in damage array (" + values.Length + ") doesn't match the number of damage types (" + DamageTypeExtensions.GetNumTypes() + ")." );
+				throw new Exception( "The number of elements in damage array (" + values.Length + ") doesn't match the number of damage types (" + DamageTypeExtensions.GetNumTypes() + ")." );
 			}
 			for( int i = 0; i < values.Length; i++ )
 			{
 				if( values[i] < 0.0f )
 				{
-					throw new System.Exception( "Armor can't have negative values." );
+					throw new Exception( "Missing or invalid value of 'ArmorValues' (" + serializer.file.fileName + ")." );
 				}
 			}
 			this.values = values;

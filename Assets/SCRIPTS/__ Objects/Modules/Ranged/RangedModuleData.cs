@@ -21,7 +21,7 @@ namespace SS.Levels.SaveStates
 			{
 				try
 				{
-					this.targetGuid = Guid.ParseExact( serializer.ReadString( "TargetGuid" ), "D" );
+					this.targetGuid = serializer.ReadGuid( "TargetGuid" );
 				}
 				catch
 				{
@@ -34,7 +34,7 @@ namespace SS.Levels.SaveStates
 		{
 			if( this.targetGuid != null )
 			{
-				serializer.WriteString( "", "TargetGuid", this.targetGuid.Value.ToString( "D" ) );
+				serializer.WriteGuid( "", "TargetGuid", this.targetGuid.Value );
 			}
 		}
 	}

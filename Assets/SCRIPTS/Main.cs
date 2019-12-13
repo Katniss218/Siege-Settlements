@@ -553,18 +553,6 @@ namespace SS
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
 		}
 
-		public static SSObject GetSSObject( Guid guid )
-		{
-			SSObject[] ssObjectArray = SSObject.GetAllSSObjects();
-
-			for( int i = 0; i < ssObjectArray.Length; i++ )
-			{
-				if( ssObjectArray[i].guid == guid )
-				{
-					return ssObjectArray[i];
-				}
-			}
-			return null;
-		}
+		
 	}
 }

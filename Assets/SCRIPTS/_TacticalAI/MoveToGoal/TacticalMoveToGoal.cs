@@ -63,6 +63,7 @@ namespace SS.AI.Goals
 		{
 			if( !IsOnValidObject( controller.ssObject ) )
 			{
+				controller.goal = TacticalGoalController.GetDefaultGoal();
 				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
 			}
 			this.navMeshAgent = (controller.ssObject as INavMeshAgent).navMeshAgent;
@@ -207,7 +208,7 @@ namespace SS.AI.Goals
 
 			if( this.destination == DestinationType.OBJECT )
 			{
-				this.destinationObject = Main.GetSSObject( data.destinationObjectGuid.Value );
+				this.destinationObject = SSObject.Find( data.destinationObjectGuid.Value );
 			}
 			else if( this.destination == DestinationType.POSITION )
 			{

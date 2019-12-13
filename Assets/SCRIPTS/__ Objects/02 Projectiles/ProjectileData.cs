@@ -26,7 +26,7 @@ namespace SS.Levels.SaveStates
 		{
 			try
 			{
-				this.guid = Guid.ParseExact( serializer.ReadString( "Guid" ), "D" );
+				this.guid = serializer.ReadGuid( "Guid" );
 			}
 			catch
 			{
@@ -117,7 +117,7 @@ namespace SS.Levels.SaveStates
 
 				try
 				{
-					ownerGuid = Guid.ParseExact( serializer.ReadString( "Owner.Guid" ), "D" );
+					ownerGuid = serializer.ReadGuid( "Owner.Guid" );
 				}
 				catch
 				{
@@ -125,7 +125,7 @@ namespace SS.Levels.SaveStates
 				}
 				try
 				{
-					ownerModuleId = Guid.ParseExact( serializer.ReadString( "Owner.ModuleId" ), "D" );
+					ownerModuleId = serializer.ReadGuid( "Owner.ModuleId" );
 				}
 				catch
 				{
@@ -138,7 +138,7 @@ namespace SS.Levels.SaveStates
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "Guid", this.guid.ToString( "D" ) );
+			serializer.WriteGuid( "", "Guid", this.guid );
 
 			serializer.WriteVector3( "", "Position", this.position );
 			serializer.WriteBool( "", "IsStuck", this.isStuck );
@@ -161,8 +161,8 @@ namespace SS.Levels.SaveStates
 			if( this.owner != null )
 			{
 				serializer.WriteClass( "", "Owner" );
-				serializer.WriteString( "Owner", "Guid", this.owner.Item1.ToString( "D" ) );
-				serializer.WriteString( "Owner", "ModuleId", this.owner.Item2.ToString( "D" ) );
+				serializer.WriteGuid( "Owner", "Guid", this.owner.Item1 );
+				serializer.WriteGuid( "Owner", "ModuleId", this.owner.Item2 );
 			}
 		}
 	}

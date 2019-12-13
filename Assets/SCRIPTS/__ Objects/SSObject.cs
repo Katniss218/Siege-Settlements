@@ -282,5 +282,19 @@ namespace SS.Objects
 				return;
 			}
 		}
+
+		public static SSObject Find( Guid guid )
+		{
+			SSObject[] ssObjectArray = GetAllSSObjects();
+
+			for( int i = 0; i < ssObjectArray.Length; i++ )
+			{
+				if( ssObjectArray[i].guid == guid )
+				{
+					return ssObjectArray[i];
+				}
+			}
+			return null;
+		}
 	}
 }

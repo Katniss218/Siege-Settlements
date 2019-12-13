@@ -169,7 +169,7 @@ namespace SS.Objects.Modules
 				{
 					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 					{
-						this.traversibleSubObjects[i] = Guid.ParseExact( serializer.ReadString( new Path( "TraversibleSubObjects.{0}", i ) ), "D" );
+						this.traversibleSubObjects[i] = serializer.ReadGuid( new Path( "TraversibleSubObjects.{0}", i ) );
 					}
 				}
 				catch
@@ -208,12 +208,7 @@ namespace SS.Objects.Modules
 
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
 
-			string[] guidArray = new string[this.traversibleSubObjects.Length];
-			for( int i = 0; i < guidArray.Length; i++ )
-			{
-				guidArray[i] = this.traversibleSubObjects[i].ToString( "D" );
-			}
-			serializer.WriteStringArray( "", "TraversibleSubObjects", guidArray );
+			serializer.WriteGuidArray( "", "TraversibleSubObjects", this.traversibleSubObjects );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

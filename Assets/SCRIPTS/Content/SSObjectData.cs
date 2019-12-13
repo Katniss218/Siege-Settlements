@@ -135,7 +135,7 @@ namespace SS.Content
 				Guid guid;
 				try
 				{
-					guid = Guid.ParseExact( serializer.ReadString( new Path( "Modules.{0}.ModuleId", i ) ), "D" );
+					guid = serializer.ReadGuid( new Path( "Modules.{0}.ModuleId", i ) );
 				}
 				catch
 				{
@@ -159,7 +159,7 @@ namespace SS.Content
 				string typeId = ModuleData.DataToTypeId( modulesArray[i] );
 				
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
-				serializer.WriteString( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i].ToString( "D" ) );
+				serializer.WriteGuid( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i] );
 			}
 		}
 	}

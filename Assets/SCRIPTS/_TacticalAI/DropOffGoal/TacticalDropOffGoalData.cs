@@ -56,7 +56,7 @@ namespace SS.AI.Goals
 			{
 				try
 				{
-					this.destinationObjectGuid = Guid.ParseExact( serializer.ReadString( "DestinationObjectGuid" ), "D" );
+					this.destinationObjectGuid = serializer.ReadGuid( "DestinationObjectGuid" );
 				}
 				catch
 				{
@@ -86,8 +86,7 @@ namespace SS.AI.Goals
 			}
 			if( this.destination == TacticalDropOffGoal.DestinationType.OBJECT )
 			{
-#warning Move this to WriteGuid / ReadGuid.
-				serializer.WriteString( "", "DestinationObjectGuid", this.destinationObjectGuid.Value.ToString( "D" ) );
+				serializer.WriteGuid( "", "DestinationObjectGuid", this.destinationObjectGuid.Value );
 			}
 
 			serializer.WriteBool( "", "IsHostile", this.isHostile );

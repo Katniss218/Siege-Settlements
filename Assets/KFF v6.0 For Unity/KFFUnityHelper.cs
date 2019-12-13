@@ -1,6 +1,7 @@
 ﻿using Object = KFF.DataStructures.Object;
 using UnityEngine;
 using static KFF.KFFSerializer;
+using System;
 
 namespace KFF
 {
@@ -9,6 +10,26 @@ namespace KFF
 	/// </summary>
 	public static class KFFUnityHelper
 	{
+		public static Guid ReadGuid( this KFFSerializer serializer, Path path )
+		{
+			return Guid.ParseExact( serializer.ReadString( path ), "D" );
+		}
+
+		public static void WriteGuid( this KFFSerializer serializer, Path path, string name, Guid value )
+		{
+			serializer.WriteString( path, name, value.ToString( "D" ) );
+		}
+
+		public static void WriteGuidArray( this KFFSerializer serializer, Path path, string name, Guid[] values )
+		{
+			string[] guidArray = new string[values.Length];
+			for( int i = 0; i < guidArray.Length; i++ )
+			{
+				guidArray[i] = values[i].ToString( "D" );
+			}
+			serializer.WriteStringArray( path, name, guidArray );
+		}
+
 		// Everything specific to Unity's implementation of KFF goes here.
 
 		public static Vector2 ReadVector2( this KFFSerializer serializer, Path path )
@@ -29,7 +50,7 @@ namespace KFF
 
 			serializer.MoveScope( path, true );
 			Object arrayScope = serializer.scopeRoot;
-			
+
 			int length = serializer.Analyze( "" ).childCount;
 
 			Vector2[] ret = new Vector2[length];
@@ -367,7 +388,7 @@ namespace KFF
 			serializer.WriteFloat( "", "Y", value.y );
 			serializer.WriteFloat( "", "W", value.width );
 			serializer.WriteFloat( "", "H", value.height );
-			
+
 			serializer.scopeRoot = beginScope;
 		}
 
