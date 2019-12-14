@@ -100,6 +100,7 @@
     <Compile Include="Assets\SCRIPTS\Input System\QueuedMouseInput.cs" />
     <Compile Include="Assets\SCRIPTS\Levels\LevelDataManager.cs" />
     <Compile Include="Assets\SCRIPTS\Levels\LevelManager.cs" />
+    <Compile Include="Assets\SCRIPTS\LightFlickerer.cs" />
     <Compile Include="Assets\SCRIPTS\Main.cs" />
     <Compile Include="Assets\SCRIPTS\MaterialDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\MaterialManager.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObject.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\LightSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\MeshSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\ParticlesSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\SubObjectDefinition.cs" />
@@ -245,8 +247,14 @@
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
+    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
+      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
@@ -262,6 +270,12 @@
     </Reference>
     <Reference Include="Unity.EditorCoroutines.Editor">
       <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.EditorCoroutines.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Editor">
+      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
@@ -298,18 +312,6 @@
     </Reference>
     <Reference Include="Unity.MemoryProfiler.Editor">
       <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.MemoryProfiler.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
-      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
-      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
-      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Universal.Editor">
-      <HintPath>H:/GIT/Siege-Settlements/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>H:/UnityVersions/2019.3.0f3/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

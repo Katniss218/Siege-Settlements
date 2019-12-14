@@ -1,6 +1,7 @@
 ﻿using KFF;
 using SS.Content;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.SubObjects
@@ -46,6 +47,7 @@ namespace SS.Objects.SubObjects
 		public Tuple<float, float>[] sizeOverLifetime { get; set; }
 
 		public AddressableAsset<Texture2D> particleTexture { get; set; }
+		public Color? emissionColor { get; set; }
 
 
 		public override SubObject AddTo( GameObject gameObject )
@@ -150,10 +152,14 @@ namespace SS.Objects.SubObjects
 			emission.rateOverTime = this.emissionRateTime;
 
 			ParticleSystemRenderer renderer = child.GetComponent<ParticleSystemRenderer>();
-			renderer.material = MaterialManager.CreateParticles( this.particleTexture );
-
-
-
+			renderer.material = MaterialManager.CreateParticles( this.particleTexture, this.emissionColor );
+			List<ParticleSystemVertexStream> streams = new List<ParticleSystemVertexStream>()
+			{
+				 ParticleSystemVertexStream.Position,
+				 ParticleSystemVertexStream.Color,
+				 ParticleSystemVertexStream.UV
+			};
+			renderer.SetActiveVertexStreams( streams );
 
 
 			SubObject subObject = child.AddComponent<SubObject>();
@@ -242,6 +248,10 @@ namespace SS.Objects.SubObjects
 			}
 
 			this.particleTexture = serializer.ReadTexture2DFromAssets( "ParticleTexture" );
+			if( serializer.Analyze("EmissionColor").isSuccess )
+			{
+				this.emissionColor = serializer.ReadColor( "EmissionColor" );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -315,6 +325,10 @@ namespace SS.Objects.SubObjects
 			}
 
 			serializer.WriteString( "", "ParticleTexture", (string)this.particleTexture );
+			if( this.emissionColor != null )
+			{
+				serializer.WriteColor( "", "EmissionColor", this.emissionColor.Value );
+			}
 		}
 	}
 }

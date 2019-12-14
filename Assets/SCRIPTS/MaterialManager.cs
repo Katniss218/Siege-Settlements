@@ -50,7 +50,7 @@ namespace SS
 			}
 			if( def.materialType == MaterialType.Particles )
 			{
-				return CreateParticles( def.colorMap );
+				return CreateParticles( def.colorMap, default( Color ) );
 			}
 			throw new System.Exception( "Unknown materialType '" + def.materialType + "'." );
 		}
@@ -189,11 +189,17 @@ namespace SS
 		/// <summary>
 		/// Creates a new opaque material with a texture overlayed on top of base color.
 		/// </summary>
-		public static Material CreateParticles( Texture2D texture )
+		public static Material CreateParticles( Texture2D texture, Color? emissionColor )
 		{
 			Material material = new Material( AssetManager.GetMaterialPrototype( PARTICLES_ID ) );
 
 			material.SetTexture( "_BaseMap", texture );
+			if( emissionColor != null )
+			{
+				// Emission Keyword must be enabled for all materials anyway. Otherwise it doesn't work (it won't enable on the specific instance).
+				material.EnableKeyword( "_EMISSION" );
+				material.SetColor( "_EmissionColor", emissionColor.Value );
+			}
 
 			return material;
 		}

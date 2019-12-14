@@ -611,7 +611,8 @@
 					"building.college",
 					"building.wooden_wall",
 					"building.wooden_tower",
-					"building.wooden_ballista_tower"
+					"building.wooden_ballista_tower",
+					"building.campfire"
 				];
 				Icon = "extern:Textures/Modules/constructor_icon.png";
 			}

@@ -84,8 +84,16 @@ namespace SS.TerrainCreation
 
 					if( x < resolution - 1 && z < resolution - 1 )
 					{
-						AddTriangle( vertIndex, vertIndex + resolution + 1, vertIndex + resolution );
-						AddTriangle( vertIndex + resolution + 1, vertIndex, vertIndex + 1 );
+						if( Random.Range( 0, 2 ) == 0 )
+						{
+							AddTriangle( vertIndex, vertIndex + resolution + 1, vertIndex + resolution );
+							AddTriangle( vertIndex + resolution + 1, vertIndex, vertIndex + 1 );
+						}
+						else
+						{
+							AddTriangle( vertIndex, vertIndex + 1, vertIndex + resolution );
+							AddTriangle( vertIndex + 1, vertIndex + resolution + 1, vertIndex + resolution );
+						}
 					}
 
 

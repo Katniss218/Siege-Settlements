@@ -552,7 +552,5 @@ namespace SS
 		{
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
 		}
-
-		
 	}
 }

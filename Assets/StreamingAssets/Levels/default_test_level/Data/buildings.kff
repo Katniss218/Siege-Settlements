@@ -670,5 +670,145 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+	},
+	{
+		Id = "building.campfire";
+		DisplayName = "Campfire";
+		ViewRange = 3;
+		MaxHealth = 15.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.0, // Slash
+				0.0, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/campfire.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.01;
+					Angle = 0.01;
+				};
+				
+				LifetimeMin = 0.5;
+				LifetimeMax = 0.95;
+				EmissionRateTime = 16;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.25;
+				StartSpeedMax = 0.6;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 1.0; },
+					{ Time = 0.5; Value = 0.7; },
+					{ Time = 1.0; Value = 0.4; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.2; Value = { R = 1.0; G = 0.95; B = 0.95; A = 0.8; }; },
+					{ Time = 0.8; Value = { R = 0.95; G = 0.8; B = 0.8; A = 0.6; }; },
+					{ Time = 1.0; Value = { R = 0.6; G = 0.5; B = 0.4; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/flame.png";
+				EmissionColor = { R = 1.8; G = 1.5; B = 0.7; A = 1.0; };
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0003-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.4; Z = 0.0; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 3;
+				LifetimeMax = 7;
+				EmissionRateTime = 5;
+				StartSizeMin = 0.3;
+				StartSizeMax = 0.4;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.15; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			},
+			{
+				TypeId = "LIGHT";
+				SubObjectId = "00000000-0000-0000-0004-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.5; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Color = { R = 1.0; G = 0.95; B = 0.8; A = 0.0; };
+				MinIntensity = 0.35;
+				MaxIntensity = 0.75;
+				Range = 2.8;
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	}
 ];

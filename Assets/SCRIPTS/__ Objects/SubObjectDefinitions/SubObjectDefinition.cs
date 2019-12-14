@@ -44,6 +44,10 @@ namespace SS.Objects.SubObjects
 			{
 				return new ParticlesSubObjectDefinition();
 			}
+			if( subObjectId == LightSubObjectDefinition.KFF_TYPEID )
+			{
+				return new LightSubObjectDefinition();
+			}
 			throw new Exception( "Unknown Sub-Object Id '" + subObjectId + "'." );
 		}
 
@@ -56,6 +60,10 @@ namespace SS.Objects.SubObjects
 			if( def is ParticlesSubObjectDefinition )
 			{
 				return ParticlesSubObjectDefinition.KFF_TYPEID;
+			}
+			if( def is LightSubObjectDefinition )
+			{
+				return LightSubObjectDefinition.KFF_TYPEID;
 			}
 			throw new Exception( "Unknown Sub-Object type '" + def.GetType().Name + "'." );
 		}
