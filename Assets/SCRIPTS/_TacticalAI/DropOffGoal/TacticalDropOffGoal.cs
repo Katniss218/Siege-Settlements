@@ -383,10 +383,17 @@ namespace SS.AI.Goals
 					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
+
+				if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+				{
+					this.navMeshAgent.ResetPath();
+					controller.goal = TacticalGoalController.GetDefaultGoal();
+					return;
+				}
 			}
 
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
+			if( (controller.ssObject is IUsableToggle) && !((IUsableToggle)controller.ssObject).IsUsable() )
 			{
 				return;
 			}

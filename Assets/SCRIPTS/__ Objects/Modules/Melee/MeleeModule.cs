@@ -59,7 +59,7 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			// If it's not usable - return, don't attack.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
+			if( this.ssObject is IUsableToggle && !((IUsableToggle)this.ssObject).IsUsable() )
 			{
 				return;
 			}

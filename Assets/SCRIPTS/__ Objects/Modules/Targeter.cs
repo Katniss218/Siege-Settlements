@@ -135,8 +135,7 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
-				IDamageable ssDamageable = col[i].GetComponent<IDamageable>();
-				return ssDamageable.damageable;
+				return col[i].GetComponent<Damageable>();
 			}
 			return null;
 		}
@@ -149,6 +148,7 @@ namespace SS.Objects.Modules
 				return null;
 			}
 			Damageable ret = null;
+			float needThisCloseSq = searchRange * searchRange;
 			float needThisClose = searchRange;
 
 			for( int i = 0; i < col.Length; i++ )
@@ -161,14 +161,15 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
-				if( !Main.IsInRange( col[i].transform.position, positionSelf, needThisClose ) )
+				float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
+				//if( !Main.IsInRange( col[i].transform.position, positionSelf, needThisClose ) )
+				if( distSq >= needThisCloseSq )
 				{
 					continue;
 				}
 
-				needThisClose = Vector3.Distance( col[i].transform.position, positionSelf );
-				IDamageable ssDamageable = col[i].GetComponent<IDamageable>();
-				ret = ssDamageable.damageable;
+				needThisCloseSq = distSq;
+				ret = col[i].GetComponent<Damageable>();
 			}
 			return ret;
 		}

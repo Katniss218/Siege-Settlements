@@ -164,7 +164,7 @@ namespace SS.AI
 		internal static void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectSelectable[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
-
+			
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{

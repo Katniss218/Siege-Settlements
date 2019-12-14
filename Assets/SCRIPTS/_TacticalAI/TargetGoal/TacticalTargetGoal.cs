@@ -144,7 +144,7 @@ namespace SS.AI.Goals
 		public override void Update( TacticalGoalController controller )
 		{
 			// If it's not usable - return, don't attack.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
+			if( controller.ssObject is IUsableToggle && !((IUsableToggle)controller.ssObject).IsUsable() )
 			{
 				return;
 			}
