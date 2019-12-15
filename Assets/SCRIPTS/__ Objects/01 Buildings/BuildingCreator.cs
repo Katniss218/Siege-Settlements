@@ -53,17 +53,12 @@ namespace SS.Objects.Buildings
 			building.deathSound = def.deathSoundEffect;
 			building.icon = def.icon;
 
-			// Make the building belong to a faction.
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-
-			// Set the building's health.
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-
+#warning TODO! - properly collect sub-objects
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
-			factionMember.onFactionChange.AddListener( () =>
+			building.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[building.factionId].color;
 
 				for( int i = 0; i < renderers.Length; i++ )
 				{
@@ -72,20 +67,20 @@ namespace SS.Objects.Buildings
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			building.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				for( int i = 0; i < renderers.Length; i++ )
 				{
-					renderers[i].material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+					renderers[i].material.SetFloat( "_Dest", 1 - building.healthPercent );
 				}
 			} );
 
-			factionMember.factionId = data.factionId;
-			factionMember.viewRange = def.viewRange;
+			building.factionId = data.factionId;
+			building.viewRange = def.viewRange;
 
-			damageable.healthMax = def.healthMax;
-			damageable.health = data.health;
-			damageable.armor = def.armor;
+			building.healthMax = def.healthMax;
+			building.health = data.health;
+			building.armor = def.armor;
 			
 			//
 			//    MODULES
@@ -190,21 +185,16 @@ namespace SS.Objects.Buildings
 			} );
 			
 			// Make the building belong to a faction.
-			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( () =>
+			building.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[building.factionId].color;
 				hud.SetColor( color );
 			} );
 			
-
-			// Make the building damageable.
-			Damageable damageable = container.AddComponent<Damageable>();
-			
 			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			building.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				hud.SetHealthBarFill( damageable.healthPercent );
+				hud.SetHealthBarFill( building.healthPercent );
 				if( deltaHP < 0 )
 				{
 					hudGameObject.SetActive( true );
@@ -216,7 +206,7 @@ namespace SS.Objects.Buildings
 			// - Destroy the building's UI.
 			// - Deselect the building.
 			// - Play the death sound.
-			damageable.onDeath.AddListener( () =>
+			building.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
 				if( Selection.IsSelected( building ) )
@@ -227,8 +217,8 @@ namespace SS.Objects.Buildings
 				// Remove the now unused listeners.
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-			
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+
+			building.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				if( !Selection.IsDisplayed( building ) )
 				{
@@ -237,7 +227,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)building.health + "/" + (int)building.healthMax );
 				}
 
 				// If the health change changed the usability (health is above threshold).
@@ -273,11 +263,9 @@ namespace SS.Objects.Buildings
 			data.position = building.transform.position;
 			data.rotation = building.transform.rotation;
 			
-			FactionMember factionMember = building.GetComponent<FactionMember>();
-			data.factionId = factionMember.factionId;
-
-			Damageable damageable = building.GetComponent<Damageable>();
-			data.health = damageable.health;
+			data.factionId = building.factionId;
+			
+			data.health = building.health;
 
 			ConstructionSite constructionSite = building.GetComponent<ConstructionSite>();
 			if( constructionSite != null )

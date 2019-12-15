@@ -110,13 +110,9 @@ namespace SS.Objects.Buildings
 					}
 
 					// Disable snapping to other factions' buildings
-					FactionMember factionMember = building.GetComponent<FactionMember>();
-					if( factionMember != null )
+					if( building.factionId != Levels.LevelDataManager.PLAYER_FAC )
 					{
-						if( factionMember.factionId != Levels.LevelDataManager.PLAYER_FAC )
-						{
-							continue;
-						}
+						continue;
 					}
 
 					Vector3[] targetNodes = building.placementNodes;

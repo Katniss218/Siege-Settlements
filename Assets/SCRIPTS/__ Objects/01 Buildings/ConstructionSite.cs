@@ -18,7 +18,6 @@ namespace SS.Objects.Buildings
 	/// Represents a building that's being constructed.
 	/// </summary>
 	[RequireComponent( typeof( Building ) )]
-	[RequireComponent( typeof( Damageable ) )]
 	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
 		public class ResourceInfo
@@ -31,9 +30,7 @@ namespace SS.Objects.Buildings
 		private Dictionary<string, ResourceInfo> resourceInfo;
 
 		public UnityEvent onPaymentReceived { get; private set; }
-
-		private Damageable damageable;
-
+		
 		private Building building;
 		private MeshRenderer[] renderers;
 
@@ -97,14 +94,14 @@ namespace SS.Objects.Buildings
 				if( isDone )
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
-					this.damageable.onHealthChange.RemoveListener( this.OnHealthChange );
-					this.GetComponent<FactionMember>().onFactionChange.RemoveListener( this.OnFactionChange );
+					this.building.onHealthChange.RemoveListener( this.OnHealthChange );
+					this.building.onFactionChange.RemoveListener( this.OnFactionChange );
 
 					for( int i = 0; i < this.renderers.Length; i++ )
 					{
 						this.renderers[i].material.SetFloat( "_YOffset", 0.0f );
 					}
-					this.damageable.health = this.damageable.healthMax;
+					this.building.health = this.building.healthMax;
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
@@ -112,17 +109,17 @@ namespace SS.Objects.Buildings
 					this.ConstructionComplete_UI();
 				}
 
-				float healAmt = ((this.damageable.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
+				float healAmt = ((this.building.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
 
 				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 				// Otherwise, heal it normally.
-				if( this.damageable.health + healAmt > this.damageable.healthMax )
+				if( this.building.health + healAmt > this.building.healthMax )
 				{
-					this.damageable.health = this.damageable.healthMax;
+					this.building.health = this.building.healthMax;
 				}
 				else
 				{
-					this.damageable.health += healAmt;
+					this.building.health += healAmt;
 				}
 
 
@@ -212,7 +209,6 @@ namespace SS.Objects.Buildings
 
 		void Awake()
 		{
-			this.damageable = this.GetComponent<Damageable>();
 			this.onPaymentReceived = new UnityEvent();
 		}
 
@@ -245,12 +241,10 @@ namespace SS.Objects.Buildings
 			return data;
 		}
 
-		private static GameObject CreateConstructionSiteGraphics( GameObject gameObject )
+		private static GameObject CreateConstructionSiteGraphics( GameObject gameObject, IFactionMember fac )
 		{
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
-
-			FactionMember fac = gameObject.GetComponent<FactionMember>();
-
+			
 			Color color = fac != null ? LevelDataManager.factions[fac.factionId].color : Color.gray;
 
 			int numX = Mathf.FloorToInt( collider.size.x * 2.0f );
@@ -381,10 +375,9 @@ namespace SS.Objects.Buildings
 		/// </summary>
 		public static void BeginConstructionOrRepair( Building building, ConstructionSiteData data )
 		{
-			Damageable damageable = building.GetComponent<Damageable>();
-			if( !Building.IsRepairable( damageable ) )
+			if( !Building.IsRepairable( building ) )
 			{
-				throw new Exception( building.name + " - Building is not repairable." );
+				throw new Exception( building.displayName + " - Building is not repairable." );
 			}
 			
 			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
@@ -397,10 +390,10 @@ namespace SS.Objects.Buildings
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
 			{
-				float deltaHP = damageable.health - damageable.healthMax;
+				float deltaHP = building.health - building.healthMax;
 				foreach( var kvp in constructionSite.resourceInfo )
 				{
-					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
+					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
 
 					kvp.Value.remaining = resAmt;
 				}
@@ -412,18 +405,18 @@ namespace SS.Objects.Buildings
 					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
 				}
 			}
-						
 
-			damageable.onHealthChange.AddListener( constructionSite.OnHealthChange );
-			building.GetComponent<FactionMember>().onFactionChange.AddListener( constructionSite.OnFactionChange );
 
-			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject );
+			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
+			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
+
+			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject, building );
 
 
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
 			for( int i = 0; i < constructionSite.renderers.Length; i++ )
 			{
-				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, damageable.healthPercent ) );
+				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
 			}
 		}
 
@@ -432,13 +425,13 @@ namespace SS.Objects.Buildings
 		{
 			for( int i = 0; i < this.renderers.Length; i++ )
 			{
-				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.buildingHeight, 0.0f, damageable.healthPercent ) );
+				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.buildingHeight, 0.0f, building.healthPercent ) );
 			}
 			if( deltaHP < 0 )
 			{
 				foreach( var kvp in this.resourceInfo )
 				{
-					float resAmt = (kvp.Value.initialResource / (damageable.healthMax * (1 - 0.1f))) * -deltaHP;
+					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
 
 					kvp.Value.remaining += resAmt;
 				}
@@ -448,7 +441,7 @@ namespace SS.Objects.Buildings
 		private void OnFactionChange()
 		{
 			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
-			Color facColor = LevelDataManager.factions[this.GetComponent<FactionMember>().factionId].color;
+			Color facColor = LevelDataManager.factions[this.building.factionId].color;
 
 			for( int i = 0; i < constr_gfx.childCount; i++ )
 			{

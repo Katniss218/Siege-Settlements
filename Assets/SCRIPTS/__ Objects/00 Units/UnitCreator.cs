@@ -9,7 +9,6 @@ using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.Diplomacy;
 using SS.AI;
-using SS.AI.Goals;
 
 namespace SS.Objects.Units
 {
@@ -57,18 +56,12 @@ namespace SS.Objects.Units
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
 
-
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-
-			// Set the unit's health.
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-
-
+					
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
-			factionMember.onFactionChange.AddListener( () =>
+			unit.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[unit.factionId].color;
 
 				for( int i = 0; i < renderers.Length; i++ )
 				{
@@ -77,20 +70,20 @@ namespace SS.Objects.Units
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			unit.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				for( int i = 0; i < renderers.Length; i++ )
 				{
-					renderers[i].material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+					renderers[i].material.SetFloat( "_Dest", 1 - unit.healthPercent );
 				}
 			} );
 
-			factionMember.factionId = data.factionId;
-			factionMember.viewRange = def.viewRange;
+			unit.factionId = data.factionId;
+			unit.viewRange = def.viewRange;
 
-			damageable.healthMax = def.healthMax;
-			damageable.health = data.health;
-			damageable.armor = def.armor;
+			unit.healthMax = def.healthMax;
+			unit.health = data.health;
+			unit.armor = def.armor;
 
 			//
 			//    MODULES
@@ -182,23 +175,18 @@ namespace SS.Objects.Units
 				}
 				hudGameObject.SetActive( false );
 			} );
-			
+
 			// Make the unit change it's color when the faction is changed.
-			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( () =>
+			unit.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[unit.factionId].color;
 				hud.SetColor( color );
 			} );
-			
 
-			// Make the unit damageable.
-			Damageable damageable = container.AddComponent<Damageable>();
-			
 			// Make the unit update it's healthbar and material when health changes.
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			unit.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				hud.SetHealthBarFill( damageable.healthPercent );
+				hud.SetHealthBarFill( unit.healthPercent );
 				if( deltaHP < 0 )
 				{
 					hudGameObject.SetActive( true );
@@ -207,7 +195,7 @@ namespace SS.Objects.Units
 			} );
 
 			// Make the unit deselect itself, and destroy it's UI when killed.
-			damageable.onDeath.AddListener( () =>
+			unit.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
 
@@ -219,7 +207,7 @@ namespace SS.Objects.Units
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			unit.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				if( !Selection.IsDisplayed( unit ) )
 				{
@@ -228,7 +216,7 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax );
 				}
 			} );
 			
@@ -255,12 +243,10 @@ namespace SS.Objects.Units
 
 			data.position = unit.transform.position;
 			data.rotation = unit.transform.rotation;
-
-			FactionMember factionMember = unit.GetComponent<FactionMember>();
-			data.factionId = factionMember.factionId;
-
-			Damageable damageable = unit.GetComponent<Damageable>();
-			data.health = damageable.health;
+			
+			data.factionId = unit.factionId;
+			
+			data.health = unit.health;
 
 			//
 			// MODULES

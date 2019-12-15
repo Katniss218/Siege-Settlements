@@ -42,10 +42,10 @@ namespace SS.AI.Goals
 				// Targeter.SetTargets( IAttackModule[] array, ... other );
 				// ???
 
-				IFactionMember fac = (IFactionMember)controller.ssObject;
+				SSObjectDFS ssobj = (SSObjectDFS)controller.ssObject;
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, ssobj ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}

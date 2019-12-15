@@ -81,6 +81,7 @@ namespace SS.TerrainCreation
 				Quaternion.Euler( Vector3.up )
 			);
 			navMeshDataInstance = NavMesh.AddNavMeshData( navData );
+			
 		}
 	}
 }

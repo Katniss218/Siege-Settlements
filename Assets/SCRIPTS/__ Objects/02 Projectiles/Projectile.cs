@@ -2,11 +2,12 @@
 using SS.Objects.Extras;
 using SS.Objects.Modules;
 using UnityEngine;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Projectiles
 {
-	public class Projectile : SSObject
+	public class Projectile : SSObject, IFactionMember
 	{
 		public bool isStuck { get; set; }
 
@@ -35,13 +36,19 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					this.ownerFactionIdCache = (value.ssObject as IFactionMember).factionMember.factionId;
+					this.ownerFactionIdCache = (value.ssObject as IFactionMember).factionId;
 				}
 				this.__owner = value;
 			}
 		}
 
-		
+
+
+		public int factionId { get; set; }
+
+		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
+
+
 
 		public void MakeStuck()
 		{
@@ -94,13 +101,13 @@ namespace SS.Objects.Projectiles
 				}
 			}
 
-			Damageable damageableOther = other.GetComponent<Damageable>();
-			FactionMember factionMemberOther = other.GetComponent<FactionMember>();
+			IDamageable damageableOther = other.GetComponent<IDamageable>();
+			SSObjectDFS factionMemberOther = otherSSObject as SSObjectDFS;
 			
 			this.DamageAndStuckLogic( damageableOther, factionMemberOther, this.canGetStuck );
 		}
 
-		public void DamageAndStuckLogic( Damageable hitDamageable, FactionMember hitFactionMember, bool canGetStuck )
+		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFS hitFactionMember, bool canGetStuck )
 		{
 			if( this.blastRadius == 0.0f )
 			{
@@ -110,7 +117,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( FactionMember.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						hitDamageable.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 
@@ -127,7 +134,7 @@ namespace SS.Objects.Projectiles
 				for( int i = 0; i < col.Length; i++ )
 				{
 					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
-					if( !FactionMember.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember).factionMember ) )
+					if( !SSObjectDFS.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
 					{
 						continue;
 					}
@@ -146,7 +153,7 @@ namespace SS.Objects.Projectiles
 						Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
 						continue;
 					}
-					(potentialDamagee as IDamageable).damageable.TakeDamage( this.damageSource.damageType, damageScaledToDist, this.damageSource.armorPenetration );
+					(potentialDamagee as IDamageable).TakeDamage( this.damageSource.damageType, damageScaledToDist, this.damageSource.armorPenetration );
 				}
 
 				if( hitDamageable == null )
@@ -155,7 +162,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( FactionMember.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );

@@ -1,9 +1,12 @@
-﻿using SS.Diplomacy;
+﻿using UnityEngine.Events;
 
 namespace SS.Objects
 {
 	public interface IFactionMember
 	{
-		FactionMember factionMember { get; }
+		int factionId { get; set; }
+
+		UnityEvent onFactionChange { get; }
+		//FactionMember factionMember { get; }
 	}
 }

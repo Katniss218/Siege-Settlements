@@ -79,7 +79,7 @@ namespace SS.Objects.Modules
 		private void ShowTooltip()
 		{
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}
@@ -112,7 +112,7 @@ namespace SS.Objects.Modules
 		private void MoveTooltip()
 		{
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}
@@ -123,7 +123,7 @@ namespace SS.Objects.Modules
 		private void HideTooltip()
 		{
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}
@@ -253,10 +253,9 @@ namespace SS.Objects.Modules
 			if( this.ssObject is IFactionMember )
 			{
 				IFactionMember fac = (IFactionMember)this.ssObject;
-				FactionMember facMem = fac.factionMember;
-				facMem.onFactionChange.AddListener( () =>
+				fac.onFactionChange.AddListener( () =>
 				{
-					if( facMem.factionId == LevelDataManager.PLAYER_FAC )
+					if( fac.factionId == LevelDataManager.PLAYER_FAC )
 					{
 						// add to the respanel.
 						for( int i = 0; i < this.slotCount; i++ )
@@ -282,7 +281,7 @@ namespace SS.Objects.Modules
 			}
 			if( this.ssObject is IDamageable )
 			{
-				Damageable d = ((IDamageable)this.ssObject).damageable;
+				IDamageable d = ((IDamageable)this.ssObject);
 
 				d.onDeath.AddListener( () =>
 				{
@@ -584,7 +583,7 @@ namespace SS.Objects.Modules
 					if( this.ssObject is IFactionMember )
 					{
 						IFactionMember factionMember = (IFactionMember)this.ssObject;
-						if( factionMember.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+						if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
 						{
 #warning TODO! - ugly.
 #warning TODO! - update when faction changes.

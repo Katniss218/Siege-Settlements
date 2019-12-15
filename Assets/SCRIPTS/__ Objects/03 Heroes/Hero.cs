@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectSelectable, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
+	public class Hero : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
 		public GameObject hud { get; set; }
 
@@ -57,32 +57,6 @@ namespace SS.Objects.Heroes
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 		
-		private Damageable __damageable = null;
-		public Damageable damageable
-		{
-			get
-			{
-				if( this.__damageable == null )
-				{
-					this.__damageable = this.GetComponent<Damageable>();
-				}
-				return this.__damageable;
-			}
-		}
-
-		private FactionMember __factionMember = null;
-		public FactionMember factionMember
-		{
-			get
-			{
-				if( this.__factionMember == null )
-				{
-					this.__factionMember = this.GetComponent<FactionMember>();
-				}
-				return this.__factionMember;
-			}
-		}
-
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
 		{
@@ -145,7 +119,7 @@ namespace SS.Objects.Heroes
 			{
 				return;
 			}
-			if( Time.time > this.damageable.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
+			if( Time.time > this.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
@@ -165,7 +139,7 @@ namespace SS.Objects.Heroes
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
 

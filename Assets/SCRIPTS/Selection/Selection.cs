@@ -12,7 +12,7 @@ namespace SS
 	{
 		private class DisplayedObjectData
 		{
-			public SSObjectSelectable obj { get; private set; } = null;
+			public SSObjectDFS obj { get; private set; } = null;
 			public ISelectDisplayHandler module { get; private set; } = null;
 			public bool isGroup { get; private set; } = false;
 
@@ -21,12 +21,12 @@ namespace SS
 				return new DisplayedObjectData() { obj = null, module = null, isGroup = true };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectSelectable obj )
+			public static DisplayedObjectData NewObject( SSObjectDFS obj )
 			{
 				return new DisplayedObjectData() { obj = obj, module = null, isGroup = false };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectSelectable obj, SSModule module )
+			public static DisplayedObjectData NewObject( SSObjectDFS obj, SSModule module )
 			{
 				if( !(module is ISelectDisplayHandler) )
 				{
@@ -36,12 +36,12 @@ namespace SS
 			}
 		}
 
-		private static List<SSObjectSelectable> selected = new List<SSObjectSelectable>();
+		private static List<SSObjectDFS> selected = new List<SSObjectDFS>();
 
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
-		public static SSObjectSelectable[] selectedObjects
+		public static SSObjectDFS[] selectedObjects
 		{
 			get
 			{
@@ -81,7 +81,7 @@ namespace SS
 			return displayedObjectData != null;
 		}
 
-		public static bool IsDisplayed( SSObjectSelectable obj )
+		public static bool IsDisplayed( SSObjectDFS obj )
 		{
 			if( displayedObjectData == null )
 			{
@@ -115,7 +115,7 @@ namespace SS
 			{
 				return;
 			}
-			SSObjectSelectable obj = displayedObjectData.obj;
+			SSObjectDFS obj = displayedObjectData.obj;
 			StopDisplaying();
 			DisplayObject( obj );
 		}
@@ -132,9 +132,8 @@ namespace SS
 			float healthMaxTotal = 0.0f;
 			for( int i = 0; i < selected.Count; i++ )
 			{
-				Damageable dam = selected[i].GetComponent<Damageable>();
-				healthTotal += dam.health;
-				healthMaxTotal += dam.healthMax;
+				healthTotal += selected[i].health;
+				healthMaxTotal += selected[i].healthMax;
 			}
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Total Health: " + (int)healthTotal + "/" + (int)healthMaxTotal );
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
@@ -143,7 +142,7 @@ namespace SS
 		/// <summary>
 		/// Displays an object.
 		/// </summary>
-		public static void DisplayObject( SSObjectSelectable obj )
+		public static void DisplayObject( SSObjectDFS obj )
 		{
 			if( obj == null )
 			{
@@ -169,7 +168,7 @@ namespace SS
 		/// <summary>
 		/// Displays a module on a specified object.
 		/// </summary>
-		public static void DisplayModule( SSObjectSelectable obj, SSModule module )
+		public static void DisplayModule( SSObjectDFS obj, SSModule module )
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
@@ -212,12 +211,12 @@ namespace SS
 		/// Checks if the object is currently selected.
 		/// </summary>
 		/// <param name="obj">The object to check.</param>
-		public static bool IsSelected( SSObjectSelectable obj )
+		public static bool IsSelected( SSObjectDFS obj )
 		{
 			return selected.Contains( obj );
 		}
 		
-		public static int TrySelect( SSObjectSelectable[] objs )
+		public static int TrySelect( SSObjectDFS[] objs )
 		{
 			if( objs == null )
 			{
@@ -257,7 +256,7 @@ namespace SS
 			if( selected.Count == 1 )
 			{
 				IFactionMember selectedObjsFaction = objs[0] as IFactionMember;
-				if( selectedObjsFaction == null || selectedObjsFaction.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+				if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
 				{
 					StopDisplaying();
 
@@ -283,7 +282,7 @@ namespace SS
 		/// Deselects an object.
 		/// </summary>
 		/// <param name="obj">The object to deselect.</param>
-		public static void Deselect( SSObjectSelectable obj )
+		public static void Deselect( SSObjectDFS obj )
 		{
 			if( obj == null )
 			{
@@ -304,7 +303,7 @@ namespace SS
 			if( selected.Count == 1 )
 			{
 				IFactionMember selectedObjsFaction = selected[0] as IFactionMember;
-				if( selectedObjsFaction == null || selectedObjsFaction.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+				if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
 				{
 					DisplayObject( selected[0] );
 				}

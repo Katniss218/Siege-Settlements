@@ -121,11 +121,12 @@ namespace SS
 
 		public static bool IsControllableByFaction( SSObject obj, int factionId )
 		{
+#warning TODO! - remove.
 			// Being controllable not necessarily means that you need to be selectable.
 
 			if( obj is IFactionMember )
-			{				
-				return ((IFactionMember)obj).factionMember.factionId == factionId;
+			{
+				return ((IFactionMember)obj).factionId == factionId;
 			}
 			return false;
 		}
@@ -147,7 +148,7 @@ namespace SS
 					{
 						return;
 					}
-					if( !Building.IsRepairable( building.GetComponent<Damageable>() ) )
+					if( !Building.IsRepairable( building ) )
 					{
 						return;
 					}
@@ -227,7 +228,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, ObjectLayer.OBJECTS_MASK ) )
 				{
-					Damageable damageable = hitInfo.collider.GetComponent<Damageable>();
+					IDamageable damageable = hitInfo.collider.GetComponent<IDamageable>();
 
 					if( damageable == null )
 					{
@@ -236,7 +237,7 @@ namespace SS
 					else
 					//if( damageable != null )
 					{
-						damageable.TakeDamageUnscaled( 99999999.99f );
+						damageable.Die();
 					}
 				}
 			}
@@ -249,7 +250,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					SSObjectSelectable sel = hitInfo.collider.GetComponent<SSObjectSelectable>();
+					SSObjectDFS sel = hitInfo.collider.GetComponent<SSObjectDFS>();
 					if( sel == null )
 					{
 						return;
@@ -261,7 +262,7 @@ namespace SS
 					}
 					else
 					{
-						Selection.TrySelect( new SSObjectSelectable[] { sel } );
+						Selection.TrySelect( new SSObjectDFS[] { sel } );
 					}
 				}
 			}
@@ -276,10 +277,10 @@ namespace SS
 
 		private static void SetFactionSelected( int fac )
 		{
-			SSObjectSelectable[] selected = Selection.selectedObjects;
+			SSObjectDFS[] selected = Selection.selectedObjects;
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				FactionMember faction = selected[i].GetComponent<FactionMember>();
+				IFactionMember faction = selected[i].GetComponent<IFactionMember>();
 
 				if( faction == null )
 				{
@@ -470,11 +471,11 @@ namespace SS
 
 		void Start()
 		{
-			Damageable.onHealthChangeAny.AddListener( ( Damageable obj, float deltaHealth ) =>
+			SSObjectDFS.onHealthChangeAny.AddListener( ( SSObjectDFS obj, float deltaHealth ) =>
 			{
 				if( Selection.IsDisplayedGroup() )
 				{
-					SSObjectSelectable ssObjectSelectable = obj.GetComponent<SSObjectSelectable>();
+					SSObjectDFS ssObjectSelectable = obj.GetComponent<SSObjectDFS>();
 					if( ssObjectSelectable  == null )
 					{
 						return;

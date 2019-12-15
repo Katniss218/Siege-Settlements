@@ -188,10 +188,10 @@ namespace SS.AI.Goals
 		{
 			if( this.isHostile )
 			{
-				IFactionMember fac = controller.GetComponent<IFactionMember>();
+				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, ssobj ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}

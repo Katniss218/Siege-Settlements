@@ -102,9 +102,7 @@ namespace SS.Objects.Projectiles
 			// Make the projectile destroy itself after certain time.
 			TimerHandler timerHandler = container.AddComponent<TimerHandler>();
 			timerHandler.onTimerEnd.AddListener( () => Object.Destroy( container ) );
-
-			FactionMember factionMember = container.AddComponent<FactionMember>();
-			
+						
 			// Make the projectile rotate to face the direction of flight.
 			container.AddComponent<RotateAlongVelocity>();
 
@@ -143,9 +141,8 @@ namespace SS.Objects.Projectiles
 				data.isStuck = false;
 				data.velocity = rigidbody.velocity;
 			}
-
-			FactionMember factionMember = projectile.GetComponent<FactionMember>();
-			data.ownerFactionIdCache = factionMember.factionId;
+			
+			data.ownerFactionIdCache = projectile.factionId;
 
 			DamageSource damageSource = projectile.GetComponent<Projectile>().damageSource;
 			data.damageTypeOverride = damageSource.damageType;

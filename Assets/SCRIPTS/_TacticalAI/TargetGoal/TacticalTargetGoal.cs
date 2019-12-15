@@ -15,7 +15,8 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// The object that the goal is going to try and attack.
 		/// </summary>
-		public Damageable target { get; set; }
+		public SSObjectDFS target { get; set; }
+
 		/// <summary>
 		/// If set to true, the goal won't check if the target can be targeted (e.g. outside range, wrong faction, etc.). Useful when you want to attack objects outside of the view range.
 		/// </summary>
@@ -102,14 +103,14 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			IFactionMember fac = controller.GetComponent<IFactionMember>();
+			SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
 			{
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, fac.factionMember ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, ssobj ) )
 					{
 						this.attackModules[i].targeter.target = null;
 					}
@@ -117,7 +118,7 @@ namespace SS.AI.Goals
 			}
 
 			// If the current target is outside of the global view range, or can't be targeted - try and find a new target.
-			if( !Targeter.CanTarget( controller.transform.position, fac.factionMember.viewRange, this.target, fac.factionMember ) )
+			if( !Targeter.CanTarget( controller.transform.position, ssobj.viewRange, this.target, ssobj ) )
 			{
 				this.target = null;
 			}
@@ -127,7 +128,7 @@ namespace SS.AI.Goals
 			{
 				if( this.target == null )
 				{
-					this.target = Targeter.FindTargetClosest( controller.transform.position, fac.factionMember.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, fac.factionMember );
+					this.target = Targeter.FindTargetClosest( controller.transform.position, ssobj.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, ssobj );
 				}
 			}
 
@@ -180,7 +181,7 @@ namespace SS.AI.Goals
 			}
 			else
 			{
-				this.target = SSObject.Find( data.targetGuid.Value ).GetComponent<Damageable>();
+				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
 			}
 		}
 	}

@@ -14,8 +14,8 @@ namespace SS.Objects.Modules
 		}
 
 #warning Do I even want that? The Tactical Goals are targeters.
-		private Damageable __target;
-		public Damageable target
+		private SSObjectDFS __target;
+		public SSObjectDFS target
 		{
 			get
 			{
@@ -38,7 +38,7 @@ namespace SS.Objects.Modules
 		public int layers { get; private set; }
 
 
-		public Targeter( int layers, FactionMember factionMember )
+		public Targeter( int layers, SSObjectDFS factionMember )
 		{
 			this.layers = layers;
 			this.factionMember = factionMember;
@@ -47,17 +47,17 @@ namespace SS.Objects.Modules
 		public event Action onTargetSet = null;
 		public event Action onTargetReset = null;
 
-		public FactionMember factionMember { get; private set; }
+		public SSObjectDFS factionMember { get; private set; }
 		
 
-		public static bool CanTarget( Vector3 positionSelf, float searchRange, Damageable target, FactionMember factionMemberSelf )
+		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target, SSObjectDFS factionMemberSelf )
 		{
 			if( target == null )
 			{
 				return false;
 			}
 
-			if( !factionMemberSelf.CanTargetAnother( target.GetComponent<FactionMember>() ) )
+			if( !factionMemberSelf.CanTargetAnother( target.GetComponent<IFactionMember>() ) )
 			{
 				return false;
 			}
@@ -70,7 +70,7 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public Damageable TrySetTarget( Vector3 positionSelf, float searchRange, TargetingMode targetingMode, Damageable target = null )
+		public SSObjectDFS TrySetTarget( Vector3 positionSelf, float searchRange, TargetingMode targetingMode, SSObjectDFS target = null )
 		{
 			if( targetingMode == TargetingMode.ARBITRARY )
 			{
@@ -88,7 +88,7 @@ namespace SS.Objects.Modules
 					return null;
 				}
 				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( target.GetComponent<FactionMember>() ) )
+				if( !this.factionMember.CanTargetAnother( target ) )
 				{
 					return this.target;
 				}
@@ -103,7 +103,7 @@ namespace SS.Objects.Modules
 			return this.target;
 		}
 
-		public Damageable TrySetTarget( Vector3 positionSelf, float searchRange, Damageable target )
+		public SSObjectDFS TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target )
 		{
 			if( CanTarget( positionSelf, searchRange, target, this.factionMember ) )
 			{
@@ -112,7 +112,7 @@ namespace SS.Objects.Modules
 			return this.target;
 		}
 		
-		public static Damageable FindTargetArbitrary( Vector3 positionSelf, float searchRange, int layerMask, FactionMember factionMemberSelf )
+		public static SSObjectDFS FindTargetArbitrary( Vector3 positionSelf, float searchRange, int layerMask, SSObjectDFS factionMemberSelf )
 		{
 			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
 			if( col.Length == 0 )
@@ -122,7 +122,7 @@ namespace SS.Objects.Modules
 			
 			for( int i = 0; i < col.Length; i++ )
 			{
-				FactionMember facOther = col[i].GetComponent<FactionMember>();
+				SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
 
 				// Check if the overlapped object can be targeted by this finder.
 				if( !factionMemberSelf.CanTargetAnother( facOther ) )
@@ -135,25 +135,25 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
-				return col[i].GetComponent<Damageable>();
+				return facOther;
 			}
 			return null;
 		}
 
-		public static Damageable FindTargetClosest( Vector3 positionSelf, float searchRange, int layerMask, FactionMember factionMemberSelf )
+		public static SSObjectDFS FindTargetClosest( Vector3 positionSelf, float searchRange, int layerMask, SSObjectDFS factionMemberSelf )
 		{
 			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
 			if( col.Length == 0 )
 			{
 				return null;
 			}
-			Damageable ret = null;
+			SSObjectDFS ret = null;
 			float needThisCloseSq = searchRange * searchRange;
 			float needThisClose = searchRange;
 
 			for( int i = 0; i < col.Length; i++ )
 			{
-				FactionMember facOther = col[i].GetComponent<FactionMember>();
+				SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
 
 				// Check if the overlapped object can be targeted by this finder.
 				if( !factionMemberSelf.CanTargetAnother( facOther ) )
@@ -162,14 +162,13 @@ namespace SS.Objects.Modules
 				}
 
 				float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
-				//if( !Main.IsInRange( col[i].transform.position, positionSelf, needThisClose ) )
 				if( distSq >= needThisCloseSq )
 				{
 					continue;
 				}
 
 				needThisCloseSq = distSq;
-				ret = col[i].GetComponent<Damageable>();
+				ret = facOther;
 			}
 			return ret;
 		}

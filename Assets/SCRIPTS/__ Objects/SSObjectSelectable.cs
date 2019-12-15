@@ -1,32 +1,111 @@
-﻿using System;
+﻿using SS.Diplomacy;
+using SS.Levels;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace SS.Objects
 {
-	/*[DisallowMultipleComponent]
-	/// <summary>
-	/// Represents objects that can be damaged.
-	/// </summary>
-	public class Damageable : MonoBehaviour
-	{
-#warning This doesn't have to be a MonoBehaviour - change this to virtual of SSObjectSelectable (overriden by units). Units need different implementation than buildings & heroes.
+	public class _UnityEvent_float : UnityEvent<float> { }
+	public class _UnityEvent_SSObjectDFS_float : UnityEvent<SSObjectDFS, float> { }
+	public class _UnityEvent_SSObjectDFS : UnityEvent<SSObjectDFS> { }
 
-		public class _UnityEvent_float : UnityEvent<float> { }
-		public class _UnityEvent_Damageable_float : UnityEvent<Damageable, float> { }
-		public class _UnityEvent_Damageable : UnityEvent<Damageable> { }
+	/// <summary>
+	/// Add this to any object to make it selectable by the player.
+	/// </summary>
+	public abstract class SSObjectDFS : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
+	{
+
+		/// <summary>
+		/// The icon that is shown on the list of all selected objects.
+		/// </summary>
+		public Sprite icon;
+
+		/// <summary>
+		/// Is called when the object gets selected.
+		/// </summary>
+		public UnityEvent onSelect = new UnityEvent();
+
+		/// <summary>
+		/// Is called when the object gets highlighted.
+		/// </summary>
+		public UnityEvent onHighlight = new UnityEvent();
+
+		/// <summary>
+		/// Is called when the object gets deselected.
+		/// </summary>
+		public UnityEvent onDeselect = new UnityEvent();
+
+
+		public float viewRange { get; set; }
+
+
+		[SerializeField] private int __factionId;
+		/// <summary>
+		/// Contains the index of the faction that this object belongs to.
+		/// </summary>
+		public int factionId
+		{
+			get
+			{
+				return this.__factionId;
+			}
+			set
+			{
+				this.__factionId = value;
+				this.onFactionChange?.Invoke();
+			}
+		}
+
+		/// <summary>
+		/// Fired when the faction ID changes.
+		/// </summary>
+		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
+
+		//public float viewRange;
+
+		// Checks if the faction members can target each other.
+		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.
+		internal bool CanTargetAnother( IFactionMember fac2 )
+		{
+			if( fac2 == null )
+			{
+				return true;
+			}
+			if( this.factionId == fac2.factionId )
+			{
+				return false;
+			}
+			return LevelDataManager.GetRelation( this.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
+		}
+
+		internal static bool CanTarget( int fac1, IFactionMember fac2 )
+		{
+			if( fac1 < 0 || fac2 == null )
+			{
+				return true;
+			}
+			if( fac1 == fac2.factionId )
+			{
+				return false;
+			}
+			return LevelDataManager.GetRelation( fac1, fac2.factionId ) == DiplomaticRelation.Enemy;
+		}
+
+
+
 
 		/// <summary>
 		/// Fires when the 'health' value is changed.
 		/// </summary>
-		public _UnityEvent_float onHealthChange = new _UnityEvent_float();
-		public static _UnityEvent_Damageable_float onHealthChangeAny = new _UnityEvent_Damageable_float();
+		public _UnityEvent_float onHealthChange { get; set; } = new _UnityEvent_float();
+		public static _UnityEvent_SSObjectDFS_float onHealthChangeAny = new _UnityEvent_SSObjectDFS_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
-		public UnityEvent onDeath = new UnityEvent();
-		public static _UnityEvent_Damageable onDeathAny = new _UnityEvent_Damageable();
+		public UnityEvent onDeath { get; set; } = new UnityEvent();
+		public static _UnityEvent_SSObjectDFS onDeathAny = new _UnityEvent_SSObjectDFS();
 
 
 		public float lastDamageTakenTimestamp { get; private set; }
@@ -127,48 +206,7 @@ namespace SS.Objects
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}
-
-		/// <summary>
-		/// Heals this damageable to full health.
-		/// </summary>
-		public virtual void Heal()
-		{
-			this.health = this.healthMax;
-		}
-
-		/// <summary>
-		/// Heals this damageable by the specified amount.
-		/// </summary>
-		/// <param name="amount">The amount of health to restore.</param>
-		public virtual void Heal( float amount )
-		{
-			if( amount <= 0 )
-			{
-				throw new ArgumentOutOfRangeException( "Can't heal for less than 1 health." );
-			}
-			if( this.health + amount > this.healthMax )
-			{
-				this.health = this.healthMax;
-			}
-			else
-			{
-				this.health += amount;
-			}
-		}
-
-		/// <summary>
-		/// Makes the damageable take an amount of damage, without applying any modifiers to it.
-		/// </summary>
-		/// <param name="amount">The raw amount of damage to take.</param>
-		public virtual void TakeDamageUnscaled( float amount )
-		{
-			if( amount <= 0 )
-			{
-				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
-			}
-			this.health -= amount;
-		}
-
+		
 		/// <summary>
 		/// makes the damageable take an amount of damage, using the scaling reduction formula.
 		/// </summary>
@@ -196,5 +234,16 @@ namespace SS.Objects
 			this.onDeath?.Invoke();
 			onDeathAny?.Invoke( this );
 		}
-	}*/
+
+		public abstract void OnDisplay();
+		public abstract void OnHide();
+
+#if UNITY_EDITOR
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.blue;
+			Gizmos.DrawWireSphere( this.transform.position, this.viewRange );
+		}
+#endif
+	}
 }

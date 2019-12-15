@@ -25,18 +25,16 @@ namespace SS.AI
 
 			Vector3? terrainHitPos = null;
 
-			SSObject hitInventorySSObject = null;
+			SSObjectDFS hitInventorySSObject = null;
 			InventoryModule hitInventory = null;
-			FactionMember hitInventoryFactionMember = null;
 
 			SSObject hitDepositSSObject = null;
 			ResourceDepositModule hitDeposit = null;
 
-			Transform hitReceiverTransform = null;
+			SSObjectDFS hitReceiverSSObject = null;
 			IPaymentReceiver[] hitPaymentReceivers = null;
-			FactionMember hitReceiverFactionMember = null;
 
-			Damageable hitDamageable = null;
+			SSObjectDFS hitDamageable = null;
 
 			for( int i = 0; i < raycastHits.Length; i++ )
 			{
@@ -46,8 +44,6 @@ namespace SS.AI
 				}
 				else
 				{
-					FactionMember factionMember = raycastHits[i].collider.GetComponent<FactionMember>();
-
 					ResourceDepositModule deposit = raycastHits[i].collider.GetComponent<ResourceDepositModule>();
 					if( deposit != null && hitDepositSSObject == null )
 					{
@@ -58,20 +54,18 @@ namespace SS.AI
 					InventoryModule inventory = raycastHits[i].collider.GetComponent<InventoryModule>();
 					if( inventory != null && hitInventorySSObject == null )
 					{
-						hitInventorySSObject = raycastHits[i].collider.GetComponent<SSObject>();
+						hitInventorySSObject = raycastHits[i].collider.GetComponent<SSObjectDFS>();
 						hitInventory = inventory;
-						hitInventoryFactionMember = factionMember;
 					}
 
 					IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
-					if( receivers.Length > 0 && hitReceiverTransform == null )
+					if( receivers.Length > 0 && hitReceiverSSObject == null )
 					{
-						hitReceiverTransform = raycastHits[i].collider.transform;
+						hitReceiverSSObject = raycastHits[i].collider.GetComponent<SSObjectDFS>();
 						hitPaymentReceivers = receivers;
-						hitReceiverFactionMember = factionMember;
 					}
 
-					Damageable damageable = raycastHits[i].collider.GetComponent<Damageable>();
+					SSObjectDFS damageable = raycastHits[i].collider.GetComponent<SSObjectDFS>();
 					if( damageable != null && hitDamageable == null )
 					{
 						hitDamageable = damageable;
@@ -79,20 +73,20 @@ namespace SS.AI
 				}
 			}
 
-			if( hitDeposit == null && hitInventory == null && hitReceiverTransform == null && hitDamageable == null && terrainHitPos.HasValue )
+			if( hitDeposit == null && hitInventory == null && hitReceiverSSObject == null && hitDamageable == null && terrainHitPos.HasValue )
 			{
 				AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 			}
 
-			else if( hitReceiverTransform != null && (hitReceiverFactionMember == null || hitReceiverFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
+			else if( hitReceiverSSObject != null && (hitReceiverSSObject == null || hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMakePaymentGoal( hitReceiverTransform, hitPaymentReceivers, Selection.selectedObjects );
+				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.selectedObjects );
 			}
 			else if( hitDeposit != null )
 			{
 				AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.selectedObjects );
 			}
-			else if( hitInventory != null && (hitInventoryFactionMember == null || hitInventoryFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
+			else if( hitInventory != null && (hitReceiverSSObject == null || hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
 				AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.selectedObjects );
 			}
@@ -110,12 +104,10 @@ namespace SS.AI
 		//
 
 
-		private static void AssignAttackGoal( Damageable target, SSObjectSelectable[] selected )
+		private static void AssignAttackGoal( SSObjectDFS target, SSObjectDFS[] selected )
 		{
-			List<SSObjectSelectable> filteredObjects = new List<SSObjectSelectable>();
-
-			FactionMember tarFac = target.GetComponent<FactionMember>();
-
+			List<SSObjectDFS> filteredObjects = new List<SSObjectDFS>();
+			
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -128,13 +120,11 @@ namespace SS.AI
 				{
 					continue;
 				}
-
-				FactionMember selFac = selected[i].GetComponent<FactionMember>();
-
+				
 				bool canTarget = false;
 				for( int j = 0; j < targeters.Length; j++ )
 				{
-					if( selFac.CanTargetAnother( tarFac ) )
+					if( target.CanTargetAnother( selected[i] ) )
 					{
 						canTarget = true;
 						break;
@@ -161,7 +151,7 @@ namespace SS.AI
 			}
 		}
 
-		internal static void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectSelectable[] selected )
+		internal static void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectDFS[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 			
@@ -226,7 +216,7 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectSelectable[] selected )
+		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFS[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
 
@@ -290,7 +280,7 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectSelectable[] selected )
+		private static void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFS[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -340,7 +330,7 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectSelectable[] selected )
+		private static void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectDFS[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
@@ -395,13 +385,12 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMakePaymentGoal( Transform paymentReceiverTransform, IPaymentReceiver[] paymentReceivers, SSObjectSelectable[] selected )
+		private static void AssignMakePaymentGoal( SSObjectDFS paymentReceiverSSObject, IPaymentReceiver[] paymentReceivers, SSObjectDFS[] selected )
 		{
-			FactionMember recFactionMember = paymentReceiverTransform.GetComponent<FactionMember>();
-			if( recFactionMember != null )
+			if( paymentReceiverSSObject != null )
 			{
 				// Don't assign make payment to non player.
-				if( recFactionMember.factionId != LevelDataManager.PLAYER_FAC )
+				if( paymentReceiverSSObject.factionId != LevelDataManager.PLAYER_FAC )
 				{
 					return;
 				}
@@ -409,7 +398,7 @@ namespace SS.AI
 
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> toBeAssignedGameObjects = new List<GameObject>();
+			List<SSObjectDFS> toBeAssignedGameObjects = new List<SSObjectDFS>();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -439,7 +428,7 @@ namespace SS.AI
 					bool hasWantedItem_s = false;
 					foreach( var kvp in wantedRes )
 					{
-						Debug.Log( paymentReceiverTransform.gameObject.name + " wants: " + kvp.Value + "x " + kvp.Key );
+						Debug.Log( paymentReceiverSSObject.displayName + " wants: " + kvp.Value + "x " + kvp.Key );
 						if( inv.Get( kvp.Key ) > 0 )
 						{
 							hasWantedItem_s = true;
@@ -449,7 +438,7 @@ namespace SS.AI
 
 					if( hasWantedItem_s )
 					{
-						toBeAssignedGameObjects.Add( selected[i].gameObject );
+						toBeAssignedGameObjects.Add( selected[i] );
 						break;
 					}
 					// if this receiver is not compatible - check the next one.
@@ -467,7 +456,7 @@ namespace SS.AI
 				TacticalDropOffGoal goal = new TacticalDropOffGoal();
 				goal.isHostile = false;
 				goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.PAYMENT;
-				goal.SetDestination( paymentReceiverTransform.GetComponent<SSObject>() );
+				goal.SetDestination( paymentReceiverSSObject );
 				goalController.goal = goal;
 			}
 		}

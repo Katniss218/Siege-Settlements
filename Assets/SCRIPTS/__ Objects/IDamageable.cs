@@ -1,7 +1,23 @@
-﻿namespace SS.Objects
+﻿using UnityEngine.Events;
+
+namespace SS.Objects
 {
 	public interface IDamageable
 	{
-		Damageable damageable { get; }
+		float health { get; set; }
+
+		float healthMax { get; set; }
+
+		float healthPercent { get; set; }
+
+		Armor armor { get; set; }
+
+		void TakeDamage( DamageType type, float amount, float armorPenetration );
+
+		void Die();
+
+		_UnityEvent_float onHealthChange { get; }
+
+		UnityEvent onDeath { get; }
 	}
 }

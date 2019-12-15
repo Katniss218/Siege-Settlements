@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObjectSelectable, IHUDHolder, IUsableToggle, IDamageable, IFactionMember, IMouseOverHandlerListener
+	public class Building : SSObjectDFS, IHUDHolder, IUsableToggle, IDamageable, IFactionMember, IMouseOverHandlerListener
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -30,7 +30,7 @@ namespace SS.Objects.Buildings
 			// If not under construction/repair.
 			if( this.GetComponent<ConstructionSite>() == null )
 			{
-				return this.damageable.healthPercent >= 0.5f;
+				return this.healthPercent >= 0.5f;
 			}
 			// If under construction/repair.
 			return false;
@@ -40,7 +40,7 @@ namespace SS.Objects.Buildings
 		/// <summary>
 		/// Checks if the building can be repaired (repair hasn't started already).
 		/// </summary>
-		public static bool IsRepairable( Damageable building )
+		public static bool IsRepairable( Building building )
 		{
 			// If the construction/repair is currently being done.
 			if( building.GetComponent<ConstructionSite>() != null )
@@ -53,32 +53,6 @@ namespace SS.Objects.Buildings
 		
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 		
-		private Damageable __damageable = null;
-		public Damageable damageable
-		{
-			get
-			{
-				if( this.__damageable == null )
-				{
-					this.__damageable = this.GetComponent<Damageable>();
-				}
-				return this.__damageable;
-			}
-		}
-
-		private FactionMember __factionMember = null;
-		public FactionMember factionMember
-		{
-			get
-			{
-				if( this.__factionMember == null )
-				{
-					this.__factionMember = this.GetComponent<FactionMember>();
-				}
-				return this.__factionMember;
-			}
-		}
-
 		private NavMeshObstacle __obstacle = null;
 		public NavMeshObstacle obstacle
 		{
@@ -153,7 +127,7 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-			if( Time.time > this.damageable.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
+			if( Time.time > this.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
@@ -172,10 +146,10 @@ namespace SS.Objects.Buildings
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.damageable.health + "/" + (int)this.damageable.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
-			if( this.factionMember.factionId == LevelDataManager.PLAYER_FAC )
+			if( this.factionId == LevelDataManager.PLAYER_FAC )
 			{
 				ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
 
@@ -191,7 +165,7 @@ namespace SS.Objects.Buildings
 				}
 				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Press to demolish building.", () =>
 				{
-					this.damageable.Die();
+					this.Die();
 				} );
 			}
 		}

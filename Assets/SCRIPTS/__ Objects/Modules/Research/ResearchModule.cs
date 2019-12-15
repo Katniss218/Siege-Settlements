@@ -11,11 +11,9 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-using SS.Objects;
 
 namespace SS.Objects.Modules
 {
-	[RequireComponent( typeof( FactionMember ) )]
 	public class ResearchModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
 	{
 		public const string KFF_TYPEID = "research";
@@ -40,20 +38,7 @@ namespace SS.Objects.Modules
 		/// Contains the multiplier used as the construction speed.
 		/// </summary>
 		public float researchSpeed { get; set; } = 1.0f;
-
-
-		private FactionMember __factionMember = null;
-		public FactionMember factionMember
-		{
-			get
-			{
-				if( this.__factionMember == null )
-				{
-					this.__factionMember = this.GetComponent<FactionMember>();
-				}
-				return this.__factionMember;
-			}
-		}
+		
 
 		private float researchProgressRemaining = 0.0f;
 
@@ -191,7 +176,7 @@ namespace SS.Objects.Modules
 
 			if( isSuccess )
 			{
-				LevelDataManager.SetTech( this.factionMember.factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
+				LevelDataManager.SetTech( (this.ssObject as IFactionMember).factionId, this.researchedTechnology.id, TechnologyResearchProgress.Researched );
 			}
 			this.researchedTechnology = null;
 			this.researchProgressRemaining = 0.0f;
@@ -307,7 +292,7 @@ namespace SS.Objects.Modules
 			{
 				TechnologyDefinition techDef = this.researchableTechnologies[i];
 				// If it can be researched, add clickable button, otherwise add unclickable button that represents tech already researched/locked.
-				if( LevelDataManager.factionData[this.factionMember.factionId].GetTech( techDef.id ) == TechnologyResearchProgress.Available )
+				if( LevelDataManager.factionData[(this.ssObject as IFactionMember).factionId].GetTech( techDef.id ) == TechnologyResearchProgress.Available )
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), techDef.icon, () =>
 					{
@@ -339,7 +324,7 @@ namespace SS.Objects.Modules
 
 		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
-			if( factionId != this.factionMember.factionId )
+			if( factionId != (this.ssObject as IFactionMember).factionId )
 			{
 				return;
 			}
@@ -432,7 +417,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}

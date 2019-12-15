@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-using SS.Objects;
 using Object = UnityEngine.Object;
 using SS.InputSystem;
 using SS.AI.Goals;
@@ -21,7 +20,6 @@ using SS.AI;
 
 namespace SS.Objects.Modules
 {
-	[RequireComponent( typeof( FactionMember ) )]
 	public class BarracksModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
 	{
 		public const string KFF_TYPEID = "barracks";
@@ -52,21 +50,7 @@ namespace SS.Objects.Modules
 		/// Contains the local-space position, the units move towards, after creation.
 		/// </summary>
 		public Vector3 rallyPoint { get; set; }
-
-
-		private FactionMember __factionMember = null;
-		public FactionMember factionMember
-		{
-			get
-			{
-				if( this.__factionMember == null )
-				{
-					this.__factionMember = this.GetComponent<FactionMember>();
-				}
-				return this.__factionMember;
-			}
-		}
-
+		
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
@@ -203,7 +187,7 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = spawnPos;
 			data.rotation = Quaternion.identity;
-			data.factionId = this.factionMember.factionId;
+			data.factionId = (this.ssObject as IFactionMember).factionId;
 			data.health = this.trainedUnit.healthMax;
 			GameObject obj = UnitCreator.Create( this.trainedUnit, data );
 
@@ -384,7 +368,7 @@ namespace SS.Objects.Modules
 
 		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
-			if( factionId != this.factionMember.factionId )
+			if( factionId != (this.ssObject as IFactionMember).factionId )
 			{
 				return;
 			}
@@ -481,7 +465,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}

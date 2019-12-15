@@ -144,7 +144,9 @@ namespace SS.Objects.Units
 
 		public UnitDefinition( string id ) : base( id )
 		{
+#warning TODO! - If the definition specified default for '2x' unit, it needs to scale down to '1x' behind the scenes.
 
+			// Definition always contains values for '1x' unit.
 		}
 		
 		public override void DeserializeKFF( KFFSerializer serializer )

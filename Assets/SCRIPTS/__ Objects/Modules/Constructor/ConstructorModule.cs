@@ -16,20 +16,7 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "constructor";
 
 		public BuildingDefinition[] constructibleBuildings { get; set; }
-
-		private FactionMember __factionMember = null;
-		public FactionMember factionMember
-		{
-			get
-			{
-				if( this.__factionMember == null )
-				{
-					this.__factionMember = this.GetComponent<FactionMember>();
-				}
-				return this.__factionMember;
-			}
-		}
-
+		
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -101,7 +88,7 @@ namespace SS.Objects.Modules
 
 		private void OnTechChange( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
-			if( factionId != this.factionMember.factionId )
+			if( factionId != (this.ssObject as IFactionMember).factionId )
 			{
 				return;
 			}
@@ -172,7 +159,7 @@ namespace SS.Objects.Modules
 
 		public void OnDisplay()
 		{
-			if( this.factionMember.factionId != LevelDataManager.PLAYER_FAC )
+			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
 			{
 				return;
 			}

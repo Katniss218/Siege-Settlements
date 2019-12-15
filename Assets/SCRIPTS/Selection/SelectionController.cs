@@ -74,7 +74,7 @@ namespace SS
 			selectionRect.gameObject.SetActive( false );
 		}
 
-		private static void HandleSelecting( SSObjectSelectable[] uniqueSelectables, SelectionMode selectionMode )
+		private static void HandleSelecting( SSObjectDFS[] uniqueSelectables, SelectionMode selectionMode )
 		{
 			// Select selectables on the list (if not selected).
 			if( selectionMode == SelectionMode.Add )
@@ -106,7 +106,7 @@ namespace SS
 				}
 				else
 				{
-					SSObjectSelectable[] selectedObjs = Selection.selectedObjects;
+					SSObjectDFS[] selectedObjs = Selection.selectedObjects;
 					bool playDeselect = false;
 
 					for( int i = 0; i < selectedObjs.Length; i++ )
@@ -179,7 +179,7 @@ namespace SS
 				{
 					return;
 				}
-				SSObjectSelectable[] overlap = GetSelectablesInDragArea();
+				SSObjectDFS[] overlap = GetSelectablesInDragArea();
 
 				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 
@@ -193,8 +193,8 @@ namespace SS
 				{
 					return;
 				}
-				SSObjectSelectable atCursor = GetSelectableAtCursor();
-				SSObjectSelectable[] array = atCursor == null ? null : new SSObjectSelectable[] { atCursor };
+				SSObjectDFS atCursor = GetSelectableAtCursor();
+				SSObjectDFS[] array = atCursor == null ? null : new SSObjectDFS[] { atCursor };
 				HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 			}
 		}
@@ -217,12 +217,12 @@ namespace SS
 			}
 		}
 		
-		private static SSObjectSelectable GetSelectableAtCursor()
+		private static SSObjectDFS GetSelectableAtCursor()
 		{
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{
 				// Returns null if the mouse is over non-selectable object.
-				return hitInfo.collider.GetComponent<SSObjectSelectable>();
+				return hitInfo.collider.GetComponent<SSObjectDFS>();
 			}
 			return null;
 		}
@@ -244,11 +244,11 @@ namespace SS
 			return ret;
 		}
 
-		private static SSObjectSelectable[] GetSelectablesInDragArea()
+		private static SSObjectDFS[] GetSelectablesInDragArea()
 		{
-			SSObjectSelectable[] selectables = SSObject.GetAllSelectables();
+			SSObjectDFS[] selectables = SSObject.GetAllSelectables();
 
-			List<SSObjectSelectable> ret = new List<SSObjectSelectable>();
+			List<SSObjectDFS> ret = new List<SSObjectDFS>();
 
 			Bounds viewportBounds = GetViewportBounds( Main.camera, new Vector3( beginDragPos.x, beginDragPos.y, 0 ), Input.mousePosition );
 

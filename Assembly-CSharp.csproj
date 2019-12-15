@@ -115,7 +115,6 @@
     <Compile Include="Assets\SCRIPTS\RotateAlongVelocity.cs" />
     <Compile Include="Assets\SCRIPTS\ScaleOscillator.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\ISelectDisplayHandler.cs" />
-    <Compile Include="Assets\SCRIPTS\Selection\SSObjectSelectable.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\Selection.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\SelectionController.cs" />
     <Compile Include="Assets\SCRIPTS\Technologies\ITechsRequired.cs" />
@@ -172,6 +171,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitDefinition.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitPopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreview.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreviewPositioner.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Building.cs" />
@@ -224,6 +224,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectSelectable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\LightSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\MeshSubObjectDefinition.cs" />

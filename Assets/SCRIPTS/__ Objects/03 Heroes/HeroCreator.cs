@@ -54,18 +54,12 @@ namespace SS.Objects.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			hero.icon = def.icon;
-
-			// Set the faction id.
-			FactionMember factionMember = gameObject.GetComponent<FactionMember>();
-
-			// Set the hero's health.
-			Damageable damageable = gameObject.GetComponent<Damageable>();
-
+						
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
-			factionMember.onFactionChange.AddListener( () =>
+			hero.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[hero.factionId].color;
 
 				for( int i = 0; i < renderers.Length; i++ )
 				{
@@ -74,21 +68,21 @@ namespace SS.Objects.Heroes
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			hero.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				for( int i = 0; i < renderers.Length; i++ )
 				{
-					renderers[i].material.SetFloat( "_Dest", 1 - damageable.healthPercent );
+					renderers[i].material.SetFloat( "_Dest", 1 - hero.healthPercent );
 				}
 			} );
 
 
-			factionMember.factionId = data.factionId;
-			factionMember.viewRange = def.viewRange;
+			hero.factionId = data.factionId;
+			hero.viewRange = def.viewRange;
 
-			damageable.healthMax = def.healthMax;
-			damageable.health = data.health;
-			damageable.armor = def.armor;
+			hero.healthMax = def.healthMax;
+			hero.health = data.health;
+			hero.armor = def.armor;
 
 			
 			//
@@ -183,20 +177,18 @@ namespace SS.Objects.Heroes
 				hudGameObject.SetActive( false );
 			} );
 
-			
+
 			// Make the hero change it's color when the faction is changed.
-			FactionMember factionMember = container.AddComponent<FactionMember>();
-			factionMember.onFactionChange.AddListener( () =>
+			hero.onFactionChange.AddListener( () =>
 			{
-				Color color = LevelDataManager.factions[factionMember.factionId].color;
+				Color color = LevelDataManager.factions[hero.factionId].color;
 				hud.SetColor( color );
 			} );
 
 			// Make the hero damageable.
-			Damageable damageable = container.AddComponent<Damageable>();
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+			hero.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				hud.SetHealthBarFill( damageable.healthPercent );
+				hud.SetHealthBarFill( hero.healthPercent );
 				if( deltaHP < 0 )
 				{
 					hudGameObject.SetActive( true );
@@ -205,7 +197,7 @@ namespace SS.Objects.Heroes
 			} );
 
 			// Make the hero deselect itself, and destroy it's UI when killed.
-			damageable.onDeath.AddListener( () =>
+			hero.onDeath.AddListener( () =>
 			{
 				Object.Destroy( hud.gameObject );
 				
@@ -216,8 +208,8 @@ namespace SS.Objects.Heroes
 				// Remove the now unused listeners.
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-			
-			damageable.onHealthChange.AddListener( ( float deltaHP ) =>
+
+			hero.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				if( !Selection.IsDisplayed( hero ) )
 				{
@@ -226,7 +218,7 @@ namespace SS.Objects.Heroes
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)damageable.health + "/" + (int)damageable.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)hero.health + "/" + (int)hero.healthMax );
 				}
 			} );
 
@@ -254,12 +246,10 @@ namespace SS.Objects.Heroes
 
 			data.position = hero.transform.position;
 			data.rotation = hero.transform.rotation;
-
-			FactionMember factionMember = hero.GetComponent<FactionMember>();
-			data.factionId = factionMember.factionId;
-
-			Damageable damageable = hero.GetComponent<Damageable>();
-			data.health = damageable.health;
+			
+			data.factionId = hero.factionId;
+			
+			data.health = hero.health;
 
 			//
 			// MODULES

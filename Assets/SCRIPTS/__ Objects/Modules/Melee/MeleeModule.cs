@@ -40,7 +40,7 @@ namespace SS.Objects.Modules
 		
 		void Awake()
 		{
-			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.GetComponent<FactionMember>() );
+			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.ssObject as SSObjectDFS );
 
 			this.targeter.onTargetReset += () =>
 			{
@@ -91,7 +91,7 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
 		/// </summary>
-		public void Attack( Damageable target )
+		public void Attack( IDamageable target )
 		{
 			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
 			AudioManager.PlaySound( this.attackSoundEffect );
@@ -157,7 +157,7 @@ namespace SS.Objects.Modules
 			
 			if( data.targetGuid != null )
 			{
-				this.targeter.target = SSObject.Find( data.targetGuid.Value ).GetComponent<Damageable>();
+				this.targeter.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
 			}
 		}
 		
