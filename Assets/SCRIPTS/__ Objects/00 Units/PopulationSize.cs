@@ -1,9 +1,9 @@
-﻿namespace SS.Objects.Units
+﻿namespace SS.Objects
 {
 	/// <summary>
 	/// Determines to which slots the unit can fit.
 	/// </summary>
-	public enum UnitPopulationSize : byte
+	public enum PopulationSize : byte
 	{
 		/// <summary>
 		/// Unit can fit inside 'x1' slots (single)

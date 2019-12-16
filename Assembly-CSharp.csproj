@@ -63,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\KFF v6.0 For Unity\KFFUnityHelper.cs" />
+    <Compile Include="Assets\Modifier-Affected Values\FloatM.cs" />
+    <Compile Include="Assets\Modifier-Affected Values\IntM.cs" />
+    <Compile Include="Assets\Modifier-Affected Values\ModifierType.cs" />
     <Compile Include="Assets\SCRIPTS\AudioManager.cs" />
     <Compile Include="Assets\SCRIPTS\CameraController.cs" />
     <Compile Include="Assets\SCRIPTS\CollisionOverlapHandler.cs" />
@@ -81,7 +84,6 @@
     <Compile Include="Assets\SCRIPTS\Damage System\Armor.cs" />
     <Compile Include="Assets\SCRIPTS\Damage System\DamageSource.cs" />
     <Compile Include="Assets\SCRIPTS\Damage System\DamageType.cs" />
-    <Compile Include="Assets\SCRIPTS\Damage System\Damageable.cs" />
     <Compile Include="Assets\SCRIPTS\DaylightCycleController.cs" />
     <Compile Include="Assets\SCRIPTS\DefaultSceneLoader.cs" />
     <Compile Include="Assets\SCRIPTS\DevConsole\Console.cs" />
@@ -89,7 +91,6 @@
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\DiplomaticRelation.cs" />
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\FactionData.cs" />
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\FactionDefinition.cs" />
-    <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\FactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\RelationMap.cs" />
     <Compile Include="Assets\SCRIPTS\FontManager.cs" />
     <Compile Include="Assets\SCRIPTS\IAttackModule.cs" />
@@ -167,11 +168,11 @@
     <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitDefinition.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitPopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreview.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreviewPositioner.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Building.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\IDamageable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IFactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\IPopulationScaler.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IUsableToggle.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleData.cs" />
@@ -224,7 +226,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectSelectable.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectDFS.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\LightSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjectDefinitions\MeshSubObjectDefinition.cs" />

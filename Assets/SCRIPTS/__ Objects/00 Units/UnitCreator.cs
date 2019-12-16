@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
-using SS.Diplomacy;
 using SS.AI;
 
 namespace SS.Objects.Units
@@ -56,7 +55,7 @@ namespace SS.Objects.Units
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
 
-					
+
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
 			unit.onFactionChange.AddListener( () =>
@@ -70,6 +69,10 @@ namespace SS.Objects.Units
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
+#warning TODO! - we would want this to also update when the modifier changes the max health (so the proportion changes).
+			// When the modifier is added, we need to update
+			// When the modifier is removed, same
+			// Wieh the modifier value changes, same
 			unit.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
 				for( int i = 0; i < renderers.Length; i++ )
@@ -82,8 +85,10 @@ namespace SS.Objects.Units
 			unit.viewRange = def.viewRange;
 
 			unit.healthMax = def.healthMax;
+			unit.__healthMax["mod"] = UnityEngine.Random.Range( 1.0f, 2.0f ); // this needs to be set before the health is set, as the onHealthChange would have the non-modified value.
 			unit.health = data.health;
 			unit.armor = def.armor;
+#warning This results in invalid behaviour - units are not crumbled at all, and their healthbars show full health.
 
 			//
 			//    MODULES
@@ -96,6 +101,9 @@ namespace SS.Objects.Units
 			{
 				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
 			}
+
+			unit.RandomizeRanged();
+#warning After all the fields (and modules) are set to 'x1''s scaling, set the scaling to the proper value (automatically recalculates all fields).
 		}
 
 		private static GameObject CreateUnit( Guid guid )

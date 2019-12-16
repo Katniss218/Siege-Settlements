@@ -119,18 +119,6 @@ namespace SS
 			}
 		}
 
-		public static bool IsControllableByFaction( SSObject obj, int factionId )
-		{
-#warning TODO! - remove.
-			// Being controllable not necessarily means that you need to be selectable.
-
-			if( obj is IFactionMember )
-			{
-				return ((IFactionMember)obj).factionId == factionId;
-			}
-			return false;
-		}
-
 		private void Inp_Right( InputQueue self )
 		{
 			TacticalGoalQuery.InputQuery( Main.camera.ScreenPointToRay( Input.mousePosition ) );
@@ -144,7 +132,7 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.BUILDINGS_MASK ) )
 				{
 					Building building = hitInfo.collider.GetComponent<Building>();
-					if( !IsControllableByFaction( building, LevelDataManager.PLAYER_FAC ) )
+					if( building.factionId != LevelDataManager.PLAYER_FAC )
 					{
 						return;
 					}

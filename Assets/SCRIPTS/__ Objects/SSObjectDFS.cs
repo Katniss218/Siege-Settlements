@@ -1,4 +1,5 @@
-﻿using SS.Diplomacy;
+﻿using Katniss.ModifierAffectedValues;
+using SS.Diplomacy;
 using SS.Levels;
 using System;
 using UnityEngine;
@@ -157,7 +158,8 @@ namespace SS.Objects
 		}
 
 		[SerializeField]
-		private float __healthMax;
+#warning TODO! - not intended to be public. just for testing.
+		internal FloatM __healthMax = new FloatM(0);
 		/// <summary>
 		/// Gets or sets the maximum health value of this damageable.
 		/// </summary>
@@ -165,11 +167,11 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.__healthMax;
+				return this.__healthMax.GetModifiedValue();
 			}
 			set
 			{
-				this.__healthMax = value;
+				this.__healthMax.baseValue = value;
 			}
 		}
 

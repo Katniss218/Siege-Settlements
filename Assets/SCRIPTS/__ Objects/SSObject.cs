@@ -161,7 +161,7 @@ namespace SS.Objects
 			}
 			return null;
 		}
-
+		
 		/// <summary>
 		/// Gets a specified module.
 		/// </summary>

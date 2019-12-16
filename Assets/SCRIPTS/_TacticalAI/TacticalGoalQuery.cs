@@ -78,7 +78,7 @@ namespace SS.AI
 				AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
 			}
 
-			else if( hitReceiverSSObject != null && (hitReceiverSSObject == null || hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
+			else if( hitReceiverSSObject != null && (hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
 				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.selectedObjects );
 			}
@@ -86,7 +86,7 @@ namespace SS.AI
 			{
 				AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.selectedObjects );
 			}
-			else if( hitInventory != null && (hitReceiverSSObject == null || hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
+			else if( hitInventory != null && (hitInventorySSObject == null || hitInventorySSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
 				AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.selectedObjects );
 			}
@@ -111,7 +111,7 @@ namespace SS.AI
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
@@ -160,7 +160,7 @@ namespace SS.AI
 			{
 				bool suitable = true;
 
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
@@ -227,7 +227,7 @@ namespace SS.AI
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
@@ -290,7 +290,7 @@ namespace SS.AI
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
@@ -340,7 +340,7 @@ namespace SS.AI
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
@@ -402,7 +402,7 @@ namespace SS.AI
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( !Main.IsControllableByFaction( selected[i], LevelDataManager.PLAYER_FAC ) )
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}

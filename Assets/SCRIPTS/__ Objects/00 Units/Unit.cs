@@ -1,11 +1,11 @@
-﻿using SS.Diplomacy;
+﻿using SS.Objects.Modules;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
+	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener//, IPopulationScaler
 	{
 		public GameObject hud { get; set; }
 
@@ -23,7 +23,49 @@ namespace SS.Objects.Units
 				return this.__navMeshAgent;
 			}
 		}
-		
+
+		/*private PopulationSize __population = PopulationSize.x1;
+		public PopulationSize population
+		{
+			get
+			{
+				return this.__population;
+			}
+			set
+			{
+				// Recalculate here, before setting '__population'. (we need the from size - '__population', and the to size - 'value')
+#warning Damageable needs to play damage sound when the health gets down due to damage, but not when it goes down due to unit split.
+				// Needs to have the reason (source) of gain/loss of health as another parameter.
+				// - Meaning, we need parameter in the event, and takeDamage shouldn't call the event in the 'health''s setter.
+
+#warning TODO! - maybe we set the values for '1x', but then set the modifiers for them to whatever pop is there, and the game just magically calculates the appropriate value?
+	// So you can set the direct value for the '1x', but the modified-value is what you access normally. - when the modified-value is set, it scaled it from *current to *1 and assigns it to raw.
+				// ^ ^ ^ ^ ^ needs more thinking.
+				// - multiplier would need to be calculated, for non-linear scaling, by the population
+
+				this.healthMax = IPopulationScalerExtensions.GetLinearScale( this.__population, value, this.healthMax );
+				this.health = IPopulationScalerExtensions.GetLinearScale( this.__population, value, this.health );
+
+				// scale modules' values. (get modules of type - for each module, set values) - repeat for all relevant module types.
+
+				// melee damage,
+				// ranged projectile count,
+				// inventory size
+				// 
+
+				this.__population = value;
+			}
+		}*/
+
+		public void RandomizeRanged()
+		{
+			RangedModule[] rangedModules = this.GetModules<RangedModule>();
+			for( int i = 0; i < rangedModules.Length; i++ )
+			{
+				rangedModules[i].projectileCount["mod"] = Random.Range( 1.0f, 5.0f );
+			}
+		}
+
 		void Update()
 		{
 			if( hud.activeSelf )

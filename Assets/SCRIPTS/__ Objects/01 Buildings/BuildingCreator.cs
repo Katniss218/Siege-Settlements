@@ -52,8 +52,8 @@ namespace SS.Objects.Buildings
 			building.displayName = def.displayName;
 			building.deathSound = def.deathSoundEffect;
 			building.icon = def.icon;
+			
 
-#warning TODO! - properly collect sub-objects
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
 			building.onFactionChange.AddListener( () =>
