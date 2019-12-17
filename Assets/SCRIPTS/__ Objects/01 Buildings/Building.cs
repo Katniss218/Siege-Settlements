@@ -14,7 +14,7 @@ namespace SS.Objects.Buildings
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
 
 
-		public GameObject hud { get; set; }
+		public HUD hud { get; set; }
 
 		public Vector3[] placementNodes { get; set; }
 		
@@ -87,7 +87,7 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-			this.hud.SetActive( true );
+			this.hud.gameObject.SetActive( true );
 		}
 
 		public void OnMouseStayListener()
@@ -105,12 +105,12 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-			this.hud.SetActive( false );
+			this.hud.gameObject.SetActive( false );
 		}
 
 		void Update()
 		{
-			if( hud.activeSelf )
+			if( hud.gameObject.activeSelf )
 			{
 				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
@@ -133,7 +133,7 @@ namespace SS.Objects.Buildings
 				{
 					return;
 				}
-				this.hud.SetActive( false );
+				this.hud.gameObject.SetActive( false );
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}

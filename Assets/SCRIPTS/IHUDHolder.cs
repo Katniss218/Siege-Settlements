@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using SS.UI;
 
 namespace SS
 {
@@ -7,6 +7,6 @@ namespace SS
 	/// </summary>
 	public interface IHUDHolder
 	{
-		GameObject hud { get; }
+		HUD hud { get; }
 	}
 }

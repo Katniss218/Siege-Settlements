@@ -1,13 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Katniss.ModifierAffectedValues
 {
 	public class IntM
 	{
-		public int baseValue;
+		private int __baseValue;
+		public int baseValue
+		{
+			get
+			{
+				return this.__baseValue;
+			}
+			set
+			{
+				this.__baseValue = value;
+				this.CalculateModifiedValue();
+			}
+		}
 
-		List<string> modifierIds;
-		List<float> modifiers;
+		public Action onAnyChangeCallback;
+
+		private List<Modifier> modifiers;
+
+		public int modifiedValue { get; private set; }
+
 
 		public float this[string id]
 		{
@@ -15,48 +32,56 @@ namespace Katniss.ModifierAffectedValues
 			{
 				for( int i = 0; i < this.modifiers.Count; i++ )
 				{
-					if( this.modifierIds[i] == id )
+					if( this.modifiers[i].id == id )
 					{
-						return this.modifiers[i];
+						return this.modifiers[i].value;
 					}
 				}
-				throw new System.Exception( "Unknown id '" + id + "'." );
+				throw new Exception( "Unknown id '" + id + "'." );
 			}
 			set
 			{
 				for( int i = 0; i < this.modifiers.Count; i++ )
 				{
-					if( this.modifierIds[i] == id )
+					if( this.modifiers[i].id == id )
 					{
-						this.modifiers[i] = value;
+						this.modifiers[i].Set( value );
+						this.CalculateModifiedValue();
+						return;
 					}
 				}
-				this.modifiers.Add( value );
-				this.modifierIds.Add( id );
+				this.modifiers.Add( new Modifier( id, value ) );
+				this.CalculateModifiedValue();
 			}
 		}
+
+
 
 		public IntM( int baseValue )
 		{
 			this.baseValue = baseValue;
-			this.modifierIds = new List<string>();
-			this.modifiers = new List<float>();
+			this.modifiers = new List<Modifier>();
+			this.CalculateModifiedValue();
 		}
 
-		public int GetModifiedValue()
+
+
+		private void CalculateModifiedValue()
 		{
-#warning precalculate the value, since it's not changing randomly. It's well defined by the base value & modifiers. Only recalc when it's necessary.
-			if( this.modifiers.Count == 0 )
+			if( this.modifiers == null || this.modifiers.Count == 0 )
 			{
-				return this.baseValue;
+				this.modifiedValue = this.baseValue;
+				this.onAnyChangeCallback?.Invoke();
+				return;
 			}
-			
+
 			float value = this.baseValue;
 			for( int i = 0; i < this.modifiers.Count; i++ )
 			{
-				value = value * this.modifiers[i];
+				value *= this.modifiers[i].value;
 			}
-			return (int)value;
+			this.modifiedValue = (int)value;
+			this.onAnyChangeCallback?.Invoke();
 		}
 		
 		public static explicit operator IntM( int right )

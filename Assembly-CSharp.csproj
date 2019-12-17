@@ -65,7 +65,7 @@
     <Compile Include="Assets\KFF v6.0 For Unity\KFFUnityHelper.cs" />
     <Compile Include="Assets\Modifier-Affected Values\FloatM.cs" />
     <Compile Include="Assets\Modifier-Affected Values\IntM.cs" />
-    <Compile Include="Assets\Modifier-Affected Values\ModifierType.cs" />
+    <Compile Include="Assets\Modifier-Affected Values\Modifier.cs" />
     <Compile Include="Assets\SCRIPTS\AudioManager.cs" />
     <Compile Include="Assets\SCRIPTS\CameraController.cs" />
     <Compile Include="Assets\SCRIPTS\CollisionOverlapHandler.cs" />
@@ -140,8 +140,6 @@
     <Compile Include="Assets\SCRIPTS\UI\GameTimeCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GenericUIData.cs" />
     <Compile Include="Assets\SCRIPTS\UI\HUD.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUDScaled.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUDUnscaled.cs" />
     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\SaveButton.cs" />

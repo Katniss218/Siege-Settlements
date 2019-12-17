@@ -67,14 +67,10 @@ namespace SS.Objects.Units
 					renderers[i].material.SetColor( "_FactionColor", color );
 				}
 			} );
-
-			// Make the unit update it's healthbar and material when health changes.
-#warning TODO! - we would want this to also update when the modifier changes the max health (so the proportion changes).
-			// When the modifier is added, we need to update
-			// When the modifier is removed, same
-			// Wieh the modifier value changes, same
-			unit.onHealthChange.AddListener( ( float deltaHP ) =>
+			
+			unit.onHealthPercentChanged.AddListener( () =>
 			{
+				unit.hud.SetHealthBarFill( unit.healthPercent );
 				for( int i = 0; i < renderers.Length; i++ )
 				{
 					renderers[i].material.SetFloat( "_Dest", 1 - unit.healthPercent );
@@ -85,10 +81,8 @@ namespace SS.Objects.Units
 			unit.viewRange = def.viewRange;
 
 			unit.healthMax = def.healthMax;
-			unit.__healthMax["mod"] = UnityEngine.Random.Range( 1.0f, 2.0f ); // this needs to be set before the health is set, as the onHealthChange would have the non-modified value.
 			unit.health = data.health;
 			unit.armor = def.armor;
-#warning This results in invalid behaviour - units are not crumbled at all, and their healthbars show full health.
 
 			//
 			//    MODULES
@@ -101,9 +95,6 @@ namespace SS.Objects.Units
 			{
 				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
 			}
-
-			unit.RandomizeRanged();
-#warning After all the fields (and modules) are set to 'x1''s scaling, set the scaling to the proper value (automatically recalculates all fields).
 		}
 
 		private static GameObject CreateUnit( Guid guid )
@@ -134,9 +125,9 @@ namespace SS.Objects.Units
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
-			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
+			HUD hud = hudGameObject.GetComponent<HUD>();
 
-			unit.hud = hudGameObject;
+			unit.hud = hud;
 			
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
@@ -194,7 +185,6 @@ namespace SS.Objects.Units
 			// Make the unit update it's healthbar and material when health changes.
 			unit.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				hud.SetHealthBarFill( unit.healthPercent );
 				if( deltaHP < 0 )
 				{
 					hudGameObject.SetActive( true );

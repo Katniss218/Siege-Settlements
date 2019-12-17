@@ -1,13 +1,12 @@
-﻿using SS.Objects.Modules;
-using SS.UI;
+﻿using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener//, IPopulationScaler
+	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
-		public GameObject hud { get; set; }
+		public HUD hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 		
@@ -24,7 +23,7 @@ namespace SS.Objects.Units
 			}
 		}
 
-		/*private PopulationSize __population = PopulationSize.x1;
+		private PopulationSize __population = PopulationSize.x1;
 		public PopulationSize population
 		{
 			get
@@ -43,8 +42,6 @@ namespace SS.Objects.Units
 				// ^ ^ ^ ^ ^ needs more thinking.
 				// - multiplier would need to be calculated, for non-linear scaling, by the population
 
-				this.healthMax = IPopulationScalerExtensions.GetLinearScale( this.__population, value, this.healthMax );
-				this.health = IPopulationScalerExtensions.GetLinearScale( this.__population, value, this.health );
 
 				// scale modules' values. (get modules of type - for each module, set values) - repeat for all relevant module types.
 
@@ -55,20 +52,11 @@ namespace SS.Objects.Units
 
 				this.__population = value;
 			}
-		}*/
-
-		public void RandomizeRanged()
-		{
-			RangedModule[] rangedModules = this.GetModules<RangedModule>();
-			for( int i = 0; i < rangedModules.Length; i++ )
-			{
-				rangedModules[i].projectileCount["mod"] = Random.Range( 1.0f, 5.0f );
-			}
 		}
-
+		
 		void Update()
 		{
-			if( hud.activeSelf )
+			if( hud.gameObject.activeSelf )
 			{
 #warning TODO! - only if the camera or transform has moved or rotated or scaled (cam).
 				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
@@ -92,7 +80,7 @@ namespace SS.Objects.Units
 				{
 					return;
 				}
-				this.hud.SetActive( false );
+				this.hud.gameObject.SetActive( false );
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}
@@ -105,7 +93,7 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-			this.hud.SetActive( true );
+			this.hud.gameObject.SetActive( true );
 		}
 
 		public void OnMouseStayListener()
@@ -125,7 +113,7 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-			this.hud.SetActive( false );
+			this.hud.gameObject.SetActive( false );
 		}
 
 

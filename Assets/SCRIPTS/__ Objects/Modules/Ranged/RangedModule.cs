@@ -24,8 +24,7 @@ namespace SS.Objects.Modules
 
 
 		public ProjectileDefinition projectile;
-		//public int projectileCount;
-		public IntM projectileCount;
+		public int projectileCount;
 		public DamageSource damageSource;
 		public float attackCooldown;
 		public float velocity;
@@ -139,10 +138,9 @@ namespace SS.Objects.Modules
 
 			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, enemyCenterWorld, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
-				Debug.Log( this.projectileCount.GetModifiedValue() );
 				Vector3 pos;
 				Vector3 vel = low;
-				for( int i = 0; i < this.projectileCount.GetModifiedValue(); i++ )
+				for( int i = 0; i < this.projectileCount; i++ )
 				{
 					pos = new Vector3(
 						Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
@@ -227,7 +225,7 @@ namespace SS.Objects.Modules
 
 			this.projectile = DefinitionManager.GetProjectile( def.projectileId );
 			this.damageSource = damageSource;
-			this.projectileCount = (IntM)def.projectileCount;
+			this.projectileCount = def.projectileCount;
 			this.attackCooldown = def.attackCooldown;
 			this.velocity = def.velocity;
 			this.localOffsetMin = def.localOffsetMin;

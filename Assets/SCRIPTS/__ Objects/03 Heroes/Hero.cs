@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using SS.UI;
+﻿using SS.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,7 +7,7 @@ namespace SS.Objects.Heroes
 {
 	public class Hero : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
-		public GameObject hud { get; set; }
+		public HUD hud { get; set; }
 
 		private string __displayTitle = "<missing>";
 
@@ -79,7 +78,7 @@ namespace SS.Objects.Heroes
 			{
 				return;
 			}
-			this.hud.SetActive( true );
+			this.hud.gameObject.SetActive( true );
 		}
 
 		public void OnMouseStayListener()
@@ -97,12 +96,12 @@ namespace SS.Objects.Heroes
 			{
 				return;
 			}
-			this.hud.SetActive( false );
+			this.hud.gameObject.SetActive( false );
 		}
 
 		void Update()
 		{
-			if( hud.activeSelf )
+			if( hud.gameObject.activeSelf )
 			{
 				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
@@ -125,7 +124,7 @@ namespace SS.Objects.Heroes
 				{
 					return;
 				}
-				this.hud.SetActive( false );
+				this.hud.gameObject.SetActive( false );
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}

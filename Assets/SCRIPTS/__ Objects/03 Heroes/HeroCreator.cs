@@ -127,10 +127,11 @@ namespace SS.Objects.Heroes
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 
-			hero.hud = hudGameObject;
 
-			HUDScaled hud = hudGameObject.GetComponent<HUDScaled>();
-			
+			HUD hud = hudGameObject.GetComponent<HUD>();
+
+			hero.hud = hud;
+
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
 				if( hero.hasBeenHiddenSinceLastDamage )

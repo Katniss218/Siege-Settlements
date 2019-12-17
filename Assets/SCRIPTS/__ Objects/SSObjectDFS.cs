@@ -62,9 +62,7 @@ namespace SS.Objects
 		/// Fired when the faction ID changes.
 		/// </summary>
 		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
-
-		//public float viewRange;
-
+		
 		// Checks if the faction members can target each other.
 		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.
 		internal bool CanTargetAnother( IFactionMember fac2 )
@@ -95,6 +93,8 @@ namespace SS.Objects
 
 
 
+		
+		public UnityEvent onHealthPercentChanged { get; set; } = new UnityEvent();
 
 		/// <summary>
 		/// Fires when the 'health' value is changed.
@@ -147,6 +147,7 @@ namespace SS.Objects
 				}
 
 				this.onHealthChange?.Invoke( diff );
+				this.onHealthPercentChanged?.Invoke();
 				onHealthChangeAny?.Invoke( this, diff );
 
 				// If the health is 0, kill the damageable.
@@ -158,8 +159,7 @@ namespace SS.Objects
 		}
 
 		[SerializeField]
-#warning TODO! - not intended to be public. just for testing.
-		internal FloatM __healthMax = new FloatM(0);
+		private float __healthMax;
 		/// <summary>
 		/// Gets or sets the maximum health value of this damageable.
 		/// </summary>
@@ -167,11 +167,12 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.__healthMax.GetModifiedValue();
+				return this.__healthMax;
 			}
 			set
 			{
-				this.__healthMax.baseValue = value;
+				this.__healthMax = value;
+				this.onHealthPercentChanged?.Invoke();
 			}
 		}
 
