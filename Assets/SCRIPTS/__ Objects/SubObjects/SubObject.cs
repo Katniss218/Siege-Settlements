@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SS.Objects.SubObjects
 {
 	[DisallowMultipleComponent]
-	public class SubObject : MonoBehaviour
+	public abstract class SubObject : MonoBehaviour
 	{
 		private SSObject __ssObject;
 		
@@ -17,12 +17,12 @@ namespace SS.Objects.SubObjects
 			{
 				if( this.__ssObject == null )
 				{
-					Transform parent = this.transform.parent;
-					if( parent == null )
+					Transform containerTransform = this.transform.parent;
+					if( containerTransform == null )
 					{
 						throw new Exception( "This SubObject doesn't have proper hierarchy (SSObject >> SubObject)." );
 					}
-					this.__ssObject = parent.GetComponent<SSObject>() ?? throw new Exception( "This SubObject doesn't have proper hierarchy (SSObject >> SubObject)." );
+					this.__ssObject = containerTransform.GetComponent<SSObject>() ?? throw new Exception( "This SubObject doesn't have proper hierarchy (SSObject >> SubObject)." );
 				}
 				return this.__ssObject;
 			}

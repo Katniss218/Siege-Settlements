@@ -23,6 +23,8 @@ namespace SS.Objects.Buildings
 
 		public static void SetDefData( GameObject gameObject, BuildingDefinition def, BuildingData data )
 		{
+			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
+
 			//
 			//    SUB-OBJECTS
 			//
@@ -132,10 +134,10 @@ namespace SS.Objects.Buildings
 			navMeshObstacle.carving = true;
 
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
 			
 			HUD hud = hudGameObject.GetComponent<HUD>();
 
+			hud.isVisible = Main.isHudForcedVisible;
 			building.hud = hud;
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
@@ -146,7 +148,7 @@ namespace SS.Objects.Buildings
 				}
 				if( isLocked )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 				}
 				else
 				{
@@ -158,7 +160,7 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					hudGameObject.SetActive( false );
+					hud.isVisible = false;
 				}
 			};
 
@@ -166,22 +168,22 @@ namespace SS.Objects.Buildings
 			
 			building.onSelect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( true );
+				hud.isVisible = true;
 			} );
 
 			building.onDeselect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( false );
+				hud.isVisible = false;
 			} );
 			
 			// Make the building belong to a faction.
@@ -197,7 +199,7 @@ namespace SS.Objects.Buildings
 				hud.SetHealthBarFill( building.healthPercent );
 				if( deltaHP < 0 )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 					building.hasBeenHiddenSinceLastDamage = true;
 				}
 			} );

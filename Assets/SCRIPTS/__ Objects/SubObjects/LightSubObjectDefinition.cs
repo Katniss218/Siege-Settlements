@@ -29,24 +29,17 @@ namespace SS.Objects.SubObjects
 			child.transform.localPosition = this.localPosition;
 			child.transform.localRotation = this.localRotation;
 
-
-
-
+			
 			Light light = child.AddComponent<Light>();
-
 			light.type = LightType.Point;
-			light.color = this.color;
-			light.range = this.range;
-
-			LightFlickerer flickerer = child.AddComponent<LightFlickerer>();
-			flickerer.light = light;
-			flickerer.minIntensity = this.minIntensity;
-			flickerer.maxIntensity = this.maxIntensity;
-			flickerer.speedMultiplier = 8.0f;
-
-
-			SubObject subObject = child.AddComponent<SubObject>();
+			
+			LightSubObject subObject = child.AddComponent<LightSubObject>();
 			subObject.subObjectId = this.subObjectId;
+			subObject.minIntensity = this.minIntensity;
+			subObject.maxIntensity = this.maxIntensity;
+			subObject.speedMultiplier = 8.0f;
+			subObject.color = this.color;
+			subObject.range = this.range;
 
 			return subObject;
 		}

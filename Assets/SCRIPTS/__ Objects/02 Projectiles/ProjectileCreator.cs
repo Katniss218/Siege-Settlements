@@ -19,6 +19,7 @@ namespace SS.Objects.Projectiles
 
 		public static void SetDefData( GameObject gameObject, ProjectileDefinition def, ProjectileData data )
 		{
+			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
 
 			//
 			//    SUB-OBJECTS

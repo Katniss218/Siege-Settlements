@@ -159,9 +159,29 @@ namespace SS.Objects
 
 				ret.Add( subObject );
 			}
-			return null;
+			return ret.ToArray();
 		}
-		
+
+		/// <summary>
+		/// Gets all SubObjects assigned to this SSObject.
+		/// </summary>
+		public T[] GetSubObjects<T>() where T : SubObject
+		{
+			List<T> ret = new List<T>();
+			for( int i = 0; i < this.transform.childCount; i++ )
+			{
+				T subObject = this.transform.GetChild( i ).GetComponent<T>();
+
+				if( subObject == null )
+				{
+					throw new Exception( "A non-SubObject has been assigned to this SSObject." );
+				}
+
+				ret.Add( subObject );
+			}
+			return ret.ToArray();
+		}
+
 		/// <summary>
 		/// Gets a specified module.
 		/// </summary>

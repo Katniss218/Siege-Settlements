@@ -1,7 +1,6 @@
 ﻿using KFF;
 using SS.Content;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.SubObjects
@@ -73,29 +72,6 @@ namespace SS.Objects.SubObjects
 			main.startSize = new ParticleSystem.MinMaxCurve( this.startSizeMin, this.startSizeMax );
 			main.startSpeed = new ParticleSystem.MinMaxCurve( this.startSpeedMin, this.startSpeedMax );
 
-			ParticleSystem.ShapeModule shape = particleSystem.shape;
-			if( this.shape is BoxShape )
-			{
-				shape.shapeType = ParticleSystemShapeType.Box;
-				shape.scale = ((BoxShape)this.shape).size;
-			}
-			else if( this.shape is ConeShape )
-			{
-				shape.shapeType = ParticleSystemShapeType.Cone;
-				shape.radius = ((ConeShape)this.shape).radius;
-				shape.angle = ((ConeShape)this.shape).angle;
-			}
-			else if( this.shape is SphereShape )
-			{
-				shape.shapeType = ParticleSystemShapeType.Sphere;
-				shape.radius = ((SphereShape)this.shape).radius;
-			}
-			else
-			{
-				throw new Exception( "Invalid shape" );
-			}
-
-
 			if( this.velocityOverLifetime != null )
 			{
 				ParticleSystem.VelocityOverLifetimeModule velocityOverTime = particleSystem.velocityOverLifetime;
@@ -151,19 +127,11 @@ namespace SS.Objects.SubObjects
 			ParticleSystem.EmissionModule emission = particleSystem.emission;
 			emission.rateOverTime = this.emissionRateTime;
 
-			ParticleSystemRenderer renderer = child.GetComponent<ParticleSystemRenderer>();
-			renderer.material = MaterialManager.CreateParticles( this.particleTexture, this.emissionColor );
-			List<ParticleSystemVertexStream> streams = new List<ParticleSystemVertexStream>()
-			{
-				 ParticleSystemVertexStream.Position,
-				 ParticleSystemVertexStream.Color,
-				 ParticleSystemVertexStream.UV
-			};
-			renderer.SetActiveVertexStreams( streams );
-
-
-			SubObject subObject = child.AddComponent<SubObject>();
+			
+			ParticlesSubObject subObject = child.AddComponent<ParticlesSubObject>();
 			subObject.subObjectId = this.subObjectId;
+			subObject.SetShape( this.shape );
+			subObject.SetMaterial( this.particleTexture, this.emissionColor );
 
 			return subObject;
 		}

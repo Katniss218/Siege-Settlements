@@ -61,6 +61,11 @@ namespace Katniss.ModifierAffectedValues
 			this.CalculateModifiedValue();
 		}
 
+		public Modifier[] GetModifiers()
+		{
+			return this.modifiers.ToArray();
+		}
+
 		private void CalculateModifiedValue()
 		{
 			float oldModified = this.modifiedValue;

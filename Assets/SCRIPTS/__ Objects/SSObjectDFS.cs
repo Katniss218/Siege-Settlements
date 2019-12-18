@@ -127,7 +127,8 @@ namespace SS.Objects
 			{
 				if( value > this.healthMax )
 				{
-					throw new ArgumentOutOfRangeException( "Can't set the health to more than max health." );
+					Debug.LogWarning( "Tried setting the health to above max health." );
+					value = this.healthMax;
 				}
 				// Make sure that health can't go below 0.
 				if( value < 0 )
@@ -159,7 +160,7 @@ namespace SS.Objects
 		}
 
 		[SerializeField]
-		private float __healthMax;
+		internal FloatM __healthMax;
 		/// <summary>
 		/// Gets or sets the maximum health value of this damageable.
 		/// </summary>
@@ -167,11 +168,17 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.__healthMax;
+				return this.__healthMax.modifiedValue;
 			}
 			set
 			{
-				this.__healthMax = value;
+				this.__healthMax.baseValue = value;
+
+				if( this.healthMax < this.health )
+				{
+					this.health = this.healthMax;
+				}
+
 				this.onHealthPercentChanged?.Invoke();
 			}
 		}
@@ -204,8 +211,19 @@ namespace SS.Objects
 		/// </summary>
 		public Armor armor { get; set; }
 
-		void Awake()
+		protected virtual void Awake()
 		{
+			this.__healthMax = new FloatM( 0 );
+			this.__healthMax.onAnyChangeCallback = () =>
+			{
+				if( this.healthMax < this.health )
+				{
+					this.health = this.healthMax;
+				}
+
+				this.onHealthPercentChanged?.Invoke();
+			};
+
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}

@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.AI;
+using SS.Objects.SubObjects;
 
 namespace SS.Objects.Units
 {
@@ -22,6 +23,7 @@ namespace SS.Objects.Units
 
 		public static void SetDefData( GameObject gameObject, UnitDefinition def, UnitData data )
 		{
+			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
 
 			//
 			//    SUB-OBJECTS
@@ -45,8 +47,6 @@ namespace SS.Objects.Units
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			navMeshAgent.radius = def.size.x < def.size.z ? def.size.x * 0.5f : def.size.z * 0.5f;
 			navMeshAgent.height = def.size.y;
-			navMeshAgent.speed = def.movementSpeed;
-			navMeshAgent.angularSpeed = def.rotationSpeed;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the unit's native parameters.
@@ -54,26 +54,51 @@ namespace SS.Objects.Units
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
+			unit.movementSpeed = def.movementSpeed;
+			if( data.movementSpeedModifiers != null )
+			{
+				for( int i = 0; i < data.movementSpeedModifiers.Length; i++ )
+				{
+					unit.__movementSpeed[data.movementSpeedModifiers[i].id] = data.movementSpeedModifiers[i].value;
+				}
+			}
+			else
+			{
+				unit.__movementSpeed["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
+			}
+			unit.rotationSpeed = def.rotationSpeed;
+			if( data.rotationSpeedModifiers != null )
+			{
+				for( int i = 0; i < data.rotationSpeedModifiers.Length; i++ )
+				{
+					unit.__rotationSpeed[data.rotationSpeedModifiers[i].id] = data.rotationSpeedModifiers[i].value;
+				}
+			}
+			else
+			{
+				unit.__rotationSpeed["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
+			}
 
-
-			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
 			unit.onFactionChange.AddListener( () =>
 			{
+				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				Color color = LevelDataManager.factions[unit.factionId].color;
 
-				for( int i = 0; i < renderers.Length; i++ )
+				for( int i = 0; i < meshes.Length; i++ )
 				{
-					renderers[i].material.SetColor( "_FactionColor", color );
+					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 			} );
 			
 			unit.onHealthPercentChanged.AddListener( () =>
 			{
+				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
+
 				unit.hud.SetHealthBarFill( unit.healthPercent );
-				for( int i = 0; i < renderers.Length; i++ )
+				for( int i = 0; i < meshes.Length; i++ )
 				{
-					renderers[i].material.SetFloat( "_Dest", 1 - unit.healthPercent );
+					meshes[i].GetMaterial().SetFloat( "_Dest", 1 - unit.healthPercent );
 				}
 			} );
 
@@ -81,6 +106,18 @@ namespace SS.Objects.Units
 			unit.viewRange = def.viewRange;
 
 			unit.healthMax = def.healthMax;
+			if( data.maxHealthModifiers != null )
+			{
+				for( int i = 0; i < data.maxHealthModifiers.Length; i++ )
+				{
+					unit.__healthMax[data.maxHealthModifiers[i].id] = data.maxHealthModifiers[i].value;
+				}
+			}
+			else
+			{
+#warning TODO! - handle invalid health in a better way then throwing exceptions.
+				unit.__healthMax["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
+			}
 			unit.health = data.health;
 			unit.armor = def.armor;
 
@@ -123,12 +160,12 @@ namespace SS.Objects.Units
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
-
+			
 			HUD hud = hudGameObject.GetComponent<HUD>();
 
 			unit.hud = hud;
-			
+			hud.isVisible = Main.isHudForcedVisible;
+
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
 				if( unit.hasBeenHiddenSinceLastDamage )
@@ -137,7 +174,7 @@ namespace SS.Objects.Units
 				}
 				if( isLocked )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 				}
 				else
 				{
@@ -149,7 +186,7 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					hudGameObject.SetActive( false );
+					hud.isVisible = false;
 				}
 			};
 
@@ -157,22 +194,22 @@ namespace SS.Objects.Units
 			
 			unit.onSelect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( true );
+				hud.isVisible = true;
 			} );
 
 			unit.onDeselect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( false );
+				hud.isVisible = false;
 			} );
 
 			// Make the unit change it's color when the faction is changed.
@@ -187,7 +224,7 @@ namespace SS.Objects.Units
 			{
 				if( deltaHP < 0 )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 					unit.hasBeenHiddenSinceLastDamage = true;
 				}
 			} );
@@ -245,6 +282,10 @@ namespace SS.Objects.Units
 			data.factionId = unit.factionId;
 			
 			data.health = unit.health;
+
+			data.maxHealthModifiers = unit.__healthMax.GetModifiers();
+			data.movementSpeedModifiers = unit.__movementSpeed.GetModifiers();
+			data.rotationSpeedModifiers = unit.__rotationSpeed.GetModifiers();
 
 			//
 			// MODULES

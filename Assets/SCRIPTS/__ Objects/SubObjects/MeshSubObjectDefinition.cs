@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using System;
 using UnityEngine;
 
 namespace SS.Objects.SubObjects
@@ -23,13 +22,12 @@ namespace SS.Objects.SubObjects
 			child.transform.localRotation = this.localRotation;
 			
 			MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-			meshFilter.sharedMesh = this.mesh;
-
 			MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
-			meshRenderer.sharedMaterial = MaterialManager.CreateMaterial( this.materialData );
 
-			SubObject subObject = child.AddComponent<SubObject>();
+			MeshSubObject subObject = child.AddComponent<MeshSubObject>();
 			subObject.subObjectId = this.subObjectId;
+			subObject.SetMesh( this.mesh );
+			subObject.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
 			subObject.defaultPosition = this.localPosition;
 			subObject.defaultRotation = this.localRotation;

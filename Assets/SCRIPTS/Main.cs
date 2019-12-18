@@ -1,5 +1,4 @@
 ﻿using SS.Content;
-using SS.Diplomacy;
 using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -12,7 +11,6 @@ using SS.ResourceSystem.Payment;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
@@ -33,7 +31,7 @@ namespace SS
 
 		public class _UnityEvent_bool : UnityEvent<bool> { }
 
-		public static bool isHudLocked { get; private set; }
+		public static bool isHudForcedVisible { get; private set; }
 
 		/// <summary>
 		/// Called when the HUD becomes locked / unlocked.
@@ -258,9 +256,9 @@ namespace SS
 
 		private void Inp_Tab( InputQueue self )
 		{
-			isHudLocked = !isHudLocked;
+			isHudForcedVisible = !isHudForcedVisible;
 
-			onHudLockChange?.Invoke( isHudLocked );
+			onHudLockChange?.Invoke( isHudForcedVisible );
 		}
 
 		private static void SetFactionSelected( int fac )

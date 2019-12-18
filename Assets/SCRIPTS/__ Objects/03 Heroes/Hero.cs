@@ -1,4 +1,5 @@
-﻿using SS.UI;
+﻿using Katniss.ModifierAffectedValues;
+using SS.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,9 +8,19 @@ namespace SS.Objects.Heroes
 {
 	public class Hero : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
-		public HUD hud { get; set; }
+		private NavMeshAgent __navMeshAgent = null;
+		public NavMeshAgent navMeshAgent
+		{
+			get
+			{
+				if( this.__navMeshAgent == null )
+				{
+					this.__navMeshAgent = this.GetComponent<NavMeshAgent>();
+				}
+				return this.__navMeshAgent;
+			}
+		}
 
-		private string __displayTitle = "<missing>";
 
 		/// <summary>
 		/// Gets or sets the display name of this Hero.
@@ -28,6 +39,7 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+		private string __displayTitle = "<missing>";
 		/// <summary>
 		/// Gets or sets the display title of this Hero.
 		/// </summary>
@@ -53,64 +65,63 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+		public HUD hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
-		
-		private NavMeshAgent __navMeshAgent = null;
-		public NavMeshAgent navMeshAgent
+
+		internal FloatM __movementSpeed = new FloatM( 0 );
+		public float movementSpeed
 		{
-			get
+			get { return this.__movementSpeed.modifiedValue; }
+			set
 			{
-				if( this.__navMeshAgent == null )
-				{
-					this.__navMeshAgent = this.GetComponent<NavMeshAgent>();
-				}
-				return this.__navMeshAgent;
+				this.__movementSpeed.baseValue = value;
+				this.navMeshAgent.speed = value;
 			}
+		}
+		private void MovementSpeedModifierCallback()
+		{
+			this.navMeshAgent.speed = this.movementSpeed;
 		}
 
 
-		public void OnMouseEnterListener()
+		internal FloatM __rotationSpeed = new FloatM( 0 );
+		public float rotationSpeed
 		{
-			if( Main.isHudLocked ) { return; }
-
-			if( Selection.IsSelected( this ) )
+			get { return this.__rotationSpeed.modifiedValue; }
+			set
 			{
-				return;
+				this.__rotationSpeed.baseValue = value;
+				this.navMeshAgent.angularSpeed = value;
 			}
-			this.hud.gameObject.SetActive( true );
+		}
+		private void RotationSpeedModifierCallback()
+		{
+			this.navMeshAgent.angularSpeed = this.rotationSpeed;
 		}
 
-		public void OnMouseStayListener()
-		{ }
-
-		public void OnMouseExitListener()
+		protected override void Awake()
 		{
-			if( Main.isHudLocked ) { return; }
+			base.Awake();
 
-			if( this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.gameObject.SetActive( false );
+			this.__movementSpeed.onAnyChangeCallback = MovementSpeedModifierCallback;
+			this.__rotationSpeed.onAnyChangeCallback = RotationSpeedModifierCallback;
 		}
+
+
 
 		void Update()
 		{
-			if( hud.gameObject.activeSelf )
+			if( this.hud.isVisible )
 			{
-				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
 
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;
 			}
-			if( Main.isHudLocked )
+			if( Main.isHudForcedVisible )
 			{
 				return;
 			}
@@ -124,9 +135,38 @@ namespace SS.Objects.Heroes
 				{
 					return;
 				}
-				this.hud.gameObject.SetActive( false );
+				this.hud.isVisible = false;
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
+		}
+
+		public void OnMouseEnterListener()
+		{
+			if( Main.isHudForcedVisible ) { return; }
+
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.isVisible = true;
+		}
+
+		public void OnMouseStayListener()
+		{ }
+
+		public void OnMouseExitListener()
+		{
+			if( Main.isHudForcedVisible ) { return; }
+
+			if( this.hasBeenHiddenSinceLastDamage )
+			{
+				return;
+			}
+			if( Selection.IsSelected( this ) )
+			{
+				return;
+			}
+			this.hud.isVisible = false;
 		}
 
 		public override void OnDisplay()

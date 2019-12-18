@@ -1,5 +1,4 @@
 ﻿using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.UI;
 using System.Collections.Generic;
@@ -81,13 +80,13 @@ namespace SS.Objects.Buildings
 
 		public void OnMouseEnterListener()
 		{
-			if( Main.isHudLocked ) { return; }
+			if( Main.isHudForcedVisible ) { return; }
 
 			if( Selection.IsSelected( this ) )
 			{
 				return;
 			}
-			this.hud.gameObject.SetActive( true );
+			this.hud.isVisible = true;
 		}
 
 		public void OnMouseStayListener()
@@ -95,7 +94,7 @@ namespace SS.Objects.Buildings
 
 		public void OnMouseExitListener()
 		{
-			if( Main.isHudLocked ) { return; }
+			if( Main.isHudForcedVisible ) { return; }
 
 			if( this.hasBeenHiddenSinceLastDamage )
 			{
@@ -105,21 +104,21 @@ namespace SS.Objects.Buildings
 			{
 				return;
 			}
-			this.hud.gameObject.SetActive( false );
+			this.hud.isVisible = false;
 		}
 
 		void Update()
 		{
-			if( hud.gameObject.activeSelf )
+			if( this.hud.isVisible )
 			{
-				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
 
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;
 			}
-			if( Main.isHudLocked )
+			if( Main.isHudForcedVisible )
 			{
 				return;
 			}
@@ -133,7 +132,7 @@ namespace SS.Objects.Buildings
 				{
 					return;
 				}
-				this.hud.gameObject.SetActive( false );
+				this.hud.isVisible = false;
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}

@@ -1,4 +1,5 @@
-﻿using SS.UI;
+﻿using Katniss.ModifierAffectedValues;
+using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,10 +7,6 @@ namespace SS.Objects.Units
 {
 	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
 	{
-		public HUD hud { get; set; }
-
-		public bool hasBeenHiddenSinceLastDamage { get; set; }
-		
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
 		{
@@ -53,20 +50,63 @@ namespace SS.Objects.Units
 				this.__population = value;
 			}
 		}
-		
+
+		public HUD hud { get; set; }
+
+		public bool hasBeenHiddenSinceLastDamage { get; set; }
+
+		internal FloatM __movementSpeed = new FloatM( 0 );
+		public float movementSpeed
+		{
+			get { return this.__movementSpeed.modifiedValue; }
+			set
+			{
+				this.__movementSpeed.baseValue = value;
+				this.navMeshAgent.speed = value;
+			}
+		}
+		private void MovementSpeedModifierCallback()
+		{
+			this.navMeshAgent.speed = this.movementSpeed;
+		}
+
+
+		internal FloatM __rotationSpeed = new FloatM( 0 );
+		public float rotationSpeed
+		{
+			get { return this.__rotationSpeed.modifiedValue; }
+			set
+			{
+				this.__rotationSpeed.baseValue = value;
+				this.navMeshAgent.angularSpeed = value;
+			}
+		}
+		private void RotationSpeedModifierCallback()
+		{
+			this.navMeshAgent.angularSpeed = this.rotationSpeed;
+		}
+
+		protected override void Awake()
+		{
+			base.Awake();
+
+			this.__movementSpeed.onAnyChangeCallback = MovementSpeedModifierCallback;
+			this.__rotationSpeed.onAnyChangeCallback = RotationSpeedModifierCallback;
+		}
+
 		void Update()
 		{
-			if( hud.gameObject.activeSelf )
+			if( this.hud.isVisible )
 			{
 #warning TODO! - only if the camera or transform has moved or rotated or scaled (cam).
-				hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
 
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;
 			}
-			if( Main.isHudLocked )
+			if( Main.isHudForcedVisible )
 			{
 				return;
 			}
@@ -80,20 +120,20 @@ namespace SS.Objects.Units
 				{
 					return;
 				}
-				this.hud.gameObject.SetActive( false );
+				this.hud.isVisible = false;
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}
 
 		public void OnMouseEnterListener()
 		{
-			if( Main.isHudLocked ) { return; }
+			if( Main.isHudForcedVisible ) { return; }
 
 			if( Selection.IsSelected( this ) )
 			{
 				return;
 			}
-			this.hud.gameObject.SetActive( true );
+			this.hud.isVisible = true;
 		}
 
 		public void OnMouseStayListener()
@@ -103,7 +143,7 @@ namespace SS.Objects.Units
 
 		public void OnMouseExitListener()
 		{
-			if( Main.isHudLocked ) { return; }
+			if( Main.isHudForcedVisible ) { return; }
 
 			if( this.hasBeenHiddenSinceLastDamage )
 			{
@@ -113,7 +153,7 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-			this.hud.gameObject.SetActive( false );
+			this.hud.isVisible = false;
 		}
 
 

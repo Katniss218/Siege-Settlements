@@ -22,6 +22,8 @@ namespace SS.Objects.Heroes
 
 		public static void SetDefData( GameObject gameObject, HeroDefinition def, HeroData data )
 		{
+			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
+
 			//
 			//    SUB-OBJECTS
 			//
@@ -44,8 +46,6 @@ namespace SS.Objects.Heroes
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			navMeshAgent.radius = def.radius;
 			navMeshAgent.height = def.height;
-			navMeshAgent.speed = def.movementSpeed;
-			navMeshAgent.angularSpeed = def.rotationSpeed;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the hero's native parameters.
@@ -54,6 +54,8 @@ namespace SS.Objects.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			hero.icon = def.icon;
+			hero.movementSpeed = def.movementSpeed;
+			hero.rotationSpeed = def.rotationSpeed;
 						
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
@@ -125,12 +127,11 @@ namespace SS.Objects.Heroes
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			hudGameObject.SetActive( Main.isHudLocked ); // Only show hud when it's locked.
-
-
+			
 			HUD hud = hudGameObject.GetComponent<HUD>();
 
 			hero.hud = hud;
+			hud.isVisible = Main.isHudForcedVisible;
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
@@ -140,7 +141,7 @@ namespace SS.Objects.Heroes
 				}
 				if( isLocked )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 				}
 				else
 				{
@@ -152,7 +153,7 @@ namespace SS.Objects.Heroes
 					{
 						return;
 					}
-					hudGameObject.SetActive( false );
+					hud.isVisible = false;
 				}
 			};
 
@@ -160,22 +161,22 @@ namespace SS.Objects.Heroes
 			
 			hero.onSelect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( true );
+				hud.isVisible = true;
 			} );
 
 			hero.onDeselect.AddListener( () =>
 			{
-				if( Main.isHudLocked ) { return; }
+				if( Main.isHudForcedVisible ) { return; }
 				if( MouseOverHandler.currentObjectMouseOver == container )
 				{
 					return;
 				}
-				hudGameObject.SetActive( false );
+				hud.isVisible = false;
 			} );
 
 
@@ -192,7 +193,7 @@ namespace SS.Objects.Heroes
 				hud.SetHealthBarFill( hero.healthPercent );
 				if( deltaHP < 0 )
 				{
-					hudGameObject.SetActive( true );
+					hud.isVisible = true;
 					hero.hasBeenHiddenSinceLastDamage = true;
 				}
 			} );

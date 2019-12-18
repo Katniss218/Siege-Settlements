@@ -16,6 +16,8 @@ namespace SS.Objects.Extras
 
 		public static void SetDefData( GameObject gameObject, ExtraDefinition def, ExtraData data )
 		{
+			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
+
 			//
 			//    SUB-OBJECTS
 			//

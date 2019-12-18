@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace SS.UI
 {
+	[DisallowMultipleComponent]
 	public class HUD : MonoBehaviour
 	{
 		/// <summary>
@@ -23,7 +24,22 @@ namespace SS.UI
 		/// The Image component that displays current health percent.
 		/// </summary>
 		public Image healthBar;
-		
+
+
+		private bool __isVisible;
+		public bool isVisible
+		{
+			get
+			{
+				return this.__isVisible;
+			}
+			set
+			{
+				this.__isVisible = value;
+				this.gameObject.SetActive( value );
+			}
+		}
+
 
 		/// <summary>
 		/// Colors the specified image components with a given faction color.
