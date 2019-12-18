@@ -88,7 +88,7 @@ namespace SS.Objects.Buildings
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
 				AudioManager.PlaySound( this.building.buildSoundEffect );
-
+				
 
 				bool isDone = this.IsDone();
 				if( isDone )
@@ -101,7 +101,7 @@ namespace SS.Objects.Buildings
 					{
 						this.renderers[i].material.SetFloat( "_YOffset", 0.0f );
 					}
-					this.building.health = this.building.healthMax;
+					this.building.health = this.building.healthMax.value;
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
 					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
@@ -109,13 +109,13 @@ namespace SS.Objects.Buildings
 					this.ConstructionComplete_UI();
 				}
 
-				float healAmt = ((this.building.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
+				float healAmt = ((this.building.healthMax.value * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
 
 				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 				// Otherwise, heal it normally.
-				if( this.building.health + healAmt > this.building.healthMax )
+				if( this.building.healthMax.value + healAmt > this.building.healthMax.value )
 				{
-					this.building.health = this.building.healthMax;
+					this.building.health = this.building.healthMax.value;
 				}
 				else
 				{
@@ -215,6 +215,7 @@ namespace SS.Objects.Buildings
 		// Rounds down when the decimal is <=0.5, rounds up when >0.5
 		private static int RoundExact( float remainingResAmt )
 		{
+			return Mathf.CeilToInt( remainingResAmt );
 			int floored = Mathf.FloorToInt( remainingResAmt );
 			if( remainingResAmt - floored <= 0.5f )
 			{
@@ -390,11 +391,11 @@ namespace SS.Objects.Buildings
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
 			{
-				float deltaHP = building.health - building.healthMax;
+				float deltaHP = building.health - building.healthMax.value;
 				foreach( var kvp in constructionSite.resourceInfo )
 				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
-
+					float resAmt = (kvp.Value.initialResource / (building.healthMax.baseValue * (1 - 0.1f))) * -deltaHP;
+					Debug.Log( kvp.Key + ", " + resAmt );
 					kvp.Value.remaining = resAmt;
 				}
 			}
@@ -431,7 +432,7 @@ namespace SS.Objects.Buildings
 			{
 				foreach( var kvp in this.resourceInfo )
 				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
+					float resAmt = (kvp.Value.initialResource / (building.healthMax.baseValue * (1 - 0.1f))) * -deltaHP;
 
 					kvp.Value.remaining += resAmt;
 				}

@@ -428,7 +428,7 @@ namespace SS.AI
 					bool hasWantedItem_s = false;
 					foreach( var kvp in wantedRes )
 					{
-						Debug.Log( paymentReceiverSSObject.displayName + " wants: " + kvp.Value + "x " + kvp.Key );
+						//Debug.Log( paymentReceiverSSObject.displayName + " wants: " + kvp.Value + "x " + kvp.Key );
 						if( inv.Get( kvp.Key ) > 0 )
 						{
 							hasWantedItem_s = true;

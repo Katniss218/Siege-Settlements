@@ -1,4 +1,5 @@
-﻿using UnityEngine.Events;
+﻿using Katniss.ModifierAffectedValues;
+using UnityEngine.Events;
 
 namespace SS.Objects
 {
@@ -6,7 +7,8 @@ namespace SS.Objects
 	{
 		float health { get; set; }
 
-		float healthMax { get; set; }
+		//float healthMax { get; set; }
+		FloatM healthMax { get; }
 
 		float healthPercent { get; set; }
 

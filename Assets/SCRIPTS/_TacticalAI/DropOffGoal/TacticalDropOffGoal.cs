@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Levels.SaveStates;
 using SS.Objects;
+using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Modules;
 using SS.ResourceSystem;
@@ -252,10 +253,22 @@ namespace SS.AI.Goals
 			}
 			else if( this.objectDropOffMode == ObjectDropOffMode.PAYMENT )
 			{
+				bool onlyConstructionSites = false;
+				if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+				{
+					onlyConstructionSites = true;
+				}
 				IPaymentReceiver[] paymentReceivers = this.destinationObject.GetComponents<IPaymentReceiver>();
 
 				for( int i = 0; i < paymentReceivers.Length; i++ )
 				{
+					if( onlyConstructionSites )
+					{
+						if( !(paymentReceivers[i] is ConstructionSite) )
+						{
+							continue;
+						}
+					}
 					Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
 
 					foreach( var kvp in wantedRes )
@@ -384,11 +397,14 @@ namespace SS.AI.Goals
 					return;
 				}
 
-				if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+				if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
 				{
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-					return;
+					if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+					{
+						this.navMeshAgent.ResetPath();
+						controller.goal = TacticalGoalController.GetDefaultGoal();
+						return;
+					}
 				}
 			}
 
@@ -397,7 +413,7 @@ namespace SS.AI.Goals
 			{
 				return;
 			}
-
+			
 			this.UpdatePosition( controller );
 			this.UpdateTargeting( controller );
 

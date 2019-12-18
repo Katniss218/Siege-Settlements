@@ -16,7 +16,6 @@ namespace SS.Objects
 	/// </summary>
 	public abstract class SSObjectDFS : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
 	{
-
 		/// <summary>
 		/// The icon that is shown on the list of all selected objects.
 		/// </summary>
@@ -125,10 +124,10 @@ namespace SS.Objects
 			}
 			set
 			{
-				if( value > this.healthMax )
+				if( value > this.healthMax.value )
 				{
 					Debug.LogWarning( "Tried setting the health to above max health." );
-					value = this.healthMax;
+					value = this.healthMax.value;
 				}
 				// Make sure that health can't go below 0.
 				if( value < 0 )
@@ -159,7 +158,8 @@ namespace SS.Objects
 			}
 		}
 
-		[SerializeField]
+		public FloatM healthMax { get; private set; }
+		/*[SerializeField]
 		internal FloatM __healthMax;
 		/// <summary>
 		/// Gets or sets the maximum health value of this damageable.
@@ -181,7 +181,7 @@ namespace SS.Objects
 
 				this.onHealthPercentChanged?.Invoke();
 			}
-		}
+		}*/
 
 		/// <summary>
 		/// Gets or sets the percentage of health of this damageable.
@@ -190,7 +190,7 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.health / this.healthMax;
+				return this.health / this.healthMax.value;
 			}
 			set
 			{
@@ -202,7 +202,7 @@ namespace SS.Objects
 				{
 					throw new ArgumentOutOfRangeException( "Can't set the health percentage to more than 1." );
 				}
-				this.health = value * this.healthMax;
+				this.health = value * this.healthMax.value;
 			}
 		}
 
@@ -213,12 +213,12 @@ namespace SS.Objects
 
 		protected virtual void Awake()
 		{
-			this.__healthMax = new FloatM();
-			this.__healthMax.onAnyChangeCallback = () =>
+			this.healthMax = new FloatM();
+			this.healthMax.onAnyChangeCallback = () =>
 			{
-				if( this.health > this.healthMax )
+				if( this.health > this.healthMax.value )
 				{
-					this.health = this.healthMax;
+					this.health = this.healthMax.value;
 				}
 
 				this.onHealthPercentChanged?.Invoke();

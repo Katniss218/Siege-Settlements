@@ -96,7 +96,7 @@ namespace SS.Objects.Heroes
 			hero.factionId = data.factionId;
 			hero.viewRange = def.viewRange;
 
-			hero.healthMax = def.healthMax;
+			hero.healthMax.baseValue = def.healthMax;
 			hero.health = data.health;
 			hero.armor = def.armor;
 
@@ -234,7 +234,7 @@ namespace SS.Objects.Heroes
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)hero.health + "/" + (int)hero.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)hero.health + "/" + (int)hero.healthMax.value );
 				}
 			} );
 

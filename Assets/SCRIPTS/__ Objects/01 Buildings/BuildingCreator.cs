@@ -80,7 +80,7 @@ namespace SS.Objects.Buildings
 			building.factionId = data.factionId;
 			building.viewRange = def.viewRange;
 
-			building.healthMax = def.healthMax;
+			building.healthMax.baseValue = def.healthMax;
 			building.health = data.health;
 			building.armor = def.armor;
 			
@@ -229,7 +229,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)building.health + "/" + (int)building.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)building.health + "/" + (int)building.healthMax.value );
 				}
 
 				// If the health change changed the usability (health is above threshold).

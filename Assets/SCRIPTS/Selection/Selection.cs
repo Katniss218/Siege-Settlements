@@ -133,7 +133,7 @@ namespace SS
 			for( int i = 0; i < selected.Count; i++ )
 			{
 				healthTotal += selected[i].health;
-				healthMaxTotal += selected[i].healthMax;
+				healthMaxTotal += selected[i].healthMax.value;
 			}
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Total Health: " + (int)healthTotal + "/" + (int)healthMaxTotal );
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );

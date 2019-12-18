@@ -97,12 +97,12 @@ namespace SS.Objects.Units
 			unit.factionId = data.factionId;
 			unit.viewRange = def.viewRange;
 
-			unit.healthMax = def.healthMax;
+			unit.healthMax.baseValue = def.healthMax;
 			if( data.maxHealthModifiers != null )
 			{
 				for( int i = 0; i < data.maxHealthModifiers.Length; i++ )
 				{
-					unit.__healthMax[data.maxHealthModifiers[i].id] = data.maxHealthModifiers[i].value;
+					unit.healthMax[data.maxHealthModifiers[i].id] = data.maxHealthModifiers[i].value;
 				}
 			}
 			unit.health = data.health;
@@ -238,7 +238,7 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax );
+					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax.value );
 				}
 			} );
 			
@@ -270,7 +270,7 @@ namespace SS.Objects.Units
 			
 			data.health = unit.health;
 
-			data.maxHealthModifiers = unit.__healthMax.GetModifiers();
+			data.maxHealthModifiers = unit.healthMax.GetModifiers();
 			data.movementSpeedModifiers = unit.movementSpeed.GetModifiers();
 			data.rotationSpeedModifiers = unit.rotationSpeed.GetModifiers();
 
