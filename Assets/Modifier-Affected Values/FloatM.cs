@@ -23,8 +23,9 @@ namespace Katniss.ModifierAffectedValues
 
 		private List<Modifier> modifiers;
 
-		public float modifiedValue { get; private set; }
+		public float value { get; private set; }
 		
+
 		public float this[string id]
 		{
 			get
@@ -54,12 +55,16 @@ namespace Katniss.ModifierAffectedValues
 			}
 		}
 
-		public FloatM( float baseValue )
+
+
+		public FloatM()
 		{
-			this.baseValue = baseValue;
+			this.baseValue = 0;
 			this.modifiers = new List<Modifier>();
-			this.CalculateModifiedValue();
+			this.value = 0;
 		}
+		
+
 
 		public Modifier[] GetModifiers()
 		{
@@ -68,11 +73,9 @@ namespace Katniss.ModifierAffectedValues
 
 		private void CalculateModifiedValue()
 		{
-			float oldModified = this.modifiedValue;
-
 			if( this.modifiers == null || this.modifiers.Count == 0 )
 			{
-				this.modifiedValue = this.baseValue;
+				this.value = this.baseValue;
 				this.onAnyChangeCallback?.Invoke();
 				return;
 			}
@@ -82,13 +85,8 @@ namespace Katniss.ModifierAffectedValues
 			{
 				value *= this.modifiers[i].value;
 			}
-			this.modifiedValue = value;
+			this.value = value;
 			this.onAnyChangeCallback?.Invoke();
-		}
-		
-		public static explicit operator FloatM( float right )
-		{
-			return new FloatM( right );
 		}
 	}
 }

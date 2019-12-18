@@ -69,46 +69,39 @@ namespace SS.Objects.Heroes
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
-		internal FloatM __movementSpeed = new FloatM( 0 );
-		public float movementSpeed
-		{
-			get { return this.__movementSpeed.modifiedValue; }
-			set
-			{
-				this.__movementSpeed.baseValue = value;
-				this.navMeshAgent.speed = value;
-			}
-		}
-		private void MovementSpeedModifierCallback()
-		{
-			this.navMeshAgent.speed = this.movementSpeed;
-		}
 
+		//
+		//
+		//
 
-		internal FloatM __rotationSpeed = new FloatM( 0 );
-		public float rotationSpeed
+		public FloatM movementSpeed { get; private set; }
+		public FloatM rotationSpeed { get; private set; }
+
+		//
+		//
+		//
+
+		private void InitModifierAffectedValues()
 		{
-			get { return this.__rotationSpeed.modifiedValue; }
-			set
+			this.movementSpeed = new FloatM();
+			this.movementSpeed.onAnyChangeCallback = () =>
 			{
-				this.__rotationSpeed.baseValue = value;
-				this.navMeshAgent.angularSpeed = value;
-			}
-		}
-		private void RotationSpeedModifierCallback()
-		{
-			this.navMeshAgent.angularSpeed = this.rotationSpeed;
+				this.navMeshAgent.speed = this.movementSpeed.value;
+			};
+
+			this.rotationSpeed = new FloatM();
+			this.rotationSpeed.onAnyChangeCallback = () =>
+			{
+				this.navMeshAgent.angularSpeed = this.rotationSpeed.value;
+			};
 		}
 
 		protected override void Awake()
 		{
 			base.Awake();
 
-			this.__movementSpeed.onAnyChangeCallback = MovementSpeedModifierCallback;
-			this.__rotationSpeed.onAnyChangeCallback = RotationSpeedModifierCallback;
+			this.InitModifierAffectedValues();
 		}
-
-
 
 		void Update()
 		{

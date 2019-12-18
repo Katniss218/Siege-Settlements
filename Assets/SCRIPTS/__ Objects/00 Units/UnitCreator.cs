@@ -54,29 +54,21 @@ namespace SS.Objects.Units
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
-			unit.movementSpeed = def.movementSpeed;
+			unit.movementSpeed.baseValue = def.movementSpeed;
 			if( data.movementSpeedModifiers != null )
 			{
 				for( int i = 0; i < data.movementSpeedModifiers.Length; i++ )
 				{
-					unit.__movementSpeed[data.movementSpeedModifiers[i].id] = data.movementSpeedModifiers[i].value;
+					unit.movementSpeed[data.movementSpeedModifiers[i].id] = data.movementSpeedModifiers[i].value;
 				}
 			}
-			else
-			{
-				unit.__movementSpeed["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
-			}
-			unit.rotationSpeed = def.rotationSpeed;
+			unit.rotationSpeed.baseValue = def.rotationSpeed;
 			if( data.rotationSpeedModifiers != null )
 			{
 				for( int i = 0; i < data.rotationSpeedModifiers.Length; i++ )
 				{
-					unit.__rotationSpeed[data.rotationSpeedModifiers[i].id] = data.rotationSpeedModifiers[i].value;
+					unit.rotationSpeed[data.rotationSpeedModifiers[i].id] = data.rotationSpeedModifiers[i].value;
 				}
-			}
-			else
-			{
-				unit.__rotationSpeed["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
 			}
 
 
@@ -112,11 +104,6 @@ namespace SS.Objects.Units
 				{
 					unit.__healthMax[data.maxHealthModifiers[i].id] = data.maxHealthModifiers[i].value;
 				}
-			}
-			else
-			{
-#warning TODO! - handle invalid health in a better way then throwing exceptions.
-				unit.__healthMax["aa"] = UnityEngine.Random.Range( 0.5f, 3.0f );
 			}
 			unit.health = data.health;
 			unit.armor = def.armor;
@@ -284,8 +271,8 @@ namespace SS.Objects.Units
 			data.health = unit.health;
 
 			data.maxHealthModifiers = unit.__healthMax.GetModifiers();
-			data.movementSpeedModifiers = unit.__movementSpeed.GetModifiers();
-			data.rotationSpeedModifiers = unit.__rotationSpeed.GetModifiers();
+			data.movementSpeedModifiers = unit.movementSpeed.GetModifiers();
+			data.rotationSpeedModifiers = unit.rotationSpeed.GetModifiers();
 
 			//
 			// MODULES

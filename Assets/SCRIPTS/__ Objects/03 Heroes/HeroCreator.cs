@@ -54,9 +54,23 @@ namespace SS.Objects.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			hero.icon = def.icon;
-			hero.movementSpeed = def.movementSpeed;
-			hero.rotationSpeed = def.rotationSpeed;
-						
+			hero.movementSpeed.baseValue = def.movementSpeed;
+			/*if( data.movementSpeedModifiers != null )
+			{
+				for( int i = 0; i < data.movementSpeedModifiers.Length; i++ )
+				{
+					hero.SetMovementSpeedModifier( data.movementSpeedModifiers[i].id, data.movementSpeedModifiers[i].value );
+				}
+			}*/
+			hero.rotationSpeed.baseValue = def.rotationSpeed;
+			/*if( data.rotationSpeedModifiers != null )
+			{
+				for( int i = 0; i < data.rotationSpeedModifiers.Length; i++ )
+				{
+					hero.SetRotationSpeedModifier( data.rotationSpeedModifiers[i].id, data.rotationSpeedModifiers[i].value );
+				}
+			}*/
+
 			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 
 			hero.onFactionChange.AddListener( () =>
@@ -252,6 +266,10 @@ namespace SS.Objects.Heroes
 			data.factionId = hero.factionId;
 			
 			data.health = hero.health;
+
+			//data.maxHealthModifiers = hero.__healthMax.GetModifiers();
+			//data.movementSpeedModifiers = hero.GetMovementSpeedModifiers();
+			//data.rotationSpeedModifiers = hero.GetRotationSpeedModifiers();
 
 			//
 			// MODULES

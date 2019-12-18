@@ -168,7 +168,7 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.__healthMax.modifiedValue;
+				return this.__healthMax.value;
 			}
 			set
 			{
@@ -213,10 +213,10 @@ namespace SS.Objects
 
 		protected virtual void Awake()
 		{
-			this.__healthMax = new FloatM( 0 );
+			this.__healthMax = new FloatM();
 			this.__healthMax.onAnyChangeCallback = () =>
 			{
-				if( this.healthMax < this.health )
+				if( this.health > this.healthMax )
 				{
 					this.health = this.healthMax;
 				}
