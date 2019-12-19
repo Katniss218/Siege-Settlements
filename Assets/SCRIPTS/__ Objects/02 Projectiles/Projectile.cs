@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using SS.Objects.Extras;
+﻿using SS.Objects.Extras;
 using SS.Objects.Modules;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,7 +14,9 @@ namespace SS.Objects.Projectiles
 
 		public float blastRadius { get; set; }
 
-		public DamageSource damageSource { get; set; }
+		public float damage;
+		public float armorPenetration;
+		public DamageType damageType;
 
 		public AudioClip hitSound { get; set; }
 		public AudioClip missSound { get; set; }
@@ -85,8 +86,17 @@ namespace SS.Objects.Projectiles
 			}
 
 			SSObject otherSSObject = other.GetComponent<SSObject>();
+			if( otherSSObject == null )
+			{
+				if( other.gameObject.layer == ObjectLayer.TERRAIN )
+				{
+					this.DamageAndStuckLogic( null, null, this.canGetStuck );
+				}
+				return;
+			}
+
 			// If the object that was hit is non-SSObject or another projectile, do nothing.
-			if( otherSSObject == null || otherSSObject is Projectile )
+			if( otherSSObject is Projectile )
 			{
 				return;
 			}
@@ -119,7 +129,7 @@ namespace SS.Objects.Projectiles
 				{
 					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
-						hitDamageable.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 
 						AudioManager.PlaySound( this.hitSound );
 						Object.Destroy( this.gameObject );
@@ -147,13 +157,13 @@ namespace SS.Objects.Projectiles
 
 					float damageScale = (distance / this.blastRadius);
 
-					float damageScaledToDist = this.damageSource.GetRandomizedDamage() * damageScale;
+					float damageScaledToDist = DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ) * damageScale;
 					if( damageScaledToDist <= 0 )
 					{
 						Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
 						continue;
 					}
-					(potentialDamagee as IDamageable).TakeDamage( this.damageSource.damageType, damageScaledToDist, this.damageSource.armorPenetration );
+					(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
 				}
 
 				if( hitDamageable == null )

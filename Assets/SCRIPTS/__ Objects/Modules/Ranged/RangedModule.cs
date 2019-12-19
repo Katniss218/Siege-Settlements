@@ -1,6 +1,5 @@
 ﻿using Katniss.Utils;
 using SS.Content;
-using SS.Diplomacy;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
 using SS.Objects.Projectiles;
@@ -8,7 +7,6 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
-using Katniss.ModifierAffectedValues;
 
 namespace SS.Objects.Modules
 {
@@ -25,7 +23,12 @@ namespace SS.Objects.Modules
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
-		public DamageSource damageSource;
+		public int? projectileCountOverride;
+		
+		public float damage;
+		public float armorPenetration;
+		public DamageType damageType;
+
 		public float attackCooldown;
 		public float velocity;
 		public Vector3 localOffsetMin;
@@ -140,7 +143,8 @@ namespace SS.Objects.Modules
 			{
 				Vector3 pos;
 				Vector3 vel = low;
-				for( int i = 0; i < this.projectileCount; i++ )
+				int count = projectileCountOverride == null ? projectileCount : projectileCountOverride.Value;
+				for( int i = 0; i < count; i++ )
 				{
 					pos = new Vector3(
 						Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
@@ -167,9 +171,9 @@ namespace SS.Objects.Modules
 			data.position = pos;
 			data.velocity = vel;
 			data.ownerFactionIdCache = this.targeter.factionMember.factionId;
-			data.damageTypeOverride = this.damageSource.damageType;
-			data.damageOverride = this.damageSource.damage;
-			data.armorPenetrationOverride = this.damageSource.armorPenetration;
+			data.damageTypeOverride = this.damageType;
+			data.damageOverride = this.damage;
+			data.armorPenetrationOverride = this.armorPenetration;
 			data.owner = new Tuple<Guid, Guid>(
 				this.ssObject.guid,
 				this.moduleId
@@ -220,11 +224,12 @@ namespace SS.Objects.Modules
 			
 			this.attackRange = def.attackRange;
 
-
-			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
-
+			
 			this.projectile = DefinitionManager.GetProjectile( def.projectileId );
-			this.damageSource = damageSource;
+			this.damage = def.damage;
+			this.damageType = def.damageType;
+			this.armorPenetration = def.armorPenetration;
+
 			this.projectileCount = def.projectileCount;
 			this.attackCooldown = def.attackCooldown;
 			this.velocity = def.velocity;

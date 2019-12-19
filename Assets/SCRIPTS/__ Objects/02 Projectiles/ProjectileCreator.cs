@@ -72,10 +72,11 @@ namespace SS.Objects.Projectiles
 				Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
 				rigidbody.velocity = data.velocity;
 			}
-			
+
 			// Set the damage information.
-			projectile.damageSource = new DamageSource( data.damageTypeOverride, data.damageOverride, data.armorPenetrationOverride );
-			
+			projectile.damageType = data.damageTypeOverride;
+			projectile.damage = data.damageOverride;
+			projectile.armorPenetration = data.armorPenetrationOverride;
 			//
 			//    MODULES
 			//
@@ -144,11 +145,10 @@ namespace SS.Objects.Projectiles
 			}
 			
 			data.ownerFactionIdCache = projectile.factionId;
-
-			DamageSource damageSource = projectile.GetComponent<Projectile>().damageSource;
-			data.damageTypeOverride = damageSource.damageType;
-			data.damageOverride = damageSource.damage;
-			data.armorPenetrationOverride = damageSource.armorPenetration;
+			
+			data.damageTypeOverride = projectile.damageType;
+			data.damageOverride = projectile.damage;
+			data.armorPenetrationOverride = projectile.armorPenetration;
 
 			if( projectile.owner == null )
 			{

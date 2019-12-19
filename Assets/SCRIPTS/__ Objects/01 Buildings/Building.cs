@@ -47,7 +47,7 @@ namespace SS.Objects.Buildings
 				return false;
 			}
 			// If the construction/repair is NOT being done.
-			return building.health < building.healthMax.value;
+			return building.health < building.healthMax;
 		}
 		
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
@@ -145,7 +145,7 @@ namespace SS.Objects.Buildings
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax.value );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
 			if( this.factionId == LevelDataManager.PLAYER_FAC )

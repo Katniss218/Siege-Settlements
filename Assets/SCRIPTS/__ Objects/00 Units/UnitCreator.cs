@@ -37,16 +37,9 @@ namespace SS.Objects.Units
 
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			// Set the unit's size.
-			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
-			collider.size = def.size;
-			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-
+			
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-			navMeshAgent.radius = def.size.x < def.size.z ? def.size.x * 0.5f : def.size.z * 0.5f;
-			navMeshAgent.height = def.size.y;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the unit's native parameters.
@@ -55,21 +48,8 @@ namespace SS.Objects.Units
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
 			unit.movementSpeed.baseValue = def.movementSpeed;
-			if( data.movementSpeedModifiers != null )
-			{
-				for( int i = 0; i < data.movementSpeedModifiers.Length; i++ )
-				{
-					unit.movementSpeed[data.movementSpeedModifiers[i].id] = data.movementSpeedModifiers[i].value;
-				}
-			}
 			unit.rotationSpeed.baseValue = def.rotationSpeed;
-			if( data.rotationSpeedModifiers != null )
-			{
-				for( int i = 0; i < data.rotationSpeedModifiers.Length; i++ )
-				{
-					unit.rotationSpeed[data.rotationSpeedModifiers[i].id] = data.rotationSpeedModifiers[i].value;
-				}
-			}
+			unit.size = def.size;
 
 
 			unit.onFactionChange.AddListener( () =>
@@ -97,14 +77,7 @@ namespace SS.Objects.Units
 			unit.factionId = data.factionId;
 			unit.viewRange = def.viewRange;
 
-			unit.healthMax.baseValue = def.healthMax;
-			if( data.maxHealthModifiers != null )
-			{
-				for( int i = 0; i < data.maxHealthModifiers.Length; i++ )
-				{
-					unit.healthMax[data.maxHealthModifiers[i].id] = data.maxHealthModifiers[i].value;
-				}
-			}
+			unit.healthMax = def.healthMax;
 			unit.health = data.health;
 			unit.armor = def.armor;
 
@@ -238,7 +211,7 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax.value );
+					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax );
 				}
 			} );
 			
@@ -269,11 +242,7 @@ namespace SS.Objects.Units
 			data.factionId = unit.factionId;
 			
 			data.health = unit.health;
-
-			data.maxHealthModifiers = unit.healthMax.GetModifiers();
-			data.movementSpeedModifiers = unit.movementSpeed.GetModifiers();
-			data.rotationSpeedModifiers = unit.rotationSpeed.GetModifiers();
-
+			
 			//
 			// MODULES
 			//

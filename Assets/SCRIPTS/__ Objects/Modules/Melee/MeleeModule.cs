@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using SS.Levels.SaveStates;
+﻿using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
 using System;
 using UnityEngine;
@@ -14,7 +13,10 @@ namespace SS.Objects.Modules
 		public Targeter targeter { get; private set; }
 
 
-		public DamageSource damageSource;
+		public float damage;
+		public float armorPenetration;
+		public DamageType damageType;
+
 		public float attackCooldown;
 		public AudioClip attackSoundEffect;
 		
@@ -93,7 +95,7 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public void Attack( IDamageable target )
 		{
-			target.TakeDamage( this.damageSource.damageType, this.damageSource.GetRandomizedDamage(), this.damageSource.armorPenetration );
+			target.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 			AudioManager.PlaySound( this.attackSoundEffect );
 			this.lastAttackTimestamp = Time.time;
 			this.isReady2 = false;
@@ -141,9 +143,10 @@ namespace SS.Objects.Modules
 
 			this.icon = def.icon;
 			this.attackRange = def.attackRange;
-			
-			DamageSource damageSource = new DamageSource( def.damageType, def.damage, def.armorPenetration );
-			this.damageSource = damageSource;
+
+			this.damage = def.damage;
+			this.damageType = def.damageType;
+			this.armorPenetration = def.armorPenetration;
 
 			this.attackCooldown = def.attackCooldown;
 			this.attackSoundEffect = def.attackSoundEffect;

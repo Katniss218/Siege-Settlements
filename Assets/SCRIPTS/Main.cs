@@ -196,13 +196,33 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
+					/*TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
 					if( goalController == null )
 					{
 						return;
 					}
 					TacticalTargetGoal goal = new TacticalTargetGoal();
-					goalController.goal = goal;
+					goalController.goal = goal;*/
+					IPopulationScaler popScaler = hitInfo.collider.GetComponent<IPopulationScaler>();
+					if( popScaler == null )
+					{
+						return;
+					}
+					switch( popScaler.population )
+					{
+						case PopulationSize.x1:
+							popScaler.population = PopulationSize.x2;
+							break;
+						case PopulationSize.x2:
+							popScaler.population = PopulationSize.x4;
+							break;
+						case PopulationSize.x4:
+							popScaler.population = PopulationSize.x8;
+							break;
+						case PopulationSize.x8:
+							popScaler.population = PopulationSize.x1;
+							break;
+					}
 				}
 			}
 		}

@@ -105,6 +105,7 @@ namespace SS.AI.Goals
 		{
 			SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 
+
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
 			{
@@ -115,23 +116,33 @@ namespace SS.AI.Goals
 						this.attackModules[i].targeter.target = null;
 					}
 				}
-			}
 
-			// If the current target is outside of the global view range, or can't be targeted - try and find a new target.
-			if( !Targeter.CanTarget( controller.transform.position, ssobj.viewRange, this.target, ssobj ) )
-			{
-				this.target = null;
+				// If the current target is outside of the global view range, or can't be targeted - try and find a new target.
+				if( !Targeter.CanTarget( controller.transform.position, ssobj.viewRange, this.target, ssobj ) )
+				{
+					this.target = null;
+				}
 			}
-
-			// If the target was destroyed or could no longer be targeted - find a new target.
-			if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
+			else
 			{
 				if( this.target == null )
 				{
-					this.target = Targeter.FindTargetClosest( controller.transform.position, ssobj.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, ssobj );
+					controller.goal = TacticalGoalController.GetDefaultGoal();
+					this.navMeshAgent.ResetPath();
+					return;
 				}
 			}
 
+			if( this.target == null )
+			{
+				// If the target was destroyed or could no longer be targeted - find a new target.
+				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
+				{
+
+					this.target = Targeter.FindTargetClosest( controller.transform.position, ssobj.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, ssobj );
+				}
+			}
+		
 			// Set the target of each targeter module to the goal's target.
 			for( int i = 0; i < this.attackModules.Length; i++ )
 			{

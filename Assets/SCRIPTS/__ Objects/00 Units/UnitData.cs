@@ -9,10 +9,6 @@ namespace SS.Levels.SaveStates
 {
 	public class UnitData : SSObjectData
 	{
-		public Modifier[] maxHealthModifiers { get; set; } = null;
-		public Modifier[] movementSpeedModifiers { get; set; } = null;
-		public Modifier[] rotationSpeedModifiers { get; set; } = null;
-
 		public Guid guid { get; set; }
 
 		public Vector3 position { get; set; }
@@ -41,33 +37,6 @@ namespace SS.Levels.SaveStates
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "MaxHealthModifiers" );
-			if( analysisData.isSuccess )
-			{
-				this.maxHealthModifiers = new Modifier[analysisData.childCount];
-				for( int i = 0; i < this.maxHealthModifiers.Length; i++ ) { this.maxHealthModifiers[i] = new Modifier(); }
-
-				serializer.DeserializeArray( "MaxHealthModifiers", this.maxHealthModifiers );
-			}
-			analysisData = serializer.Analyze( "MovementSpeedModifiers" );
-			if( analysisData.isSuccess )
-			{
-				this.movementSpeedModifiers = new Modifier[analysisData.childCount];
-				for( int i = 0; i < this.movementSpeedModifiers.Length; i++ ) { this.movementSpeedModifiers[i] = new Modifier(); }
-
-				serializer.DeserializeArray( "MovementSpeedModifiers", this.movementSpeedModifiers );
-			}
-			analysisData = serializer.Analyze( "RotationSpeedModifiers" );
-			if( analysisData.isSuccess )
-			{
-				this.rotationSpeedModifiers = new Modifier[analysisData.childCount];
-				for( int i = 0; i < this.rotationSpeedModifiers.Length; i++ ) { this.rotationSpeedModifiers[i] = new Modifier(); }
-
-				serializer.DeserializeArray( "RotationSpeedModifiers", this.rotationSpeedModifiers );
-			}
-
-
-
 			try
 			{
 				this.guid = serializer.ReadGuid( "Guid" );
@@ -120,21 +89,6 @@ namespace SS.Levels.SaveStates
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			if( this.maxHealthModifiers != null )
-			{
-				serializer.SerializeArray( "", "MaxHealthModifiers", this.maxHealthModifiers );
-			}
-			if( this.movementSpeedModifiers != null )
-			{
-				serializer.SerializeArray( "", "MovementSpeedModifiers", this.movementSpeedModifiers );
-			}
-			if( this.rotationSpeedModifiers != null )
-			{
-				serializer.SerializeArray( "", "RotationSpeedModifiers", this.rotationSpeedModifiers );
-			}
-
-
-
 			serializer.WriteGuid( "", "Guid", this.guid );
 
 			serializer.WriteVector3( "", "Position", this.position );

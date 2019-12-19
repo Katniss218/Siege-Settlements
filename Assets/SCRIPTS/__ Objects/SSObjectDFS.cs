@@ -1,5 +1,4 @@
-﻿using Katniss.ModifierAffectedValues;
-using SS.Diplomacy;
+﻿using SS.Diplomacy;
 using SS.Levels;
 using System;
 using UnityEngine;
@@ -124,10 +123,10 @@ namespace SS.Objects
 			}
 			set
 			{
-				if( value > this.healthMax.value )
+				if( value > this.healthMax )
 				{
 					Debug.LogWarning( "Tried setting the health to above max health." );
-					value = this.healthMax.value;
+					value = this.healthMax;
 				}
 				// Make sure that health can't go below 0.
 				if( value < 0 )
@@ -158,7 +157,7 @@ namespace SS.Objects
 			}
 		}
 
-		public FloatM healthMax { get; private set; }
+		public float healthMax { get; set; }
 		/*[SerializeField]
 		internal FloatM __healthMax;
 		/// <summary>
@@ -168,7 +167,7 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.__healthMax.value;
+				return this.__healthMax;
 			}
 			set
 			{
@@ -190,7 +189,7 @@ namespace SS.Objects
 		{
 			get
 			{
-				return this.health / this.healthMax.value;
+				return this.health / this.healthMax;
 			}
 			set
 			{
@@ -202,7 +201,7 @@ namespace SS.Objects
 				{
 					throw new ArgumentOutOfRangeException( "Can't set the health percentage to more than 1." );
 				}
-				this.health = value * this.healthMax.value;
+				this.health = value * this.healthMax;
 			}
 		}
 
@@ -213,16 +212,16 @@ namespace SS.Objects
 
 		protected virtual void Awake()
 		{
-			this.healthMax = new FloatM();
+			/*this.healthMax = new FloatM();
 			this.healthMax.onAnyChangeCallback = () =>
 			{
-				if( this.health > this.healthMax.value )
+				if( this.health > this.healthMax )
 				{
-					this.health = this.healthMax.value;
+					this.health = this.healthMax;
 				}
 
 				this.onHealthPercentChanged?.Invoke();
-			};
+			};*/
 
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.

@@ -84,6 +84,7 @@
     <Compile Include="Assets\SCRIPTS\Damage System\Armor.cs" />
     <Compile Include="Assets\SCRIPTS\Damage System\DamageSource.cs" />
     <Compile Include="Assets\SCRIPTS\Damage System\DamageType.cs" />
+    <Compile Include="Assets\SCRIPTS\DamageUtils.cs" />
     <Compile Include="Assets\SCRIPTS\DaylightCycleController.cs" />
     <Compile Include="Assets\SCRIPTS\DefaultSceneLoader.cs" />
     <Compile Include="Assets\SCRIPTS\DevConsole\Console.cs" />
