@@ -41,7 +41,18 @@ namespace SS.Objects.Units
 				throw new Exception( "Mismatched guid." );
 			}
 			unit.factionId = data.factionId;
-			unit.health = data.health;
+			if( data.health != null )
+			{
+				unit.health = data.health.Value;
+			}
+			if( data.movementSpeed != null )
+			{
+				unit.movementSpeedOverride = data.movementSpeed.Value;
+			}
+			if( data.rotationSpeed != null )
+			{
+				unit.rotationSpeedOverride = data.rotationSpeed.Value;
+			}
 
 			//
 			//    MODULES
@@ -92,8 +103,8 @@ namespace SS.Objects.Units
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
-			unit.movementSpeed.baseValue = def.movementSpeed;
-			unit.rotationSpeed.baseValue = def.rotationSpeed;
+			unit.movementSpeed = def.movementSpeed;
+			unit.rotationSpeed = def.rotationSpeed;
 			unit.size = def.size;
 
 			unit.viewRange = def.viewRange;
@@ -104,24 +115,34 @@ namespace SS.Objects.Units
 			unit.onFactionChange.AddListener( () =>
 			{
 #warning TODO! - The Selection Panel display is not re-displayed when faction changes (enemy & friendly objects display differently).
-				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				Color color = LevelDataManager.factions[unit.factionId].color;
 
 				unit.hud.SetColor( color );
+				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
+				}
+				MeshPredicatedSubObject[] meshes2 = unit.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 			} );
 
 			unit.onHealthPercentChanged.AddListener( () =>
 			{
-				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
-
 				unit.hud.SetHealthBarFill( unit.healthPercent );
+
+				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetFloat( "_Dest", 1 - unit.healthPercent );
+				}
+				MeshPredicatedSubObject[] meshes2 = unit.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetFloat( "_Dest", 1 - unit.healthPercent );
 				}
 			} );
 
@@ -179,7 +200,6 @@ namespace SS.Objects.Units
 			{
 				if( deltaHP < 0 )
 				{
-					Debug.Log( "AA" );
 					unit.hud.isVisible = true;
 					unit.hasBeenHiddenSinceLastDamage = true;
 				}
@@ -249,7 +269,18 @@ namespace SS.Objects.Units
 
 			data.factionId = unit.factionId;
 
-			data.health = unit.health;
+			if( unit.health != unit.healthMax )
+			{
+				data.health = unit.health;
+			}
+			if( unit.movementSpeedOverride != null )
+			{
+				data.movementSpeed = unit.movementSpeedOverride;
+			}
+			if( unit.rotationSpeedOverride != null )
+			{
+				data.rotationSpeed = unit.rotationSpeedOverride;
+			}
 			data.population = unit.population;
 
 			//

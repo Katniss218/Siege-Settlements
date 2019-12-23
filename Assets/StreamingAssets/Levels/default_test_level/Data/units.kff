@@ -112,16 +112,39 @@
 		SubObjects =
 		[
 			{
-				TypeId = "MESH";
+				TypeId = "MESH_PREDICATED";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/UnitRectangle.ksm";
+				Meshes =
+				[
+					{
+						Key = 1;
+						
+						Mesh = "extern:Models/Units/formation_1x.ksm";
+					},
+					{
+						Key = 2;
+						
+						Mesh = "extern:Models/Units/formation_2x.ksm";
+					},
+					{
+						Key = 4;
+						
+						Mesh = "extern:Models/Units/formation_4x.ksm";
+					},
+					{
+						Key = 8;
+						
+						Mesh = "extern:Models/Units/formation_8x.ksm";
+					}
+				];
+				
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/light_infantry_albedo.png";
+					ColorMap = "extern:Textures/Units/light_infantry_color.png";
 					NormalMap = "extern:Textures/Units/unit_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
@@ -180,17 +203,57 @@
 		BuildTime = 3.0;
 		SubObjects =
 		[
+			//{
+			//	TypeId = "MESH";
+			//	SubObjectId = "00000000-0000-0000-0001-000000000000";
+			//	LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+			//	LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+			//	
+			//	Mesh = "extern:Models/UnitRectangle.ksm";
+			//	Material =
+			//	{
+			//		MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+			//		ColorMap = "extern:Textures/Units/heavy_infantry_albedo.png";
+			//		NormalMap = "extern:Textures/Units/unit_normal.png";
+			//		EmissionMap = "builtin:Textures/pixel_black";
+			//		MetallicMap = "builtin:Textures/pixel_black";
+			//		SmoothnessMap = "builtin:Textures/pixel_black";
+			//	};
+			//}
 			{
-				TypeId = "MESH";
+				TypeId = "MESH_PREDICATED";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/UnitRectangle.ksm";
+				Meshes =
+				[
+					{
+						Key = 1;
+						
+						Mesh = "extern:Models/Units/formation_1x.ksm";
+					},
+					{
+						Key = 2;
+						
+						Mesh = "extern:Models/Units/formation_2x.ksm";
+					},
+					{
+						Key = 4;
+						
+						Mesh = "extern:Models/Units/formation_4x.ksm";
+					},
+					{
+						Key = 8;
+						
+						Mesh = "extern:Models/Units/formation_8x.ksm";
+					}
+				];
+				
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/heavy_infantry_albedo.png";
+					ColorMap = "extern:Textures/Units/heavy_infantry_color.png";
 					NormalMap = "extern:Textures/Units/unit_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
@@ -250,16 +313,39 @@
 		SubObjects =
 		[
 			{
-				TypeId = "MESH";
+				TypeId = "MESH_PREDICATED";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/UnitRectangle.ksm";
+				Meshes =
+				[
+					{
+						Key = 1;
+						
+						Mesh = "extern:Models/Units/formation_1x.ksm";
+					},
+					{
+						Key = 2;
+						
+						Mesh = "extern:Models/Units/formation_2x.ksm";
+					},
+					{
+						Key = 4;
+						
+						Mesh = "extern:Models/Units/formation_4x.ksm";
+					},
+					{
+						Key = 8;
+						
+						Mesh = "extern:Models/Units/formation_8x.ksm";
+					}
+				];
+				
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/light_cavalry_albedo.png";
+					ColorMap = "extern:Textures/Units/light_cavalry_color.png";
 					NormalMap = "extern:Textures/Units/unit_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
@@ -319,16 +405,39 @@
 		SubObjects =
 		[
 			{
-				TypeId = "MESH";
+				TypeId = "MESH_PREDICATED";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/UnitRectangle.ksm";
+				Meshes =
+				[
+					{
+						Key = 1;
+						
+						Mesh = "extern:Models/Units/formation_1x.ksm";
+					},
+					{
+						Key = 2;
+						
+						Mesh = "extern:Models/Units/formation_2x.ksm";
+					},
+					{
+						Key = 4;
+						
+						Mesh = "extern:Models/Units/formation_4x.ksm";
+					},
+					{
+						Key = 8;
+						
+						Mesh = "extern:Models/Units/formation_8x.ksm";
+					}
+				];
+				
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/heavy_cavalry_albedo.png";
+					ColorMap = "extern:Textures/Units/heavy_cavalry_color.png";
 					NormalMap = "extern:Textures/Units/unit_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";

@@ -188,18 +188,19 @@ namespace SS.Objects.Modules
 			data.position = spawnPos;
 			data.rotation = Quaternion.identity;
 			data.factionId = (this.ssObject as IFactionMember).factionId;
-			data.health = this.trainedUnit.healthMax;
-			//GameObject obj = UnitCreator.Create( this.trainedUnit, data );
+			data.population = PopulationSize.x4;
+
 			GameObject obj = UnitCreator.Create( this.trainedUnit, data.guid );
 			UnitCreator.SetData( obj, data );
 			
 			// Move the newly spawned unit to the rally position.
 			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
 
-			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
 			goal.isHostile = false;
 			goal.SetDestination( rallyPointWorld );
+
+			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
 			goalController.goal = goal;
 		}
 

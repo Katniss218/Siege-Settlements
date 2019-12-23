@@ -14,7 +14,7 @@ namespace SS.Content
 		/// <summary>
 		/// Loads a Texture2D from assets, using a KFF serializer.
 		/// </summary>
-		public static AddressableAsset<Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, string kffPath, TextureType type = TextureType.Color )
+		public static AddressableAsset<Texture2D> ReadTexture2DFromAssets( this KFFSerializer serializer, Path kffPath, TextureType type = TextureType.Color )
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new AddressableAsset<Texture2D>( assetPath, AssetManager.GetTexture2D( assetPath, type ) );
@@ -23,7 +23,7 @@ namespace SS.Content
 		/// <summary>
 		/// Loads a Sprite from assets, using a KFF serializer.
 		/// </summary>
-		public static AddressableAsset<Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<Sprite> ReadSpriteFromAssets( this KFFSerializer serializer, Path kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new AddressableAsset<Sprite>( assetPath, AssetManager.GetSprite( assetPath ) );
@@ -32,7 +32,7 @@ namespace SS.Content
 		/// <summary>
 		/// Loads a Mesh from assets, using a KFF serializer.
 		/// </summary>
-		public static AddressableAsset<Mesh> ReadMeshFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<Mesh> ReadMeshFromAssets( this KFFSerializer serializer, Path kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new AddressableAsset<Mesh>( assetPath, AssetManager.GetMesh( assetPath ) );
@@ -41,7 +41,7 @@ namespace SS.Content
 		/// <summary>
 		/// Loads an AudioClip from assets, using a KFF serializer.
 		/// </summary>
-		public static AddressableAsset<AudioClip> ReadAudioClipFromAssets( this KFFSerializer serializer, string kffPath )
+		public static AddressableAsset<AudioClip> ReadAudioClipFromAssets( this KFFSerializer serializer, Path kffPath )
 		{
 			string assetPath = serializer.ReadString( kffPath );
 			return new AddressableAsset<AudioClip>( assetPath, AssetManager.GetAudioClip( assetPath ) );

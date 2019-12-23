@@ -36,6 +36,11 @@ namespace SS.Objects
 		public UnityEvent onDeselect = new UnityEvent();
 
 
+		//
+		//
+		//
+
+
 		public float viewRange { get; set; }
 
 
@@ -90,6 +95,9 @@ namespace SS.Objects
 		}
 
 
+		//
+		//
+		//
 
 		
 		public UnityEvent onHealthPercentChanged { get; set; } = new UnityEvent();
@@ -156,11 +164,9 @@ namespace SS.Objects
 				}
 			}
 		}
-
-		public float healthMaxDefined { get; set; }
-		public float healthMax { get; set; }
-		/*[SerializeField]
-		internal FloatM __healthMax;
+		
+		[SerializeField]
+		private float __healthMax;
 		/// <summary>
 		/// Gets or sets the maximum health value of this damageable.
 		/// </summary>
@@ -172,16 +178,16 @@ namespace SS.Objects
 			}
 			set
 			{
-				this.__healthMax.baseValue = value;
+				this.__healthMax = value;
 
 				if( this.healthMax < this.health )
 				{
 					this.health = this.healthMax;
 				}
-
+				
 				this.onHealthPercentChanged?.Invoke();
 			}
-		}*/
+		}
 
 		/// <summary>
 		/// Gets or sets the percentage of health of this damageable.
@@ -213,17 +219,6 @@ namespace SS.Objects
 
 		protected virtual void Awake()
 		{
-			/*this.healthMax = new FloatM();
-			this.healthMax.onAnyChangeCallback = () =>
-			{
-				if( this.health > this.healthMax )
-				{
-					this.health = this.healthMax;
-				}
-
-				this.onHealthPercentChanged?.Invoke();
-			};*/
-
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}
@@ -243,7 +238,7 @@ namespace SS.Objects
 		{
 			if( amount <= 0 )
 			{
-				throw new ArgumentOutOfRangeException( "Can't take 0 or less damage" );
+				throw new ArgumentOutOfRangeException( "Damage inflicted must be greater than 0." );
 			}
 
 			float reducedDamage = this.armor.CalculateReducedDamage( type, amount, armorPenetration );

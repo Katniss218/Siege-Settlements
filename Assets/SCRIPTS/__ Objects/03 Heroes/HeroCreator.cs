@@ -39,7 +39,18 @@ namespace SS.Objects.Heroes
 				throw new Exception( "Mismatched guid." );
 			}
 			hero.factionId = data.factionId;
-			hero.health = data.health;
+			if( data.health != null )
+			{
+				hero.health = data.health.Value;
+			}
+			if( data.movementSpeed != null )
+			{
+				hero.movementSpeedOverride = data.movementSpeed.Value;
+			}
+			if( data.rotationSpeed != null )
+			{
+				hero.rotationSpeedOverride = data.rotationSpeed.Value;
+			}
 
 			//
 			//    MODULES
@@ -93,8 +104,8 @@ namespace SS.Objects.Heroes
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			hero.icon = def.icon;
-			hero.movementSpeed.baseValue = def.movementSpeed;
-			hero.rotationSpeed.baseValue = def.rotationSpeed;
+			hero.movementSpeed = def.movementSpeed;
+			hero.rotationSpeed = def.rotationSpeed;
 
 			hero.viewRange = def.viewRange;
 			hero.healthMax = def.healthMax;
@@ -103,24 +114,34 @@ namespace SS.Objects.Heroes
 
 			hero.onFactionChange.AddListener( () =>
 			{
-				MeshSubObject[] meshes = hero.GetSubObjects<MeshSubObject>();
 				Color color = LevelDataManager.factions[hero.factionId].color;
 
 				hero.hud.SetColor( color );
+				MeshSubObject[] meshes = hero.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
+				}
+				MeshPredicatedSubObject[] meshes2 = hero.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 			} );
 
 			hero.onHealthPercentChanged.AddListener( () =>
 			{
-				MeshSubObject[] meshes = hero.GetSubObjects<MeshSubObject>();
-
 				hero.hud.SetHealthBarFill( hero.healthPercent );
+
+				MeshSubObject[] meshes = hero.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetFloat( "_Dest", 1 - hero.healthPercent );
+				}
+				MeshPredicatedSubObject[] meshes2 = hero.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetFloat( "_Dest", 1 - hero.healthPercent );
 				}
 			} );
 
@@ -246,7 +267,18 @@ namespace SS.Objects.Heroes
 
 			data.factionId = hero.factionId;
 
-			data.health = hero.health;
+			if( hero.health != hero.healthMax )
+			{
+				data.health = hero.health;
+			}
+			if( hero.movementSpeedOverride != null )
+			{
+				data.movementSpeed = hero.movementSpeedOverride;
+			}
+			if( hero.rotationSpeedOverride != null )
+			{
+				data.rotationSpeed = hero.rotationSpeedOverride;
+			}
 
 			//
 			// MODULES

@@ -1,5 +1,5 @@
-﻿using Katniss.ModifierAffectedValues;
-using SS.Objects.Modules;
+﻿using SS.Objects.Modules;
+using SS.Objects.SubObjects;
 using SS.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -49,11 +49,15 @@ namespace SS.Objects.Units
 				PopulationSize populationBefore = this.__population;
 
 				float populationRatio = (float)value / (float)populationBefore;
-				
+
 				// override.
-				this.healthMax = this.healthMax * populationRatio;
-				this.health = this.health * populationRatio;
-				
+				// Calculate health first, assign later. Prevents weird behaviour due to clamping, which prevents invalid values from being assigned.
+				float newHealthMax = this.healthMax * populationRatio;
+				float newHealth = this.health * populationRatio;
+
+				this.healthMax = newHealthMax;
+				this.health = newHealth;
+
 #warning TODO! - unit definitions specify how long it's per each population. It's some sort of scaling factor. It shows how big a single unit is.
 #warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x (to prevent overly HUGE units).
 				// We can make sure that e.g. Elephants 1x can't go on top of tower by just blocking elephants from going inside of tower.
@@ -83,10 +87,10 @@ namespace SS.Objects.Units
 				}
 				this.size = new Vector3( x/2, this.size.y, z/2 );
 
-#warning proper mesh & material switching.
 				// meshes can be selected based on population (if present).
 				// materials the same.
-				this.transform.GetChild( 0 ).localScale = new Vector3( x, 1, z ); // INSTEAD OF THIS - switch the meshes & materials depending on population.
+#warning proper mesh & material switching.
+				//this.transform.GetChild( 0 ).localScale = new Vector3( x, 1, z ); // INSTEAD OF THIS - switch the meshes & materials depending on population.
 
 
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
@@ -109,7 +113,7 @@ namespace SS.Objects.Units
 				}
 
 #warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
-				// Maybe make the population formation-independent. Slots will specify formation. This allows to make arbitrarily-sized formmations.
+				// Maybe make the population formation-independent. Slots will specify formation. This allows to make arbitrarily-sized formations.
 				// Iteratively create the next biggest-most unit possible from the leftover pop.
 
 				// ===SET size
@@ -120,8 +124,14 @@ namespace SS.Objects.Units
 				// ===SETM melee damage
 				// ===SETM ranged projectileCount
 #warning inside slots can only be put on a "non-formation" unit.
-				// SETS mesh
-				// SETS material
+				// ===SETS mesh
+				// ===SETS material
+
+				MeshPredicatedSubObject[] meshPopulationSubObjects = this.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshPopulationSubObjects.Length; i++ )
+				{
+					meshPopulationSubObjects[i].lookupKey = (int)value;
+				}
 
 				this.__population = value;
 			}
@@ -138,9 +148,73 @@ namespace SS.Objects.Units
 		//
 		//
 		//
-		
-		public FloatM movementSpeed { get; private set; }
-		public FloatM rotationSpeed { get; private set; }
+
+		float __movementSpeed;
+		public float movementSpeed
+		{
+			get
+			{
+				return this.__movementSpeed;
+			}
+			set
+			{
+				this.__movementSpeed = value;
+				if( this.movementSpeedOverride == null ) // if an override is not present - set the speed.
+				{
+					this.navMeshAgent.speed = value;
+				}
+			}
+		}
+
+		float? __movementSpeedOverride;
+		public float? movementSpeedOverride
+		{
+			get
+			{
+				return this.__movementSpeedOverride;
+			}
+			set
+			{
+				this.__movementSpeedOverride = value;
+				if( value != null ) // if the new override is not null - set the speed.
+				{
+					this.navMeshAgent.speed = value.Value;
+				}
+			}
+		}
+
+		float __rotationSpeed;
+		public float rotationSpeed
+		{
+			get
+			{
+				return this.__rotationSpeed;
+			}
+			set
+			{
+				this.__rotationSpeed = value;
+				if( this.rotationSpeedOverride == null ) // if an override is not present - set the speed.
+				{
+					this.navMeshAgent.angularSpeed = value;
+				}
+			}
+		}
+		float? __rotationSpeedOverride;
+		public float? rotationSpeedOverride
+		{
+			get
+			{
+				return this.__rotationSpeedOverride;
+			}
+			set
+			{
+				this.__rotationSpeedOverride = value;
+				if( value != null ) // if the new override is not null - set the speed.
+				{
+					this.navMeshAgent.angularSpeed = value.Value;
+				}
+			}
+		}
 
 		private Vector3 __size;
 		public Vector3 size
@@ -162,28 +236,6 @@ namespace SS.Objects.Units
 		//
 		//
 		//
-
-		private void InitModifierAffectedValues()
-		{
-			this.movementSpeed = new FloatM();
-			this.movementSpeed.onAnyChangeCallback = () =>
-			{
-				this.navMeshAgent.speed = this.movementSpeed.value;
-			};
-
-			this.rotationSpeed = new FloatM();
-			this.rotationSpeed.onAnyChangeCallback = () =>
-			{
-				this.navMeshAgent.angularSpeed = this.rotationSpeed.value;
-			};
-		}
-		
-		protected override void Awake()
-		{
-			base.Awake();
-
-			this.InitModifierAffectedValues();
-		}
 
 		void Update()
 		{

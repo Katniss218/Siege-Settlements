@@ -31,7 +31,9 @@ namespace SS.Levels.SaveStates
 			}
 		}
 
-		public float health { get; set; }
+		public float? health { get; set; }
+		public float? movementSpeed { get; set; }
+		public float? rotationSpeed { get; set; }
 
 		public TacticalGoalData tacticalGoalData { get; set; }
 
@@ -74,13 +76,39 @@ namespace SS.Levels.SaveStates
 				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
 			}
 
-			try
+			if( serializer.Analyze( "Health" ).isSuccess )
 			{
-				this.health = serializer.ReadFloat( "Health" );
+				try
+				{
+					this.health = serializer.ReadFloat( "Health" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
+				}
 			}
-			catch
+
+			if( serializer.Analyze( "MovementSpeed" ).isSuccess )
 			{
-				throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
+				try
+				{
+					this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'MovementSpeed' (" + serializer.file.fileName + ")." );
+				}
+			}
+			if( serializer.Analyze( "RotationSpeed" ).isSuccess )
+			{
+				try
+				{
+					this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'RotationSpeed' (" + serializer.file.fileName + ")." );
+				}
 			}
 
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
@@ -96,8 +124,21 @@ namespace SS.Levels.SaveStates
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
-			serializer.WriteFloat( "", "Health", this.health );
-			
+
+			if( this.health != null )
+			{
+				serializer.WriteFloat( "", "Health", this.health.Value );
+			}
+
+			if( this.movementSpeed != null )
+			{
+				serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed.Value );
+			}
+			if( this.rotationSpeed != null )
+			{
+				serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed.Value );
+			}
+
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );
 
 			this.SerializeModulesKFF( serializer );

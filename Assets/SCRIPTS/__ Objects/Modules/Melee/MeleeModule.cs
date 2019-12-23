@@ -21,9 +21,9 @@ namespace SS.Objects.Modules
 
 		public float attackCooldown;
 		public AudioClip attackSoundEffect;
-		
+
 		private float lastAttackTimestamp;
-		
+
 		public bool isReadyToAttack
 		{
 			get
@@ -41,7 +41,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		void Awake()
 		{
 			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.ssObject as SSObjectDFS );
@@ -91,7 +91,7 @@ namespace SS.Objects.Modules
 				this.isReady2 = true;
 			}
 		}
-		
+
 		/// <summary>
 		/// Forces MeleeComponent to shoot at the target (assumes target != null).
 		/// </summary>
@@ -114,7 +114,7 @@ namespace SS.Objects.Modules
 		public override ModuleData GetData()
 		{
 			MeleeModuleData data = new MeleeModuleData();
-			
+
 			if( this.targeter.target != null )
 			{
 				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
@@ -132,15 +132,15 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-			
+
 			MeleeModuleData data = (MeleeModuleData)_data;
-			
+
 			if( data.targetGuid != null )
 			{
 				this.targeter.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
 			}
 		}
-		
+
 #if UNITY_EDITOR
 
 		private void OnDrawGizmos()

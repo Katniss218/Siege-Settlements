@@ -77,35 +77,77 @@ namespace SS.Objects.Heroes
 		//
 		//
 
-		public FloatM movementSpeed { get; private set; }
-		public FloatM rotationSpeed { get; private set; }
-
-		//
-		//
-		//
-
-		private void InitModifierAffectedValues()
+		float __movementSpeed;
+		public float movementSpeed
 		{
-			this.movementSpeed = new FloatM();
-			this.movementSpeed.onAnyChangeCallback = () =>
+			get
 			{
-				this.navMeshAgent.speed = this.movementSpeed.value;
-			};
-
-			this.rotationSpeed = new FloatM();
-			this.rotationSpeed.onAnyChangeCallback = () =>
+				return this.__movementSpeed;
+			}
+			set
 			{
-				this.navMeshAgent.angularSpeed = this.rotationSpeed.value;
-			};
+				this.__movementSpeed = value;
+				if( this.movementSpeedOverride == null ) // if an override is not present - set the speed.
+				{
+					this.navMeshAgent.speed = value;
+				}
+			}
 		}
 
-		protected override void Awake()
+		float? __movementSpeedOverride;
+		public float? movementSpeedOverride
 		{
-			base.Awake();
-
-			this.InitModifierAffectedValues();
+			get
+			{
+				return this.__movementSpeedOverride;
+			}
+			set
+			{
+				this.__movementSpeedOverride = value;
+				if( value != null ) // if the new override is not null - set the speed.
+				{
+					this.navMeshAgent.speed = value.Value;
+				}
+			}
 		}
 
+		float __rotationSpeed;
+		public float rotationSpeed
+		{
+			get
+			{
+				return this.__rotationSpeed;
+			}
+			set
+			{
+				this.__rotationSpeed = value;
+				if( this.rotationSpeedOverride == null ) // if an override is not present - set the speed.
+				{
+					this.navMeshAgent.angularSpeed = value;
+				}
+			}
+		}
+		float? __rotationSpeedOverride;
+		public float? rotationSpeedOverride
+		{
+			get
+			{
+				return this.__rotationSpeedOverride;
+			}
+			set
+			{
+				this.__rotationSpeedOverride = value;
+				if( value != null ) // if the new override is not null - set the speed.
+				{
+					this.navMeshAgent.angularSpeed = value.Value;
+				}
+			}
+		}
+
+		//
+		//
+		//
+		
 		void Update()
 		{
 			if( this.hud.isVisible )

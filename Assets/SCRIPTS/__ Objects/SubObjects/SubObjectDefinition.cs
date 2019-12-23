@@ -40,6 +40,10 @@ namespace SS.Objects.SubObjects
 			{
 				return new MeshSubObjectDefinition();
 			}
+			if( subObjectId == MeshPredicatedSubObjectDefinition.KFF_TYPEID )
+			{
+				return new MeshPredicatedSubObjectDefinition();
+			}
 			if( subObjectId == ParticlesSubObjectDefinition.KFF_TYPEID )
 			{
 				return new ParticlesSubObjectDefinition();
@@ -56,6 +60,10 @@ namespace SS.Objects.SubObjects
 			if( def is MeshSubObjectDefinition )
 			{
 				return MeshSubObjectDefinition.KFF_TYPEID;
+			}
+			if( def is MeshPredicatedSubObjectDefinition )
+			{
+				return MeshPredicatedSubObjectDefinition.KFF_TYPEID;
 			}
 			if( def is ParticlesSubObjectDefinition )
 			{

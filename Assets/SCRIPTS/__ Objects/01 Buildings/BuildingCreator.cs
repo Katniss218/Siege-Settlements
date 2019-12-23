@@ -55,12 +55,18 @@ namespace SS.Objects.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 
 				building.hud.SetHealthBarFill( building.healthPercent );
+
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetFloat( "_YOffset", 0.0f );
+				}
+				MeshPredicatedSubObject[] meshes2 = building.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetFloat( "_YOffset", 0.0f );
 				}
 			}
 			// If the building was under construction/repair, make it under c/r.
@@ -111,24 +117,36 @@ namespace SS.Objects.Buildings
 
 			building.onFactionChange.AddListener( () =>
 			{
-				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				Color color = LevelDataManager.factions[building.factionId].color;
 
 				building.hud.SetColor( color );
+
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
+				}
+				MeshPredicatedSubObject[] meshes2 = building.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 			} );
 
 			building.onHealthPercentChanged.AddListener( () =>
 			{
-				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 
 				building.hud.SetHealthBarFill( building.healthPercent );
+
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetFloat( "_Dest", 1 - building.healthPercent );
+				}
+				MeshPredicatedSubObject[] meshes2 = building.GetSubObjects<MeshPredicatedSubObject>();
+				for( int i = 0; i < meshes2.Length; i++ )
+				{
+					meshes2[i].GetMaterial().SetFloat( "_Dest", 1 - building.healthPercent );
 				}
 			} );
 
