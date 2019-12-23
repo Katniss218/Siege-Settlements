@@ -189,8 +189,10 @@ namespace SS.Objects.Modules
 			data.rotation = Quaternion.identity;
 			data.factionId = (this.ssObject as IFactionMember).factionId;
 			data.health = this.trainedUnit.healthMax;
-			GameObject obj = UnitCreator.Create( this.trainedUnit, data );
-
+			//GameObject obj = UnitCreator.Create( this.trainedUnit, data );
+			GameObject obj = UnitCreator.Create( this.trainedUnit, data.guid );
+			UnitCreator.SetData( obj, data );
+			
 			// Move the newly spawned unit to the rally position.
 			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
 
@@ -253,17 +255,8 @@ namespace SS.Objects.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is BarracksModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is BarracksModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -273,17 +266,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Provided data is null." );
 			}
 			
-			BarracksModuleDefinition def = (BarracksModuleDefinition)_def;
 			BarracksModuleData data = (BarracksModuleData)_data;
-
-			this.icon = def.icon;
-			this.trainSpeed = def.trainSpeed;
-			this.trainableUnits = new UnitDefinition[def.trainableUnits.Length];
-			for( int i = 0; i < this.trainableUnits.Length; i++ )
-			{
-				this.trainableUnits[i] = DefinitionManager.GetUnit( def.trainableUnits[i] );
-			}
-			
+						
 			// ------          DATA
 
 			this.resourcesRemaining = data.resourcesRemaining;

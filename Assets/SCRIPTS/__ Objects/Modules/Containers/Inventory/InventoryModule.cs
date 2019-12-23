@@ -1,6 +1,5 @@
 ﻿using SS.AI.Goals;
 using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
@@ -23,7 +22,9 @@ namespace SS.Objects.Modules
 			public readonly string slotId;
 			public string id;
 			public int amount;
-			public readonly int capacity;
+			public int capacity; // this is original value in definition.
+#warning TODO! - saved in data.
+			public int capacityOverride; // this is custom value.
 
 			public bool isConstrained { get { return this.slotId != ""; } }
 			public bool isEmpty { get { return this.amount == 0 || this.id == ""; } }
@@ -33,11 +34,40 @@ namespace SS.Objects.Modules
 				this.slotId = slotId ?? "";
 				this.id = "";
 				this.capacity = slotCapacity;
+				this.capacityOverride = slotCapacity;
 				this.amount = 0;
 			}
 		}
 
-		private SlotGroup[] slotGroups;
+		internal SlotGroup[] slotGroups;
+
+		public int GetCapacity( int index )
+		{
+			return this.slotGroups[index].capacity;
+		}
+		public int GetCapacityOverride( int index )
+		{
+			return this.slotGroups[index].capacityOverride;
+		}
+
+		public void SetCapacity( int index, int capacity )
+		{
+			this.slotGroups[index].capacity = capacity;
+			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			{
+				this.ShowTooltip();
+			}
+		}
+		public void SetCapacityOverride( int index, int capacityOverride )
+		{
+			this.slotGroups[index].capacityOverride = capacityOverride;
+			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			{
+				this.ShowTooltip();
+			}
+		}
+
+#warning TODO! - Hud is not hidden when faction changes to an enemy. But is hidden when the unit is mouseovered as an enemy.
 
 		/// <summary>
 		/// Returns a copy of every slot in the inventory.
@@ -73,8 +103,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
+		
 		private void ShowTooltip()
 		{
 			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
@@ -92,17 +121,17 @@ namespace SS.Objects.Modules
 					if( this.slotGroups[i].isConstrained )
 					{
 						ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].slotId );
-						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
+						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
 					}
 					else
 					{
-						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
+						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
 					}
 				}
 				else
 				{
 					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].id );
-					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
+					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
 				}
 			}
 			ToolTip.ShowAt( Input.mousePosition );
@@ -163,7 +192,7 @@ namespace SS.Objects.Modules
 				}
 			} );
 		}
-		
+				
 		private void RegisterHUD()
 		{
 			// integrate hud.
@@ -278,13 +307,25 @@ namespace SS.Objects.Modules
 					}
 				} );
 			}
-			if( this.ssObject is IDamageable )
+			if( this.ssObject is SSObjectDFS )
 			{
-				IDamageable d = ((IDamageable)this.ssObject);
+				SSObjectDFS dfs = (SSObjectDFS)this.ssObject;
 
-				d.onDeath.AddListener( () =>
+				dfs.onDeath.AddListener( () =>
 				{
 					TacticalDropOffGoal.ExtractFrom( this.transform.position, this.transform.rotation, this.GetAll() );
+
+					if( dfs.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						for( int i = 0; i < this.slotCount; i++ )
+						{
+							if( this.slotGroups[i].isEmpty )
+							{
+								continue;
+							}
+							ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
+						}
+					}
 				} );
 			}
 		}
@@ -375,7 +416,7 @@ namespace SS.Objects.Modules
 				{
 					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].capacity;
+						total += this.slotGroups[i].capacityOverride;
 					}
 				}
 				else
@@ -383,7 +424,7 @@ namespace SS.Objects.Modules
 					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
 					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].capacity - this.slotGroups[i].amount;
+						total += this.slotGroups[i].capacityOverride - this.slotGroups[i].amount;
 					}
 				}
 			}
@@ -429,7 +470,7 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < indices.Count; i++ )
 			{
 				int index = indices[i];
-				int spaceInSlot = this.slotGroups[index].capacity - this.slotGroups[index].amount;
+				int spaceInSlot = this.slotGroups[index].capacityOverride - this.slotGroups[index].amount;
 				int amountAdded = spaceInSlot > amountRemaining ? amountRemaining : spaceInSlot;
 
 				this.slotGroups[index].amount += amountAdded;
@@ -533,17 +574,8 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is InventoryModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is InventoryModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -552,24 +584,17 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			InventoryModuleDefinition def = (InventoryModuleDefinition)_def;
+			
 			InventoryModuleData data = (InventoryModuleData)_data;
 
-			this.icon = def.icon;
-			this.slotGroups = new SlotGroup[def.slots.Length];
-			for( int i = 0; i < this.slotCount; i++ )
-			{
-				this.slotGroups[i] = new SlotGroup( def.slots[i].slotId, def.slots[i].capacity );
-			}
-
+			
 			// ------          DATA
 
 			if( data.items != null )
 			{
-				if( data.items.Length != def.slots.Length )
+				if( data.items.Length != this.slotCount )
 				{
-					throw new Exception( "Inventory slot count is not the same as data's slot count. Can't match the slots." );
+					throw new Exception( "Inventory slot count is not the same as data's slot count. Can't match the slots '1 to 1'." );
 				}
 				for( int i = 0; i < data.items.Length; i++ )
 				{
@@ -584,7 +609,6 @@ namespace SS.Objects.Modules
 						IFactionMember factionMember = (IFactionMember)this.ssObject;
 						if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
 						{
-#warning TODO! - ugly.
 #warning TODO! - update when faction changes.
 							if( !this.slotGroups[i].isEmpty )
 							{
@@ -592,8 +616,6 @@ namespace SS.Objects.Modules
 							}
 						}
 					}
-
-
 				}
 			}
 		}
@@ -624,7 +646,7 @@ namespace SS.Objects.Modules
 				ResourceDefinition resDef = DefinitionManager.GetResource( this.slotGroups[i].id );
 				gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), resDef.icon );
 
-				UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacity );
+				UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
 			}
 
 			GameObject list = UIUtils.InstantiateScrollableList( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 30.0f, 5.0f ), new Vector2( -60.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), gridElements );

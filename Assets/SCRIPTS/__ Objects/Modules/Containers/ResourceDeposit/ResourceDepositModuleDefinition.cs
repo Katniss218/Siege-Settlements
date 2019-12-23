@@ -48,11 +48,28 @@ namespace SS.Objects.Modules
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+
+#warning some sort of method for setting the slots(?)
+			module.resources = new ResourceDepositModule.SlotGroup[this.slots.Length];
+			for( int i = 0; i < module.slotCount; i++ )
+			{
+				for( int j = 0; j < this.slots.Length; j++ )
+				{
+					if( module.resources[j].id == this.slots[i].resourceId )
+					{
+						throw new Exception( "Can't have multiple slots with the same resource id." ); // because that doesn't make sense, just use bigger slot.
+					}
+				}
+
+				module.resources[i] = new ResourceDepositModule.SlotGroup( this.slots[i].resourceId, 0, this.slots[i].capacity );
+			}
+
+			module.miningSound = this.mineSound;
 		}
 
 

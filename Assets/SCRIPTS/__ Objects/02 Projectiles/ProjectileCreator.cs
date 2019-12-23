@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using SS.Levels.SaveStates;
+﻿using SS.Levels.SaveStates;
 using SS.Objects.Modules;
 using System;
 using UnityEngine;
@@ -12,21 +11,13 @@ namespace SS.Objects.Projectiles
 		const float DEFAULT_HITBOX_RADIUS = 0.0625f;
 
 		private const string GAMEOBJECT_NAME = "Projectile";
-		
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetDefData( GameObject gameObject, ProjectileDefinition def, ProjectileData data )
+		public static void SetData( GameObject gameObject, ProjectileData data )
 		{
-			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
-
-			//
-			//    SUB-OBJECTS
-			//
-
-			SSObjectCreator.AssignSubObjects( gameObject, def );
-			
 			//
 			//    CONTAINER GAMEOBJECT
 			//
@@ -34,18 +25,12 @@ namespace SS.Objects.Projectiles
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, Quaternion.identity );
 
-			// Set the projectile's size.
-			SphereCollider col = gameObject.GetComponent<SphereCollider>();
-			col.radius = DEFAULT_HITBOX_RADIUS;
-			
 			// Set the projectile's native parameters.
 			Projectile projectile = gameObject.GetComponent<Projectile>();
-			projectile.definitionId = def.id;
-			projectile.displayName = def.displayName;
-			projectile.hitSound = def.hitSoundEffect;
-			projectile.missSound = def.missSoundEffect;
-			projectile.blastRadius = def.blastRadius;
-			projectile.canGetStuck = def.canGetStuck;
+			if( projectile.guid != data.guid )
+			{
+				throw new Exception( "Mismatched guid." );
+			}
 			if( data.owner == null )
 			{
 				projectile.owner = null;
@@ -55,13 +40,12 @@ namespace SS.Objects.Projectiles
 			{
 				projectile.owner = SSObject.Find( data.owner.Item1 ).GetModule<RangedModule>( data.owner.Item2 );
 			}
-			
+
 
 			// Set the projectile's lifetime and reset the lifetime timer.
-			TimerHandler t = gameObject.GetComponent<TimerHandler>();
-			t.duration = def.lifetime;
-			t.StartTimer();
-			
+			TimerHandler timerHandler = gameObject.GetComponent<TimerHandler>();
+			timerHandler.StartTimer();
+
 			if( data.isStuck )
 			{
 				projectile.MakeStuck();
@@ -77,45 +61,68 @@ namespace SS.Objects.Projectiles
 			projectile.damageType = data.damageTypeOverride;
 			projectile.damage = data.damageOverride;
 			projectile.armorPenetration = data.armorPenetrationOverride;
+
 			//
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def, data );
+			SSObjectCreator.AssignModuleData( projectile, data );
 		}
-		
-		private static GameObject CreateProjectile( Guid guid )
+
+		private static GameObject CreateProjectile( ProjectileDefinition def, Guid guid )
 		{
-			GameObject container = new GameObject( GAMEOBJECT_NAME );
-			container.layer = ObjectLayer.PROJECTILES;
+			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
+			gameObject.layer = ObjectLayer.PROJECTILES;
 
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
-			Projectile projectile = container.AddComponent<Projectile>();
+			Rigidbody rigidbody = gameObject.AddComponent<Rigidbody>();
+
+			Projectile projectile = gameObject.AddComponent<Projectile>();
 			projectile.guid = guid;
+			projectile.definitionId = def.id;
+			projectile.displayName = def.displayName;
+			projectile.hitSound = def.hitSoundEffect;
+			projectile.missSound = def.missSoundEffect;
+			projectile.blastRadius = def.blastRadius;
+			projectile.canGetStuck = def.canGetStuck;
 
-			container.AddComponent<Rigidbody>();
 
-			SphereCollider collider = container.AddComponent<SphereCollider>();
+			SphereCollider collider = gameObject.AddComponent<SphereCollider>();
+			collider.radius = DEFAULT_HITBOX_RADIUS;
 			collider.isTrigger = true;
 
 			// Make the projectile destroy itself after certain time.
-			TimerHandler timerHandler = container.AddComponent<TimerHandler>();
-			timerHandler.onTimerEnd.AddListener( () => Object.Destroy( container ) );
-						
-			// Make the projectile rotate to face the direction of flight.
-			container.AddComponent<RotateAlongVelocity>();
+			TimerHandler timerHandler = gameObject.AddComponent<TimerHandler>();
+			timerHandler.duration = def.lifetime;
+			timerHandler.onTimerEnd.AddListener( () => Object.Destroy( gameObject ) );
 
-			return container;
+			// Make the projectile rotate to face the direction of flight.
+			RotateAlongVelocity rotateAlongVelocity = gameObject.AddComponent<RotateAlongVelocity>();
+			rotateAlongVelocity.direction = RotateAlongVelocity.Direction.Forward;
+
+			//
+			//    SUB-OBJECTS
+			//
+
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+
+			//
+			//    MODULES
+			//
+
+			SSObjectCreator.AssignModules( gameObject, def );
+
+			return gameObject;
 		}
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+
 		/// <summary>
 		/// Creates a new ProjectileData from a GameObject.
 		/// </summary>
@@ -143,9 +150,9 @@ namespace SS.Objects.Projectiles
 				data.isStuck = false;
 				data.velocity = rigidbody.velocity;
 			}
-			
+
 			data.ownerFactionIdCache = projectile.factionId;
-			
+
 			data.damageTypeOverride = projectile.damageType;
 			data.damageOverride = projectile.damage;
 			data.armorPenetrationOverride = projectile.armorPenetration;
@@ -154,10 +161,11 @@ namespace SS.Objects.Projectiles
 			{
 				data.owner = null;
 			}
-			else {
+			else
+			{
 				data.owner = new Tuple<Guid, Guid>(
-				projectile.owner.ssObject.guid,
-				projectile.owner.moduleId
+					projectile.owner.ssObject.guid,
+					projectile.owner.moduleId
 				);
 			}
 
@@ -170,26 +178,15 @@ namespace SS.Objects.Projectiles
 
 			return data;
 		}
-		
+
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
-		public static GameObject CreateEmpty( Guid guid )
+
+		public static GameObject Create( ProjectileDefinition def, Guid guid )
 		{
-			GameObject gameObject = CreateProjectile( guid );
-			
-			return gameObject;
-		}
-
-		public static GameObject Create( ProjectileDefinition def, ProjectileData data )
-		{
-			GameObject gameObject = CreateProjectile( data.guid );
-
-			SetDefData( gameObject, def, data );
-			
-			return gameObject;
+			return CreateProjectile( def, guid );
 		}
 	}
 }

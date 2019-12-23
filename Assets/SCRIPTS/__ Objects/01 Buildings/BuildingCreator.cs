@@ -1,8 +1,8 @@
 ﻿using SS.AI;
 using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.SubObjects;
 using SS.UI;
 using System;
 using UnityEngine;
@@ -21,74 +21,27 @@ namespace SS.Objects.Buildings
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetDefData( GameObject gameObject, BuildingDefinition def, BuildingData data )
+		public static void SetData( GameObject gameObject, BuildingData data )
 		{
-			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
-
-			//
-			//    SUB-OBJECTS
-			//
-
-			SSObjectCreator.AssignSubObjects( gameObject, def );
-			
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
 
-			// Set the building's size.
-			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
-			collider.size = def.size;
-			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-
-			NavMeshObstacle navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
-			navMeshObstacle.size = def.size;
-			navMeshObstacle.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
-						
 			// Set the building's native parameters.
 			Building building = gameObject.GetComponent<Building>();
-			building.definitionId = def.id;
-			building.placementNodes = def.placementNodes;
-			building.StartToEndConstructionCost = def.cost;
-			building.buildSoundEffect = def.buildSoundEffect;
-			building.displayName = def.displayName;
-			building.deathSound = def.deathSoundEffect;
-			building.icon = def.icon;
-			
-
-			MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-
-			building.onFactionChange.AddListener( () =>
+			if( building.guid != data.guid )
 			{
-				Color color = LevelDataManager.factions[building.factionId].color;
-
-				for( int i = 0; i < renderers.Length; i++ )
-				{
-					renderers[i].material.SetColor( "_FactionColor", color );
-				}
-			} );
-
-			// Make the unit update it's healthbar and material when health changes.
-			building.onHealthChange.AddListener( ( float deltaHP ) =>
-			{
-				for( int i = 0; i < renderers.Length; i++ )
-				{
-					renderers[i].material.SetFloat( "_Dest", 1 - building.healthPercent );
-				}
-			} );
-
-			building.factionId = data.factionId;
-			building.viewRange = def.viewRange;
-
-			building.healthMax = def.healthMax;
+				throw new Exception( "Mismatched guid." );
+			}
 			building.health = data.health;
-			building.armor = def.armor;
-			
+			building.factionId = data.factionId;
+
 			//
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def, data );
+			SSObjectCreator.AssignModuleData( building, data );
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
@@ -102,9 +55,12 @@ namespace SS.Objects.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-				for( int i = 0; i < renderers.Length; i++ )
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
+
+				building.hud.SetHealthBarFill( building.healthPercent );
+				for( int i = 0; i < meshes.Length; i++ )
 				{
-					renderers[i].material.SetFloat( "_YOffset", 0.0f );
+					meshes[i].GetMaterial().SetFloat( "_YOffset", 0.0f );
 				}
 			}
 			// If the building was under construction/repair, make it under c/r.
@@ -114,31 +70,70 @@ namespace SS.Objects.Buildings
 				ConstructionSite.BeginConstructionOrRepair( building, data.constructionSaveState );
 			}
 		}
-		
-		private static GameObject CreateBuilding( Guid guid )
+
+		private static GameObject CreateBuilding( BuildingDefinition def, Guid guid )
 		{
-			GameObject container = new GameObject( GAMEOBJECT_NAME );
-			container.layer = ObjectLayer.BUILDINGS;
-			container.isStatic = true;
-			
+			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
+			gameObject.layer = ObjectLayer.BUILDINGS;
+			gameObject.isStatic = true;
+
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-			
-			BoxCollider collider = container.AddComponent<BoxCollider>();
 
-			Building building = container.AddComponent<Building>();
-			building.guid = guid;
-			
-			NavMeshObstacle navMeshObstacle = container.AddComponent<NavMeshObstacle>();
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+
+			HUD hud = hudGameObject.GetComponent<HUD>();
+			hud.isVisible = Main.isHudForcedVisible;
+
+
+			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+
+			NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.carving = true;
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			
-			HUD hud = hudGameObject.GetComponent<HUD>();
-
-			hud.isVisible = Main.isHudForcedVisible;
+			Building building = gameObject.AddComponent<Building>();
 			building.hud = hud;
+			building.guid = guid;
+			building.definitionId = def.id;
+			building.displayName = def.displayName;
+			building.icon = def.icon;
+			building.placementNodes = def.placementNodes;
+			building.StartToEndConstructionCost = def.cost;
+			building.buildSoundEffect = def.buildSoundEffect;
+			building.deathSound = def.deathSoundEffect;
+			building.size = def.size;
+
+			building.viewRange = def.viewRange;
+			building.healthMax = def.healthMax;
+			building.health = def.healthMax;
+			building.armor = def.armor;
+
+			building.onFactionChange.AddListener( () =>
+			{
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
+				Color color = LevelDataManager.factions[building.factionId].color;
+
+				building.hud.SetColor( color );
+				for( int i = 0; i < meshes.Length; i++ )
+				{
+					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
+				}
+			} );
+
+			building.onHealthPercentChanged.AddListener( () =>
+			{
+				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
+
+				building.hud.SetHealthBarFill( building.healthPercent );
+				for( int i = 0; i < meshes.Length; i++ )
+				{
+					meshes[i].GetMaterial().SetFloat( "_Dest", 1 - building.healthPercent );
+				}
+			} );
+
+
+
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
@@ -148,7 +143,7 @@ namespace SS.Objects.Buildings
 				}
 				if( isLocked )
 				{
-					hud.isVisible = true;
+					building.hud.isVisible = true;
 				}
 				else
 				{
@@ -160,68 +155,42 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					hud.isVisible = false;
+					building.hud.isVisible = false;
 				}
 			};
 
 			Main.onHudLockChange.AddListener( onHudLockChangeListener );
-			
+
 			building.onSelect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == container )
+				if( MouseOverHandler.currentObjectMouseOver == gameObject )
 				{
 					return;
 				}
-				hud.isVisible = true;
+				building.hud.isVisible = true;
 			} );
 
 			building.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == container )
+				if( MouseOverHandler.currentObjectMouseOver == gameObject )
 				{
 					return;
 				}
-				hud.isVisible = false;
+				building.hud.isVisible = false;
 			} );
-			
-			// Make the building belong to a faction.
-			building.onFactionChange.AddListener( () =>
-			{
-				Color color = LevelDataManager.factions[building.factionId].color;
-				hud.SetColor( color );
-			} );
-			
+
 			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
 			building.onHealthChange.AddListener( ( float deltaHP ) =>
 			{
-				hud.SetHealthBarFill( building.healthPercent );
 				if( deltaHP < 0 )
 				{
-					hud.isVisible = true;
+					building.hud.isVisible = true;
 					building.hasBeenHiddenSinceLastDamage = true;
 				}
-			} );
 
-			// When the building dies:
-			// - Destroy the building's UI.
-			// - Deselect the building.
-			// - Play the death sound.
-			building.onDeath.AddListener( () =>
-			{
-				Object.Destroy( hud.gameObject );
-				if( Selection.IsSelected( building ) )
-				{
-					Selection.Deselect( building ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
-				}
-				AudioManager.PlaySound( building.deathSound );
-				// Remove the now unused listeners.
-				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
-			} );
 
-			building.onHealthChange.AddListener( ( float deltaHP ) =>
-			{
 				if( !Selection.IsDisplayed( building ) )
 				{
 					return;
@@ -229,7 +198,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, (int)building.health + "/" + (int)building.healthMax );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthDisplay( building.health, building.healthMax ) );
 				}
 
 				// If the health change changed the usability (health is above threshold).
@@ -240,14 +209,42 @@ namespace SS.Objects.Buildings
 				}
 			} );
 
-			return container;
+			// When the building dies:
+			// - Destroy the building's UI.
+			// - Deselect the building.
+			// - Play the death sound.
+			building.onDeath.AddListener( () =>
+			{
+				Object.Destroy( building.hud.gameObject );
+				if( Selection.IsSelected( building ) )
+				{
+					Selection.Deselect( building ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
+				}
+				AudioManager.PlaySound( building.deathSound );
+				// Remove the now unused listeners.
+				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
+			} );
+
+			//
+			//    SUB-OBJECTS
+			//
+
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+
+			//
+			//    MODULES
+			//
+
+			SSObjectCreator.AssignModules( gameObject, def );
+
+			return gameObject;
 		}
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+
 		/// <summary>
 		/// Creates a new BuildingData from a GameObject.
 		/// </summary>
@@ -264,9 +261,9 @@ namespace SS.Objects.Buildings
 
 			data.position = building.transform.position;
 			data.rotation = building.transform.rotation;
-			
+
 			data.factionId = building.factionId;
-			
+
 			data.health = building.health;
 
 			ConstructionSite constructionSite = building.GetComponent<ConstructionSite>();
@@ -286,26 +283,15 @@ namespace SS.Objects.Buildings
 			return data;
 		}
 
-		
-		
+
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static GameObject CreateEmpty( Guid guid )
+		public static GameObject Create( BuildingDefinition def, Guid guid )
 		{
-			GameObject gameObject = CreateBuilding( guid );
-			
-			return gameObject;
-		}
-
-		public static GameObject Create( BuildingDefinition def, BuildingData data )
-		{
-			GameObject gameObject = CreateBuilding( data.guid );
-
-			SetDefData( gameObject, def, data );
-
-			return gameObject;
+			return CreateBuilding( def, guid );
 		}
 	}
 }

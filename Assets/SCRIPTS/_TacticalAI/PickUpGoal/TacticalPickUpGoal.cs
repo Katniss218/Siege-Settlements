@@ -115,12 +115,12 @@ namespace SS.AI.Goals
 			string idPickedUp = "";
 			int amountPickedUp = 0;
 
+#warning make sure that the goal doesn't continue picking up resources "in the background", even if it can't hold it.
 			this.amountCollectedDeposit += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
 			int amountCollectedFloored = Mathf.FloorToInt( amountCollectedDeposit );
 			Dictionary<string, int> resourcesInDeposit = depositToPickUp.GetAll();
 			if( amountCollectedFloored >= 1 )
 			{
-
 				foreach( var kvp in resourcesInDeposit )
 				{
 					if( kvp.Value == 0 )

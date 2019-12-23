@@ -17,15 +17,7 @@ namespace SS.Objects.Modules
 		{
 			public string slotId { get; set; }
 			public int capacity { get; set; }
-
-
-			public SlotDefinition( InventoryModule.SlotGroup slotGroup )
-			{
-				this.slotId = slotGroup.slotId;
-				this.capacity = slotGroup.capacity;
-			}
-
-
+			
 
 			public void DeserializeKFF( KFFSerializer serializer )
 			{
@@ -60,11 +52,17 @@ namespace SS.Objects.Modules
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			InventoryModule module = gameObject.AddComponent<InventoryModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+#warning some sort of method for setting the slots(?)
+			module.slotGroups = new InventoryModule.SlotGroup[this.slots.Length];
+			for( int i = 0; i < module.slotCount; i++ )
+			{
+				module.slotGroups[i] = new InventoryModule.SlotGroup( this.slots[i].slotId, this.slots[i].capacity );
+			}
 		}
 
 

@@ -174,7 +174,7 @@ namespace SS.Objects
 
 				if( subObject == null )
 				{
-					throw new Exception( "A non-SubObject has been assigned to this SSObject." );
+					continue;
 				}
 
 				ret.Add( subObject );

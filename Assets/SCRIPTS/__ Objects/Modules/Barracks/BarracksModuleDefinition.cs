@@ -17,7 +17,6 @@ namespace SS.Objects.Modules
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return
-				objType == typeof( UnitDefinition ) ||
 				objType == typeof( BuildingDefinition );
 		}
 
@@ -26,11 +25,17 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			BarracksModule module = gameObject.AddComponent<BarracksModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+			module.trainSpeed = this.trainSpeed;
+			module.trainableUnits = new UnitDefinition[this.trainableUnits.Length];
+			for( int i = 0; i < this.trainableUnits.Length; i++ )
+			{
+				module.trainableUnits[i] = DefinitionManager.GetUnit( this.trainableUnits[i] );
+			}
 		}
 
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using KFF;
-using SS.Objects.Buildings;
 using SS.Objects.Heroes;
 using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using UnityEngine;
 using SS.Content;
+using SS.Objects.Buildings;
 
 namespace SS.Objects.Modules
 {
@@ -19,7 +19,6 @@ namespace SS.Objects.Modules
 		{
 			return
 				objType == typeof( UnitDefinition ) ||
-				objType == typeof( BuildingDefinition ) ||
 				objType == typeof( HeroDefinition );
 		}
 
@@ -28,11 +27,16 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+			module.constructibleBuildings = new BuildingDefinition[this.constructibleBuildings.Length];
+			for( int i = 0; i < module.constructibleBuildings.Length; i++ )
+			{
+				module.constructibleBuildings[i] = DefinitionManager.GetBuilding( this.constructibleBuildings[i] );
+			}
 		}
 
 		public override ModuleData GetIdentityData()

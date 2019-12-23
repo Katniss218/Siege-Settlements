@@ -46,6 +46,8 @@ namespace SS.Objects.Modules
 
 
 		public abstract ModuleData GetData();
-		public abstract void SetDefData( ModuleDefinition def, ModuleData data );
+#warning definitions now handled by ModuleDefinition
+		public abstract void SetData( ModuleData data );
+		//public abstract void SetDefData( ModuleDefinition def, ModuleData data );
 	}
 }

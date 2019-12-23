@@ -173,7 +173,9 @@ namespace SS.AI.Goals
 						data.rotation = rotation;
 
 
-						GameObject extra = ExtraCreator.Create( def, data );
+						GameObject extra = ExtraCreator.Create( def, data.guid );
+						ExtraCreator.SetData( extra, data );
+
 						ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
 						foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
 						{
@@ -351,7 +353,8 @@ namespace SS.AI.Goals
 								data.rotation = Quaternion.identity;
 
 
-								GameObject extra = ExtraCreator.Create( def, data );
+								GameObject extra = ExtraCreator.Create( def, data.guid );
+								ExtraCreator.SetData( extra, data );
 								ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
 								foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
 								{

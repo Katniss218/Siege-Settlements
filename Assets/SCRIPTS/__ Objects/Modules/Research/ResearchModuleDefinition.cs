@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SS.Content;
+using SS.Technologies;
 
 namespace SS.Objects.Modules
 {
@@ -18,7 +19,6 @@ namespace SS.Objects.Modules
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return
-				objType == typeof( UnitDefinition ) ||
 				objType == typeof( BuildingDefinition );
 		}
 
@@ -27,11 +27,17 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			ResearchModule module = gameObject.AddComponent<ResearchModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+			module.researchSpeed = this.researchSpeed;
+			module.researchableTechnologies = new TechnologyDefinition[this.researchableTechnologies.Length];
+			for( int i = 0; i < module.researchableTechnologies.Length; i++ )
+			{
+				module.researchableTechnologies[i] = DefinitionManager.GetTechnology( this.researchableTechnologies[i] );
+			}
 		}
 
 

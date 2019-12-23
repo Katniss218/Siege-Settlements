@@ -12,46 +12,6 @@ namespace SS.Objects.Buildings
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
 
-
-		public HUD hud { get; set; }
-
-		public Vector3[] placementNodes { get; set; }
-		
-		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
-
-		public AudioClip buildSoundEffect { get; set; }
-		
-
-		public AudioClip deathSound { get; set; }
-
-		public bool IsUsable()
-		{
-			// If not under construction/repair.
-			if( this.GetComponent<ConstructionSite>() == null )
-			{
-				return this.healthPercent >= 0.5f;
-			}
-			// If under construction/repair.
-			return false;
-		}
-		
-
-		/// <summary>
-		/// Checks if the building can be repaired (repair hasn't started already).
-		/// </summary>
-		public static bool IsRepairable( Building building )
-		{
-			// If the construction/repair is currently being done.
-			if( building.GetComponent<ConstructionSite>() != null )
-			{
-				return false;
-			}
-			// If the construction/repair is NOT being done.
-			return building.health < building.healthMax;
-		}
-		
-		public bool hasBeenHiddenSinceLastDamage { get; set; }
-		
 		private NavMeshObstacle __obstacle = null;
 		public NavMeshObstacle obstacle
 		{
@@ -77,6 +37,70 @@ namespace SS.Objects.Buildings
 				return this.__collider;
 			}
 		}
+
+		/// <summary>
+		/// Returns the hud that's attached to this object.
+		/// </summary>
+		public HUD hud { get; set; }
+
+		public Vector3[] placementNodes { get; set; }
+		
+		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
+
+		public AudioClip buildSoundEffect { get; set; }
+		
+
+		public AudioClip deathSound { get; set; }
+
+		public bool hasBeenHiddenSinceLastDamage { get; set; }
+
+		private Vector3 __size;
+		public Vector3 size
+		{
+			get
+			{
+				return this.__size;
+			}
+			set
+			{
+				this.__size = value;
+				this.obstacle.size = value;
+				this.obstacle.center = new Vector3( 0.0f, value.y / 2.0f, 0.0f );
+				this.collider.size = value;
+				this.collider.center = new Vector3( 0.0f, value.y / 2.0f, 0.0f );
+			}
+		}
+
+
+		public bool IsUsable()
+		{
+			// If not under construction/repair.
+			if( this.GetComponent<ConstructionSite>() == null )
+			{
+				return this.healthPercent >= 0.5f;
+			}
+			// If under construction/repair.
+			return false;
+		}
+
+
+		/// <summary>
+		/// Checks if the building can be repaired (repair hasn't started already).
+		/// </summary>
+		public static bool IsRepairable( Building building )
+		{
+			// If the construction/repair is currently being done.
+			if( building.GetComponent<ConstructionSite>() != null )
+			{
+				return false;
+			}
+			// If the construction/repair is NOT being done.
+			return building.health < building.healthMax;
+		}
+
+
+
+
 
 		public void OnMouseEnterListener()
 		{
@@ -145,7 +169,7 @@ namespace SS.Objects.Buildings
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
 			if( this.factionId == LevelDataManager.PLAYER_FAC )

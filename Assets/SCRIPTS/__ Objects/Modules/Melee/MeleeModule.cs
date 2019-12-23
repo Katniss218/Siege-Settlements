@@ -14,6 +14,8 @@ namespace SS.Objects.Modules
 
 
 		public float damage;
+#warning serialize overrides in data (nullable).
+		public float? damageOverride;
 		public float armorPenetration;
 		public DamageType damageType;
 
@@ -32,7 +34,7 @@ namespace SS.Objects.Modules
 
 		private bool isReady2 = false;
 
-		private SubObject[] traversibleSubObjects { get; set; }
+		public SubObject[] traversibleSubObjects { get; set; }
 
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -95,7 +97,9 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public void Attack( IDamageable target )
 		{
-			target.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
+			float damage = this.damageOverride == null ? this.damage : this.damageOverride.Value;
+
+			target.TakeDamage( this.damageType, DamageUtils.GetRandomized( damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 			AudioManager.PlaySound( this.attackSoundEffect );
 			this.lastAttackTimestamp = Time.time;
 			this.isReady2 = false;
@@ -118,17 +122,8 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is MeleeModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is MeleeModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -137,26 +132,8 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			MeleeModuleDefinition def = (MeleeModuleDefinition)_def;
+			
 			MeleeModuleData data = (MeleeModuleData)_data;
-
-			this.icon = def.icon;
-			this.attackRange = def.attackRange;
-
-			this.damage = def.damage;
-			this.damageType = def.damageType;
-			this.armorPenetration = def.armorPenetration;
-
-			this.attackCooldown = def.attackCooldown;
-			this.attackSoundEffect = def.attackSoundEffect;
-
-			this.traversibleSubObjects = new SubObject[def.traversibleSubObjects.Length];
-			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-			{
-				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
-				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
-			}
 			
 			if( data.targetGuid != null )
 			{

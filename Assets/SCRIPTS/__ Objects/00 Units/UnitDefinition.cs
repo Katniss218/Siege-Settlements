@@ -112,7 +112,7 @@ namespace SS.Objects.Units
 		//  PRODUCTION-RELATED
 		//--------------------------------------
 
-		public Dictionary<string, int> cost { get; private set; }
+		public Dictionary<string, int> cost { get; set; }
 
 		private float __buildTime = 0.0f;
 		public float buildTime
@@ -128,15 +128,17 @@ namespace SS.Objects.Units
 			}
 		}
 
-		public string[] techsRequired { get; private set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
+		public string[] techsRequired { get; set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
 
+		// Definition always contains values for a '1x' unit.
+		public PopulationSize defaultPopulationOnSpawn { get; set; }
 
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
 		
 		public AddressableAsset<Sprite> icon { get; private set; }
-		
+
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -144,9 +146,7 @@ namespace SS.Objects.Units
 
 		public UnitDefinition( string id ) : base( id )
 		{
-#warning TODO! - If the definition specified default for '2x' unit, it needs to scale down to '1x' behind the scenes.
 
-			// Definition always contains values for '1x' unit.
 		}
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
@@ -281,6 +281,16 @@ namespace SS.Objects.Units
 			catch( KFFException )
 			{
 				throw new Exception( "Missing 'Icon' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.defaultPopulationOnSpawn = (PopulationSize)serializer.ReadByte( "DefaultPopulationOnSpawn" );
+			}
+			catch
+			{
+				this.defaultPopulationOnSpawn = PopulationSize.x1;
+				//throw new Exception( "Missing or invalid value of 'DefaultPopulationOnSpawn' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
 			this.DeserializeModulesAndSubObjectsKFF( serializer );

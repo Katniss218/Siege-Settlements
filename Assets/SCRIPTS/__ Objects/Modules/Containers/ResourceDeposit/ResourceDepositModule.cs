@@ -15,8 +15,8 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "resource_deposit";
 
 		public const float MINING_SPEED = 2.0f;
-		
-		private struct SlotGroup
+
+		internal struct SlotGroup
 		{
 			public readonly string id;
 			public int amount;
@@ -32,7 +32,7 @@ namespace SS.Objects.Modules
 
 		public AudioClip miningSound { get; set; }
 
-		private SlotGroup[] resources;
+		internal SlotGroup[] resources;
 
 		public int slotCount
 		{
@@ -290,17 +290,8 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is ResourceDepositModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is ResourceDepositModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -309,27 +300,9 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			ResourceDepositModuleDefinition def = (ResourceDepositModuleDefinition)_def;
+			
 			ResourceDepositModuleData data = (ResourceDepositModuleData)_data;
-
-			this.icon = def.icon;
-			this.resources = new SlotGroup[def.slots.Length];
-			for( int i = 0; i < this.resources.Length; i++ )
-			{
-				for( int j = 0; j < def.slots.Length; j++ )
-				{
-					if( this.resources[j].id == def.slots[i].resourceId )
-					{
-						throw new Exception( "Can't have multiple slots with the same resource id." ); // because that doesn't make sense, just use bigger slot.
-					}
-				}
-
-				this.resources[i] = new SlotGroup( def.slots[i].resourceId, 0, def.slots[i].capacity );
-			}
-
-			this.miningSound = def.mineSound;
-
+			
 			// -----           DATA
 
 			foreach( var kvp in data.items )

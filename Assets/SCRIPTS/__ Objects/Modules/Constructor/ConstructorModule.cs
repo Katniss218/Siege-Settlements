@@ -1,6 +1,5 @@
 ﻿using SS.Objects.Buildings;
 using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Technologies;
@@ -120,17 +119,8 @@ namespace SS.Objects.Modules
 		}
 		
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is ConstructorModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is ConstructorModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -139,16 +129,8 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			ConstructorModuleDefinition def = (ConstructorModuleDefinition)_def;
-			ConstructorModuleData data = (ConstructorModuleData)_data;
-
-			this.icon = def.icon;
-			this.constructibleBuildings = new BuildingDefinition[def.constructibleBuildings.Length];
-			for( int i = 0; i < this.constructibleBuildings.Length; i++ )
-			{
-				this.constructibleBuildings[i] = DefinitionManager.GetBuilding( def.constructibleBuildings[i] );
-			}
+			
+			//ConstructorModuleData data = (ConstructorModuleData)_data;			
 		}
 
 

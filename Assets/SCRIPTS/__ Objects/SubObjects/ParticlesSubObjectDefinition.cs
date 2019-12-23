@@ -66,73 +66,31 @@ namespace SS.Objects.SubObjects
 
 
 			ParticleSystem particleSystem = child.AddComponent<ParticleSystem>();
-			ParticleSystem.MainModule main = particleSystem.main;
-			main.simulationSpace = this.isWorldSpace ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
-			main.startLifetime = new ParticleSystem.MinMaxCurve( this.lifetimeMin, this.lifetimeMax );
-			main.startSize = new ParticleSystem.MinMaxCurve( this.startSizeMin, this.startSizeMax );
-			main.startSpeed = new ParticleSystem.MinMaxCurve( this.startSpeedMin, this.startSpeedMax );
-
-			if( this.velocityOverLifetime != null )
-			{
-				ParticleSystem.VelocityOverLifetimeModule velocityOverTime = particleSystem.velocityOverLifetime;
-				velocityOverTime.enabled = true;
-
-				AnimationCurve x = new AnimationCurve();
-				AnimationCurve y = new AnimationCurve();
-				AnimationCurve z = new AnimationCurve();
-				for( int i = 0; i < this.velocityOverLifetime.Length; i++ )
-				{
-					x.AddKey( this.velocityOverLifetime[i].Item1, this.velocityOverLifetime[i].Item2.x );
-					y.AddKey( this.velocityOverLifetime[i].Item1, this.velocityOverLifetime[i].Item2.y );
-					z.AddKey( this.velocityOverLifetime[i].Item1, this.velocityOverLifetime[i].Item2.z );
-				}
-				velocityOverTime.x = new ParticleSystem.MinMaxCurve( 1.0f, x );
-				velocityOverTime.y = new ParticleSystem.MinMaxCurve( 1.0f, y );
-				velocityOverTime.z = new ParticleSystem.MinMaxCurve( 1.0f, z );
-			}
-
-			if( this.colorOverLifetime != null )
-			{
-				ParticleSystem.ColorOverLifetimeModule sizeOverTime = particleSystem.colorOverLifetime;
-				sizeOverTime.enabled = true;
-
-				GradientColorKey[] ckeys = new GradientColorKey[this.colorOverLifetime.Length];
-				GradientAlphaKey[] akeys = new GradientAlphaKey[this.colorOverLifetime.Length];
-				for( int i = 0; i < this.colorOverLifetime.Length; i++ )
-				{
-					ckeys[i] = new GradientColorKey( this.colorOverLifetime[i].Item2, this.colorOverLifetime[i].Item1 );
-					akeys[i] = new GradientAlphaKey( this.colorOverLifetime[i].Item2.a, this.colorOverLifetime[i].Item1 );
-				}
-				Gradient color = new Gradient();
-				color.alphaKeys = akeys;
-				color.colorKeys = ckeys;
-				sizeOverTime.color = new ParticleSystem.MinMaxGradient( color );
-			}
-
-			if( this.sizeOverLifetime != null )
-			{
-				ParticleSystem.SizeOverLifetimeModule sizeOverTime = particleSystem.sizeOverLifetime;
-				sizeOverTime.enabled = true;
-
-				AnimationCurve size = new AnimationCurve();
-				for( int i = 0; i < this.sizeOverLifetime.Length; i++ )
-				{
-					size.AddKey( this.sizeOverLifetime[i].Item1, this.sizeOverLifetime[i].Item2 );
-				}
-				sizeOverTime.size = new ParticleSystem.MinMaxCurve( 1.0f, size );
-			}
-
-			//shape
-
-			ParticleSystem.EmissionModule emission = particleSystem.emission;
-			emission.rateOverTime = this.emissionRateTime;
-
 			
 			ParticlesSubObject subObject = child.AddComponent<ParticlesSubObject>();
 			subObject.subObjectId = this.subObjectId;
 			subObject.SetShape( this.shape );
 			subObject.SetMaterial( this.particleTexture, this.emissionColor );
+			subObject.SetSimulationSpace( this.isWorldSpace ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local );
+			subObject.SetLifetime( this.lifetimeMin, this.lifetimeMax );
+			subObject.SetSize( this.startSizeMin, this.startSizeMax );
+			subObject.SetSpeed( this.startSpeedMin, this.startSpeedMax );
+			subObject.SetEmission( this.emissionRateTime );
 
+			if( this.velocityOverLifetime != null )
+			{
+				subObject.SetVelocityOverLifetime( this.velocityOverLifetime );
+			}
+
+			if( this.colorOverLifetime != null )
+			{
+				subObject.SetColorOverLifetime( this.colorOverLifetime );
+			}
+
+			if( this.sizeOverLifetime != null )
+			{
+				subObject.SetSizeOverLifetime( this.sizeOverLifetime );
+			}
 			return subObject;
 		}
 

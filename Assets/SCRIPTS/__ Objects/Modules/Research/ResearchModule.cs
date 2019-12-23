@@ -216,17 +216,8 @@ namespace SS.Objects.Modules
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is ResearchModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is ResearchModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -235,17 +226,8 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			ResearchModuleDefinition def = (ResearchModuleDefinition)_def;
+			
 			ResearchModuleData data = (ResearchModuleData)_data;
-
-			this.icon = def.icon;
-			this.researchSpeed = def.researchSpeed;
-			this.researchableTechnologies = new TechnologyDefinition[def.researchableTechnologies.Length];
-			for( int i = 0; i < this.researchableTechnologies.Length; i++ )
-			{
-				this.researchableTechnologies[i] = DefinitionManager.GetTechnology( def.researchableTechnologies[i] );
-			}
 
 			// ------          DATA
 

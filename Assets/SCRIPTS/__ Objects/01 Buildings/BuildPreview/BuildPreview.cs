@@ -164,7 +164,9 @@ namespace SS.Objects.Buildings
 				data.factionId = LevelDataManager.PLAYER_FAC;
 				data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
 				data.constructionSaveState = new ConstructionSiteData();
-				BuildingCreator.Create( this.def, data );
+
+				GameObject building = BuildingCreator.Create( this.def, data.guid );
+				BuildingCreator.SetData( building, data );
 
 				Object.Destroy( this.gameObject );
 			}

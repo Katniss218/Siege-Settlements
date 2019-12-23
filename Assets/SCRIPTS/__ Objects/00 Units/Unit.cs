@@ -49,13 +49,11 @@ namespace SS.Objects.Units
 				PopulationSize populationBefore = this.__population;
 
 				float populationRatio = (float)value / (float)populationBefore;
-
-				//float healthPercBefore = this.healthPercent;
+				
+				// override.
 				this.healthMax = this.healthMax * populationRatio;
-				//this.healthMax["pop"] = (byte)value;
 				this.health = this.health * populationRatio;
-
-#warning TODO! - this scales linearly. we want square/rect.
+				
 #warning TODO! - unit definitions specify how long it's per each population. It's some sort of scaling factor. It shows how big a single unit is.
 #warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x (to prevent overly HUGE units).
 				// We can make sure that e.g. Elephants 1x can't go on top of tower by just blocking elephants from going inside of tower.
@@ -84,37 +82,54 @@ namespace SS.Objects.Units
 					z *= 2;
 				}
 				this.size = new Vector3( x/2, this.size.y, z/2 );
+
+#warning proper mesh & material switching.
+				// meshes can be selected based on population (if present).
+				// materials the same.
 				this.transform.GetChild( 0 ).localScale = new Vector3( x, 1, z ); // INSTEAD OF THIS - switch the meshes & materials depending on population.
+
 
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
 				for( int i = 0; i < inventories.Length; i++ )
 				{
-#warning each object & each module keep a reference to their default unchangable values. Data can modify the other value to whatever it wants to be.
+					for( int j = 0; j < inventories[i].slotCount; j++ )
+					{
+						inventories[i].SetCapacityOverride( j, (int)(inventories[i].GetCapacity( j ) * (float)value) );
+					}
 				}
 				RangedModule[] ranged = this.GetModules<RangedModule>();
 				for( int i = 0; i < ranged.Length; i++ )
 				{
-					ranged[i].projectileCountOverride = ranged[i].projectileCount * (int)value;
+					ranged[i].projectileCountOverride = (int)(ranged[i].projectileCount * (float)value);
 				}
 				MeleeModule[] melee = this.GetModules<MeleeModule>();
 				for( int i = 0; i < melee.Length; i++ )
 				{
-#warning each object & each module keep a reference to their default unchangable values. Data can modify the other value to whatever it wants to be.
-					melee[i].damage = (int)value;
+					melee[i].damageOverride = melee[i].damage * (float)value;
 				}
+
+#warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
+				// Maybe make the population formation-independent. Slots will specify formation. This allows to make arbitrarily-sized formmations.
+				// Iteratively create the next biggest-most unit possible from the leftover pop.
+
 				// ===SET size
 				// ===SET health
 				// ===SET maxHealth
-				// SETM inventory size
+				// ===SETM inventory size
 #warning inventory drops items when size can no longer contain them (make sure to remove them first to prevent duplicates).
-				// SETM melee damage
-				// SETM ranged projectileCount
-				// SETM inside slotCount
+				// ===SETM melee damage
+				// ===SETM ranged projectileCount
+#warning inside slots can only be put on a "non-formation" unit.
+				// SETS mesh
+				// SETS material
 
 				this.__population = value;
 			}
 		}
 
+		/// <summary>
+		/// Returns the hud that's attached to this object.
+		/// </summary>
 		public HUD hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
@@ -128,7 +143,9 @@ namespace SS.Objects.Units
 		public FloatM rotationSpeed { get; private set; }
 
 		private Vector3 __size;
-		public Vector3 size { get
+		public Vector3 size
+		{
+			get
 			{
 				return this.__size;
 			}
@@ -172,7 +189,6 @@ namespace SS.Objects.Units
 		{
 			if( this.hud.isVisible )
 			{
-#warning TODO! - only if the camera or transform has moved or rotated or scaled (cam).
 				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
 
@@ -231,14 +247,13 @@ namespace SS.Objects.Units
 		}
 
 
-
 		public override void OnDisplay()
 		{
 			SelectionPanel.instance.obj.SetIcon( this.icon );
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
 		}
 

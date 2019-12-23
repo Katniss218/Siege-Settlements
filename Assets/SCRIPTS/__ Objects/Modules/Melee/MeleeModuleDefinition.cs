@@ -7,6 +7,7 @@ using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using SS.Objects.SubObjects;
 
 namespace SS.Objects.Modules
 {
@@ -38,11 +39,26 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId, ModuleData data )
+		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
 			MeleeModule module = gameObject.AddComponent<MeleeModule>();
 			module.moduleId = moduleId;
-			module.SetDefData( this, data );
+			module.icon = this.icon;
+			module.attackRange = this.attackRange;
+
+			module.damage = this.damage;
+			module.damageType = this.damageType;
+			module.armorPenetration = this.armorPenetration;
+
+			module.attackCooldown = this.attackCooldown;
+			module.attackSoundEffect = this.attackSoundEffect;
+
+			module.traversibleSubObjects = new SubObject[this.traversibleSubObjects.Length];
+			for( int i = 0; i < module.traversibleSubObjects.Length; i++ )
+			{
+				SubObject trav = module.ssObject.GetSubObject( this.traversibleSubObjects[i] );
+				module.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + this.traversibleSubObjects[i].ToString( "D" ) + "'." );
+			}
 		}
 
 

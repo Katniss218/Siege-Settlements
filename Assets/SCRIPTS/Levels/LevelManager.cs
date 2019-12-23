@@ -328,7 +328,7 @@ namespace SS.Levels
 				}
 				throw new Exception( "Can't open level file '" + pathLevel + "'." );
 			}
-			
+
 			try
 			{
 				serializerLevelSaveState = KFFSerializer.ReadFromFile( pathLevelSaveState, DefinitionManager.FILE_ENCODING );
@@ -347,7 +347,7 @@ namespace SS.Levels
 
 			// Set up the paths and serializers for definition files.
 
-			string 
+			string
 				pathUnits = GetFullDataPath( levelIdentifier, "units.kff" ),
 				pathBuildings = GetFullDataPath( levelIdentifier, "buildings.kff" ),
 				pathProjectiles = GetFullDataPath( levelIdentifier, "projectiles.kff" ),
@@ -367,7 +367,7 @@ namespace SS.Levels
 
 				serializerResources,
 				serializerTechnologies,
-				
+
 				serializerFactions;
 
 
@@ -385,7 +385,7 @@ namespace SS.Levels
 				}
 				throw new Exception( "Can't open file '" + pathUnits + "'." );
 			}
-			
+
 			try
 			{
 				serializerBuildings = KFFSerializer.ReadFromFile( pathBuildings, DefinitionManager.FILE_ENCODING );
@@ -433,7 +433,7 @@ namespace SS.Levels
 			{
 				throw new Exception( "Can't open file '" + pathExtras + "'." );
 			}
-			
+
 
 			try
 			{
@@ -492,7 +492,7 @@ namespace SS.Levels
 
 			DefinitionManager.LoadResourceDefinitions( serializerResources );
 			DefinitionManager.LoadTechnologyDefinitions( serializerTechnologies );
-			
+
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Loading data & assets: " + sw.ElapsedMilliseconds + " ms" );
@@ -504,7 +504,7 @@ namespace SS.Levels
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/ToolTip Canvas" ) );
 
 			LevelDataManager.LoadMapData( serializerLevel );
-			
+
 			InstantiateLevelPrefabs(); // game UI prefabs
 
 			LevelDataManager.LoadFactions( serializerFactions );
@@ -532,7 +532,7 @@ namespace SS.Levels
 
 			string
 				pathFactionData = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_factions.kff" ),
-				
+
 				pathSavedUnits = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_units.kff" ),
 				pathSavedBuildings = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_buildings.kff" ),
 				pathSavedProjectiles = System.IO.Path.Combine( GetLevelSaveStateMainDirectory( levelIdentifier, levelSaveStateIdentifier ), "save_projectiles.kff" ),
@@ -541,7 +541,7 @@ namespace SS.Levels
 
 			KFFSerializer
 				serializerFactionData,
-				
+
 				serializerSavedUnits,
 				serializerSavedBuildings,
 				serializerSavedProjectiles,
@@ -629,7 +629,7 @@ namespace SS.Levels
 				}
 				throw new Exception( "Can't open file '" + pathSavedExtras + "'." );
 			}
-			
+
 			sw.Stop();
 			totalLoadTime += sw.ElapsedMilliseconds;
 			Debug.Log( "Save state parsing: " + sw.ElapsedMilliseconds + " ms" );
@@ -659,48 +659,48 @@ namespace SS.Levels
 
 			for( int i = 0; i < units.Length; i++ )
 			{
-				units[i] = UnitCreator.CreateEmpty( sUnits[i].Item2.guid );
+				units[i] = UnitCreator.Create( sUnits[i].Item1, sUnits[i].Item2.guid );
 			}
 			for( int i = 0; i < buildings.Length; i++ )
 			{
-				buildings[i] = BuildingCreator.CreateEmpty( sBuildings[i].Item2.guid );
+				buildings[i] = BuildingCreator.Create( sBuildings[i].Item1, sBuildings[i].Item2.guid );
 			}
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
-				projectiles[i] = ProjectileCreator.CreateEmpty( sProjectiles[i].Item2.guid );
+				projectiles[i] = ProjectileCreator.Create( sProjectiles[i].Item1, sProjectiles[i].Item2.guid );
 			}
 			for( int i = 0; i < heroes.Length; i++ )
 			{
-				heroes[i] = HeroCreator.CreateEmpty( sHeroes[i].Item2.guid );
+				heroes[i] = HeroCreator.Create( sHeroes[i].Item1, sHeroes[i].Item2.guid );
 			}
 			for( int i = 0; i < extras.Length; i++ )
 			{
-				extras[i] = ExtraCreator.CreateEmpty( sExtras[i].Item2.guid );
+				extras[i] = ExtraCreator.Create( sExtras[i].Item1, sExtras[i].Item2.guid );
 			}
 
 			// Set the data (guids stay the same).
 
 			for( int i = 0; i < units.Length; i++ )
 			{
-				UnitCreator.SetDefData( units[i], sUnits[i].Item1, sUnits[i].Item2 );
+				UnitCreator.SetData( units[i], sUnits[i].Item2 );
 			}
 			for( int i = 0; i < buildings.Length; i++ )
 			{
-				BuildingCreator.SetDefData( buildings[i], sBuildings[i].Item1, sBuildings[i].Item2 );
+				BuildingCreator.SetData( buildings[i], sBuildings[i].Item2 );
 			}
 			for( int i = 0; i < projectiles.Length; i++ )
 			{
-				ProjectileCreator.SetDefData( projectiles[i], sProjectiles[i].Item1, sProjectiles[i].Item2 );
+				ProjectileCreator.SetData( projectiles[i], sProjectiles[i].Item2 );
 			}
 			for( int i = 0; i < heroes.Length; i++ )
 			{
-				HeroCreator.SetDefData( heroes[i], sHeroes[i].Item1, sHeroes[i].Item2 );
+				HeroCreator.SetData( heroes[i], sHeroes[i].Item2 );
 			}
 			for( int i = 0; i < extras.Length; i++ )
 			{
-				ExtraCreator.SetDefData( extras[i], sExtras[i].Item1, sExtras[i].Item2 );
+				ExtraCreator.SetData( extras[i], sExtras[i].Item2 );
 			}
-
+		
 
 			// Set inactive, since by default, there's no selection.
 			SelectionPanel.instance.gameObject.SetActive( false );

@@ -14,28 +14,33 @@ namespace SS.Objects.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetDefData( GameObject gameObject, ExtraDefinition def, ExtraData data )
+		public static void SetData( GameObject gameObject, ExtraData data )
 		{
-			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
-
-			//
-			//    SUB-OBJECTS
-			//
-
-			SSObjectCreator.AssignSubObjects( gameObject, def );
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+			
+			//
+			//    MODULES
+			//
 
 			Extra extra = gameObject.GetComponent<Extra>();
-			extra.definitionId = def.id;
-			extra.displayName = def.displayName;
+			SSObjectCreator.AssignModuleData( extra, data );
+		}
 
+		private static GameObject CreateExtra( ExtraDefinition def, Guid guid )
+		{
+			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
+			gameObject.isStatic = true;
+			gameObject.layer = ObjectLayer.EXTRAS;
 
-			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
 			collider.isTrigger = !def.isObstacle;
 			collider.size = def.size;
 			collider.center = new Vector3( 0.0f, def.size.y / 2.0f, 0.0f );
@@ -48,29 +53,24 @@ namespace SS.Objects.Extras
 				obs.carving = true;
 			}
 
+			Extra extra = gameObject.AddComponent<Extra>();
+			extra.guid = guid;
+			extra.definitionId = def.id;
+			extra.displayName = def.displayName;
+
+			//
+			//    SUB-OBJECTS
+			//
+
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+
 			//
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def, data );
-		}
+			SSObjectCreator.AssignModules( gameObject, def );
 
-		private static GameObject CreateExtra( Guid guid )
-		{
-			GameObject container = new GameObject( GAMEOBJECT_NAME );
-			container.isStatic = true;
-			container.layer = ObjectLayer.EXTRAS;
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			Extra extra = container.AddComponent<Extra>();
-			extra.guid = guid;
-
-			BoxCollider collider = container.AddComponent<BoxCollider>();
-			
-			return container;
+			return gameObject;
 		}
 
 
@@ -109,21 +109,10 @@ namespace SS.Objects.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-		public static GameObject CreateEmpty( Guid guid )
+		
+		public static GameObject Create( ExtraDefinition def, Guid guid )
 		{
-			GameObject gameObject = CreateExtra( guid );
-
-			return gameObject;
-		}
-
-		public static GameObject Create( ExtraDefinition def, ExtraData data )
-		{
-			GameObject gameObject = CreateExtra( data.guid );
-
-			SetDefData( gameObject, def, data );
-
-			return gameObject;
+			return CreateExtra( def, guid );
 		}
 	}
 }

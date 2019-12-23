@@ -65,6 +65,9 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+		/// <summary>
+		/// Returns the hud that's attached to this object.
+		/// </summary>
 		public HUD hud { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
@@ -171,7 +174,7 @@ namespace SS.Objects.Heroes
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Health: " + (int)this.health + "/" + (int)this.healthMax );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -50.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
 

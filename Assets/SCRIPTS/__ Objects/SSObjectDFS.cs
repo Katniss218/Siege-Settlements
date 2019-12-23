@@ -157,6 +157,7 @@ namespace SS.Objects
 			}
 		}
 
+		public float healthMaxDefined { get; set; }
 		public float healthMax { get; set; }
 		/*[SerializeField]
 		internal FloatM __healthMax;
@@ -195,11 +196,11 @@ namespace SS.Objects
 			{
 				if( value < 0 )
 				{
-					throw new ArgumentOutOfRangeException( "Can't set the health percentage to less than 0." );
+					value = 0;
 				}
 				if( value > 1 )
 				{
-					throw new ArgumentOutOfRangeException( "Can't set the health percentage to more than 1." );
+					value = 1;
 				}
 				this.health = value * this.healthMax;
 			}
@@ -226,7 +227,12 @@ namespace SS.Objects
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}
-		
+
+		internal static string GetHealthDisplay( float health, float healthMax )
+		{
+			return "Health: " + (int)health + "/" + (int)healthMax;
+		}
+
 		/// <summary>
 		/// makes the damageable take an amount of damage, using the scaling reduction formula.
 		/// </summary>

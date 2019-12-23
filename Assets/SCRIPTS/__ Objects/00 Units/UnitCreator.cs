@@ -21,29 +21,74 @@ namespace SS.Objects.Units
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetDefData( GameObject gameObject, UnitDefinition def, UnitData data )
+		public static void SetData( GameObject gameObject, UnitData data )
 		{
-			gameObject.name = GAMEOBJECT_NAME + " - '" + def.id + "'";
-
-			//
-			//    SUB-OBJECTS
-			//
-
-			SSObjectCreator.AssignSubObjects( gameObject, def );
-
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
 			// Set the position/movement information.
 			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
-			
+
 			// Set the unit's movement parameters.
 			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the unit's native parameters.
 			Unit unit = gameObject.GetComponent<Unit>();
+			if( unit.guid != data.guid )
+			{
+				throw new Exception( "Mismatched guid." );
+			}
+			unit.factionId = data.factionId;
+			unit.health = data.health;
+
+			//
+			//    MODULES
+			//
+
+			SSObjectCreator.AssignModuleData( unit, data );
+
+			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			if( data.tacticalGoalData != null )
+			{
+				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
+			}
+
+			unit.population = data.population;
+		}
+
+		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
+		{
+			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
+			gameObject.layer = ObjectLayer.UNITS;
+
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+
+			HUD hud = hudGameObject.GetComponent<HUD>();
+			hud.isVisible = Main.isHudForcedVisible;
+
+
+			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+
+			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
+			Rigidbody rigidbody = gameObject.AddComponent<Rigidbody>();
+			rigidbody.isKinematic = true;
+
+			// Add the NavMeshAgent to the unit, to make it movable.
+			NavMeshAgent navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
+			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
+			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
+			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
+
+			Unit unit = gameObject.AddComponent<Unit>();
+			unit.hud = hud;
+			unit.guid = guid;
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
@@ -51,18 +96,24 @@ namespace SS.Objects.Units
 			unit.rotationSpeed.baseValue = def.rotationSpeed;
 			unit.size = def.size;
 
+			unit.viewRange = def.viewRange;
+			unit.healthMax = def.healthMax;
+			unit.health = def.healthMax;
+			unit.armor = def.armor;
 
 			unit.onFactionChange.AddListener( () =>
 			{
+#warning TODO! - The Selection Panel display is not re-displayed when faction changes (enemy & friendly objects display differently).
 				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				Color color = LevelDataManager.factions[unit.factionId].color;
 
+				unit.hud.SetColor( color );
 				for( int i = 0; i < meshes.Length; i++ )
 				{
 					meshes[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 			} );
-			
+
 			unit.onHealthPercentChanged.AddListener( () =>
 			{
 				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
@@ -74,57 +125,8 @@ namespace SS.Objects.Units
 				}
 			} );
 
-			unit.factionId = data.factionId;
-			unit.viewRange = def.viewRange;
 
-			unit.healthMax = def.healthMax;
-			unit.health = data.health;
-			unit.armor = def.armor;
 
-			//
-			//    MODULES
-			//
-
-			SSObjectCreator.AssignModules( gameObject, def, data );
-
-			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-			if( data.tacticalGoalData != null )
-			{
-				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
-			}
-		}
-
-		private static GameObject CreateUnit( Guid guid )
-		{
-			GameObject container = new GameObject( GAMEOBJECT_NAME );
-			container.layer = ObjectLayer.UNITS;
-
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			BoxCollider collider = container.AddComponent<BoxCollider>();
-
-			Unit unit = container.AddComponent<Unit>();
-			unit.guid = guid;
-						
-			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
-			Rigidbody rigidbody = container.AddComponent<Rigidbody>();
-			rigidbody.isKinematic = true;
-
-			// Add the NavMeshAgent to the unit, to make it movable.
-			NavMeshAgent navMeshAgent = container.AddComponent<NavMeshAgent>();
-			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
-			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
-			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
-			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
-
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( container.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			
-			HUD hud = hudGameObject.GetComponent<HUD>();
-
-			unit.hud = hud;
-			hud.isVisible = Main.isHudForcedVisible;
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
@@ -134,7 +136,7 @@ namespace SS.Objects.Units
 				}
 				if( isLocked )
 				{
-					hud.isVisible = true;
+					unit.hud.isVisible = true;
 				}
 				else
 				{
@@ -146,37 +148,30 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					hud.isVisible = false;
+					unit.hud.isVisible = false;
 				}
 			};
 
 			Main.onHudLockChange.AddListener( onHudLockChangeListener );
-			
+
 			unit.onSelect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == container )
+				if( MouseOverHandler.currentObjectMouseOver == gameObject )
 				{
 					return;
 				}
-				hud.isVisible = true;
+				unit.hud.isVisible = true;
 			} );
 
 			unit.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == container )
+				if( MouseOverHandler.currentObjectMouseOver == gameObject )
 				{
 					return;
 				}
-				hud.isVisible = false;
-			} );
-
-			// Make the unit change it's color when the faction is changed.
-			unit.onFactionChange.AddListener( () =>
-			{
-				Color color = LevelDataManager.factions[unit.factionId].color;
-				hud.SetColor( color );
+				unit.hud.isVisible = false;
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
@@ -184,15 +179,27 @@ namespace SS.Objects.Units
 			{
 				if( deltaHP < 0 )
 				{
-					hud.isVisible = true;
+					Debug.Log( "AA" );
+					unit.hud.isVisible = true;
 					unit.hasBeenHiddenSinceLastDamage = true;
+				}
+
+
+				if( !Selection.IsDisplayed( unit ) )
+				{
+					return;
+				}
+				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
+				if( healthUI != null )
+				{
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthDisplay( unit.health, unit.healthMax ) );
 				}
 			} );
 
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			unit.onDeath.AddListener( () =>
 			{
-				Object.Destroy( hud.gameObject );
+				Object.Destroy( unit.hud.gameObject );
 
 				if( Selection.IsSelected( unit ) )
 				{
@@ -202,26 +209,27 @@ namespace SS.Objects.Units
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
 
-			unit.onHealthChange.AddListener( ( float deltaHP ) =>
-			{
-				if( !Selection.IsDisplayed( unit ) )
-				{
-					return;
-				}
-				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
-				if( healthUI != null )
-				{
-					UIUtils.EditText( healthUI.gameObject, (int)unit.health + "/" + (int)unit.healthMax );
-				}
-			} );
-			
-			return container;
+			//
+			//    SUB-OBJECTS
+			//
+
+			SSObjectCreator.AssignSubObjects( gameObject, def );
+
+			//
+			//    MODULES
+			//
+
+			SSObjectCreator.AssignModules( gameObject, def );
+
+			unit.population = def.defaultPopulationOnSpawn;
+
+			return gameObject;
 		}
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+
 		/// <summary>
 		/// Creates a new UnitData from a GameObject.
 		/// </summary>
@@ -238,11 +246,12 @@ namespace SS.Objects.Units
 
 			data.position = unit.transform.position;
 			data.rotation = unit.transform.rotation;
-			
+
 			data.factionId = unit.factionId;
-			
+
 			data.health = unit.health;
-			
+			data.population = unit.population;
+
 			//
 			// MODULES
 			//
@@ -253,25 +262,14 @@ namespace SS.Objects.Units
 
 			return data;
 		}
-		
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
-		public static GameObject CreateEmpty( Guid guid )
+
+		public static GameObject Create( UnitDefinition def, Guid guid )
 		{
-			GameObject gameObject = CreateUnit( guid );
-			
-			return gameObject;
-		}
-
-		public static GameObject Create( UnitDefinition def, UnitData data )
-		{
-			GameObject gameObject = CreateUnit( data.guid );
-
-			SetDefData( gameObject, def, data );
-
-			return gameObject;
+			return CreateUnit( def, guid );
 		}
 	}
 }

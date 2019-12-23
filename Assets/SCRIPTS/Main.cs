@@ -130,20 +130,33 @@ namespace SS
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.BUILDINGS_MASK ) )
 				{
 					Building building = hitInfo.collider.GetComponent<Building>();
-					if( building.factionId != LevelDataManager.PLAYER_FAC )
+					if( building == null )
 					{
-						return;
+						SSObjectDFS damageable = hitInfo.collider.GetComponent<SSObjectDFS>();
+						if( damageable == null )
+						{
+							return;
+						}
+
+						damageable.healthPercent += 0.1f;
 					}
-					if( !Building.IsRepairable( building ) )
+					else
 					{
-						return;
+						if( building.factionId != LevelDataManager.PLAYER_FAC )
+						{
+							return;
+						}
+						if( !Building.IsRepairable( building ) )
+						{
+							return;
+						}
+
+						// If it is a building, start repair.
+						// Empty ConstructionSiteData (no resources present).
+						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
+
+						ConstructionSite.BeginConstructionOrRepair( building, constructionSiteData );
 					}
-
-					// If it is a building, start repair.
-					// Empty ConstructionSiteData (no resources present).
-					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
-
-					ConstructionSite.BeginConstructionOrRepair( building, constructionSiteData );
 					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 				}
 			}
@@ -340,7 +353,9 @@ namespace SS
 					data.position = hitInfo.point;
 					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 
-					GameObject extra = ExtraCreator.Create( def, data );
+					GameObject extra = ExtraCreator.Create( def, data.guid );
+					ExtraCreator.SetData( extra, data );
+
 					ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
 					foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
 					{
@@ -370,7 +385,9 @@ namespace SS
 						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 						data.factionId = 0;
 						data.health = def.healthMax;
-						HeroCreator.Create( def, data );
+
+						GameObject hero = HeroCreator.Create( def, data.guid );
+						HeroCreator.SetData( hero, data );
 					}
 				}
 			}
@@ -395,7 +412,8 @@ namespace SS
 						data.position = hitInfo.point;
 						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 
-						GameObject extra = ExtraCreator.Create( def, data );
+						GameObject extra = ExtraCreator.Create( def, data.guid );
+						ExtraCreator.SetData( extra, data );
 					}
 				}
 			}

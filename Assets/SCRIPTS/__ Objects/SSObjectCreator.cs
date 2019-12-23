@@ -20,7 +20,55 @@ namespace SS.Objects
 			}
 		}
 
-		public static void AssignModules( GameObject gameObject, SSObjectDefinition def, SSObjectData data )
+
+
+		public static void AssignModuleData( SSObject ssObject, SSObjectData data )
+		{
+			SSModule[] modules = ssObject.GetModules();
+
+			Guid[] moduleDataIds;
+			ModuleData[] moduleData;
+			data.GetAllModules( out moduleDataIds, out moduleData );
+			
+
+			// for each module, find data.
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				if( moduleDataIds.Length == 0 )
+				{
+					Debug.Log( "No module data corresponding to moduleId of '" + modules[i].moduleId.ToString( "D" ) + "' was found." );
+					continue;
+				}
+				for( int j = 0; j < moduleDataIds.Length; j++ )
+				{
+					if( modules[i].moduleId == moduleDataIds[j] )
+					{
+						modules[i].SetData( moduleData[j] );
+						break;
+					}
+					else if( j == moduleDataIds.Length - 1 )
+					{
+						Debug.Log( "No module data corresponding to moduleId of '" + modules[i].moduleId.ToString( "D" ) + "' was found.." );
+					}
+				}
+			}
+		}
+
+		public static void AssignModules( GameObject gameObject, SSObjectDefinition def )
+		{
+			Guid[] moduleDefIds;
+			ModuleDefinition[] moduleDefinitions;
+			
+			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+
+			for( int i = 0; i < moduleDefIds.Length; i++ )
+			{
+				moduleDefinitions[i].AddModule( gameObject, moduleDefIds[i] );
+			}
+		}
+
+
+		/*public static void AssignModules( GameObject gameObject, SSObjectDefinition def, SSObjectData data )
 		{
 			Guid[] moduleDefIds;
 			ModuleDefinition[] moduleDefinitions;
@@ -53,7 +101,7 @@ namespace SS.Objects
 					}
 				}
 			}
-		}
+		}*/
 
 		public static void ExtractModulesToData( SSObject ssObject, SSObjectData data )
 		{

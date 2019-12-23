@@ -1,7 +1,7 @@
-﻿using Katniss.ModifierAffectedValues;
-using KFF;
+﻿using KFF;
 using SS.AI.Goals;
 using SS.Content;
+using SS.Objects;
 using System;
 using UnityEngine;
 
@@ -30,6 +30,8 @@ namespace SS.Levels.SaveStates
 				this.__factionId = value;
 			}
 		}
+
+		public PopulationSize population { get; set; }
 
 		public float health { get; set; }
 		
@@ -72,6 +74,15 @@ namespace SS.Levels.SaveStates
 			{
 				throw new Exception( "Missing or invalid value of 'FactionId' (" + serializer.file.fileName + ")." );
 			}
+			
+			try
+			{
+				this.population = (PopulationSize)serializer.ReadByte( "Population" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Population' (" + serializer.file.fileName + ")." );
+			}
 
 			try
 			{
@@ -95,6 +106,9 @@ namespace SS.Levels.SaveStates
 			serializer.WriteQuaternion( "", "Rotation", this.rotation );
 
 			serializer.WriteInt( "", "FactionId", this.factionId );
+
+			serializer.WriteByte( "", "Population", (byte)this.population );
+
 			serializer.WriteFloat( "", "Health", this.health );
 			
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );

@@ -23,6 +23,7 @@ namespace SS.Objects.Modules
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
+#warning serialize overrides in data (nullable).
 		public int? projectileCountOverride;
 		
 		public float damage;
@@ -47,7 +48,7 @@ namespace SS.Objects.Modules
 
 		private bool isReady2 = false;
 
-		private SubObject[] traversibleSubObjects { get; set; }
+		public SubObject[] traversibleSubObjects { get; set; }
 
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -179,7 +180,8 @@ namespace SS.Objects.Modules
 				this.moduleId
 				);
 
-			ProjectileCreator.Create( this.projectile, data );
+			GameObject projectile = ProjectileCreator.Create( this.projectile, data.guid );
+			ProjectileCreator.SetData( projectile, data );
 		}
 
 
@@ -199,17 +201,8 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetDefData( ModuleDefinition _def, ModuleData _data )
+		public override void SetData( ModuleData _data )
 		{
-			if( !(_def is RangedModuleDefinition) )
-			{
-				throw new Exception( "Provided definition is not of the correct type." );
-			}
-			if( _def == null )
-			{
-				throw new Exception( "Provided definition is null." );
-			}
-
 			if( !(_data is RangedModuleData) )
 			{
 				throw new Exception( "Provided data is not of the correct type." );
@@ -218,31 +211,8 @@ namespace SS.Objects.Modules
 			{
 				throw new Exception( "Provided data is null." );
 			}
-
-			RangedModuleDefinition def = (RangedModuleDefinition)_def;
+			
 			RangedModuleData data = (RangedModuleData)_data;
-			
-			this.attackRange = def.attackRange;
-
-			
-			this.projectile = DefinitionManager.GetProjectile( def.projectileId );
-			this.damage = def.damage;
-			this.damageType = def.damageType;
-			this.armorPenetration = def.armorPenetration;
-
-			this.projectileCount = def.projectileCount;
-			this.attackCooldown = def.attackCooldown;
-			this.velocity = def.velocity;
-			this.localOffsetMin = def.localOffsetMin;
-			this.localOffsetMax = def.localOffsetMax;
-			this.attackSoundEffect = def.attackSoundEffect;
-
-			this.traversibleSubObjects = new SubObject[def.traversibleSubObjects.Length];
-			for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-			{
-				SubObject trav = this.ssObject.GetSubObject( def.traversibleSubObjects[i] );
-				this.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + def.traversibleSubObjects[i].ToString( "D" ) + "'." );
-			}
 			
 			if( data.targetGuid != null )
 			{

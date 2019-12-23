@@ -24,7 +24,7 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public abstract ModuleData GetIdentityData();
 
-		public abstract void AddModule( GameObject gameObject, Guid moduleId, ModuleData data );
+		public abstract void AddModule( GameObject gameObject, Guid moduleId );
 		
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
