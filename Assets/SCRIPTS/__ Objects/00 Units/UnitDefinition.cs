@@ -289,6 +289,7 @@ namespace SS.Objects.Units
 			}
 			catch
 			{
+#warning TODO! incomplete default population on spawn.
 				this.defaultPopulationOnSpawn = PopulationSize.x1;
 				//throw new Exception( "Missing or invalid value of 'DefaultPopulationOnSpawn' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}

@@ -10,12 +10,14 @@ namespace SS.Levels.SaveStates
 		{
 			public string id { get; set; }
 			public int amount { get; set; }
+			public int? capacityOverride { get; set; }
 
 
 			public SlotData( InventoryModule.SlotGroup slotGroup )
 			{
 				this.id = slotGroup.id;
 				this.amount = slotGroup.amount;
+				this.capacityOverride = slotGroup.capacityOverride;
 			}
 
 
@@ -23,12 +25,20 @@ namespace SS.Levels.SaveStates
 			{
 				this.id = serializer.ReadString( "Id" );
 				this.amount = serializer.ReadInt( "Amount" );
+				if( serializer.Analyze( "CapacityOverride" ).isSuccess )
+				{
+					this.capacityOverride = serializer.ReadInt( "CapacityOverride" );
+				}
 			}
 
 			public void SerializeKFF( KFFSerializer serializer )
 			{
 				serializer.WriteString( "", "Id", this.id );
 				serializer.WriteInt( "", "Amount", this.amount );
+				if( this.capacityOverride != null )
+				{
+					serializer.WriteInt( "", "CapacityOverride", this.amount );
+				}
 			}
 		}
 		

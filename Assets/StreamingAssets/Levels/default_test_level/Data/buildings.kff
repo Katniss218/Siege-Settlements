@@ -659,7 +659,7 @@
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/bowmen_albedo.png";
+					ColorMap = "extern:Textures/Units/bowmen_color.png";
 					NormalMap = "extern:Textures/Units/unit_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";

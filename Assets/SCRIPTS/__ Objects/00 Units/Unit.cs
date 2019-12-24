@@ -58,8 +58,8 @@ namespace SS.Objects.Units
 				this.healthMax = newHealthMax;
 				this.health = newHealth;
 
-#warning TODO! - unit definitions specify how long it's per each population. It's some sort of scaling factor. It shows how big a single unit is.
-#warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x (to prevent overly HUGE units).
+#warning TODO! - unit definitions specify how big it's hitbox is per each population. It's some sort of scaling factor. It shows how big a single unit is.
+#warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x.
 				// We can make sure that e.g. Elephants 1x can't go on top of tower by just blocking elephants from going inside of tower.
 
 				float x = 0.5f;
@@ -86,13 +86,7 @@ namespace SS.Objects.Units
 					z *= 2;
 				}
 				this.size = new Vector3( x/2, this.size.y, z/2 );
-
-				// meshes can be selected based on population (if present).
-				// materials the same.
-#warning proper mesh & material switching.
-				//this.transform.GetChild( 0 ).localScale = new Vector3( x, 1, z ); // INSTEAD OF THIS - switch the meshes & materials depending on population.
-
-
+				
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
 				for( int i = 0; i < inventories.Length; i++ )
 				{

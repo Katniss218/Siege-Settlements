@@ -1,4 +1,5 @@
 ﻿using KFF;
+using System;
 using UnityEngine;
 
 namespace SS.Objects.SubObjects
@@ -9,20 +10,58 @@ namespace SS.Objects.SubObjects
 
 		public Color color { get; set; }
 
-		public float minIntensity { get; set; }
-		public float maxIntensity { get; set; }
+		float __minIntensity;
+		public float minIntensity
+		{
+			get
+			{
+				return this.__minIntensity;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new Exception( "Min intensity must be greater than 0." );
+				}
+				this.__minIntensity = value;
+			}
+		}
+		float __maxIntensity;
+		public float maxIntensity
+		{
+			get
+			{
+				return this.__maxIntensity;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new Exception( "Max intensity must be greater than 0." );
+				}
+				this.__maxIntensity = value;
+			}
+		}
 
-		public float range { get; set; }
-
-#warning TODO! - values negative
+		float __range;
+		public float range
+		{
+			get
+			{
+				return this.__range;
+			}
+			set
+			{
+				if( value <= 0 )
+				{
+					throw new Exception( "Range must be greater than 0." );
+				}
+				this.__range = value;
+			}
+		}
 
 		public override SubObject AddTo( GameObject gameObject )
 		{
-			/*if( this.shape == null )
-			{
-				throw new Exception( "Shape can't be null" );
-			}*/
-
 			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
 			child.transform.SetParent( gameObject.transform );
 
@@ -37,7 +76,7 @@ namespace SS.Objects.SubObjects
 			subObject.subObjectId = this.subObjectId;
 			subObject.minIntensity = this.minIntensity;
 			subObject.maxIntensity = this.maxIntensity;
-			subObject.speedMultiplier = 8.0f;
+			subObject.flickerSpeed = 8.0f;
 			subObject.color = this.color;
 			subObject.range = this.range;
 
@@ -47,15 +86,68 @@ namespace SS.Objects.SubObjects
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			try
+			{
+				this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'SubObjectId' (" + serializer.file.fileName + ")." );
+			}
 
-			this.localPosition = serializer.ReadVector3( "LocalPosition" );
-			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			try
+			{
+				this.localPosition = serializer.ReadVector3( "LocalPosition" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalPosition' (" + serializer.file.fileName + ")." );
+			}
 
-			this.color = serializer.ReadColor( "Color" );
-			this.minIntensity = serializer.ReadFloat( "MinIntensity" );
-			this.maxIntensity = serializer.ReadFloat( "MaxIntensity" );
-			this.range = serializer.ReadFloat( "Range" );
+			try
+			{
+				this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalRotationEuler' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.color = serializer.ReadColor( "Color" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Color' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.minIntensity = serializer.ReadFloat( "MinIntensity" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MinIntensity' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.maxIntensity = serializer.ReadFloat( "MaxIntensity" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'MaxIntensity' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.range = serializer.ReadFloat( "Range" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'Range' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

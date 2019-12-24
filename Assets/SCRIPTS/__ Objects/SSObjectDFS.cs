@@ -44,7 +44,7 @@ namespace SS.Objects
 		public float viewRange { get; set; }
 
 
-		[SerializeField] private int __factionId;
+		[SerializeField] private int __factionId = -1; // Needs to be different then any index of the factions array (otherwise onFactionChange won't trigger on spawn).
 		/// <summary>
 		/// Contains the index of the faction that this object belongs to.
 		/// </summary>
@@ -56,8 +56,13 @@ namespace SS.Objects
 			}
 			set
 			{
+				bool isDifferentFactionId = this.factionId != value;
 				this.__factionId = value;
-				this.onFactionChange?.Invoke();
+
+				if( isDifferentFactionId ) // Only call onFactionChange if the faction ID has actually changed.
+				{
+					this.onFactionChange?.Invoke();
+				}
 			}
 		}
 

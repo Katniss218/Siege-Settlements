@@ -28,6 +28,10 @@ namespace SS.Objects.SubObjects
 		}
 
 		public const string KFF_TYPEID = "PARTICLES";
+
+		public const string SHAPE_SPHERE_KFFID = "sphere";
+		public const string SHAPE_CONE_KFFID = "cone";
+		public const string SHAPE_BOX_KFFID = "box";
 		
 		public bool isWorldSpace { get; set; }
 
@@ -97,55 +101,183 @@ namespace SS.Objects.SubObjects
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			try
+			{
+				this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'SubObjectId' (" + serializer.file.fileName + ")." );
+			}
 
-			this.localPosition = serializer.ReadVector3( "LocalPosition" );
-			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			try
+			{
+				this.localPosition = serializer.ReadVector3( "LocalPosition" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalPosition' (" + serializer.file.fileName + ")." );
+			}
 
-			this.isWorldSpace = serializer.ReadBool( "IsWorldSpace" );
+			try
+			{
+				this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalRotationEuler' (" + serializer.file.fileName + ")." );
+			}
 
-			this.lifetimeMin = serializer.ReadFloat( "LifetimeMin" );
-			this.lifetimeMax = serializer.ReadFloat( "LifetimeMax" );
-			this.emissionRateTime = serializer.ReadFloat( "EmissionRateTime" );
-			this.startSizeMin = serializer.ReadFloat( "StartSizeMin" );
-			this.startSizeMax = serializer.ReadFloat( "StartSizeMax" );
-			this.startSpeedMin = serializer.ReadFloat( "StartSpeedMin" );
-			this.startSpeedMax = serializer.ReadFloat( "StartSpeedMax" );
+			try
+			{
+				this.isWorldSpace = serializer.ReadBool( "IsWorldSpace" );
+			}
+			catch
+			{
+#warning Get full KFF Paths from the serializer exception.
+				throw new Exception( "Missing or invalid value of 'IsWorldSpace' (" + serializer.file.fileName + ")." );
+			}
 
-			string strShape = serializer.ReadString( "Shape.Type" );
-			if( strShape == "box" )
+			try
+			{
+				this.lifetimeMin = serializer.ReadFloat( "LifetimeMin" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LifetimeMin' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.lifetimeMax = serializer.ReadFloat( "LifetimeMax" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LifetimeMax' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.emissionRateTime = serializer.ReadFloat( "EmissionRateTime" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'EmissionRateTime' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.startSizeMin = serializer.ReadFloat( "StartSizeMin" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'StartSizeMin' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.startSizeMax = serializer.ReadFloat( "StartSizeMax" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'StartSizeMax' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.startSpeedMin = serializer.ReadFloat( "StartSpeedMin" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'StartSpeedMin' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.startSpeedMax = serializer.ReadFloat( "StartSpeedMax" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'StartSpeedMax' (" + serializer.file.fileName + ")." );
+			}
+
+			string strShape = "";
+			try
+			{
+				strShape = serializer.ReadString( "Shape.Type" );
+			}
+			catch
+			{
+				throw new Exception( "Missing 'Shape.Type' (" + serializer.file.fileName + ")." );
+			}
+			if( strShape == SHAPE_BOX_KFFID )
 			{
 				BoxShape shape = new BoxShape();
-				shape.size = serializer.ReadVector3( "Shape.Size" );
+				try
+				{
+					shape.size = serializer.ReadVector3( "Shape.Size" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Shape.Size' (" + serializer.file.fileName + ")." );
+				}
 				this.shape = shape;
 			}
-			else if( strShape == "sphere" )
+			else if( strShape == SHAPE_SPHERE_KFFID )
 			{
 				SphereShape shape = new SphereShape();
-				shape.radius = serializer.ReadFloat( "Shape.Radius" );
+				try
+				{
+					shape.radius = serializer.ReadFloat( "Shape.Radius" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Shape.Radius' (" + serializer.file.fileName + ")." );
+				}
 				this.shape = shape;
 			}
-			else if( strShape == "cone" )
+			else if( strShape == SHAPE_CONE_KFFID )
 			{
 				ConeShape shape = new ConeShape();
-				shape.radius = serializer.ReadFloat( "Shape.Radius" );
-				shape.angle = serializer.ReadFloat( "Shape.Angle" );
+				try
+				{
+					shape.radius = serializer.ReadFloat( "Shape.Radius" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Shape.Radius' (" + serializer.file.fileName + ")." );
+				}
+				try
+				{
+					shape.angle = serializer.ReadFloat( "Shape.Angle" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Shape.Angle' (" + serializer.file.fileName + ")." );
+				}
 				this.shape = shape;
 			}
 			else
 			{
-				throw new Exception( "Invalid shape '" + strShape + "'." );
+				throw new Exception( "Missing or invalid value of 'Shape.Type' - \"" + strShape + "\"." );
 			}
 
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "VelocityOverLifetimeKeys" );
 			if( analysisData.isSuccess )
 			{
 				this.velocityOverLifetime = new Tuple<float, Vector3>[analysisData.childCount];
-				for( int i = 0; i < this.velocityOverLifetime.Length; i++ )
+				try
 				{
-					float time = serializer.ReadFloat( new Path( "VelocityOverLifetimeKeys.{0}.Time", i ) );
-					Vector3 value = serializer.ReadVector3( new Path( "VelocityOverLifetimeKeys.{0}.Value", i ) );
-					this.velocityOverLifetime[i] = new Tuple<float, Vector3>( time, value );
+					for( int i = 0; i < this.velocityOverLifetime.Length; i++ )
+					{
+						float time = serializer.ReadFloat( new Path( "VelocityOverLifetimeKeys.{0}.Time", i ) );
+						Vector3 value = serializer.ReadVector3( new Path( "VelocityOverLifetimeKeys.{0}.Value", i ) );
+						this.velocityOverLifetime[i] = new Tuple<float, Vector3>( time, value );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'VelocityOverLifetimeKeys' (" + serializer.file.fileName + ")." );
 				}
 			}
 
@@ -153,11 +285,18 @@ namespace SS.Objects.SubObjects
 			if( analysisData.isSuccess )
 			{
 				this.colorOverLifetime = new Tuple<float, Color>[analysisData.childCount];
-				for( int i = 0; i < this.colorOverLifetime.Length; i++ )
+				try
 				{
-					float time = serializer.ReadFloat( new Path( "ColorOverLifetimeKeys.{0}.Time", i ) );
-					Color value = serializer.ReadColor( new Path( "ColorOverLifetimeKeys.{0}.Value", i ) );
-					this.colorOverLifetime[i] = new Tuple<float, Color>( time, value );
+					for( int i = 0; i < this.colorOverLifetime.Length; i++ )
+					{
+						float time = serializer.ReadFloat( new Path( "ColorOverLifetimeKeys.{0}.Time", i ) );
+						Color value = serializer.ReadColor( new Path( "ColorOverLifetimeKeys.{0}.Value", i ) );
+						this.colorOverLifetime[i] = new Tuple<float, Color>( time, value );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ColorOverLifetimeKeys' (" + serializer.file.fileName + ")." );
 				}
 			}
 
@@ -165,18 +304,39 @@ namespace SS.Objects.SubObjects
 			if( analysisData.isSuccess )
 			{
 				this.sizeOverLifetime = new Tuple<float, float>[analysisData.childCount];
-				for( int i = 0; i < this.sizeOverLifetime.Length; i++ )
+				try
 				{
-					float time = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Time", i ) );
-					float value = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Value", i ) );
-					this.sizeOverLifetime[i] = new Tuple<float, float>( time, value );
+					for( int i = 0; i < this.sizeOverLifetime.Length; i++ )
+					{
+						float time = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Time", i ) );
+						float value = serializer.ReadFloat( new Path( "SizeOverLifetimeKeys.{0}.Value", i ) );
+						this.sizeOverLifetime[i] = new Tuple<float, float>( time, value );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'SizeOverLifetimeKeys' (" + serializer.file.fileName + ")." );
 				}
 			}
 
-			this.particleTexture = serializer.ReadTexture2DFromAssets( "ParticleTexture" );
-			if( serializer.Analyze("EmissionColor").isSuccess )
+			try
 			{
-				this.emissionColor = serializer.ReadColor( "EmissionColor" );
+				this.particleTexture = serializer.ReadTexture2DFromAssets( "ParticleTexture" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing or invalid value of 'ParticleTexture' (" + serializer.file.fileName + ")." );
+			}
+			if( serializer.Analyze( "EmissionColor" ).isSuccess )
+			{
+				try
+				{
+					this.emissionColor = serializer.ReadColor( "EmissionColor" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'EmissionColor' (" + serializer.file.fileName + ")." );
+				}
 			}
 		}
 

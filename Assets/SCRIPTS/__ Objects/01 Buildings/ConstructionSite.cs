@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using SS.Content;
-using SS.ResourceSystem.Payment;
-using Object = UnityEngine.Object;
+﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Diplomacy;
-using SS.UI;
-using System.Text;
 using SS.ResourceSystem;
+using SS.ResourceSystem.Payment;
+using SS.UI;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 using UnityEngine.Events;
+using Object = UnityEngine.Object;
 
 namespace SS.Objects.Buildings
 {
@@ -41,9 +40,9 @@ namespace SS.Objects.Buildings
 		{
 			foreach( var kvp in resourceInfo )
 			{
-				int roundedAmount = RoundExact( kvp.Value.remaining );
+				int ceiledAmount = Mathf.CeilToInt( kvp.Value.remaining );
 
-				if( roundedAmount != 0 )
+				if( ceiledAmount != 0 )
 				{
 					return false;
 				}
@@ -61,15 +60,15 @@ namespace SS.Objects.Buildings
 					continue;
 				}
 
-				int roundedRemaining = RoundExact( kvp.Value.remaining );
-				if( roundedRemaining == 0 )
+				int ceiledRemaining = Mathf.CeilToInt( kvp.Value.remaining );
+				if( ceiledRemaining == 0 )
 				{
 					throw new Exception( "Received resource wasn't wanted." );
 				}
 				// Received more than was needed (invalid behavior).
-				if( roundedRemaining < amount )
+				if( ceiledRemaining < amount )
 				{
-					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + roundedRemaining + ")." );
+					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + ceiledRemaining + ")." );
 				}
 
 
@@ -172,10 +171,10 @@ namespace SS.Objects.Buildings
 
 			foreach( var kvp in this.resourceInfo )
 			{
-				int amtRounded = RoundExact( kvp.Value.remaining );
-				if( amtRounded != 0 )
+				int ceiledAmount = Mathf.CeilToInt( kvp.Value.remaining );
+				if( ceiledAmount != 0 )
 				{
-					ret.Add( kvp.Key, amtRounded );
+					ret.Add( kvp.Key, ceiledAmount );
 				}
 			}
 			return ret;
@@ -211,20 +210,7 @@ namespace SS.Objects.Buildings
 		{
 			this.onPaymentReceived = new UnityEvent();
 		}
-
-		// Rounds down when the decimal is <=0.5, rounds up when >0.5
-		private static int RoundExact( float remainingResAmt )
-		{
-			return Mathf.CeilToInt( remainingResAmt );
-			int floored = Mathf.FloorToInt( remainingResAmt );
-			if( remainingResAmt - floored <= 0.5f )
-			{
-				return floored;
-			}
-			return floored + 1;
-		}
-
-
+		
 		/// <summary>
 		/// Creates a new ConstructionSiteData from a GameObject.
 		/// </summary>

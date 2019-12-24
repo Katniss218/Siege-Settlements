@@ -16,6 +16,10 @@ namespace SS.Objects.SubObjects
 		
 		public override SubObject AddTo( GameObject gameObject )
 		{
+			if( this.meshes == null || this.meshes.Count < 1 )
+			{
+				throw new Exception( "Mesh dictionary must have at least 1 element." );
+			}
 			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
 			child.transform.SetParent( gameObject.transform );
 
@@ -37,7 +41,7 @@ namespace SS.Objects.SubObjects
 				}
 				subObject.meshes.Add( kvp.Key, (Mesh)kvp.Value );
 			}
-#warning what if array is null or 0-length?
+
 			subObject.lookupKey = firstKey.Value;
 			subObject.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
@@ -49,10 +53,32 @@ namespace SS.Objects.SubObjects
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			try
+			{
+				this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'SubObjectId' (" + serializer.file.fileName + ")." );
+			}
 
-			this.localPosition = serializer.ReadVector3( "LocalPosition" );
-			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			try
+			{
+				this.localPosition = serializer.ReadVector3( "LocalPosition" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalPosition' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalRotationEuler' (" + serializer.file.fileName + ")." );
+			}
 
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Meshes" );
 			if( analysisData.isSuccess )
@@ -67,7 +93,7 @@ namespace SS.Objects.SubObjects
 						this.meshes.Add( key, mesh );
 					}
 				}
-				catch
+				catch( KFFException )
 				{
 					throw new Exception( "Missing or invalid value of 'Meshes' (" + serializer.file.fileName + ")." );
 				}
@@ -82,7 +108,7 @@ namespace SS.Objects.SubObjects
 			{
 				serializer.Deserialize( "Material", this.materialData );
 			}
-			catch
+			catch( KFFException )
 			{
 				throw new Exception( "Missing or invalid value of 'Material' (" + serializer.file.fileName + ")." );
 			}

@@ -7,6 +7,7 @@ namespace SS.Levels.SaveStates
 	public class MeleeModuleData : ModuleData
 	{
 		public Guid? targetGuid { get; set; }
+		public float? damageOverride { get; set; }
 		
 
 		public MeleeModuleData()
@@ -28,6 +29,18 @@ namespace SS.Levels.SaveStates
 					throw new Exception( "Missing or invalid value of 'TargetGuid' (" + serializer.file.fileName + ")." );
 				}
 			}
+
+			if( serializer.Analyze( "DamageOverride" ).isSuccess )
+			{
+				try
+				{
+					this.damageOverride = serializer.ReadFloat( "DamageOverride" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'DamageOverride' (" + serializer.file.fileName + ")." );
+				}
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -35,6 +48,10 @@ namespace SS.Levels.SaveStates
 			if( this.targetGuid != null )
 			{
 				serializer.WriteGuid( "", "TargetGuid", this.targetGuid.Value );
+			}
+			if( this.damageOverride != null )
+			{
+				serializer.WriteFloat( "", "DamageOverride", this.damageOverride.Value );
 			}
 		}
 	}

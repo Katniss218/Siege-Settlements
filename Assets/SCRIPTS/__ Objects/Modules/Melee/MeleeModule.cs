@@ -14,7 +14,6 @@ namespace SS.Objects.Modules
 
 
 		public float damage;
-#warning serialize overrides in data (nullable).
 		public float? damageOverride;
 		public float armorPenetration;
 		public DamageType damageType;
@@ -119,6 +118,10 @@ namespace SS.Objects.Modules
 			{
 				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
 			}
+			if( this.damageOverride != null )
+			{
+				data.damageOverride = this.damageOverride;
+			}
 			return data;
 		}
 
@@ -138,6 +141,10 @@ namespace SS.Objects.Modules
 			if( data.targetGuid != null )
 			{
 				this.targeter.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
+			}
+			if( data.damageOverride != null )
+			{
+				this.damageOverride = data.damageOverride;
 			}
 		}
 

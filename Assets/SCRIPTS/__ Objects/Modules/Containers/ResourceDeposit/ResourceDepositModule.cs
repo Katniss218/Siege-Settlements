@@ -111,12 +111,7 @@ namespace SS.Objects.Modules
 						this.ShowTooltip();
 					}
 				}
-			} );
-
-#warning This is very taxing, when there are multiple resource deposits, all getting called (since every single one is getting called, no matter what).
-			// Make the function call only the object that is in question. - similarly to the built-in Unity Event System functions with interfaces
-			//        (can't use Unity's system since the usage of ispointerovergameobject to detect GUI).
-			
+			} );			
 		}
 
 		void OnDestroy()

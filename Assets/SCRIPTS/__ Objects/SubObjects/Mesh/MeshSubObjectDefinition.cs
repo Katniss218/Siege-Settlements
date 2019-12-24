@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Content;
+using System;
 using UnityEngine;
 
 namespace SS.Objects.SubObjects
@@ -38,15 +39,51 @@ namespace SS.Objects.SubObjects
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			try
+			{
+				this.subObjectId = serializer.ReadGuid( "SubObjectId" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'SubObjectId' (" + serializer.file.fileName + ")." );
+			}
 
-			this.localPosition = serializer.ReadVector3( "LocalPosition" );
-			this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
-			
-			this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
-#warning Add exception handling.
+			try
+			{
+				this.localPosition = serializer.ReadVector3( "LocalPosition" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalPosition' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.localRotation = Quaternion.Euler( serializer.ReadVector3( "LocalRotationEuler" ) );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'LocalRotationEuler' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.mesh = serializer.ReadMeshFromAssets( "Mesh" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing or invalid value of 'Mesh' (" + serializer.file.fileName + ")." );
+			}
+
 			this.materialData = new MaterialDefinition();
-			serializer.Deserialize( "Material", this.materialData );
+			try
+			{
+				serializer.Deserialize( "Material", this.materialData );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing or invalid value of 'Material' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )

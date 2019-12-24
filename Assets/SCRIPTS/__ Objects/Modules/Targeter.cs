@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -13,7 +12,8 @@ namespace SS.Objects.Modules
 			TARGET
 		}
 
-#warning Do I even want that? The Tactical Goals are targeters.
+#warning Tergeter is kind of a wrapper class at this point. Could be made static, with target field moved to the attack modules.
+
 		private SSObjectDFS __target;
 		public SSObjectDFS target
 		{

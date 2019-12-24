@@ -21,7 +21,7 @@ namespace SS.Objects.SubObjects
 		public float minIntensity { get; set; } = 1.0f;
 		public float maxIntensity { get; set; } = 2.0f;
 
-		public float speedMultiplier { get; set; } = 8.0f;
+		public float flickerSpeed { get; set; } = 8.0f;
 
 		public Color color
 		{
@@ -56,7 +56,7 @@ namespace SS.Objects.SubObjects
 
 		void Update()
 		{
-			light.intensity = Mathf.Lerp( this.minIntensity, this.maxIntensity, Mathf.PerlinNoise( Time.time * speedMultiplier, this.randOffset ) );
+			light.intensity = Mathf.Lerp( this.minIntensity, this.maxIntensity, Mathf.PerlinNoise( Time.time * flickerSpeed, this.randOffset ) );
 		}
 	}
 }

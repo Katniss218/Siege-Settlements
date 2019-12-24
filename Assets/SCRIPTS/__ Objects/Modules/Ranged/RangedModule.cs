@@ -1,5 +1,4 @@
 ﻿using Katniss.Utils;
-using SS.Content;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
 using SS.Objects.Projectiles;
@@ -23,7 +22,6 @@ namespace SS.Objects.Modules
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
-#warning serialize overrides in data (nullable).
 		public int? projectileCountOverride;
 		
 		public float damage;
@@ -198,6 +196,10 @@ namespace SS.Objects.Modules
 			{
 				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
 			}
+			if( this.projectileCountOverride != null )
+			{
+				data.projectileCountOverride = this.projectileCountOverride;
+			}
 			return data;
 		}
 
@@ -217,6 +219,10 @@ namespace SS.Objects.Modules
 			if( data.targetGuid != null )
 			{
 				this.targeter.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFS);
+			}
+			if( data.projectileCountOverride != null )
+			{
+				this.projectileCountOverride = data.projectileCountOverride;
 			}
 		}
 		

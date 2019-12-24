@@ -23,8 +23,7 @@ namespace SS.Objects.Modules
 			public string id;
 			public int amount;
 			public int capacity; // this is original value in definition.
-#warning TODO! - saved in data.
-			public int capacityOverride; // this is custom value.
+			public int? capacityOverride; // this is custom value.
 
 			public bool isConstrained { get { return this.slotId != ""; } }
 			public bool isEmpty { get { return this.amount == 0 || this.id == ""; } }
@@ -34,7 +33,7 @@ namespace SS.Objects.Modules
 				this.slotId = slotId ?? "";
 				this.id = "";
 				this.capacity = slotCapacity;
-				this.capacityOverride = slotCapacity;
+				this.capacityOverride = null;
 				this.amount = 0;
 			}
 		}
@@ -45,7 +44,7 @@ namespace SS.Objects.Modules
 		{
 			return this.slotGroups[index].capacity;
 		}
-		public int GetCapacityOverride( int index )
+		public int? GetCapacityOverride( int index )
 		{
 			return this.slotGroups[index].capacityOverride;
 		}
@@ -55,7 +54,10 @@ namespace SS.Objects.Modules
 			this.slotGroups[index].capacity = capacity;
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
-				this.ShowTooltip();
+				if( this.CanShowTooltip() )
+				{
+					this.ShowTooltip();
+				}
 			}
 		}
 		public void SetCapacityOverride( int index, int capacityOverride )
@@ -63,11 +65,13 @@ namespace SS.Objects.Modules
 			this.slotGroups[index].capacityOverride = capacityOverride;
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
-				this.ShowTooltip();
+				if( this.CanShowTooltip() )
+				{
+					this.ShowTooltip();
+				}
 			}
 		}
 
-#warning TODO! - Hud is not hidden when faction changes to an enemy. But is hidden when the unit is mouseovered as an enemy.
 
 		/// <summary>
 		/// Returns a copy of every slot in the inventory.
@@ -104,34 +108,43 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		
-		private void ShowTooltip()
+		private bool CanShowTooltip()
 		{
-			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
+			if( !(this.ssObject is IFactionMember) )
+			{
+				return true;
+			}
+			IFactionMember ssObjectFactionMember = (IFactionMember)this.ssObject;
 			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
 			{
-				return;
+				return false;
 			}
-
+			return true;
+		}
+		
+		private void ShowTooltip()
+		{
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
 
 			for( int i = 0; i < this.slotCount; i++ )
 			{
+				int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
 				if( this.slotGroups[i].isEmpty )
 				{
 					if( this.slotGroups[i].isConstrained )
 					{
 						ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].slotId );
-						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
+						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + realCapacity );
 					}
 					else
 					{
-						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
+						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + realCapacity );
 					}
 				}
 				else
 				{
 					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].id );
-					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + this.slotGroups[i].capacityOverride );
+					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + realCapacity );
 				}
 			}
 			ToolTip.ShowAt( Input.mousePosition );
@@ -139,58 +152,79 @@ namespace SS.Objects.Modules
 
 		private void MoveTooltip()
 		{
-			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
-
 			ToolTip.MoveTo( Input.mousePosition, true );
 		}
 
 		private void HideTooltip()
 		{
-			IFactionMember ssObjectFactionMember = this.ssObject as IFactionMember;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
-
 			ToolTip.Hide();
 		}
 
 		
 		public void OnMouseEnterListener()
 		{
-			this.ShowTooltip();
+			if( this.CanShowTooltip() )
+			{
+				this.ShowTooltip();
+			}
 		}
 
 		public void OnMouseStayListener()
 		{
-			this.MoveTooltip();
+			if( this.CanShowTooltip() )
+			{
+				this.MoveTooltip();
+			}
 		}
 
 		public void OnMouseExitListener()
 		{
-			this.HideTooltip();
+			if( this.CanShowTooltip() )
+			{
+				this.HideTooltip();
+			}
 		}
-
+		
 		private void RegisterTooltip()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					this.ShowTooltip();
+					if( this.CanShowTooltip() )
+					{
+						this.ShowTooltip();
+					}
 				}
 			} );
 			this.onRemove.AddListener( ( string id, int amount ) =>
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					this.ShowTooltip();
+					if( this.CanShowTooltip() )
+					{
+						this.ShowTooltip();
+					}
 				}
 			} );
+			if( this.ssObject is IFactionMember )
+			{
+				IFactionMember factionMemberSelf = (IFactionMember)this.ssObject;
+				factionMemberSelf.onFactionChange.AddListener( () =>
+				{
+					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+					{
+						if( factionMemberSelf.factionId != LevelDataManager.PLAYER_FAC )
+						{
+							this.HideTooltip();
+						}
+						else
+						{
+							this.ShowTooltip();
+						}
+					}
+				} );
+			}
 		}
 				
 		private void RegisterHUD()
@@ -269,18 +303,25 @@ namespace SS.Objects.Modules
 			{
 				this.RegisterHUD();
 			}
-			this.onAdd.AddListener( ( string id, int amount ) =>
-			{
-				ResourcePanel.instance.UpdateResourceEntryDelta( id, amount );
-			} );
-			this.onRemove.AddListener( ( string id, int amount ) =>
-			{
-				ResourcePanel.instance.UpdateResourceEntryDelta( id, -amount );
-			} );
+			
 
 			if( this.ssObject is IFactionMember )
 			{
 				IFactionMember fac = (IFactionMember)this.ssObject;
+				this.onAdd.AddListener( ( string id, int amount ) =>
+				{
+					if( fac.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdateResourceEntryDelta( id, amount );
+					}
+				} );
+				this.onRemove.AddListener( ( string id, int amount ) =>
+				{
+					if( fac.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdateResourceEntryDelta( id, -amount );
+					}
+				} );
 				fac.onFactionChange.AddListener( () =>
 				{
 					if( fac.factionId == LevelDataManager.PLAYER_FAC )
@@ -336,7 +377,10 @@ namespace SS.Objects.Modules
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					this.HideTooltip();
+					if( this.CanShowTooltip() )
+					{
+						this.HideTooltip();
+					}
 				}
 			}
 		}
@@ -416,7 +460,7 @@ namespace SS.Objects.Modules
 				{
 					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].capacityOverride;
+						total += this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
 					}
 				}
 				else
@@ -424,7 +468,7 @@ namespace SS.Objects.Modules
 					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
 					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].capacityOverride - this.slotGroups[i].amount;
+						total += (this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value) - this.slotGroups[i].amount;
 					}
 				}
 			}
@@ -470,7 +514,7 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < indices.Count; i++ )
 			{
 				int index = indices[i];
-				int spaceInSlot = this.slotGroups[index].capacityOverride - this.slotGroups[index].amount;
+				int spaceInSlot = (this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value) - this.slotGroups[index].amount;
 				int amountAdded = spaceInSlot > amountRemaining ? amountRemaining : spaceInSlot;
 
 				this.slotGroups[index].amount += amountAdded;
@@ -601,7 +645,10 @@ namespace SS.Objects.Modules
 					this.slotGroups[i].id = data.items[i].id;
 					this.slotGroups[i].amount = data.items[i].amount;
 
-
+					if( data.items[i].capacityOverride != null )
+					{
+						this.slotGroups[i].capacityOverride = data.items[i].capacityOverride;
+					}
 
 
 					if( this.ssObject is IFactionMember )
@@ -609,7 +656,6 @@ namespace SS.Objects.Modules
 						IFactionMember factionMember = (IFactionMember)this.ssObject;
 						if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
 						{
-#warning TODO! - update when faction changes.
 							if( !this.slotGroups[i].isEmpty )
 							{
 								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, this.slotGroups[i].amount );
