@@ -45,9 +45,9 @@ namespace SS.Objects
 
 
 		[SerializeField] private int __factionId = -1; // Needs to be different then any index of the factions array (otherwise onFactionChange won't trigger on spawn).
-		/// <summary>
-		/// Contains the index of the faction that this object belongs to.
-		/// </summary>
+													   /// <summary>
+													   /// Contains the index of the faction that this object belongs to.
+													   /// </summary>
 		public int factionId
 		{
 			get
@@ -70,7 +70,7 @@ namespace SS.Objects
 		/// Fired when the faction ID changes.
 		/// </summary>
 		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
-		
+
 		// Checks if the faction members can target each other.
 		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.
 		internal bool CanTargetAnother( IFactionMember fac2 )
@@ -99,12 +99,20 @@ namespace SS.Objects
 			return LevelDataManager.GetRelation( fac1, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
 
+		/// <summary>
+		/// Returns true if the object should display it's parameters on the Selection Panel. True if the faction id matches player's faction.
+		/// </summary>
+		public override bool IsDisplaySafe()
+		{
+			return this.factionId == LevelDataManager.PLAYER_FAC;
+		}
+
 
 		//
 		//
 		//
 
-		
+
 		public UnityEvent onHealthPercentChanged { get; set; } = new UnityEvent();
 
 		/// <summary>
@@ -169,7 +177,7 @@ namespace SS.Objects
 				}
 			}
 		}
-		
+
 		[SerializeField]
 		private float __healthMax;
 		/// <summary>
@@ -189,7 +197,7 @@ namespace SS.Objects
 				{
 					this.health = this.healthMax;
 				}
-				
+
 				this.onHealthPercentChanged?.Invoke();
 			}
 		}

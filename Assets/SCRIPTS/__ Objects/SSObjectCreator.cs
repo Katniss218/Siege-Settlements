@@ -21,7 +21,9 @@ namespace SS.Objects
 		}
 
 
-
+		/// <summary>
+		/// Assigns data to each module that has it's data present in the SSObjectData.
+		/// </summary>
 		public static void AssignModuleData( SSObject ssObject, SSObjectData data )
 		{
 			SSModule[] modules = ssObject.GetModules();
@@ -30,13 +32,14 @@ namespace SS.Objects
 			ModuleData[] moduleData;
 			data.GetAllModules( out moduleDataIds, out moduleData );
 			
+			//
 
 			// for each module, find data.
 			for( int i = 0; i < modules.Length; i++ )
 			{
 				if( moduleDataIds.Length == 0 )
 				{
-					Debug.Log( "No module data corresponding to moduleId of '" + modules[i].moduleId.ToString( "D" ) + "' was found." );
+					//Debug.Log( "No module data corresponding to moduleId of '" + modules[i].moduleId.ToString( "D" ) + "' was found." );
 					continue;
 				}
 				for( int j = 0; j < moduleDataIds.Length; j++ )
@@ -46,10 +49,10 @@ namespace SS.Objects
 						modules[i].SetData( moduleData[j] );
 						break;
 					}
-					else if( j == moduleDataIds.Length - 1 )
+					/*else if( j == moduleDataIds.Length - 1 )
 					{
 						Debug.Log( "No module data corresponding to moduleId of '" + modules[i].moduleId.ToString( "D" ) + "' was found.." );
-					}
+					}*/
 				}
 			}
 		}

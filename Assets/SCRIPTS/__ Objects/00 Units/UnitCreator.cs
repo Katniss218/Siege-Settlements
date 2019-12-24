@@ -114,7 +114,9 @@ namespace SS.Objects.Units
 
 			unit.onFactionChange.AddListener( () =>
 			{
-#warning TODO! - The Selection Panel display is not re-displayed when faction changes (enemy & friendly objects display differently).
+#warning TODO! - The Selection Panel display is not re-displayed when faction changes (enemy objects aren't displayed so we don't know if we should display it, after it changes to friendly).
+
+
 				Color color = LevelDataManager.factions[unit.factionId].color;
 
 				unit.hud.SetColor( color );
@@ -128,6 +130,11 @@ namespace SS.Objects.Units
 				{
 					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
+
+				// re-display
+				// ...
+				// ..
+				// .
 			} );
 
 			unit.onHealthPercentChanged.AddListener( () =>

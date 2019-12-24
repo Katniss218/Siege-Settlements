@@ -380,6 +380,11 @@ namespace SS.Objects.Modules
 				return;
 			}
 
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
@@ -393,7 +398,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
 			
 			if( !this.IsPaymentDone() )
@@ -417,6 +427,11 @@ namespace SS.Objects.Modules
 				return;
 			}
 
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
@@ -427,6 +442,11 @@ namespace SS.Objects.Modules
 		private void TrainingEnd_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )
+			{
+				return;
+			}
+
+			if( !this.ssObject.IsDisplaySafe() )
 			{
 				return;
 			}
@@ -444,16 +464,17 @@ namespace SS.Objects.Modules
 
 		public void OnDisplay()
 		{
+			if( !this.ssObject.IsDisplaySafe() )//( this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
+			{
+				return;
+			}
+
 			// If it's not usable - return, don't train anything.
 			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
 			{
 				return;
 			}
 
-			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
 			if( this.IsPaymentDone() )
 			{
 				if( this.trainedUnit != null )

@@ -1,5 +1,4 @@
-﻿using Katniss.ModifierAffectedValues;
-using SS.UI;
+﻿using SS.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;

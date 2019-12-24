@@ -103,9 +103,14 @@ namespace SS.Objects.Buildings
 					this.building.health = this.building.healthMax;
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
-					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site, that'd still present if we used 'Destroy()'.
+					Object.DestroyImmediate( this ); // Use 'DestroyImmediate()', so that the redraw doesn't detect the construction site and say that it's not usable, that'd still present if we used 'Destroy()'.
 
-					this.ConstructionComplete_UI();
+					// Re-Display to update.
+					if( Selection.IsDisplayed( this.building ) )
+					{
+						Selection.StopDisplaying();
+						Selection.DisplayObject( this.building );
+					}
 				}
 
 				float healAmt = ((this.building.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
@@ -404,6 +409,14 @@ namespace SS.Objects.Buildings
 			for( int i = 0; i < constructionSite.renderers.Length; i++ )
 			{
 				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
+			}
+
+
+			// Re-Display to update.
+			if( Selection.IsDisplayed( building ) )
+			{
+				Selection.StopDisplaying();
+				Selection.DisplayObject( building );
 			}
 		}
 

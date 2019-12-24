@@ -12,7 +12,7 @@ namespace SS.Objects.Modules
 			TARGET
 		}
 
-#warning Tergeter is kind of a wrapper class at this point. Could be made static, with target field moved to the attack modules.
+#warning Targeter is kind of a wrapper class at this point. Could be made static, with target field moved to the attack modules.
 
 		private SSObjectDFS __target;
 		public SSObjectDFS target

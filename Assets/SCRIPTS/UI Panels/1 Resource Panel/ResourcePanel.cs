@@ -87,19 +87,29 @@ namespace SS.UI
 
 		public void SetEntries( ResourceDefinition[] resources )
 		{
+			this.RemoveAllEntries();
 			for( int i = 0; i < resources.Length; i++ )
 			{
 				this.AddEntry( resources[i].id, resources[i].icon, 0 );
 			}
 		}
+
+		public void RemoveAllEntries()
+		{
+			foreach( var kvp in this.entries )
+			{
+				Object.Destroy( kvp.Value.container.gameObject );
+			}
+			this.entries.Clear();
+		}
 		
 		public void RemoveResourceEntry( ResourceDefinition resource )
 		{
 			ResourceListEntry entry;
-			if( entries.TryGetValue( resource.id, out entry ) )
+			if( this.entries.TryGetValue( resource.id, out entry ) )
 			{
-				Destroy( entry.container.gameObject );
-				entries.Remove( resource.id );
+				Object.Destroy( entry.container.gameObject );
+				this.entries.Remove( resource.id );
 			}
 		}
 	}

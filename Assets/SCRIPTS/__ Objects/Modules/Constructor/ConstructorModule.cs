@@ -141,7 +141,7 @@ namespace SS.Objects.Modules
 
 		public void OnDisplay()
 		{
-			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
+			if( !this.ssObject.IsDisplaySafe() )
 			{
 				return;
 			}

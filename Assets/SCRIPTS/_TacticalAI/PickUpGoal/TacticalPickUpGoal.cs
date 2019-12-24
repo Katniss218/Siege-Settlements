@@ -110,38 +110,36 @@ namespace SS.AI.Goals
 			}
 		}
 
-		private void OnArrivalDeposit( TacticalGoalController controller, ResourceDepositModule depositToPickUp )
-		{
-			string idPickedUp = "";
-			int amountPickedUp = 0;
-
-#warning make sure that the goal doesn't continue picking up resources "in the background", even if it can't hold it.
-			this.amountCollectedDeposit += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
-			int amountCollectedFloored = Mathf.FloorToInt( amountCollectedDeposit );
-			Dictionary<string, int> resourcesInDeposit = depositToPickUp.GetAll();
-			if( amountCollectedFloored >= 1 )
+		private void OnArrivalDeposit( TacticalGoalController controller, ResourceDepositModule destinationDeposit )
+		{			
+			Dictionary<string, int> resourcesInDeposit = destinationDeposit.GetAll();
+			foreach( var kvp in resourcesInDeposit )
 			{
-				foreach( var kvp in resourcesInDeposit )
+				if( kvp.Value == 0 )
 				{
-					if( kvp.Value == 0 )
+					continue;
+				}
+				// If the goal wants a specific resource - disregard any other resources.
+				if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+				{
+					continue;
+				}
+				if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
+				{
+					this.amountCollectedDeposit += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
+					int amountCollectedFloored = Mathf.FloorToInt( amountCollectedDeposit );
+					if( amountCollectedFloored >= 1 )
 					{
-						continue;
-					}
-					// If the goal wants a specific resource - disregard any other resources.
-					if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
-					{
-						continue;
-					}
-					if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
-					{
-						amountPickedUp = this.inventory.Add( kvp.Key, amountCollectedFloored );
-						idPickedUp = kvp.Key;
+						// Get the actual amount that can be picked up & put in the inventory.
+						string pickedUpId = kvp.Key;
+						int pickedUpAmount = this.inventory.Add( kvp.Key, amountCollectedFloored );
+
 						this.amountCollectedDeposit -= amountCollectedFloored;
 
-						if( amountPickedUp > 0 )
+						if( pickedUpAmount > 0 )
 						{
-							depositToPickUp.Remove( idPickedUp, amountPickedUp );
-							AudioManager.PlaySound( depositToPickUp.miningSound );
+							destinationDeposit.Remove( pickedUpId, pickedUpAmount );
+							AudioManager.PlaySound( destinationDeposit.miningSound );
 						}
 						break; // Only pick up one resource at a time.
 					}

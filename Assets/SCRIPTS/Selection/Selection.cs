@@ -4,7 +4,6 @@ using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using SS.Levels;
-using UnityEngine.UI;
 
 namespace SS
 {
@@ -57,7 +56,19 @@ namespace SS
 
 		// When object is null, module also must be null.
 		// When module is not null, object also can't be null.
-		static DisplayedObjectData displayedObjectData = null;
+		private static DisplayedObjectData displayedObjectData = null;
+
+		public static SSObjectDFS displayedObject
+		{
+			get
+			{
+				if( displayedObjectData == null )
+				{
+					return null;
+				}
+				return displayedObjectData.obj;
+			}
+		}
 
 		private static ISelectDisplayHandler GetDisplayedThing()
 		{
@@ -76,18 +87,13 @@ namespace SS
 			return null;
 		}
 
-		public static bool IsDisplayed()
-		{
-			return displayedObjectData != null;
-		}
-
 		public static bool IsDisplayed( SSObjectDFS obj )
 		{
 			if( displayedObjectData == null )
 			{
 				return false;
 			}
-			return displayedObjectData.obj == obj ;
+			return displayedObjectData.obj == obj;
 		}
 
 		public static bool IsDisplayedGroup()
@@ -109,24 +115,13 @@ namespace SS
 			return displayedObjectData.module == moduleS;
 		}
 
-		public static void DisplayObjectDisplayed()
-		{
-			if( displayedObjectData == null )
-			{
-				return;
-			}
-			SSObjectDFS obj = displayedObjectData.obj;
-			StopDisplaying();
-			DisplayObject( obj );
-		}
-
 		/// <summary>
 		/// Displays a group, based on objects that are selected.
 		/// </summary>
 		public static void DisplayGroupSelected()
 		{
 			displayedObjectData = DisplayedObjectData.NewGroup();
-			
+
 			SelectionPanel.instance.obj.displayNameText.text = "Group: " + selected.Count;
 			float healthTotal = 0.0f;
 			float healthMaxTotal = 0.0f;
@@ -150,17 +145,20 @@ namespace SS
 			}
 			displayedObjectData = DisplayedObjectData.NewObject( obj );
 
-			SSModule[] modules = ((SSObject)obj).GetModules();
-
-			for( int i = 0; i < modules.Length; i++ )
+			if( !(obj is IUsableToggle) || ((IUsableToggle)obj).IsUsable() )
 			{
-				if( !(modules[i] is ISelectDisplayHandler) )
+				SSModule[] modules = ((SSObject)obj).GetModules();
+
+				for( int i = 0; i < modules.Length; i++ )
 				{
-					continue;
+					if( !(modules[i] is ISelectDisplayHandler) )
+					{
+						continue;
+					}
+					SelectionPanel.instance.obj.CreateModuleButton( modules[i] );
 				}
-				SelectionPanel.instance.obj.CreateModuleButton( modules[i] );
 			}
-			
+
 			obj.OnDisplay();
 			SelectionPanel.instance.obj.HighlightIcon();
 		}
@@ -185,7 +183,7 @@ namespace SS
 			(module as ISelectDisplayHandler).OnDisplay();
 			SelectionPanel.instance.obj.HighlightIcon( module );
 		}
-		
+
 		/// <summary>
 		/// Stops displaying anything.
 		/// </summary>
@@ -215,7 +213,7 @@ namespace SS
 		{
 			return selected.Contains( obj );
 		}
-		
+
 		public static int TrySelect( SSObjectDFS[] objs )
 		{
 			if( objs == null )
@@ -226,7 +224,7 @@ namespace SS
 			{
 				return 0;
 			}
-			
+
 			if( !SelectionPanel.instance.gameObject.activeSelf )
 			{
 				SelectionPanel.instance.gameObject.SetActive( true );
@@ -252,16 +250,17 @@ namespace SS
 				numSelected++;
 				objs[i].onSelect?.Invoke();
 			}
-			
+
 			if( selected.Count == 1 )
 			{
-				IFactionMember selectedObjsFaction = objs[0] as IFactionMember;
-				if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
-				{
-					StopDisplaying();
+				//IFactionMember selectedObjsFaction = objs[0] as IFactionMember;
+				//if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
+				//{
+#warning Hostile objects are also displayed, but they don't instantiate any UI elements. We need to mark which object would be displayed to display it if it changes faction.
+				StopDisplaying();
 
-					DisplayObject( objs[0] );
-				}
+				DisplayObject( objs[0] );
+				//}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -302,11 +301,12 @@ namespace SS
 			}
 			if( selected.Count == 1 )
 			{
-				IFactionMember selectedObjsFaction = selected[0] as IFactionMember;
-				if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
-				{
-					DisplayObject( selected[0] );
-				}
+				//IFactionMember selectedObjsFaction = selected[0] as IFactionMember;
+				//if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
+				//{
+#warning Hostile objects are also displayed, but they don't instantiate any UI elements. We need to mark which object would be displayed to display it if it changes faction.
+				DisplayObject( selected[0] );
+				//}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -320,7 +320,7 @@ namespace SS
 
 			obj.onDeselect?.Invoke();
 		}
-		
+
 		/// <summary>
 		/// Deselects all objects.
 		/// </summary>
@@ -334,7 +334,7 @@ namespace SS
 			{
 				selected[i].onDeselect?.Invoke();
 			}
-			
+
 			selected.Clear();
 
 			SelectionPanel.instance.gameObject.SetActive( false );

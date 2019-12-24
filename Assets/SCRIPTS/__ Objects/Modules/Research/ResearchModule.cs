@@ -1,5 +1,4 @@
 ﻿using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
@@ -306,14 +305,16 @@ namespace SS.Objects.Modules
 
 		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
-			if( factionId != (this.ssObject as IFactionMember).factionId )
-			{
-				return;
-			}
 			if( !Selection.IsDisplayedModule( this ) )
 			{
 				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+			
 			if( this.IsPaymentDone() )
 			{
 				if( this.researchedTechnology == null )
@@ -331,6 +332,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 			if( statusUI != null )
 			{
@@ -344,6 +351,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			SelectionPanel.instance.obj.TryClearElement( "research.list" );
 			
 			if( !this.IsPaymentDone() )
@@ -366,6 +379,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 			if( statusUI != null )
 			{
@@ -379,6 +398,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 			if( statusUI != null )
 			{
@@ -393,16 +418,17 @@ namespace SS.Objects.Modules
 
 		public void OnDisplay()
 		{
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			// If it's not usable - return, don't research anything.
 			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
 			{
 				return;
 			}
-
-			if( (this.ssObject as IFactionMember).factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return;
-			}
+			
 			if( this.IsPaymentDone() )
 			{
 				if( this.researchedTechnology != null )

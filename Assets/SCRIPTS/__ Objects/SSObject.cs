@@ -58,6 +58,13 @@ namespace SS.Objects
 			return allExtras.ToArray();
 		}
 
+		/// <summary>
+		/// Returns true if the object should display it's parameters on the Selection Panel. By default always true for non-faction objects.
+		/// </summary>
+		public virtual bool IsDisplaySafe()
+		{
+			return true;
+		}
 
 		private Guid? __guid = null;
 		private string __definitionId = null;

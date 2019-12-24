@@ -27,7 +27,10 @@ namespace SS.UI
 		{
 			this.objIcon.GetComponent<Button>().onClick.AddListener( () =>
 			{
-				Selection.DisplayObjectDisplayed();
+				SSObjectDFS displayed = Selection.displayedObject;
+				Selection.StopDisplaying();
+
+				Selection.DisplayObject( displayed );
 			} );
 		}
 

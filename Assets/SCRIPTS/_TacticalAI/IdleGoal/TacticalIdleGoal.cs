@@ -37,11 +37,6 @@ namespace SS.AI.Goals
 
 			if( this.isHostile )
 			{
-#warning TODO! - optimise by having only 1 overlapsphere (the largest radius, and filtering for smaller targeters).
-
-				// Targeter.SetTargets( IAttackModule[] array, ... other );
-				// ???
-
 				SSObjectDFS ssobj = (SSObjectDFS)controller.ssObject;
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{

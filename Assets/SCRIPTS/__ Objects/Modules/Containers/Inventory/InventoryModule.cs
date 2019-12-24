@@ -54,7 +54,7 @@ namespace SS.Objects.Modules
 			this.slotGroups[index].capacity = capacity;
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
-				if( this.CanShowTooltip() )
+				if( this.ssObject.IsDisplaySafe() )
 				{
 					this.ShowTooltip();
 				}
@@ -65,7 +65,7 @@ namespace SS.Objects.Modules
 			this.slotGroups[index].capacityOverride = capacityOverride;
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
-				if( this.CanShowTooltip() )
+				if( this.ssObject.IsDisplaySafe() )
 				{
 					this.ShowTooltip();
 				}
@@ -108,20 +108,6 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		
-		private bool CanShowTooltip()
-		{
-			if( !(this.ssObject is IFactionMember) )
-			{
-				return true;
-			}
-			IFactionMember ssObjectFactionMember = (IFactionMember)this.ssObject;
-			if( ssObjectFactionMember != null && ssObjectFactionMember.factionId != LevelDataManager.PLAYER_FAC )
-			{
-				return false;
-			}
-			return true;
-		}
-		
 		private void ShowTooltip()
 		{
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
@@ -163,7 +149,7 @@ namespace SS.Objects.Modules
 		
 		public void OnMouseEnterListener()
 		{
-			if( this.CanShowTooltip() )
+			if( this.ssObject.IsDisplaySafe() )
 			{
 				this.ShowTooltip();
 			}
@@ -171,7 +157,7 @@ namespace SS.Objects.Modules
 
 		public void OnMouseStayListener()
 		{
-			if( this.CanShowTooltip() )
+			if( this.ssObject.IsDisplaySafe() )
 			{
 				this.MoveTooltip();
 			}
@@ -179,7 +165,7 @@ namespace SS.Objects.Modules
 
 		public void OnMouseExitListener()
 		{
-			if( this.CanShowTooltip() )
+			if( this.ssObject.IsDisplaySafe() )
 			{
 				this.HideTooltip();
 			}
@@ -191,7 +177,7 @@ namespace SS.Objects.Modules
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					if( this.CanShowTooltip() )
+					if( this.ssObject.IsDisplaySafe() )
 					{
 						this.ShowTooltip();
 					}
@@ -201,7 +187,7 @@ namespace SS.Objects.Modules
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					if( this.CanShowTooltip() )
+					if( this.ssObject.IsDisplaySafe() )
 					{
 						this.ShowTooltip();
 					}
@@ -377,7 +363,7 @@ namespace SS.Objects.Modules
 			{
 				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 				{
-					if( this.CanShowTooltip() )
+					if( this.ssObject.IsDisplaySafe() )
 					{
 						this.HideTooltip();
 					}
@@ -524,12 +510,12 @@ namespace SS.Objects.Modules
 				if( amountRemaining == 0 )
 				{
 					this.onAdd?.Invoke( id, amountMax );
-					this.TryUpdateList();
+					this.TryUpdateSlots_UI();
 					return amountMax;
 				}
 			}
 			this.onAdd?.Invoke( id, amountMax - amountRemaining );
-			this.TryUpdateList();
+			this.TryUpdateSlots_UI();
 			return amountMax - amountRemaining;
 		}
 
@@ -565,13 +551,13 @@ namespace SS.Objects.Modules
 					if( amountLeftToRemove == 0 )
 					{
 						this.onRemove?.Invoke( id, amountMax );
-						this.TryUpdateList();
+						this.TryUpdateSlots_UI();
 						return amountMax;
 					}
 				}
 			}
 			this.onRemove?.Invoke( id, amountMax - amountLeftToRemove );
-			this.TryUpdateList();
+			this.TryUpdateSlots_UI();
 			return amountMax - amountLeftToRemove;
 		}
 
@@ -590,7 +576,7 @@ namespace SS.Objects.Modules
 			{
 				this.onRemove?.Invoke( kvp.Key, kvp.Value ); // be consistent, all methods shall invoke after adding/removing.
 			}
-			this.TryUpdateList();
+			this.TryUpdateSlots_UI();
 		}
 
 
@@ -666,14 +652,21 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		private void TryUpdateList()
+		private void TryUpdateSlots_UI()
 		{
-			if( Selection.IsDisplayedModule( this ) )
+			if( !Selection.IsDisplayedModule( this ) )
 			{
-				SelectionPanel.instance.obj.TryClearElement( "inventory.slots" );
-				
-				this.ShowList();
+				return;
 			}
+
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
+			SelectionPanel.instance.obj.TryClearElement( "inventory.slots" );
+				
+			this.ShowList();
 		}
 
 		private void ShowList()
@@ -701,6 +694,11 @@ namespace SS.Objects.Modules
 
 		public void OnDisplay()
 		{
+			if( !this.ssObject.IsDisplaySafe() )
+			{
+				return;
+			}
+
 			this.ShowList();
 		}
 
