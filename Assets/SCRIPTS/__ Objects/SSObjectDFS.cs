@@ -18,22 +18,22 @@ namespace SS.Objects
 		/// <summary>
 		/// The icon that is shown on the list of all selected objects.
 		/// </summary>
-		public Sprite icon;
+		public Sprite icon { get; set; }
 
 		/// <summary>
 		/// Is called when the object gets selected.
 		/// </summary>
-		public UnityEvent onSelect = new UnityEvent();
+		public UnityEvent onSelect { get; private set; } = new UnityEvent();
 
 		/// <summary>
 		/// Is called when the object gets highlighted.
 		/// </summary>
-		public UnityEvent onHighlight = new UnityEvent();
+		public UnityEvent onHighlight { get; private set; } = new UnityEvent();
 
 		/// <summary>
 		/// Is called when the object gets deselected.
 		/// </summary>
-		public UnityEvent onDeselect = new UnityEvent();
+		public UnityEvent onDeselect { get; private set; } = new UnityEvent();
 
 
 		//
@@ -119,13 +119,13 @@ namespace SS.Objects
 		/// Fires when the 'health' value is changed.
 		/// </summary>
 		public _UnityEvent_float onHealthChange { get; set; } = new _UnityEvent_float();
-		public static _UnityEvent_SSObjectDFS_float onHealthChangeAny = new _UnityEvent_SSObjectDFS_float();
+		public static _UnityEvent_SSObjectDFS_float onHealthChangeAny { get; set; } = new _UnityEvent_SSObjectDFS_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
 		public UnityEvent onDeath { get; set; } = new UnityEvent();
-		public static _UnityEvent_SSObjectDFS onDeathAny = new _UnityEvent_SSObjectDFS();
+		public static _UnityEvent_SSObjectDFS onDeathAny { get; set; } = new _UnityEvent_SSObjectDFS();
 
 
 		public float lastDamageTakenTimestamp { get; private set; }

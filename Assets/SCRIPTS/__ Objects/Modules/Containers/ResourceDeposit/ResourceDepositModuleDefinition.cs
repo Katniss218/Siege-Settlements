@@ -72,13 +72,7 @@ namespace SS.Objects.Modules
 			module.miningSound = this.mineSound;
 		}
 
-
-		public override ModuleData GetIdentityData()
-		{
-			return new ResourceDepositModuleData();
-		}
-
-
+		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Resources" );

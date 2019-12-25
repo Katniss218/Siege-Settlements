@@ -16,6 +16,7 @@ using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
 using SS.AI;
 using SS.AI.Goals;
+using SS.Objects.Units;
 
 namespace SS
 {
@@ -197,6 +198,45 @@ namespace SS
 					if( hitInventory != null )
 					{
 						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.selectedObjects );
+					}
+				}
+			}
+		}
+
+		private void Inp_I( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				SSObjectDFS[] selected = Selection.selectedObjects;
+				for( int i = 0; i < selected.Length; i++ )
+				{
+					if( !(selected[i] is Unit) )
+					{
+						continue;
+					}
+					Unit unit = (Unit)selected[i];
+					
+					if( unit.isInside )
+					{
+						unit.SetOutside();
+					}
+					else
+					{
+						RaycastHit hitInfo;
+						if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+						{
+							SSObject ssObject = hitInfo.collider.GetComponent<SSObject>();
+							if( ssObject == null )
+							{
+								return;
+							}
+							InteriorModule[] interiors = ssObject.GetModules<InteriorModule>();
+							if( interiors.Length == 0 )
+							{
+								return;
+							}
+							unit.SetInside( interiors[0], false );
+						}
 					}
 				}
 			}
@@ -525,6 +565,7 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.I, 60.0f, Inp_I, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
@@ -554,6 +595,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
+				Main.keyboardInput.ClearOnPress( KeyCode.I, Inp_I );
 				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
 				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
 				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_H );

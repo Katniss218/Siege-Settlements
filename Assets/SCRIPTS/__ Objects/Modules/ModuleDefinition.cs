@@ -18,12 +18,7 @@ namespace SS.Objects.Modules
 		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
 		/// </summary>
 		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
-
-		/// <summary>
-		/// Used to create identity (default) data.
-		/// </summary>
-		public abstract ModuleData GetIdentityData();
-
+		
 		public abstract void AddModule( GameObject gameObject, Guid moduleId );
 		
 		public abstract void DeserializeKFF( KFFSerializer serializer );
@@ -59,6 +54,10 @@ namespace SS.Objects.Modules
 			{
 				return new ConstructorModuleDefinition();
 			}
+			if( typeId == InteriorModule.KFF_TYPEID )
+			{
+				return new InteriorModuleDefinition();
+			}
 			throw new Exception( "Unknown module type '" + typeId + "'." );
 		}
 
@@ -91,6 +90,10 @@ namespace SS.Objects.Modules
 			if( def is ConstructorModuleDefinition )
 			{
 				return ConstructorModule.KFF_TYPEID;
+			}
+			if( def is InteriorModuleDefinition )
+			{
+				return InteriorModule.KFF_TYPEID;
 			}
 			throw new Exception( "Unknown module type '" + def.GetType().Name + "'." );
 		}

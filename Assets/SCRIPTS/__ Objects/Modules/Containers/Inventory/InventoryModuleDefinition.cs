@@ -64,13 +64,7 @@ namespace SS.Objects.Modules
 				module.slotGroups[i] = new InventoryModule.SlotGroup( this.slots[i].slotId, this.slots[i].capacity );
 			}
 		}
-
-
-		public override ModuleData GetIdentityData()
-		{
-			return new InventoryModuleData();
-		}
-
+		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

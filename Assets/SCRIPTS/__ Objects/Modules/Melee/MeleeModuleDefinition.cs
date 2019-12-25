@@ -60,13 +60,7 @@ namespace SS.Objects.Modules
 				module.traversibleSubObjects[i] = trav ?? throw new Exception( "Can't find Sub-Object with Id of '" + this.traversibleSubObjects[i].ToString( "D" ) + "'." );
 			}
 		}
-
-
-		public override ModuleData GetIdentityData()
-		{
-			return new MeleeModuleData();
-		}
-
+		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

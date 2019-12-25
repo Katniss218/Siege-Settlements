@@ -37,13 +37,7 @@ namespace SS.Objects.Modules
 				module.trainableUnits[i] = DefinitionManager.GetUnit( this.trainableUnits[i] );
 			}
 		}
-
-
-		public override ModuleData GetIdentityData()
-		{
-			return new BarracksModuleData();
-		}
-
+		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

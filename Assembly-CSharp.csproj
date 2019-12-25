@@ -208,6 +208,9 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Containers\ResourceDeposit\ResourceDepositModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Containers\ResourceDeposit\ResourceDepositModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Containers\ResourceDeposit\ResourceDepositModuleDefinition.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Interior\InteriorModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Interior\InteriorModuleData.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Interior\InteriorModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModuleDefinition.cs" />

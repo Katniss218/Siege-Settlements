@@ -1,7 +1,6 @@
 ﻿using KFF;
 using SS.Objects.Buildings;
 using SS.Levels.SaveStates;
-using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,13 +38,7 @@ namespace SS.Objects.Modules
 				module.researchableTechnologies[i] = DefinitionManager.GetTechnology( this.researchableTechnologies[i] );
 			}
 		}
-
-
-		public override ModuleData GetIdentityData()
-		{
-			return new ResearchModuleData();
-		}
-
+		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

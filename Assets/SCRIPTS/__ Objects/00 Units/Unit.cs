@@ -1,4 +1,5 @@
-﻿using SS.Objects.Modules;
+﻿using SS.Objects.Buildings;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using UnityEngine;
@@ -85,8 +86,8 @@ namespace SS.Objects.Units
 					x *= 4;
 					z *= 2;
 				}
-				this.size = new Vector3( x/2, this.size.y, z/2 );
-				
+				this.size = new Vector3( x / 2, this.size.y, z / 2 );
+
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
 				for( int i = 0; i < inventories.Length; i++ )
 				{
@@ -142,6 +143,86 @@ namespace SS.Objects.Units
 		//
 		//
 		//
+
+		
+		public InteriorModule interior { get; private set; }
+
+		public bool isInside
+		{
+			get { return this.interior != null; }
+		}
+		public bool isInsideHidden { get; private set; }
+
+		/// <summary>
+		/// Marks the unit as being inside.
+		/// </summary>
+		public void SetInside( InteriorModule interior, bool isHidden )
+		{
+			if( this.isInside )
+			{
+				return;
+			}
+			/*if( INSIDE_SLOT.CanHold( this.population )
+			{
+				return;
+			}*/
+
+			this.navMeshAgent.enabled = false;
+
+			this.interior = interior;
+
+			this.transform.position = interior.SlotWorldPosition( interior.slots[0] );
+			this.transform.rotation = interior.SlotWorldRotation( interior.slots[0] );
+			
+			if( isHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int i = 0; i < subObjects.Length; i++ )
+				{
+					subObjects[i].gameObject.SetActive( false );
+				}
+
+				this.isInsideHidden = true;
+			}
+		}
+
+		/// <summary>
+		/// Marks the unit as being outside.
+		/// </summary>
+		public void SetOutside()
+		{
+			if( !this.isInside )
+			{
+				return;
+			}
+
+#warning Unit needs to have it's current inside slot cached.
+			this.transform.position = this.interior.EntranceWorldPosition();
+			this.transform.rotation = this.interior.EntranceWorldRotation();
+
+			this.navMeshAgent.enabled = true;
+
+
+			if( this.isInsideHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int i = 0; i < subObjects.Length; i++ )
+				{
+					subObjects[i].gameObject.SetActive( true );
+				}
+			}
+
+			this.interior = null;
+			this.isInsideHidden = false;
+		}
+
+
+		//
+		//
+		//
+
 
 		float __movementSpeed;
 		public float movementSpeed

@@ -38,12 +38,7 @@ namespace SS.Objects.Modules
 				module.constructibleBuildings[i] = DefinitionManager.GetBuilding( this.constructibleBuildings[i] );
 			}
 		}
-
-		public override ModuleData GetIdentityData()
-		{
-			return new ConstructorModuleData();
-		}
-
+		
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

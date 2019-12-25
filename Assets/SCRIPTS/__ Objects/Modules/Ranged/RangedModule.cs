@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using SS.Objects.Units;
 
 namespace SS.Objects.Modules
 {
@@ -78,7 +79,12 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-			
+
+			if( this.ssObject is Unit && ((Unit)this.ssObject).isInsideHidden )
+			{
+				return;
+			}
+
 			if( this.targeter.target != null )
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )

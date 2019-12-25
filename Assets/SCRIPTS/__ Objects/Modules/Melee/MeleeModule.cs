@@ -1,5 +1,6 @@
 ﻿using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
+using SS.Objects.Units;
 using System;
 using UnityEngine;
 
@@ -63,6 +64,11 @@ namespace SS.Objects.Modules
 		{
 			// If it's not usable - return, don't attack.
 			if( this.ssObject is IUsableToggle && !((IUsableToggle)this.ssObject).IsUsable() )
+			{
+				return;
+			}
+
+			if( this.ssObject is Unit && ((Unit)this.ssObject).isInsideHidden )
 			{
 				return;
 			}

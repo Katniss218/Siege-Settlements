@@ -563,7 +563,13 @@
 			{ Id = "resource.wood"; Amount = 20; }
 		];
 		TechsRequired = [ ];
-		Modules = [ ];
+		Modules =
+		[
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+			}
+		];
 		SubObjects =
 		[
 			{
