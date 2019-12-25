@@ -142,10 +142,10 @@ namespace SS
 					}
 					else
 					{
-						if( building.factionId != LevelDataManager.PLAYER_FAC )
+						/*if( building.factionId != LevelDataManager.PLAYER_FAC )
 						{
 							return;
-						}
+						}*/
 						if( !Building.IsRepairable( building ) )
 						{
 							return;

@@ -127,6 +127,13 @@ namespace SS.Objects.Heroes
 				{
 					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
+
+				// Re-Display the object
+
+				if( Selection.IsDisplayed( hero ) )
+				{
+					SSObjectHelper.ReDisplayDisplayed();
+				}
 			} );
 
 			hero.onHealthPercentChanged.AddListener( () =>

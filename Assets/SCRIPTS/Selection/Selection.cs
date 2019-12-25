@@ -70,6 +70,18 @@ namespace SS
 			}
 		}
 
+		public static SSModule displayedModule
+		{
+			get
+			{
+				if( displayedObjectData == null )
+				{
+					return null;
+				}
+				return (SSModule)displayedObjectData.module;
+			}
+		}
+
 		private static ISelectDisplayHandler GetDisplayedThing()
 		{
 			if( displayedObjectData == null )
@@ -253,14 +265,9 @@ namespace SS
 
 			if( selected.Count == 1 )
 			{
-				//IFactionMember selectedObjsFaction = objs[0] as IFactionMember;
-				//if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
-				//{
-#warning Hostile objects are also displayed, but they don't instantiate any UI elements. We need to mark which object would be displayed to display it if it changes faction.
 				StopDisplaying();
 
 				DisplayObject( objs[0] );
-				//}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -295,18 +302,15 @@ namespace SS
 
 			SelectionPanel.instance.list.RemoveIcon( obj );
 
+			// If the deselected object is displayed - stop displaying it.
 			if( IsDisplayed( obj ) || (displayedObjectData != null && displayedObjectData.isGroup) )
 			{
 				StopDisplaying();
 			}
+			// If the selection contains only 1 object - display it.
 			if( selected.Count == 1 )
 			{
-				//IFactionMember selectedObjsFaction = selected[0] as IFactionMember;
-				//if( selectedObjsFaction == null || selectedObjsFaction.factionId == LevelDataManager.PLAYER_FAC )
-				//{
-#warning Hostile objects are also displayed, but they don't instantiate any UI elements. We need to mark which object would be displayed to display it if it changes faction.
 				DisplayObject( selected[0] );
-				//}
 			}
 			else if( selected.Count == 0 )
 			{
@@ -341,7 +345,7 @@ namespace SS
 			ActionPanel.instance.gameObject.SetActive( false );
 		}
 
-		public static void Purge()
+		public static void Clear()
 		{
 			selected.Clear();
 		}

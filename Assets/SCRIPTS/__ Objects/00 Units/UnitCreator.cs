@@ -131,10 +131,12 @@ namespace SS.Objects.Units
 					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
 
-				// re-display
-				// ...
-				// ..
-				// .
+				// Re-Display the object
+
+				if( Selection.IsDisplayed( unit ) )
+				{
+					SSObjectHelper.ReDisplayDisplayed();
+				}
 			} );
 
 			unit.onHealthPercentChanged.AddListener( () =>

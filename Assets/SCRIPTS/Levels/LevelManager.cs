@@ -238,7 +238,7 @@ namespace SS.Levels
 			AssetManager.sourceLevelId = null;
 			Main.onHudLockChange.RemoveAllListeners();
 
-			Selection.Purge();
+			Selection.Clear();
 			AudioManager.StopSounds();
 
 			if( loadMenu )

@@ -128,7 +128,7 @@ namespace SS.Objects.Buildings
 
 
 				this.onPaymentReceived?.Invoke();
-				this.paymentReceived_UI();
+				this.UpdateStatus_UI();
 
 				return;
 			}
@@ -161,7 +161,7 @@ namespace SS.Objects.Buildings
 			return sb.ToString();
 		}
 
-		private void paymentReceived_UI()
+		private void UpdateStatus_UI()
 		{
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
 			if( statusUI != null )
@@ -423,6 +423,7 @@ namespace SS.Objects.Buildings
 
 		private void OnHealthChange( float deltaHP )
 		{
+			this.UpdateStatus_UI();
 			for( int i = 0; i < this.renderers.Length; i++ )
 			{
 				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.buildingHeight, 0.0f, building.healthPercent ) );

@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using System;
@@ -130,6 +131,13 @@ namespace SS.Objects.Buildings
 				for( int i = 0; i < meshes2.Length; i++ )
 				{
 					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
+				}
+
+				// Re-Display the object
+
+				if( Selection.IsDisplayed( building ) )
+				{
+					SSObjectHelper.ReDisplayDisplayed();
 				}
 			} );
 
