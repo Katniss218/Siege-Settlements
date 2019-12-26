@@ -117,7 +117,7 @@ namespace SS.Objects.Buildings
 
 				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
 				// Otherwise, heal it normally.
-				if( this.building.healthMax + healAmt > this.building.healthMax )
+				if( this.building.health + healAmt > this.building.healthMax )
 				{
 					this.building.health = this.building.healthMax;
 				}
