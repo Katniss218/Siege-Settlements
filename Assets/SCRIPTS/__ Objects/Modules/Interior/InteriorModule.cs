@@ -1,5 +1,6 @@
 ﻿using SS.Levels.SaveStates;
 using SS.Objects.Units;
+using SS.UI;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -47,10 +48,10 @@ namespace SS.Objects.Modules
 		/// Specifies the local-space position of the entrance.
 		/// </summary>
 		public Vector3? entrancePosition { get; set; }
-		
-		public SlotGeneric[] slots { get; set; }
-		public SlotCivilian[] civilianSlots { get; set; }
-		public SlotWorker[] workerSlots { get; set; }
+
+		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
+		public SlotCivilian[] civilianSlots { get; set; } = new SlotCivilian[0];
+		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
 
 
 		public Vector3 SlotWorldPosition( Slot slot )
@@ -69,15 +70,28 @@ namespace SS.Objects.Modules
 			return this.entrancePosition == null ? this.transform.position : this.transform.TransformPoint( this.entrancePosition.Value );
 		}
 
-
-		public override ModuleData GetData()
+		HUDInterior hudInterior = null;
+		
+		public void OnAfterSlotsChanged()
 		{
-			return new InteriorModuleData();
+			this.hudInterior.SetSlotCount( this.slots.Length, this.civilianSlots.Length, this.workerSlots.Length );
 		}
 
-		public override void SetData( ModuleData data )
+		private void RegisterHUD()
 		{
+			// integrate hud.
+			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
 
+
+			this.hudInterior = hudObj.hud.GetComponent<HUDInterior>();
+		}
+
+		void Awake()
+		{
+			if( this.ssObject is IHUDHolder )
+			{
+				this.RegisterHUD();
+			}
 		}
 
 		private Vector3 oldPosition;
@@ -102,6 +116,17 @@ namespace SS.Objects.Modules
 
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
+		}
+
+
+		public override ModuleData GetData()
+		{
+			return new InteriorModuleData();
+		}
+
+		public override void SetData( ModuleData data )
+		{
+
 		}
 	}
 }

@@ -64,6 +64,7 @@ namespace SS.Objects.Modules
 				interior.slots[i] = slot;
 			}
 
+			interior.OnAfterSlotsChanged();
 			interior.entrancePosition = this.entrancePosition;
 			interior.moduleId = moduleId;
 		}

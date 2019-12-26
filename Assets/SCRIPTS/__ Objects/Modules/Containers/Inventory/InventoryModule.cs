@@ -224,23 +224,7 @@ namespace SS.Objects.Modules
 			{
 				return;
 			}
-
-
-			/*Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
-			if( hudResourceTransform == null )
-			{
-				return;
-			}
-
-			Transform hudResourceIconTransform = hudResourceTransform.Find( "Icon" );
-			if( hudResourceIconTransform == null )
-			{
-				return;
-			}*/
-
-			//Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
-			//TextMeshProUGUI hudResourceAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
-
+			
 			// Make the inventory update the HUD wien resources are added/removed.
 			this.onAdd.AddListener( ( string id, int amtAdded ) =>
 			{
@@ -251,11 +235,6 @@ namespace SS.Objects.Modules
 						continue;
 					}
 					hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
-					/*hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
-					hudResourceAmount.text = "" + this.slotGroups[i].amount;
-
-					hudResourceIcon.gameObject.SetActive( true );
-					hudResourceAmount.gameObject.SetActive( true );*/
 					break;
 				}
 			} );
@@ -264,8 +243,6 @@ namespace SS.Objects.Modules
 				if( this.isEmpty )
 				{
 					hudInventory.HideResource();
-					//hudResourceIcon.gameObject.SetActive( false );
-					//hudResourceAmount.gameObject.SetActive( false );
 				}
 				else
 				{
@@ -276,8 +253,6 @@ namespace SS.Objects.Modules
 							continue;
 						}
 						hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
-						//hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
-						//hudResourceAmount.text = "" + this.slotGroups[i].amount;
 						break;
 					}
 				}
