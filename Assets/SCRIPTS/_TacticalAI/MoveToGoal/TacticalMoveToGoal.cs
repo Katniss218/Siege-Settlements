@@ -143,7 +143,7 @@ namespace SS.AI.Goals
 							{
 								Unit unit = (Unit)controller.ssObject;
 
-								unit.SetInside( this.destinationInterior );
+								unit.TrySetInside( this.destinationInterior );
 								controller.goal = TacticalGoalController.GetDefaultGoal();
 							}
 						}

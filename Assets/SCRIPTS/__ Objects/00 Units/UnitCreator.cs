@@ -73,7 +73,7 @@ namespace SS.Objects.Units
 			{
 				SSObject obj = SSObject.Find( data.inside.Item1 );
 				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
-				unit.SetInside( interior );
+				unit.TrySetInside( interior );
 			}
 #warning this (position) depends on the position of interior being assigned. If the position of an object with an interior is changed, the interior needs to move its contents with it.
 		}

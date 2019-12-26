@@ -147,6 +147,7 @@ namespace SS.Objects.Units
 
 		
 		public InteriorModule interior { get; private set; }
+		public int slotIndex { get; private set; }
 
 		public bool isInside
 		{
@@ -157,42 +158,49 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void SetInside( InteriorModule interior )
+		public void TrySetInside( InteriorModule interior )
 		{
 			if( this.isInside )
 			{
 				return;
 			}
 
-			if( (byte)this.population > (byte)interior.slots[0].maxPopulation )
+			for( int i = 0; i < interior.slots.Length; i++ )
 			{
-				throw new System.Exception( "Can't enter." );
-			}
-
-			if( !interior.slots[0].isEmpty )
-			{
-				throw new System.Exception( "Slot not empty." );
-			}
-
-			this.navMeshAgent.enabled = false;
-
-			this.interior = interior;
-
-			interior.slots[0].unitInside = this;
-
-			this.transform.position = interior.SlotWorldPosition( interior.slots[0] );
-			this.transform.rotation = interior.SlotWorldRotation( interior.slots[0] );
-
-			if( interior.slots[0].isHidden )
-			{
-				SubObject[] subObjects = this.GetSubObjects();
-
-				for( int i = 0; i < subObjects.Length; i++ )
+				if( (byte)this.population > (byte)interior.slots[i].maxPopulation )
 				{
-					subObjects[i].gameObject.SetActive( false );
+					continue;
 				}
 
-				this.isInsideHidden = true;
+				if( !interior.slots[i].isEmpty )
+				{
+					continue;
+				}
+
+				this.navMeshAgent.enabled = false;
+
+				this.interior = interior;
+				this.slotIndex = i; // expand here to other slot types
+
+				interior.slots[i].unitInside = this;
+
+				this.transform.position = interior.SlotWorldPosition( interior.slots[i] );
+				this.transform.rotation = interior.SlotWorldRotation( interior.slots[i] );
+
+				interior.hudInterior.slots[i].SetSprite( this.icon );
+
+				if( interior.slots[i].isHidden )
+				{
+					SubObject[] subObjects = this.GetSubObjects();
+
+					for( int j = 0; j < subObjects.Length; j++ )
+					{
+						subObjects[j].gameObject.SetActive( false );
+					}
+
+					this.isInsideHidden = true;
+				}
+				break;
 			}
 		}
 
@@ -205,14 +213,17 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-
-#warning Unit needs to have it's current inside slot cached.
+			
 			this.transform.position = this.interior.EntranceWorldPosition();
 			this.transform.rotation = Quaternion.identity;
 
 			this.navMeshAgent.enabled = true;
 
-			interior.slots[0].unitInside = null;
+			InteriorModule.Slot slot = interior.GetSlotAny( this.slotIndex );
+			slot.unitInside = null;
+
+			HUDInterior.Element hudSlot = interior.hudInterior.GetSlotAny( this.slotIndex );
+			hudSlot.ClearSprite();
 
 			if( this.isInsideHidden )
 			{
@@ -225,6 +236,7 @@ namespace SS.Objects.Units
 			}
 
 			this.interior = null;
+			this.slotIndex = -1;
 			this.isInsideHidden = false;
 		}
 

@@ -70,11 +70,28 @@ namespace SS.Objects.Modules
 			return this.entrancePosition == null ? this.transform.position : this.transform.TransformPoint( this.entrancePosition.Value );
 		}
 
-		HUDInterior hudInterior = null;
+		public HUDInterior hudInterior { get; private set; } = null;
 		
 		public void OnAfterSlotsChanged()
 		{
 			this.hudInterior.SetSlotCount( this.slots.Length, this.civilianSlots.Length, this.workerSlots.Length );
+		}
+
+		public Slot GetSlotAny( int slotIndex )
+		{
+			if( slotIndex < this.slots.Length )
+			{
+				return this.slots[slotIndex];
+			}
+			if( slotIndex < this.civilianSlots.Length )
+			{
+				return this.civilianSlots[slotIndex - this.slots.Length];
+			}
+			if( slotIndex < this.workerSlots.Length )
+			{
+				return this.workerSlots[slotIndex - this.civilianSlots.Length];
+			}
+			return null;
 		}
 
 		private void RegisterHUD()
