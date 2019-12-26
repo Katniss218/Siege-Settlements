@@ -88,7 +88,8 @@ namespace SS.Objects.Buildings
 			//    CONTAINER GAMEOBJECT
 			//
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/h2" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 
 			HUD hud = hudGameObject.GetComponent<HUD>();
 			hud.isVisible = Main.isHudForcedVisible;
@@ -143,7 +144,6 @@ namespace SS.Objects.Buildings
 
 			building.onHealthPercentChanged.AddListener( () =>
 			{
-
 				building.hud.SetHealthBarFill( building.healthPercent );
 
 				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();

@@ -101,7 +101,19 @@ namespace SS.Objects.Buildings
 
 
 
+#warning Only one inventory can be added to an object.
+		// Inventory uses circular hud elements to display every slot in the inv.
 
+#warning Only one resource deposit can be added to an object.
+		// Inventory uses circular hud elements to display every slot in the inv.
+
+#warning Only one interior can be added to an object.
+		// Interior uses 2 rows of 6 icons to display slots.
+
+			// worker slots in the top
+
+			// generic & population slots at the bottom (in the same row).
+		
 		public void OnMouseEnterListener()
 		{
 			if( Main.isHudForcedVisible ) { return; }

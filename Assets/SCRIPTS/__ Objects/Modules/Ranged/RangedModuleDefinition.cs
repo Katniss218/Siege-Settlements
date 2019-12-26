@@ -23,6 +23,7 @@ namespace SS.Objects.Modules
 		public float attackRange { get; set; }
 		public float attackCooldown { get; set; }
 		public float velocity { get; set; }
+		public bool useHitboxOffset { get; set; }
 		public Vector3 localOffsetMin { get; set; }
 		public Vector3 localOffsetMax { get; set; }
 		public AddressableAsset<AudioClip> attackSoundEffect { get; private set; }
@@ -61,6 +62,7 @@ namespace SS.Objects.Modules
 			module.projectileCount = this.projectileCount;
 			module.attackCooldown = this.attackCooldown;
 			module.velocity = this.velocity;
+			module.useHitboxOffset = this.useHitboxOffset;
 			module.localOffsetMin = this.localOffsetMin;
 			module.localOffsetMax = this.localOffsetMax;
 			module.attackSoundEffect = this.attackSoundEffect;
@@ -149,22 +151,30 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing or invalid value of 'Velocity' (" + serializer.file.fileName + ")." );
 			}
 
-			try
+			if( serializer.Analyze( "UseHitboxOffset" ).isSuccess && serializer.ReadBool( "UseHitboxOffset" ) == true )
 			{
-				this.localOffsetMin = serializer.ReadVector3( "LocalOffsetMin" );
+				this.useHitboxOffset = true;
 			}
-			catch
+			else
 			{
-				throw new Exception( "Missing or invalid value of 'LocalOffsetMin' (" + serializer.file.fileName + ")." );
-			}
+				this.useHitboxOffset = false;
+				try
+				{
+					this.localOffsetMin = serializer.ReadVector3( "LocalOffsetMin" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'LocalOffsetMin' (" + serializer.file.fileName + ")." );
+				}
 
-			try
-			{
-				this.localOffsetMax = serializer.ReadVector3( "LocalOffsetMax" );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'LocalOffsetMax' (" + serializer.file.fileName + ")." );
+				try
+				{
+					this.localOffsetMax = serializer.ReadVector3( "LocalOffsetMax" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'LocalOffsetMax' (" + serializer.file.fileName + ")." );
+				}
 			}
 
 			try

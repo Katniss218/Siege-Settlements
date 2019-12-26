@@ -31,8 +31,11 @@ namespace SS.Objects.Modules
 
 		public float attackCooldown;
 		public float velocity;
+
+		public bool useHitboxOffset;
 		public Vector3 localOffsetMin;
 		public Vector3 localOffsetMax;
+
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
@@ -49,6 +52,26 @@ namespace SS.Objects.Modules
 
 		public SubObject[] traversibleSubObjects { get; set; }
 
+
+		private Tuple<Vector3, Vector3> GetShootingOffsets()
+		{
+			if( this.useHitboxOffset )
+			{
+				if( this.ssObject is Unit )
+				{
+					BoxCollider col = ((Unit)this.ssObject).collider;
+					
+					Vector3 min = col.center - (col.size / 2);
+					min.y = col.center.y + (col.size.y / 2);
+
+					Vector3 max = col.center + (col.size / 2);
+					max.y = col.center.y + (col.size.y / 2);
+
+					return new Tuple<Vector3, Vector3>( min, max );
+				}
+			}
+			return new Tuple<Vector3, Vector3>( this.localOffsetMin, this.localOffsetMax );
+		}
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -146,15 +169,17 @@ namespace SS.Objects.Modules
 
 			if( BallisticSolver.Solve( boxCenterGlobal, this.velocity, enemyCenterWorld, targetVel, -Physics.gravity.y, out low, out high ) > 0 )
 			{
-				Vector3 pos;
+				Tuple<Vector3, Vector3> offsets = this.GetShootingOffsets();
+				Vector3 pos = Vector3.zero;
 				Vector3 vel = low;
 				int count = projectileCountOverride == null ? projectileCount : projectileCountOverride.Value;
 				for( int i = 0; i < count; i++ )
 				{
+
 					pos = new Vector3(
-						Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
-						Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
-						Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
+						Random.Range( offsets.Item1.x, offsets.Item2.x ),
+						Random.Range( offsets.Item1.y, offsets.Item2.y ),
+						Random.Range( offsets.Item1.z, offsets.Item2.z )
 					);
 
 					Vector3 ranVel = vel;
@@ -255,12 +280,13 @@ namespace SS.Objects.Modules
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			Vector3 pos;
 			Gizmos.color = Color.red;
+			Tuple<Vector3, Vector3> offsets = this.GetShootingOffsets();
 			for( int i = 0; i < 100; i++ )
 			{
 				pos = new Vector3(
-					Random.Range( this.localOffsetMin.x, this.localOffsetMax.x ),
-					Random.Range( this.localOffsetMin.y, this.localOffsetMax.y ),
-					Random.Range( this.localOffsetMin.z, this.localOffsetMax.z )
+					Random.Range( offsets.Item1.x, offsets.Item2.x ),
+					Random.Range( offsets.Item1.y, offsets.Item2.y ),
+					Random.Range( offsets.Item1.z, offsets.Item2.z )
 				);
 				Gizmos.DrawSphere( toWorld.MultiplyVector( pos ) + this.transform.position, 0.05f );
 			}

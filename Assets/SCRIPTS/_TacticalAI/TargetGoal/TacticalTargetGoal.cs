@@ -1,5 +1,6 @@
 ﻿using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -47,24 +48,13 @@ namespace SS.AI.Goals
 			// ELSE			  - Move towards the target (if there is a target).
 			if( this.navMeshAgent != null )
 			{
-				if( this.target == null )
+				bool isInside = false;
+				if( controller.ssObject is Unit )
 				{
-					if( Vector3.Distance( controller.transform.position, this.initialPosition ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM  )
+					if( ((Unit)controller.ssObject).isInside )
 					{
-						this.navMeshAgent.ResetPath();
+						isInside = true;
 					}
-					else
-					{
-						Vector3 currDestPos = this.initialPosition;
-
-						if( this.oldDestination != currDestPos )
-						{
-							this.navMeshAgent.SetDestination( currDestPos );
-						}
-
-						this.oldDestination = currDestPos;
-					}
-					return;
 				}
 
 				float shortestAttackRange = float.MaxValue;
@@ -82,21 +72,44 @@ namespace SS.AI.Goals
 						}
 					}
 				}
-				
-				if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= shortestAttackRange * STOPPING_FRACTION )
-				{
-					this.navMeshAgent.ResetPath();
-				}
-				else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= shortestAttackRange * MOVING_FACTION )
-				{
-					Vector3 currDestPos = this.target.transform.position;
 
-					if( this.oldDestination != currDestPos )
+				if( !isInside )
+				{
+					if( this.target == null )
 					{
-						this.navMeshAgent.SetDestination( currDestPos );
-					}
+						if( Vector3.Distance( controller.transform.position, this.initialPosition ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+						{
+							this.navMeshAgent.ResetPath();
+						}
+						else
+						{
+							Vector3 currDestPos = this.initialPosition;
 
-					this.oldDestination = currDestPos;
+							if( this.oldDestination != currDestPos )
+							{
+								this.navMeshAgent.SetDestination( currDestPos );
+							}
+
+							this.oldDestination = currDestPos;
+						}
+
+						return;
+					}
+					if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= shortestAttackRange * STOPPING_FRACTION )
+					{
+						this.navMeshAgent.ResetPath();
+					}
+					else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= shortestAttackRange * MOVING_FACTION )
+					{
+						Vector3 currDestPos = this.target.transform.position;
+
+						if( this.oldDestination != currDestPos )
+						{
+							this.navMeshAgent.SetDestination( currDestPos );
+						}
+
+						this.oldDestination = currDestPos;
+					}
 				}
 			}
 		}
@@ -105,6 +118,14 @@ namespace SS.AI.Goals
 		{
 			SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 
+			bool isInside = false;
+			if( controller.ssObject is Unit )
+			{
+				if( ((Unit)controller.ssObject).isInside )
+				{
+					isInside = true;
+				}
+			}
 
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
@@ -128,7 +149,10 @@ namespace SS.AI.Goals
 				if( this.target == null )
 				{
 					controller.goal = TacticalGoalController.GetDefaultGoal();
-					this.navMeshAgent.ResetPath();
+					if( !isInside )
+					{
+						this.navMeshAgent.ResetPath();
+					}
 					return;
 				}
 			}

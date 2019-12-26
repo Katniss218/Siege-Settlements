@@ -129,10 +129,7 @@ namespace SS.Objects.Units
 		}
 
 		public string[] techsRequired { get; set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
-
-		// Definition always contains values for a '1x' unit.
-		public PopulationSize defaultPopulationOnSpawn { get; set; }
-
+		
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
@@ -282,18 +279,7 @@ namespace SS.Objects.Units
 			{
 				throw new Exception( "Missing 'Icon' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
-
-			try
-			{
-				this.defaultPopulationOnSpawn = (PopulationSize)serializer.ReadByte( "DefaultPopulationOnSpawn" );
-			}
-			catch
-			{
-#warning TODO! incomplete default population on spawn.
-				this.defaultPopulationOnSpawn = PopulationSize.x1;
-				//throw new Exception( "Missing or invalid value of 'DefaultPopulationOnSpawn' of '" + this.id + "' (" + serializer.file.fileName + ")." );
-			}
-
+			
 			this.DeserializeModulesAndSubObjectsKFF( serializer );
 		}
 

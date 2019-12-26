@@ -140,6 +140,8 @@
     <Compile Include="Assets\SCRIPTS\UI\GameTimeCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GenericUIData.cs" />
     <Compile Include="Assets\SCRIPTS\UI\HUD.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDInterior.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDInventory.cs" />
     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\SaveButton.cs" />

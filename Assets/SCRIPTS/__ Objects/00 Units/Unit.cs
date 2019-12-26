@@ -1,5 +1,4 @@
-﻿using SS.Objects.Buildings;
-using SS.Objects.Modules;
+﻿using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using UnityEngine;
@@ -106,6 +105,7 @@ namespace SS.Objects.Units
 				{
 					melee[i].damageOverride = melee[i].damage * (float)value;
 				}
+#warning TODO! - ranged module spread set to auto from hitbox size. (emits randomly from object's hitbox's top surface) - or position, if n/a.
 
 #warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
 				// Maybe make the population formation-independent. Slots will specify formation. This allows to make arbitrarily-sized formations.
@@ -119,6 +119,7 @@ namespace SS.Objects.Units
 				// ===SETM melee damage
 				// ===SETM ranged projectileCount
 #warning inside slots can only be put on a "non-formation" unit.
+#warning - We can actually make that, because we know what unit we are spawning at the time of spawn, co we can assign different Unit subclasses, depending on the unit sub-type.
 				// ===SETS mesh
 				// ===SETS material
 
@@ -156,25 +157,33 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void SetInside( InteriorModule interior, bool isHidden )
+		public void SetInside( InteriorModule interior )
 		{
 			if( this.isInside )
 			{
 				return;
 			}
-			/*if( INSIDE_SLOT.CanHold( this.population )
+
+			if( (byte)this.population > (byte)interior.slots[0].maxPopulation )
 			{
-				return;
-			}*/
+				throw new System.Exception( "Can't enter." );
+			}
+
+			if( !interior.slots[0].isEmpty )
+			{
+				throw new System.Exception( "Slot not empty." );
+			}
 
 			this.navMeshAgent.enabled = false;
 
 			this.interior = interior;
 
+			interior.slots[0].unitInside = this;
+
 			this.transform.position = interior.SlotWorldPosition( interior.slots[0] );
 			this.transform.rotation = interior.SlotWorldRotation( interior.slots[0] );
-			
-			if( isHidden )
+
+			if( interior.slots[0].isHidden )
 			{
 				SubObject[] subObjects = this.GetSubObjects();
 
@@ -199,10 +208,11 @@ namespace SS.Objects.Units
 
 #warning Unit needs to have it's current inside slot cached.
 			this.transform.position = this.interior.EntranceWorldPosition();
-			this.transform.rotation = this.interior.EntranceWorldRotation();
+			this.transform.rotation = Quaternion.identity;
 
 			this.navMeshAgent.enabled = true;
 
+			interior.slots[0].unitInside = null;
 
 			if( this.isInsideHidden )
 			{

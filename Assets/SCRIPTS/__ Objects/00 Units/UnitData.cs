@@ -38,6 +38,9 @@ namespace SS.Levels.SaveStates
 		public float? rotationSpeed { get; set; }
 		
 		public TacticalGoalData tacticalGoalData { get; set; }
+
+		public Tuple<Guid,Guid> inside { get; set; }
+		public int insideSlotIndex { get; set; }
 		
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -121,6 +124,15 @@ namespace SS.Levels.SaveStates
 				}
 			}
 
+			if( serializer.Analyze( "Inside" ).isSuccess )
+			{
+				Guid insideObj = serializer.ReadGuid( "Inside.ObjectGuid" );
+				Guid insideMod = serializer.ReadGuid( "Inside.ModuleId" );
+				this.inside = new Tuple<Guid, Guid>( insideObj, insideMod );
+				this.insideSlotIndex = serializer.ReadInt( "Inside.SlotIndex" );
+			}
+
+
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
 
 			this.DeserializeModulesKFF( serializer );
@@ -149,6 +161,14 @@ namespace SS.Levels.SaveStates
 			if( this.rotationSpeed != null )
 			{
 				serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed.Value );
+			}
+
+			if( this.inside != null )
+			{
+				serializer.WriteClass( "", "Inside" );
+				serializer.WriteGuid( "Inside", "ObjectGuid", this.inside.Item1 );
+				serializer.WriteGuid( "Inside", "ModuleId", this.inside.Item2 );
+				serializer.WriteInt( "Inside", "SlotIndex", this.insideSlotIndex );
 			}
 
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );

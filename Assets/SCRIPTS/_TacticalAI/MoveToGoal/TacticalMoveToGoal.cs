@@ -1,5 +1,6 @@
 ﻿using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -23,10 +24,11 @@ namespace SS.AI.Goals
 		public bool isHostile { get; set; }
 
 
-
 		private Vector3 oldDestination;
 		private NavMeshAgent navMeshAgent;
 		private IAttackModule[] attackModules;
+
+		private InteriorModule destinationInterior;
 
 		public TacticalMoveToGoal()
 		{
@@ -44,6 +46,7 @@ namespace SS.AI.Goals
 			this.destination = DestinationType.POSITION;
 			this.destinationPos = destination;
 			this.destinationObject = null;
+			this.destinationInterior = null;
 		}
 
 		public void SetDestination( SSObject destination )
@@ -51,6 +54,15 @@ namespace SS.AI.Goals
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = destination;
+			InteriorModule[] interiors = destination.GetModules<InteriorModule>();
+			if( interiors.Length > 0 )
+			{
+				this.destinationInterior = interiors[0];
+			}
+			else
+			{
+				this.destinationInterior = null;
+			}
 		}
 
 
@@ -72,6 +84,12 @@ namespace SS.AI.Goals
 
 		private void UpdatePosition( TacticalGoalController controller )
 		{
+
+
+#warning MoveTo can be assigned when the unit is inside. It makes the unit exit (if possible) or reset to default (if not possible).
+
+#warning MoveTo can be assigned to enter interiors. It makes the unit go towards the interior object, and when close enough to the entrance, it enters.
+			
 			if( this.destination == DestinationType.POSITION )
 			{
 				Vector3 currDestPos = this.destinationPos.Value;
@@ -98,13 +116,45 @@ namespace SS.AI.Goals
 			if( this.destination == DestinationType.OBJECT )
 			{
 				Vector3 currDestPos = this.destinationObject.transform.position;
+
+				if( this.destinationInterior != null )
+				{
+					if( controller.ssObject is Unit )
+					{
+						currDestPos = this.destinationInterior.EntranceWorldPosition();
+					}
+				}
+
 				if( this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
-				this.oldDestination = currDestPos;
+				if( this.destinationInterior != null )
+				{
+					// If the agent has travelled to the destination - switch back to the default Goal.
+					if( this.navMeshAgent.hasPath )
+					{
+						if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+						{
+							this.navMeshAgent.ResetPath();
+							
+							if( controller.ssObject is Unit )
+							{
+								Unit unit = (Unit)controller.ssObject;
 
+								unit.SetInside( this.destinationInterior );
+								controller.goal = TacticalGoalController.GetDefaultGoal();
+							}
+						}
+
+						return;
+					}
+				}
+			
+
+				this.oldDestination = currDestPos;
+				
 				return;
 			}
 		}
@@ -147,6 +197,15 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
+			if( controller.ssObject is Unit )
+			{
+				Unit unit = (Unit)controller.ssObject;
+
+				if( unit.isInside )
+				{
+					unit.SetOutside();
+				}
+			}
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( this.destination == DestinationType.OBJECT )
 			{

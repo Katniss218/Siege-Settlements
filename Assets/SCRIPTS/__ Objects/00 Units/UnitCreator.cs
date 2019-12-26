@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using SS.AI;
 using SS.Objects.SubObjects;
+using SS.Objects.Modules;
 
 namespace SS.Objects.Units
 {
@@ -53,7 +54,7 @@ namespace SS.Objects.Units
 			{
 				unit.rotationSpeedOverride = data.rotationSpeed.Value;
 			}
-
+			
 			//
 			//    MODULES
 			//
@@ -67,6 +68,14 @@ namespace SS.Objects.Units
 			}
 
 			unit.population = data.population;
+
+			if( data.inside != null )
+			{
+				SSObject obj = SSObject.Find( data.inside.Item1 );
+				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
+				unit.SetInside( interior );
+			}
+#warning this (position) depends on the position of interior being assigned. If the position of an object with an interior is changed, the interior needs to move its contents with it.
 		}
 
 		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
@@ -114,9 +123,6 @@ namespace SS.Objects.Units
 
 			unit.onFactionChange.AddListener( () =>
 			{
-#warning TODO! - The Selection Panel display is not re-displayed when faction changes (enemy objects aren't displayed so we don't know if we should display it, after it changes to friendly).
-
-
 				Color color = LevelDataManager.factions[unit.factionId].color;
 
 				unit.hud.SetColor( color );
@@ -237,7 +243,7 @@ namespace SS.Objects.Units
 				// Remove the now unused listeners.
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-
+			
 			//
 			//    SUB-OBJECTS
 			//
@@ -250,7 +256,7 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.AssignModules( gameObject, def );
 
-			unit.population = def.defaultPopulationOnSpawn;
+			unit.population = PopulationSize.x1;
 
 			return gameObject;
 		}
@@ -291,6 +297,16 @@ namespace SS.Objects.Units
 				data.rotationSpeed = unit.rotationSpeedOverride;
 			}
 			data.population = unit.population;
+
+			if( unit.isInside )
+			{
+#warning Proper slot-index.
+				data.inside = new Tuple<Guid, Guid>(
+						unit.interior.ssObject.guid,
+						unit.interior.moduleId
+					);
+				data.insideSlotIndex = 0;
+			}
 
 			//
 			// MODULES

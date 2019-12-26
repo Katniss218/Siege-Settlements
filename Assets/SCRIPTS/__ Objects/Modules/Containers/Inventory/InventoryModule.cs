@@ -219,7 +219,14 @@ namespace SS.Objects.Modules
 			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
 
 
-			Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
+			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
+			if( hudInventory == null )
+			{
+				return;
+			}
+
+
+			/*Transform hudResourceTransform = hudObj.hud.transform.Find( "Resource" );
 			if( hudResourceTransform == null )
 			{
 				return;
@@ -229,10 +236,10 @@ namespace SS.Objects.Modules
 			if( hudResourceIconTransform == null )
 			{
 				return;
-			}
+			}*/
 
-			Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
-			TextMeshProUGUI hudResourceAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
+			//Image hudResourceIcon = hudResourceIconTransform.GetComponent<Image>();
+			//TextMeshProUGUI hudResourceAmount = hudObj.hud.transform.Find( "Amount" ).GetComponent<TextMeshProUGUI>();
 
 			// Make the inventory update the HUD wien resources are added/removed.
 			this.onAdd.AddListener( ( string id, int amtAdded ) =>
@@ -243,11 +250,12 @@ namespace SS.Objects.Modules
 					{
 						continue;
 					}
-					hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
+					hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
+					/*hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
 					hudResourceAmount.text = "" + this.slotGroups[i].amount;
 
 					hudResourceIcon.gameObject.SetActive( true );
-					hudResourceAmount.gameObject.SetActive( true );
+					hudResourceAmount.gameObject.SetActive( true );*/
 					break;
 				}
 			} );
@@ -255,8 +263,9 @@ namespace SS.Objects.Modules
 			{
 				if( this.isEmpty )
 				{
-					hudResourceIcon.gameObject.SetActive( false );
-					hudResourceAmount.gameObject.SetActive( false );
+					hudInventory.HideResource();
+					//hudResourceIcon.gameObject.SetActive( false );
+					//hudResourceAmount.gameObject.SetActive( false );
 				}
 				else
 				{
@@ -266,8 +275,9 @@ namespace SS.Objects.Modules
 						{
 							continue;
 						}
-						hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
-						hudResourceAmount.text = "" + this.slotGroups[i].amount;
+						hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
+						//hudResourceIcon.sprite = DefinitionManager.GetResource( this.slotGroups[i].id ).icon;
+						//hudResourceAmount.text = "" + this.slotGroups[i].amount;
 						break;
 					}
 				}

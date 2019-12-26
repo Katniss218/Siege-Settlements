@@ -8,6 +8,36 @@ namespace SS.Objects.Modules
 {
 	public class InteriorModuleDefinition : ModuleDefinition
 	{
+		public class Slot : IKFFSerializable
+		{
+			public Vector3 position { get; set; }
+			public Quaternion rotation { get; set; }
+
+			public PopulationSize maxPopulation { get; set; }
+
+
+			public void DeserializeKFF( KFFSerializer serializer )
+			{
+				this.position = serializer.ReadVector3( "Position" );
+				this.rotation = serializer.ReadQuaternion( "Rotation" );
+
+				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
+			}
+
+			public void SerializeKFF( KFFSerializer serializer )
+			{
+				serializer.WriteVector3( "", "Position", this.position );
+				serializer.WriteQuaternion( "", "Rotation", this.rotation );
+				serializer.WriteByte( "", "MaxPopulation", (byte)this.maxPopulation );
+			}
+		}
+
+
+		public Slot[] slots { get; set; }
+
+		public Vector3? entrancePosition { get; set; }
+
+
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return
@@ -23,23 +53,48 @@ namespace SS.Objects.Modules
 		{
 			InteriorModule interior = gameObject.AddComponent<InteriorModule>();
 
-			interior.slots = new InteriorModule.Slot[1];
-			interior.slots[0] = new InteriorModule.Slot() { localPos = new Vector3( 0.0f, 0.5f, 0.0f ), localRot = Quaternion.identity };
+			interior.slots = new InteriorModule.SlotGeneric[this.slots.Length];
+			for( int i = 0; i < this.slots.Length; i++ )
+			{
+				InteriorModule.SlotGeneric slot = new InteriorModule.SlotGeneric();
+				slot.localPos = this.slots[i].position;
+				slot.localRot = this.slots[i].rotation;
+				slot.maxPopulation = this.slots[i].maxPopulation;
 
-			interior.entrancePosition = new Vector3( 0.0f, 0.0f, 0.5f );
-			interior.entranceRotation = Quaternion.identity;
+				interior.slots[i] = slot;
+			}
+
+			interior.entrancePosition = this.entrancePosition;
 			interior.moduleId = moduleId;
 		}
-		
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Slots" );
+			this.slots = new Slot[analysisData.childCount];
+			for( int i = 0; i < this.slots.Length; i++ )
+			{
+				this.slots[i] = new Slot();
+			}
+			serializer.DeserializeArray( "Slots", this.slots );
+
+			if( serializer.Analyze( "EntrancePosition" ).isSuccess )
+			{
+				this.entrancePosition = serializer.ReadVector3( "EntrancePosition" );
+			}
+			else
+			{
+				this.entrancePosition = null;
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			
+			serializer.SerializeArray( "", "Slots", this.slots );
+			if( this.entrancePosition != null )
+			{
+				serializer.WriteVector3( "", "EntrancePosition", this.entrancePosition.Value );
+			}
 		}
 	}
 }

@@ -39,6 +39,10 @@ namespace SS.Objects.Modules
 			{
 				return new ConstructorModuleData();
 			}
+			if( typeId == InteriorModule.KFF_TYPEID )
+			{
+				return new InteriorModuleData();
+			}
 			throw new Exception( "Unknown module type '" + typeId + "'." );
 		}
 
@@ -71,6 +75,10 @@ namespace SS.Objects.Modules
 			if( data is ConstructorModuleData )
 			{
 				return ConstructorModule.KFF_TYPEID;
+			}
+			if( data is InteriorModuleData )
+			{
+				return InteriorModule.KFF_TYPEID;
 			}
 			throw new Exception( "Inknown module type '" + data.GetType().Name + "'." );
 		}
