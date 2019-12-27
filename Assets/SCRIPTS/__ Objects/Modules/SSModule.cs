@@ -44,6 +44,11 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		public virtual void OnObjDestroyed()
+		{
+
+		}
+
 
 		public abstract ModuleData GetData();
 		public abstract void SetData( ModuleData data );

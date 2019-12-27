@@ -4,6 +4,7 @@
 		Id = "unit.light_infantry";
 		DisplayName = "Light Infantry";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 15.0;
 		
 		Armor = // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
@@ -97,6 +98,7 @@
 		Id = "unit.heavy_infantry";
 		DisplayName = "Heavy Infantry";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 15.0;
 		Armor =
 		{
@@ -206,6 +208,7 @@
 		Id = "unit.light_cavalry";
 		DisplayName = "Light Cavalry";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 18.0;
 		Armor =
 		{
@@ -298,6 +301,7 @@
 		Id = "unit.heavy_cavalry";
 		DisplayName = "Heavy Cavalry";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 18.0;
 		Armor =
 		{
@@ -390,6 +394,7 @@
 		Id = "unit.bowmen";
 		DisplayName = "Bowmen";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -490,6 +495,7 @@
 		Id = "unit.crossbowmen";
 		DisplayName = "Crossbowmen";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -591,6 +597,7 @@
 		Id = "unit.mounted_archers";
 		DisplayName = "Mounted Archers";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 12.0;
 		Armor =
 		{
@@ -691,6 +698,7 @@
 		Id = "unit.civilian";
 		DisplayName = "Civilian";
 		ViewRange = 7.0;
+		IsCivilian = true;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -790,6 +798,7 @@
 		Id = "unit.civilian_employed";
 		DisplayName = "Employed Civilian";
 		ViewRange = 7.0;
+		IsCivilian = true;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -846,6 +855,7 @@
 		Id = "unit.movable_ballista";
 		DisplayName = "Movable Balista";
 		ViewRange = 7.0;
+		IsCivilian = false;
 		MaxHealth = 10.0;
 		Armor =
 		{

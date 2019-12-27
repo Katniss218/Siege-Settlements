@@ -97,7 +97,7 @@ namespace SS.Objects.Projectiles
 			// Make the projectile destroy itself after certain time.
 			TimerHandler timerHandler = gameObject.AddComponent<TimerHandler>();
 			timerHandler.duration = def.lifetime;
-			timerHandler.onTimerEnd.AddListener( () => Object.Destroy( gameObject ) );
+			timerHandler.onTimerEnd.AddListener( () => projectile.Destroy() );
 
 			// Make the projectile rotate to face the direction of flight.
 			RotateAlongVelocity rotateAlongVelocity = gameObject.AddComponent<RotateAlongVelocity>();

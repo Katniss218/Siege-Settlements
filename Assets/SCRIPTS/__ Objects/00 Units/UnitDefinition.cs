@@ -33,6 +33,8 @@ namespace SS.Objects.Units
 			}
 		}
 
+		public bool isCivilian { get; set; }
+
 		//--------------------------------------------------------------------
 		//  HEALTH-RELATED
 		//--------------------------------------
@@ -164,6 +166,15 @@ namespace SS.Objects.Units
 			catch
 			{
 				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.isCivilian = serializer.ReadBool( "IsCivilian" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'IsCivilian' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
 			try

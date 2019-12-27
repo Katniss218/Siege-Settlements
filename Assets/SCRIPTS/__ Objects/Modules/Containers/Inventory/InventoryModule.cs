@@ -319,39 +319,33 @@ namespace SS.Objects.Modules
 					}
 				} );
 			}
-			if( this.ssObject is SSObjectDFS )
-			{
-				SSObjectDFS dfs = (SSObjectDFS)this.ssObject;
-
-				dfs.onDeath.AddListener( () =>
-				{
-					TacticalDropOffGoal.ExtractFrom( this.transform.position, this.transform.rotation, this.GetAll() );
-
-					if( dfs.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						for( int i = 0; i < this.slotCount; i++ )
-						{
-							if( this.slotGroups[i].isEmpty )
-							{
-								continue;
-							}
-							ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
-						}
-					}
-				} );
-			}
 		}
 
-		void OnDestroy()
+		public override void OnObjDestroyed()
 		{
-			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
+			TacticalDropOffGoal.ExtractFrom( this.transform.position, this.transform.rotation, this.GetAll() );
+
+			if( this.ssObject is IFactionMember )
 			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				IFactionMember fac = (IFactionMember)this.ssObject;
+				if( fac.factionId == LevelDataManager.PLAYER_FAC )
 				{
-					if( this.ssObject.IsDisplaySafe() )
+					for( int i = 0; i < this.slotCount; i++ )
 					{
-						this.HideTooltip();
+						if( this.slotGroups[i].isEmpty )
+						{
+							continue;
+						}
+						ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
 					}
+				}
+			}
+
+			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			{
+				if( this.ssObject.IsDisplaySafe() )
+				{
+					this.HideTooltip();
 				}
 			}
 		}

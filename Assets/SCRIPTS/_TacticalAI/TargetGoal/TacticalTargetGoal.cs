@@ -37,7 +37,7 @@ namespace SS.AI.Goals
 
 		public override void Start( TacticalGoalController controller )
 		{
-			this.navMeshAgent = (controller.ssObject as INavMeshAgent)?.navMeshAgent;
+			this.navMeshAgent = (controller.ssObject as IMovable)?.navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
 			this.initialPosition = controller.transform.position;
 		}

@@ -264,7 +264,7 @@ namespace SS.Objects
 		/// </summary>
 		public virtual void Die()
 		{
-			Destroy( this.gameObject );
+			this.Destroy();
 			this.onDeath?.Invoke();
 			onDeathAny?.Invoke( this );
 		}

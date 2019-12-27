@@ -57,7 +57,7 @@ namespace SS.UI
 			GameObject gameObject = null;
 			if( icons.TryGetValue( obj, out gameObject ) )
 			{
-				Destroy( gameObject );
+				Object.Destroy( gameObject );
 				icons.Remove( obj );
 			}
 			else
@@ -73,7 +73,7 @@ namespace SS.UI
 		{
 			foreach( var icon in icons )
 			{
-				Destroy( icon.Value );
+				Object.Destroy( icon.Value );
 			}
 			icons.Clear();
 		}

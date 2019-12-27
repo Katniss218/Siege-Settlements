@@ -102,7 +102,7 @@ namespace SS.Objects.Modules
 			{
 				if( this.isEmpty )
 				{
-					Object.Destroy( gameObject );
+					this.ssObject.Destroy();
 				}
 				else
 				{
@@ -114,14 +114,11 @@ namespace SS.Objects.Modules
 			} );			
 		}
 
-		void OnDestroy()
+		public override void OnObjDestroyed()
 		{
-			if( ToolTip.canvas != null ) // If the tooltip exists (can be non-existent, if the OnDestroy() is called when the editor leaves play mode).
+			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					this.HideTooltip();
-				}
+				this.HideTooltip();
 			}
 		}
 

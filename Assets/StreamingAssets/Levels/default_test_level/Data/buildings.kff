@@ -124,27 +124,35 @@
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; };
-				Slots =
+				CivilianSlots =
 				[
 					{
-						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [ ];
 					},
 					{
-						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [ ];
 					},
 					{
-						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [ ];
 					},
 					{
-						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [ ];
 					}
 				];
 			}
@@ -602,6 +610,18 @@
 						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
+						IsHidden = false;
+						WhitelistedUnits =
+						[
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers",
+							"unit.movable_ballista"
+						];
 					}
 				];
 			}

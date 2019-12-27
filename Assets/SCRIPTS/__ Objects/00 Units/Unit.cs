@@ -6,7 +6,24 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener, IPopulationScaler
+	public interface IEnterableInside
+	{
+		Transform transform { get; }
+
+		InteriorModule interior { get; }
+		int slotIndex { get; }
+
+		bool isInside
+		{
+			get;
+		}
+		bool isInsideHidden { get; }
+
+		void TrySetInside( InteriorModule interior, InteriorModule.SlotType slotType );
+		void SetOutside();
+	}
+
+	public class Unit : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IEnterableInside
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -140,10 +157,11 @@ namespace SS.Objects.Units
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
+		public bool isCivilian { get; set; }
 
-		//
-		//
-		//
+		// = = = = = = = = = = =
+		// = = = = = = = = = = =
+		// = = = = = = = = = = =
 
 		
 		public InteriorModule interior { get; private set; }
@@ -158,49 +176,47 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void TrySetInside( InteriorModule interior )
+		public void TrySetInside( InteriorModule interior, InteriorModule.SlotType slotType )
 		{
 			if( this.isInside )
 			{
 				return;
 			}
 
-			for( int i = 0; i < interior.slots.Length; i++ )
+			int? slotIndex = interior.GetFirstValid( slotType, this.population, this.definitionId, this.isCivilian, false );
+
+			if( slotIndex == null )
 			{
-				if( (byte)this.population > (byte)interior.slots[i].maxPopulation )
+				return;
+			}
+
+			int i = slotIndex.Value;
+
+			this.navMeshAgent.enabled = false;
+
+			this.interior = interior;
+			this.slotIndex = i; // expand here to other slot types
+
+			InteriorModule.Slot slot = interior.GetSlotAny( i );
+
+			slot.objInside = this;
+
+			this.transform.position = interior.SlotWorldPosition( slot );
+			this.transform.rotation = interior.SlotWorldRotation( slot );
+			
+			HUDInterior.Element slotHud = interior.hudInterior.GetSlotAny( i );
+			slotHud.SetSprite( this.icon );
+			
+			if( slot.isHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int j = 0; j < subObjects.Length; j++ )
 				{
-					continue;
+					subObjects[j].gameObject.SetActive( false );
 				}
 
-				if( !interior.slots[i].isEmpty )
-				{
-					continue;
-				}
-
-				this.navMeshAgent.enabled = false;
-
-				this.interior = interior;
-				this.slotIndex = i; // expand here to other slot types
-
-				interior.slots[i].unitInside = this;
-
-				this.transform.position = interior.SlotWorldPosition( interior.slots[i] );
-				this.transform.rotation = interior.SlotWorldRotation( interior.slots[i] );
-
-				interior.hudInterior.slots[i].SetSprite( this.icon );
-
-				if( interior.slots[i].isHidden )
-				{
-					SubObject[] subObjects = this.GetSubObjects();
-
-					for( int j = 0; j < subObjects.Length; j++ )
-					{
-						subObjects[j].gameObject.SetActive( false );
-					}
-
-					this.isInsideHidden = true;
-				}
-				break;
+				this.isInsideHidden = true;
 			}
 		}
 
@@ -220,7 +236,7 @@ namespace SS.Objects.Units
 			this.navMeshAgent.enabled = true;
 
 			InteriorModule.Slot slot = interior.GetSlotAny( this.slotIndex );
-			slot.unitInside = null;
+			slot.objInside = null;
 
 			HUDInterior.Element hudSlot = interior.hudInterior.GetSlotAny( this.slotIndex );
 			hudSlot.ClearSprite();

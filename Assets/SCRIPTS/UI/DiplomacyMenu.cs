@@ -77,7 +77,7 @@ namespace SS.UI
 		{
 			for( int i = 0; i < diplomacyListContents.childCount; i++ )
 			{
-				Destroy( diplomacyListContents.GetChild( i ).gameObject );
+				Object.Destroy( diplomacyListContents.GetChild( i ).gameObject );
 			}
 		}
 	}

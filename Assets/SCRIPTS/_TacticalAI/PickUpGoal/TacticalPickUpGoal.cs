@@ -47,7 +47,7 @@ namespace SS.AI.Goals
 		
 		private bool IsOnValidObject( SSObject ssObject )
 		{
-			return ssObject is INavMeshAgent && ssObject.GetModules<InventoryModule>().Length > 0;
+			return ssObject is IMovable && ssObject.GetModules<InventoryModule>().Length > 0;
 		}
 
 		public override void Start( TacticalGoalController controller )
@@ -58,7 +58,7 @@ namespace SS.AI.Goals
 				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
 			}
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
-			this.navMeshAgent = (controller.ssObject as INavMeshAgent).navMeshAgent;
+			this.navMeshAgent = (controller.ssObject as IMovable).navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
 		}
 

@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectDFS, IHUDHolder, IDamageable, INavMeshAgent, IFactionMember, IMouseOverHandlerListener
+	public class Hero : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent

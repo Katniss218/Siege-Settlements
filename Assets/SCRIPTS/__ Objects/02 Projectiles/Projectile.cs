@@ -73,7 +73,7 @@ namespace SS.Objects.Projectiles
 			}
 			else
 			{
-				Object.Destroy( gameObject );
+				this.Destroy();
 			}
 			AudioManager.PlaySound( this.missSound );
 		}
@@ -132,7 +132,7 @@ namespace SS.Objects.Projectiles
 						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 
 						AudioManager.PlaySound( this.hitSound );
-						Object.Destroy( this.gameObject );
+						this.Destroy();
 					}
 				}
 			}
@@ -175,7 +175,7 @@ namespace SS.Objects.Projectiles
 					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound );
-						Object.Destroy( this.gameObject );
+						this.Destroy();
 					}
 				}
 			}

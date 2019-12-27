@@ -8,6 +8,7 @@ using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SS.Objects
 {
@@ -237,6 +238,24 @@ namespace SS.Objects
 		{
 			T[] modules = this.GetComponents<T>();
 			return modules;
+		}
+
+		protected virtual void OnObjDestroyed()
+		{
+
+		}
+
+		public void Destroy()
+		{
+			SSModule[] modules = this.GetModules();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				modules[i].OnObjDestroyed();
+			}
+
+			this.OnObjDestroyed();
+			
+			Object.Destroy( this.gameObject );
 		}
 
 

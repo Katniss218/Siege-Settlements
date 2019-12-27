@@ -73,7 +73,7 @@ namespace SS.Objects.Units
 			{
 				SSObject obj = SSObject.Find( data.inside.Item1 );
 				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
-				unit.TrySetInside( interior );
+				unit.TrySetInside( interior, InteriorModule.SlotType.Generic );
 			}
 #warning this (position) depends on the position of interior being assigned. If the position of an object with an interior is changed, the interior needs to move its contents with it.
 		}
@@ -115,6 +115,7 @@ namespace SS.Objects.Units
 			unit.movementSpeed = def.movementSpeed;
 			unit.rotationSpeed = def.rotationSpeed;
 			unit.size = def.size;
+			unit.isCivilian = def.isCivilian;
 
 			unit.viewRange = def.viewRange;
 			unit.healthMax = def.healthMax;

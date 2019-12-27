@@ -277,10 +277,14 @@ namespace SS
 
 					if( damageable == null )
 					{
-						Object.Destroy( hitInfo.collider.gameObject );
+						SSObject ssObject = hitInfo.collider.GetComponent<SSObject>();
+						if( ssObject == null )
+						{
+							return;
+						}
+						ssObject.Destroy();
 					}
 					else
-					//if( damageable != null )
 					{
 						damageable.Die();
 					}
