@@ -1,6 +1,10 @@
-﻿using SS.Objects.Modules;
+﻿using SS.Content;
+using SS.Levels.SaveStates;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -60,8 +64,12 @@ namespace SS.Objects.Units
 			}
 			set
 			{
-				// Recalculate here, before setting '__population'. (we need the from size - '__population', and the to size - 'value')
 #warning Damageable needs to play damage sound when the health gets down due to damage, but not when it goes down due to unit split.
+
+				if( !this.CanChangePopulation() )
+				{
+					return;
+				}
 
 				PopulationSize populationBefore = this.__population;
 
@@ -122,23 +130,18 @@ namespace SS.Objects.Units
 				{
 					melee[i].damageOverride = melee[i].damage * (float)value;
 				}
-#warning TODO! - ranged module spread set to auto from hitbox size. (emits randomly from object's hitbox's top surface) - or position, if n/a.
 
 #warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
-				// Maybe make the population formation-independent. Slots will specify formation. This allows to make arbitrarily-sized formations.
+				// Maybe make the population formation-independent. Slots will specify formation & max pop. This allows to make arbitrarily-sized formations.
 				// Iteratively create the next biggest-most unit possible from the leftover pop.
+				
 
-				// ===SET size
-				// ===SET health
-				// ===SET maxHealth
-				// ===SETM inventory size
-#warning inventory drops items when size can no longer contain them (make sure to remove them first to prevent duplicates).
-				// ===SETM melee damage
-				// ===SETM ranged projectileCount
+#warning inventory drops items when size can no longer contain them.
+
+
 #warning inside slots can only be put on a "non-formation" unit.
 #warning - We can actually make that, because we know what unit we are spawning at the time of spawn, co we can assign different Unit subclasses, depending on the unit sub-type.
-				// ===SETS mesh
-				// ===SETS material
+
 
 				MeshPredicatedSubObject[] meshPopulationSubObjects = this.GetSubObjects<MeshPredicatedSubObject>();
 				for( int i = 0; i < meshPopulationSubObjects.Length; i++ )
@@ -425,6 +428,170 @@ namespace SS.Objects.Units
 		public override void OnHide()
 		{
 
+		}
+
+		public bool CanChangePopulation()
+		{
+#error TODO! - some unit types can't change population.
+			SSModule[] modules = this.GetModules();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				if( modules[i] is IPopulationChangeBlocker )
+				{
+					if( !((IPopulationChangeBlocker)modules[i]).CanChangePopulation() )
+					{
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+
+		// // // =-    -    -  -       -  -  -   -    -   -  -  -      -      -    -  -  -  -  -        -  -  -     -   -    -
+
+		
+		// // //
+		// // //			STATIC METHODS
+		// // //
+
+		
+		// // // =-    -      - -       -  -  -   -     -  -   - -      -      -    -  -  -  -  -        -  -  -     -  -    -
+
+
+		/// <summary>
+		/// Tries to join specified units with additional units to make a bigger unit.
+		/// </summary>
+		/// <param name="beacon">The unit to enlarge (increase population).</param>
+		/// <param name="additional">Units to take the additional population from.</param>
+		public static void Join( Unit beacon, List<Unit> additional )
+		{
+			byte selfPop = (byte)beacon.population;
+			byte popTotal = selfPop; // total population of the new unit
+			byte targetPop = 0; // total population of the new unit (if popTotal is a valid PopulationSize).
+
+			float healthTotal = beacon.health;
+						
+			for( int i = 0; i < additional.Count; i++ )
+			{
+				popTotal += (byte)additional[i].population;
+
+				if( popTotal > selfPop )
+				{
+					healthTotal += additional[i].health;
+					if( popTotal == 8 )
+					{
+						targetPop = 8;
+						break;
+					}
+					if( popTotal == 4 )
+					{
+						targetPop = 4;
+						break;
+					}
+					if( popTotal == 2 )
+					{
+						targetPop = 2;
+						break;
+					}
+					if( popTotal == 1 )
+					{
+						targetPop = 1;
+						break;
+					}
+				}
+			}
+
+			if( targetPop > selfPop )
+			{
+				int i = 0;
+				do
+				{
+					selfPop += (byte)additional[i].population;
+					
+					additional[i].Die();
+
+					i++;
+					// Join as long as selfPop is less than targetPop AND as long as the selfPop is not a valid pop number.
+				} while( selfPop < targetPop && (selfPop != 1 || selfPop != 2 || selfPop != 4 || selfPop != 8) );
+
+				// assign the new, "joined" population.
+				beacon.population = (PopulationSize)selfPop;
+				beacon.health = healthTotal;
+			}
+#warning If one of the units was selected (beacon or additional), select the unit that it joins into.
+		}
+
+		/// <summary>
+		/// Splits the unit so that one of the results has population size of specified value.
+		/// </summary>
+		/// <param name="beacon">The unit to split.</param>
+		/// <param name="targetPopulation">Beacon unit after splitting will be this size.</param>
+		public static List<Unit> Split( Unit beacon, PopulationSize? targetPopulation )
+		{
+			// If target pop is equal to this pop - don't split.
+			// else
+			// - beacon becomes the specified size, and additional units are spawned.
+			// - only additional units are added to return list.
+
+			byte populationPool = (byte)beacon.population;
+
+			byte populationTarget = (byte)targetPopulation;
+
+			if( populationTarget > populationPool )
+			{
+				throw new System.Exception( "Tried to split unit into bigger unit. That doesn't make sense. Don't do that." );
+			}
+
+			populationPool -= populationTarget;
+			if( populationPool != 0 ) // if the population changed
+			{
+				beacon.population = (PopulationSize)populationTarget;
+			}
+
+			float healthPercentSrc = beacon.healthPercent;
+
+			UnitDefinition beaconDef = DefinitionManager.GetUnit( beacon.definitionId );
+			
+
+
+			while( populationPool > 0 )
+			{
+				PopulationSize newSize = PopulationSize.x1;
+				if( populationPool >= 8 )
+				{
+					populationPool -= 8;
+					newSize = PopulationSize.x8;
+				}
+				else if( populationPool >= 4 )
+				{
+					populationPool -= 4;
+					newSize = PopulationSize.x4;
+				}
+				else if( populationPool >= 2 )
+				{
+					populationPool -= 2;
+					newSize = PopulationSize.x2;
+				}
+				else if( populationPool >= 1 )
+				{
+					populationPool -= 1;
+					newSize = PopulationSize.x1;
+				}
+
+				
+
+				Unit u = UnitCreator.Create( beaconDef, Guid.NewGuid() ).GetComponent<Unit>();
+				u.population = newSize;
+				u.transform.position = beacon.transform.position + new Vector3( UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ) );
+				u.factionId = beacon.factionId;
+				u.healthPercent = healthPercentSrc;
+#warning should be enabled when the position is set.
+				u.GetComponent<NavMeshAgent>().enabled = true;
+			}
+#warning If the beacon was selected, select also every created from it unit.
+			return null;
+			//throw new System.Exception();
 		}
 	}
 }

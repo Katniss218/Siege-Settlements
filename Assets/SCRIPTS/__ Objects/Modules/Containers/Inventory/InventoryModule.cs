@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.UI;
 using System;
@@ -13,7 +14,7 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {	
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener, IPopulationChangeBlocker
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -38,6 +39,11 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		public bool CanChangePopulation()
+		{
+			return this.isEmpty;
+		}
+
 		internal SlotGroup[] slotGroups;
 
 		public int GetCapacity( int index )
@@ -52,6 +58,7 @@ namespace SS.Objects.Modules
 		public void SetCapacity( int index, int capacity )
 		{
 			this.slotGroups[index].capacity = capacity;
+			
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
 				if( this.ssObject.IsDisplaySafe() )
@@ -63,6 +70,7 @@ namespace SS.Objects.Modules
 		public void SetCapacityOverride( int index, int capacityOverride )
 		{
 			this.slotGroups[index].capacityOverride = capacityOverride;
+			
 			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
 				if( this.ssObject.IsDisplaySafe() )

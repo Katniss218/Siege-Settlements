@@ -58,7 +58,7 @@ namespace SS.Objects.Heroes
 
 			SSObjectCreator.AssignModuleData( hero, data );
 
-			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
 				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
@@ -246,6 +246,9 @@ namespace SS.Objects.Heroes
 			//
 
 			SSObjectCreator.AssignModules( gameObject, def );
+
+			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
+			tacticalGoalController.goal = TacticalGoalController.GetDefaultGoal();
 
 			return gameObject;
 		}

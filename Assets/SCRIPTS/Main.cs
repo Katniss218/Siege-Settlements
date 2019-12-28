@@ -213,17 +213,49 @@ namespace SS
 					RaycastHit hitInfo;
 					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 					{
-						SSObject ssObject = hitInfo.collider.GetComponent<SSObject>();
-						if( ssObject == null )
+						Unit unitRay = hitInfo.collider.GetComponent<Unit>();
+						if( unitRay == null )
 						{
 							return;
 						}
+						/*
 						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
 						TacticalMoveToGoal goal = new TacticalMoveToGoal();
 						goal.isHostile = false;
 						goal.SetDestination( ssObject );
 						goalController.goal = goal;
+						*/
+
+						TacticalGoalController goalControllerBeacon = unitRay.GetComponent<TacticalGoalController>();
+						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
+						goal.isHostile = false;
+						goal.beacon = unitRay;
+						goalControllerBeacon.goal = goal;
+
+						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
+						goal = new TacticalMakeFormationGoal();
+						goal.isHostile = false;
+						goal.beacon = unitRay;
+						goalController.goal = goal;
 					}
+				}
+			}
+		}
+
+		private void Inp_U( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				SSObjectDFS[] selected = Selection.selectedObjects;
+				for( int i = 0; i < selected.Length; i++ )
+				{
+					Unit u = (Unit)selected[i];
+					if( !u.CanChangePopulation() )
+					{
+						continue;
+					}
+
+					Unit.Split( u, PopulationSize.x1 );
 				}
 			}
 		}
@@ -246,6 +278,13 @@ namespace SS
 					if( popScaler == null )
 					{
 						return;
+					}
+					if( popScaler is Unit )
+					{
+						if( !((Unit)popScaler).CanChangePopulation() )
+						{
+							return;
+						}
 					}
 					switch( popScaler.population )
 					{
@@ -556,6 +595,7 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.I, 60.0f, Inp_I, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.U, 60.0f, Inp_U, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
@@ -586,6 +626,7 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
 				Main.keyboardInput.ClearOnPress( KeyCode.I, Inp_I );
+				Main.keyboardInput.ClearOnPress( KeyCode.U, Inp_U );
 				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
 				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
 				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_H );

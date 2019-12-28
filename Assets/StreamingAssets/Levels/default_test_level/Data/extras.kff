@@ -14,7 +14,7 @@
 			{
 				TypeId = "MESH";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalPosition = { X = 0.0; Y = -0.15; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
 				Mesh = "extern:Models/Extras/Cross.ksm";

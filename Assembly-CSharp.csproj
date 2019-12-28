@@ -155,6 +155,8 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoalData.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoal.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\TacticalMoveToGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\TacticalMoveToGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickUpGoal\TacticalPickUpGoal.cs" />
@@ -168,6 +170,7 @@
     <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlocker.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />
