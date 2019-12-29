@@ -36,6 +36,8 @@ namespace SS.Objects.Units
 		public bool isCivilian { get; set; }
 		public bool isPopulationLocked { get; set; }
 
+		public byte? populationSizeLimit { get; set; }
+
 		//--------------------------------------------------------------------
 		//  HEALTH-RELATED
 		//--------------------------------------
@@ -187,6 +189,18 @@ namespace SS.Objects.Units
 				throw new Exception( "Missing or invalid value of 'IsPopulationLocked' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
+			if( serializer.Analyze( "PopulationSizeLimit" ).isSuccess )
+			{
+				try
+				{
+					this.populationSizeLimit = serializer.ReadByte( "PopulationSizeLimit" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'PopulationSizeLimit' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+				}
+			}
+
 			try
 			{
 				this.viewRange = serializer.ReadFloat( "ViewRange" );
@@ -312,6 +326,10 @@ namespace SS.Objects.Units
 
 			serializer.WriteBool( "", "IsCivilian", this.isCivilian );
 			serializer.WriteBool( "", "IsPopulationLocked", this.isPopulationLocked );
+			if( this.populationSizeLimit != null )
+			{
+				serializer.WriteByte( "", "PopulationSizeLimit", this.populationSizeLimit.Value );
+			}
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );

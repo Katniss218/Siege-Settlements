@@ -56,6 +56,7 @@ namespace SS.Objects.Units
 		}
 
 		public bool isPopulationLocked { get; set; }
+		public byte? populationSizeLimit { get; set; }
 		private PopulationSize __population = PopulationSize.x1;
 		public PopulationSize population
 		{
@@ -68,6 +69,10 @@ namespace SS.Objects.Units
 #warning Damageable needs to play damage sound when the health gets down due to damage, but not when it goes down due to unit split.
 
 				if( !this.CanChangePopulation() )
+				{
+					return;
+				}
+				if( this.populationSizeLimit != null && (byte)value > this.populationSizeLimit )
 				{
 					return;
 				}
@@ -84,9 +89,6 @@ namespace SS.Objects.Units
 				this.healthMax = newHealthMax;
 				this.health = newHealth;
 				
-#warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x.
-				// We can make sure that e.g. Elephants 1x can't go on top of tower by just blocking elephants from going inside of tower.
-
 				this.SetSize( value );
 
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();

@@ -117,6 +117,7 @@ namespace SS.Objects.Units
 			unit.sizePerPopulation = def.size;
 			unit.isCivilian = def.isCivilian;
 			unit.isPopulationLocked = def.isPopulationLocked;
+			unit.populationSizeLimit = def.populationSizeLimit;
 
 			unit.viewRange = def.viewRange;
 			unit.healthMax = def.healthMax;
