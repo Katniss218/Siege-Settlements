@@ -9,6 +9,11 @@
 		
 		bool isReadyToAttack { get; }
 
-		Targeter targeter { get; }
+		//Targeter targeter { get; }
+		SSObjectDFS target { get; set; }
+		
+		void FindTargetClosest();
+
+		void TrySetTarget( SSObjectDFS target );
 	}
 }

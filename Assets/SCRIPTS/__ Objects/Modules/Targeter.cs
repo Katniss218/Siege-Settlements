@@ -3,53 +3,14 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class Targeter
+	public static class Targeter
 	{
 		public enum TargetingMode : byte
 		{
-			ARBITRARY,
 			CLOSEST,
 			TARGET
 		}
-
-#warning Targeter is kind of a wrapper class at this point. Could be made static, with target field moved to the attack modules.
-
-		private SSObjectDFS __target;
-		public SSObjectDFS target
-		{
-			get
-			{
-				return this.__target;
-			}
-			set
-			{
-				this.__target = value;
-				if( value == null )
-				{
-					onTargetReset?.Invoke();
-				}
-				else
-				{
-					onTargetSet?.Invoke();
-				}
-			}
-		}
-		
-		public int layers { get; private set; }
-
-
-		public Targeter( int layers, SSObjectDFS factionMember )
-		{
-			this.layers = layers;
-			this.factionMember = factionMember;
-		}
-
-		public event Action onTargetSet = null;
-		public event Action onTargetReset = null;
-
-		public SSObjectDFS factionMember { get; private set; }
-		
-
+						
 		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target, SSObjectDFS factionMemberSelf )
 		{
 			if( target == null )
@@ -70,86 +31,65 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public SSObjectDFS TrySetTarget( Vector3 positionSelf, float searchRange, TargetingMode targetingMode, SSObjectDFS target = null )
-		{
-			if( targetingMode == TargetingMode.ARBITRARY )
-			{
-				this.target = FindTargetArbitrary( positionSelf, searchRange, this.layers, this.factionMember );
-			}
-			else if( targetingMode == TargetingMode.CLOSEST )
-			{
-				this.target = FindTargetClosest( positionSelf, searchRange, this.layers, this.factionMember );
-			}
-			else if( targetingMode == TargetingMode.TARGET )
-			{
-				if( target == null )
-				{
-					this.target = null;
-					return null;
-				}
-				// Check if the overlapped object can be targeted by this finder.
-				if( !this.factionMember.CanTargetAnother( target ) )
-				{
-					return this.target;
-				}
+		public const int LAYERS = ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK;
 
-				if( !Main.IsInRange( target.transform.position, positionSelf, searchRange ) )
-				{
-					return this.target;
-				}
-				
-				this.target = target;
-			}
-			return this.target;
-		}
 
-		public SSObjectDFS TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target )
+		public static SSObjectDFS TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFS self, SSObjectDFS target, bool requireExactDistance )
 		{
-			if( CanTarget( positionSelf, searchRange, target, this.factionMember ) )
+			SSObjectDFS targetRet = null;
+			if( target == null )
 			{
-				this.target = target;
-			}
-			return this.target;
-		}
-		
-		public static SSObjectDFS FindTargetArbitrary( Vector3 positionSelf, float searchRange, int layerMask, SSObjectDFS factionMemberSelf )
-		{
-			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
-			if( col.Length == 0 )
-			{
+				targetRet = null;
 				return null;
 			}
-			
-			for( int i = 0; i < col.Length; i++ )
+			// Check if the overlapped object can be targeted by this finder.
+			if( !self.CanTargetAnother( target ) )
 			{
-				SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
-
-				// Check if the overlapped object can be targeted by this finder.
-				if( !factionMemberSelf.CanTargetAnother( facOther ) )
-				{
-					continue;
-				}
-
-				if( !Main.IsInRange( col[i].transform.position, positionSelf, searchRange ) )
-				{
-					continue;
-				}
-
-				return facOther;
+				return targetRet;
 			}
-			return null;
+
+			if( requireExactDistance )
+			{
+				if( !Main.IsInRange( target.transform.position, positionSelf, searchRange ) )
+				{
+					return targetRet;
+				}
+				targetRet = target;
+			}
+			else
+			{
+				Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
+				if( col.Length == 0 )
+				{
+					return null;
+				}
+				for( int i = 0; i < col.Length; i++ )
+				{
+					SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
+
+					if( facOther == target )
+					{
+						targetRet = target;
+					}
+				}
+			}
+
+			return targetRet;
 		}
 
-		public static SSObjectDFS FindTargetClosest( Vector3 positionSelf, float searchRange, int layerMask, SSObjectDFS factionMemberSelf )
+		public static SSObjectDFS FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFS factionMemberSelf, bool requireExactDistance )
 		{
-			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, layerMask );
+			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
 			if( col.Length == 0 )
 			{
 				return null;
 			}
 			SSObjectDFS ret = null;
-			float needThisCloseSq = searchRange * searchRange;
-			float needThisClose = searchRange;
+			float needThisCloseSq = float.MaxValue;
+			if( !requireExactDistance )
+			{
+				needThisCloseSq = searchRange * searchRange;
+			}
 
 			for( int i = 0; i < col.Length; i++ )
 			{
@@ -162,9 +102,12 @@ namespace SS.Objects.Modules
 				}
 
 				float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
-				if( distSq >= needThisCloseSq )
+				if( requireExactDistance )
 				{
-					continue;
+					if( distSq >= needThisCloseSq )
+					{
+						continue;
+					}
 				}
 
 				needThisCloseSq = distSq;

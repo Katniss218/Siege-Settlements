@@ -142,9 +142,9 @@ namespace SS.AI.Goals
 			{
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, ssobj ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
 					{
-						this.attackModules[i].targeter.target = null;
+						this.attackModules[i].target = null;
 					}
 				}
 
@@ -156,13 +156,23 @@ namespace SS.AI.Goals
 			}
 			else
 			{
+				// If the target can no longer be targeted.
+				if( this.target != null )
+				{
+					if( !ssobj.CanTargetAnother( this.target ) )
+					{
+						this.target = null;
+					}
+				}
+
+				// If the target can no longer be targeted.
 				if( this.target == null )
 				{
-					controller.goal = TacticalGoalController.GetDefaultGoal();
 					if( !isInside )
 					{
 						this.navMeshAgent.ResetPath();
 					}
+					controller.goal = TacticalGoalController.GetDefaultGoal();
 					return;
 				}
 			}
@@ -172,8 +182,7 @@ namespace SS.AI.Goals
 				// If the target was destroyed or could no longer be targeted - find a new target.
 				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
 				{
-
-					this.target = Targeter.FindTargetClosest( controller.transform.position, ssobj.viewRange, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, ssobj );
+					this.target = Targeter.FindTargetClosest( controller.transform.position, ssobj.viewRange, ssobj, true );
 				}
 			}
 		
@@ -183,7 +192,7 @@ namespace SS.AI.Goals
 				if( this.attackModules[i].isReadyToAttack )
 				{
 #warning melee modules only check overlap (hitbox). Ranged checks (from 'center-of-shooting-box' to 'center-of-enemy') and shoots at the center.
-					this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.TARGET, this.target );
+					this.attackModules[i].TrySetTarget( this.target );//.target = Targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, ssobj, this.target );
 				}
 			}
 		}

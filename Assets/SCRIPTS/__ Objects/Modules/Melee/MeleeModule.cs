@@ -11,8 +11,26 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "melee";
 
 		public float attackRange { get; set; }
-		public Targeter targeter { get; private set; }
 
+		private SSObjectDFS __target;
+		public SSObjectDFS target
+		{
+			get
+			{
+				return this.__target;
+			}
+			set
+			{
+				this.__target = value;
+				if( value == null )
+				{
+					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+					{
+						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+					}
+				}
+			}
+		}
 
 		public float damage;
 		public float? damageOverride;
@@ -23,6 +41,18 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
+		private SSObjectDFS __factionMemberSelf = null;
+		private SSObjectDFS factionMemberSelf
+		{
+			get
+			{
+				if( __factionMemberSelf == null )
+				{
+					__factionMemberSelf = this.ssObject as SSObjectDFS;
+				}
+				return __factionMemberSelf;
+			}
+		}
 
 		public bool isReadyToAttack
 		{
@@ -37,23 +67,20 @@ namespace SS.Objects.Modules
 		public SubObject[] traversibleSubObjects { get; set; }
 
 
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
-		void Awake()
+		public void FindTargetClosest()
 		{
-			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.ssObject as SSObjectDFS );
-
-			this.targeter.onTargetReset += () =>
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-				}
-			};
+			this.target = Targeter.FindTargetClosest( this.transform.position, this.attackRange, this.factionMemberSelf, false );
 		}
+
+		public void TrySetTarget( SSObjectDFS target )
+		{
+			this.target = Targeter.TrySetTarget( this.transform.position, this.attackRange, this.factionMemberSelf, target, false );
+		}
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		void Start()
 		{
@@ -73,22 +100,22 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.targeter.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
 			}
 
 			if( this.isReady2 )
 			{
-				if( this.targeter.target == null )
+				if( this.target == null )
 				{
 					return;
 				}
 
-				this.Attack( this.targeter.target );
+				this.Attack( this.target );
 			}
 
 			if( this.isReadyToAttack )
@@ -120,9 +147,9 @@ namespace SS.Objects.Modules
 		{
 			MeleeModuleData data = new MeleeModuleData();
 
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
-				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
+				data.targetGuid = this.target.GetComponent<SSObject>().guid;
 			}
 			if( this.damageOverride != null )
 			{
@@ -146,7 +173,7 @@ namespace SS.Objects.Modules
 
 			if( data.targetGuid != null )
 			{
-				this.targeter.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
+				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
 			}
 			if( data.damageOverride != null )
 			{
@@ -158,11 +185,11 @@ namespace SS.Objects.Modules
 
 		private void OnDrawGizmos()
 		{
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
 				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.targeter.target.transform.position );
-				Gizmos.DrawSphere( this.targeter.target.transform.position, 0.125f );
+				Gizmos.DrawLine( this.transform.position, this.target.transform.position );
+				Gizmos.DrawSphere( this.target.transform.position, 0.125f );
 			}
 		}
 

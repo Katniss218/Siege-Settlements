@@ -17,9 +17,26 @@ namespace SS.Objects.Modules
 		public float attackRange { get; set; }
 
 		// it's the target finder.
-
-		public Targeter targeter { get; private set; }
-
+		
+		private SSObjectDFS __target;
+		public SSObjectDFS target
+		{
+			get
+			{
+				return this.__target;
+			}
+			set
+			{
+				this.__target = value;
+				if( value == null )
+				{
+					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
+					{
+						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+					}
+				}
+			}
+		}
 
 		public ProjectileDefinition projectile;
 		public int projectileCount;
@@ -39,7 +56,19 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
-		
+		private SSObjectDFS __factionMemberSelf = null;
+		private SSObjectDFS factionMemberSelf
+		{
+			get
+			{
+				if( __factionMemberSelf == null )
+				{
+					__factionMemberSelf = this.ssObject as SSObjectDFS;
+				}
+				return __factionMemberSelf;
+			}
+		}
+
 		public bool isReadyToAttack
 		{
 			get
@@ -73,22 +102,20 @@ namespace SS.Objects.Modules
 			return new Tuple<Vector3, Vector3>( this.localOffsetMin, this.localOffsetMax );
 		}
 
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-		void Awake()
+		public void FindTargetClosest()
 		{
-			this.targeter = new Targeter( ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK, this.ssObject as SSObjectDFS );
-
-			this.targeter.onTargetReset += () =>
-			{
-				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
-				{
-					this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
-				}
-			};
+			this.target = Targeter.FindTargetClosest( this.transform.position, this.attackRange, this.factionMemberSelf, true );
 		}
+
+		public void TrySetTarget( SSObjectDFS target )
+		{
+			this.target = Targeter.TrySetTarget( this.transform.position, this.attackRange, this.factionMemberSelf, target, true );
+		}
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		void Start()
 		{
@@ -108,27 +135,27 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.targeter.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
+					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
 			}
 
 			if( this.isReady2 )
 			{
-				if( this.targeter.target == null )
+				if( this.target == null )
 				{
 					return;
 				}
 
-				if( this.targeter.target.transform.position == this.transform.position )
+				if( this.target.transform.position == this.transform.position )
 				{
 					return;
 				}
 
-				this.Attack( this.targeter.target );
+				this.Attack( this.target );
 			}
 
 			if( this.isReadyToAttack )
@@ -200,7 +227,7 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
-			data.ownerFactionIdCache = this.targeter.factionMember.factionId;
+			data.ownerFactionIdCache = (this.ssObject as SSObjectDFS).factionId;
 			data.damageTypeOverride = this.damageType;
 			data.damageOverride = this.damage;
 			data.armorPenetrationOverride = this.armorPenetration;
@@ -223,9 +250,9 @@ namespace SS.Objects.Modules
 		{
 			RangedModuleData data = new RangedModuleData();
 
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
-				data.targetGuid = this.targeter.target.GetComponent<SSObject>().guid;
+				data.targetGuid = this.target.GetComponent<SSObject>().guid;
 			}
 			if( this.projectileCountOverride != null )
 			{
@@ -249,7 +276,7 @@ namespace SS.Objects.Modules
 			
 			if( data.targetGuid != null )
 			{
-				this.targeter.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFS);
+				this.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFS);
 			}
 			if( data.projectileCountOverride != null )
 			{
@@ -261,11 +288,11 @@ namespace SS.Objects.Modules
 
 		private void OnDrawGizmos()
 		{
-			if( this.targeter.target != null )
+			if( this.target != null )
 			{
 				Gizmos.color = Color.blue;
-				Gizmos.DrawLine( this.transform.position, this.targeter.target.transform.position );
-				Gizmos.DrawSphere( this.targeter.target.transform.position, 0.125f );
+				Gizmos.DrawLine( this.transform.position, this.target.transform.position );
+				Gizmos.DrawSphere( this.target.transform.position, 0.125f );
 			}
 		}
 

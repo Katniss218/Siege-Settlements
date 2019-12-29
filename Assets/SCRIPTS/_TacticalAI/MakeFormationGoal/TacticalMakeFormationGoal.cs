@@ -72,9 +72,9 @@ namespace SS.AI.Goals
 				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].targeter.target, ssobj ) )
+					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
 					{
-						this.attackModules[i].targeter.target = null;
+						this.attackModules[i].target = null;
 					}
 				}
 
@@ -84,7 +84,7 @@ namespace SS.AI.Goals
 					{
 						if( this.attackModules[i].isReadyToAttack )
 						{
-							this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.CLOSEST );
+							this.attackModules[i].FindTargetClosest();
 						}
 					}
 				}
@@ -93,9 +93,9 @@ namespace SS.AI.Goals
 			{
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
-					if( this.attackModules[i].targeter.target != null )
+					if( this.attackModules[i].target != null )
 					{
-						this.attackModules[i].targeter.target = null;
+						this.attackModules[i].target = null;
 					}
 				}
 			}
