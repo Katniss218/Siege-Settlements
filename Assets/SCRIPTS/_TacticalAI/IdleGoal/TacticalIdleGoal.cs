@@ -23,7 +23,13 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		
+
+
+		public override bool IsOnValidObject( SSObject ssObject )
+		{
+			return true;
+		}
+
 		public override void Start( TacticalGoalController controller )
 		{
 			this.attackModules = controller.GetComponents<IAttackModule>();

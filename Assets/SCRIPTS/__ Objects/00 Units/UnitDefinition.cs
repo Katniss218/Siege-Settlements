@@ -34,6 +34,7 @@ namespace SS.Objects.Units
 		}
 
 		public bool isCivilian { get; set; }
+		public bool isPopulationLocked { get; set; }
 
 		//--------------------------------------------------------------------
 		//  HEALTH-RELATED
@@ -167,7 +168,7 @@ namespace SS.Objects.Units
 			{
 				throw new Exception( "Missing or invalid value of 'DisplayName' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
-
+			
 			try
 			{
 				this.isCivilian = serializer.ReadBool( "IsCivilian" );
@@ -175,6 +176,15 @@ namespace SS.Objects.Units
 			catch
 			{
 				throw new Exception( "Missing or invalid value of 'IsCivilian' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.isPopulationLocked = serializer.ReadBool( "IsPopulationLocked" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'IsPopulationLocked' of '" + this.id + "' (" + serializer.file.fileName + ")." );
 			}
 
 			try
@@ -299,6 +309,9 @@ namespace SS.Objects.Units
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteFloat( "", "ViewRange", this.viewRange );
+
+			serializer.WriteBool( "", "IsCivilian", this.isCivilian );
+			serializer.WriteBool( "", "IsPopulationLocked", this.isPopulationLocked );
 
 			serializer.WriteFloat( "", "MaxHealth", this.healthMax );
 			serializer.Serialize( "", "Armor", this.armor );

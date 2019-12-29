@@ -1,10 +1,11 @@
 ﻿List =
 [
 	{
-		Id = "unit.light_infantry";
+		Id = "unit.light_infantry"; // The unique ID of this specific unit. Must be unique.
 		DisplayName = "Light Infantry";
-		ViewRange = 7.0;
-		IsCivilian = false;
+		ViewRange = 7.0; // The distance at which the unit can detect it's surroundings.
+		IsCivilian = false; // If true, the unit will be able to enter civilian-only interior slots.
+		IsPopulationLocked = false; // if true, the unit will not be able to split/join and will stay at the default '1x' population size.
 		MaxHealth = 15.0;
 		
 		Armor = // The total of 0.0 means 0% reduction, 1.0 means 100% reduction (the total is calculated: victim's armor - attacker's armor penetration, never above 1.0).
@@ -26,9 +27,9 @@
 				ArmorPenetration = 0.0;
 				AttackRange = 0.7;
 				AttackCooldown = 0.75;
-				TraversibleSubObjects = [ ];
+				TraversibleSubObjects = [ ]; // The module will point these sub-object towards the target (used to achieve 'aiming' effect).
 				AttackSound = "extern:Sounds/melee.wav";
-				Icon = "extern:Textures/Modules/melee_icon.png";
+				Icon = "extern:Textures/Modules/melee_icon.png"; // The icon of the module, displayed when the unit is selected.
 			},
 			{
 				TypeId = "inventory";
@@ -42,18 +43,18 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
 		];
-		TechsRequired = [];
+		TechsRequired = [ ];
 		BuildTime = 3.0;
-		SubObjects =
+		SubObjects = // A list of graphical sub-objects of this unit.
 		[
 			{
-				TypeId = "MESH_PREDICATED";
-				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				TypeId = "MESH_PREDICATED"; // This sub-object is a mesh that can selectively display different things depending on the condition (population size).
+				SubObjectId = "00000000-0000-0000-0001-000000000000"; // unique ID of this sub-object (System.Guid.ParseExact( this, "D" );).
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
@@ -81,6 +82,7 @@
 					}
 				];
 				
+				// Specifies a material (shader).
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
@@ -99,6 +101,7 @@
 		DisplayName = "Heavy Infantry";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 15.0;
 		Armor =
 		{
@@ -135,7 +138,7 @@
 		];
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -209,6 +212,7 @@
 		DisplayName = "Light Cavalry";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 18.0;
 		Armor =
 		{
@@ -245,7 +249,7 @@
 		];
 		MovementSpeed = 0.5;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -302,6 +306,7 @@
 		DisplayName = "Heavy Cavalry";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 18.0;
 		Armor =
 		{
@@ -338,7 +343,7 @@
 		];
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -395,6 +400,7 @@
 		DisplayName = "Bowmen";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -437,7 +443,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -496,6 +502,7 @@
 		DisplayName = "Crossbowmen";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -539,7 +546,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -598,6 +605,7 @@
 		DisplayName = "Mounted Archers";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = false;
 		MaxHealth = 12.0;
 		Armor =
 		{
@@ -640,7 +648,7 @@
 		];
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
-		Size = { X = 1.0; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 5; }
@@ -699,6 +707,7 @@
 		DisplayName = "Civilian";
 		ViewRange = 7.0;
 		IsCivilian = true;
+		IsPopulationLocked = true;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -711,7 +720,7 @@
 		IsConstructor = true;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Modules =
 		[
 			{
@@ -799,6 +808,7 @@
 		DisplayName = "Employed Civilian";
 		ViewRange = 7.0;
 		IsCivilian = true;
+		IsPopulationLocked = true;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -810,7 +820,7 @@
 		};
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
 		Modules =
 		[
 			{
@@ -856,6 +866,7 @@
 		DisplayName = "Movable Balista";
 		ViewRange = 7.0;
 		IsCivilian = false;
+		IsPopulationLocked = true;
 		MaxHealth = 10.0;
 		Armor =
 		{
@@ -889,7 +900,7 @@
 		];
 		MovementSpeed = 0.15;
 		RotationSpeed = 160;
-		Size = { X = 0.5; Y = 0.1875; Z = 0.5; };
+		Size = { X = 0.375; Y = 0.1875; Z = 0.375; };
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; },

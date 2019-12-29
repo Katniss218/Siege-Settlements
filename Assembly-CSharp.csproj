@@ -170,7 +170,7 @@
     <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlocker.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />

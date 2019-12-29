@@ -35,6 +35,16 @@ namespace SS.AI.Goals
 		}
 
 
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+
+		public override bool IsOnValidObject( SSObject ssObject )
+		{
+			return ssObject.GetComponents<IAttackModule>().Length > 0;
+		}
+
 		public override void Start( TacticalGoalController controller )
 		{
 			this.navMeshAgent = (controller.ssObject as IMovable)?.navMeshAgent;
@@ -172,6 +182,7 @@ namespace SS.AI.Goals
 			{
 				if( this.attackModules[i].isReadyToAttack )
 				{
+#warning melee modules only check overlap (hitbox). Ranged checks (from 'center-of-shooting-box' to 'center-of-enemy') and shoots at the center.
 					this.attackModules[i].targeter.TrySetTarget( controller.transform.position, this.attackModules[i].attackRange, Targeter.TargetingMode.TARGET, this.target );
 				}
 			}

@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {	
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener, IPopulationChangeBlocker
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener, IPopulationChangeBlockerModule
 	{
 		public const string KFF_TYPEID = "inventory";
 

@@ -207,24 +207,22 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				SSObjectDFS[] selected = Selection.selectedObjects;
-				for( int i = 0; i < selected.Length; i++ )
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					RaycastHit hitInfo;
-					if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+					Unit unitRay = hitInfo.collider.GetComponent<Unit>();
+					if( unitRay == null )
 					{
-						Unit unitRay = hitInfo.collider.GetComponent<Unit>();
-						if( unitRay == null )
+						return;
+					}
+
+					SSObjectDFS[] selected = Selection.selectedObjects;
+					for( int i = 0; i < selected.Length; i++ )
+					{
+						if( !(selected[i] is Unit) )
 						{
-							return;
+							continue;
 						}
-						/*
-						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
-						TacticalMoveToGoal goal = new TacticalMoveToGoal();
-						goal.isHostile = false;
-						goal.SetDestination( ssObject );
-						goalController.goal = goal;
-						*/
 
 						TacticalGoalController goalControllerBeacon = unitRay.GetComponent<TacticalGoalController>();
 						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
@@ -249,6 +247,10 @@ namespace SS
 				SSObjectDFS[] selected = Selection.selectedObjects;
 				for( int i = 0; i < selected.Length; i++ )
 				{
+					if( !(selected[i] is Unit) )
+					{
+						continue;
+					}
 					Unit u = (Unit)selected[i];
 					if( !u.CanChangePopulation() )
 					{

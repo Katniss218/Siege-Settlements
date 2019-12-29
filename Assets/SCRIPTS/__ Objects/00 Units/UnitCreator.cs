@@ -114,8 +114,9 @@ namespace SS.Objects.Units
 			unit.icon = def.icon;
 			unit.movementSpeed = def.movementSpeed;
 			unit.rotationSpeed = def.rotationSpeed;
-			unit.size = def.size;
+			unit.sizePerPopulation = def.size;
 			unit.isCivilian = def.isCivilian;
+			unit.isPopulationLocked = def.isPopulationLocked;
 
 			unit.viewRange = def.viewRange;
 			unit.healthMax = def.healthMax;
@@ -328,6 +329,21 @@ namespace SS.Objects.Units
 		public static GameObject Create( UnitDefinition def, Guid guid )
 		{
 			return CreateUnit( def, guid );
+		}
+
+		public static GameObject Create( UnitDefinition def, Guid guid, Vector3 position, Quaternion rotation, int factionId )
+		{
+			GameObject gameObject = CreateUnit( def, guid );
+			gameObject.transform.position = position;
+			gameObject.transform.rotation = rotation;
+
+			Unit unit = gameObject.GetComponent<Unit>();
+			unit.factionId = factionId;
+
+			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+			navMeshAgent.enabled = true;
+
+			return gameObject;
 		}
 	}
 }

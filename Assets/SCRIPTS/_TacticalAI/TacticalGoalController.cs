@@ -23,6 +23,11 @@ namespace SS.AI
 				{
 					value = GetDefaultGoal();
 				}
+				else if( !value.IsOnValidObject( this.ssObject ) )
+				{
+					Debug.LogWarning( "Goal '" + value.GetType().Name + "' was added to an invalid object. - '" + this.ssObject.definitionId + "'." );
+					value = GetDefaultGoal();
+				}
 				this.__goal = value;
 				this.__goal.Start( this );
 				//Debug.Log( this.gameObject.name + ": Set the TacticalGoal to: " + value.GetType().Name );

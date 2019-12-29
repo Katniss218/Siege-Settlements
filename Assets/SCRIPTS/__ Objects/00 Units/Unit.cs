@@ -55,6 +55,7 @@ namespace SS.Objects.Units
 			}
 		}
 
+		public bool isPopulationLocked { get; set; }
 		private PopulationSize __population = PopulationSize.x1;
 		public PopulationSize population
 		{
@@ -82,35 +83,11 @@ namespace SS.Objects.Units
 
 				this.healthMax = newHealthMax;
 				this.health = newHealth;
-
-#warning TODO! - unit definitions specify how big it's hitbox is per each population. It's some sort of scaling factor. It shows how big a single unit is.
+				
 #warning TODO! - unit definitions can limit how big can the units get. E.g. Elephants (which are pretty big in scale) can only be 1x or 2x.
 				// We can make sure that e.g. Elephants 1x can't go on top of tower by just blocking elephants from going inside of tower.
 
-				float x = 0.5f;
-				float z = 0.5f;
-
-				if( value == PopulationSize.x1 )
-				{
-					x *= 1;
-					z *= 1;
-				}
-				else if( value == PopulationSize.x2 )
-				{
-					x *= 2;
-					z *= 1;
-				}
-				else if( value == PopulationSize.x4 )
-				{
-					x *= 2;
-					z *= 2;
-				}
-				else if( value == PopulationSize.x8 )
-				{
-					x *= 4;
-					z *= 2;
-				}
-				this.size = new Vector3( x / 2, this.size.y, z / 2 );
+				this.SetSize( value );
 
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
 				for( int i = 0; i < inventories.Length; i++ )
@@ -134,12 +111,14 @@ namespace SS.Objects.Units
 #warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
 				// Maybe make the population formation-independent. Slots will specify formation & max pop. This allows to make arbitrarily-sized formations.
 				// Iteratively create the next biggest-most unit possible from the leftover pop.
-				
 
-#warning inventory drops items when size can no longer contain them.
+#warning attack speed instead of damage/arrow count? BUT I want it to not be perfectly rythmic - instead with randomization.
+				// maybe make the attack modules have a pool of available attacks (like bows that are reloaded currently). and the bigger pop, the more of them are.
 
 
-#warning inside slots can only be put on a "non-formation" unit.
+#warning interior can only be put on a "non-formation" unit.
+#warning barracks can be put on non-formation units only.
+#warning research can be put on non-formation units only.
 #warning - We can actually make that, because we know what unit we are spawning at the time of spawn, co we can assign different Unit subclasses, depending on the unit sub-type.
 
 
@@ -332,6 +311,51 @@ namespace SS.Objects.Units
 			}
 		}
 
+		private Vector3 __sizePerPopulation;
+		public Vector3 sizePerPopulation
+		{
+			get
+			{
+				return this.__sizePerPopulation;
+			}
+			set
+			{
+				this.__sizePerPopulation = value;
+				this.SetSize( this.population );
+			}
+		}
+
+		private void SetSize( PopulationSize population )
+		{
+			float x = this.sizePerPopulation.x;
+			float z = this.sizePerPopulation.z;
+
+			if( population == PopulationSize.x1 )
+			{
+				x *= 1;
+				z *= 1;
+			}
+			else if( population == PopulationSize.x2 )
+			{
+				x *= 2;
+				z *= 1;
+			}
+			else if( population == PopulationSize.x4 )
+			{
+				x *= 2;
+				z *= 2;
+			}
+			else if( population == PopulationSize.x8 )
+			{
+				x *= 4;
+				z *= 2;
+			}
+			this.navMeshAgent.radius = ((x + z) / 2f) / 2;
+			this.navMeshAgent.height = this.sizePerPopulation.y;
+			this.collider.size = new Vector3( x, this.sizePerPopulation.y, z );
+			this.collider.center = new Vector3( 0.0f, this.sizePerPopulation.y * 0.5f, 0.0f );
+		}
+
 		private Vector3 __size;
 		public Vector3 size
 		{
@@ -342,10 +366,7 @@ namespace SS.Objects.Units
 			set
 			{
 				this.__size = value;
-				this.navMeshAgent.radius = value.x < value.z ? value.x * 0.5f : value.z * 0.5f;
-				this.navMeshAgent.height = value.y;
-				this.collider.size = value;
-				this.collider.center = new Vector3( 0.0f, value.y * 0.5f, 0.0f );
+				
 			}
 		}
 
@@ -432,13 +453,16 @@ namespace SS.Objects.Units
 
 		public bool CanChangePopulation()
 		{
-#error TODO! - some unit types can't change population.
+			if( this.isPopulationLocked )
+			{
+				return false;
+			}
 			SSModule[] modules = this.GetModules();
 			for( int i = 0; i < modules.Length; i++ )
 			{
-				if( modules[i] is IPopulationChangeBlocker )
+				if( modules[i] is IPopulationChangeBlockerModule )
 				{
-					if( !((IPopulationChangeBlocker)modules[i]).CanChangePopulation() )
+					if( !((IPopulationChangeBlockerModule)modules[i]).CanChangePopulation() )
 					{
 						return false;
 					}
@@ -471,9 +495,19 @@ namespace SS.Objects.Units
 			byte targetPop = 0; // total population of the new unit (if popTotal is a valid PopulationSize).
 
 			float healthTotal = beacon.health;
-						
+
+			bool isSelectedAdditionalAny = false;
+
 			for( int i = 0; i < additional.Count; i++ )
 			{
+				if( !isSelectedAdditionalAny )
+				{
+					if( Selection.IsSelected( additional[i] ) )
+					{
+						isSelectedAdditionalAny = true;
+					}
+				}
+
 				popTotal += (byte)additional[i].population;
 
 				if( popTotal > selfPop )
@@ -515,11 +549,14 @@ namespace SS.Objects.Units
 					// Join as long as selfPop is less than targetPop AND as long as the selfPop is not a valid pop number.
 				} while( selfPop < targetPop && (selfPop != 1 || selfPop != 2 || selfPop != 4 || selfPop != 8) );
 
+				if( isSelectedAdditionalAny )
+				{
+					Selection.TrySelect( beacon );
+				}
 				// assign the new, "joined" population.
 				beacon.population = (PopulationSize)selfPop;
 				beacon.health = healthTotal;
 			}
-#warning If one of the units was selected (beacon or additional), select the unit that it joins into.
 		}
 
 		/// <summary>
@@ -540,7 +577,7 @@ namespace SS.Objects.Units
 
 			if( populationTarget > populationPool )
 			{
-				throw new System.Exception( "Tried to split unit into bigger unit. That doesn't make sense. Don't do that." );
+				throw new Exception( "Tried to split unit into bigger unit. That doesn't make sense. Don't do that." );
 			}
 
 			populationPool -= populationTarget;
@@ -551,9 +588,11 @@ namespace SS.Objects.Units
 
 			float healthPercentSrc = beacon.healthPercent;
 
+			List<Unit> ret = new List<Unit>();
+			ret.Add( beacon );
 			UnitDefinition beaconDef = DefinitionManager.GetUnit( beacon.definitionId );
-			
 
+			bool isSelected = Selection.IsSelected( beacon );
 
 			while( populationPool > 0 )
 			{
@@ -580,18 +619,22 @@ namespace SS.Objects.Units
 				}
 
 				
+				Vector3 pos = beacon.transform.position + new Vector3( UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ) );
+				Quaternion rot = beacon.transform.rotation;
 
-				Unit u = UnitCreator.Create( beaconDef, Guid.NewGuid() ).GetComponent<Unit>();
+				Unit u = UnitCreator.Create( beaconDef, Guid.NewGuid(), pos, rot, beacon.factionId ).GetComponent<Unit>();
 				u.population = newSize;
-				u.transform.position = beacon.transform.position + new Vector3( UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ) );
-				u.factionId = beacon.factionId;
 				u.healthPercent = healthPercentSrc;
-#warning should be enabled when the position is set.
-				u.GetComponent<NavMeshAgent>().enabled = true;
+				
+				ret.Add( u );
+
+				if( isSelected )
+				{
+					Selection.TrySelect( u );
+				}
 			}
-#warning If the beacon was selected, select also every created from it unit.
-			return null;
-			//throw new System.Exception();
+			return ret;
 		}
 	}
 }
+ 

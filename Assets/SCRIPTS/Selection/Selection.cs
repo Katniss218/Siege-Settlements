@@ -225,7 +225,7 @@ namespace SS
 			return selected.Contains( obj );
 		}
 
-		public static int TrySelect( SSObjectDFS[] objs )
+		public static int TrySelect( params SSObjectDFS[] objs )
 		{
 			if( objs == null )
 			{

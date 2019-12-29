@@ -37,21 +37,14 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-
-		private bool IsOnValidObject( SSObject ssObject )
+		
+		public override bool IsOnValidObject( SSObject ssObject )
 		{
 			return ssObject is Unit;
 		}
 
 		public override void Start( TacticalGoalController controller )
 		{
-			if( !IsOnValidObject( controller.ssObject ) )
-			{
-				controller.goal = TacticalGoalController.GetDefaultGoal();
-				throw new System.Exception( this.GetType().Name + "Was added to an invalid object " + controller.ssObject.GetType().Name );
-			}
-#warning TODO! - set isonvalidobject to virtual & call it from the controller, when goal is assigned.
-
 			this.navMeshAgent = ((IMovable)controller.ssObject).navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
 			this.unitFormationSelf = (Unit)controller.ssObject;

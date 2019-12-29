@@ -1,7 +1,7 @@
 ﻿
 namespace SS.Objects.Units
 {
-	interface IPopulationChangeBlocker
+	interface IPopulationChangeBlockerModule
 	{
 		bool CanChangePopulation();
 	}
