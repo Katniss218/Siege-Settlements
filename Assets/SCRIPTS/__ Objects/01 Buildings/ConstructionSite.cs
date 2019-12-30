@@ -26,6 +26,7 @@ namespace SS.Objects.Buildings
 			public float healthToResource { get; set; }
 		}
 
+		// Contains info about resources remaining.
 		private Dictionary<string, ResourceInfo> resourceInfo;
 
 		public UnityEvent onPaymentReceived { get; private set; }
@@ -36,6 +37,9 @@ namespace SS.Objects.Buildings
 
 		float buildingHeight = 0.0f;
 
+		/// <summary>
+		/// Checks if the construction (payment) has finished. Construction is finished when there are no more resources wanted.
+		/// </summary>
 		private bool IsDone()
 		{
 			foreach( var kvp in resourceInfo )
