@@ -172,7 +172,7 @@ namespace SS.Diplomacy
 		public void Resize( int newSize )
 		{
 			this.Size = newSize;
-			Array.Resize<T>( ref this.__values, newSize );
+			Array.Resize( ref this.__values, newSize );
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace SS.Diplomacy
 		{
 			this.Size = newSize;
 			int oldSize = this.__values.Length;
-			Array.Resize<T>( ref this.__values, newSize );
+			Array.Resize( ref this.__values, newSize );
 
 			if( newSize > oldSize )
 			{
