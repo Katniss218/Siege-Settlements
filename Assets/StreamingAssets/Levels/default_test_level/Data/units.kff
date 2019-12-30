@@ -29,7 +29,6 @@
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ]; // The module will point these sub-objects towards the target (used to achieve 'aiming' effect).
 				AttackSound = "extern:Sounds/melee.wav";
-				Icon = "extern:Textures/Modules/melee_icon.png"; // The icon of the module, displayed when the unit is selected.
 			},
 			{
 				TypeId = "inventory";
@@ -124,7 +123,6 @@
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
-				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -235,7 +233,6 @@
 				AttackCooldown = 0.65;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
-				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -329,7 +326,6 @@
 				AttackCooldown = 0.47;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
-				Icon = "extern:Textures/Modules/melee_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -429,7 +425,6 @@
 				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
-				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -532,7 +527,6 @@
 				//LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
-				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -634,7 +628,6 @@
 				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
-				Icon = "extern:Textures/Modules/ranged_icon.png";
 			},
 			{
 				TypeId = "inventory";
@@ -895,7 +888,6 @@
 				LocalOffsetMax = { X = 0.0; Y = 0.2; Z = 0.0; };
 				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
 				AttackSound = "extern:Sounds/swoosh_deep.wav";
-				Icon = "extern:Textures/Modules/ranged_icon.png";
 			}
 		];
 		MovementSpeed = 0.15;

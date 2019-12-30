@@ -208,14 +208,14 @@ namespace SS.Objects.Modules
 			}
 
 
-			try
+			/*try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 			}
 			catch( KFFException )
 			{
 				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
-			}
+			}*/
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -234,7 +234,7 @@ namespace SS.Objects.Modules
 			serializer.WriteString( "", "AttackSound", (string)this.attackSoundEffect );
 
 			serializer.WriteGuidArray( "", "TraversibleSubObjects", this.traversibleSubObjects );
-			serializer.WriteString( "", "Icon", (string)this.icon );
+			//serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

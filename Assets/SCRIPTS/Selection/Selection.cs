@@ -3,11 +3,21 @@ using SS.Objects;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace SS
 {
 	public class Selection
 	{
+		private static Type[] moduleTypeSorted = new Type[]
+		{
+			typeof( ConstructorModule ),
+			typeof( BarracksModule ),
+			typeof( ResearchModule ),
+			typeof( InteriorModule ),
+			typeof( InventoryModule ),
+		};
+		
 		private class DisplayedObjectData
 		{
 			public SSObjectDFS obj { get; private set; } = null;
@@ -152,14 +162,14 @@ namespace SS
 		{
 			if( obj == null )
 			{
-				throw new System.Exception( "Object can't be null." );
+				throw new Exception( "Object can't be null." );
 			}
-			displayedObjectData = DisplayedObjectData.NewObject( obj );
+
 
 			if( !(obj is IUsableToggle) || ((IUsableToggle)obj).IsUsable() )
 			{
 				SSModule[] modules = ((SSObject)obj).GetModules();
-
+				
 				for( int i = 0; i < modules.Length; i++ )
 				{
 					if( !(modules[i] is ISelectDisplayHandler) )
@@ -167,11 +177,43 @@ namespace SS
 						continue;
 					}
 					SelectionPanel.instance.obj.CreateModuleButton( modules[i] );
+
+				}
+				if( modules.Length == 0 )
+				{
+					displayedObjectData = DisplayedObjectData.NewObject( obj );
+					obj.OnDisplay();
+				}
+				else
+				{
+					for( int i = 0; i < moduleTypeSorted.Length; i++ )
+					{
+						for( int j = 0; j < modules.Length; j++ )
+						{
+							if( modules[j].GetType() != moduleTypeSorted[i] )
+							{
+								continue;
+							}
+
+							displayedObjectData = DisplayedObjectData.NewObject( obj, modules[j] );
+							obj.OnDisplay();
+							((ISelectDisplayHandler)modules[j]).OnDisplay();
+							SelectionPanel.instance.obj.HighlightIcon( modules[j] );
+
+							return;
+						}
+					}
+					
+					// If there is no modules to display on this object (no displayable modules or no modules at all).
+					displayedObjectData = DisplayedObjectData.NewObject( obj );
+					obj.OnDisplay();
 				}
 			}
-
-			obj.OnDisplay();
-			SelectionPanel.instance.obj.HighlightIcon();
+			else
+			{
+				displayedObjectData = DisplayedObjectData.NewObject( obj );
+				obj.OnDisplay();
+			}
 		}
 
 		/// <summary>
@@ -191,6 +233,7 @@ namespace SS
 			SelectionPanel.instance.obj.ClearAllElements();
 			ActionPanel.instance.ClearAll();
 			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
+			obj.OnDisplay();
 			(module as ISelectDisplayHandler).OnDisplay();
 			SelectionPanel.instance.obj.HighlightIcon( module );
 		}

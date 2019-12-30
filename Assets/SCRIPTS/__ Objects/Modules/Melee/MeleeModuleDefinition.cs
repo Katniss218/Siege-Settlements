@@ -43,7 +43,7 @@ namespace SS.Objects.Modules
 		{
 			MeleeModule module = gameObject.AddComponent<MeleeModule>();
 			module.moduleId = moduleId;
-			module.icon = this.icon;
+			//module.icon = this.icon;
 			module.attackRange = this.attackRange;
 
 			module.damage = this.damage;
@@ -141,14 +141,14 @@ namespace SS.Objects.Modules
 			}
 
 
-			try
+			/*try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 			}
 			catch( KFFException )
 			{
 				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
-			}
+			}*/
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
@@ -163,7 +163,7 @@ namespace SS.Objects.Modules
 
 			serializer.WriteGuidArray( "", "TraversibleSubObjects", this.traversibleSubObjects );
 
-			serializer.WriteString( "", "Icon", (string)this.icon );
+			//serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

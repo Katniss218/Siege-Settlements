@@ -135,6 +135,10 @@ namespace SS.InputSystem
 
 		void Update()
 		{
+
+#warning TODO! - count the number of presses in an interval (interval longer than threshold breaks the string). Pass it to the input queue as pressCount.
+			// works for presses only. not for releases.
+
 			foreach( var kvp in this.press )
 			{
 				if( Input.GetMouseButtonDown( (int)kvp.Key ) )

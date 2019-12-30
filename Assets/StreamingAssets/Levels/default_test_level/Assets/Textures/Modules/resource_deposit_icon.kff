@@ -2,8 +2,8 @@
 {
 	X = 0;
 	Y = 0;
-	W = 63;
-	H = 63;
+	W = 60;
+	H = 60;
 };
 PivotUnitMode = "Normalized"; // "Normalized" or "Pixels"
 Pivot =

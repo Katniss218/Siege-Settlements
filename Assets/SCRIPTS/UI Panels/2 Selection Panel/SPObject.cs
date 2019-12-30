@@ -22,19 +22,7 @@ namespace SS.UI
 		private Dictionary<SSModule, Image> moduleIcons = new Dictionary<SSModule, Image>();
 
 		private Image highlightedIcon = null;
-
-		void Start()
-		{
-			this.objIcon.GetComponent<Button>().onClick.AddListener( () =>
-			{
-				SSObjectDFS displayed = Selection.displayedObject;
-				Selection.StopDisplaying();
-
-				Selection.DisplayObject( displayed );
-			} );
-		}
-
-
+		
 
 		public void SetIcon( Sprite icon )
 		{
@@ -154,27 +142,14 @@ namespace SS.UI
 
 		private void Highlight( Image image )
 		{
-			image.color = Color.white;
+			image.color = new Color( 1.0f, 1.0f, 1.0f, 1.0f );
 		}
 
 		private void UnHighlight( Image image )
 		{
-			image.color = new Color( 0.5f, 0.5f, 0.5f, 0.85f );
+			image.color = new Color( 0.53f, 0.5f, 0.5f, 1.0f );
 		}
-
-		/// <summary>
-		/// Hightlights the object's icon. Unhighlights any other icons.
-		/// </summary>
-		public void HighlightIcon()
-		{
-			if( this.highlightedIcon  != null )
-			{
-				this.UnHighlight( this.highlightedIcon );
-			}
-			this.highlightedIcon = this.objIcon;
-			this.Highlight( this.objIcon );
-		}
-
+		
 		/// <summary>
 		/// Hightlights the module's icon. Unhighlights any other icons.
 		/// </summary>
