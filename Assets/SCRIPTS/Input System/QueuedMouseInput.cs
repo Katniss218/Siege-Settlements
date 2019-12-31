@@ -59,7 +59,6 @@ namespace SS.InputSystem
 		}
 
 
-
 //#warning Method for adding one-shot functions (auto-remove themselves from queue after execution, no matter if they succeeded or not).
 
 
@@ -133,19 +132,36 @@ namespace SS.InputSystem
 			this.release.Clear();
 		}
 
+		const float MAX_DOUBLE_CLICK_DELAY = 0.2f;
+		const int MAX_CLICK_COUNT = 2;
+
 		void Update()
 		{
-
-#warning TODO! - count the number of presses in an interval (interval longer than threshold breaks the string). Pass it to the input queue as pressCount.
-			// works for presses only. not for releases.
-
 			foreach( var kvp in this.press )
 			{
 				if( Input.GetMouseButtonDown( (int)kvp.Key ) )
 				{
+					if( 
+						   (Time.time <= kvp.Value.pressTimestamp + MAX_DOUBLE_CLICK_DELAY)
+						&& (kvp.Value.pressCount < MAX_CLICK_COUNT)
+						&& (Vector3.Distance( Input.mousePosition, kvp.Value.lastControllerPosition ) < 3.0f)
+						)
+					{
+						kvp.Value.pressCount++;
+					}
+					else
+					{
+						kvp.Value.pressCount = 1;
+					}
 					kvp.Value.Execute();
+					kvp.Value.lastControllerPosition = Input.mousePosition;
+				}
+				if( Input.GetMouseButtonUp( (int)kvp.Key ) )
+				{
+					kvp.Value.pressTimestamp = Time.time;
 				}
 			}
+
 			foreach( var kvp in this.hold )
 			{
 				if( Input.GetMouseButton( (int)kvp.Key ) )
@@ -153,6 +169,7 @@ namespace SS.InputSystem
 					kvp.Value.Execute();
 				}
 			}
+
 			foreach( var kvp in this.release )
 			{
 				if( Input.GetMouseButtonUp( (int)kvp.Key ) )

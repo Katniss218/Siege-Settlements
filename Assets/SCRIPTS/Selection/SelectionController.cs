@@ -1,7 +1,9 @@
 ﻿using SS.Content;
 using SS.Diplomacy;
 using SS.InputSystem;
+using SS.Levels;
 using SS.Objects;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -139,14 +141,29 @@ namespace SS
 				return;
 			}
 
-			throw new System.Exception( "Invalid selection mode" );
+			throw new Exception( "Invalid selection mode" );
 		}
+
+		private static bool isDoublePress = false;
 
 		private void OnPress( InputQueue self )
 		{
-			this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
-			
-			oldMousePos = Input.mousePosition;
+			if( self.pressCount == 1 )
+			{
+				this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
+
+				isDoublePress = false;
+
+				oldMousePos = Input.mousePosition;
+			}
+			else if( self.pressCount == 2 )
+			{
+				this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
+
+				isDoublePress = true;
+
+				oldMousePos = Input.mousePosition;
+			}
 		}
 
 		private void OnHold( InputQueue self )
@@ -158,10 +175,19 @@ namespace SS
 				{
 					return;
 				}
-				if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
-				Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
+
+
+				if( isDoublePress ) // Technically, I'd need to know in advance if the click is going ot be single or double.
 				{
-					BeginDrag();
+					return;
+				}
+				else
+				{
+					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
+					Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
+					{
+						BeginDrag();
+					}
 				}
 			}
 			if( isDragging )
@@ -179,12 +205,21 @@ namespace SS
 				{
 					return;
 				}
-				SSObjectDFS[] overlap = GetSelectablesInDragArea();
-
-				HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 
 
-				EndDrag();
+				if( isDoublePress )
+				{
+					return;
+				}
+				else
+				{
+					SSObjectDFS[] overlap = GetSelectablesInDragArea();
+
+					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+
+
+					EndDrag();
+				}
 			}
 			else
 			{
@@ -193,18 +228,61 @@ namespace SS
 				{
 					return;
 				}
-				SSObjectDFS atCursor = GetSelectableAtCursor();
-				SSObjectDFS[] array = atCursor == null ? null : new SSObjectDFS[] { atCursor };
-				HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+
+
+				if( isDoublePress )
+				{
+					SSObjectDFS atCursor = GetSelectableAtCursor();
+
+					if( atCursor != null && atCursor.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						SelectTheSame( atCursor.definitionId );
+					}
+				}
+				else
+				{
+					SSObjectDFS atCursor = GetSelectableAtCursor();
+					SSObjectDFS[] array = atCursor == null ? null : new SSObjectDFS[] { atCursor };
+					HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+				}
 			}
 		}
 
+		private void SelectTheSame( string definitionId )
+		{
+			SSObjectDFS[] selectables = SSObjectDFS.GetAllSelectables();
+
+			List<SSObjectDFS> sameIdAndWithinView = new List<SSObjectDFS>();
+			for( int i = 0; i < selectables.Length; i++ )
+			{
+				if( selectables[i].definitionId != definitionId )
+				{
+					continue;
+				}
+
+				if( selectables[i].factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+
+				Vector3 viewportPos = Main.camera.WorldToViewportPoint( selectables[i].transform.position );
+				if( (viewportPos.x < 0 || viewportPos.x > 1) || (viewportPos.y < 0 || viewportPos.y > 1) )
+				{
+					continue;
+				}
+
+				sameIdAndWithinView.Add( selectables[i] );
+			}
+
+			SSObjectDFS[] array = sameIdAndWithinView.ToArray();
+			HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+		}
 
 		void OnEnable()
 		{
-			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 50.0f, OnPress, true );
-			Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 50.0f, OnHold, true );
-			Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 50.0f, OnRelease, true );
+			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 50.0f, OnPress );
+			Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 50.0f, OnHold );
+			Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 50.0f, OnRelease );
 		}
 
 		void OnDisable()

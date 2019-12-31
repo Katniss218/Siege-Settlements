@@ -60,6 +60,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Buildings/research_icon.png";
 	}
 ];

@@ -11,6 +11,8 @@ namespace SS.AI.Goals
 	{
 		public const string KFF_TYPEID = "move_to";
 
+		private const float OBJECT_MODE_STOPPING_DISTANCE = 1.0f;
+
 		public enum DestinationType : byte
 		{
 			POSITION,
@@ -54,15 +56,14 @@ namespace SS.AI.Goals
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = destination;
-			InteriorModule[] interiors = destination.GetModules<InteriorModule>();
-			if( interiors.Length > 0 )
-			{
-				this.destinationInterior = interiors[0];
-			}
-			else
-			{
-				this.destinationInterior = null;
-			}
+		}
+
+		public void SetDestination( InteriorModule interior )
+		{
+			this.destination = DestinationType.OBJECT;
+			this.destinationPos = null;
+			this.destinationObject = interior.ssObject;
+			this.destinationInterior = interior;
 		}
 
 
@@ -125,21 +126,31 @@ namespace SS.AI.Goals
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
-				if( this.destinationInterior != null )
+
+				// If the agent has travelled to the destination - switch back to the default Goal.
+				if( this.navMeshAgent.hasPath )
 				{
-					// If the agent has travelled to the destination - switch back to the default Goal.
-					if( this.navMeshAgent.hasPath )
+					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE )
 					{
-						if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+						this.navMeshAgent.ResetPath();
+						if( this.destinationInterior != null )
 						{
-							this.navMeshAgent.ResetPath();
-							
 							if( controller.ssObject is Unit )
 							{
 								Unit unit = (Unit)controller.ssObject;
 
+								InteriorModule.SlotType slotType = InteriorModule.SlotType.Generic;
+								int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit.population, unit.definitionId, unit.isCivilian, false );
+
+								if( slotIndex == null )
+								{
+									Debug.LogWarning( "Can't enter slot" );
+									this.navMeshAgent.ResetPath();
+									controller.goal = TacticalGoalController.GetDefaultGoal();
+									return;
+								}
 #warning slot type specified in goal.
-								unit.TrySetInside( this.destinationInterior, InteriorModule.SlotType.Generic );
+								unit.SetInside( this.destinationInterior, slotIndex.Value, InteriorModule.SlotType.Generic );
 								controller.goal = TacticalGoalController.GetDefaultGoal();
 							}
 						}

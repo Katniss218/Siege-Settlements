@@ -15,6 +15,9 @@ namespace SS.InputSystem
 		
 		private List<InputMethod> methods;
 
+		public Vector3 lastControllerPosition { get; set; }
+		public int pressCount { get; set; }
+		public float pressTimestamp { get; set; } = float.MinValue;
 		public bool isStopped { get; private set; }
 
 		public InputQueue()

@@ -89,6 +89,7 @@ namespace SS.Objects.Buildings
 		//--------------------------------------
 		
 		public AddressableAsset<AudioClip> buildSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> hurtSoundEffect { get; private set; }
 		public AddressableAsset<AudioClip> deathSoundEffect { get; private set; }
 		public AddressableAsset<Sprite> icon { get; private set; }
 
@@ -221,6 +222,15 @@ namespace SS.Objects.Buildings
 
 			try
 			{
+				this.hurtSoundEffect = serializer.ReadAudioClipFromAssets( "HurtSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'HurtSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
 				this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
 			}
 			catch( KFFException )
@@ -267,6 +277,7 @@ namespace SS.Objects.Buildings
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
 			
 			serializer.WriteString( "", "BuildSound", (string)this.buildSoundEffect );
+			serializer.WriteString( "", "HurtSound", (string)this.hurtSoundEffect );
 			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 

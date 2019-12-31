@@ -131,7 +131,9 @@ namespace SS.Objects.Heroes
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
-		
+
+		public AddressableAsset<AudioClip> hurtSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> deathSoundEffect { get; private set; }
 		public AddressableAsset<Sprite> icon { get; private set; }
 
 
@@ -244,6 +246,24 @@ namespace SS.Objects.Heroes
 
 			try
 			{
+				this.hurtSoundEffect = serializer.ReadAudioClipFromAssets( "HurtSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'HurtSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'DeathSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 			}
 			catch( KFFException )
@@ -269,7 +289,9 @@ namespace SS.Objects.Heroes
 			serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed );
 			serializer.WriteFloat( "", "Radius", this.radius );
 			serializer.WriteFloat( "", "Height", this.height );
-			
+
+			serializer.WriteString( "", "HurtSound", (string)this.hurtSoundEffect );
+			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
 			this.SerializeModulesAndSubObjectsKFF( serializer );

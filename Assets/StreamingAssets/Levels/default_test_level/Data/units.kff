@@ -93,6 +93,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/light_infantry_icon.png";
 	},
 	{
@@ -203,6 +205,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/heavy_infantry_icon.png";
 	},
 	{
@@ -296,6 +300,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/light_cavalry_icon.png";
 	},
 	{
@@ -389,6 +395,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/heavy_cavalry_icon.png";
 	},
 	{
@@ -490,6 +498,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/bowmen_icon.png";
 	},
 	{
@@ -592,6 +602,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/crossbowmen_icon.png";
 	},
 	{
@@ -693,6 +705,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/mounted_archers_icon.png";
 	},
 	{
@@ -794,6 +808,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/civilian_icon.png";
 	},
 	{
@@ -852,6 +868,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/employed_civilian_icon.png";
 	},
 	{
@@ -939,6 +957,8 @@
 				};
 			}
 		];
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/movable_ballista_icon.png";
 	}
 ];

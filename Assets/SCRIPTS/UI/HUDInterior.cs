@@ -44,7 +44,6 @@ namespace SS.UI
 		[SerializeField] private Vector2 spriteCenterOffset = Vector2.zero;
 
 		public Element[] slots { get; private set; }
-		public Element[] civilianSlots { get; private set; }
 		public Element[] workerSlots { get; private set; }
 
 		private Sprite GetSpriteUpper( int index, int rowLimit )
@@ -72,7 +71,7 @@ namespace SS.UI
 			}
 			return lower3;
 		}
-		
+
 		private Image SpawnLower( int index )
 		{
 			GameObject go = new GameObject( "lower - " + index );
@@ -120,28 +119,23 @@ namespace SS.UI
 
 			return image2;
 		}
-		
+		/*
 		public Element GetSlotAny( int slotIndex )
 		{
 			if( slotIndex < this.slots.Length )
 			{
 				return this.slots[slotIndex];
 			}
-			if( slotIndex < this.civilianSlots.Length )
+			if( slotIndex < this.slots.Length + this.workerSlots.Length )
 			{
-				return this.civilianSlots[slotIndex - this.slots.Length];
-			}
-			if( slotIndex < this.workerSlots.Length )
-			{
-				return this.workerSlots[slotIndex - this.civilianSlots.Length];
+				return this.workerSlots[slotIndex - this.slots.Length];
 			}
 			return null;
 		}
-
-		public void SetSlotCount( int slots, int civilianSlots, int workerSlots )
+		*/
+		public void SetSlotCount( int slots, int workerSlots )
 		{
 			this.slots = new Element[slots];
-			this.civilianSlots = new Element[civilianSlots];
 			this.workerSlots = new Element[workerSlots];
 
 			for( int i = 0; i < workerSlots; i++ )
@@ -153,11 +147,6 @@ namespace SS.UI
 			{
 				Image icon = SpawnLower( i );
 				this.slots[i] = new Element( icon );
-			}
-			for( int i = 0; i < civilianSlots; i++ )
-			{
-				Image icon = SpawnLower( slots + i );
-				this.civilianSlots[i] = new Element( icon );
 			}
 			// worker slots on top, rest on bottom, one after another.
 		}

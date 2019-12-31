@@ -48,9 +48,7 @@ namespace SS.Objects.Buildings
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 
 		public AudioClip buildSoundEffect { get; set; }
-		
 
-		public AudioClip deathSound { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
@@ -198,7 +196,7 @@ namespace SS.Objects.Buildings
 					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -125.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Not usable (under construction or <50% health)." );
 					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
 				}
-				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Press to demolish building.", () =>
+				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...", () =>
 				{
 					this.Die();
 				} );

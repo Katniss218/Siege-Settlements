@@ -1,5 +1,4 @@
 ﻿using SS.Content;
-using SS.Levels.SaveStates;
 using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
@@ -23,7 +22,7 @@ namespace SS.Objects.Units
 		}
 		bool isInsideHidden { get; }
 
-		void TrySetInside( InteriorModule interior, InteriorModule.SlotType slotType );
+		void SetInside( InteriorModule interior, int slotIndex, InteriorModule.SlotType slotType );
 		void SetOutside();
 	}
 
@@ -54,6 +53,11 @@ namespace SS.Objects.Units
 				return this.__collider;
 			}
 		}
+
+#warning civilians that are employed have DoWork() tactical goal. that goal stores the workplace & the current state of the routine.
+#warning  Every frame (if working) it calls the workplace to specify what to do (this.workplace.DoWork( this.worker ))
+
+#warning workplace module requires interior module to be present.
 
 		public bool isPopulationLocked { get; set; }
 		public byte? populationSizeLimit { get; set; }
@@ -139,6 +143,7 @@ namespace SS.Objects.Units
 		/// </summary>
 		public HUD hud { get; set; }
 
+
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
 		public bool isCivilian { get; set; }
@@ -148,47 +153,51 @@ namespace SS.Objects.Units
 		// = = = = = = = = = = =
 
 		
+		/// <summary>
+		/// The interior module the unit is currently in. Null if not is any interior.
+		/// </summary>
 		public InteriorModule interior { get; private set; }
+		public InteriorModule.SlotType slotType { get; private set; }
+		/// <summary>
+		/// The slot of the interior module the unit is currently in.
+		/// </summary>
 		public int slotIndex { get; private set; }
 
 		public bool isInside
 		{
 			get { return this.interior != null; }
 		}
-		public bool isInsideHidden { get; private set; }
+		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
 
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void TrySetInside( InteriorModule interior, InteriorModule.SlotType slotType )
+		public void SetInside( InteriorModule interior, int slotIndex, InteriorModule.SlotType slotType )
 		{
-			if( this.isInside )
+			InteriorModule.Slot slot = null;
+			HUDInterior.Element slotHud = null;
+			if( slotType == InteriorModule.SlotType.Generic )
 			{
-				return;
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
 			}
-
-			int? slotIndex = interior.GetFirstValid( slotType, this.population, this.definitionId, this.isCivilian, false );
-
-			if( slotIndex == null )
+			else if( slotType == InteriorModule.SlotType.Worker )
 			{
-				return;
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
-
-			int i = slotIndex.Value;
-
+			
 			this.navMeshAgent.enabled = false;
 
 			this.interior = interior;
-			this.slotIndex = i; // expand here to other slot types
-
-			InteriorModule.Slot slot = interior.GetSlotAny( i );
-
+			this.slotType = slotType;
+			this.slotIndex = slotIndex;
+			
 			slot.objInside = this;
 
 			this.transform.position = interior.SlotWorldPosition( slot );
 			this.transform.rotation = interior.SlotWorldRotation( slot );
 			
-			HUDInterior.Element slotHud = interior.hudInterior.GetSlotAny( i );
 			slotHud.SetSprite( this.icon );
 			
 			if( slot.isHidden )
@@ -219,11 +228,22 @@ namespace SS.Objects.Units
 
 			this.navMeshAgent.enabled = true;
 
-			InteriorModule.Slot slot = interior.GetSlotAny( this.slotIndex );
+			InteriorModule.Slot slot = null;
+			HUDInterior.Element slotHud = null;
+			if( this.slotType == InteriorModule.SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+			}
+			else if( this.slotType == InteriorModule.SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
+			
 			slot.objInside = null;
 
-			HUDInterior.Element hudSlot = interior.hudInterior.GetSlotAny( this.slotIndex );
-			hudSlot.ClearSprite();
+			slotHud.ClearSprite();
 
 			if( this.isInsideHidden )
 			{

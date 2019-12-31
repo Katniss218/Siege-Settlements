@@ -106,6 +106,8 @@ namespace SS.Objects.Heroes
 			hero.icon = def.icon;
 			hero.movementSpeed = def.movementSpeed;
 			hero.rotationSpeed = def.rotationSpeed;
+			hero.hurtSound = def.hurtSoundEffect;
+			hero.deathSound = def.deathSoundEffect;
 
 			hero.viewRange = def.viewRange;
 			hero.healthMax = def.healthMax;

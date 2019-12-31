@@ -131,6 +131,9 @@ namespace SS.Objects
 		public float lastDamageTakenTimestamp { get; private set; }
 		public float lastHealTimestamp { get; private set; }
 
+		public AudioClip hurtSound { get; set; }
+		public AudioClip deathSound { get; set; }
+
 		[SerializeField]
 		private float __health;
 		/// <summary>
@@ -257,6 +260,15 @@ namespace SS.Objects
 			float reducedDamage = this.armor.CalculateReducedDamage( type, amount, armorPenetration );
 
 			this.health -= reducedDamage;
+			
+			// only play hurt sound if not dead (prevent overlapping hurt & death sfx).
+			if( this.health != 0 )
+			{
+				if( this.hurtSound != null )
+				{
+					AudioManager.PlaySound( this.hurtSound );
+				}
+			}
 		}
 
 		/// <summary>
@@ -267,6 +279,11 @@ namespace SS.Objects
 			this.Destroy();
 			this.onDeath?.Invoke();
 			onDeathAny?.Invoke( this );
+
+			if( this.deathSound != null )
+			{
+				AudioManager.PlaySound( this.deathSound );
+			}
 		}
 
 		public abstract void OnDisplay();

@@ -1,6 +1,5 @@
 ﻿using SS.AI.Goals;
 using SS.Content;
-using SS.Diplomacy;
 using SS.Levels;
 using SS.Objects;
 using SS.Objects.Modules;
@@ -36,6 +35,9 @@ namespace SS.AI
 
 			SSObjectDFS hitDamageable = null;
 
+			SSObjectDFS hitInteriorDFS = null;
+			InteriorModule hitInterior = null;
+
 			for( int i = 0; i < raycastHits.Length; i++ )
 			{
 				if( raycastHits[i].collider.gameObject.layer == ObjectLayer.TERRAIN )
@@ -70,29 +72,51 @@ namespace SS.AI
 					{
 						hitDamageable = damageable;
 					}
+
+					InteriorModule interior = raycastHits[i].collider.GetComponent<InteriorModule>();
+					if( interior != null && hitInterior == null )
+					{
+						hitInteriorDFS = interior.ssObject as SSObjectDFS;
+						hitInterior = interior;
+					}
 				}
 			}
 
 			if( hitDeposit == null && hitInventory == null && hitReceiverSSObject == null && hitDamageable == null && terrainHitPos.HasValue )
 			{
 				AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
+				return;
 			}
 
-			else if( hitReceiverSSObject != null && (hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
+			if( hitReceiverSSObject != null && (hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
 				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.selectedObjects );
+				return;
 			}
-			else if( hitDeposit != null )
+			if( hitInterior != null && (hitInteriorDFS.factionId == LevelDataManager.PLAYER_FAC) )
+			{
+				AssignMoveToInteriorOrObjGoal( null, hitInterior, Selection.selectedObjects );
+				return;
+			}
+			if( hitDeposit != null )
 			{
 				AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.selectedObjects );
+				return;
 			}
-			else if( hitInventory != null && (hitInventorySSObject == null || hitInventorySSObject.factionId == LevelDataManager.PLAYER_FAC) )
+			if( hitInventory != null && !hitInventory.isEmpty && (hitInventorySSObject == null || hitInventorySSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
 				AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.selectedObjects );
+				return;
 			}
-			else if( hitDamageable != null )
+			if( hitDamageable != null && (hitDamageable.factionId != LevelDataManager.PLAYER_FAC) )
 			{
 				AssignAttackGoal( hitDamageable, Selection.selectedObjects );
+				return;
+			}
+			if( hitDamageable != null && (hitDamageable.factionId == LevelDataManager.PLAYER_FAC) )
+			{
+				AssignMoveToInteriorOrObjGoal( hitDamageable, null, Selection.selectedObjects );
+				return;
 			}
 		}
 		
@@ -215,7 +239,6 @@ namespace SS.AI
 				goalController.goal = goal;
 			}
 		}
-
 		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFS[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
@@ -246,12 +269,7 @@ namespace SS.AI
 			}
 
 			//Calculate the grid position.
-
-
-
-
-
-
+			
 			TacticalMoveToGoal.MovementGridInfo gridInfo = TacticalMoveToGoal.GetGridPositions( movableGameObjects );
 
 
@@ -277,6 +295,55 @@ namespace SS.AI
 				{
 					Debug.LogWarning( "Movement Grid position " + gridPositionWorld + " was outside of the map." );
 				}
+			}
+		}
+
+		private static void AssignMoveToInteriorOrObjGoal( SSObject obj, InteriorModule interior, SSObjectDFS[] selected )
+		{
+
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			List<SSObject> movableGameObjects = new List<SSObject>();
+
+			float biggestRadius = float.MinValue;
+
+			for( int i = 0; i < selected.Length; i++ )
+			{
+				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+				NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
+				if( navMeshAgent == null )
+				{
+					continue;
+				}
+
+				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
+				movableGameObjects.Add( selected[i] );
+				if( navMeshAgent.radius > biggestRadius )
+				{
+					biggestRadius = navMeshAgent.radius;
+				}
+			}
+			
+			if( movableGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+			}
+			for( int i = 0; i < movableGameObjects.Count; i++ )
+			{
+				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalMoveToGoal goal = new TacticalMoveToGoal();
+				goal.isHostile = false;
+				if( interior == null )
+				{
+					goal.SetDestination( obj );
+				}
+				else
+				{
+					goal.SetDestination( interior );
+				}
+				goalController.goal = goal;
 			}
 		}
 

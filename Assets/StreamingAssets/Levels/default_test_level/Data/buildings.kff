@@ -95,6 +95,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/town_center_icon.png";
 	},
@@ -155,6 +156,7 @@
 						WhitelistedUnits = [ ];
 					}
 				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
 			}
 		];
 		SubObjects =
@@ -218,6 +220,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house_icon.png";
 	},
@@ -277,6 +280,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/small_warehouse_icon.png";
 	},
@@ -337,6 +341,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/research_icon.png";
 	},
@@ -401,6 +406,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/barracks_icon.png";
 	},
@@ -464,6 +470,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/stables_icon.png";
 	},
@@ -525,6 +532,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/siege_workshop_icon.png";
 	},
@@ -574,6 +582,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/palisade_icon.png";
 	},
@@ -623,6 +632,7 @@
 						];
 					}
 				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
 			}
 		];
 		SubObjects =
@@ -646,6 +656,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_tower_icon.png";
 	},
@@ -729,6 +740,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	},
@@ -869,6 +881,7 @@
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	}

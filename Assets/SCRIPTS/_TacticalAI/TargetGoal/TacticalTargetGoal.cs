@@ -10,6 +10,7 @@ namespace SS.AI.Goals
 	{
 		public const string KFF_TYPEID = "target";
 
+		// the target goal will stop the object from pursuing when it getsd that close (based on the attack module with the shortest range, to make surte that every module can attack).
 		public const float STOPPING_FRACTION = 0.75f;
 		public const float MOVING_FACTION = 0.85f;
 		

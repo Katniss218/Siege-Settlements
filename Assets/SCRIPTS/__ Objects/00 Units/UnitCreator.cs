@@ -73,9 +73,16 @@ namespace SS.Objects.Units
 			{
 				SSObject obj = SSObject.Find( data.inside.Item1 );
 				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
-				unit.TrySetInside( interior, InteriorModule.SlotType.Generic );
+
+				InteriorModule.SlotType slotType = InteriorModule.SlotType.Generic;
+				int? slotIndex = interior.GetFirstValid( slotType, unit.population, unit.definitionId, unit.isCivilian, false );
+
+				if( slotIndex == null )
+				{
+					throw new Exception( "Can't enter slot." );
+				}
+				unit.SetInside( interior, slotIndex.Value, InteriorModule.SlotType.Generic );
 			}
-#warning this (position) depends on the position of interior being assigned. If the position of an object with an interior is changed, the interior needs to move its contents with it.
 		}
 
 		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
@@ -115,6 +122,8 @@ namespace SS.Objects.Units
 			unit.movementSpeed = def.movementSpeed;
 			unit.rotationSpeed = def.rotationSpeed;
 			unit.sizePerPopulation = def.size;
+			unit.hurtSound = def.hurtSoundEffect;
+			unit.deathSound = def.deathSoundEffect;
 			unit.isCivilian = def.isCivilian;
 			unit.isPopulationLocked = def.isPopulationLocked;
 			unit.populationSizeLimit = def.populationSizeLimit;

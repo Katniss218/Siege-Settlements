@@ -5,15 +5,19 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class InteriorModule : SSModule
+	public class InteriorModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "interior";
 		
 		public enum SlotType : byte
 		{
-			Generic,
-			Civilian,
+			Generic, // any unit can enter (whitelist-based)
+#warning How to determing what can enter worker slots? interior doesn't know who's working in this building.
+#warning   The worker slots aren't tied to the workplace, but to the building. So if the building has several workplaces, they share the slots.
 			Worker
+
+#warning technically it's the interior which can be storing employed civilians (since slots limiting their number are part of interiors).
+			// some workplaces could scale with the number of workers currently inside (needs a reference to interior to get workers working in that specific workplace module).
 		}
 
 		public abstract class Slot
@@ -40,15 +44,10 @@ namespace SS.Objects.Modules
 		{
 			public string[] whitelistedUnits { get; set; } = new string[0];
 		}
-
-		public class SlotCivilian : Slot
-		{
-
-		}
-
+		
 		public class SlotWorker : Slot
 		{
-
+			Unit worker { get; set; }
 		}
 
 		/// <summary>
@@ -57,9 +56,12 @@ namespace SS.Objects.Modules
 		public Vector3? entrancePosition { get; set; }
 
 		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
-		public SlotCivilian[] civilianSlots { get; set; } = new SlotCivilian[0];
 		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
-		
+
+#warning The unit might work for this particular interior (is assigned to the worker slot here), but it's not inside currently.
+		// so worker slots can specify a unit that is employed in it? So units can take up only their own slots (kinda ugly to have unit in the middle of slots, with prevs empty).
+		// and worker can only enter his own worker slot.
+
 		public Vector3 SlotWorldPosition( Slot slot )
 		{
 			return this.transform.TransformPoint( slot.localPos );
@@ -80,7 +82,7 @@ namespace SS.Objects.Modules
 		
 		public void OnAfterSlotsChanged()
 		{
-			this.hudInterior.SetSlotCount( this.slots.Length, this.civilianSlots.Length, this.workerSlots.Length );
+			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
 		}
 
 		public void GetOutAll()
@@ -92,13 +94,6 @@ namespace SS.Objects.Modules
 					this.slots[i].objInside.SetOutside();
 				}
 			}
-			for( int i = 0; i < this.civilianSlots.Length; i++ )
-			{
-				if( this.civilianSlots[i].objInside != null )
-				{
-					this.civilianSlots[i].objInside.SetOutside();
-				}
-			}
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
 				if( this.workerSlots[i].objInside != null )
@@ -107,7 +102,7 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-
+		
 		public int? GetFirstValid( SlotType type, PopulationSize population, string unitId, bool isUnitCivilian, bool isWorkingHere )
 		{
 			if( type == SlotType.Generic )
@@ -136,28 +131,6 @@ namespace SS.Objects.Modules
 				}
 				return null;
 			}
-			if( type == SlotType.Civilian )
-			{
-				if( !isUnitCivilian )
-				{
-					return null;
-				}
-				for( int i = 0; i < this.civilianSlots.Length; i++ )
-				{
-					if( (byte)population > (byte)this.civilianSlots[i].maxPopulation )
-					{
-						continue;
-					}
-
-					if( !this.civilianSlots[i].isEmpty )
-					{
-						continue;
-					}
-
-					return i + this.slots.Length;
-				}
-				return null;
-			}
 			if( type == SlotType.Worker )
 			{
 				if( !isWorkingHere )
@@ -176,30 +149,26 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					return i + this.slots.Length + this.civilianSlots.Length;
+					return i + this.slots.Length;
 				}
 				return null;
 			}
 			return null;
 		}
-
+		/*
 		public Slot GetSlotAny( int slotIndex )
 		{
 			if( slotIndex < this.slots.Length )
 			{
 				return this.slots[slotIndex];
 			}
-			if( slotIndex < this.civilianSlots.Length )
+			if( slotIndex < this.slots.Length + this.workerSlots.Length )
 			{
-				return this.civilianSlots[slotIndex - this.slots.Length];
-			}
-			if( slotIndex < this.workerSlots.Length )
-			{
-				return this.workerSlots[slotIndex - this.slots.Length - this.civilianSlots.Length];
+				return this.workerSlots[slotIndex - this.slots.Length];
 			}
 			return null;
 		}
-
+		*/
 		private void RegisterHUD()
 		{
 			// integrate hud.
@@ -256,6 +225,16 @@ namespace SS.Objects.Modules
 		public override void SetData( ModuleData data )
 		{
 			// units inside are saved here or where?
+		}
+
+		public void OnDisplay()
+		{
+#warning display the slots.
+		}
+
+		public void OnHide()
+		{
+
 		}
 	}
 }

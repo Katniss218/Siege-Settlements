@@ -126,6 +126,16 @@ namespace SS.UI
 			{
 				Selection.DisplayModule( module.ssObject as SSObjectDFS, module );
 			} );
+
+			ToolTipUIHandler toolTipUIhandler = moduleIconGameObject.AddComponent<ToolTipUIHandler>();
+			toolTipUIhandler.constructToolTip = () =>
+			{
+				ToolTip.Create( 270, module.GetType().Name );
+
+				ToolTip.AddText( "Click to view..." );
+				ToolTip.Style.SetPadding( 60, 60 );
+			};
+
 			Image moduleIcon = moduleIconGameObject.GetComponent<Image>();
 			this.moduleIcons.Add( module, moduleIcon );
 			this.UnHighlight( moduleIcon );

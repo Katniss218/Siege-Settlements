@@ -8,7 +8,7 @@ namespace SS.InputSystem
 		private Dictionary<KeyCode, InputQueue> press = new Dictionary<KeyCode, InputQueue>();
 		private Dictionary<KeyCode, InputQueue> hold = new Dictionary<KeyCode, InputQueue>();
 		private Dictionary<KeyCode, InputQueue> release = new Dictionary<KeyCode, InputQueue>();
-		
+
 
 		public void RegisterOnPress( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
 		{

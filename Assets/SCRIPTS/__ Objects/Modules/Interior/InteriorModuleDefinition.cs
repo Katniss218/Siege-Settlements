@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.Content;
 using SS.Objects.Buildings;
 using System;
 using System.Collections.Generic;
@@ -43,11 +44,10 @@ namespace SS.Objects.Modules
 
 
 		public Slot[] slots { get; set; }
-		public Slot[] civilianSlots { get; set; }
 		public Slot[] workerSlots { get; set; }
 
 		public Vector3? entrancePosition { get; set; }
-
+		
 
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
@@ -79,22 +79,7 @@ namespace SS.Objects.Modules
 					interior.slots[i] = slot;
 				}
 			}
-
-			if( this.civilianSlots != null )
-			{
-				interior.civilianSlots = new InteriorModule.SlotCivilian[this.civilianSlots.Length];
-				for( int i = 0; i < this.civilianSlots.Length; i++ )
-				{
-					InteriorModule.SlotCivilian slot = new InteriorModule.SlotCivilian();
-					slot.localPos = this.civilianSlots[i].position;
-					slot.localRot = this.civilianSlots[i].rotation;
-					slot.maxPopulation = this.civilianSlots[i].maxPopulation;
-					slot.isHidden = this.civilianSlots[i].isHidden;
-
-					interior.civilianSlots[i] = slot;
-				}
-			}
-
+			
 			if( this.workerSlots != null )
 			{
 				interior.workerSlots = new InteriorModule.SlotWorker[this.workerSlots.Length];
@@ -113,6 +98,7 @@ namespace SS.Objects.Modules
 			interior.OnAfterSlotsChanged();
 			interior.entrancePosition = this.entrancePosition;
 			interior.moduleId = moduleId;
+			interior.icon = this.icon;
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )
@@ -127,18 +113,7 @@ namespace SS.Objects.Modules
 				}
 				serializer.DeserializeArray( "Slots", this.slots );
 			}
-
-			analysisData = serializer.Analyze( "CivilianSlots" );
-			if( analysisData.isSuccess )
-			{
-				this.civilianSlots = new Slot[analysisData.childCount];
-				for( int i = 0; i < this.civilianSlots.Length; i++ )
-				{
-					this.civilianSlots[i] = new Slot();
-				}
-				serializer.DeserializeArray( "CivilianSlots", this.civilianSlots );
-			}
-
+			
 			analysisData = serializer.Analyze( "WorkerSlots" );
 			if( analysisData.isSuccess )
 			{
@@ -158,18 +133,27 @@ namespace SS.Objects.Modules
 			{
 				this.entrancePosition = null;
 			}
+
+			try
+			{
+				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'Icon' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
-			serializer.SerializeArray( "", "CivilianSlots", this.civilianSlots );
 			serializer.SerializeArray( "", "WorkerSlots", this.workerSlots );
 
 			if( this.entrancePosition != null )
 			{
 				serializer.WriteVector3( "", "EntrancePosition", this.entrancePosition.Value );
 			}
+			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}
 }

@@ -109,6 +109,7 @@ namespace SS.Objects.Buildings
 			building.placementNodes = def.placementNodes;
 			building.StartToEndConstructionCost = def.cost;
 			building.buildSoundEffect = def.buildSoundEffect;
+			building.hurtSound = def.hurtSoundEffect;
 			building.deathSound = def.deathSoundEffect;
 			building.size = def.size;
 

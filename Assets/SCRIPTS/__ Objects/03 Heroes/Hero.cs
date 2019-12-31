@@ -68,6 +68,7 @@ namespace SS.Objects.Heroes
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public HUD hud { get; set; }
+		
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
@@ -143,9 +144,11 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+
 		//
 		//
 		//
+
 		
 		void Update()
 		{

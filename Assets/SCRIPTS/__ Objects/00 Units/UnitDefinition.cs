@@ -134,11 +134,13 @@ namespace SS.Objects.Units
 		}
 
 		public string[] techsRequired { get; set; } // the default techs required to unlock. TODO ----- interface for this? IUnlockable or sth
-		
+
 		//--------------------------------------------------------------------
 		//  ASSETS
 		//--------------------------------------
-		
+
+		public AddressableAsset<AudioClip> hurtSoundEffect { get; private set; }
+		public AddressableAsset<AudioClip> deathSoundEffect { get; private set; }
 		public AddressableAsset<Sprite> icon { get; private set; }
 
 
@@ -308,6 +310,24 @@ namespace SS.Objects.Units
 
 			try
 			{
+				this.hurtSoundEffect = serializer.ReadAudioClipFromAssets( "HurtSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'HurtSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
+				this.deathSoundEffect = serializer.ReadAudioClipFromAssets( "DeathSound" );
+			}
+			catch( KFFException )
+			{
+				throw new Exception( "Missing 'DeathSound' of '" + this.id + "' (" + serializer.file.fileName + ")." );
+			}
+
+			try
+			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
 			}
 			catch( KFFException )
@@ -351,7 +371,9 @@ namespace SS.Objects.Units
 
 			serializer.WriteFloat( "", "BuildTime", this.buildTime );
 			serializer.WriteStringArray( "", "TechsRequired", this.techsRequired );
-			
+
+			serializer.WriteString( "", "HurtSound", (string)this.hurtSoundEffect );
+			serializer.WriteString( "", "DeathSound", (string)this.deathSoundEffect );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 
 			this.SerializeModulesAndSubObjectsKFF( serializer );

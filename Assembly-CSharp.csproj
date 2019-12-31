@@ -230,6 +230,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\WorkplaceModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectDFS.cs" />
