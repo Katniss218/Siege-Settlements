@@ -768,35 +768,12 @@
 		SubObjects =
 		[
 			{
-				TypeId = "MESH_PREDICATED";
+				TypeId = "MESH";
 				SubObjectId = "00000000-0000-0000-0001-000000000000";
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Meshes =
-				[
-					{
-						Key = 1;
-						
-						Mesh = "extern:Models/Units/formation_1x.ksm";
-					},
-					{
-						Key = 2;
-						
-						Mesh = "extern:Models/Units/formation_2x.ksm";
-					},
-					{
-						Key = 4;
-						
-						Mesh = "extern:Models/Units/formation_4x.ksm";
-					},
-					{
-						Key = 8;
-						
-						Mesh = "extern:Models/Units/formation_8x.ksm";
-					}
-				];
-				
+				Mesh = "extern:Models/Units/formation_1x.ksm";
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
@@ -811,66 +788,6 @@
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/unit_death_generic.wav";
 		Icon = "extern:Textures/Units/civilian_icon.png";
-	},
-	{
-		Id = "unit.civilian_employed";
-		DisplayName = "Employed Civilian";
-		ViewRange = 7.0;
-		IsCivilian = true;
-		IsPopulationLocked = true;
-		MaxHealth = 10.0;
-		Armor =
-		{
-			ArmorValues = [
-				0.0, // Slash
-				0.0, // Pierce
-				0.0  // Concussion
-			];
-		};
-		MovementSpeed = 0.35;
-		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
-		Modules =
-		[
-			{
-				TypeId = "inventory";
-				ModuleId = "12345678-3373-7933-4658-396678574576";
-				Slots =
-				[
-					{ SlotId = ""; Capacity = 2; }
-				];
-				Icon = "extern:Textures/Modules/inventory_icon.png";
-			}
-		];
-		Cost =
-		[
-			{ Id = "resource.wood"; Amount = 4; }
-		];
-		TechsRequired = [];
-		BuildTime = 3.0;
-		SubObjects =
-		[
-			{
-				TypeId = "MESH";
-				SubObjectId = "00000000-0000-0000-0001-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
-				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
-				
-				Mesh = "extern:Models/UnitSquare.ksm";
-				Material =
-				{
-					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/civilian_employed_albedo.png";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
-					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
-				};
-			}
-		];
-		HurtSound = "extern:Sounds/damage_generic.wav";
-		DeathSound = "extern:Sounds/unit_death_generic.wav";
-		Icon = "extern:Textures/Units/employed_civilian_icon.png";
 	},
 	{
 		Id = "unit.movable_ballista";

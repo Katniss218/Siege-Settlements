@@ -1,5 +1,6 @@
 ﻿using SS.Content;
 using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,7 +86,7 @@ namespace SS.Objects.Buildings
 		/// <summary>
 		/// Checks if the building can be repaired (repair hasn't started already).
 		/// </summary>
-		public static bool IsRepairable( Building building )
+		public static bool CanStartRepair( Building building )
 		{
 			// If the construction/repair is currently being done.
 			if( building.GetComponent<ConstructionSite>() != null )
@@ -172,6 +173,31 @@ namespace SS.Objects.Buildings
 		}
 
 		
+		public void DisplayRepairButton()
+		{
+			if( Building.CanStartRepair( this ) )
+			{
+				// Display green repair icon if building can be repaired, red one if it needs to be repaired.
+				Sprite repairIconSprite = null;
+				if( this.IsUsable() )
+				{
+					repairIconSprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/repair_optional" );
+				}
+				else
+				{
+					repairIconSprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/repair" );
+				}
+
+				ActionPanel.instance.CreateButton( "building.ap.repair", repairIconSprite, "Repair", "Click to repair building...", () =>
+				{
+					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
+
+					ConstructionSite.BeginConstructionOrRepair( this, constructionSiteData );
+					ActionPanel.instance.Clear( "building.ap.repair" );
+				} );
+			}
+		}
+
 
 		public override void OnDisplay()
 		{
@@ -196,6 +222,12 @@ namespace SS.Objects.Buildings
 					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -125.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Not usable (under construction or <50% health)." );
 					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
 				}
+
+				if( Building.CanStartRepair( this ) )
+				{
+					this.DisplayRepairButton();
+				}
+
 				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...", () =>
 				{
 					this.Die();

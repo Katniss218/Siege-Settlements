@@ -329,7 +329,7 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
-			TacticalDropOffGoal.ExtractFrom( this.transform.position, this.transform.rotation, this.GetAll() );
+			TacticalDropOffGoal.ExtractAndDrop( this.transform.position, this.transform.rotation, this.GetAll() );
 
 			if( this.ssObject is IFactionMember )
 			{

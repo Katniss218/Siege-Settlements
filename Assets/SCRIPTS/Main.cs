@@ -124,47 +124,28 @@ namespace SS
 		}
 
 		private void Inp_L( InputQueue self )
-		{// Try repair mouseovered building.
+		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.BUILDINGS_MASK ) )
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					Building building = hitInfo.collider.GetComponent<Building>();
-					if( building == null )
+					WorkplaceModule workplace = hitInfo.collider.GetComponent<WorkplaceModule>();
+
+					if( workplace == null )
 					{
-						SSObjectDFS damageable = hitInfo.collider.GetComponent<SSObjectDFS>();
-						if( damageable == null )
-						{
-							return;
-						}
-
-						damageable.healthPercent += 0.1f;
+						return;
 					}
-					else
-					{
-						/*if( building.factionId != LevelDataManager.PLAYER_FAC )
-						{
-							return;
-						}*/
-						if( !Building.IsRepairable( building ) )
-						{
-							return;
-						}
 
-						// If it is a building, start repair.
-						// Empty ConstructionSiteData (no resources present).
-						ConstructionSiteData constructionSiteData = new ConstructionSiteData();
-
-						ConstructionSite.BeginConstructionOrRepair( building, constructionSiteData );
-					}
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+					Unit u = (Unit)Selection.selectedObjects[0];
+					workplace.Employ( u );
 				}
 			}
 		}
 
 		private void Inp_K( InputQueue self )
-		{// Temporary resource payment speedup (every payment receiver to full).
+		{
+			// Temporary resource payment speedup (every payment receiver to full).
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				RaycastHit hitInfo;

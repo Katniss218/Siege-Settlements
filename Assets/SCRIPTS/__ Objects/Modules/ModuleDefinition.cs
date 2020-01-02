@@ -58,6 +58,12 @@ namespace SS.Objects.Modules
 			{
 				return new InteriorModuleDefinition();
 			}
+
+
+			if( typeId == TavernWorkplaceModule.KFF_TYPEID )
+			{
+				return new TavernWorkplaceModuleDefinition();
+			}
 			throw new Exception( "Unknown module type '" + typeId + "'." );
 		}
 
@@ -94,6 +100,10 @@ namespace SS.Objects.Modules
 			if( def is InteriorModuleDefinition )
 			{
 				return InteriorModule.KFF_TYPEID;
+			}
+			if( def is TavernWorkplaceModuleDefinition )
+			{
+				return TavernWorkplaceModule.KFF_TYPEID;
 			}
 			throw new Exception( "Unknown module type '" + def.GetType().Name + "'." );
 		}

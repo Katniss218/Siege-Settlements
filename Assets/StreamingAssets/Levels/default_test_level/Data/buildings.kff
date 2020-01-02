@@ -122,38 +122,88 @@
 		Modules =
 		[
 			{
+				TypeId = "workplace_tavern";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+			},
+			{
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
-				CivilianSlots =
+				Slots =
 				[
 					{
 						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1; // Max size of unit that can fit inside.
 						IsHidden = true; // If true, the unit will dissappear after entering this slot.
-						WhitelistedUnits = [ ]; // SPecifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+						WhitelistedUnits = [ 
+							"unit.civilian",
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					},
 					{
 						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
 						IsHidden = true;
-						WhitelistedUnits = [ ];
+						WhitelistedUnits = [ 
+							"unit.civilian",
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
 					},
 					{
 						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
 						IsHidden = true;
-						WhitelistedUnits = [ ];
+						WhitelistedUnits = [ 
+							"unit.civilian",
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
 					},
 					{
 						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1;
 						IsHidden = true;
-						WhitelistedUnits = [ ];
+						WhitelistedUnits = [ 
+							"unit.civilian",
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					}
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					}
 				];
 				Icon = "extern:Textures/Modules/interior_icon.png";

@@ -270,16 +270,17 @@ namespace SS.AI
 
 			//Calculate the grid position.
 			
-			TacticalMoveToGoal.MovementGridInfo gridInfo = TacticalMoveToGoal.GetGridPositions( movableGameObjects );
+			MovementGridInfo gridInfo = new MovementGridInfo( movableGameObjects );
 
 
 			if( gridInfo.positions.Count > 0 )
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
 			}
+			Quaternion gridRotation = Quaternion.Euler( 0, Main.cameraPivot.rotation.eulerAngles.y, 0 );
 			foreach( var kvp in gridInfo.positions )
 			{
-				Vector3 gridPositionWorld = TacticalMoveToGoal.GridToWorld( kvp.Value, gridInfo.sizeX, gridInfo.sizeZ, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
+				Vector3 gridPositionWorld = gridInfo.GridPosToWorld( kvp.Value, gridRotation, terrainHitPos, biggestRadius * 2 + GRID_MARGIN );
 
 				RaycastHit gridHit;
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
@@ -341,7 +342,16 @@ namespace SS.AI
 				}
 				else
 				{
-					goal.SetDestination( interior );
+					if( movableGameObjects[i].definitionId == "unit.civilian" )
+					{
+#warning change back after testing.
+						goal.SetDestination( interior, InteriorModule.SlotType.Worker );
+					}
+					else
+					{
+
+						goal.SetDestination( interior, InteriorModule.SlotType.Generic );
+					}
 				}
 				goalController.goal = goal;
 			}

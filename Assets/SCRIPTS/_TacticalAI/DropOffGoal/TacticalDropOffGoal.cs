@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Random = UnityEngine.Random;
 
 namespace SS.AI.Goals
 {
@@ -133,7 +132,7 @@ namespace SS.AI.Goals
 			}
 		}
 
-		public static void ExtractFrom( Vector3 position, Quaternion rotation, Dictionary<string,int> resourcesCarried )
+		public static void ExtractAndDrop( Vector3 position, Quaternion rotation, Dictionary<string,int> resourcesCarried )
 		{
 			foreach( var kvp in resourcesCarried )
 			{
@@ -181,43 +180,7 @@ namespace SS.AI.Goals
 				}
 			}
 		}
-
-		private void UpdateTargeting( TacticalGoalController controller )
-		{
-			if( this.isHostile )
-			{
-				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-
-				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
-				{
-					for( int i = 0; i < this.attackModules.Length; i++ )
-					{
-						if( this.attackModules[i].isReadyToAttack )
-						{
-							this.attackModules[i].FindTargetClosest();
-						}
-					}
-				}
-			}
-			else
-			{
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( this.attackModules[i].target != null )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-			}
-		}
-
+		
 		private void OnArrivalObject( TacticalGoalController controller )
 		{
 			if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
@@ -250,16 +213,17 @@ namespace SS.AI.Goals
 			}
 			else if( this.objectDropOffMode == ObjectDropOffMode.PAYMENT )
 			{
-				bool onlyConstructionSites = false;
+				bool payOnlyConstructionSites = false;
 				if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
 				{
-					onlyConstructionSites = true;
+					payOnlyConstructionSites = true;
 				}
 				IPaymentReceiver[] paymentReceivers = this.destinationObject.GetComponents<IPaymentReceiver>();
 
 				for( int i = 0; i < paymentReceivers.Length; i++ )
 				{
-					if( onlyConstructionSites )
+					// If the building is damaged, we don't want to pay e.g. barracks, since it's not usable. We need to repair it first.
+					if( payOnlyConstructionSites )
 					{
 						if( !(paymentReceivers[i] is ConstructionSite) )
 						{
@@ -413,7 +377,7 @@ namespace SS.AI.Goals
 			}
 			
 			this.UpdatePosition( controller );
-			this.UpdateTargeting( controller );
+			this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 
 			if( this.destination == DestinationType.OBJECT )
 			{

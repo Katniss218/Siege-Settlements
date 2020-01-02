@@ -13,6 +13,8 @@ namespace SS.Objects.Units
 	{
 		Transform transform { get; }
 
+		Sprite icon { get; }
+
 		InteriorModule interior { get; }
 		int slotIndex { get; }
 
@@ -22,7 +24,7 @@ namespace SS.Objects.Units
 		}
 		bool isInsideHidden { get; }
 
-		void SetInside( InteriorModule interior, int slotIndex, InteriorModule.SlotType slotType );
+		void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex );
 		void SetOutside();
 	}
 
@@ -172,7 +174,7 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void SetInside( InteriorModule interior, int slotIndex, InteriorModule.SlotType slotType )
+		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
 		{
 			InteriorModule.Slot slot = null;
 			HUDInterior.Element slotHud = null;
@@ -493,6 +495,8 @@ namespace SS.Objects.Units
 			return true;
 		}
 
+		public WorkplaceModule workplace { get; set; } = null;
+		
 
 		// // // =-    -    -  -       -  -  -   -    -   -  -  -      -      -    -  -  -  -  -        -  -  -     -   -    -
 

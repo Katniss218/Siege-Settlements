@@ -31,6 +31,7 @@ namespace SS.AI.Goals
 		private IAttackModule[] attackModules;
 
 		private InteriorModule destinationInterior;
+		private InteriorModule.SlotType destinationSlotType;
 
 		public TacticalMoveToGoal()
 		{
@@ -58,12 +59,13 @@ namespace SS.AI.Goals
 			this.destinationObject = destination;
 		}
 
-		public void SetDestination( InteriorModule interior )
+		public void SetDestination( InteriorModule interior, InteriorModule.SlotType destinationSlotType )
 		{
 			this.destination = DestinationType.OBJECT;
 			this.destinationPos = null;
 			this.destinationObject = interior.ssObject;
 			this.destinationInterior = interior;
+			this.destinationSlotType = destinationSlotType;
 		}
 
 
@@ -79,13 +81,7 @@ namespace SS.AI.Goals
 		}
 
 		private void UpdatePosition( TacticalGoalController controller )
-		{
-
-
-#warning MoveTo can be assigned when the unit is inside. It makes the unit exit (if possible) or reset to default (if not possible).
-
-#warning MoveTo can be assigned to enter interiors. It makes the unit go towards the interior object, and when close enough to the entrance, it enters.
-			
+		{			
 			if( this.destination == DestinationType.POSITION )
 			{
 				Vector3 currDestPos = this.destinationPos.Value;
@@ -139,8 +135,8 @@ namespace SS.AI.Goals
 							{
 								Unit unit = (Unit)controller.ssObject;
 
-								InteriorModule.SlotType slotType = InteriorModule.SlotType.Generic;
-								int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit.population, unit.definitionId, unit.isCivilian, false );
+								InteriorModule.SlotType slotType = this.destinationSlotType;
+								int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
 
 								if( slotIndex == null )
 								{
@@ -149,8 +145,7 @@ namespace SS.AI.Goals
 									controller.goal = TacticalGoalController.GetDefaultGoal();
 									return;
 								}
-#warning slot type specified in goal.
-								unit.SetInside( this.destinationInterior, slotIndex.Value, InteriorModule.SlotType.Generic );
+								unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
 								controller.goal = TacticalGoalController.GetDefaultGoal();
 							}
 						}
@@ -166,41 +161,7 @@ namespace SS.AI.Goals
 			}
 		}
 
-		private void UpdateTargeting( TacticalGoalController controller )
-		{
-			if( this.isHostile )
-			{
-				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-
-				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
-				{
-					for( int i = 0; i < this.attackModules.Length; i++ )
-					{
-						if( this.attackModules[i].isReadyToAttack )
-						{
-							this.attackModules[i].FindTargetClosest();
-						}
-					}
-				}
-			}
-			else
-			{
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( this.attackModules[i].target != null )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-			}
-		}
+		
 
 		public override void Update( TacticalGoalController controller )
 		{
@@ -238,7 +199,7 @@ namespace SS.AI.Goals
 			}
 
 			this.UpdatePosition( controller );
-			this.UpdateTargeting( controller );
+			this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 		}
 
 
@@ -282,63 +243,6 @@ namespace SS.AI.Goals
 			}
 
 			this.isHostile = data.isHostile;
-		}
-
-
-
-
-		public static Vector3 GridToWorld( Vector2Int grid, int sizeX, int sizeZ, Vector3 gridCenter, float gridSpacing )
-		{
-			float camRotY = Main.cameraPivot.rotation.eulerAngles.y;
-
-			Vector3 offset = new Vector3( (sizeX - 1) / 2.0f, 0, (sizeZ - 1) / 2.0f );
-
-			Vector3 gridRelativeToCenterLocal = new Vector3( grid.x, 0, grid.y ) - offset;
-			Vector3 gridRelativeToCenterLocalRotated = Quaternion.Euler( 0, camRotY, 0 ) * (gridRelativeToCenterLocal);
-
-			Vector3 global = gridRelativeToCenterLocalRotated * gridSpacing + gridCenter;
-
-			return global;
-		}
-
-		public struct MovementGridInfo
-		{
-			public Dictionary<SSObject, Vector2Int> positions;
-
-			public int sizeX;
-			public int sizeZ;
-		}
-
-		/// <summary>
-		/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
-		/// </summary>
-		public static MovementGridInfo GetGridPositions( List<SSObject> objects )
-		{
-			int count = objects.Count;
-			int sideLen = Mathf.CeilToInt( Mathf.Sqrt( count ) );
-
-			Dictionary<SSObject, Vector2Int> ret = new Dictionary<SSObject, Vector2Int>();
-
-			int i = 0;
-			int x = 0, z = 0;
-			for( x = 0; x < sideLen; x++ )
-			{
-				for( z = 0; z < sideLen; z++ )
-				{
-					// If we calculated every object, return (since the sideLen ^ 2 can be bigger than the number of objects).
-					if( i >= count )
-					{
-						return new MovementGridInfo() { positions = ret, sizeX = x + 1, sizeZ = z + 1 };
-					}
-
-					// Add the new object to the grid (position needs to be flipped for some reason, if it's not, the positions don't match the dimentions).
-					ret.Add( objects[i], new Vector2Int( z, x ) );
-
-					i++;
-				}
-			}
-
-			return new MovementGridInfo() { positions = ret, sizeX = x, sizeZ = z };
 		}
 	}
 }

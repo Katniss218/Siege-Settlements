@@ -64,43 +64,6 @@ namespace SS.AI.Goals
 			return;
 		}
 
-#warning make this as a helper function of a generic 'TacticalGoal'.
-		private void UpdateTargeting( TacticalGoalController controller )
-		{
-			if( this.isHostile )
-			{
-				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-
-				if( Random.Range( 0, 5 ) == 0 ) // Recalculate target only 20% of the time (not really noticeable, but gives a nice boost to FPS).
-				{
-					for( int i = 0; i < this.attackModules.Length; i++ )
-					{
-						if( this.attackModules[i].isReadyToAttack )
-						{
-							this.attackModules[i].FindTargetClosest();
-						}
-					}
-				}
-			}
-			else
-			{
-				for( int i = 0; i < this.attackModules.Length; i++ )
-				{
-					if( this.attackModules[i].target != null )
-					{
-						this.attackModules[i].target = null;
-					}
-				}
-			}
-		}
-
 		// returns units that want to make formation with this unit.
 		private List<Unit> GetUnitsInRange( Vector3 position, float searchRange, string id, int factionId )
 		{
@@ -158,7 +121,7 @@ namespace SS.AI.Goals
 			}
 
 			this.UpdatePosition( controller );
-			this.UpdateTargeting( controller );
+			this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 
 			if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
 			{

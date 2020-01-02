@@ -31,7 +31,6 @@ namespace SS.UI
 			{
 				this.objIcon.gameObject.SetActive( true );
 			}
-			this.UnHighlight( this.objIcon );
 		}
 
 		public void ClearIcon()
@@ -130,6 +129,7 @@ namespace SS.UI
 			ToolTipUIHandler toolTipUIhandler = moduleIconGameObject.AddComponent<ToolTipUIHandler>();
 			toolTipUIhandler.constructToolTip = () =>
 			{
+#warning each module has a displayname (instance field, since we want to avoid ambiguity when multiples of the same module are added).
 				ToolTip.Create( 270, module.GetType().Name );
 
 				ToolTip.AddText( "Click to view..." );

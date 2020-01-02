@@ -1,6 +1,7 @@
 ﻿using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -8,16 +9,11 @@ namespace SS.Objects.Modules
 	public class InteriorModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "interior";
-		
+
 		public enum SlotType : byte
 		{
 			Generic, // any unit can enter (whitelist-based)
-#warning How to determing what can enter worker slots? interior doesn't know who's working in this building.
-#warning   The worker slots aren't tied to the workplace, but to the building. So if the building has several workplaces, they share the slots.
-			Worker
-
-#warning technically it's the interior which can be storing employed civilians (since slots limiting their number are part of interiors).
-			// some workplaces could scale with the number of workers currently inside (needs a reference to interior to get workers working in that specific workplace module).
+			Worker // only the unit employed at this particular slot can enter.
 		}
 
 		public abstract class Slot
@@ -44,10 +40,10 @@ namespace SS.Objects.Modules
 		{
 			public string[] whitelistedUnits { get; set; } = new string[0];
 		}
-		
+
 		public class SlotWorker : Slot
 		{
-			Unit worker { get; set; }
+			public Unit worker { get; set; }
 		}
 
 		/// <summary>
@@ -61,6 +57,26 @@ namespace SS.Objects.Modules
 #warning The unit might work for this particular interior (is assigned to the worker slot here), but it's not inside currently.
 		// so worker slots can specify a unit that is employed in it? So units can take up only their own slots (kinda ugly to have unit in the middle of slots, with prevs empty).
 		// and worker can only enter his own worker slot.
+
+		public Unit[] GetEmployed( WorkplaceModule workplace = null )
+		{
+			List<Unit> ret = new List<Unit>();
+			for( int i = 0; i < this.workerSlots.Length; i++ )
+			{
+				if( this.workerSlots[i].worker == null )
+				{
+					continue;
+				}
+
+				if( workplace != null && this.workerSlots[i].worker.workplace != workplace )
+				{
+					continue;
+				}
+
+				ret.Add( this.workerSlots[i].worker );
+			}
+			return ret.ToArray();
+		}
 
 		public Vector3 SlotWorldPosition( Slot slot )
 		{
@@ -79,10 +95,12 @@ namespace SS.Objects.Modules
 		}
 
 		public HUDInterior hudInterior { get; private set; } = null;
-		
+
 		public void OnAfterSlotsChanged()
 		{
 			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
+
+#warning update the amount of slots visible on the selection panel.
 		}
 
 		public void GetOutAll()
@@ -102,14 +120,16 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-		
-		public int? GetFirstValid( SlotType type, PopulationSize population, string unitId, bool isUnitCivilian, bool isWorkingHere )
+
+		public int? GetFirstValid( SlotType type, Unit u )// PopulationSize population, string unitId, bool isUnitCivilian, bool isWorkingHere )
 		{
+			byte population = (byte)u.population;
+
 			if( type == SlotType.Generic )
 			{
 				for( int i = 0; i < this.slots.Length; i++ )
 				{
-					if( (byte)population > (byte)this.slots[i].maxPopulation )
+					if( population > (byte)this.slots[i].maxPopulation )
 					{
 						continue;
 					}
@@ -121,7 +141,7 @@ namespace SS.Objects.Modules
 
 					for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
 					{
-						if( this.slots[i].whitelistedUnits[j] == unitId )
+						if( this.slots[i].whitelistedUnits[j] == u.definitionId )
 						{
 							return i;
 						}
@@ -133,42 +153,25 @@ namespace SS.Objects.Modules
 			}
 			if( type == SlotType.Worker )
 			{
-				if( !isWorkingHere )
-				{
-					return null;
-				}
 				for( int i = 0; i < this.workerSlots.Length; i++ )
 				{
-					if( (byte)population > (byte)this.workerSlots[i].maxPopulation )
+					if( population > (byte)this.workerSlots[i].maxPopulation )
 					{
 						continue;
 					}
 
-					if( !this.workerSlots[i].isEmpty )
+					if( this.workerSlots[i].worker != u )
 					{
 						continue;
 					}
 
-					return i + this.slots.Length;
+					return i;
 				}
 				return null;
 			}
 			return null;
 		}
-		/*
-		public Slot GetSlotAny( int slotIndex )
-		{
-			if( slotIndex < this.slots.Length )
-			{
-				return this.slots[slotIndex];
-			}
-			if( slotIndex < this.slots.Length + this.workerSlots.Length )
-			{
-				return this.workerSlots[slotIndex - this.slots.Length];
-			}
-			return null;
-		}
-		*/
+
 		private void RegisterHUD()
 		{
 			// integrate hud.
@@ -177,6 +180,7 @@ namespace SS.Objects.Modules
 
 			this.hudInterior = hudObj.hud.GetComponent<HUDInterior>();
 		}
+
 
 		void Awake()
 		{
@@ -200,7 +204,7 @@ namespace SS.Objects.Modules
 						continue;
 					}
 					IEnterableInside u = this.slots[i].objInside;
-					
+
 					u.transform.position = this.SlotWorldPosition( slots[i] );
 					u.transform.rotation = this.SlotWorldRotation( slots[i] );
 				}
@@ -209,27 +213,75 @@ namespace SS.Objects.Modules
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
 		}
-		
+
 		public override void OnObjDestroyed()
 		{
 			this.GetOutAll();
 		}
 
 
+
 		public override ModuleData GetData()
 		{
 			return new InteriorModuleData();
-			// units inside are saved here or where?
 		}
 
 		public override void SetData( ModuleData data )
 		{
-			// units inside are saved here or where?
+			// whether or not a unit is inside is saved in that particular unit's data.
 		}
 
+
+
+
+		private void DisplaySlotsList_UI()
+		{
+			GameObject[] gridElements = new GameObject[this.slots.Length];
+			for( int i = 0; i < this.slots.Length; i++ )
+			{
+				IEnterableInside insideObj = this.slots[i].objInside;
+				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), insideObj?.icon, () =>
+				{
+					if( insideObj != null )
+					{
+						if( insideObj is SSObjectDFS )
+						{
+							Selection.DeselectAll();
+							Selection.TrySelect( (SSObjectDFS)insideObj );
+						}
+					}
+				} );
+			}
+			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
+			SelectionPanel.instance.obj.RegisterElement( "interior.slots", list.transform );
+		}
+
+		private void DisplayWorkerSlotsList_UI()
+		{
+			GameObject[] gridElements = new GameObject[this.workerSlots.Length];
+			for( int i = 0; i < this.workerSlots.Length; i++ )
+			{
+				IEnterableInside insideObj = this.workerSlots[i].objInside;
+				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), insideObj?.icon, () =>
+				{
+					if( insideObj != null )
+					{
+						if( insideObj is SSObjectDFS )
+						{
+							Selection.DeselectAll();
+							Selection.TrySelect( (SSObjectDFS)insideObj );
+						}
+					}
+				} );
+			}
+			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
+			SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
+		}
+	
 		public void OnDisplay()
 		{
-#warning display the slots.
+			DisplaySlotsList_UI();
+			DisplayWorkerSlotsList_UI();
 		}
 
 		public void OnHide()

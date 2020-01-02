@@ -157,6 +157,7 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoalData.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\MovementGridInfo.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\TacticalMoveToGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\TacticalMoveToGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\PickUpGoal\TacticalPickUpGoal.cs" />
@@ -230,6 +231,8 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\TavernWorkplace\TavernWorkplaceModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\TavernWorkplace\TavernWorkplaceModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\WorkplaceModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />

@@ -146,7 +146,7 @@ namespace SS.Objects.Buildings
 			building.onHealthPercentChanged.AddListener( () =>
 			{
 				building.hud.SetHealthBarFill( building.healthPercent );
-
+				
 				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
@@ -221,6 +221,13 @@ namespace SS.Objects.Buildings
 				if( !Selection.IsDisplayed( building ) )
 				{
 					return;
+				}
+				// If the health changes & repair hasn't already started - update the repair button.
+				if( Building.CanStartRepair( building ) )
+				{
+					// clear the previous button (if any) & display new, possibly updated to be red or green.
+					ActionPanel.instance.Clear( "building.ap.repair" );
+					building.DisplayRepairButton();
 				}
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )

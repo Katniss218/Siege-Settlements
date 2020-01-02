@@ -39,7 +39,7 @@ namespace SS.Objects.Units
 			Unit unit = gameObject.GetComponent<Unit>();
 			if( unit.guid != data.guid )
 			{
-				throw new Exception( "Mismatched guid." );
+				throw new Exception( "Mismatched guid: '" + unit.guid + "'." );
 			}
 			unit.factionId = data.factionId;
 			if( data.health != null )
@@ -54,7 +54,36 @@ namespace SS.Objects.Units
 			{
 				unit.rotationSpeedOverride = data.rotationSpeed.Value;
 			}
-			
+
+			// Set the unit's interior information.
+			if( data.inside != null )
+			{
+				SSObject obj = SSObject.Find( data.inside.Item1 );
+				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
+
+				int? slotIndex = interior.GetFirstValid( data.insideSlotType, unit );
+
+				if( slotIndex == null )
+				{
+					throw new Exception( "Can't enter slot. (guid: '" + unit.guid + "')." );
+				}
+				unit.SetInside( interior, data.insideSlotType, slotIndex.Value );
+			}
+
+			// Set the workplace (if unit is a civilian & workplace is present).
+			if( data.workplace != null )
+			{
+				if( !unit.isCivilian )
+				{
+					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
+				}
+
+				SSObject obj = SSObject.Find( data.workplace.Item1 );
+				WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
+
+				unit.workplace = workplace;
+			}
+
 			//
 			//    MODULES
 			//
@@ -67,22 +96,8 @@ namespace SS.Objects.Units
 				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
 			}
 
+			// population needs to be set after modules, since it can change some properties of the modules (override values).
 			unit.population = data.population;
-
-			if( data.inside != null )
-			{
-				SSObject obj = SSObject.Find( data.inside.Item1 );
-				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
-
-				InteriorModule.SlotType slotType = InteriorModule.SlotType.Generic;
-				int? slotIndex = interior.GetFirstValid( slotType, unit.population, unit.definitionId, unit.isCivilian, false );
-
-				if( slotIndex == null )
-				{
-					throw new Exception( "Can't enter slot." );
-				}
-				unit.SetInside( interior, slotIndex.Value, InteriorModule.SlotType.Generic );
-			}
 		}
 
 		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
@@ -313,12 +328,20 @@ namespace SS.Objects.Units
 
 			if( unit.isInside )
 			{
-#warning Proper slot-index.
 				data.inside = new Tuple<Guid, Guid>(
 						unit.interior.ssObject.guid,
 						unit.interior.moduleId
 					);
-				data.insideSlotIndex = 0;
+				data.insideSlotType = unit.slotType;
+				data.insideSlotIndex = unit.slotIndex;
+			}
+
+			if( unit.workplace != null )
+			{
+				data.workplace = new Tuple<Guid, Guid>(
+						unit.workplace.ssObject.guid,
+						unit.workplace.moduleId
+					);
 			}
 
 			//

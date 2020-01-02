@@ -371,7 +371,7 @@ namespace SS.Objects.Buildings
 		/// </summary>
 		public static void BeginConstructionOrRepair( Building building, ConstructionSiteData data )
 		{
-			if( !Building.IsRepairable( building ) )
+			if( !Building.CanStartRepair( building ) )
 			{
 				throw new Exception( building.displayName + " - Building is not repairable." );
 			}

@@ -2,6 +2,7 @@
 using SS.AI.Goals;
 using SS.Content;
 using SS.Objects;
+using SS.Objects.Modules;
 using System;
 using UnityEngine;
 
@@ -40,8 +41,13 @@ namespace SS.Levels.SaveStates
 		public TacticalGoalData tacticalGoalData { get; set; }
 
 		public Tuple<Guid,Guid> inside { get; set; }
+		public InteriorModule.SlotType insideSlotType { get; set; }
 		public int insideSlotIndex { get; set; }
 		
+		public Tuple<Guid, Guid> workplace { get; set; }
+
+
+
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
 			try
@@ -129,10 +135,18 @@ namespace SS.Levels.SaveStates
 				Guid insideObj = serializer.ReadGuid( "Inside.ObjectGuid" );
 				Guid insideMod = serializer.ReadGuid( "Inside.ModuleId" );
 				this.inside = new Tuple<Guid, Guid>( insideObj, insideMod );
+				this.insideSlotType = (InteriorModule.SlotType)serializer.ReadByte( "Inside.SlotType" );
 				this.insideSlotIndex = serializer.ReadInt( "Inside.SlotIndex" );
 			}
 
-
+			if( serializer.Analyze( "Workplace" ).isSuccess )
+			{
+#warning kff reading object-module tuples abstracted away & just call a method in the extensions.
+				Guid insideObj = serializer.ReadGuid( "Workplace.ObjectGuid" );
+				Guid insideMod = serializer.ReadGuid( "Workplace.ModuleId" );
+				this.workplace = new Tuple<Guid, Guid>( insideObj, insideMod );
+			}
+			
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
 
 			this.DeserializeModulesKFF( serializer );
