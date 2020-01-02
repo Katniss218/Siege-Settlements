@@ -1,5 +1,5 @@
 ﻿using SS.Objects.Units;
-using SS.UI;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -11,8 +11,8 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			bool isWorkerInside = false;
-			Unit[] emp = this.interior.GetEmployed();
-			for( int i = 0; i < emp.Length; i++ )
+			List<Unit> emp = this.interior.GetEmployed();
+			for( int i = 0; i < emp.Count; i++ )
 			{
 				if( emp[i].workplace == this )
 				{

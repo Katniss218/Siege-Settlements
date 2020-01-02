@@ -58,7 +58,7 @@ namespace SS.Objects.Modules
 		// so worker slots can specify a unit that is employed in it? So units can take up only their own slots (kinda ugly to have unit in the middle of slots, with prevs empty).
 		// and worker can only enter his own worker slot.
 
-		public Unit[] GetEmployed( WorkplaceModule workplace = null )
+		public List<Unit> GetEmployed( WorkplaceModule workplace = null )
 		{
 			List<Unit> ret = new List<Unit>();
 			for( int i = 0; i < this.workerSlots.Length; i++ )
@@ -75,7 +75,7 @@ namespace SS.Objects.Modules
 
 				ret.Add( this.workerSlots[i].worker );
 			}
-			return ret.ToArray();
+			return ret;
 		}
 
 		public Vector3 SlotWorldPosition( Slot slot )
@@ -193,8 +193,16 @@ namespace SS.Objects.Modules
 		private Vector3 oldPosition;
 		private Quaternion oldRotation;
 
+		void Start()
+		{
+			// Cache the starting position & rotation.
+			this.oldPosition = this.transform.position;
+			this.oldRotation = this.transform.rotation;
+		}
+
 		private void Update()
 		{
+			// If the position or rotation is changed, update the carried units, and cache the new, changed position & rotation.
 			if( this.transform.position != this.oldPosition || this.transform.rotation != this.oldRotation )
 			{
 				for( int i = 0; i < this.slots.Length; i++ )
@@ -208,10 +216,9 @@ namespace SS.Objects.Modules
 					u.transform.position = this.SlotWorldPosition( slots[i] );
 					u.transform.rotation = this.SlotWorldRotation( slots[i] );
 				}
+				this.oldPosition = this.transform.position;
+				this.oldRotation = this.transform.rotation;
 			}
-
-			this.oldPosition = this.transform.position;
-			this.oldRotation = this.transform.rotation;
 		}
 
 		public override void OnObjDestroyed()

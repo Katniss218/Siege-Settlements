@@ -6,13 +6,28 @@ namespace SS.AI.Goals
 {
 	public abstract class TacticalGoal
 	{
-		public abstract bool IsOnValidObject( SSObject obj );
+		// Tactical goals are bound to a specific object through the TacticalGoalController.
 
+		// They only control a single object - the one they're bound to.
+		// They don't coordinate their actions with other objects.
+
+		/// <summary>
+		/// Use this to check if the tactical goal can be added to this specific object. Can be used to restrict.
+		/// </summary>
+		public abstract bool CanBeAddedTo( SSObject obj );
+
+		// Start is mostly used to initialize the goal's cached variables.
 		public abstract void Start( TacticalGoalController controller );
-
-		// Update is allowed to change the current state, but not allowed to change the current goal itself.
+		
+		//Update is used to actually control the object.
 		public abstract void Update( TacticalGoalController controller );
 
+		/// <summary>
+		/// Updates the targeting of a specified group of attack modules.
+		/// </summary>
+		/// <param name="controller">The controller passed through 'Start' or 'Update' method.</param>
+		/// <param name="isHostile">Should the attacking modules attack or not.</param>
+		/// <param name="attackModules">The array of attack modules to affect.</param>
 		protected virtual void UpdateTargeting( TacticalGoalController controller, bool isHostile, IAttackModule[] attackModules )
 		{
 			if( isHostile )

@@ -41,7 +41,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override bool IsOnValidObject( SSObject ssObject )
+		public override bool CanBeAddedTo( SSObject ssObject )
 		{
 			return ssObject.GetComponents<IAttackModule>().Length > 0;
 		}

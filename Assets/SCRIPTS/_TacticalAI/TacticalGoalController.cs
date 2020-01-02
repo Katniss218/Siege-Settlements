@@ -23,7 +23,7 @@ namespace SS.AI
 				{
 					value = GetDefaultGoal();
 				}
-				else if( !value.IsOnValidObject( this.ssObject ) )
+				else if( !value.CanBeAddedTo( this.ssObject ) )
 				{
 					Debug.LogWarning( "Goal '" + value.GetType().Name + "' was added to an invalid object. - '" + this.ssObject.definitionId + "'." );
 					value = GetDefaultGoal();

@@ -38,7 +38,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 		
-		public override bool IsOnValidObject( SSObject ssObject )
+		public override bool CanBeAddedTo( SSObject ssObject )
 		{
 			return ssObject is Unit;
 		}
@@ -121,7 +121,10 @@ namespace SS.AI.Goals
 			}
 
 			this.UpdatePosition( controller );
-			this.UpdateTargeting( controller, this.isHostile, this.attackModules );
+			if( attackModules.Length > 0 )
+			{
+				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
+			}
 
 			if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
 			{

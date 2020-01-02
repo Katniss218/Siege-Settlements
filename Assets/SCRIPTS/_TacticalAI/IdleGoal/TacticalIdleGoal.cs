@@ -25,7 +25,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override bool IsOnValidObject( SSObject ssObject )
+		public override bool CanBeAddedTo( SSObject ssObject )
 		{
 			return true;
 		}
@@ -37,7 +37,10 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
-			this.UpdateTargeting( controller, this.isHostile, this.attackModules );
+			if( attackModules.Length > 0 )
+			{
+				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
+			}
 		}
 
 
