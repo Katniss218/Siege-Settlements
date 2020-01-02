@@ -38,23 +38,23 @@ namespace SS.AI.Goals
 
 		public static string InstanceToTypeId( TacticalGoalData data )
 		{
-			if( data is TacticalIdleGoalData )
+			if( data.GetType() == typeof( TacticalIdleGoalData ) )
 			{
 				return TacticalIdleGoal.KFF_TYPEID;
 			}
-			if( data is TacticalMoveToGoalData )
+			if( data.GetType() == typeof( TacticalMoveToGoalData ) )
 			{
 				return TacticalMoveToGoal.KFF_TYPEID;
 			}
-			if( data is TacticalDropOffGoalData )
+			if( data.GetType() == typeof( TacticalDropOffGoalData ) )
 			{
 				return TacticalDropOffGoal.KFF_TYPEID;
 			}
-			if( data is TacticalPickUpGoalData )
+			if( data.GetType() == typeof( TacticalPickUpGoalData ) )
 			{
 				return TacticalPickUpGoal.KFF_TYPEID;
 			}
-			if( data is TacticalTargetGoalData )
+			if( data.GetType() == typeof( TacticalTargetGoalData ) )
 			{
 				return TacticalTargetGoal.KFF_TYPEID;
 			}

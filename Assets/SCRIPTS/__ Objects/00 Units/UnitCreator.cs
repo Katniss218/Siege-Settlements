@@ -95,6 +95,8 @@ namespace SS.Objects.Units
 			{
 				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
 			}
+#warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
+#warning   data should set the population in a different way maybe?
 
 			// population needs to be set after modules, since it can change some properties of the modules (override values).
 			unit.population = data.population;

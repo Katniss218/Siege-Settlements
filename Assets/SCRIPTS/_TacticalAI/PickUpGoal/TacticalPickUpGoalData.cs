@@ -21,13 +21,16 @@ namespace SS.AI.Goals
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			try
+			if( serializer.Analyze( "ResourceId" ).isSuccess )
 			{
-				this.resourceId = serializer.ReadString( "ResourceId" );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'ResourceId' (" + serializer.file.fileName + ")." );
+				try
+				{
+					this.resourceId = serializer.ReadString( "ResourceId" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ResourceId' (" + serializer.file.fileName + ")." );
+				}
 			}
 
 			try
@@ -51,7 +54,10 @@ namespace SS.AI.Goals
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "ResourceId", this.resourceId );
+			if( this.resourceId != null )
+			{
+				serializer.WriteString( "", "ResourceId", this.resourceId );
+			}
 
 			serializer.WriteGuid( "", "DestinationObjectGuid", this.destinationObjectGuid );
 

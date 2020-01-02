@@ -59,6 +59,19 @@ namespace SS.AI.Goals
 			this.isHostile = true;
 		}
 
+#warning dropOff goal can be used by the player by itself.
+#warning pickUpGoal IS used.
+#warning makePaymentGoal can be used.
+#warning moveto is used extensively.
+
+#warning - hunters need some sort of selective attacking of only specified ids. (can be assigned via a a search from work schedule & Attack)
+		//   - attack would need to be turned-off when the unit dies.
+#warning @ hunters need some sort of selective collecting of resources (can be assigned via a search from work schedule & PickUp).
+
+#warning # miners use pickup & dropoff. (get minerals, bring materials to storage)
+#warning # lumberjacks are analogous to miners.
+#warning # farmers use pickup & dropoff. (get crop, bring food to storage)
+#warning # tavernkeep uses pickup & dropoff. (gets food from storage, brings food to tavern)
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-

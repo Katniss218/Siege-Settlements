@@ -135,6 +135,7 @@ namespace SS.Levels.SaveStates
 				Guid insideObj = serializer.ReadGuid( "Inside.ObjectGuid" );
 				Guid insideMod = serializer.ReadGuid( "Inside.ModuleId" );
 				this.inside = new Tuple<Guid, Guid>( insideObj, insideMod );
+
 				this.insideSlotType = (InteriorModule.SlotType)serializer.ReadByte( "Inside.SlotType" );
 				this.insideSlotIndex = serializer.ReadInt( "Inside.SlotIndex" );
 			}
@@ -182,7 +183,15 @@ namespace SS.Levels.SaveStates
 				serializer.WriteClass( "", "Inside" );
 				serializer.WriteGuid( "Inside", "ObjectGuid", this.inside.Item1 );
 				serializer.WriteGuid( "Inside", "ModuleId", this.inside.Item2 );
+				serializer.WriteByte( "Inside", "SlotType", (byte)this.insideSlotType );
 				serializer.WriteInt( "Inside", "SlotIndex", this.insideSlotIndex );
+			}
+
+			if( this.workplace != null )
+			{
+				serializer.WriteClass( "", "Workplace" );
+				serializer.WriteGuid( "Workplace", "ObjectGuid", this.inside.Item1 );
+				serializer.WriteGuid( "Workplace", "ModuleId", this.inside.Item2 );
 			}
 
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );

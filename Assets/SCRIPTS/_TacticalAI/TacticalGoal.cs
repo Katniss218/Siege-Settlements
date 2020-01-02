@@ -65,6 +65,7 @@ namespace SS.AI.Goals
 		}
 
 		public abstract TacticalGoalData GetData();
+
 		public abstract void SetData( TacticalGoalData _data );
 	}
 }

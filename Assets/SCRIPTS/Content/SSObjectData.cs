@@ -123,7 +123,7 @@ namespace SS.Content
 				try
 				{
 					string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
-					module = ModuleData.TypeIdToDefinition( typeId );
+					module = ModuleData.TypeIdToData( typeId );
 				}
 				catch
 				{

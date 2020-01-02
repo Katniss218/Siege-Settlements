@@ -182,20 +182,18 @@ namespace SS.Objects.Modules
 		}
 
 
+		private Vector3 oldPosition;
+		private Quaternion oldRotation;
+
 		void Awake()
 		{
 			if( this.ssObject is IHUDHolder )
 			{
 				this.RegisterHUD();
 			}
-		}
 
-		private Vector3 oldPosition;
-		private Quaternion oldRotation;
-
-		void Start()
-		{
 			// Cache the starting position & rotation.
+			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
 		}

@@ -1,4 +1,5 @@
-﻿using SS.Objects.Units;
+﻿using SS.Levels.SaveStates;
+using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,12 +52,13 @@ namespace SS.Objects.Modules
 
 		public override ModuleData GetData()
 		{
-			throw new System.NotImplementedException();
+			return new TavernWorkplaceModuleData();
+#warning data.
 		}
 
 		public override void SetData( ModuleData data )
 		{
-			throw new System.NotImplementedException();
+
 		}
 
 

@@ -963,7 +963,7 @@ namespace SS.Levels
 			for( int i = 0; i < units.Length; i++ )
 			{
 				serializer.AppendClass( "List" );
-
+				
 				serializer.WriteString( new Path( "List.{0}", i ), "DefinitionId", units[i].Item1 );
 				serializer.Serialize( new Path( "List.{0}", i ), "Data", units[i].Item2 );
 			}

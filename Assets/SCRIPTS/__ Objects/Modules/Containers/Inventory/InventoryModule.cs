@@ -11,8 +11,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace SS.Objects.Modules
-{	
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener, IPopulationChangeBlockerModule
+{
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -36,13 +36,9 @@ namespace SS.Objects.Modules
 				this.amount = 0;
 			}
 		}
-
-		public bool CanChangePopulation()
-		{
-			return this.isEmpty;
-		}
-
+		
 		internal SlotGroup[] slotGroups;
+
 
 		public int GetCapacity( int index )
 		{

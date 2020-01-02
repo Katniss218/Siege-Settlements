@@ -72,8 +72,6 @@ namespace SS.Objects.Units
 			}
 			set
 			{
-#warning Damageable needs to play damage sound when the health gets down due to damage, but not when it goes down due to unit split.
-
 				if( !this.CanChangePopulation() )
 				{
 					return;
@@ -115,11 +113,7 @@ namespace SS.Objects.Units
 				{
 					melee[i].damageOverride = melee[i].damage * (float)value;
 				}
-
-#warning What if 8x unit goes inside a tower, and creates 4x, 2x, 1x? That's a lot of waste and small units.
-				// Maybe make the population formation-independent. Slots will specify formation & max pop. This allows to make arbitrarily-sized formations.
-				// Iteratively create the next biggest-most unit possible from the leftover pop.
-
+				
 #warning attack speed instead of damage/arrow count? BUT I want it to not be perfectly rythmic - instead with randomization.
 				// maybe make the attack modules have a pool of available attacks (like bows that are reloaded currently). and the bigger pop, the more of them are.
 
@@ -479,6 +473,7 @@ namespace SS.Objects.Units
 		{
 			if( this.isPopulationLocked )
 			{
+				Debug.Log( "PL: " + this.guid );
 				return false;
 			}
 			SSModule[] modules = this.GetModules();
@@ -488,6 +483,7 @@ namespace SS.Objects.Units
 				{
 					if( !((IPopulationChangeBlockerModule)modules[i]).CanChangePopulation() )
 					{
+						Debug.Log( "PL: " + this.guid + " -    " + modules[i].moduleId );
 						return false;
 					}
 				}

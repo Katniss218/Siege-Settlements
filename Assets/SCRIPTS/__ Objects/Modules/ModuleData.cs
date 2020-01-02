@@ -9,7 +9,7 @@ namespace SS.Objects.Modules
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
 
-		public static ModuleData TypeIdToDefinition( string typeId )
+		public static ModuleData TypeIdToData( string typeId )
 		{
 			if( typeId == MeleeModule.KFF_TYPEID )
 			{
@@ -43,7 +43,11 @@ namespace SS.Objects.Modules
 			{
 				return new InteriorModuleData();
 			}
-			throw new Exception( "Unknown module type '" + typeId + "'." );
+			if( typeId == TavernWorkplaceModule.KFF_TYPEID )
+			{
+				return new TavernWorkplaceModuleData();
+			}
+			throw new Exception( "Unknown module type '" + typeId + "' (Type->Data)." );
 		}
 
 		public static string DataToTypeId( ModuleData data )
@@ -80,7 +84,11 @@ namespace SS.Objects.Modules
 			{
 				return InteriorModule.KFF_TYPEID;
 			}
-			throw new Exception( "Inknown module type '" + data.GetType().Name + "'." );
+			if( data is TavernWorkplaceModuleData )
+			{
+				return TavernWorkplaceModule.KFF_TYPEID;
+			}
+			throw new Exception( "Inknown module type '" + data.GetType().Name + "' (Data->Type)." );
 		}
 	}
 }
