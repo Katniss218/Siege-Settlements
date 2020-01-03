@@ -822,7 +822,7 @@
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.0; Y = 0.2; Z = 0.0; };
 				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
-				AttackSound = "extern:Sounds/swoosh_deep.wav";
+				AttackSound = "extern:Sounds/ballista_shoot.wav";
 			}
 		];
 		MovementSpeed = 0.15;

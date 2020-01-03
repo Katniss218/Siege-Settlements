@@ -30,8 +30,8 @@ namespace SS.AI.Goals
 		private NavMeshAgent navMeshAgent;
 		private IAttackModule[] attackModules;
 
-		private InteriorModule destinationInterior;
-		private InteriorModule.SlotType destinationSlotType;
+		public InteriorModule destinationInterior { get; private set; }
+		public InteriorModule.SlotType destinationSlotType { get; private set; }
 
 		public TacticalMoveToGoal()
 		{

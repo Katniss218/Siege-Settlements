@@ -73,8 +73,8 @@
 		BlastRadius = 1.0;
 		Lifetime = 15.0;
 		
-		HitSound = "extern:Sounds/swoosh_2.wav";
-		MissSound = "extern:Sounds/swoosh_2.wav";
+		HitSound = "extern:Sounds/ballista_hit.wav";
+		MissSound = "extern:Sounds/ballista_miss.wav";
 		
 		Modules = [];
 		SubObjects =

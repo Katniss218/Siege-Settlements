@@ -747,7 +747,7 @@
 				LocalOffsetMin = { X = 0.0; Y = 0.63; Z = 0.0; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
 				LocalOffsetMax = { X = 0.0; Y = 0.63; Z = 0.0; };
-				AttackSound = "extern:Sounds/swoosh_deep.wav";
+				AttackSound = "extern:Sounds/ballista_shoot.wav";
 				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
 				Icon = "extern:Textures/Modules/ranged_icon.png";
 			}

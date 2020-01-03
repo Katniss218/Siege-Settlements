@@ -1,4 +1,6 @@
-﻿using SS.Content;
+﻿using SS.AI;
+using SS.AI.Goals;
+using SS.Content;
 using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
@@ -55,12 +57,7 @@ namespace SS.Objects.Units
 				return this.__collider;
 			}
 		}
-
-#warning civilians that are employed have DoWork() tactical goal. that goal stores the workplace & the current state of the routine.
-#warning  Every frame (if working) it calls the workplace to specify what to do (this.workplace.DoWork( this.worker ))
-
-#warning workplace module requires interior module to be present.
-
+		
 		public bool isPopulationLocked { get; set; }
 		public byte? populationSizeLimit { get; set; }
 		private PopulationSize __population = PopulationSize.x1;
@@ -116,12 +113,6 @@ namespace SS.Objects.Units
 				
 #warning attack speed instead of damage/arrow count? BUT I want it to not be perfectly rythmic - instead with randomization.
 				// maybe make the attack modules have a pool of available attacks (like bows that are reloaded currently). and the bigger pop, the more of them are.
-
-
-#warning interior can only be put on a "non-formation" unit.
-#warning barracks can be put on non-formation units only.
-#warning research can be put on non-formation units only.
-#warning - We can actually make that, because we know what unit we are spawning at the time of spawn, co we can assign different Unit subclasses, depending on the unit sub-type.
 
 
 				MeshPredicatedSubObject[] meshPopulationSubObjects = this.GetSubObjects<MeshPredicatedSubObject>();
@@ -391,12 +382,68 @@ namespace SS.Objects.Units
 		//
 		//
 		//
+		
+		public bool isWorking { get; private set; }
+
+		void UpdateWorkerSchedule()
+		{
+#warning civilians that are employed have DoWork() tactical goal. that goal stores the workplace & the current state of the routine.
+#warning  Every frame (if working) it calls the workplace to specify what to do (this.workplace.DoWork( this.worker ))
+
+			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
+#warning workplace module requires interior module to be present.
+			if( DaylightCycleController.instance.isNight )
+			{
+				// Unit tries to find nearest unoccupied house. If the house gets occupied, it finds next nearest suitable (unoccupied) house.
+				// - In the future, make it so that it coordinates with other units (as a part of strategic AI) & each unit only goes to buildings that won't be occupied by other unit currently on the way there.
+				if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior != this.workplace.interior )
+				{
+					TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.goal;
+					if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.workplace.interior )
+					{
+						this.isWorking = false;
+						
+						TacticalMoveToGoal goal = new TacticalMoveToGoal();
+		GetClosestInteriorInRangeUnoccupiedMarkedAsAHouse
+						goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
+						goalController.goal = goal;
+					}
+				}
+
+				return;
+			}
+
+			if( this.isWorking ) // set after the worker has checked in.
+			{
+				this.workplace.MakeDoWork( this );
+			}
+			else
+			{
+				if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior == this.workplace.interior )
+				{
+					TacticalMoveToGoal goal = new TacticalMoveToGoal();
+					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
+					goalController.goal = goal;
+				}
+
+				if( this.interior == this.workplace.interior && !this.isWorking )
+				{
+					isWorking = true;
+				}
+			}
+
+		}
 
 		void Update()
 		{
 			if( this.hud.isVisible )
 			{
 				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
+			}
+
+			if( this.isCivilian && this.workplace != null ) // is civilian & is employed... - update the worker schedule.
+			{
+				this.UpdateWorkerSchedule();
 			}
 
 			if( !this.hasBeenHiddenSinceLastDamage )
