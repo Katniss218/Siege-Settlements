@@ -86,7 +86,7 @@ namespace SS.Objects.Modules
 			}
 			SSObjectDFS ret = null;
 			float needThisCloseSq = float.MaxValue;
-			if( !requireExactDistance )
+			if( requireExactDistance )
 			{
 				needThisCloseSq = searchRange * searchRange;
 			}
@@ -104,12 +104,13 @@ namespace SS.Objects.Modules
 				float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
 				if( requireExactDistance )
 				{
-					if( distSq >= needThisCloseSq )
+					if( distSq > needThisCloseSq )
 					{
 						continue;
 					}
 				}
 
+				Debug.Log( needThisCloseSq + ", " + distSq );
 				needThisCloseSq = distSq;
 				ret = facOther;
 			}

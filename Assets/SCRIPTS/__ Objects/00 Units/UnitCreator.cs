@@ -78,10 +78,11 @@ namespace SS.Objects.Units
 					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
 				}
 
+				CivilianUnitExtension cue = gameObject.GetComponent<CivilianUnitExtension>();
 				SSObject obj = SSObject.Find( data.workplace.Item1 );
 				WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
 
-				unit.workplace = workplace;
+				cue.workplace = workplace;
 			}
 
 			//
@@ -152,7 +153,7 @@ namespace SS.Objects.Units
 
 			if( unit.isCivilian )
 			{
-				gameObject.AddComponent<WorkerScheduleController>();
+				gameObject.AddComponent<CivilianUnitExtension>();
 			}
 
 			unit.onFactionChange.AddListener( () =>
@@ -343,11 +344,12 @@ namespace SS.Objects.Units
 				data.insideSlotIndex = unit.slotIndex;
 			}
 
-			if( unit.workplace != null )
+			CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
+			if( cue.workplace != null )
 			{
 				data.workplace = new Tuple<Guid, Guid>(
-						unit.workplace.ssObject.guid,
-						unit.workplace.moduleId
+						cue.workplace.ssObject.guid,
+						cue.workplace.moduleId
 					);
 			}
 

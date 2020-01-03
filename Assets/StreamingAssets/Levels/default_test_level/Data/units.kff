@@ -42,7 +42,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -138,7 +138,7 @@
 		];
 		MovementSpeed = 0.25;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -250,7 +250,7 @@
 		];
 		MovementSpeed = 0.5;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -345,7 +345,7 @@
 		];
 		MovementSpeed = 0.4;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -446,7 +446,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 4; }
@@ -550,7 +550,7 @@
 		];
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 6; }
@@ -653,7 +653,7 @@
 		];
 		MovementSpeed = 0.45;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 5; }
@@ -727,7 +727,7 @@
 		IsConstructor = true;
 		MovementSpeed = 0.35;
 		RotationSpeed = 120;
-		Size = { X = 0.25; Y = 0.1875; Z = 0.25; }; // The size of the hitbox.
+		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Modules =
 		[
 			{

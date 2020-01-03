@@ -139,24 +139,21 @@ namespace SS.Objects.Modules
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
+					Debug.Log( "A" );
 					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
+
+				if( this.isReady2 )
+				{
+					if( this.target.transform.position == this.transform.position )
+					{
+						return;
+					}
+
+					this.Attack( this.target );
+				}
 			}
 
-			if( this.isReady2 )
-			{
-				if( this.target == null )
-				{
-					return;
-				}
-
-				if( this.target.transform.position == this.transform.position )
-				{
-					return;
-				}
-
-				this.Attack( this.target );
-			}
 
 			if( this.isReadyToAttack )
 			{

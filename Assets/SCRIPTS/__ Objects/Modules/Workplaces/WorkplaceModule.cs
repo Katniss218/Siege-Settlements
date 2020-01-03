@@ -1,7 +1,5 @@
-﻿using SS.Levels;
+﻿using SS.AI;
 using SS.Objects.Units;
-using SS.UI;
-using UnityEngine;
 
 namespace SS.Objects.Modules
 {
@@ -15,7 +13,7 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public InteriorModule interior { get; set; }
 				
-		public bool CanEmploy( Unit civilian )
+		public bool CanEmploy( CivilianUnitExtension civilian )
 		{
 			// Returns true if there is space left in the interior's worker slots. Returns false if the civilian is already employed.
 			if( civilian.workplace != null )
@@ -33,7 +31,7 @@ namespace SS.Objects.Modules
 			return foundEmpty;
 		}
 
-		public void Employ( Unit civilian )
+		public void Employ( CivilianUnitExtension civilian )
 		{
 			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
 			{

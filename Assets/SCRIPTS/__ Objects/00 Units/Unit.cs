@@ -483,7 +483,6 @@ namespace SS.Objects.Units
 			return true;
 		}
 
-		public WorkplaceModule workplace { get; set; } = null;
 		
 
 		// // // =-    -    -  -       -  -  -   -    -   -  -  -      -      -    -  -  -  -  -        -  -  -     -   -    -

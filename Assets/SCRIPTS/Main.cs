@@ -137,8 +137,8 @@ namespace SS
 						return;
 					}
 
-					Unit u = (Unit)Selection.selectedObjects[0];
-					workplace.Employ( u );
+					CivilianUnitExtension cue = Selection.selectedObjects[0].GetComponent<CivilianUnitExtension>();
+					workplace.Employ( cue );
 				}
 			}
 		}

@@ -7,22 +7,23 @@ using UnityEngine;
 
 namespace SS.AI
 {
-	public class WorkerScheduleController : MonoBehaviour
+	public class CivilianUnitExtension : MonoBehaviour
 	{
-		private Unit __civilian = null;
-		public Unit civilian
+		private Unit __unit = null;
+		public Unit unit
 		{
 			get
 			{
-				if( this.__civilian == null )
+				if( this.__unit == null )
 				{
-					this.__civilian = this.GetComponent<Unit>();
+					this.__unit = this.GetComponent<Unit>();
 				}
-				return this.__civilian;
+				return this.__unit;
 			}
 		}
 
 
+		public WorkplaceModule workplace { get; set; } = null;
 		public bool isWorking { get; private set; }
 
 		bool IsGoingToHome( TacticalGoalController goalController )
@@ -30,7 +31,7 @@ namespace SS.AI
 			if( goalController.goal is TacticalMoveToGoal )
 			{
 				TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.goal;
-				if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.civilian.workplace.interior )
+				if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.workplace.interior )
 				{
 					return true;
 				}
@@ -40,7 +41,7 @@ namespace SS.AI
 
 		bool IsGoingToWorkplace( TacticalGoalController goalController )
 		{
-			if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior == this.civilian.workplace.interior )
+			if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior == this.workplace.interior )
 			{
 				return true;
 			}
@@ -55,7 +56,7 @@ namespace SS.AI
 			float dst = float.MaxValue;
 			for( int i = 0; i < b.Length; i++ )
 			{
-				if( b[i].factionId != this.civilian.factionId )
+				if( b[i].factionId != this.unit.factionId )
 				{
 					continue;
 				}
@@ -66,7 +67,7 @@ namespace SS.AI
 					continue;
 				}
 
-				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.civilian ) == null )
+				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.unit ) == null )
 				{
 					continue;
 				}
@@ -81,11 +82,10 @@ namespace SS.AI
 			}
 			return interior;
 		}
-
-
+		
 		void Update()
 		{
-			if( this.civilian.workplace == null )
+			if( this.workplace == null )
 			{
 				return;
 			}
@@ -101,7 +101,7 @@ namespace SS.AI
 				}
 
 				// if is at home
-				if( this.civilian.interior != null && this.civilian.interior != this.civilian.workplace.interior )
+				if( this.unit.interior != null && this.unit.interior != this.workplace.interior )
 				{
 					return;
 				}
@@ -126,7 +126,7 @@ namespace SS.AI
 
 			if( this.isWorking ) // set after the worker has checked in.
 			{
-				this.civilian.workplace.MakeDoWork( this.civilian );
+				this.workplace.MakeDoWork( this.unit );
 			}
 			else
 			{
@@ -136,7 +136,7 @@ namespace SS.AI
 					return;
 				}
 				
-				if( this.civilian.interior == this.civilian.workplace.interior && this.civilian.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
+				if( this.unit.interior == this.workplace.interior && this.unit.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
 				{
 					Debug.LogWarning( "starting work" );
 					this.isWorking = true;
@@ -145,7 +145,7 @@ namespace SS.AI
 				{
 					Debug.LogWarning( "Going to work" );
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
-					goal.SetDestination( this.civilian.workplace.interior, InteriorModule.SlotType.Worker );
+					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
 					goalController.goal = goal;
 				}
 			}

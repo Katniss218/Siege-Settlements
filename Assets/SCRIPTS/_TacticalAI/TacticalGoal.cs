@@ -35,8 +35,13 @@ namespace SS.AI.Goals
 				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
 				for( int i = 0; i < attackModules.Length; i++ )
 				{
+					if( attackModules[i].target == null )
+					{
+						continue;
+					}
 					if( !Targeter.CanTarget( controller.transform.position, attackModules[i].attackRange, attackModules[i].target, ssobj ) )
 					{
+						Debug.Log( "B" );
 						attackModules[i].target = null;
 					}
 				}

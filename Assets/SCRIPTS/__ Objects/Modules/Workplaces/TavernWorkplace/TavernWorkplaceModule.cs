@@ -1,4 +1,5 @@
-﻿using SS.Levels.SaveStates;
+﻿using SS.AI;
+using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,10 +13,10 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			bool isWorkerInside = false;
-			List<Unit> emp = this.interior.GetEmployed();
+			List<CivilianUnitExtension> emp = this.interior.GetEmployed();
 			for( int i = 0; i < emp.Count; i++ )
 			{
-				if( emp[i].workplace == this && emp[i].interior == this.interior && emp[i].slotType == InteriorModule.SlotType.Worker )
+				if( emp[i].workplace == this && emp[i].unit.interior == this.interior && emp[i].unit.slotType == InteriorModule.SlotType.Worker )
 				{
 					isWorkerInside = true;
 				}
