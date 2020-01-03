@@ -163,6 +163,11 @@ namespace SS
 		// night is <dayLength, totalDayLen)
 		public bool isNight { get { return this.time >= dayLength; } }
 
+		public bool IsWorkTime()
+		{
+			return this.time > this.dayLength * 0.05f && this.time < this.dayLength * 0.95f;
+		}
+
 		private Transform sunTransform = null;
 		private Transform moonTransform = null;
 

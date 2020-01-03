@@ -124,10 +124,11 @@ namespace SS.AI.Goals
 
 
 				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( this.navMeshAgent.hasPath )
+				if( (this.navMeshAgent.hasPath && Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE) 
+					|| Vector3.Distance( this.destinationObject.transform.position, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE )
 				{
-					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE )
-					{
+					//if(  )
+					//{
 						this.navMeshAgent.ResetPath();
 						if( this.destinationInterior != null )
 						{
@@ -151,7 +152,7 @@ namespace SS.AI.Goals
 						}
 
 						return;
-					}
+					//}
 				}
 			
 

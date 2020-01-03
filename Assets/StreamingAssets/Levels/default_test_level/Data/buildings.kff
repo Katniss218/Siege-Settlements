@@ -122,10 +122,6 @@
 		Modules =
 		[
 			{
-				TypeId = "workplace_tavern";
-				ModuleId = "12335535-3373-7933-4658-396678574576";
-			},
-			{
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
@@ -137,14 +133,7 @@
 						MaxPopulation = 1; // Max size of unit that can fit inside.
 						IsHidden = true; // If true, the unit will dissappear after entering this slot.
 						WhitelistedUnits = [ 
-							"unit.civilian",
-							"unit.light_infantry",
-							"unit.heavy_infantry",
-							"unit.light_cavalry",
-							"unit.heavy_cavalry",
-							"unit.bowmen",
-							"unit.crossbowmen",
-							"unit.mounted_archers"
+							"unit.civilian"
 						]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					},
 					{
@@ -153,14 +142,7 @@
 						MaxPopulation = 1;
 						IsHidden = true;
 						WhitelistedUnits = [ 
-							"unit.civilian",
-							"unit.light_infantry",
-							"unit.heavy_infantry",
-							"unit.light_cavalry",
-							"unit.heavy_cavalry",
-							"unit.bowmen",
-							"unit.crossbowmen",
-							"unit.mounted_archers"
+							"unit.civilian"
 						];
 					},
 					{
@@ -169,14 +151,7 @@
 						MaxPopulation = 1;
 						IsHidden = true;
 						WhitelistedUnits = [ 
-							"unit.civilian",
-							"unit.light_infantry",
-							"unit.heavy_infantry",
-							"unit.light_cavalry",
-							"unit.heavy_cavalry",
-							"unit.bowmen",
-							"unit.crossbowmen",
-							"unit.mounted_archers"
+							"unit.civilian"
 						];
 					},
 					{
@@ -185,25 +160,8 @@
 						MaxPopulation = 1;
 						IsHidden = true;
 						WhitelistedUnits = [ 
-							"unit.civilian",
-							"unit.light_infantry",
-							"unit.heavy_infantry",
-							"unit.light_cavalry",
-							"unit.heavy_cavalry",
-							"unit.bowmen",
-							"unit.crossbowmen",
-							"unit.mounted_archers"
+							"unit.civilian"
 						];
-					}
-				];
-				WorkerSlots =
-				[
-					{
-						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
-						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
-						MaxPopulation = 1; // Max size of unit that can fit inside.
-						IsHidden = true; // If true, the unit will dissappear after entering this slot.
-						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					}
 				];
 				Icon = "extern:Textures/Modules/interior_icon.png";
@@ -934,5 +892,136 @@
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+	},
+	{
+		Id = "building.tavern";
+		DisplayName = "Tavern";
+		ViewRange = 7.0;
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.43; Y = 0.51; Z = 0.55; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "workplace_tavern";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					}
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/tavern.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/house_0_color.png";
+					NormalMap = "extern:Textures/Buildings/house_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house_icon.png";
 	}
 ];

@@ -754,7 +754,8 @@
 					"building.wooden_wall",
 					"building.wooden_tower",
 					"building.wooden_ballista_tower",
-					"building.campfire"
+					"building.campfire",
+					"building.tavern"
 				];
 				Icon = "extern:Textures/Modules/constructor_icon.png";
 			}

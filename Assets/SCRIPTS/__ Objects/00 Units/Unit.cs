@@ -1,6 +1,7 @@
 ﻿using SS.AI;
 using SS.AI.Goals;
 using SS.Content;
+using SS.Objects.Buildings;
 using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
@@ -383,69 +384,13 @@ namespace SS.Objects.Units
 		//
 		//
 		
-		public bool isWorking { get; private set; }
-
-		void UpdateWorkerSchedule()
-		{
-#warning civilians that are employed have DoWork() tactical goal. that goal stores the workplace & the current state of the routine.
-#warning  Every frame (if working) it calls the workplace to specify what to do (this.workplace.DoWork( this.worker ))
-
-			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
-#warning workplace module requires interior module to be present.
-			if( DaylightCycleController.instance.isNight )
-			{
-				// Unit tries to find nearest unoccupied house. If the house gets occupied, it finds next nearest suitable (unoccupied) house.
-				// - In the future, make it so that it coordinates with other units (as a part of strategic AI) & each unit only goes to buildings that won't be occupied by other unit currently on the way there.
-				if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior != this.workplace.interior )
-				{
-					TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.goal;
-					if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.workplace.interior )
-					{
-						this.isWorking = false;
-						
-						TacticalMoveToGoal goal = new TacticalMoveToGoal();
-		GetClosestInteriorInRangeUnoccupiedMarkedAsAHouse
-						goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
-						goalController.goal = goal;
-					}
-				}
-
-				return;
-			}
-
-			if( this.isWorking ) // set after the worker has checked in.
-			{
-				this.workplace.MakeDoWork( this );
-			}
-			else
-			{
-				if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior == this.workplace.interior )
-				{
-					TacticalMoveToGoal goal = new TacticalMoveToGoal();
-					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
-					goalController.goal = goal;
-				}
-
-				if( this.interior == this.workplace.interior && !this.isWorking )
-				{
-					isWorking = true;
-				}
-			}
-
-		}
-
 		void Update()
 		{
 			if( this.hud.isVisible )
 			{
 				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
 			}
-
-			if( this.isCivilian && this.workplace != null ) // is civilian & is employed... - update the worker schedule.
-			{
-				this.UpdateWorkerSchedule();
-			}
-
+			
 			if( !this.hasBeenHiddenSinceLastDamage )
 			{
 				return;

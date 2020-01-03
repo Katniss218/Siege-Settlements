@@ -15,7 +15,7 @@ namespace SS.Objects.Modules
 			List<Unit> emp = this.interior.GetEmployed();
 			for( int i = 0; i < emp.Count; i++ )
 			{
-				if( emp[i].workplace == this )
+				if( emp[i].workplace == this && emp[i].interior == this.interior && emp[i].slotType == InteriorModule.SlotType.Worker )
 				{
 					isWorkerInside = true;
 				}
@@ -46,7 +46,6 @@ namespace SS.Objects.Modules
 		public override void MakeDoWork( Unit worker )
 		{
 #warning worker schedule.
-			throw new System.NotImplementedException();
 		}
 
 

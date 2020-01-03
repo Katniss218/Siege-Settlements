@@ -54,7 +54,7 @@ namespace SS.Objects.Modules
 		}
 
 		/// <summary>
-		/// The workplace-dependent work of the employed civilian.
+		/// Controls the AI of the civilian while he's working.
 		/// </summary>
 		public abstract void MakeDoWork( Unit worker );
 	}

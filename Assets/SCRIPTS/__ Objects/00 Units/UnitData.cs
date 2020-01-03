@@ -190,8 +190,8 @@ namespace SS.Levels.SaveStates
 			if( this.workplace != null )
 			{
 				serializer.WriteClass( "", "Workplace" );
-				serializer.WriteGuid( "Workplace", "ObjectGuid", this.inside.Item1 );
-				serializer.WriteGuid( "Workplace", "ModuleId", this.inside.Item2 );
+				serializer.WriteGuid( "Workplace", "ObjectGuid", this.workplace.Item1 );
+				serializer.WriteGuid( "Workplace", "ModuleId", this.workplace.Item2 );
 			}
 
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );

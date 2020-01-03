@@ -150,6 +150,11 @@ namespace SS.Objects.Units
 			unit.health = def.healthMax;
 			unit.armor = def.armor;
 
+			if( unit.isCivilian )
+			{
+				gameObject.AddComponent<WorkerScheduleController>();
+			}
+
 			unit.onFactionChange.AddListener( () =>
 			{
 				Color color = LevelDataManager.factions[unit.factionId].color;
