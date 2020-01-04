@@ -13,11 +13,6 @@ namespace SS.Objects.Modules
 						
 		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target, SSObjectDFS factionMemberSelf )
 		{
-			if( target == null )
-			{
-				return false;
-			}
-
 			if( !factionMemberSelf.CanTargetAnother( target.GetComponent<IFactionMember>() ) )
 			{
 				return false;
@@ -109,8 +104,7 @@ namespace SS.Objects.Modules
 						continue;
 					}
 				}
-
-				Debug.Log( needThisCloseSq + ", " + distSq );
+				
 				needThisCloseSq = distSq;
 				ret = facOther;
 			}

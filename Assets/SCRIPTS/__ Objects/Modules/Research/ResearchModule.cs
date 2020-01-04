@@ -217,16 +217,7 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is ResearchModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			ResearchModuleData data = (ResearchModuleData)_data;
+			ResearchModuleData data = ValidateDataType<ResearchModuleData>( _data );
 
 			// ------          DATA
 

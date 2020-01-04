@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class TavernWorkplaceModule : WorkplaceModule, ISelectDisplayHandler
+	public class TavernWorkplaceModule : WorkplaceModule
 	{
 		public const string KFF_TYPEID = "workplace_tavern";
 
@@ -46,7 +46,7 @@ namespace SS.Objects.Modules
 
 		public override void MakeDoWork( Unit worker )
 		{
-#warning worker schedule.
+#warning worker schedule. But what do they do?
 		}
 
 
@@ -56,21 +56,9 @@ namespace SS.Objects.Modules
 #warning data.
 		}
 
-		public override void SetData( ModuleData data )
+		public override void SetData( ModuleData _data )
 		{
-
-		}
-
-
-
-		public void OnDisplay()
-		{
-			
-		}
-
-		public void OnHide()
-		{
-
+			TavernWorkplaceModuleData data = ValidateDataType<TavernWorkplaceModuleData>( _data );
 		}
 	}
 }

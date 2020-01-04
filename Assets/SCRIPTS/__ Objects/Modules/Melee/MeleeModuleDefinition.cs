@@ -2,7 +2,6 @@
 using SS.Objects.Buildings;
 using SS.Content;
 using SS.Objects.Heroes;
-using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
@@ -43,6 +42,7 @@ namespace SS.Objects.Modules
 		{
 			MeleeModule module = gameObject.AddComponent<MeleeModule>();
 			module.moduleId = moduleId;
+			//module.displayName = this.displayName;
 			//module.icon = this.icon;
 			module.attackRange = this.attackRange;
 

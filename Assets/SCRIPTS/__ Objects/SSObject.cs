@@ -28,7 +28,7 @@ namespace SS.Objects
 		private static List<Hero> allHeroes = new List<Hero>();
 		private static List<Extra> allExtras = new List<Extra>();
 
-		public static SSObject[] GetAllSSObjects()
+		public static SSObject[] GetAll()
 		{
 			return allSSObjects.ToArray();
 		}
@@ -331,7 +331,7 @@ namespace SS.Objects
 
 		public static SSObject Find( Guid guid )
 		{
-			SSObject[] ssObjectArray = GetAllSSObjects();
+			SSObject[] ssObjectArray = GetAll();
 
 			for( int i = 0; i < ssObjectArray.Length; i++ )
 			{

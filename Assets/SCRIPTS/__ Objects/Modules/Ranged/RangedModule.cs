@@ -139,7 +139,6 @@ namespace SS.Objects.Modules
 			{
 				for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 				{
-					Debug.Log( "A" );
 					this.traversibleSubObjects[i].transform.rotation = Quaternion.LookRotation( (this.target.transform.position - this.traversibleSubObjects[i].transform.position).normalized, this.transform.up );
 				}
 
@@ -260,16 +259,7 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is RangedModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			RangedModuleData data = (RangedModuleData)_data;
+			RangedModuleData data = ValidateDataType<RangedModuleData>( _data );
 			
 			if( data.targetGuid != null )
 			{

@@ -8,11 +8,22 @@ namespace SS.Objects.Modules
 	/// </summary>
 	public abstract class WorkplaceModule : SSModule
 	{
+		private InteriorModule __interior = null;
 		/// <summary>
 		/// Contains the interior (which contains the slots) used by this workplace.
 		/// </summary>
-		public InteriorModule interior { get; set; }
-				
+		public InteriorModule interior
+		{
+			get
+			{
+				if( this.__interior == null )
+				{
+					this.__interior = this.ssObject.GetModules<InteriorModule>()[0];
+				}
+				return this.__interior;
+			}
+		}
+		
 		public bool CanEmploy( CivilianUnitExtension civilian )
 		{
 			// Returns true if there is space left in the interior's worker slots. Returns false if the civilian is already employed.
@@ -31,15 +42,21 @@ namespace SS.Objects.Modules
 			return foundEmpty;
 		}
 
+		public static void SetWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
+		{
+			w.interior.workerSlots[slotIndex].worker = c;
+			c.workplace = w;
+			c.workplaceSlotId = slotIndex;
+		}
+
 		public void Employ( CivilianUnitExtension civilian )
 		{
 			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
 			{
 				if( this.interior.workerSlots[i].worker == null )
 				{
-					this.interior.workerSlots[i].worker = civilian;
-
-					civilian.workplace = this;
+					SetWorker( this, civilian, i );
+					return;
 				}
 			}
 		}
@@ -48,7 +65,7 @@ namespace SS.Objects.Modules
 
 		protected virtual void Start()
 		{
-			this.interior = this.ssObject.GetModules<InteriorModule>()[0];
+
 		}
 
 		/// <summary>

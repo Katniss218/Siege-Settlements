@@ -30,6 +30,7 @@ namespace SS.Objects.Modules
 		{
 			ResearchModule module = gameObject.AddComponent<ResearchModule>();
 			module.moduleId = moduleId;
+			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.researchSpeed = this.researchSpeed;
 			module.researchableTechnologies = new TechnologyDefinition[this.researchableTechnologies.Length];
@@ -60,6 +61,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing or invalid value of 'ResearchableTechnologies' (" + serializer.file.fileName + ")." );
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -74,6 +77,7 @@ namespace SS.Objects.Modules
 		{
 			serializer.WriteFloat( "", "ResearchSpeed", this.researchSpeed );
 			serializer.WriteStringArray( "", "ResearchableTechnologies", this.researchableTechnologies );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

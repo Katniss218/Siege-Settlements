@@ -5,6 +5,7 @@ using SS.Objects;
 using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using System;
@@ -58,20 +59,7 @@ namespace SS.AI.Goals
 		{
 			this.isHostile = true;
 		}
-
-#warning dropOff goal can be used by the player by itself.
-#warning pickUpGoal IS used.
-#warning makePaymentGoal can be used.
-#warning moveto is used extensively.
-
-#warning - hunters need some sort of selective attacking of only specified ids. (can be assigned via a a search from work schedule & Attack)
-		//   - attack would need to be turned-off when the unit dies.
-#warning @ hunters need some sort of selective collecting of resources (can be assigned via a search from work schedule & PickUp).
-
-#warning # miners use pickup & dropoff. (get minerals, bring materials to storage)
-#warning # lumberjacks are analogous to miners.
-#warning # farmers use pickup & dropoff. (get crop, bring food to storage)
-#warning # tavernkeep uses pickup & dropoff. (gets food from storage, brings food to tavern)
+		
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -354,6 +342,16 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
+			if( controller.ssObject is Unit )
+			{
+				Unit unit = (Unit)controller.ssObject;
+
+				if( unit.isInside )
+				{
+					unit.SetOutside();
+				}
+			}
+
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( this.destination == DestinationType.OBJECT )
 			{
@@ -397,6 +395,7 @@ namespace SS.AI.Goals
 
 			if( this.destination == DestinationType.OBJECT )
 			{
+#warning ugly.
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, 0.75f ) )
 				{
 					this.OnArrivalObject( controller );

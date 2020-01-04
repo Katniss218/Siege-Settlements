@@ -137,8 +137,12 @@ namespace SS
 						return;
 					}
 
-					CivilianUnitExtension cue = Selection.selectedObjects[0].GetComponent<CivilianUnitExtension>();
-					workplace.Employ( cue );
+					SSObjectDFS[] selected = Selection.GetSelectedObjects();
+					for( int i = 0; i < selected.Length; i++ )
+					{
+						CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
+						workplace.Employ( cue );
+					}
 				}
 			}
 		}
@@ -178,7 +182,7 @@ namespace SS
 
 					if( hitInventory != null )
 					{
-						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.selectedObjects );
+						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.GetSelectedObjects() );
 					}
 				}
 			}
@@ -197,7 +201,7 @@ namespace SS
 						return;
 					}
 
-					SSObjectDFS[] selected = Selection.selectedObjects;
+					SSObjectDFS[] selected = Selection.GetSelectedObjects();
 					for( int i = 0; i < selected.Length; i++ )
 					{
 						if( !(selected[i] is Unit) )
@@ -225,7 +229,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				SSObjectDFS[] selected = Selection.selectedObjects;
+				SSObjectDFS[] selected = Selection.GetSelectedObjects();
 				for( int i = 0; i < selected.Length; i++ )
 				{
 					if( !(selected[i] is Unit) )
@@ -348,7 +352,7 @@ namespace SS
 
 		private static void SetFactionSelected( int fac )
 		{
-			SSObjectDFS[] selected = Selection.selectedObjects;
+			SSObjectDFS[] selected = Selection.GetSelectedObjects();
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				IFactionMember faction = selected[i].GetComponent<IFactionMember>();

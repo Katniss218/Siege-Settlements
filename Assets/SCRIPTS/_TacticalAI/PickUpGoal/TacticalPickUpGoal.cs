@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -70,7 +71,8 @@ namespace SS.AI.Goals
 		}
 
 		private void OnArrivalDeposit( TacticalGoalController controller, ResourceDepositModule destinationDeposit )
-		{			
+		{
+#warning TODO - do something to this. either this should also exit from interiors, or just try to pick up, and must be moved first via MoveTo.
 			Dictionary<string, int> resourcesInDeposit = destinationDeposit.GetAll();
 			foreach( var kvp in resourcesInDeposit )
 			{
@@ -143,6 +145,16 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
+			if( controller.ssObject is Unit )
+			{
+				Unit unit = (Unit)controller.ssObject;
+
+				if( unit.isInside )
+				{
+					unit.SetOutside();
+				}
+			}
+
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( this.destinationObject == null )
 			{

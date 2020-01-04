@@ -134,120 +134,33 @@ namespace SS.Objects.Units
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
-		public bool isCivilian { get; set; }
+		private static int avoidancePriorityIncrement = 10;
 
-		// = = = = = = = = = = =
-		// = = = = = = = = = = =
-		// = = = = = = = = = = =
-
-		
-		/// <summary>
-		/// The interior module the unit is currently in. Null if not is any interior.
-		/// </summary>
-		public InteriorModule interior { get; private set; }
-		public InteriorModule.SlotType slotType { get; private set; }
-		/// <summary>
-		/// The slot of the interior module the unit is currently in.
-		/// </summary>
-		public int slotIndex { get; private set; }
-
-		public bool isInside
+		private bool __isCivilian;
+		public bool isCivilian
 		{
-			get { return this.interior != null; }
-		}
-		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
-
-		/// <summary>
-		/// Marks the unit as being inside.
-		/// </summary>
-		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
-		{
-			InteriorModule.Slot slot = null;
-			HUDInterior.Element slotHud = null;
-			if( slotType == InteriorModule.SlotType.Generic )
+			get
 			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
+				return this.__isCivilian;
 			}
-			else if( slotType == InteriorModule.SlotType.Worker )
+			set
 			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
-			
-			this.navMeshAgent.enabled = false;
-
-			this.interior = interior;
-			this.slotType = slotType;
-			this.slotIndex = slotIndex;
-			
-			slot.objInside = this;
-
-			this.transform.position = interior.SlotWorldPosition( slot );
-			this.transform.rotation = interior.SlotWorldRotation( slot );
-			
-			slotHud.SetSprite( this.icon );
-			
-			if( slot.isHidden )
-			{
-				SubObject[] subObjects = this.GetSubObjects();
-
-				for( int j = 0; j < subObjects.Length; j++ )
+				this.__isCivilian = value;
+				// if the unit is civilian, make sure to set it's avoidance priority to 10-99, otherwise set them to 1. Do this to reduce civilians getting stuck on each other.
+				if( value )
 				{
-					subObjects[j].gameObject.SetActive( false );
+					this.navMeshAgent.avoidancePriority = avoidancePriorityIncrement++;
+					if( avoidancePriorityIncrement > 99 )
+					{
+						avoidancePriorityIncrement = 10;
+					}
 				}
-
-				this.isInsideHidden = true;
-			}
-		}
-
-		/// <summary>
-		/// Marks the unit as being outside.
-		/// </summary>
-		public void SetOutside()
-		{
-			if( !this.isInside )
-			{
-				return;
-			}
-			
-			this.transform.position = this.interior.EntranceWorldPosition();
-			this.transform.rotation = Quaternion.identity;
-
-			this.navMeshAgent.enabled = true;
-
-			InteriorModule.Slot slot = null;
-			HUDInterior.Element slotHud = null;
-			if( this.slotType == InteriorModule.SlotType.Generic )
-			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
-			}
-			else if( this.slotType == InteriorModule.SlotType.Worker )
-			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
-			
-			slot.objInside = null;
-
-			slotHud.ClearSprite();
-
-			if( this.isInsideHidden )
-			{
-				SubObject[] subObjects = this.GetSubObjects();
-
-				for( int i = 0; i < subObjects.Length; i++ )
+				else
 				{
-					subObjects[i].gameObject.SetActive( true );
+					navMeshAgent.avoidancePriority = 1;
 				}
 			}
-
-			this.interior = null;
-			this.slotIndex = -1;
-			this.isInsideHidden = false;
 		}
-
 
 		//
 		//
@@ -365,21 +278,7 @@ namespace SS.Objects.Units
 			this.collider.size = new Vector3( x, this.sizePerPopulation.y, z );
 			this.collider.center = new Vector3( 0.0f, this.sizePerPopulation.y * 0.5f, 0.0f );
 		}
-
-		private Vector3 __size;
-		public Vector3 size
-		{
-			get
-			{
-				return this.__size;
-			}
-			set
-			{
-				this.__size = value;
-				
-			}
-		}
-
+		
 		//
 		//
 		//
@@ -413,6 +312,125 @@ namespace SS.Objects.Units
 				this.hasBeenHiddenSinceLastDamage = false;
 			}
 		}
+
+
+		// = = = = = = = = = = =
+		// = = = = = = = = = = =
+		// = = = = = = = = = = =
+
+
+		/// <summary>
+		/// The interior module the unit is currently in. Null if not is any interior.
+		/// </summary>
+		public InteriorModule interior { get; private set; }
+		public InteriorModule.SlotType slotType { get; private set; }
+		/// <summary>
+		/// The slot of the interior module the unit is currently in.
+		/// </summary>
+		public int slotIndex { get; private set; }
+
+		public bool isInside
+		{
+			get { return this.interior != null; }
+		}
+		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
+
+		/// <summary>
+		/// Marks the unit as being inside.
+		/// </summary>
+		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
+		{
+			InteriorModule.Slot slot = null;
+			HUDInterior.Element slotHud = null;
+			if( slotType == InteriorModule.SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+			}
+			else if( slotType == InteriorModule.SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
+			
+			this.navMeshAgent.enabled = false;
+
+			this.interior = interior;
+			this.slotType = slotType;
+			this.slotIndex = slotIndex;
+
+			slot.objInside = this;
+
+			this.transform.position = interior.SlotWorldPosition( slot );
+			this.transform.rotation = interior.SlotWorldRotation( slot );
+			
+			slotHud.SetSprite( this.icon );
+
+			if( slot.isHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int j = 0; j < subObjects.Length; j++ )
+				{
+					subObjects[j].gameObject.SetActive( false );
+				}
+
+				this.isInsideHidden = true;
+			}
+		}
+
+		/// <summary>
+		/// Marks the unit as being outside.
+		/// </summary>
+		public void SetOutside()
+		{
+			if( !this.isInside )
+			{
+				return;
+			}
+
+			this.transform.position = this.interior.EntranceWorldPosition();
+			this.transform.rotation = Quaternion.identity;
+
+			this.navMeshAgent.enabled = true;
+
+			InteriorModule.Slot slot = null;
+			HUDInterior.Element slotHud = null;
+			if( this.slotType == InteriorModule.SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+			}
+			else if( this.slotType == InteriorModule.SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
+
+			slot.objInside = null;
+
+			slotHud.ClearSprite();
+
+			if( this.isInsideHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int i = 0; i < subObjects.Length; i++ )
+				{
+					subObjects[i].gameObject.SetActive( true );
+				}
+			}
+
+			this.interior = null;
+			this.slotIndex = -1;
+			this.isInsideHidden = false;
+		}
+
+
+		//
+		//
+		//
+
 
 		public void OnMouseEnterListener()
 		{
@@ -465,7 +483,8 @@ namespace SS.Objects.Units
 		{
 			if( this.isPopulationLocked )
 			{
-				Debug.Log( "PL: " + this.guid );
+#warning figure out something for the pop locking.
+				//Debug.Log( "PL: " + this.guid );
 				return false;
 			}
 			SSModule[] modules = this.GetModules();
@@ -475,7 +494,7 @@ namespace SS.Objects.Units
 				{
 					if( !((IPopulationChangeBlockerModule)modules[i]).CanChangePopulation() )
 					{
-						Debug.Log( "PL: " + this.guid + " -    " + modules[i].moduleId );
+						//Debug.Log( "PL: " + this.guid + " -    " + modules[i].moduleId );
 						return false;
 					}
 				}

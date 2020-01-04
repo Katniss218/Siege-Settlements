@@ -6,10 +6,6 @@ namespace SS.Objects.Modules
 	public abstract class SSModule : MonoBehaviour
 	{
 		private SSObject __ssObject = null;
-		private Guid __moduleId = Guid.Empty;
-
-		public Sprite icon { get; set; }
-
 		/// <summary>
 		/// Returns the SSObject that this module is added to. Throws an exception if N/A.
 		/// </summary>
@@ -25,6 +21,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		private Guid __moduleId = Guid.Empty;
 		/// <summary>
 		/// A unique identifier that identifies this specific module (Must be unique on an per-SSObject basis).
 		/// </summary>
@@ -44,13 +41,43 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public virtual void OnObjDestroyed()
-		{
+		public string displayName { get; set; }
+		
+		public Sprite icon { get; set; }
 
+		//
+		//
+		//
+
+
+		public virtual void OnObjDestroyed() { }
+
+		/// <summary>
+		/// makes sure that the data is not null & of the specified type. Returns the data cast as the specified type. Throws exception if data is null or not the specified type.
+		/// </summary>
+		/// <exception cref="ArgumentNullException">Thrown when the data is null.</exception>
+		/// <exception cref="Exception">Thrown when the data is not of the specified type.</exception>
+		protected static T ValidateDataType<T>( ModuleData data ) where T : ModuleData
+		{
+			if( data == null )
+			{
+				throw new ArgumentNullException( "Provided data is null." );
+			}
+			if( !(data is T) )
+			{
+				throw new Exception( "Provided data is not of the correct type (needs to be '" + typeof( T ).Name + "')." );
+			}
+
+			return (T)data;
 		}
 
 
+		//
+		//
+		//
+
+
 		public abstract ModuleData GetData();
-		public abstract void SetData( ModuleData data );
+		public abstract void SetData( ModuleData _data );
 	}
 }

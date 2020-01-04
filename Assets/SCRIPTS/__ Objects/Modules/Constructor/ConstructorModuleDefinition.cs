@@ -31,6 +31,7 @@ namespace SS.Objects.Modules
 		{
 			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
 			module.moduleId = moduleId;
+			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.constructibleBuildings = new BuildingDefinition[this.constructibleBuildings.Length];
 			for( int i = 0; i < module.constructibleBuildings.Length; i++ )
@@ -51,6 +52,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing or invalid value of 'ConstructibleBuildings' (" + serializer.file.fileName + ")." );
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -64,6 +67,7 @@ namespace SS.Objects.Modules
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.WriteStringArray( "", "ConstructibleBuildings", this.constructibleBuildings );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

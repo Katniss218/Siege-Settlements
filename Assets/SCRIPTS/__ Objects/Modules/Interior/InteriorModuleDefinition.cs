@@ -62,11 +62,15 @@ namespace SS.Objects.Modules
 
 		public override void AddModule( GameObject gameObject, Guid moduleId )
 		{
-			InteriorModule interior = gameObject.AddComponent<InteriorModule>();
+			InteriorModule module = gameObject.AddComponent<InteriorModule>();
+			module.moduleId = moduleId;
+			module.displayName = this.displayName;
+			module.icon = this.icon;
+			module.entrancePosition = this.entrancePosition;
 
 			if( this.slots != null )
 			{
-				interior.slots = new InteriorModule.SlotGeneric[this.slots.Length];
+				module.slots = new InteriorModule.SlotGeneric[this.slots.Length];
 				for( int i = 0; i < this.slots.Length; i++ )
 				{
 					InteriorModule.SlotGeneric slot = new InteriorModule.SlotGeneric();
@@ -76,13 +80,13 @@ namespace SS.Objects.Modules
 					slot.isHidden = this.slots[i].isHidden;
 					slot.whitelistedUnits = this.slots[i].whitelistedUnits;
 
-					interior.slots[i] = slot;
+					module.slots[i] = slot;
 				}
 			}
 			
 			if( this.workerSlots != null )
 			{
-				interior.workerSlots = new InteriorModule.SlotWorker[this.workerSlots.Length];
+				module.workerSlots = new InteriorModule.SlotWorker[this.workerSlots.Length];
 				for( int i = 0; i < this.workerSlots.Length; i++ )
 				{
 					InteriorModule.SlotWorker slot = new InteriorModule.SlotWorker();
@@ -91,14 +95,11 @@ namespace SS.Objects.Modules
 					slot.maxPopulation = this.workerSlots[i].maxPopulation;
 					slot.isHidden = this.workerSlots[i].isHidden;
 
-					interior.workerSlots[i] = slot;
+					module.workerSlots[i] = slot;
 				}
 			}
 
-			interior.OnAfterSlotsChanged();
-			interior.entrancePosition = this.entrancePosition;
-			interior.moduleId = moduleId;
-			interior.icon = this.icon;
+			module.OnAfterSlotsChanged();
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )
@@ -134,6 +135,8 @@ namespace SS.Objects.Modules
 				this.entrancePosition = null;
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -153,6 +156,7 @@ namespace SS.Objects.Modules
 			{
 				serializer.WriteVector3( "", "EntrancePosition", this.entrancePosition.Value );
 			}
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

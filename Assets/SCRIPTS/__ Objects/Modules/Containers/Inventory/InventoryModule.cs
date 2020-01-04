@@ -12,7 +12,7 @@ using UnityEngine.Events;
 
 namespace SS.Objects.Modules
 {
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IMouseOverHandlerListener
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler//, IMouseOverHandlerListener
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -53,25 +53,25 @@ namespace SS.Objects.Modules
 		{
 			this.slotGroups[index].capacity = capacity;
 			
-			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
 				if( this.ssObject.IsDisplaySafe() )
 				{
 					this.ShowTooltip();
 				}
-			}
+			}*/
 		}
-		public void SetCapacityOverride( int index, int capacityOverride )
+		public void SetCapacityOverride( int index, int? capacityOverride )
 		{
 			this.slotGroups[index].capacityOverride = capacityOverride;
 			
-			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
 				if( this.ssObject.IsDisplaySafe() )
 				{
 					this.ShowTooltip();
 				}
-			}
+			}*/
 		}
 
 
@@ -109,7 +109,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		
+		/*
 		private void ShowTooltip()
 		{
 			ToolTip.Create( 200.0f, this.ssObject.displayName );
@@ -214,21 +214,15 @@ namespace SS.Objects.Modules
 				} );
 			}
 		}
-				
-		private void RegisterHUD()
+		*/	
+
+		private void UpdateHud( HUDInventory hudInventory )
 		{
-			// integrate hud.
-			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
-
-			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
-			if( hudInventory == null )
+			if( this.isEmpty )
 			{
-				return;
+				hudInventory.HideResource();
 			}
-			
-			// Make the inventory update the HUD wien resources are added/removed.
-			this.onAdd.AddListener( ( string id, int amtAdded ) =>
+			else
 			{
 				for( int i = 0; i < this.slotCount; i++ )
 				{
@@ -239,26 +233,28 @@ namespace SS.Objects.Modules
 					hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
 					break;
 				}
-			} );
-			this.onRemove.AddListener( ( string id, int amtRemoved ) =>
+			}
+		}
+		
+		private void RegisterHUD()
+		{
+			// integrate hud.
+			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
+
+
+			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
+			if( hudInventory != null )
 			{
-				if( this.isEmpty )
+				// Make the inventory update the HUD wien resources are added/removed.
+				this.onAdd.AddListener( ( string id, int amtAdded ) =>
 				{
-					hudInventory.HideResource();
-				}
-				else
+					this.UpdateHud( hudInventory );
+				} );
+				this.onRemove.AddListener( ( string id, int amtRemoved ) =>
 				{
-					for( int i = 0; i < this.slotCount; i++ )
-					{
-						if( this.slotGroups[i].isEmpty )
-						{
-							continue;
-						}
-						hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
-						break;
-					}
-				}
-			} );
+					this.UpdateHud( hudInventory );
+				} );
+			}
 		}
 
 
@@ -270,7 +266,7 @@ namespace SS.Objects.Modules
 		void Awake()
 		{
 			// needs to be registered on Awake(), since the resources (data) are assigned before Start() happens.
-			this.RegisterTooltip();
+			//this.RegisterTooltip();
 
 			if( this.ssObject is IHUDHolder )
 			{
@@ -343,13 +339,13 @@ namespace SS.Objects.Modules
 				}
 			}
 
-			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
 			{
 				if( this.ssObject.IsDisplaySafe() )
 				{
 					this.HideTooltip();
 				}
-			}
+			}*/
 		}
 
 
@@ -423,11 +419,12 @@ namespace SS.Objects.Modules
 			int total = 0;
 			for( int i = 0; i < this.slotCount; i++ )
 			{
+				int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
 				if( this.slotGroups[i].isEmpty )
 				{
 					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
 					{
-						total += this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
+						total += realCapacity;
 					}
 				}
 				else
@@ -435,7 +432,7 @@ namespace SS.Objects.Modules
 					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
 					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
 					{
-						total += (this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value) - this.slotGroups[i].amount;
+						total += realCapacity - this.slotGroups[i].amount;
 					}
 				}
 			}
@@ -587,19 +584,14 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is InventoryModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			InventoryModuleData data = (InventoryModuleData)_data;
+			InventoryModuleData data = ValidateDataType<InventoryModuleData>( _data );
 
-			
 			// ------          DATA
+
+			// integrate hud.
+			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
+
+			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
 
 			if( data.items != null )
 			{
@@ -616,8 +608,7 @@ namespace SS.Objects.Modules
 					{
 						this.slotGroups[i].capacityOverride = data.items[i].capacityOverride;
 					}
-
-
+					
 					if( this.ssObject is IFactionMember )
 					{
 						IFactionMember factionMember = (IFactionMember)this.ssObject;
@@ -630,6 +621,11 @@ namespace SS.Objects.Modules
 						}
 					}
 				}
+			}
+			
+			if( hudInventory != null )
+			{
+				this.UpdateHud( hudInventory );
 			}
 		}
 

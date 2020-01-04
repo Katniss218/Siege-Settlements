@@ -143,6 +143,10 @@ namespace SS.AI.Goals
 			{
 				for( int i = 0; i < this.attackModules.Length; i++ )
 				{
+					if( this.attackModules[i].target == null )
+					{
+						continue;
+					}
 					if( !Targeter.CanTarget( controller.transform.position, this.attackModules[i].attackRange, this.attackModules[i].target, ssobj ) )
 					{
 						this.attackModules[i].target = null;

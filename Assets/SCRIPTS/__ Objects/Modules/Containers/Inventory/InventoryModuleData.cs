@@ -37,7 +37,7 @@ namespace SS.Levels.SaveStates
 				serializer.WriteInt( "", "Amount", this.amount );
 				if( this.capacityOverride != null )
 				{
-					serializer.WriteInt( "", "CapacityOverride", this.amount );
+					serializer.WriteInt( "", "CapacityOverride", this.capacityOverride.Value );
 				}
 			}
 		}

@@ -29,6 +29,7 @@ namespace SS.Objects.Modules
 		{
 			BarracksModule module = gameObject.AddComponent<BarracksModule>();
 			module.moduleId = moduleId;
+			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.trainSpeed = this.trainSpeed;
 			module.trainableUnits = new UnitDefinition[this.trainableUnits.Length];
@@ -59,6 +60,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing or invalid value of 'TrainableUnits' (" + serializer.file.fileName + ")." );
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -73,6 +76,7 @@ namespace SS.Objects.Modules
 		{
 			serializer.WriteFloat( "", "TrainSpeed", this.trainSpeed );
 			serializer.WriteStringArray( "", "TrainableUnits", this.trainableUnits );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

@@ -98,7 +98,7 @@ namespace SS
 			{
 				if( uniqueSelectables == null )
 				{
-					if( Selection.selectedObjects.Length == 0 )
+					if( Selection.GetSelectedObjects().Length == 0 )
 					{
 						return;
 					}
@@ -108,7 +108,7 @@ namespace SS
 				}
 				else
 				{
-					SSObjectDFS[] selectedObjs = Selection.selectedObjects;
+					SSObjectDFS[] selectedObjs = Selection.GetSelectedObjects();
 					bool playDeselect = false;
 
 					for( int i = 0; i < selectedObjs.Length; i++ )

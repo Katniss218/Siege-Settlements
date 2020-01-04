@@ -26,6 +26,7 @@
 			{
 				TypeId = "barracks";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
 				TrainSpeed = 1.0;
 				TrainableUnits =
 				[ // controls also the ordering of icons when training menu is displayed.
@@ -124,6 +125,7 @@
 			{
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
 				Slots =
 				[
@@ -258,6 +260,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Storage";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 30; },
@@ -318,6 +321,7 @@
 			{
 				TypeId = "research";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Research Facility";
 				ResearchSpeed = 1.0;
 				ResearchableTechnologies =
 				[ // controls also the ordering of icons.
@@ -382,6 +386,7 @@
 			{
 				TypeId = "barracks";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
 				TrainSpeed = 1.0;
 				TrainableUnits =
 				[ // controls also the ordering of icons.
@@ -447,6 +452,7 @@
 			{
 				TypeId = "barracks";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
 				TrainSpeed = 1.0;
 				TrainableUnits =
 				[ // controls also the ordering of icons.
@@ -511,6 +517,7 @@
 			{
 				TypeId = "barracks";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
 				TrainSpeed = 1.0;
 				TrainableUnits =
 				[ // controls also the ordering of icons.
@@ -619,6 +626,7 @@
 			{
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; };
 				Slots =
 				[
@@ -667,90 +675,6 @@
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/wooden_tower_icon.png";
-	},
-	{
-		Id = "building.wooden_ballista_tower";
-		DisplayName = "Wooden Ballista Tower";
-		ViewRange = 7.0;
-		MaxHealth = 90.0;
-		Armor =
-		{
-			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
-				0.0  // Concussion
-			];
-		};
-		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
-		PlacementNodes = [ ];
-		Cost =
-		[
-			{ Id = "resource.wood"; Amount = 20; }
-		];
-		TechsRequired = [ ];
-		Modules =
-		[
-			{
-				TypeId = "ranged";
-				ModuleId = "12354537-3373-7933-4658-396678574576";
-				
-				ProjectileId = "projectile.barrow"; // can be any defined projectile's id.
-				ProjectileCount = 1;
-				DamageType = 2; // 0 - Slash, 1 - Pierce, 2 - Concussion
-				Damage = 10;
-				ArmorPenetration = 0.0;
-				AttackRange = 3;
-				AttackCooldown = 3.0;
-				Velocity = 2.1;
-				LocalOffsetMin = { X = 0.0; Y = 0.63; Z = 0.0; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
-																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
-				LocalOffsetMax = { X = 0.0; Y = 0.63; Z = 0.0; };
-				AttackSound = "extern:Sounds/ballista_shoot.wav";
-				TraversibleSubObjects = [ "00000000-0000-0000-0002-000000000000" ];
-				Icon = "extern:Textures/Modules/ranged_icon.png";
-			}
-		];
-		SubObjects =
-		[
-			{
-				TypeId = "MESH";
-				SubObjectId = "00000000-0000-0000-0001-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
-				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
-				
-				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
-				Material =
-				{
-					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
-					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
-					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
-					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
-				};
-			},
-			{
-				TypeId = "MESH";
-				SubObjectId = "00000000-0000-0000-0002-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.6; Z = 0.0; };
-				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
-				
-				Mesh = "extern:Models/ballista_elem.ksm";
-				Material =
-				{
-					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/bowmen_color.png";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
-					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
-				};
-			}
-		];
-		BuildSound = "extern:Sounds/construction_site.wav";
-		HurtSound = "extern:Sounds/damage_generic.wav";
-		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	},
 	{
 		Id = "building.campfire";
@@ -918,10 +842,12 @@
 			{
 				TypeId = "workplace_tavern";
 				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Tavern";
 			},
 			{
 				TypeId = "interior";
 				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
 				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
 				Slots =
 				[
@@ -1023,5 +949,106 @@
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house_icon.png";
+	},
+	{
+		Id = "building.stone_mine";
+		DisplayName = "Stone Mine";
+		ViewRange = 7.0;
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.2, // Slash
+				0.45, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			{
+				TypeId = "workplace_resource_collector";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Mine";
+				
+				ResourceId = "resource.stone";
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678578328";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.6; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 45.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Material =
+				{
+					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
+					ColorMap = "extern:Textures/Units/bowmen_color.png";
+					NormalMap = "extern:Textures/Units/unit_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	}
 ];

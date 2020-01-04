@@ -164,7 +164,7 @@ namespace SS.Content
 			{
 				string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
 
-				ModuleDefinition module = ModuleDefinition.TypeIdToDefinition( typeId );
+				ModuleDefinition module = ModuleDefinition.TypeIdToInstance( typeId );
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
 				Guid moduleId = serializer.ReadGuid( new Path( "Modules.{0}.ModuleId", i ) );
@@ -198,7 +198,7 @@ namespace SS.Content
 
 			for( int i = 0; i < modulesArray.Length; i++ )
 			{
-				string typeId = ModuleDefinition.DefinitionToTypeId( modulesArray[i] );
+				string typeId = ModuleDefinition.InstanceToTypeId( modulesArray[i] );
 
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteGuid( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i] );

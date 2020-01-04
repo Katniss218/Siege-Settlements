@@ -2,6 +2,7 @@
 using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,10 +55,7 @@ namespace SS.Objects.Modules
 
 		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
 		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
-
-#warning The unit might work for this particular interior (is assigned to the worker slot here), but it's not inside currently.
-		// so worker slots can specify a unit that is employed in it? So units can take up only their own slots (kinda ugly to have unit in the middle of slots, with prevs empty).
-		// and worker can only enter his own worker slot.
+		
 
 		public List<CivilianUnitExtension> GetEmployed( WorkplaceModule workplace = null )
 		{
@@ -154,6 +152,10 @@ namespace SS.Objects.Modules
 			}
 			if( type == SlotType.Worker )
 			{
+				if( !u.isCivilian )
+				{
+					return null;
+				}
 				for( int i = 0; i < this.workerSlots.Length; i++ )
 				{
 					if( population > (byte)this.workerSlots[i].maxPopulation )
@@ -161,7 +163,8 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					if( this.workerSlots[i].worker != u )
+					CivilianUnitExtension cue = u.GetComponent<CivilianUnitExtension>();
+					if( this.workerSlots[i].worker != cue )
 					{
 						continue;
 					}
@@ -229,12 +232,43 @@ namespace SS.Objects.Modules
 
 		public override ModuleData GetData()
 		{
-			return new InteriorModuleData();
+			InteriorModuleData data = new InteriorModuleData();
+			data.slots = new Dictionary<int, Guid>();
+			for( int i = 0; i < this.slots.Length; i++ )
+			{
+				if( this.slots[i].objInside == null )
+				{
+					continue;
+				}
+				data.slots.Add( i, ((SSObject)this.slots[i].objInside).guid );
+			}
+
+			data.workerSlots = new Dictionary<int, Guid>();
+			for( int i = 0; i < this.workerSlots.Length; i++ )
+			{
+				if( this.workerSlots[i].objInside == null )
+				{
+					continue;
+				}
+				data.workerSlots.Add( i, ((SSObject)this.workerSlots[i].objInside).guid );
+			}
+
+			return data;
 		}
 
-		public override void SetData( ModuleData data )
+		public override void SetData( ModuleData _data )
 		{
-			// whether or not a unit is inside is saved in that particular unit's data.
+			InteriorModuleData data = ValidateDataType<InteriorModuleData>( _data );
+
+			//return;
+			foreach( var kvp in data.slots )
+			{
+				((IEnterableInside)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
+			}
+			foreach( var kvp in data.workerSlots )
+			{
+				((IEnterableInside)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
+			}
 		}
 
 

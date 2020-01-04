@@ -39,6 +39,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -80,6 +81,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -121,6 +123,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -161,6 +164,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -201,6 +205,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -241,6 +246,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -298,6 +304,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -338,6 +345,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[
@@ -395,6 +403,7 @@
 			{
 				TypeId = "resource_deposit";
 				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
 				
 				Resources =
 				[

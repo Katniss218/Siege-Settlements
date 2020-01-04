@@ -84,38 +84,38 @@ namespace SS.AI
 
 			if( hitDeposit == null && hitInventory == null && hitReceiverSSObject == null && hitDamageable == null && terrainHitPos.HasValue )
 			{
-				AssignMoveToGoal( terrainHitPos.Value, Selection.selectedObjects );
+				AssignMoveToGoal( terrainHitPos.Value, Selection.GetSelectedObjects() );
 				return;
 			}
 
 			if( hitReceiverSSObject != null && (hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.selectedObjects );
+				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitInterior != null && (hitInteriorDFS.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMoveToInteriorOrObjGoal( null, hitInterior, Selection.selectedObjects );
+				AssignMoveToInteriorOrObjGoal( null, hitInterior, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitDeposit != null )
 			{
-				AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.selectedObjects );
+				AssignPickupDepositGoal( hitDepositSSObject, hitDeposit, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitInventory != null && !hitInventory.isEmpty && (hitInventorySSObject == null || hitInventorySSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.selectedObjects );
+				AssignPickupInventoryGoal( hitInventorySSObject, hitInventory, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitDamageable != null && (hitDamageable.factionId != LevelDataManager.PLAYER_FAC) )
 			{
-				AssignAttackGoal( hitDamageable, Selection.selectedObjects );
+				AssignAttackGoal( hitDamageable, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitDamageable != null && (hitDamageable.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMoveToInteriorOrObjGoal( hitDamageable, null, Selection.selectedObjects );
+				AssignMoveToInteriorOrObjGoal( hitDamageable, null, Selection.GetSelectedObjects() );
 				return;
 			}
 		}

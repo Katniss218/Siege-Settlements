@@ -51,6 +51,8 @@ namespace SS.Objects.Modules
 		{
 			RangedModule module = gameObject.AddComponent<RangedModule>();
 			module.moduleId = moduleId;
+			//module.displayName = this.displayName;
+			//module.icon = this.icon;
 			module.attackRange = this.attackRange;
 
 

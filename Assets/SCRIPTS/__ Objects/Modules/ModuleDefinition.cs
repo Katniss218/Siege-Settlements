@@ -7,7 +7,20 @@ namespace SS.Objects.Modules
 {
 	public abstract class ModuleDefinition : IKFFSerializable
 	{
+		public string displayName { get; set; }
+
 		public AddressableAsset<Sprite> icon { get; set; }
+
+		//
+		//
+		//
+
+		public abstract void DeserializeKFF( KFFSerializer serializer );
+		public abstract void SerializeKFF( KFFSerializer serializer );
+
+		//
+		//
+		//
 
 		/// <summary>
 		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
@@ -18,13 +31,17 @@ namespace SS.Objects.Modules
 		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
 		/// </summary>
 		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
-		
-		public abstract void AddModule( GameObject gameObject, Guid moduleId );
-		
-		public abstract void DeserializeKFF( KFFSerializer serializer );
-		public abstract void SerializeKFF( KFFSerializer serializer );
 
-		public static ModuleDefinition TypeIdToDefinition( string typeId )
+		public abstract void AddModule( GameObject gameObject, Guid moduleId );
+
+		//
+		//
+		//
+
+		/// <summary>
+		/// Reads a string type and returns an instance for that corresponding type.
+		/// </summary>
+		public static ModuleDefinition TypeIdToInstance( string typeId )
 		{
 			if( typeId == MeleeModule.KFF_TYPEID )
 			{
@@ -64,10 +81,17 @@ namespace SS.Objects.Modules
 			{
 				return new TavernWorkplaceModuleDefinition();
 			}
+			if( typeId == ResourceCollectorWorkplaceModule.KFF_TYPEID )
+			{
+				return new ResourceCollectorWorkplaceModuleDefinition();
+			}
 			throw new Exception( "Unknown module type '" + typeId + "'." );
 		}
 
-		public static string DefinitionToTypeId( ModuleDefinition def )
+		/// <summary>
+		/// Reads a instance and returns a string type for that corresponding instance.
+		/// </summary>
+		public static string InstanceToTypeId( ModuleDefinition def )
 		{
 			if( def is MeleeModuleDefinition )
 			{
@@ -101,9 +125,15 @@ namespace SS.Objects.Modules
 			{
 				return InteriorModule.KFF_TYPEID;
 			}
+
+
 			if( def is TavernWorkplaceModuleDefinition )
 			{
 				return TavernWorkplaceModule.KFF_TYPEID;
+			}
+			if( def is ResourceCollectorWorkplaceModuleDefinition )
+			{
+				return ResourceCollectorWorkplaceModule.KFF_TYPEID;
 			}
 			throw new Exception( "Unknown module type '" + def.GetType().Name + "'." );
 		}

@@ -160,16 +160,7 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is MeleeModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-
-			MeleeModuleData data = (MeleeModuleData)_data;
+			MeleeModuleData data = ValidateDataType<MeleeModuleData>( _data );
 
 			if( data.targetGuid != null )
 			{

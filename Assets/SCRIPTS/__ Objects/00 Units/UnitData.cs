@@ -39,12 +39,8 @@ namespace SS.Levels.SaveStates
 		public float? rotationSpeed { get; set; }
 		
 		public TacticalGoalData tacticalGoalData { get; set; }
-
-		public Tuple<Guid,Guid> inside { get; set; }
-		public InteriorModule.SlotType insideSlotType { get; set; }
-		public int insideSlotIndex { get; set; }
-		
-		public Tuple<Guid, Guid> workplace { get; set; }
+				
+		public Tuple<Guid, Guid, int> workplace { get; set; }
 
 
 
@@ -130,22 +126,13 @@ namespace SS.Levels.SaveStates
 				}
 			}
 
-			if( serializer.Analyze( "Inside" ).isSuccess )
-			{
-				Guid insideObj = serializer.ReadGuid( "Inside.ObjectGuid" );
-				Guid insideMod = serializer.ReadGuid( "Inside.ModuleId" );
-				this.inside = new Tuple<Guid, Guid>( insideObj, insideMod );
-
-				this.insideSlotType = (InteriorModule.SlotType)serializer.ReadByte( "Inside.SlotType" );
-				this.insideSlotIndex = serializer.ReadInt( "Inside.SlotIndex" );
-			}
-
 			if( serializer.Analyze( "Workplace" ).isSuccess )
 			{
 #warning kff reading object-module tuples abstracted away & just call a method in the extensions.
 				Guid insideObj = serializer.ReadGuid( "Workplace.ObjectGuid" );
 				Guid insideMod = serializer.ReadGuid( "Workplace.ModuleId" );
-				this.workplace = new Tuple<Guid, Guid>( insideObj, insideMod );
+				int slotIndex = serializer.ReadInt( "Workplace.SlotIndex" );
+				this.workplace = new Tuple<Guid, Guid, int>( insideObj, insideMod, slotIndex );
 			}
 			
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
@@ -177,21 +164,13 @@ namespace SS.Levels.SaveStates
 			{
 				serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed.Value );
 			}
-
-			if( this.inside != null )
-			{
-				serializer.WriteClass( "", "Inside" );
-				serializer.WriteGuid( "Inside", "ObjectGuid", this.inside.Item1 );
-				serializer.WriteGuid( "Inside", "ModuleId", this.inside.Item2 );
-				serializer.WriteByte( "Inside", "SlotType", (byte)this.insideSlotType );
-				serializer.WriteInt( "Inside", "SlotIndex", this.insideSlotIndex );
-			}
-
+			
 			if( this.workplace != null )
 			{
 				serializer.WriteClass( "", "Workplace" );
 				serializer.WriteGuid( "Workplace", "ObjectGuid", this.workplace.Item1 );
 				serializer.WriteGuid( "Workplace", "ModuleId", this.workplace.Item2 );
+				serializer.WriteInt( "Workplace", "SlotIndex", this.workplace.Item3 );
 			}
 
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );

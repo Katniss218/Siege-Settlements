@@ -24,7 +24,8 @@ namespace SS.AI
 
 
 		public WorkplaceModule workplace { get; set; } = null;
-		public bool isWorking { get; private set; }
+		public int workplaceSlotId { get; set; }
+		public bool isWorking;// { get; private set; }
 
 		bool IsGoingToHome( TacticalGoalController goalController )
 		{
@@ -48,7 +49,7 @@ namespace SS.AI
 			return false;
 		}
 
-		private InteriorModule GetClosestInterior()
+		private InteriorModule GetClosestInteriorBuilding()
 		{
 			Building[] b = SSObject.GetAllBuildings();
 
@@ -107,14 +108,17 @@ namespace SS.AI
 				}
 
 				// stops work w/o the need to go back to the workplace.
-				Debug.LogWarning( "Stopping work" );
 				this.isWorking = false;
 
-				InteriorModule closestHouse = this.GetClosestInterior();
+				InteriorModule closestHouse = this.GetClosestInteriorBuilding();
 
 				if( closestHouse != null )
 				{
-					Debug.LogWarning( "Going home" );
+					// goes to sleep normally, enters building when near it.
+
+					// when time comes to go out to work, it either appears at workplace, or at home.
+
+
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 
 					goal.SetDestination( closestHouse, InteriorModule.SlotType.Generic );
@@ -138,12 +142,10 @@ namespace SS.AI
 				
 				if( this.unit.interior == this.workplace.interior && this.unit.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
 				{
-					Debug.LogWarning( "starting work" );
 					this.isWorking = true;
 				}
 				else
 				{
-					Debug.LogWarning( "Going to work" );
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
 					goalController.goal = goal;

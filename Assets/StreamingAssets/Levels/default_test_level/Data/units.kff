@@ -33,6 +33,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -129,6 +130,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -241,6 +243,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -336,6 +339,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -437,6 +441,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -541,6 +546,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -644,6 +650,7 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -733,15 +740,17 @@
 			{
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Inventory";
 				Slots =
 				[
-					{ SlotId = ""; Capacity = 2; }
+					{ SlotId = ""; Capacity = 5; }
 				];
 				Icon = "extern:Textures/Modules/inventory_icon.png";
 			},
 			{
 				TypeId = "constructor";
 				ModuleId = "12345678-9999-6666-4658-396678574576";
+				DisplayName = "Constructor";
 				ConstructibleBuildings =
 				[ // controls also the ordering of icons.
 					"building.town_center",
@@ -753,9 +762,9 @@
 					"building.college",
 					"building.wooden_wall",
 					"building.wooden_tower",
-					"building.wooden_ballista_tower",
 					"building.campfire",
-					"building.tavern"
+					"building.tavern",
+					"building.stone_mine"
 				];
 				Icon = "extern:Textures/Modules/constructor_icon.png";
 			}

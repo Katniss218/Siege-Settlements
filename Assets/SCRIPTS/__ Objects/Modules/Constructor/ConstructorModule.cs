@@ -4,7 +4,6 @@ using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Technologies;
 using SS.UI;
-using System;
 using UnityEngine;
 using SS.ResourceSystem;
 
@@ -121,16 +120,7 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is ConstructorModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			//ConstructorModuleData data = (ConstructorModuleData)_data;			
+			ConstructorModuleData data = ValidateDataType<ConstructorModuleData>( _data );	
 		}
 
 

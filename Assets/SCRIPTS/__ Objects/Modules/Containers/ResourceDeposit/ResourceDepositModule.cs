@@ -13,7 +13,7 @@ namespace SS.Objects.Modules
 	{
 		public const string KFF_TYPEID = "resource_deposit";
 
-		public const float MINING_SPEED = 2.0f;
+		public const float MINING_SPEED = 1.0f;
 
 		internal struct SlotGroup
 		{
@@ -283,16 +283,7 @@ namespace SS.Objects.Modules
 
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is ResourceDepositModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			ResourceDepositModuleData data = (ResourceDepositModuleData)_data;
+			ResourceDepositModuleData data = ValidateDataType<ResourceDepositModuleData>( _data );
 			
 			// -----           DATA
 

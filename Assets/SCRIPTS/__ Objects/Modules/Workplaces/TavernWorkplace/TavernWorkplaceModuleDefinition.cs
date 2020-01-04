@@ -23,7 +23,8 @@ namespace SS.Objects.Modules
 		{
 			TavernWorkplaceModule module = gameObject.AddComponent<TavernWorkplaceModule>();
 			module.moduleId = moduleId;
-			
+			module.displayName = this.displayName;
+			module.icon = this.icon;
 		}
 		
 

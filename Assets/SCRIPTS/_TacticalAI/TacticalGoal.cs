@@ -41,7 +41,6 @@ namespace SS.AI.Goals
 					}
 					if( !Targeter.CanTarget( controller.transform.position, attackModules[i].attackRange, attackModules[i].target, ssobj ) )
 					{
-						Debug.Log( "B" );
 						attackModules[i].target = null;
 					}
 				}

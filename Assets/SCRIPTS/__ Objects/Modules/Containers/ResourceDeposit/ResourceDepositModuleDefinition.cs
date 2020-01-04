@@ -52,6 +52,7 @@ namespace SS.Objects.Modules
 		{
 			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
 			module.moduleId = moduleId;
+			module.displayName = this.displayName;
 			module.icon = this.icon;
 
 #warning some sort of method for setting the slots(?)
@@ -102,6 +103,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing 'MineSound' (" + serializer.file.fileName + ")." );
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -118,6 +121,7 @@ namespace SS.Objects.Modules
 			serializer.SerializeArray( "", "Resources", this.slots );
 
 			serializer.WriteString( "", "MineSound", (string)this.mineSound );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

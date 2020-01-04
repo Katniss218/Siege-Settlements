@@ -56,6 +56,7 @@ namespace SS.Objects.Modules
 		{
 			InventoryModule module = gameObject.AddComponent<InventoryModule>();
 			module.moduleId = moduleId;
+			module.displayName = this.displayName;
 			module.icon = this.icon;
 #warning some sort of method for setting the slots(?)
 			module.slotGroups = new InventoryModule.SlotGroup[this.slots.Length];
@@ -86,6 +87,8 @@ namespace SS.Objects.Modules
 				throw new Exception( "Missing or invalid value of 'Slots' (" + serializer.file.fileName + ")." );
 			}
 
+			this.displayName = serializer.ReadString( "DisplayName" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -99,6 +102,7 @@ namespace SS.Objects.Modules
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "Slots", this.slots );
+			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
 		}
 	}

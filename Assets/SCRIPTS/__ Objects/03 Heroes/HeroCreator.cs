@@ -96,6 +96,7 @@ namespace SS.Objects.Heroes
 			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
 			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
+			navMeshAgent.avoidancePriority = 1;
 
 			Hero hero = gameObject.AddComponent<Hero>();
 			hero.hud = hud;

@@ -256,16 +256,7 @@ namespace SS.Objects.Modules
 		
 		public override void SetData( ModuleData _data )
 		{
-			if( !(_data is BarracksModuleData) )
-			{
-				throw new Exception( "Provided data is not of the correct type." );
-			}
-			if( _data == null )
-			{
-				throw new Exception( "Provided data is null." );
-			}
-			
-			BarracksModuleData data = (BarracksModuleData)_data;
+			BarracksModuleData data = ValidateDataType<BarracksModuleData>( _data );
 						
 			// ------          DATA
 

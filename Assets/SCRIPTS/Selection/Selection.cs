@@ -49,12 +49,9 @@ namespace SS
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
-		public static SSObjectDFS[] selectedObjects
+		public static SSObjectDFS[] GetSelectedObjects()
 		{
-			get
-			{
-				return selected.ToArray();
-			}
+			return selected.ToArray();
 		}
 
 

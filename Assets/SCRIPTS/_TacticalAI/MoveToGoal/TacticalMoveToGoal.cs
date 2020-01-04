@@ -124,35 +124,34 @@ namespace SS.AI.Goals
 
 
 				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( (this.navMeshAgent.hasPath && Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE) 
-					|| Vector3.Distance( this.destinationObject.transform.position, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE )
+				if( (this.navMeshAgent.hasPath && !this.navMeshAgent.pathPending && Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE)
+					//||
+					//(Vector3.Distance( this.destinationObject.transform.position, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE)
+					)
 				{
-					//if(  )
-					//{
-						this.navMeshAgent.ResetPath();
-						if( this.destinationInterior != null )
+					this.navMeshAgent.ResetPath();
+					if( this.destinationInterior != null )
+					{
+						if( controller.ssObject is Unit )
 						{
-							if( controller.ssObject is Unit )
+							Unit unit = (Unit)controller.ssObject;
+
+							InteriorModule.SlotType slotType = this.destinationSlotType;
+							int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
+
+							if( slotIndex == null )
 							{
-								Unit unit = (Unit)controller.ssObject;
-
-								InteriorModule.SlotType slotType = this.destinationSlotType;
-								int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
-
-								if( slotIndex == null )
-								{
-									Debug.LogWarning( "Can't enter slot" );
-									this.navMeshAgent.ResetPath();
-									controller.goal = TacticalGoalController.GetDefaultGoal();
-									return;
-								}
-								unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
+								Debug.LogWarning( "Can't enter slot: " + this.destinationInterior.ssObject.definitionId );
+								this.navMeshAgent.ResetPath();
 								controller.goal = TacticalGoalController.GetDefaultGoal();
+								return;
 							}
+							unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
+							controller.goal = TacticalGoalController.GetDefaultGoal();
 						}
+					}
 
-						return;
-					//}
+					return;
 				}
 			
 
@@ -175,6 +174,7 @@ namespace SS.AI.Goals
 					unit.SetOutside();
 				}
 			}
+
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( this.destination == DestinationType.OBJECT )
 			{

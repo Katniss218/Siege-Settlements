@@ -54,22 +54,7 @@ namespace SS.Objects.Units
 			{
 				unit.rotationSpeedOverride = data.rotationSpeed.Value;
 			}
-
-			// Set the unit's interior information.
-			if( data.inside != null )
-			{
-				SSObject obj = SSObject.Find( data.inside.Item1 );
-				InteriorModule interior = obj.GetModule<InteriorModule>( data.inside.Item2 );
-
-				int? slotIndex = interior.GetFirstValid( data.insideSlotType, unit );
-
-				if( slotIndex == null )
-				{
-					throw new Exception( "Can't enter slot. (guid: '" + unit.guid + "')." );
-				}
-				unit.SetInside( interior, data.insideSlotType, slotIndex.Value );
-			}
-
+			
 			// Set the workplace (if unit is a civilian & workplace is present).
 			if( data.workplace != null )
 			{
@@ -82,7 +67,7 @@ namespace SS.Objects.Units
 				SSObject obj = SSObject.Find( data.workplace.Item1 );
 				WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
 
-				cue.workplace = workplace;
+				WorkplaceModule.SetWorker( workplace, cue, data.workplace.Item3 );
 			}
 
 			//
@@ -102,7 +87,7 @@ namespace SS.Objects.Units
 			// population needs to be set after modules, since it can change some properties of the modules (override values).
 			unit.population = data.population;
 		}
-
+		
 		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
@@ -130,7 +115,7 @@ namespace SS.Objects.Units
 			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
 			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
-
+			
 			Unit unit = gameObject.AddComponent<Unit>();
 			unit.hud = hud;
 			unit.guid = guid;
@@ -333,24 +318,18 @@ namespace SS.Objects.Units
 				data.rotationSpeed = unit.rotationSpeedOverride;
 			}
 			data.population = unit.population;
-
-			if( unit.isInside )
-			{
-				data.inside = new Tuple<Guid, Guid>(
-						unit.interior.ssObject.guid,
-						unit.interior.moduleId
-					);
-				data.insideSlotType = unit.slotType;
-				data.insideSlotIndex = unit.slotIndex;
-			}
-
+			
 			CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
-			if( cue.workplace != null )
+			if( cue != null )
 			{
-				data.workplace = new Tuple<Guid, Guid>(
-						cue.workplace.ssObject.guid,
-						cue.workplace.moduleId
-					);
+				if( cue.workplace != null )
+				{
+					data.workplace = new Tuple<Guid, Guid, int>(
+							cue.workplace.ssObject.guid,
+							cue.workplace.moduleId,
+							cue.workplaceSlotId
+						);
+				}
 			}
 
 			//

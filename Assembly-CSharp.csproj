@@ -66,6 +66,7 @@
     <Compile Include="Assets\Modifier-Affected Values\FloatM.cs" />
     <Compile Include="Assets\Modifier-Affected Values\IntM.cs" />
     <Compile Include="Assets\Modifier-Affected Values\Modifier.cs" />
+    <Compile Include="Assets\SCRIPTS\AreaOfInfluence.cs" />
     <Compile Include="Assets\SCRIPTS\AudioManager.cs" />
     <Compile Include="Assets\SCRIPTS\CameraController.cs" />
     <Compile Include="Assets\SCRIPTS\CollisionOverlapHandler.cs" />
@@ -232,6 +233,9 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\ResourceCollectorWorkplace\ResourceCollectorWorkplaceModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\ResourceCollectorWorkplace\ResourceCollectorWorkplaceModuleData.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\ResourceCollectorWorkplace\ResourceCollectorWorkplaceModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\TavernWorkplace\TavernWorkplaceModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\TavernWorkplace\TavernWorkplaceModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\TavernWorkplace\TavernWorkplaceModuleDefinition.cs" />
