@@ -96,10 +96,18 @@ namespace SS.Objects.Units
 				InventoryModule[] inventories = this.GetModules<InventoryModule>();
 				for( int i = 0; i < inventories.Length; i++ )
 				{
-					for( int j = 0; j < inventories[i].slotCount; j++ )
+					InventoryModule.SlotGroup[] slotGroups = inventories[i].GetSlots();
+
+					for( int j = 0; j < slotGroups.Length; j++ )
 					{
-						inventories[i].SetCapacityOverride( j, (int)(inventories[i].GetCapacity( j ) * (float)value) );
+						slotGroups[j].capacityOverride = (int)(slotGroups[j].capacity * (float)value);
 					}
+
+					inventories[i].SetSlots( slotGroups );
+					/*for( int j = 0; j < inventories[i].slotCount; j++ )
+					{
+						inventories[i].slotGroups[j].capacityOverride = (int)(inventories[i].slotGroups[j].capacity * (float)value);
+					}*/
 				}
 				RangedModule[] ranged = this.GetModules<RangedModule>();
 				for( int i = 0; i < ranged.Length; i++ )

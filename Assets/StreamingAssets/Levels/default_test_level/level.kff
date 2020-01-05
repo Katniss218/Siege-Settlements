@@ -6,8 +6,8 @@ Map =
 };
 DaylightCycle =
 {
-	DayLength = 10;
-	NightLength = 6;
+	DayLength = 500;
+	NightLength = 333;
 	SunIntensity = 1.75;
 	MoonIntensity = 0.05;
 	SunElevationAngle = 60.0;

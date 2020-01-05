@@ -83,7 +83,6 @@ namespace SS.Objects
 			{
 				return false;
 			}
-			Debug.Log( this.factionId + ", " + fac2.factionId );
 			return LevelDataManager.GetRelation( this.factionId, fac2.factionId ) == DiplomaticRelation.Enemy;
 		}
 

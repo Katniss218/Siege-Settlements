@@ -2,7 +2,6 @@
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.UI;
 using System;
@@ -12,7 +11,7 @@ using UnityEngine.Events;
 
 namespace SS.Objects.Modules
 {
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler//, IMouseOverHandlerListener
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -37,43 +36,19 @@ namespace SS.Objects.Modules
 			}
 		}
 		
-		internal SlotGroup[] slotGroups;
+		SlotGroup[] slotGroups;
 
 
-		public int GetCapacity( int index )
+		/// <summary>
+		/// Returns the amount of slots of this inventory.
+		/// </summary>
+		public int slotCount
 		{
-			return this.slotGroups[index].capacity;
-		}
-		public int? GetCapacityOverride( int index )
-		{
-			return this.slotGroups[index].capacityOverride;
-		}
-
-		public void SetCapacity( int index, int capacity )
-		{
-			this.slotGroups[index].capacity = capacity;
-			
-			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			get
 			{
-				if( this.ssObject.IsDisplaySafe() )
-				{
-					this.ShowTooltip();
-				}
-			}*/
+				return this.slotGroups.Length;
+			}
 		}
-		public void SetCapacityOverride( int index, int? capacityOverride )
-		{
-			this.slotGroups[index].capacityOverride = capacityOverride;
-			
-			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-			{
-				if( this.ssObject.IsDisplaySafe() )
-				{
-					this.ShowTooltip();
-				}
-			}*/
-		}
-
 
 		/// <summary>
 		/// Returns a copy of every slot in the inventory.
@@ -88,16 +63,15 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
-		/// <summary>
-		/// Returns the amount of slots of this inventory.
-		/// </summary>
-		public int slotCount
+		public void SetSlots( SlotGroup[] slotGroups )
 		{
-			get
+			this.slotGroups = new SlotGroup[slotGroups.Length];
+			for( int i = 0; i < slotGroups.Length; i++ )
 			{
-				return this.slotGroups.Length;
+				this.slotGroups[i] = slotGroups[i];
 			}
 		}
+
 
 
 		public class _UnityEvent_string_int : UnityEvent<string, int> { }
@@ -109,113 +83,8 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		/*
-		private void ShowTooltip()
-		{
-			ToolTip.Create( 200.0f, this.ssObject.displayName );
-
-			for( int i = 0; i < this.slotCount; i++ )
-			{
-				int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
-				if( this.slotGroups[i].isEmpty )
-				{
-					if( this.slotGroups[i].isConstrained )
-					{
-						ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].slotId );
-						ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + realCapacity );
-					}
-					else
-					{
-						ToolTip.AddText( AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ), this.slotGroups[i].amount + " / " + realCapacity );
-					}
-				}
-				else
-				{
-					ResourceDefinition resourceDef = DefinitionManager.GetResource( this.slotGroups[i].id );
-					ToolTip.AddText( resourceDef.icon, this.slotGroups[i].amount + " / " + realCapacity );
-				}
-			}
-			ToolTip.ShowAt( Input.mousePosition );
-		}
-
-		private void MoveTooltip()
-		{
-			ToolTip.MoveTo( Input.mousePosition, true );
-		}
-
-		private void HideTooltip()
-		{
-			ToolTip.Hide();
-		}
-
 		
-		public void OnMouseEnterListener()
-		{
-			if( this.ssObject.IsDisplaySafe() )
-			{
-				this.ShowTooltip();
-			}
-		}
-
-		public void OnMouseStayListener()
-		{
-			if( this.ssObject.IsDisplaySafe() )
-			{
-				this.MoveTooltip();
-			}
-		}
-
-		public void OnMouseExitListener()
-		{
-			if( this.ssObject.IsDisplaySafe() )
-			{
-				this.HideTooltip();
-			}
-		}
 		
-		private void RegisterTooltip()
-		{
-			this.onAdd.AddListener( ( string id, int amount ) =>
-			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					if( this.ssObject.IsDisplaySafe() )
-					{
-						this.ShowTooltip();
-					}
-				}
-			} );
-			this.onRemove.AddListener( ( string id, int amount ) =>
-			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					if( this.ssObject.IsDisplaySafe() )
-					{
-						this.ShowTooltip();
-					}
-				}
-			} );
-			if( this.ssObject is IFactionMember )
-			{
-				IFactionMember factionMemberSelf = (IFactionMember)this.ssObject;
-				factionMemberSelf.onFactionChange.AddListener( () =>
-				{
-					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-					{
-						if( factionMemberSelf.factionId != LevelDataManager.PLAYER_FAC )
-						{
-							this.HideTooltip();
-						}
-						else
-						{
-							this.ShowTooltip();
-						}
-					}
-				} );
-			}
-		}
-		*/	
-
 		private void UpdateHud( HUDInventory hudInventory )
 		{
 			if( this.isEmpty )
@@ -224,14 +93,11 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
-				for( int i = 0; i < this.slotCount; i++ )
+				Dictionary<string, int> res = this.GetAll();
+				foreach( var kvp in res )
 				{
-					if( this.slotGroups[i].isEmpty )
-					{
-						continue;
-					}
-					hudInventory.DisplayResource( DefinitionManager.GetResource( this.slotGroups[i].id ), this.slotGroups[i].amount );
-					break;
+					hudInventory.DisplayResource( DefinitionManager.GetResource( kvp.Key ), kvp.Value, res.Count > 1 );
+					return;
 				}
 			}
 		}
@@ -257,16 +123,9 @@ namespace SS.Objects.Modules
 			}
 		}
 
-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		
-
 		void Awake()
 		{
 			// needs to be registered on Awake(), since the resources (data) are assigned before Start() happens.
-			//this.RegisterTooltip();
 
 			if( this.ssObject is IHUDHolder )
 			{
@@ -338,16 +197,12 @@ namespace SS.Objects.Modules
 					}
 				}
 			}
-
-			/*if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-			{
-				if( this.ssObject.IsDisplaySafe() )
-				{
-					this.HideTooltip();
-				}
-			}*/
 		}
 
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
 		public bool isEmpty
@@ -576,12 +431,6 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
 		public override void SetData( ModuleData _data )
 		{
 			InventoryModuleData data = ValidateDataType<InventoryModuleData>( _data );
@@ -629,6 +478,12 @@ namespace SS.Objects.Modules
 			}
 		}
 
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+		
 		private void TryUpdateSlots_UI()
 		{
 			if( !Selection.IsDisplayedModule( this ) )

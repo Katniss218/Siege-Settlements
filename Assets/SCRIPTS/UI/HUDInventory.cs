@@ -10,7 +10,7 @@ namespace SS.UI
 		[SerializeField] private Image resourceIcon = null;
 		[SerializeField] private TextMeshProUGUI amountText = null;
 
-		public void DisplayResource( ResourceDefinition def, int amount )
+		public void DisplayResource( ResourceDefinition def, int amount, bool plus )
 		{
 			resourceIcon.sprite = def.icon;
 			if( !resourceIcon.gameObject.activeSelf )
@@ -21,6 +21,10 @@ namespace SS.UI
 			if( !amountText.gameObject.activeSelf )
 			{
 				amountText.gameObject.SetActive( true );
+			}
+			if( plus )
+			{
+				amountText.text += "*";
 			}
 		}
 

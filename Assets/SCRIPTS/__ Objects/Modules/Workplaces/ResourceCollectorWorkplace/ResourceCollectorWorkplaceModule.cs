@@ -26,16 +26,16 @@ namespace SS.Objects.Modules
 			Extra[] extras = SSObject.GetAllExtras();
 
 			ResourceDepositModule ret = null;
-			float dst = range;
+			float dstSq = range*range;
 			for( int i = 0; i < extras.Length; i++ )
 			{
 				// If is in range.
-				float newDst = Vector3.Distance( pos, extras[i].transform.position );
-				if( newDst > dst )
+				float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, extras[i].transform.position );
+				if( newDstSq > dstSq )
 				{
 					continue;
 				}
-				dst = newDst;
+				dstSq = newDstSq;
 
 				// If has resource deposit.
 				ResourceDepositModule[] resourceDeposits = extras[i].GetModules<ResourceDepositModule>();
@@ -65,7 +65,7 @@ namespace SS.Objects.Modules
 			Building[] objects = SSObject.GetAllBuildings();
 			
 			InventoryModule ret = null;
-			float dst = float.MaxValue;
+			float dstSq = float.MaxValue;
 			for( int i = 0; i < objects.Length; i++ )
 			{
 				if( objects[i] == self )
@@ -97,10 +97,10 @@ namespace SS.Objects.Modules
 					if( inventories[j].GetSpaceLeft( resourceId ) > 0 )
 					{
 						// If is in range.
-						float newDst = Vector3.Distance( pos, objects[i].transform.position );
-						if( newDst <= dst )
+						float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, objects[i].transform.position );
+						if( newDstSq <= dstSq )
 						{
-							dst = newDst;
+							dstSq = newDstSq;
 							ret = inventories[j];
 							break; // break inner loop
 						}
