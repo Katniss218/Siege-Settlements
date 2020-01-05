@@ -803,13 +803,13 @@
 			{
 				TypeId = "LIGHT";
 				SubObjectId = "00000000-0000-0000-0004-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.5; Z = 0.0; };
+				LocalPosition = { X = 0.0; Y = 0.8; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
 				Color = { R = 1.0; G = 0.95; B = 0.8; A = 0.0; };
-				MinIntensity = 0.35;
-				MaxIntensity = 0.75;
-				Range = 2.8;
+				MinIntensity = 0.4;
+				MaxIntensity = 0.8;
+				Range = 3.2;
 			}
 		];
 		BuildSound = "extern:Sounds/construction_site.wav";
@@ -949,6 +949,90 @@
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
 		Icon = "extern:Textures/Buildings/house_icon.png";
+	},
+	{
+		Id = "building.lumberjacks_hut";
+		DisplayName = "Lumberjack's Hut";
+		ViewRange = 7.0;
+		MaxHealth = 90.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.2, // Slash
+				0.45, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.7; Y = 0.5; Z = 0.75; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			{
+				TypeId = "workplace_resource_collector";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Mine";
+				
+				ResourceId = "resource.wood";
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678578328";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/lumberjacks_hut.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/lumberjacks_hut_color.png";
+					NormalMap = "extern:Textures/Buildings/lumberjacks_hut_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
 	},
 	{
 		Id = "building.stone_mine";

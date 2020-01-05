@@ -118,7 +118,8 @@ namespace SS
 			}
 		}
 
-		public Color ambientLightColor = Color.black;
+		public Color ambientDayColor = Color.black;
+		public Color ambientNightColor = Color.black;
 
 		/// <summary>
 		/// The total length of the day and night combined.
@@ -242,46 +243,56 @@ namespace SS
 			return 0f;
 		}
 
+		static float Remap( float value, float start1, float end1, float start2, float end2 )
+		{
+			return start2 + (end2 - start2) * ((value - start1) / (end1 - start1));
+		}
+
+
 		private Color GetAmbientColor( float time )
 		{
+			// day:
+
+			// 0 <==> dayLength * (margin/2) <==> dayLength - (dayLength * (margin/2)) <==> dayLength
+			// half - 1 - 1 - half
+
+			// night:
+
+			// 0 <==> dayLength + nightLength * (margin/2) <==> dayLength + nightLength - (nightLength * (margin/2)) <==> dayLength + nightLength
+
+			// half - 0 - 0 - half
+
+			float t = 0.5f;
 			if( this.isDay )
 			{
-				float margin = this.dayLength * (DAY_NIGHT_EASE_MARGIN / 2.0f);
+				float margin = this.dayLength * DAY_NIGHT_EASE_MARGIN;
 
-				float multiplier = 1.0f;
-				if( time > margin && time < this.dayLength - margin )
+				t = 0;
+				if( this.time < margin )
 				{
-					return this.ambientLightColor;
+					t = Remap( this.time, 0, margin, 0.5f, 0.0f );
 				}
-				if( time < this.dayLength / 2f )
+				if( this.time > dayLength - margin )
 				{
-					multiplier = Mathf.Lerp( 2.5f, 1.0f, (time) / margin );
+					t = Remap( this.time, dayLength - margin, dayLength, 0.0f, 0.5f );
 				}
-				else
-				{
-					multiplier = Mathf.Lerp( 1.0f, 2.5f, (time - this.dayLength + margin) / margin );
-				}
-				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
 			}
 			else
 			{
-				float margin = this.nightLength * (DAY_NIGHT_EASE_MARGIN / 2.0f);
+				float margin = this.nightLength * DAY_NIGHT_EASE_MARGIN;
 
-				float multiplier = 4.0f;
-				if( time > this.dayLength + margin && time < this.dayLength + this.nightLength - margin )
+				t = 1;
+				if( (this.time - dayLength) < margin )
 				{
-					return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
+					t = Remap( (this.time - dayLength), 0, margin, 0.5f, 1.0f );
 				}
-				if( time < this.dayLength + (this.nightLength / 2f) )
+				if( (this.time - dayLength) > nightLength - margin )
 				{
-					multiplier = Mathf.Lerp( 2.5f, 4.0f, (time - this.dayLength) / margin );
+					t = Remap( (this.time - dayLength), nightLength - margin, nightLength, 1.0f, 0.5f );
 				}
-				else
-				{
-					multiplier = Mathf.Lerp( 4.0f, 2.5f, (time - this.dayLength - this.nightLength + margin) / margin );
-				}
-				return new Color( ambientLightColor.r / multiplier, ambientLightColor.g / multiplier, ambientLightColor.b / multiplier );
 			}
+
+			return Color.Lerp( this.ambientDayColor, this.ambientNightColor, t );
 		}
 		
 		void Update()

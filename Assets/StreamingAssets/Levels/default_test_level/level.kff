@@ -6,10 +6,12 @@ Map =
 };
 DaylightCycle =
 {
-	DayLength = 300;
-	NightLength = 200;
+	DayLength = 10;
+	NightLength = 6;
 	SunIntensity = 1.75;
 	MoonIntensity = 0.05;
 	SunElevationAngle = 60.0;
 	MoonElevationAngle = 60.0;
+	AmbientDayColor = { R = 0.28; G = 0.28; B = 0.32; A = 1.0; };
+	AmbientNightColor = { R = 0.1; G = 0.1; B = 0.15; A = 1.0; };
 };

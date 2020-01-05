@@ -268,6 +268,23 @@ namespace SS.Levels
 			{
 				throw new Exception( "Missing or invalid value of 'DaylightCycle.MoonElevationAngle' (" + serializer.file.fileName + ")." );
 			}
+
+			try
+			{
+				daylightCycle.ambientDayColor = serializer.ReadColor( "DaylightCycle.AmbientDayColor" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.AmbientDayColor' (" + serializer.file.fileName + ")." );
+			}
+			try
+			{
+				daylightCycle.ambientNightColor = serializer.ReadColor( "DaylightCycle.AmbientNightColor" );
+			}
+			catch
+			{
+				throw new Exception( "Missing or invalid value of 'DaylightCycle.AmbientNightColor' (" + serializer.file.fileName + ")." );
+			}
 		}
 
 		public static void LoadDaylightCycleData( KFFSerializer serializer )

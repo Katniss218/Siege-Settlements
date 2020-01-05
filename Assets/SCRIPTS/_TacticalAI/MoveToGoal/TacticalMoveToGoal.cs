@@ -1,4 +1,5 @@
-﻿using SS.Objects;
+﻿using Katniss.Utils;
+using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
 using System.Collections.Generic;
@@ -18,11 +19,11 @@ namespace SS.AI.Goals
 			POSITION,
 			OBJECT
 		}
-		
+
 		public DestinationType destination { get; private set; }
 		public Vector3? destinationPos { get; private set; }
 		public SSObject destinationObject { get; private set; }
-		
+
 		public bool isHostile { get; set; }
 
 
@@ -43,7 +44,7 @@ namespace SS.AI.Goals
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		public void SetDestination( Vector3 destination )
 		{
 			this.destination = DestinationType.POSITION;
@@ -81,7 +82,7 @@ namespace SS.AI.Goals
 		}
 
 		private void UpdatePosition( TacticalGoalController controller )
-		{			
+		{
 			if( this.destination == DestinationType.POSITION )
 			{
 				Vector3 currDestPos = this.destinationPos.Value;
@@ -124,10 +125,7 @@ namespace SS.AI.Goals
 
 
 				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( (this.navMeshAgent.hasPath && !this.navMeshAgent.pathPending && Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE)
-					//||
-					//(Vector3.Distance( this.destinationObject.transform.position, controller.transform.position ) <= OBJECT_MODE_STOPPING_DISTANCE)
-					)
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
 				{
 					this.navMeshAgent.ResetPath();
 					if( this.destinationInterior != null )
@@ -153,15 +151,15 @@ namespace SS.AI.Goals
 
 					return;
 				}
-			
+
 
 				this.oldDestination = currDestPos;
-				
+
 				return;
 			}
 		}
 
-		
+
 
 		public override void Update( TacticalGoalController controller )
 		{

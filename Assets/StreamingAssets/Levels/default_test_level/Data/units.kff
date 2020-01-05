@@ -764,6 +764,7 @@
 					"building.wooden_tower",
 					"building.campfire",
 					"building.tavern",
+					"building.lumberjacks_hut",
 					"building.stone_mine"
 				];
 				Icon = "extern:Textures/Modules/constructor_icon.png";
