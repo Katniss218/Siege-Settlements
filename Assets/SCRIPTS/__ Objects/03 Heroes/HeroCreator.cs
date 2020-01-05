@@ -115,7 +115,7 @@ namespace SS.Objects.Heroes
 			hero.health = def.healthMax;
 			hero.armor = def.armor;
 
-			hero.onFactionChange.AddListener( () =>
+			hero.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{
 				Color color = LevelDataManager.factions[hero.factionId].color;
 

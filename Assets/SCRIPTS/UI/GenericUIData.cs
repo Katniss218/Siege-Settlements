@@ -4,11 +4,11 @@ namespace SS.UI
 {
 	public struct GenericUIData
 	{
-		public Vector2 position;
-		public Vector2 size;
-		public Vector2 pivot;
-		public Vector2 anchorMin;
-		public Vector2 anchorMax;
+		public Vector2 position { get; set; }
+		public Vector2 size { get; set; }
+		public Vector2 pivot { get; set; }
+		public Vector2 anchorMin { get; set; }
+		public Vector2 anchorMax { get; set; }
 
 		public GenericUIData( Vector2 position, Vector2 size )
 		{

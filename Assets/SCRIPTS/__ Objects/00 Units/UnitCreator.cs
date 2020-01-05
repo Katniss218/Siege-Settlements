@@ -141,7 +141,7 @@ namespace SS.Objects.Units
 				gameObject.AddComponent<CivilianUnitExtension>();
 			}
 
-			unit.onFactionChange.AddListener( () =>
+			unit.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{
 				Color color = LevelDataManager.factions[unit.factionId].color;
 

@@ -443,7 +443,7 @@ namespace SS.Objects.Buildings
 			}
 		}
 
-		private void OnFactionChange()
+		private void OnFactionChange( int fromFac, int toFac )
 		{
 			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
 			Color facColor = LevelDataManager.factions[this.building.factionId].color;

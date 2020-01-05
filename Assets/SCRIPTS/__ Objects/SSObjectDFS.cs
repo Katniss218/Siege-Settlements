@@ -56,12 +56,12 @@ namespace SS.Objects
 			}
 			set
 			{
-				bool isDifferentFactionId = this.factionId != value;
+				int oldFactionId = this.__factionId;
 				this.__factionId = value;
 
-				if( isDifferentFactionId ) // Only call onFactionChange if the faction ID has actually changed.
+				if( oldFactionId != this.__factionId ) // Only call onFactionChange if the faction ID has actually changed.
 				{
-					this.onFactionChange?.Invoke();
+					this.onFactionChange?.Invoke( oldFactionId, this.__factionId );
 				}
 			}
 		}
@@ -69,7 +69,7 @@ namespace SS.Objects
 		/// <summary>
 		/// Fired when the faction ID changes.
 		/// </summary>
-		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
+		public UnityEvent_int_int onFactionChange { get; set; } = new UnityEvent_int_int();
 
 		// Checks if the faction members can target each other.
 		// The condition is: --- Fac1 can target Fac2 IF: Fac1 or Fac2 is nor present, or the Fac1 belongs to different faction than Fac2.

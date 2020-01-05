@@ -118,7 +118,7 @@ namespace SS.Objects.Buildings
 			building.health = def.healthMax;
 			building.armor = def.armor;
 
-			building.onFactionChange.AddListener( () =>
+			building.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{
 				Color color = LevelDataManager.factions[building.factionId].color;
 

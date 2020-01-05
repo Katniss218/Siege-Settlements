@@ -25,12 +25,12 @@ namespace SS.UI
 			{
 				LevelManager.UnloadLevel( false, () =>
 				{
-					LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text, null );
+					LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text );
 				} );
 			}
 			else
 			{
-				LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text, null );
+				LevelManager.LoadLevel( levelInput.text, levelSaveStateInput.text );
 			}
 		}
 	}

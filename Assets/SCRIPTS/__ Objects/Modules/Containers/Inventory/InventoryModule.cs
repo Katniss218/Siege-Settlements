@@ -50,6 +50,41 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		bool __isStorage;
+		/// <summary>
+		/// Is the inventory marked as storage?
+		/// </summary>
+		public bool isStorage
+		{
+			get
+			{
+				return this.__isStorage;
+			}
+			set
+			{
+				if( value == this.__isStorage )
+				{
+					return;
+				}
+
+				// if the object belongs to a faction - update the stored resources cache.
+				if( this.ssObject is IFactionMember )
+				{
+					IFactionMember fac = (IFactionMember)this.ssObject;
+					Dictionary<string, int> res = this.GetAll();
+					foreach( var resource in res )
+					{
+						if( value )
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] += resource.Value;
+						else
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] -= resource.Value;
+					}
+				}
+
+				this.__isStorage = value;
+			}
+		}
+
 		/// <summary>
 		/// Returns a copy of every slot in the inventory.
 		/// </summary>
@@ -63,6 +98,9 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+		/// <summary>
+		/// Sets the slots to the copy of the array.
+		/// </summary>
 		public void SetSlots( SlotGroup[] slotGroups )
 		{
 			this.slotGroups = new SlotGroup[slotGroups.Length];
@@ -138,41 +176,47 @@ namespace SS.Objects.Modules
 				IFactionMember fac = (IFactionMember)this.ssObject;
 				this.onAdd.AddListener( ( string id, int amount ) =>
 				{
+					// will just throw an exception if non-existing resource is added/removed.
+					LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] += amount;
+					if( this.isStorage )
+					{
+						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] += amount;
+					}
+
 					if( fac.factionId == LevelDataManager.PLAYER_FAC )
 					{
-						ResourcePanel.instance.UpdateResourceEntryDelta( id, amount );
+						ResourcePanel.instance.UpdateResourceEntry( id,
+							LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id],
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] );
 					}
 				} );
 				this.onRemove.AddListener( ( string id, int amount ) =>
 				{
+					// will just throw an exception if non-existing resource is added/removed.
+					LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] -= amount;
+					if( this.isStorage )
+					{
+						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] -= amount;
+					}
+
 					if( fac.factionId == LevelDataManager.PLAYER_FAC )
 					{
-						ResourcePanel.instance.UpdateResourceEntryDelta( id, -amount );
+						ResourcePanel.instance.UpdateResourceEntry( id,
+							LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id],
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] );
 					}
 				} );
-				fac.onFactionChange.AddListener( () =>
+				fac.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 				{
-					if( fac.factionId == LevelDataManager.PLAYER_FAC )
+					Dictionary<string, int> res = this.GetAll();
+					foreach( var resource in res )
 					{
-						// add to the respanel.
-						for( int i = 0; i < this.slotCount; i++ )
-						{
-							if( !this.slotGroups[i].isEmpty )
-							{
-								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, this.slotGroups[i].amount );
-							}
-						}
-					}
-					else
-					{
-						// remove from the respanel
-						for( int i = 0; i < this.slotCount; i++ )
-						{
-							if( !this.slotGroups[i].isEmpty )
-							{
-								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
-							}
-						}
+						LevelDataManager.factionData[fromFac].resourcesStoredCache[resource.Key] -= resource.Value;
+						LevelDataManager.factionData[toFac].resourcesStoredCache[resource.Key] += resource.Value;
+
+						ResourcePanel.instance.UpdateResourceEntry( resource.Key,
+							LevelDataManager.factionData[toFac].resourcesAvailableCache[resource.Key],
+							LevelDataManager.factionData[toFac].resourcesStoredCache[resource.Key] );
 					}
 				} );
 			}
@@ -185,15 +229,21 @@ namespace SS.Objects.Modules
 			if( this.ssObject is IFactionMember )
 			{
 				IFactionMember fac = (IFactionMember)this.ssObject;
-				if( fac.factionId == LevelDataManager.PLAYER_FAC )
+
+				Dictionary<string, int> res = this.GetAll();
+				foreach( var resource in res )
 				{
-					for( int i = 0; i < this.slotCount; i++ )
+					LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[resource.Key] -= resource.Value;
+					if( this.isStorage )
 					{
-						if( this.slotGroups[i].isEmpty )
-						{
-							continue;
-						}
-						ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, -this.slotGroups[i].amount );
+						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] -= resource.Value;
+					}
+
+					if( fac.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdateResourceEntry( resource.Key,
+							LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[resource.Key],
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] );
 					}
 				}
 			}
@@ -457,16 +507,25 @@ namespace SS.Objects.Modules
 					{
 						this.slotGroups[i].capacityOverride = data.items[i].capacityOverride;
 					}
-					
+
 					if( this.ssObject is IFactionMember )
 					{
-						IFactionMember factionMember = (IFactionMember)this.ssObject;
-						if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+						IFactionMember fac = (IFactionMember)this.ssObject;
+						if( fac.factionId == LevelDataManager.PLAYER_FAC )
 						{
-							if( !this.slotGroups[i].isEmpty )
+							if( this.slotGroups[i].isEmpty )
 							{
-								ResourcePanel.instance.UpdateResourceEntryDelta( this.slotGroups[i].id, this.slotGroups[i].amount );
+								continue;
 							}
+							LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[this.slotGroups[i].id] += this.slotGroups[i].amount;
+							if( this.isStorage )
+							{
+								LevelDataManager.factionData[fac.factionId].resourcesStoredCache[this.slotGroups[i].id] += this.slotGroups[i].amount;
+							}
+
+							ResourcePanel.instance.UpdateResourceEntry( this.slotGroups[i].id,
+								LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[this.slotGroups[i].id],
+								LevelDataManager.factionData[fac.factionId].resourcesStoredCache[this.slotGroups[i].id] );
 						}
 					}
 				}

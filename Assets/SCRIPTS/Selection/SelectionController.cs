@@ -250,7 +250,7 @@ namespace SS
 
 		private void SelectTheSame( string definitionId )
 		{
-			SSObjectDFS[] selectables = SSObjectDFS.GetAllSelectables();
+			SSObjectDFS[] selectables = SSObjectDFS.GetAllDFS();
 
 			List<SSObjectDFS> sameIdAndWithinView = new List<SSObjectDFS>();
 			for( int i = 0; i < selectables.Length; i++ )
@@ -324,7 +324,7 @@ namespace SS
 
 		private static SSObjectDFS[] GetSelectablesInDragArea()
 		{
-			SSObjectDFS[] selectables = SSObject.GetAllSelectables();
+			SSObjectDFS[] selectables = SSObject.GetAllDFS();
 
 			List<SSObjectDFS> ret = new List<SSObjectDFS>();
 

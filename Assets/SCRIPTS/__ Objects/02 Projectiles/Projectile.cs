@@ -47,7 +47,7 @@ namespace SS.Objects.Projectiles
 
 		public int factionId { get; set; }
 
-		public UnityEvent onFactionChange { get; set; } = new UnityEvent();
+		public UnityEvent_int_int onFactionChange { get; set; } = new UnityEvent_int_int();
 
 
 

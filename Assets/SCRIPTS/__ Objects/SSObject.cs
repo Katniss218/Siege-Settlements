@@ -33,7 +33,7 @@ namespace SS.Objects
 			return allSSObjects.ToArray();
 		}
 
-		public static SSObjectDFS[] GetAllSelectables()
+		public static SSObjectDFS[] GetAllDFS()
 		{
 			return allSelectables.ToArray();
 		}

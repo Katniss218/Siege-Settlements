@@ -4,6 +4,8 @@ using SS.Levels.SaveStates;
 using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Units;
+using SS.ResourceSystem.Payment;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -21,7 +23,7 @@ namespace SS.Objects.Modules
 			
 		}
 
-		public ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
+		public static ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
 		{
 			Extra[] extras = SSObject.GetAllExtras();
 
@@ -30,7 +32,7 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < extras.Length; i++ )
 			{
 				// If is in range.
-				float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, extras[i].transform.position );
+				float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;
 				if( newDstSq > dstSq )
 				{
 					continue;
@@ -58,23 +60,82 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string resourceId = null )
+		{
+			SSObject[] objects = SSObject.GetAll();
+
+			IPaymentReceiver ret = null;
+			float dstSq = float.MaxValue;
+
+			Dictionary<string, int> resourcesWanted;
+			for( int i = 0; i < objects.Length; i++ )
+			{
+				// If has resource deposit.
+				IPaymentReceiver[] paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
+
+				if( paymentReceivers.Length == 0 )
+				{
+					continue;
+				}
+
+				if( objects[i] is IFactionMember )
+				{
+					if( ((IFactionMember)objects[i]).factionId != factionId )
+					{
+						continue;
+					}
+				}
+
+				for( int j = 0; j < paymentReceivers.Length; j++ )
+				{
+					resourcesWanted = paymentReceivers[j].GetWantedResources();
+					if( resourcesWanted.Count == 0 )
+					{
+						break;
+					}
+
+					if( resourceId == null || (resourceId != null && resourcesWanted.ContainsKey( resourceId ) ) )
+					{
+						// If is in range.
+						float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, objects[i].transform.position );
+						if( newDstSq <= dstSq )
+						{
+							dstSq = newDstSq;
+							ret = paymentReceivers[j];
+							break; // break inner loop
+						}
+					}
+
+				}
+			}
+			return ret;
+		}
+
 
 		public InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
-#warning mark certain inventories as storage. Make sure to only drop off to these.
-			Building[] objects = SSObject.GetAllBuildings();
+			SSObjectDFS[] objects = SSObject.GetAllDFS();
 			
 			InventoryModule ret = null;
-			float dstSq = float.MaxValue;
+			float dstSqToLastValid = float.MaxValue;
 			for( int i = 0; i < objects.Length; i++ )
 			{
 				if( objects[i] == self )
 				{
 					continue;
 				}
-				
-				
-				
+
+				// If is in range.
+				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
+				if( newDstSq > dstSqToLastValid )
+				{
+					continue;
+				}
+
+				if( objects[i].factionId != factionId )
+				{
+					continue;
+				}
 				
 				// If has resource deposit.
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
@@ -84,23 +145,13 @@ namespace SS.Objects.Modules
 					continue;
 				}
 				
-				if( objects[i] is IFactionMember )
-				{
-					if( ((IFactionMember)objects[i]).factionId != factionId )
-					{
-						continue;
-					}
-				}
-
 				for( int j = 0; j < inventories.Length; j++ )
 				{
-					if( inventories[j].GetSpaceLeft( resourceId ) > 0 )
+					if( inventories[j].isStorage )
 					{
-						// If is in range.
-						float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, objects[i].transform.position );
-						if( newDstSq <= dstSq )
+						if( inventories[j].GetSpaceLeft( resourceId ) > 0 )
 						{
-							dstSq = newDstSq;
+							dstSqToLastValid = newDstSq;
 							ret = inventories[j];
 							break; // break inner loop
 						}
@@ -133,7 +184,7 @@ namespace SS.Objects.Modules
 			
 			if( spaceLeft > 0 )
 			{
-				if( this.IsGoingToDeposit( goalController ) )
+				if( IsGoingToPickUp( goalController, this.resourceId ) )
 				{
 					return;
 				}
@@ -150,7 +201,7 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
-				if( this.IsGoingToDropOff( goalController ) )
+				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.ObjectDropOffMode.INVENTORY ) )
 				{
 					return;
 				}
@@ -169,20 +220,24 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		bool IsGoingToDeposit( TacticalGoalController goalController )
+		public static bool IsGoingToPickUp( TacticalGoalController goalController, string resourceId )
 		{
-			if( goalController.goal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.goal).resourceId == this.resourceId )
+			if( goalController.goal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.goal).resourceId == resourceId )
 			{
 				return true;
 			}
 			return false;
 		}
 
-		bool IsGoingToDropOff( TacticalGoalController goalController )
+		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.ObjectDropOffMode dropOffMode )
 		{
-			if( goalController.goal is TacticalDropOffGoal && ((TacticalDropOffGoal)goalController.goal).resourceId == this.resourceId )
+			if( goalController.goal is TacticalDropOffGoal )
 			{
-				return true;
+				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.goal;
+				if( dropOffGoal.resourceId == resourceId && dropOffGoal.objectDropOffMode == dropOffMode )
+				{
+					return true;
+				}
 			}
 			return false;
 		}

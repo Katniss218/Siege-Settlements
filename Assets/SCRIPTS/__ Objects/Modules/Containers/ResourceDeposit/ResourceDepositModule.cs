@@ -15,7 +15,7 @@ namespace SS.Objects.Modules
 
 		public const float MINING_SPEED = 1.0f;
 
-		internal struct SlotGroup
+		public struct SlotGroup
 		{
 			public readonly string id;
 			public int amount;
@@ -31,13 +31,49 @@ namespace SS.Objects.Modules
 
 		public AudioClip miningSound { get; set; }
 
-		internal SlotGroup[] resources;
+		internal SlotGroup[] slotGroups;
 
 		public int slotCount
 		{
 			get
 			{
-				return this.resources.Length;
+				return this.slotGroups.Length;
+			}
+		}
+
+		/// <summary>
+		/// Returns a copy of every slot in the inventory.
+		/// </summary>
+		public SlotGroup[] GetSlots()
+		{
+			SlotGroup[] ret = new SlotGroup[this.slotCount];
+			for( int i = 0; i < this.slotCount; i++ )
+			{
+				ret[i] = this.slotGroups[i];
+			}
+			return ret;
+		}
+
+		/// <summary>
+		/// Sets the slots to the copy of the array.
+		/// </summary>
+		public void SetSlots( SlotGroup[] slotGroups )
+		{
+			for( int i = 0; i < slotGroups.Length; i++ )
+			{
+				for( int j = i + 1; j < slotGroups.Length; j++ )
+				{
+					if( slotGroups[i].id == slotGroups[j].id )
+					{
+						throw new Exception( "Can't have multiple slots with the same resource id." ); // because that doesn't make sense, just use bigger slot.
+					}
+				}
+			}
+
+			this.slotGroups = new SlotGroup[slotGroups.Length];
+			for( int i = 0; i < slotGroups.Length; i++ )
+			{
+				this.slotGroups[i] = slotGroups[i];
 			}
 		}
 
@@ -127,9 +163,9 @@ namespace SS.Objects.Modules
 			get
 			{
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
-				for( int i = 0; i < this.resources.Length; i++ )
+				for( int i = 0; i < this.slotGroups.Length; i++ )
 				{
-					if( this.resources[i].amount != 0 )
+					if( this.slotGroups[i].amount != 0 )
 					{
 						return false;
 					}
@@ -145,11 +181,11 @@ namespace SS.Objects.Modules
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].id == id )
 				{
-					return this.resources[i].amount;
+					return this.slotGroups[i].amount;
 				}
 			}
 			// Resource is not present.
@@ -163,9 +199,9 @@ namespace SS.Objects.Modules
 				return new Dictionary<string, int>();
 			}
 			Dictionary<string, int> ret = new Dictionary<string, int>();
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				ret.Add( this.resources[i].id, this.resources[i].amount );
+				ret.Add( this.slotGroups[i].id, this.slotGroups[i].amount );
 			}
 			return ret;
 		}
@@ -177,11 +213,11 @@ namespace SS.Objects.Modules
 				throw new ArgumentNullException( "Id can't be null or empty." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].id == id )
 				{
-					return this.resources[i].slotCapacity;
+					return this.slotGroups[i].slotCapacity;
 				}
 			}
 			// No slot with the specified id.
@@ -200,20 +236,20 @@ namespace SS.Objects.Modules
 			}
 
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].id == id )
 				{
-					int spaceLeft = this.resources[i].slotCapacity - this.resources[i].amount;
+					int spaceLeft = this.slotGroups[i].slotCapacity - this.slotGroups[i].amount;
 					if( spaceLeft < amountMax )
 					{
-						this.resources[i].amount = this.resources[i].slotCapacity;
+						this.slotGroups[i].amount = this.slotGroups[i].slotCapacity;
 						this.onAdd?.Invoke( id, spaceLeft );
 						return spaceLeft;
 					}
 					else
 					{
-						this.resources[i].amount += amountMax;
+						this.slotGroups[i].amount += amountMax;
 						this.onAdd?.Invoke( id, amountMax );
 						return amountMax;
 					}
@@ -233,20 +269,20 @@ namespace SS.Objects.Modules
 				throw new ArgumentOutOfRangeException( "Amount can't be less than 1." );
 			}
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				if( this.resources[i].id == id )
+				if( this.slotGroups[i].id == id )
 				{
-					int spaceOccupied = this.resources[i].amount;
+					int spaceOccupied = this.slotGroups[i].amount;
 					if( spaceOccupied <= amountMax )
 					{
-						this.resources[i].amount = 0;
+						this.slotGroups[i].amount = 0;
 						this.onRemove?.Invoke( id, spaceOccupied );
 						return spaceOccupied;
 					}
 					else
 					{
-						this.resources[i].amount -= amountMax;
+						this.slotGroups[i].amount -= amountMax;
 						this.onRemove?.Invoke( id, amountMax );
 						return amountMax;
 					}
@@ -257,12 +293,12 @@ namespace SS.Objects.Modules
 
 		public void Clear()
 		{
-			Tuple<string, int>[] res = new Tuple<string, int>[this.resources.Length];
+			Tuple<string, int>[] res = new Tuple<string, int>[this.slotGroups.Length];
 
-			for( int i = 0; i < this.resources.Length; i++ )
+			for( int i = 0; i < this.slotGroups.Length; i++ )
 			{
-				res[i] = new Tuple<string, int>( this.resources[i].id, this.resources[i].amount );
-				this.resources[i].amount = 0;
+				res[i] = new Tuple<string, int>( this.slotGroups[i].id, this.slotGroups[i].amount );
+				this.slotGroups[i].amount = 0;
 			}
 
 			// Call the event after clearing, once per each type.

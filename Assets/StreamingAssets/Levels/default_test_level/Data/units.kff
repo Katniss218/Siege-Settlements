@@ -34,6 +34,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -131,6 +132,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -244,6 +246,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -340,6 +343,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -442,6 +446,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -547,6 +552,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -651,6 +657,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 2; }
@@ -741,6 +748,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Inventory";
+				IsStorage = false;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 5; }

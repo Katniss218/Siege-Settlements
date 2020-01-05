@@ -261,6 +261,7 @@
 				TypeId = "inventory";
 				ModuleId = "12345678-3373-7933-4658-396678574576";
 				DisplayName = "Storage";
+				IsStorage = true;
 				Slots =
 				[
 					{ SlotId = ""; Capacity = 30; },

@@ -57,13 +57,13 @@ namespace SS.UI
 			entries.Add( id, new ResourceListEntry() { container = container.transform, text = textText, amount = amount } );
 		}
 
-		public void UpdateResourceEntry( string id, int amount )
+		public void UpdateResourceEntry( string id, int amount, int amount2 )
 		{
 			ResourceListEntry entry;
 			if( entries.TryGetValue( id, out entry ) )
 			{
 				entry.amount = amount;
-				entry.text.text = entry.amount.ToString();
+				entry.text.text = amount + " (" + amount2 + ")";
 			}
 			else
 			{
@@ -71,7 +71,7 @@ namespace SS.UI
 			}
 		}
 
-		public void UpdateResourceEntryDelta( string id, int amountDelta )
+		/*public void UpdateResourceEntryDelta( string id, int amountDelta )
 		{
 			ResourceListEntry entry;
 			if( entries.TryGetValue( id, out entry ) )
@@ -83,7 +83,7 @@ namespace SS.UI
 			{
 				throw new System.Exception( "Didn't find resource '" + id + "'." );
 			}
-		}
+		}*/
 
 		public void SetEntries( ResourceDefinition[] resources )
 		{

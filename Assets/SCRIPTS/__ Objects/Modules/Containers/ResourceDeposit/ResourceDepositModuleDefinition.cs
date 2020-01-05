@@ -1,6 +1,5 @@
 ﻿using KFF;
 using SS.Content;
-using SS.Levels.SaveStates;
 using SS.Objects.Extras;
 using System;
 using System.Collections.Generic;
@@ -54,22 +53,14 @@ namespace SS.Objects.Modules
 			module.moduleId = moduleId;
 			module.displayName = this.displayName;
 			module.icon = this.icon;
-
-#warning some sort of method for setting the slots(?)
-			module.resources = new ResourceDepositModule.SlotGroup[this.slots.Length];
-			for( int i = 0; i < module.slotCount; i++ )
+			
+			ResourceDepositModule.SlotGroup[] slotGroups = new ResourceDepositModule.SlotGroup[this.slots.Length];
+			for( int i = 0; i < slotGroups.Length; i++ )
 			{
-				for( int j = 0; j < this.slots.Length; j++ )
-				{
-					if( module.resources[j].id == this.slots[i].resourceId )
-					{
-						throw new Exception( "Can't have multiple slots with the same resource id." ); // because that doesn't make sense, just use bigger slot.
-					}
-				}
-
-				module.resources[i] = new ResourceDepositModule.SlotGroup( this.slots[i].resourceId, 0, this.slots[i].capacity );
+				slotGroups[i] = new ResourceDepositModule.SlotGroup( this.slots[i].resourceId, 0, this.slots[i].capacity );
 			}
-
+			module.SetSlots( slotGroups );
+			
 			module.miningSound = this.mineSound;
 		}
 

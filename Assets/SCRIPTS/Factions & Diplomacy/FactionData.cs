@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Content;
+using SS.ResourceSystem;
 using SS.Technologies;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,18 @@ namespace SS.Diplomacy
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>
 		public Dictionary<string, TechnologyResearchProgress> techs = new Dictionary<string, TechnologyResearchProgress>();
+		
+		/// <summary>
+		/// All resources in inventories belonging to this faction (stored & not stored).
+		/// </summary>
+		public Dictionary<string, int> resourcesAvailableCache { get; internal set; }
+
+		/// <summary>
+		/// Only stored resources belonging to this faction (inside inventories marked as storage).
+		/// </summary>
+		public Dictionary<string, int> resourcesStoredCache { get; internal set; }
+		
+
 
 		/// <summary>
 		/// Creates a new, blank faction.
@@ -23,8 +36,25 @@ namespace SS.Diplomacy
 		{
 			this.techs = new Dictionary<string, TechnologyResearchProgress>();
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
+			this.resourcesAvailableCache = new Dictionary<string, int>();
+			this.resourcesStoredCache = new Dictionary<string, int>();
+			this.LoadRegisteredResources();
 		}
 		
+
+
+		private void LoadRegisteredResources()
+		{
+			ResourceDefinition[] resourcesLoaded = DefinitionManager.GetAllResources();
+			for( int i = 0; i < resourcesLoaded.Length; i++ )
+			{
+				resourcesAvailableCache.Add( resourcesLoaded[i].id, 0 );
+				resourcesStoredCache.Add( resourcesLoaded[i].id, 0 );
+			}
+		}
+
+
+
 		public TechnologyResearchProgress GetTech( string id )
 		{
 			if( this.techs.TryGetValue( id, out TechnologyResearchProgress ret ) )

@@ -1,13 +1,12 @@
 ﻿using KFF;
+using SS.Content;
 using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Heroes;
-using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SS.Content;
 
 namespace SS.Objects.Modules
 {
@@ -35,6 +34,7 @@ namespace SS.Objects.Modules
 
 		public SlotDefinition[] slots { get; set; }
 
+		public bool isStorage { get; set; }
 
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
@@ -58,13 +58,14 @@ namespace SS.Objects.Modules
 			module.moduleId = moduleId;
 			module.displayName = this.displayName;
 			module.icon = this.icon;
-
+			
 			InventoryModule.SlotGroup[] slotGroups = new InventoryModule.SlotGroup[this.slots.Length];
 			for( int i = 0; i < slotGroups.Length; i++ )
 			{
 				slotGroups[i] = new InventoryModule.SlotGroup( this.slots[i].slotId, this.slots[i].capacity );
 			}
 			module.SetSlots( slotGroups );
+			module.isStorage = this.isStorage;
 		}
 		
 
@@ -90,6 +91,8 @@ namespace SS.Objects.Modules
 
 			this.displayName = serializer.ReadString( "DisplayName" );
 
+			this.isStorage = serializer.ReadBool( "IsStorage" );
+
 			try
 			{
 				this.icon = serializer.ReadSpriteFromAssets( "Icon" );
@@ -105,6 +108,8 @@ namespace SS.Objects.Modules
 			serializer.SerializeArray( "", "Slots", this.slots );
 			serializer.WriteString( "", "DisplayName", this.displayName );
 			serializer.WriteString( "", "Icon", (string)this.icon );
+
+			serializer.WriteBool( "", "IsStorage", this.isStorage );
 		}
 	}
 }

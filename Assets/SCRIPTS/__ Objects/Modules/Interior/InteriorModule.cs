@@ -120,9 +120,9 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public int? GetFirstValid( SlotType type, Unit u )// PopulationSize population, string unitId, bool isUnitCivilian, bool isWorkingHere )
+		public int? GetFirstValid( SlotType type, Unit unit )
 		{
-			byte population = (byte)u.population;
+			byte population = (byte)unit.population;
 
 			if( type == SlotType.Generic )
 			{
@@ -140,7 +140,7 @@ namespace SS.Objects.Modules
 
 					for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
 					{
-						if( this.slots[i].whitelistedUnits[j] == u.definitionId )
+						if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
 						{
 							return i;
 						}
@@ -152,7 +152,7 @@ namespace SS.Objects.Modules
 			}
 			if( type == SlotType.Worker )
 			{
-				if( !u.isCivilian )
+				if( !unit.isCivilian )
 				{
 					return null;
 				}
@@ -163,7 +163,8 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					CivilianUnitExtension cue = u.GetComponent<CivilianUnitExtension>();
+					// Should be null checked before (isCivilian).
+					CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
 					if( this.workerSlots[i].worker != cue )
 					{
 						continue;
@@ -180,7 +181,6 @@ namespace SS.Objects.Modules
 		{
 			// integrate hud.
 			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
 
 			this.hudInterior = hudObj.hud.GetComponent<HUDInterior>();
 		}
@@ -229,6 +229,10 @@ namespace SS.Objects.Modules
 		}
 
 
+		//
+		//
+		//
+
 
 		public override ModuleData GetData()
 		{
@@ -272,7 +276,22 @@ namespace SS.Objects.Modules
 		}
 
 
+		//
+		//
+		//
 
+
+		private void TrySelectInside_UI( IEnterableInside insideObj )
+		{
+			if( insideObj != null )
+			{
+				if( insideObj is SSObjectDFS )
+				{
+					Selection.DeselectAll();
+					Selection.TrySelect( (SSObjectDFS)insideObj );
+				}
+			}
+		}
 
 		private void DisplaySlotsList_UI()
 		{
@@ -280,16 +299,9 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < this.slots.Length; i++ )
 			{
 				IEnterableInside insideObj = this.slots[i].objInside;
-				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), insideObj?.icon, () =>
+				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
-					if( insideObj != null )
-					{
-						if( insideObj is SSObjectDFS )
-						{
-							Selection.DeselectAll();
-							Selection.TrySelect( (SSObjectDFS)insideObj );
-						}
-					}
+					TrySelectInside_UI( insideObj );
 				} );
 			}
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
@@ -302,22 +314,16 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
 				IEnterableInside insideObj = this.workerSlots[i].objInside;
-				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), insideObj?.icon, () =>
+				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
-					if( insideObj != null )
-					{
-						if( insideObj is SSObjectDFS )
-						{
-							Selection.DeselectAll();
-							Selection.TrySelect( (SSObjectDFS)insideObj );
-						}
-					}
+					TrySelectInside_UI( insideObj );
 				} );
 			}
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
 		}
 	
+
 		public void OnDisplay()
 		{
 			DisplaySlotsList_UI();

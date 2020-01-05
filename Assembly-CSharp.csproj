@@ -152,7 +152,6 @@
     <Compile Include="Assets\SCRIPTS\UI\ToolTip.cs" />
     <Compile Include="Assets\SCRIPTS\UI\ToolTipUIHandler.cs" />
     <Compile Include="Assets\SCRIPTS\UI\UIUtils.cs" />
-    <Compile Include="Assets\SCRIPTS\_TacticalAI\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoal.cs" />
@@ -173,6 +172,7 @@
     <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />

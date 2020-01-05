@@ -10,30 +10,28 @@ namespace SS.UI
 		[SerializeField] private Image resourceIcon = null;
 		[SerializeField] private TextMeshProUGUI amountText = null;
 
-		public void DisplayResource( ResourceDefinition def, int amount, bool plus )
+		public void DisplayResource( ResourceDefinition def, int amount, bool displayStar )
 		{
-			resourceIcon.sprite = def.icon;
 			if( !resourceIcon.gameObject.activeSelf )
 			{
 				resourceIcon.gameObject.SetActive( true );
 			}
-			amountText.text = "" + amount;
 			if( !amountText.gameObject.activeSelf )
 			{
 				amountText.gameObject.SetActive( true );
 			}
-			if( plus )
-			{
-				amountText.text += "*";
-			}
+
+			resourceIcon.sprite = def.icon;
+			amountText.text = displayStar ? amount + "*" : amount + "";
 		}
 
 		public void HideResource()
 		{
-			resourceIcon.sprite = null;
 			resourceIcon.gameObject.SetActive( false );
-			amountText.text = "";
 			amountText.gameObject.SetActive( false );
+
+			resourceIcon.sprite = null;
+			amountText.text = "";
 		}
 	}
 }
