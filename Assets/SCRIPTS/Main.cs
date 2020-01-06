@@ -177,13 +177,16 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
+					CivilianUnitExtension cue = hitInfo.collider.GetComponent<CivilianUnitExtension>();
+					cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
+
+					/*InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
 
 
 					if( hitInventory != null )
 					{
 						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInfo, hitInventory, Selection.GetSelectedObjects() );
-					}
+					}*/
 				}
 			}
 		}

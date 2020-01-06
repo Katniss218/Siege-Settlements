@@ -271,6 +271,27 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		public bool isFull
+		{
+			get
+			{
+				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
+				for( int i = 0; i < this.slotCount; i++ )
+				{
+					if( this.slotGroups[i].isEmpty )
+					{
+						return false;
+					}
+					int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
+					if( this.slotGroups[i].amount < realCapacity )
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
 		public int Get( string id )
 		{
 			if( string.IsNullOrEmpty( id ) )

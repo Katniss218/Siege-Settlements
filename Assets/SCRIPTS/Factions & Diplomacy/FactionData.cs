@@ -16,7 +16,26 @@ namespace SS.Diplomacy
 		/// The techs that are locked/researched/etc. for this specific faction.
 		/// </summary>
 		public Dictionary<string, TechnologyResearchProgress> techs = new Dictionary<string, TechnologyResearchProgress>();
-		
+
+
+		//
+		//
+		//
+
+		static List<T> __GetEqualOrAboveThreshold<T>( Dictionary<T, int> container, int threshold )
+		{
+			// returns every key for which the value is at least equal the specified threshold.
+			List<T> resources = new List<T>();
+			foreach( var kvp in container )
+			{
+				if( kvp.Value >= threshold )
+				{
+					resources.Add( kvp.Key );
+				}
+			}
+			return resources;
+		}
+
 		/// <summary>
 		/// All resources in inventories belonging to this faction (stored & not stored).
 		/// </summary>
@@ -26,8 +45,29 @@ namespace SS.Diplomacy
 		/// Only stored resources belonging to this faction (inside inventories marked as storage).
 		/// </summary>
 		public Dictionary<string, int> resourcesStoredCache { get; internal set; }
-		
 
+
+		/// <summary>
+		/// Returns a list of resources belonging to this faction, that this faction has at least the specified amount.
+		/// </summary>
+		/// <param name="threshold">The amount of resource must be at least equal to this amount.</param>
+		public List<string> GetResourcesAvailable( int threshold = 0 )
+		{
+			return __GetEqualOrAboveThreshold( this.resourcesAvailableCache, threshold );
+		}
+
+		/// <summary>
+		/// Returns a list of resources in storage of this faction, that this faction has at least the specified amount.
+		/// </summary>
+		/// <param name="threshold">The amount of resource must be at least equal to this amount.</param>
+		public List<string> GetResourcesStored( int threshold = 0 )
+		{
+			return __GetEqualOrAboveThreshold( this.resourcesStoredCache, threshold );
+		}
+
+		//
+		//
+		//
 
 		/// <summary>
 		/// Creates a new, blank faction.
@@ -42,9 +82,14 @@ namespace SS.Diplomacy
 		}
 		
 
+		//
+		//
+		//
 
+		
 		private void LoadRegisteredResources()
 		{
+			// Loads the registered resources to the faction's cache.
 			ResourceDefinition[] resourcesLoaded = DefinitionManager.GetAllResources();
 			for( int i = 0; i < resourcesLoaded.Length; i++ )
 			{
@@ -53,8 +98,19 @@ namespace SS.Diplomacy
 			}
 		}
 
+		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState = TechnologyResearchProgress.Available )
+		{
+			// Loads the registered technologies to the faction's cache. Can specify a default state.
+			TechnologyDefinition[] technologiesLoaded = DefinitionManager.GetAllTechnologies();
+			for( int i = 0; i < technologiesLoaded.Length; i++ )
+			{
+				techs.Add( technologiesLoaded[i].id, defaultState );
+			}
+		}
 
-
+		/// <summary>
+		/// Returns a state of the technology with the specified id.
+		/// </summary>
 		public TechnologyResearchProgress GetTech( string id )
 		{
 			if( this.techs.TryGetValue( id, out TechnologyResearchProgress ret ) )
@@ -64,20 +120,19 @@ namespace SS.Diplomacy
 			throw new System.Exception( "Unknown technology '" + id + "'." );
 		}
 
+		/// <summary>
+		/// Returns the state of every technology currently registered.
+		/// </summary>
 		public Dictionary<string, TechnologyResearchProgress> GetAllTechs()
 		{
 			return new Dictionary<string, TechnologyResearchProgress>( techs );
 		}
 
-		// Loads the registered technologies to the faction's cache.
-		private void LoadRegisteredTechnologies( TechnologyResearchProgress defaultState )
-		{
-			TechnologyDefinition[] technologiesLoaded = DefinitionManager.GetAllTechnologies();
-			for( int i = 0; i < technologiesLoaded.Length; i++ )
-			{
-				techs.Add( technologiesLoaded[i].id, defaultState );
-			}
-		}
+
+		//
+		//
+		//
+
 		
 		public void DeserializeKFF( KFFSerializer serializer )
 		{

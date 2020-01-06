@@ -5,6 +5,7 @@ using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Units;
 using SS.ResourceSystem.Payment;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,11 +61,12 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
-		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string resourceId = null )
+		public static Tuple<SSObject,IPaymentReceiver> GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
 			SSObject[] objects = SSObject.GetAll();
 
 			IPaymentReceiver ret = null;
+			SSObject retObj = null;
 			float dstSq = float.MaxValue;
 
 			Dictionary<string, int> resourcesWanted;
@@ -94,21 +96,27 @@ namespace SS.Objects.Modules
 						break;
 					}
 
-					if( resourceId == null || (resourceId != null && resourcesWanted.ContainsKey( resourceId ) ) )
+					if( resourceIds != null )
 					{
-						// If is in range.
-						float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;// Vector3.Distance( pos, objects[i].transform.position );
-						if( newDstSq <= dstSq )
+						for( int k = 0; k < resourceIds.Length; k++ )
 						{
-							dstSq = newDstSq;
-							ret = paymentReceivers[j];
-							break; // break inner loop
+							if( resourcesWanted.ContainsKey( resourceIds[k] ) )
+							{
+								// If is in range.
+								float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
+								if( newDstSq <= dstSq )
+								{
+									dstSq = newDstSq;
+									ret = paymentReceivers[j];
+									retObj = objects[i];
+									break; // break inner loop
+								}
+							}
 						}
 					}
-
 				}
 			}
-			return ret;
+			return new Tuple<SSObject, IPaymentReceiver>( retObj, ret );
 		}
 
 

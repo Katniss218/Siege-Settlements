@@ -4,7 +4,9 @@ using SS.Levels;
 using SS.Objects.Buildings;
 using SS.Objects.Modules;
 using SS.ResourceSystem.Payment;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SS.Objects.Units
@@ -88,6 +90,7 @@ namespace SS.Objects.Units
 
 		public bool isOnAutomaticDuty { get; set; }
 		IPaymentReceiver automaticDutyReceiver;
+		SSObject automaticDutyReceiverObject;
 		string automaticDutyResourceId = null;
 
 		void UpdateAutomaticDuty()
@@ -101,9 +104,14 @@ namespace SS.Objects.Units
 
 			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
 
+			InventoryModule selfInventory = inventories[0];
+
 			if( ResourceCollectorWorkplaceModule.IsGoingToPickUp( goalController, automaticDutyResourceId ) )
 			{
-				return;
+				if( !selfInventory.isFull )
+				{
+					return;
+				}
 			}
 
 			if( ResourceCollectorWorkplaceModule.IsGoingToDropOff( goalController, automaticDutyResourceId, TacticalDropOffGoal.ObjectDropOffMode.PAYMENT ) )
@@ -111,7 +119,6 @@ namespace SS.Objects.Units
 				return;
 			}
 
-			InventoryModule selfInventory = inventories[0];
 
 			if( selfInventory.isEmpty )
 			{
@@ -123,9 +130,19 @@ namespace SS.Objects.Units
 					{
 						if( LevelDataManager.factionData[this.unit.factionId].resourcesStoredCache.ContainsKey( kvp.Key ) )
 						{
-							ResourceDepositModule rd = ResourceCollectorWorkplaceModule.GetClosestInRangeContaining( this.unit.transform.position, float.MaxValue, kvp.Key );
+#warning pick up from inventories, not deposits.
 
-							// - - - PICK_UP (any of the type wanted).
+#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
+
+							ResourceDepositModule closestDeposit = ResourceCollectorWorkplaceModule.GetClosestInRangeContaining( this.unit.transform.position, float.MaxValue, kvp.Key );
+
+							this.automaticDutyResourceId = kvp.Key;
+							
+							TacticalPickUpGoal goal = new TacticalPickUpGoal();
+
+							goal.destinationObject = closestDeposit.ssObject;
+							goal.resourceId = this.automaticDutyResourceId;
+							goalController.goal = goal;
 
 							foundResourceDeposit = true;
 							break;
@@ -133,24 +150,60 @@ namespace SS.Objects.Units
 					}
 					if( !foundResourceDeposit ) // else - can't pick up any of the wanted resources.
 					{
-						// - - - find new receiver using resources that can be found (needs cache of all available resources per faction).
+						// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
+						Tuple<SSObject, IPaymentReceiver> receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId, 
+							LevelDataManager.factionData[this.unit.factionId].GetResourcesStored().ToArray()
+						);
+						
+						this.automaticDutyReceiver = receiver.Item2; // if null, will be set to null.
+						this.automaticDutyReceiverObject = receiver.Item1;
 					}
 				}
 				else
 				{
-					// - - find any receiver, using resources that can be found (needs cache of all available resources per faction).
+					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
+					Tuple<SSObject, IPaymentReceiver> receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
+						LevelDataManager.factionData[this.unit.factionId].GetResourcesStored().ToArray()
+					);
+
+					this.automaticDutyReceiver = receiver.Item2; // if null, will be set to null.
+					this.automaticDutyReceiverObject = receiver.Item1;
 				}
 			}
 			else
 			{
 				if( this.automaticDutyReceiver != null )
 				{
-					// - - if receiver wants any of the resources currently carried
-					// - - - MAKE_PAYMENT
+					Dictionary<string, int> wantedResources = this.automaticDutyReceiver.GetWantedResources();
+					Dictionary<string, int> resourcesCarried = selfInventory.GetAll();
+
+					foreach( var kvp in wantedResources )
+					{
+						// - - if receiver wants any of the resources currently carried
+						if( resourcesCarried.ContainsKey( kvp.Key ) )
+						{
+							// - - - MAKE_PAYMENT
+							TacticalDropOffGoal goal = new TacticalDropOffGoal();
+
+							goal.SetDestination( this.automaticDutyReceiverObject );
+							goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.PAYMENT;
+							goal.resourceId = this.automaticDutyResourceId;
+							goalController.goal = goal;
+
+							break;
+						}
+					}
 				}
 				else
 				{
-					// - - find receiver wanting any of the carried resources.
+					// - - find receiver that wants any of the carried resources.
+					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
+					Tuple<SSObject, IPaymentReceiver> receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
+						selfInventory.GetAll().Keys.ToArray()
+					);
+
+					this.automaticDutyReceiver = receiver.Item2; // if null, will be set to null.
+					this.automaticDutyReceiverObject = receiver.Item1;
 				}
 			}
 			// IF going to storage to pick up resources
@@ -174,8 +227,7 @@ namespace SS.Objects.Units
 			// - - - MAKE_PAYMENT
 			// - ELSE (no receiver)
 			// - - find receiver wanting any of the carried resources.
-
-#warning .
+			
 			// if has receiver & resources - go pay.
 		}
 
