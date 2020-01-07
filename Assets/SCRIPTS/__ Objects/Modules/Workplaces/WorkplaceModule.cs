@@ -49,6 +49,13 @@ namespace SS.Objects.Modules
 			c.workplaceSlotId = slotIndex;
 		}
 
+		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
+		{
+			w.interior.workerSlots[slotIndex].worker = null;
+			c.workplace = null;
+			c.workplaceSlotId = 0;
+		}
+
 		public void Employ( CivilianUnitExtension civilian )
 		{
 			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
@@ -56,6 +63,18 @@ namespace SS.Objects.Modules
 				if( this.interior.workerSlots[i].worker == null )
 				{
 					SetWorker( this, civilian, i );
+					return;
+				}
+			}
+		}
+
+		public void UnEmploy( CivilianUnitExtension civilian )
+		{
+			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
+			{
+				if( this.interior.workerSlots[i].worker == civilian )
+				{
+					ClearWorker( this, civilian, i );
 					return;
 				}
 			}

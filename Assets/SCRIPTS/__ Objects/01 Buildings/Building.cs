@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObjectDFS, IHUDHolder, IUsableToggle, IMouseOverHandlerListener
+	public class Building : SSObjectDFS, IHUDHolder, IUsableSSObject, IMouseOverHandlerListener
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -50,6 +50,7 @@ namespace SS.Objects.Buildings
 
 		public AudioClip buildSoundEffect { get; set; }
 
+		internal ConstructionSite constructionSite { get; set; }
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 

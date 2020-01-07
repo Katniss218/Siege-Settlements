@@ -163,7 +163,7 @@ namespace SS.AI
 
 			if( filteredObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < filteredObjects.Count; i++ )
 			{
@@ -225,9 +225,10 @@ namespace SS.AI
 				}
 			}
 
+#warning if the unit is an employed civilian or civilian on auto duty, lock the interaction.
 			if( movableWithInvGameObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
@@ -275,7 +276,7 @@ namespace SS.AI
 
 			if( gridInfo.positions.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			Quaternion gridRotation = Quaternion.Euler( 0, Main.cameraPivot.rotation.eulerAngles.y, 0 );
 			foreach( var kvp in gridInfo.positions )
@@ -329,7 +330,7 @@ namespace SS.AI
 			
 			if( movableGameObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
@@ -395,7 +396,7 @@ namespace SS.AI
 
 			if( movableWithInvGameObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
@@ -450,7 +451,7 @@ namespace SS.AI
 
 			if( movableWithInvGameObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
@@ -525,7 +526,7 @@ namespace SS.AI
 
 			if( toBeAssignedGameObjects.Count > 0 )
 			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ) );
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{

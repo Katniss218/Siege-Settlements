@@ -90,13 +90,14 @@ namespace SS.Objects.Buildings
 				shape.position = Vector3.zero;
 				Main.particleSystem.GetComponent<ParticleSystem>().Emit( 36 );
 
-				AudioManager.PlaySound( this.building.buildSoundEffect );
+				AudioManager.PlaySound( this.building.buildSoundEffect, this.transform.position );
 				
 
 				bool isDone = this.IsDone();
 				if( isDone )
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
+					this.building.constructionSite = null;
 					this.building.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.building.onFactionChange.RemoveListener( this.OnFactionChange );
 
@@ -403,6 +404,7 @@ namespace SS.Objects.Buildings
 			}
 
 
+			building.constructionSite = constructionSite;
 			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
 
@@ -423,8 +425,7 @@ namespace SS.Objects.Buildings
 				Selection.DisplayObject( building );
 			}
 		}
-
-
+		
 		private void OnHealthChange( float deltaHP )
 		{
 			this.UpdateStatus_UI();

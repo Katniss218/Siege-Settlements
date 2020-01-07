@@ -163,7 +163,7 @@ namespace SS
 			}
 
 
-			if( !(obj is IUsableToggle) || ((IUsableToggle)obj).IsUsable() )
+			if( !(obj is IUsableSSObject) || ((IUsableSSObject)obj).IsUsable() )
 			{
 				SSModule[] modules = ((SSObject)obj).GetModules();
 				

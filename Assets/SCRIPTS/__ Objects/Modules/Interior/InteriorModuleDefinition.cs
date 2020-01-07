@@ -60,10 +60,9 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			InteriorModule module = gameObject.AddComponent<InteriorModule>();
-			module.moduleId = moduleId;
+			InteriorModule module = ssObject.AddModule<InteriorModule>( moduleId );
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.entrancePosition = this.entrancePosition;

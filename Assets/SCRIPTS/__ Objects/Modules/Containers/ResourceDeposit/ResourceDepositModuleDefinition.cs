@@ -47,10 +47,9 @@ namespace SS.Objects.Modules
 				modTypes.Contains( typeof( ResourceDepositModuleDefinition ) ));
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			ResourceDepositModule module = gameObject.AddComponent<ResourceDepositModule>();
-			module.moduleId = moduleId;
+			ResourceDepositModule module = ssObject.AddModule<ResourceDepositModule>( moduleId );
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			

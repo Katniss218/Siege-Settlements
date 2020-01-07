@@ -26,10 +26,9 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			ResearchModule module = gameObject.AddComponent<ResearchModule>();
-			module.moduleId = moduleId;
+			ResearchModule module = ssObject.AddModule<ResearchModule>( moduleId );
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.researchSpeed = this.researchSpeed;

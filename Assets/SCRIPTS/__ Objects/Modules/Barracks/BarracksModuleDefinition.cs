@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using KFF;
 using SS.Objects.Buildings;
-using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using UnityEngine;
 using SS.Content;
@@ -25,10 +24,9 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			BarracksModule module = gameObject.AddComponent<BarracksModule>();
-			module.moduleId = moduleId;
+			BarracksModule module = ssObject.AddModule<BarracksModule>( moduleId );
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.trainSpeed = this.trainSpeed;

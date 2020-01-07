@@ -132,16 +132,22 @@ namespace SS
 				{
 					WorkplaceModule workplace = hitInfo.collider.GetComponent<WorkplaceModule>();
 
-					if( workplace == null )
-					{
-						return;
-					}
-
 					SSObjectDFS[] selected = Selection.GetSelectedObjects();
+
 					for( int i = 0; i < selected.Length; i++ )
 					{
 						CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-						workplace.Employ( cue );
+						if( cue.workplace == null )
+						{
+							if( workplace != null )
+							{
+								workplace.Employ( cue );
+							}
+						}
+						else
+						{
+							cue.workplace.UnEmploy( cue );
+						}
 					}
 				}
 			}
@@ -179,6 +185,7 @@ namespace SS
 				{
 					CivilianUnitExtension cue = hitInfo.collider.GetComponent<CivilianUnitExtension>();
 					cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
+					Debug.Log( "Auto: " + cue.isOnAutomaticDuty );
 
 					/*InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
 

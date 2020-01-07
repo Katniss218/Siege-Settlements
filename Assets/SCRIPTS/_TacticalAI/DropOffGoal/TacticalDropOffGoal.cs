@@ -176,7 +176,7 @@ namespace SS.AI.Goals
 						{
 							resDepo.Add( slot.resourceId, resAmount );
 						}
-						AudioManager.PlaySound( resourceDef.dropoffSound );
+						AudioManager.PlaySound( resourceDef.dropoffSound, position );
 					}
 				}
 			}
@@ -208,14 +208,14 @@ namespace SS.AI.Goals
 						this.inventory.Remove( kvp.Key, amountDroppedOff );
 
 						ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
-						AudioManager.PlaySound( def.dropoffSound );
+						AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
 					}
 				}
 			}
 			else if( this.objectDropOffMode == ObjectDropOffMode.PAYMENT )
 			{
 				bool payOnlyConstructionSites = false;
-				if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+				if( (this.destinationObject is IUsableSSObject) && !((IUsableSSObject)this.destinationObject).IsUsable() )
 				{
 					payOnlyConstructionSites = true;
 				}
@@ -253,7 +253,7 @@ namespace SS.AI.Goals
 						this.inventory.Remove( kvp.Key, amountPayed );
 						paymentReceivers[i].ReceivePayment( kvp.Key, amountPayed );
 						ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-						AudioManager.PlaySound( resDef.dropoffSound );
+						AudioManager.PlaySound( resDef.dropoffSound, controller.transform.position );
 					}
 					// If there is no resources to pay (everything spent).
 					if( this.inventory.isEmpty )
@@ -320,7 +320,7 @@ namespace SS.AI.Goals
 								{
 									resDepo.Add( slot.resourceId, resAmount );
 								}
-								AudioManager.PlaySound( resourceDef.dropoffSound );
+								AudioManager.PlaySound( resourceDef.dropoffSound, controller.transform.position );
 							}
 						}
 					}
@@ -372,7 +372,7 @@ namespace SS.AI.Goals
 
 				if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
 				{
-					if( (this.destinationObject is IUsableToggle) && !((IUsableToggle)this.destinationObject).IsUsable() )
+					if( (this.destinationObject is IUsableSSObject) && !((IUsableSSObject)this.destinationObject).IsUsable() )
 					{
 						this.navMeshAgent.ResetPath();
 						controller.goal = TacticalGoalController.GetDefaultGoal();
@@ -382,7 +382,7 @@ namespace SS.AI.Goals
 			}
 
 			// If it's not usable - return, don't move.
-			if( (controller.ssObject is IUsableToggle) && !((IUsableToggle)controller.ssObject).IsUsable() )
+			if( (controller.ssObject is IUsableSSObject) && !((IUsableSSObject)controller.ssObject).IsUsable() )
 			{
 				return;
 			}

@@ -1,11 +1,8 @@
 ﻿using Katniss.Utils;
-using SS.Content;
 using SS.Objects;
 using SS.Objects.Modules;
-using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace SS.AI.Goals
 {
@@ -19,25 +16,55 @@ namespace SS.AI.Goals
 			NONE
 		}
 
-		/// <summary>
-		/// Specified which resource is going to be picked up (null for all).
-		/// </summary>
-		public string resourceId { get; set; }
-		public SSObject destinationObject { get; set; }
+		public enum PickUpMode : byte
+		{
+			INVENTORY,
+			RESOURCE_DEPOSIT
+		}
 
+		private static float INTERACTION_DISTANCE = 0.75f;
+
+		/// <summary>
+		/// Specified which resources to pick up (set to null to take any and all resources).
+		/// </summary>
+		public Dictionary<string, int> resources { get; set; } = null;
+
+
+
+		public InventoryModule destinationInventory { get; private set; }
+		public ResourceDepositModule destinationResourceDeposit { get; private set; }
+		public PickUpMode pickUpMode { get; private set; }
+		
 		public bool isHostile { get; set; }
 
 
-		private float amountCollectedDeposit;
+		private Dictionary<string, int> resourcesRemaining;
 
-		private Vector3 oldDestination;
+		private float amountCollectedFractional;
+		
 		private InventoryModule inventory;
-		private NavMeshAgent navMeshAgent;
 		private IAttackModule[] attackModules;
+
+
 
 		public TacticalPickUpGoal()
 		{
 			this.isHostile = true;
+		}
+
+
+		public void SetDestination( InventoryModule inventory )
+		{
+			this.pickUpMode = PickUpMode.INVENTORY;
+			this.destinationInventory = inventory;
+			this.destinationResourceDeposit = null;
+		}
+
+		public void SetDestination( ResourceDepositModule resourceDeposit )
+		{
+			this.pickUpMode = PickUpMode.RESOURCE_DEPOSIT;
+			this.destinationInventory = null;
+			this.destinationResourceDeposit = resourceDeposit;
 		}
 
 
@@ -54,156 +81,198 @@ namespace SS.AI.Goals
 		public override void Start( TacticalGoalController controller )
 		{
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
-			this.navMeshAgent = (controller.ssObject as IMovable).navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
 		}
 
 
-		private void UpdatePosition( TacticalGoalController controller )
+		private bool? PickUpFromDeposit( TacticalGoalController controller )
 		{
-			Vector3 currDestPos = this.destinationObject.transform.position;
-			if( this.oldDestination != currDestPos )
-			{
-				this.navMeshAgent.SetDestination( currDestPos );
-			}			
+			Dictionary<string, int> resourcesInDeposit = this.destinationResourceDeposit.GetAll();
 
-			this.oldDestination = currDestPos;
-		}
-
-		private void OnArrivalDeposit( TacticalGoalController controller, ResourceDepositModule destinationDeposit )
-		{
-#warning TODO - do something to this. either this should also exit from interiors, or just try to pick up, and must be moved first via MoveTo.
-			Dictionary<string, int> resourcesInDeposit = destinationDeposit.GetAll();
 			foreach( var kvp in resourcesInDeposit )
 			{
-				if( kvp.Value == 0 )
-				{
-					continue;
-				}
+				int amountRemainingWanted = int.MaxValue;
+
 				// If the goal wants a specific resource - disregard any other resources.
-				if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+				if( this.resourcesRemaining != null )
+				{
+					amountRemainingWanted = 0;
+					this.resourcesRemaining.TryGetValue( kvp.Key, out amountRemainingWanted );
+				}
+
+				// If set to 0, this means that resources remaining for this resource is present & equal to 0.
+				// If set to int.MaxValue, this means that there's no 'resources remaining' for this resource.
+				if( amountRemainingWanted == 0 )
 				{
 					continue;
 				}
-				if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
+
+				int spaceLeftSelf = this.inventory.GetSpaceLeft( kvp.Key );
+				if( spaceLeftSelf == 0 )
 				{
-					this.amountCollectedDeposit += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
-					int amountCollectedFloored = Mathf.FloorToInt( amountCollectedDeposit );
-					if( amountCollectedFloored >= 1 )
-					{
-						// Get the actual amount that can be picked up & put in the inventory.
-						string pickedUpId = kvp.Key;
-						int pickedUpAmount = this.inventory.Add( kvp.Key, amountCollectedFloored );
-
-						this.amountCollectedDeposit -= amountCollectedFloored;
-
-						if( pickedUpAmount > 0 )
-						{
-							destinationDeposit.Remove( pickedUpId, pickedUpAmount );
-							AudioManager.PlaySound( destinationDeposit.miningSound );
-						}
-						break; // Only pick up one resource at a time.
-					}
+					continue;
 				}
+
+				this.amountCollectedFractional += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
+				int amountCollectedFloored = Mathf.FloorToInt( amountCollectedFractional );
+				// when the amount collected has accumulated to over '1' - take '1' of any (wanted) resource.
+				if( amountCollectedFloored >= 1 )
+				{
+					// Take either what's left or enough to completely fill the remaining space.
+					int amountToTake = amountRemainingWanted > kvp.Value ? kvp.Value : amountRemainingWanted;
+
+					// If tried to take more than can hold - clamped automatically.
+					int amountTaken = this.inventory.Add( kvp.Key, amountToTake );
+					
+					this.amountCollectedFractional -= amountCollectedFloored;
+
+					if( amountTaken > 0 )
+					{
+						// Remove the actual amount taken by the inventory.
+						this.destinationResourceDeposit.Remove( kvp.Key, amountTaken );
+						
+						AudioManager.PlaySound( this.destinationResourceDeposit.miningSound, controller.transform.position );
+					}
+					break; // Only pick up '1' of any resource per-pickup.
+				}
+			}
+			
+			bool isSomethingRemaining = false;
+			// check if there is still more resources remaining.
+			foreach( var kvp in this.resourcesRemaining )
+			{
+				if( kvp.Value > 0 )
+				{
+					isSomethingRemaining = true;
+				}
+			}
+
+			// only return actual success when there's no this.resourcesRemaining
+			// only return actual failure if the inventory is full.
+			// otherwise, wait - the operation is not done yet.
+			if( isSomethingRemaining )
+			{
+				if( this.inventory.isFull )
+				{
+					return false;
+				}
+				return null; // operation not done yet, can still take more, but picking up from deposits takes time.
+			}
+			else
+			{
+				return true;
 			}
 		}
 
-		private void OnArrivalInventory( TacticalGoalController controller, InventoryModule inventoryToPickUp )
+		private bool PickUpFromInventory( TacticalGoalController controller )
 		{
-			string idPickedUp = "";
-			int amountPickedUp = 0;
+			Dictionary<string, int> resourcesInInventory = this.destinationInventory.GetAll();
 
-			Dictionary<string, int> resourcesInInventory = inventoryToPickUp.GetAll();
+			// if not specified the types of resources, set to true.
+			bool tookEverythingWantedOrAny = true;
 
 			foreach( var kvp in resourcesInInventory )
 			{
-				if( kvp.Value == 0 )
-				{
-					continue;
-				}
-				// If the goal wants a specific resource - disregard any other resources.
-				if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
-				{
-					continue;
-				}
-				if( this.inventory.GetSpaceLeft( kvp.Key ) != 0 )
-				{
-					amountPickedUp = this.inventory.Add( kvp.Key, kvp.Value );
-					idPickedUp = kvp.Key;
+				int amountRemainingWanted = int.MaxValue;
 
-					if( amountPickedUp > 0 )
+				// If the goal wants a specific resource - disregard any other resources.
+				if( this.resourcesRemaining != null )
+				{
+					amountRemainingWanted = 0;
+					this.resourcesRemaining.TryGetValue( kvp.Key, out amountRemainingWanted );
+				}
+
+				// If set to 0, this means that resources remaining for this resource is present & equal to 0.
+				// If set to int.MaxValue, this means that there's no 'resources remaining' for this resource.
+				if( amountRemainingWanted == 0 )
+				{
+					continue;
+				}
+
+				int spaceLeftSelf = this.inventory.GetSpaceLeft( kvp.Key );
+				if( spaceLeftSelf == 0 )
+				{
+					continue;
+				}
+
+				// Take either what's left or enough to completely fill the remaining space.
+				int amountToTake = amountRemainingWanted > kvp.Value ? kvp.Value : amountRemainingWanted;
+
+				// If tried to take more than can hold - clamped automatically.
+				int amountTaken = this.inventory.Add( kvp.Key, amountToTake );
+
+				if( amountTaken > 0 )
+				{
+					// Remove the actual amount taken by the inventory.
+					this.destinationInventory.Remove( kvp.Key, amountTaken );
+				}
+				else
+				{
+					if( this.resourcesRemaining != null )
 					{
-						int amtRemoved = inventoryToPickUp.Remove( idPickedUp, amountPickedUp );
-						AudioManager.PlaySound( DefinitionManager.GetResource( idPickedUp ).pickupSound );
+						tookEverythingWantedOrAny = false;
 					}
 				}
 			}
 
-			this.navMeshAgent.ResetPath();
-			controller.goal = TacticalGoalController.GetDefaultGoal();
+			return tookEverythingWantedOrAny; // true for successful exit. false for failure.
 		}
 
 		public override void Update( TacticalGoalController controller )
 		{
-			if( controller.ssObject is Unit )
+			if( (this.pickUpMode == PickUpMode.INVENTORY) && (this.destinationInventory == null) )
 			{
-				Unit unit = (Unit)controller.ssObject;
-
-				if( unit.isInside )
-				{
-					unit.SetOutside();
-				}
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
 			}
-
-			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
-			if( this.destinationObject == null )
+			if( (this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT) && (this.destinationResourceDeposit == null) )
 			{
-				this.navMeshAgent.ResetPath();
-				controller.goal = TacticalGoalController.GetDefaultGoal();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 
-			if( this.destinationObject == controller.ssObject )
+			
+			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
 			{
-				Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
-				this.navMeshAgent.ResetPath();
-				controller.goal = TacticalGoalController.GetDefaultGoal();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-			// If it's not usable - return, don't move.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
-			{
-				return;
-			}
-
-			this.UpdatePosition( controller );
+			
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 
-			if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, 0.75f ) )
+			if( this.pickUpMode == PickUpMode.INVENTORY )
 			{
-				// If the agent has travelled to the destination - reset the path (but keep the goal)
-				if( this.navMeshAgent.hasPath )
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
-					this.navMeshAgent.ResetPath();
-				}
+					bool outcome = this.PickUpFromInventory( controller );
 
-				ResourceDepositModule[] deposits = this.destinationObject.GetModules<ResourceDepositModule>();
-				InventoryModule[] inventories = this.destinationObject.GetModules<InventoryModule>();
-				if( deposits.Length > 0 )
+					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					return;
+				}
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				// fail
+
+				return;
+			}
+			if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
+			{
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
-					ResourceDepositModule depositToCollect = deposits[0];
+					bool? outcome = this.PickUpFromDeposit( controller );
 
-					this.OnArrivalDeposit( controller, depositToCollect );
-				}
-				else
-				{
-					InventoryModule inventoryToPickUp = inventories[0];
+					if( outcome == null ) // not done yet.
+					{
+						return;
+					}
 
-					this.OnArrivalInventory( controller, inventoryToPickUp );
+					controller.ExitCurrent( outcome.Value ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					return;
 				}
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
 			}
 		}
 
@@ -217,8 +286,6 @@ namespace SS.AI.Goals
 		{
 			return new TacticalPickUpGoalData()
 			{
-				resourceId = this.resourceId,
-				destinationObjectGuid = this.destinationObject.guid,
 				isHostile = this.isHostile
 			};
 		}
@@ -227,8 +294,30 @@ namespace SS.AI.Goals
 		{
 			TacticalPickUpGoalData data = (TacticalPickUpGoalData)_data;
 
-			this.resourceId = data.resourceId;
-			this.destinationObject = SSObject.Find( data.destinationObjectGuid );
+			this.pickUpMode = data.pickUpMode;
+			if( pickUpMode == PickUpMode.INVENTORY )
+			{
+				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<InventoryModule>( data.destinationGuid.Item2 ) );
+			}
+			else if( pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
+			{
+				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<ResourceDepositModule>( data.destinationGuid.Item2 ) );
+			}
+			if( data.resources == null )
+			{
+				this.resources = null;
+			}
+			else
+			{
+				this.resources = new Dictionary<string, int>();
+				this.resourcesRemaining = new Dictionary<string, int>();
+				foreach( var kvp in data.resources )
+				{
+					this.resources.Add( kvp.Key, kvp.Value.Item1 );
+					this.resourcesRemaining.Add( kvp.Key, kvp.Value.Item2 );
+				}
+			}
+
 			this.isHostile = data.isHostile;
 		}
 	}

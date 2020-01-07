@@ -90,7 +90,7 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			// If it's not usable - return, don't attack.
-			if( this.ssObject is IUsableToggle && !((IUsableToggle)this.ssObject).IsUsable() )
+			if( this.ssObject is IUsableSSObject && !((IUsableSSObject)this.ssObject).IsUsable() )
 			{
 				return;
 			}
@@ -132,7 +132,7 @@ namespace SS.Objects.Modules
 			float damage = this.damageOverride == null ? this.damage : this.damageOverride.Value;
 
 			target.TakeDamage( this.damageType, DamageUtils.GetRandomized( damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
-			AudioManager.PlaySound( this.attackSoundEffect );
+			AudioManager.PlaySound( this.attackSoundEffect, this.transform.position );
 			this.lastAttackTimestamp = Time.time;
 			this.isReady2 = false;
 		}

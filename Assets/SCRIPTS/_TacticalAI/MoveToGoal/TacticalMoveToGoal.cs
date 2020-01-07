@@ -88,6 +88,7 @@ namespace SS.AI.Goals
 				Vector3 currDestPos = this.destinationPos.Value;
 				if( this.oldDestination != currDestPos )
 				{
+#warning setdestination needs to take into account the side from which it's coming. Not perfect, but works in most simple & obvious conditions.
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
@@ -192,7 +193,7 @@ namespace SS.AI.Goals
 				}
 			}
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
+			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
 			{
 				return;
 			}

@@ -8,7 +8,7 @@ namespace SS.AI.Goals
 		public Guid? targetGuid { get; set; }
 
 
-		public override TacticalGoal GetInstance()
+		public override TacticalGoal GetGoal()
 		{
 			TacticalTargetGoal goal = new TacticalTargetGoal();
 			goal.SetData( this );

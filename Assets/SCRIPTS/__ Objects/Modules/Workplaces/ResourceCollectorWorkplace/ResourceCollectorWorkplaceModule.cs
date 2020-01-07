@@ -17,11 +17,59 @@ namespace SS.Objects.Modules
 
 		public string resourceId { get; set; }
 
+#warning if they get stuck, resetting the AoI recalculates the goals.
 		public AreaOfInfluence aoi { get; set; }
 
 		void Update()
 		{
 			
+		}
+
+		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
+		{
+			SSObjectDFS[] objects = SSObject.GetAllDFS();
+
+			InventoryModule ret = null;
+			float dstSq = float.MaxValue;
+			for( int i = 0; i < objects.Length; i++ )
+			{
+				if( !objects[i].hasInventoryModule )
+				{
+					continue;
+				}
+
+				if( objects[i].factionId != factionId )
+				{
+					continue;
+				}
+
+				// If is in range.
+				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
+				if( newDstSq > dstSq )
+				{
+					continue;
+				}
+
+
+#warning take into account object being unusable.
+				// If has resource deposit.
+				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
+				
+				// If inventory is storage & contains wanted resource.
+				for( int j = 0; j < inventories.Length; j++ )
+				{
+					if( inventories[j].isStorage )
+					{
+						if( inventories[j].GetAll().ContainsKey( resourceId ) )
+						{
+							dstSq = newDstSq;
+							ret = inventories[j];
+							break; // break inner loop
+						}
+					}
+				}
+			}
+			return ret;
 		}
 
 		public static ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
@@ -38,7 +86,6 @@ namespace SS.Objects.Modules
 				{
 					continue;
 				}
-				dstSq = newDstSq;
 
 				// If has resource deposit.
 				ResourceDepositModule[] resourceDeposits = extras[i].GetModules<ResourceDepositModule>();
@@ -53,6 +100,7 @@ namespace SS.Objects.Modules
 				{
 					if( resourceDeposits[j].GetAll().ContainsKey( resourceId ) )
 					{
+						dstSq = newDstSq;
 						ret = resourceDeposits[j];
 						break; // break inner loop
 					}
@@ -61,32 +109,38 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
-		public static Tuple<SSObject,IPaymentReceiver> GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
+		public static Tuple<SSObject, IPaymentReceiver> GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
-			SSObject[] objects = SSObject.GetAll();
+			SSObjectDFS[] objects = SSObject.GetAllDFS();
 
 			IPaymentReceiver ret = null;
 			SSObject retObj = null;
 			float dstSq = float.MaxValue;
 
 			Dictionary<string, int> resourcesWanted;
+			IPaymentReceiver[] paymentReceivers;
 			for( int i = 0; i < objects.Length; i++ )
 			{
-				// If has resource deposit.
-				IPaymentReceiver[] paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
-
-				if( paymentReceivers.Length == 0 )
+				if( objects[i].factionId != factionId )
 				{
 					continue;
 				}
 
-				if( objects[i] is IFactionMember )
+				if( !objects[i].HasPaymentReceivers() )
 				{
-					if( ((IFactionMember)objects[i]).factionId != factionId )
-					{
-						continue;
-					}
+					continue;
 				}
+				
+				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
+				if( newDstSq > dstSq )
+				{
+					continue;
+				}
+
+
+				// If has resource deposit.
+				paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
+				
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
@@ -102,15 +156,10 @@ namespace SS.Objects.Modules
 						{
 							if( resourcesWanted.ContainsKey( resourceIds[k] ) )
 							{
-								// If is in range.
-								float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
-								if( newDstSq <= dstSq )
-								{
-									dstSq = newDstSq;
-									ret = paymentReceivers[j];
-									retObj = objects[i];
-									break; // break inner loop
-								}
+								dstSq = newDstSq;
+								ret = paymentReceivers[j];
+								retObj = objects[i];
+								break; // break inner loop
 							}
 						}
 					}
@@ -144,7 +193,8 @@ namespace SS.Objects.Modules
 				{
 					continue;
 				}
-				
+
+#warning take into account object being unusable.
 				// If has resource deposit.
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
 
@@ -182,7 +232,7 @@ namespace SS.Objects.Modules
 
 			InventoryModule inventory = inventories[0];
 
-
+#warning object might not be able to pick up desired resource due to cluttered inventory.
 			TacticalGoalController goalController = worker.GetComponent<TacticalGoalController>();
 			
 			

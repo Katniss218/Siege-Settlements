@@ -55,7 +55,7 @@ namespace SS.Objects.Modules
 
 		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
 		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
-		
+
 
 		public List<CivilianUnitExtension> GetEmployed( WorkplaceModule workplace = null )
 		{
@@ -99,21 +99,28 @@ namespace SS.Objects.Modules
 		{
 			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
 
-#warning update the amount of slots visible on the selection panel.
+			if( Selection.IsDisplayedModule( this ) )
+			{
+				SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
+				SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
+				
+				DisplaySlotsList_UI();
+				DisplayWorkerSlotsList_UI();
+			}
 		}
 
 		public void GetOutAll()
 		{
 			for( int i = 0; i < this.slots.Length; i++ )
 			{
-				if( this.slots[i].objInside != null )
+				if( ((SSObject)this.slots[i].objInside) != null )
 				{
 					this.slots[i].objInside.SetOutside();
 				}
 			}
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
-				if( this.workerSlots[i].objInside != null )
+				if( ((SSObject)this.workerSlots[i].objInside) != null )
 				{
 					this.workerSlots[i].objInside.SetOutside();
 				}
@@ -322,7 +329,7 @@ namespace SS.Objects.Modules
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
 			SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
 		}
-	
+
 
 		public void OnDisplay()
 		{

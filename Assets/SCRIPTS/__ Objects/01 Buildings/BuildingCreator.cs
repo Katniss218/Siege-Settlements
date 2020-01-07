@@ -47,7 +47,7 @@ namespace SS.Objects.Buildings
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.goal = data.tacticalGoalData.GetInstance();
+				tacticalGoalController.goal = data.tacticalGoalData.GetGoal();
 			}
 
 			//
@@ -254,7 +254,6 @@ namespace SS.Objects.Buildings
 				{
 					Selection.Deselect( building ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?
 				}
-				AudioManager.PlaySound( building.deathSound );
 				// Remove the now unused listeners.
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
@@ -269,7 +268,7 @@ namespace SS.Objects.Buildings
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def );
+			SSObjectCreator.AssignModules( building, def );
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 			tacticalGoalController.goal = TacticalGoalController.GetDefaultGoal();

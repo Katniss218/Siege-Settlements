@@ -1,6 +1,6 @@
 ﻿namespace SS.Objects
 {
-	interface IUsableToggle
+	interface IUsableSSObject
 	{
 		bool IsUsable();
 	}

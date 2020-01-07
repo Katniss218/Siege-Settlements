@@ -68,7 +68,7 @@ namespace SS.Objects.Extras
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def );
+			SSObjectCreator.AssignModules( extra, def );
 
 			return gameObject;
 		}

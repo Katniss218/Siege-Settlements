@@ -36,6 +36,8 @@ namespace SS
 
 			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+			audioSource.spatialBlend = 1.0f;
+			audioSource.maxDistance = 1f;
 			TimerHandler timerHandler = gameObject.AddComponent<TimerHandler>();
 
 			// Setup the timer.
@@ -55,7 +57,7 @@ namespace SS
 		/// <param name="clip">The sound to play.</param>
 		/// <param name="volume">The volume (0-1)</param>
 		/// <param name="pitch">The pitch.</param>
-		public static void PlaySound( AudioClip clip, float volume = 1.0f, float pitch = 1.0f )
+		public static void PlaySound( AudioClip clip, Vector3 position, float volume = 1.0f, float pitch = 1.0f )
 		{
 			foreach( AudioSource audioSource in sources )
 			{
@@ -68,6 +70,7 @@ namespace SS
 				{
 					continue;
 				}
+				audioSource.transform.position = position;
 				SetClipAndPlay( audioSource, audioSource.GetComponent<TimerHandler>(), clip, volume, pitch );
 				return;
 			}

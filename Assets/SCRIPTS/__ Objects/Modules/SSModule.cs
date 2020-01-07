@@ -31,13 +31,9 @@ namespace SS.Objects.Modules
 			{
 				return this.__moduleId;
 			}
-			set
+			internal set
 			{
-				if( this.ssObject.GetModule( value ) != null )
-				{
-					throw new Exception( "There's a module with id '" + value.ToString( "D" ) + "' already attached to this SSObject." );
-				}
-				this.__moduleId = value;
+				this.__moduleId = value; // intended to only be used by 'SSObject.AddModule<T>( Guid moduleId )'
 			}
 		}
 
@@ -70,7 +66,7 @@ namespace SS.Objects.Modules
 
 			return (T)data;
 		}
-
+		
 
 		//
 		//

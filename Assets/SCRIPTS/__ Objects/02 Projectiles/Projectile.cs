@@ -75,7 +75,7 @@ namespace SS.Objects.Projectiles
 			{
 				this.Destroy();
 			}
-			AudioManager.PlaySound( this.missSound );
+			AudioManager.PlaySound( this.missSound, this.transform.position );
 		}
 
 		private void OnTriggerEnter( Collider other )
@@ -131,7 +131,7 @@ namespace SS.Objects.Projectiles
 					{
 						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 
-						AudioManager.PlaySound( this.hitSound );
+						AudioManager.PlaySound( this.hitSound, this.transform.position );
 						this.Destroy();
 					}
 				}
@@ -174,7 +174,7 @@ namespace SS.Objects.Projectiles
 				{
 					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
-						AudioManager.PlaySound( this.hitSound );
+						AudioManager.PlaySound( this.hitSound, this.transform.position );
 						this.Destroy();
 					}
 				}

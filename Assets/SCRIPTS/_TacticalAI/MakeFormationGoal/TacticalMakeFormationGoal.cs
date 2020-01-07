@@ -115,7 +115,7 @@ namespace SS.AI.Goals
 			}
 
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is IUsableToggle && !(controller.ssObject as IUsableToggle).IsUsable() )
+			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
 			{
 				return;
 			}

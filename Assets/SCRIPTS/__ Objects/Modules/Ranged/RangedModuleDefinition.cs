@@ -47,10 +47,9 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			RangedModule module = gameObject.AddComponent<RangedModule>();
-			module.moduleId = moduleId;
+			RangedModule module = ssObject.AddModule<RangedModule>( moduleId );
 			//module.displayName = this.displayName;
 			//module.icon = this.icon;
 			module.attackRange = this.attackRange;

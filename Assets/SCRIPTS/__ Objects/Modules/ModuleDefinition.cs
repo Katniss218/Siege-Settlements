@@ -32,7 +32,7 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public abstract bool CheckModuleDefConstraints( List<Type> modTypes );
 
-		public abstract void AddModule( GameObject gameObject, Guid moduleId );
+		public abstract void AddModule( SSObject ssObject, Guid moduleId );
 
 		//
 		//

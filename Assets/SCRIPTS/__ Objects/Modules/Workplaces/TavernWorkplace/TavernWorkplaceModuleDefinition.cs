@@ -19,9 +19,9 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			TavernWorkplaceModule module = gameObject.AddComponent<TavernWorkplaceModule>();
+			TavernWorkplaceModule module = ssObject.AddModule<TavernWorkplaceModule>( moduleId );
 			module.moduleId = moduleId;
 			module.displayName = this.displayName;
 			module.icon = this.icon;

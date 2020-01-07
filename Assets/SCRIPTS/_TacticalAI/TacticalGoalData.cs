@@ -8,7 +8,7 @@ namespace SS.AI.Goals
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
 
-		public abstract TacticalGoal GetInstance();
+		public abstract TacticalGoal GetGoal();
 
 		public static TacticalGoalData TypeIdToInstance( string typeId )
 		{
@@ -31,6 +31,10 @@ namespace SS.AI.Goals
 			if( typeId == TacticalTargetGoal.KFF_TYPEID )
 			{
 				return new TacticalTargetGoalData();
+			}
+			if( typeId == TacticalMakeFormationGoal.KFF_TYPEID )
+			{
+				return new TacticalMakeFormationGoalData();
 			}
 
 			throw new Exception( "Unknown Tactical Goal type '" + typeId + "'." );
@@ -57,6 +61,10 @@ namespace SS.AI.Goals
 			if( data.GetType() == typeof( TacticalTargetGoalData ) )
 			{
 				return TacticalTargetGoal.KFF_TYPEID;
+			}
+			if( data.GetType() == typeof( TacticalMakeFormationGoalData ) )
+			{
+				return TacticalMakeFormationGoal.KFF_TYPEID;
 			}
 
 			throw new Exception( "Inknown Tactical Goal type '" + data.GetType().Name + "'." );

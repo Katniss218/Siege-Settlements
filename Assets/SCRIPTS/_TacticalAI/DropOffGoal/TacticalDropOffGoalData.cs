@@ -14,7 +14,7 @@ namespace SS.AI.Goals
 
 		public bool isHostile { get; set; }
 
-		public override TacticalGoal GetInstance()
+		public override TacticalGoal GetGoal()
 		{
 			TacticalDropOffGoal goal = new TacticalDropOffGoal();
 			goal.SetData( this );

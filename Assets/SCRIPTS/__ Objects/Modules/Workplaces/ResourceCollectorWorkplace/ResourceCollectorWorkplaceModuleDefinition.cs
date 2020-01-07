@@ -22,15 +22,15 @@ namespace SS.Objects.Modules
 			return true; // no module constraints
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			ResourceCollectorWorkplaceModule module = gameObject.AddComponent<ResourceCollectorWorkplaceModule>();
+			ResourceCollectorWorkplaceModule module = ssObject.AddModule<ResourceCollectorWorkplaceModule>( moduleId );
 			module.moduleId = moduleId;
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 
 			module.resourceId = this.resourceId;
-			module.aoi = new AreaOfInfluence( gameObject.transform.position, 5.0f );
+			module.aoi = new AreaOfInfluence( ssObject.transform.position, 5.0f );
 		}
 		
 

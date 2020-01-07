@@ -459,7 +459,7 @@ namespace SS.Objects.Modules
 			}
 
 			// If it's not usable - return, don't train anything.
-			if( this.ssObject is IUsableToggle && !(this.ssObject as IUsableToggle).IsUsable() )
+			if( this.ssObject is IUsableSSObject && !(this.ssObject as IUsableSSObject).IsUsable() )
 			{
 				return;
 			}

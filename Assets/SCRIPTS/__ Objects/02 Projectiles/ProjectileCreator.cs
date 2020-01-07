@@ -113,7 +113,7 @@ namespace SS.Objects.Projectiles
 			//    MODULES
 			//
 
-			SSObjectCreator.AssignModules( gameObject, def );
+			SSObjectCreator.AssignModules( projectile, def );
 
 			return gameObject;
 		}

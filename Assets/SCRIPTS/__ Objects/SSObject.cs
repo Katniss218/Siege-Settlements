@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using SS.ResourceSystem.Payment;
 
 namespace SS.Objects
 {
@@ -150,6 +151,47 @@ namespace SS.Objects
 			return null;
 		}
 
+		private List<SSModule> modulesTemp = new List<SSModule>();
+		private SSModule[] modules;
+
+		private bool hasPaymentReceiverModule;
+		public bool hasInventoryModule { get; private set; }
+
+		public InventoryModule inventory { get; private set; } = null;
+
+		internal T AddModule<T>( Guid moduleId ) where T : SSModule
+		{
+			for( int i = 0; i < this.modulesTemp.Count; i++ )
+			{
+				if( this.modulesTemp[i].moduleId == moduleId )
+				{
+					throw new Exception( "Can't add another module with the same module ID." );
+				}
+			}
+
+			T module = this.gameObject.AddComponent<T>();
+			module.moduleId = moduleId;
+			
+			if( !this.hasPaymentReceiverModule && (module is IPaymentReceiver) )
+			{
+				this.hasPaymentReceiverModule = true;
+			}
+			if( !this.hasInventoryModule && (module is InventoryModule) )
+			{
+				this.hasInventoryModule = true;
+			}
+
+			modulesTemp.Add( module );
+			return module;
+		}
+
+		internal void SealModules()
+		{
+			this.modules = this.modulesTemp.ToArray();
+			modulesTemp = null; // Garbage Collect unused data
+		}
+
+
 		/// <summary>
 		/// Gets all SubObjects assigned to this SSObject.
 		/// </summary>
@@ -195,12 +237,11 @@ namespace SS.Objects
 		/// </summary>
 		public SSModule GetModule( Guid moduleId )
 		{
-			SSModule[] modules = this.GetComponents<SSModule>();
-			for( int i = 0; i < modules.Length; i++ )
+			for( int i = 0; i < this.modules.Length; i++ )
 			{
-				if( modules[i].moduleId == moduleId )
+				if( this.modules[i].moduleId == moduleId )
 				{
-					return modules[i];
+					return this.modules[i];
 				}
 			}
 			return null;
@@ -211,21 +252,22 @@ namespace SS.Objects
 		/// </summary>
 		public SSModule[] GetModules()
 		{
-			SSModule[] modules = this.GetComponents<SSModule>();
-			return modules;
+			return this.modules;
 		}
-
+		
 		/// <summary>
 		/// Gets a specified module of specified type T.
 		/// </summary>
 		public T GetModule<T>( Guid moduleId ) where T : SSModule
 		{
-			T[] modules = this.GetComponents<T>();
 			for( int i = 0; i < modules.Length; i++ )
 			{
-				if( modules[i].moduleId == moduleId )
+				if( this.modules[i].moduleId == moduleId )
 				{
-					return modules[i];
+					if( this.modules[i] is T )
+					{
+						return (T)this.modules[i];
+					}
 				}
 			}
 			return null;
@@ -236,9 +278,29 @@ namespace SS.Objects
 		/// </summary>
 		public T[] GetModules<T>() where T : SSModule
 		{
-			T[] modules = this.GetComponents<T>();
-			return modules;
+			List<T> ret = new List<T>();
+			for( int i = 0; i < this.modules.Length; i++ )
+			{
+				if( this.modules[i] is T )
+				{
+					ret.Add( (T)this.modules[i] );
+				}
+			}
+			return ret.ToArray();
 		}
+
+		public bool HasPaymentReceivers()
+		{
+			if( this is Building )
+			{
+				if( ((Building)this).constructionSite != null )
+				{
+					return true;
+				}
+			}
+			return this.hasPaymentReceiverModule;
+		}
+		
 
 		protected virtual void OnObjDestroyed()
 		{

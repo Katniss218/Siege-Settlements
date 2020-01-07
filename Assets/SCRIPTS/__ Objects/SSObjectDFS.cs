@@ -266,7 +266,7 @@ namespace SS.Objects
 			{
 				if( this.hurtSound != null )
 				{
-					AudioManager.PlaySound( this.hurtSound );
+					AudioManager.PlaySound( this.hurtSound, this.transform.position );
 				}
 			}
 		}
@@ -282,7 +282,7 @@ namespace SS.Objects
 
 			if( this.deathSound != null )
 			{
-				AudioManager.PlaySound( this.deathSound );
+				AudioManager.PlaySound( this.deathSound, this.transform.position );
 			}
 		}
 

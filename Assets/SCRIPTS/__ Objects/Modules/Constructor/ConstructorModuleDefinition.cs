@@ -27,10 +27,9 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public override void AddModule( GameObject gameObject, Guid moduleId )
+		public override void AddModule( SSObject ssObject, Guid moduleId )
 		{
-			ConstructorModule module = gameObject.AddComponent<ConstructorModule>();
-			module.moduleId = moduleId;
+			ConstructorModule module = ssObject.AddModule<ConstructorModule>( moduleId );
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			module.constructibleBuildings = new BuildingDefinition[this.constructibleBuildings.Length];

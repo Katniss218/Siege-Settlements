@@ -27,6 +27,7 @@ namespace SS.Objects.Units
 		}
 
 
+#warning clear workplace tai goal on change.
 		public WorkplaceModule workplace { get; set; } = null;
 		public int workplaceSlotId { get; set; }
 		public bool isWorking { get; private set; }
@@ -108,6 +109,7 @@ namespace SS.Objects.Units
 
 			if( ResourceCollectorWorkplaceModule.IsGoingToPickUp( goalController, automaticDutyResourceId ) )
 			{
+#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
 				if( !selfInventory.isFull )
 				{
 					return;
@@ -118,37 +120,44 @@ namespace SS.Objects.Units
 			{
 				return;
 			}
-
-
+#warning turn off automatic duty when goal is assigned by the player.
+#warning some sort of timer to prevent insta-actions with perfectly positioned units. Taking items & putting them should take time (less than extracting from deposits, & pickup/dropoff everything, instead of a single item).
 			if( selfInventory.isEmpty )
 			{
 				if( this.automaticDutyReceiver != null )
 				{
-					Dictionary<string, int> required = this.automaticDutyReceiver.GetWantedResources();
-					bool foundResourceDeposit = false;
-					foreach( var kvp in required )
+					Dictionary<string, int> wantedResources = this.automaticDutyReceiver.GetWantedResources();
+					// If the receiver no longer needs anything - find new.
+					if( wantedResources.Count == 0 )
+					{
+						this.automaticDutyReceiver = null;
+						return;
+					}
+
+					bool foundinventory = false;
+					foreach( var kvp in wantedResources )
 					{
 						if( LevelDataManager.factionData[this.unit.factionId].resourcesStoredCache.ContainsKey( kvp.Key ) )
 						{
-#warning pick up from inventories, not deposits.
+							InventoryModule closestinventory = ResourceCollectorWorkplaceModule.GetClosestInventoryContaining( this.unit.transform.position, this.unit.factionId, kvp.Key );
 
-#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
+							if( closestinventory != null )
+							{
+								this.automaticDutyResourceId = kvp.Key;
 
-							ResourceDepositModule closestDeposit = ResourceCollectorWorkplaceModule.GetClosestInRangeContaining( this.unit.transform.position, float.MaxValue, kvp.Key );
+								TacticalPickUpGoal goal = new TacticalPickUpGoal();
 
-							this.automaticDutyResourceId = kvp.Key;
-							
-							TacticalPickUpGoal goal = new TacticalPickUpGoal();
+#warning only pick up required amount.
+								goal.destinationObject = closestinventory.ssObject;
+								goal.resourceId = this.automaticDutyResourceId;
+								goalController.goal = goal;
 
-							goal.destinationObject = closestDeposit.ssObject;
-							goal.resourceId = this.automaticDutyResourceId;
-							goalController.goal = goal;
-
-							foundResourceDeposit = true;
+								foundinventory = true;
+							}
 							break;
 						}
 					}
-					if( !foundResourceDeposit ) // else - can't pick up any of the wanted resources.
+					if( !foundinventory ) // else - can't pick up any of the wanted resources.
 					{
 						// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
 						Tuple<SSObject, IPaymentReceiver> receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId, 
@@ -175,6 +184,13 @@ namespace SS.Objects.Units
 				if( this.automaticDutyReceiver != null )
 				{
 					Dictionary<string, int> wantedResources = this.automaticDutyReceiver.GetWantedResources();
+					// If the receiver no longer needs anything - find new.
+					if( wantedResources.Count == 0 )
+					{
+						this.automaticDutyReceiver = null;
+						return;
+					}
+
 					Dictionary<string, int> resourcesCarried = selfInventory.GetAll();
 
 					foreach( var kvp in wantedResources )
@@ -207,10 +223,11 @@ namespace SS.Objects.Units
 				}
 			}
 			// IF going to storage to pick up resources
+			// - if has enough of this resource in inventory (receiver wants less or equal to how much this civilian has).
 			// - - return
 
 			// IF going to payment receiver
-			// - - return
+			// - return
 
 
 			// IF doesn't carry resources
@@ -227,7 +244,7 @@ namespace SS.Objects.Units
 			// - - - MAKE_PAYMENT
 			// - ELSE (no receiver)
 			// - - find receiver wanting any of the carried resources.
-			
+
 			// if has receiver & resources - go pay.
 		}
 
@@ -244,6 +261,7 @@ namespace SS.Objects.Units
 				return;
 			}
 
+#warning stop working & go home if the workplace is damaged.
 			if( !DaylightCycleController.instance.IsWorkTime() )
 			{
 				TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
