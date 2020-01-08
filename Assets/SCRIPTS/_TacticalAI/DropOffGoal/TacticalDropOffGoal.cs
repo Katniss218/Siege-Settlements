@@ -11,7 +11,6 @@ using SS.ResourceSystem.Payment;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace SS.AI.Goals
 {
@@ -19,394 +18,352 @@ namespace SS.AI.Goals
 	{
 		public const string KFF_TYPEID = "drop_off";
 
-		public enum DestinationType : byte
-		{
-			POSITION,
-			OBJECT
-		}
-
 		public enum GoalHostileMode : byte
 		{
 			ALL,
 			NONE
 		}
 
-		public enum ObjectDropOffMode : byte
+		public enum DropOffMode : byte
 		{
+			POSITION,
 			INVENTORY,
-			PAYMENT
+			PAYMENT_RECEIVER
 		}
 
-		public DestinationType destination { get; private set; }
-		public Vector3? destinationPos { get; private set; }
-		public SSObject destinationObject { get; private set; }
-		public ObjectDropOffMode objectDropOffMode { get; set; }
-		
+		private static float INTERACTION_DISTANCE = 0.75f;
+
+
 		/// <summary>
-		/// Specified which resource is going to be dropped off (null for all).
+		/// Specifies where to drop off resources.
 		/// </summary>
-		public string resourceId { get; set; }
+		public DropOffMode dropOffMode { get; private set; }
+		public Vector3 destinationPos { get; private set; }
+		public InventoryModule destinationInventory { get; private set; }
+
+		public IPaymentReceiver destinationPaymentReceiver { get; private set; }
+#warning this needs to be identifyable by GUID or something (construction sites pose MAJOR problem, as they can't be identified using anything else than memory reference - doesn't work for saving)
+#warning also, what if I decide that buildings/units themselves can receive payments? (technically, CS's are part of buildings).
+		private MonoBehaviour destinationPaymentReceiverBeh;
+
+
+#warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
+		Dictionary<string, int> __resources = null;
+		/// <summary>
+		/// Specified which resources to pick up (set to null to take any and all resources).
+		/// </summary>
+		public Dictionary<string, int> resources
+		{
+			get
+			{
+				return this.__resources;
+			}
+			set
+			{
+				this.__resources = value;
+				this.resourcesRemaining = value;
+			}
+		}
 
 		public bool isHostile { get; set; }
 
 
-		private Vector3 oldDestination;
+		private Dictionary<string, int> resourcesRemaining;
+
 		private InventoryModule inventory;
-		private NavMeshAgent navMeshAgent;
 		private IAttackModule[] attackModules;
 
 		public TacticalDropOffGoal()
 		{
 			this.isHostile = true;
 		}
-		
+
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public void SetDestination( Vector3 destination )
+		public void SetDestination( Vector3 position )
 		{
-			this.destination = DestinationType.POSITION;
-			this.destinationPos = destination;
-			this.destinationObject = null;
+			position.y = 0;
+
+			this.dropOffMode = DropOffMode.POSITION;
+			this.destinationPos = position;
+			this.destinationInventory = null;
+			this.destinationPaymentReceiver = null;
 		}
 
-		public void SetDestination( SSObject destination )
+		public void SetDestination( InventoryModule inventory )
 		{
-			this.destination = DestinationType.OBJECT;
-			this.destinationPos = null;
-			this.destinationObject = destination;
+			this.dropOffMode = DropOffMode.INVENTORY;
+			this.destinationInventory = inventory;
+			this.destinationPaymentReceiver = null;
 		}
 
+		public void SetDestination( IPaymentReceiver paymentReceiver )
+		{
+			this.dropOffMode = DropOffMode.PAYMENT_RECEIVER;
+			this.destinationInventory = null;
+			this.destinationPaymentReceiver = paymentReceiver;
+			this.destinationPaymentReceiverBeh = (MonoBehaviour)paymentReceiver;
+		}
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		public override bool CanBeAddedTo( SSObject ssObject )
 		{
-			return ssObject is IMovable && ssObject.GetModules<InventoryModule>().Length > 0;
+			return ssObject.GetModules<InventoryModule>().Length > 0;
 		}
 
 		public override void Start( TacticalGoalController controller )
 		{
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
-			this.navMeshAgent = (controller.ssObject as IMovable).navMeshAgent;
 			this.attackModules = controller.GetComponents<IAttackModule>();
 		}
 
-		private void UpdatePosition( TacticalGoalController controller )
+		public static void ExtractAndDrop( Vector3 position, Quaternion rotation, string id, int amount )
 		{
-			if( this.destination == DestinationType.POSITION )
+			ResourceDefinition resourceDef = DefinitionManager.GetResource( id );
+
+			ExtraDefinition def = DefinitionManager.GetExtra( resourceDef.defaultDeposit );
+
+			ResourceDepositModuleDefinition depositDef = def.GetModule<ResourceDepositModuleDefinition>();
+			int capacity = 0;
+			for( int i = 0; i < depositDef.slots.Length; i++ )
 			{
-				Vector3 currDestPos = this.destinationPos.Value;
-				if( this.oldDestination != currDestPos )
+				if( depositDef.slots[i].resourceId == id )
 				{
-					this.navMeshAgent.SetDestination( currDestPos );
+					capacity = depositDef.slots[i].capacity;
 				}
-
-				// If the agent has travelled to the destination - switch back to the Idle Goal.
-				if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
-				{
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-				}
-
-				this.oldDestination = currDestPos;
-
-				return;
 			}
-			if( this.destination == DestinationType.OBJECT )
+			if( capacity != 0 )
 			{
-				Vector3 currDestPos = this.destinationObject.transform.position;
-				if( this.oldDestination != currDestPos )
+				int remaining = amount;
+				while( remaining > 0 )
 				{
-					this.navMeshAgent.SetDestination( currDestPos );
-				}
-
-				this.oldDestination = currDestPos;
-
-				return;
-			}
-		}
-
-		public static void ExtractAndDrop( Vector3 position, Quaternion rotation, Dictionary<string,int> resourcesCarried )
-		{
-			foreach( var kvp in resourcesCarried )
-			{
-				ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-
-				ExtraDefinition def = DefinitionManager.GetExtra( resourceDef.defaultDeposit );
-
-				ResourceDepositModuleDefinition depositDef = def.GetModule<ResourceDepositModuleDefinition>();
-				int capacity = 0;
-				for( int i = 0; i < depositDef.slots.Length; i++ )
-				{
-					if( depositDef.slots[i].resourceId == kvp.Key )
+					int resAmount = capacity;
+					if( remaining < capacity )
 					{
-						capacity = depositDef.slots[i].capacity;
+						resAmount = remaining;
 					}
-				}
-				if( capacity != 0 )
-				{
-					int remaining = kvp.Value;
-					while( remaining > 0 )
+					remaining -= resAmount;
+
+					ExtraData data = new ExtraData();
+					data.guid = Guid.NewGuid();
+					data.position = position;
+					data.rotation = rotation;
+
+
+					GameObject extra = ExtraCreator.Create( def, data.guid );
+					ExtraCreator.SetData( extra, data );
+
+					ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
+					foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
 					{
-						int resAmount = capacity;
-						if( remaining < capacity )
-						{
-							resAmount = remaining;
-						}
-						remaining -= resAmount;
-
-						ExtraData data = new ExtraData();
-						data.guid = Guid.NewGuid();
-						data.position = position;
-						data.rotation = rotation;
-
-
-						GameObject extra = ExtraCreator.Create( def, data.guid );
-						ExtraCreator.SetData( extra, data );
-
-						ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
-						foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
-						{
-							resDepo.Add( slot.resourceId, resAmount );
-						}
-						AudioManager.PlaySound( resourceDef.dropoffSound, position );
+						resDepo.Add( slot.resourceId, resAmount );
 					}
+					AudioManager.PlaySound( resourceDef.dropoffSound, position );
 				}
 			}
 		}
-		
-		private void OnArrivalObject( TacticalGoalController controller )
+	
+		private static Dictionary<string, int> GetClampedRes( Dictionary<string, int> max, Dictionary<string, int> preferred, out bool didClamp )
 		{
-			if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
+			// Resources that will be dropped (either this.resources, or resources carried, depends if the resources carried contains enough).
+			// If resources is not specified, whole inventory will be dropped.
+			Dictionary<string, int> resourcesToDrop = new Dictionary<string, int>();
+			// if failed is true, not all resources were able to be dropped (not enough in inv).
+			didClamp = false;
+
+			foreach( var kvp in max )
 			{
-				InventoryModule destinationInventory = this.destinationObject.GetModules<InventoryModule>()[0];
-
-				Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
-
-				foreach( var kvp in resourcesCarried )
+				int amtClamped = kvp.Value;
+				if( preferred != null )
 				{
-					// If the goal wants a specific resource - disregard any other resources.
-					if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
+					// if preferred doesn't contain this specific resource - don't consider it - don't clamp, or anything - skip.
+					if( !preferred.TryGetValue( kvp.Key, out amtClamped ) || amtClamped == 0 /* if returned value is 0 */ )
 					{
 						continue;
 					}
 
-					int spaceLeft = destinationInventory.GetSpaceLeft( kvp.Key );
-					if( spaceLeft > 0 )
+					// If wants to drop off more than it has - set failed to true and clamp the amount.
+					if( amtClamped > kvp.Value )
 					{
-						int amountCarried = kvp.Value;
-						int amountDroppedOff = spaceLeft < amountCarried ? spaceLeft : amountCarried;
-
-						destinationInventory.Add( kvp.Key, amountDroppedOff );
-						this.inventory.Remove( kvp.Key, amountDroppedOff );
-
-						ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
-						AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
+						didClamp = true;
+						amtClamped = kvp.Value;
 					}
 				}
+
+				// Add each resource that will be dropped to the dict & remove it from the inventory.
+				resourcesToDrop.Add( kvp.Key, amtClamped );
 			}
-			else if( this.objectDropOffMode == ObjectDropOffMode.PAYMENT )
-			{
-				bool payOnlyConstructionSites = false;
-				if( (this.destinationObject is IUsableSSObject) && !((IUsableSSObject)this.destinationObject).IsUsable() )
-				{
-					payOnlyConstructionSites = true;
-				}
-				IPaymentReceiver[] paymentReceivers = this.destinationObject.GetComponents<IPaymentReceiver>();
-
-				for( int i = 0; i < paymentReceivers.Length; i++ )
-				{
-					// If the building is damaged, we don't want to pay e.g. barracks, since it's not usable. We need to repair it first.
-					if( payOnlyConstructionSites )
-					{
-						if( !(paymentReceivers[i] is ConstructionSite) )
-						{
-							continue;
-						}
-					}
-					Dictionary<string, int> wantedRes = paymentReceivers[i].GetWantedResources();
-
-					foreach( var kvp in wantedRes )
-					{
-						// If the goal wants a specific resource - disregard any other resources.
-						if( !string.IsNullOrEmpty( this.resourceId ) && kvp.Key != this.resourceId )
-						{
-							continue;
-						}
-
-						int amountInInv = this.inventory.Get( kvp.Key );
-
-						if( amountInInv == 0 )
-						{
-							continue;
-						}
-
-						int amountPayed = amountInInv > kvp.Value ? kvp.Value : amountInInv;
-
-						this.inventory.Remove( kvp.Key, amountPayed );
-						paymentReceivers[i].ReceivePayment( kvp.Key, amountPayed );
-						ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-						AudioManager.PlaySound( resDef.dropoffSound, controller.transform.position );
-					}
-					// If there is no resources to pay (everything spent).
-					if( this.inventory.isEmpty )
-					{
-						break;
-					}
-				}
-			}
-			this.navMeshAgent.ResetPath();
-			controller.goal = TacticalGoalController.GetDefaultGoal();
+			return resourcesToDrop;
 		}
 
-		private void OnArrivalPosition( TacticalGoalController controller )
+		private bool OnArrivalPosition( TacticalGoalController controller )
 		{
-			Vector3 direction = (this.destinationPos.Value - controller.transform.position).normalized;
-			if( Physics.Raycast( controller.transform.position + direction.normalized + new Vector3( 0, 5, 0 ), Vector3.down, out RaycastHit hitInfo ) )
+			if( Physics.Raycast( this.destinationPos + new Vector3( 0, 100.0f, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 			{
 				if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 				{
 					Vector3 depositPosition = hitInfo.point;
-					if( this.inventory.isEmpty )
-					{
-						throw new System.Exception( "Inventory was empty." );
-					}
 
 					Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
-					foreach( var kvp in resourcesCarried )
+					bool didClamp; // if true, the resources were clamped (not all dropped).
+					Dictionary<string, int> resourcesToDrop = GetClampedRes( resourcesCarried, this.resources, out didClamp );
+
+					foreach( var kvp in resourcesToDrop )
 					{
-						ResourceDefinition resourceDef = DefinitionManager.GetResource( kvp.Key );
-
-						ExtraDefinition def = DefinitionManager.GetExtra( resourceDef.defaultDeposit );
-
-						ResourceDepositModuleDefinition depositDef = def.GetModule<ResourceDepositModuleDefinition>();
-						int capacity = 0;
-						for( int i = 0; i < depositDef.slots.Length; i++ )
-						{
-							if( depositDef.slots[i].resourceId == kvp.Key )
-							{
-								capacity = depositDef.slots[i].capacity;
-							}
-						}
-						if( capacity != 0 )
-						{
-							int remaining = kvp.Value;
-							while( remaining > 0 )
-							{
-								int resAmount = capacity;
-								if( remaining < capacity )
-								{
-									resAmount = remaining;
-								}
-								remaining -= resAmount;
-
-								ExtraData data = new ExtraData();
-								data.position = depositPosition;
-								data.rotation = Quaternion.identity;
-
-
-								GameObject extra = ExtraCreator.Create( def, data.guid );
-								ExtraCreator.SetData( extra, data );
-								ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
-								foreach( var slot in def.GetModule<ResourceDepositModuleDefinition>().slots )
-								{
-									resDepo.Add( slot.resourceId, resAmount );
-								}
-								AudioManager.PlaySound( resourceDef.dropoffSound, controller.transform.position );
-							}
-						}
+						this.inventory.Remove( kvp.Key, kvp.Value );
+						ExtractAndDrop( depositPosition, Quaternion.identity, kvp.Key, kvp.Value );
 					}
-					this.inventory.Clear();
+					
+					return didClamp;
+				}
+			}
+			return false;
+		}
+
+		private bool OnArrivalInventory( TacticalGoalController controller )
+		{
+			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
+
+			bool didClamp; // if true, the resources were clamped (not all dropped).
+			Dictionary<string,int> resourcesToDrop = GetClampedRes( resourcesCarried, this.resources, out didClamp );
+
+			bool failed = false;
+			foreach( var kvp in resourcesToDrop )
+			{
+				int amountDroppedOff = this.destinationInventory.Add( kvp.Key, kvp.Value );
+				if( amountDroppedOff < kvp.Value )
+				{
+					failed = true;
 				}
 
-				// Clear the path, when it's in range.
-				this.navMeshAgent.ResetPath();
-				controller.goal = TacticalGoalController.GetDefaultGoal();
+				this.inventory.Remove( kvp.Key, amountDroppedOff );
+
+				ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
+				AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
 			}
-			else
+			if( didClamp )
 			{
-				this.navMeshAgent.ResetPath();
-				controller.goal = TacticalGoalController.GetDefaultGoal();
+				return false;
 			}
+			return !failed;
 		}
+
+		private bool OnArrivalPayment( TacticalGoalController controller )
+		{
+			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
+
+			bool didClamp; // if true, the resources were clamped (not all dropped).
+			Dictionary<string, int> resourcesToDrop = GetClampedRes( resourcesCarried, this.resources, out didClamp );
+
+			Dictionary<string, int> resourcesWanted = this.destinationPaymentReceiver.GetWantedResources();
+
+			bool failed = false;
+			foreach( var kvp in resourcesToDrop )
+			{
+				int amountWanted = 0;
+				if( !resourcesWanted.TryGetValue( kvp.Key, out amountWanted ) )
+				{
+					failed = true; // didn't want the resource we assigned to it.
+					continue;
+				}
+
+				int amountPaid = amountWanted > kvp.Value ? kvp.Value : amountWanted;
+
+				// Only pay the amount it wants. Otherwise it will scream at you.
+				this.destinationPaymentReceiver.ReceivePayment( kvp.Key, amountPaid );
+				this.inventory.Remove( kvp.Key, amountPaid );
+
+				ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
+				AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
+			}
+			if( didClamp )
+			{
+				return false;
+			}
+			return !failed;
+		}
+
+		
 
 
 
 		public override void Update( TacticalGoalController controller )
 		{
-			if( controller.ssObject is Unit )
+			if( (this.dropOffMode == DropOffMode.INVENTORY) && (this.destinationInventory == null) )
 			{
-				Unit unit = (Unit)controller.ssObject;
-
-				if( unit.isInside )
-				{
-					unit.SetOutside();
-				}
-			}
-
-			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
-			if( this.destination == DestinationType.OBJECT )
-			{
-				if( this.destinationObject == null )
-				{
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-					return;
-				}
-
-				if( this.destinationObject == controller.ssObject )
-				{
-					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-					return;
-				}
-
-				if( this.objectDropOffMode == ObjectDropOffMode.INVENTORY )
-				{
-					if( (this.destinationObject is IUsableSSObject) && !((IUsableSSObject)this.destinationObject).IsUsable() )
-					{
-						this.navMeshAgent.ResetPath();
-						controller.goal = TacticalGoalController.GetDefaultGoal();
-						return;
-					}
-				}
-			}
-
-			// If it's not usable - return, don't move.
-			if( (controller.ssObject is IUsableSSObject) && !((IUsableSSObject)controller.ssObject).IsUsable() )
-			{
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-			
-			this.UpdatePosition( controller );
+			if( (this.dropOffMode == DropOffMode.PAYMENT_RECEIVER) && (this.destinationPaymentReceiver == null) )
+			{
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
+			}
+
+			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
+			{
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
+			}
+
+			if( this.inventory.isEmpty )
+			{
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
+			}
+
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 
-			if( this.destination == DestinationType.OBJECT )
+			if( this.dropOffMode == DropOffMode.POSITION )
 			{
-#warning ugly.
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, 0.75f ) )
+				if( Vector3.Distance( controller.transform.position, this.destinationPos ) <= INTERACTION_DISTANCE )
 				{
-					this.OnArrivalObject( controller );
+					bool outcome = this.OnArrivalPosition( controller );
+
+					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					return;
 				}
+
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
 			}
-			else if( this.destination == DestinationType.POSITION )
+			if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
-				if( Vector3.Distance( controller.transform.position, this.destinationPos.Value ) <= 0.75f )
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
-					this.OnArrivalPosition( controller );
+					bool outcome = this.OnArrivalInventory( controller );
+
+					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					return;
 				}
+
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
+			}
+			if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
+			{
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationPaymentReceiverBeh.transform, INTERACTION_DISTANCE ) )
+				{
+					bool outcome = this.OnArrivalPayment( controller );
+
+					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					return;
+				}
+
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
 			}
 		}
 		
@@ -420,17 +377,22 @@ namespace SS.AI.Goals
 		{
 			TacticalDropOffGoalData data = new TacticalDropOffGoalData()
 			{
-				resourceId = this.resourceId,
 				isHostile = this.isHostile
 			};
-			data.destination = this.destination;
-			if( this.destination == DestinationType.OBJECT )
+			data.dropOffMode = this.dropOffMode;
+			if( this.dropOffMode == DropOffMode.POSITION )
 			{
-				data.destinationObjectGuid = this.destinationObject.guid;
+				data.destinationPos = this.destinationPos;
 			}
-			else if( this.destination == DestinationType.POSITION )
+			else if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
-				data.destinationPosition = this.destinationPos;
+				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationInventory.ssObject.guid, this.destinationInventory.moduleId );
+			}
+			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
+			{
+#warning need a way to perststently save payment receivers (either object or module).
+				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationPaymentReceiver.ssObject.guid, this.destinationPaymentReceiver.moduleId );
+				data.destinationPos = this.destinationPos;
 			}
 
 			return data;
@@ -440,19 +402,29 @@ namespace SS.AI.Goals
 		{
 			TacticalDropOffGoalData data = (TacticalDropOffGoalData)_data;
 
-			this.resourceId = data.resourceId;
-
-			this.destination = data.destination;
-
-			if( this.destination == DestinationType.OBJECT )
+			this.resources = new Dictionary<string, int>();
+			this.resourcesRemaining = new Dictionary<string, int>();
+			foreach( var kvp in data.resources )
 			{
-				this.destinationObject = SSObject.Find( data.destinationObjectGuid.Value );
-			}
-			else if( this.destination == DestinationType.POSITION )
-			{
-				this.destinationPos = data.destinationPosition;
+				this.resources.Add( kvp.Key, kvp.Value.Item1 );
+				this.resourcesRemaining.Add( kvp.Key, kvp.Value.Item2 );
 			}
 
+			this.dropOffMode = data.dropOffMode;
+			if( this.dropOffMode == DropOffMode.POSITION )
+			{
+				this.SetDestination( data.destinationPos );
+			}
+			else if( this.dropOffMode == DropOffMode.INVENTORY )
+			{
+				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<InventoryModule>( data.destinationGuid.Item2 ) );
+			}
+			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
+			{
+#warning need a way to perststently save payment receivers (either object or module).
+				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<IPaymentReceiver>( data.destinationGuid.Item2 ) );
+			}
+			
 			this.isHostile = data.isHostile;
 		}
 	}

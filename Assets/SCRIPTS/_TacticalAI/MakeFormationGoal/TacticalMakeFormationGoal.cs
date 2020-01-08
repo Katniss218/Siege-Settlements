@@ -89,7 +89,7 @@ namespace SS.AI.Goals
 				}
 
 				TacticalGoalController controller = unit.GetComponent<TacticalGoalController>();
-				if( !(controller.goal is TacticalMakeFormationGoal) )
+				if( !(controller.currentGoal is TacticalMakeFormationGoal) )
 				{
 					continue;
 				}
@@ -110,7 +110,7 @@ namespace SS.AI.Goals
 			if( this.beacon == null )
 			{
 				this.navMeshAgent.ResetPath();
-				controller.goal = TacticalGoalController.GetDefaultGoal();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 

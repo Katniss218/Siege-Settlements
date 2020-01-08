@@ -194,12 +194,11 @@ namespace SS.Objects.Modules
 			// Move the newly spawned unit to the rally position.
 			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
 
+			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
 			goal.isHostile = false;
 			goal.SetDestination( rallyPointWorld );
-
-			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
-			goalController.goal = goal;
+			goalController.SetGoals( goal );
 		}
 
 		public void EndTraining( bool isSuccess )

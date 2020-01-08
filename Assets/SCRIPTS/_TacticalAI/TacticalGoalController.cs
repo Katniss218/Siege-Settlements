@@ -13,7 +13,7 @@ namespace SS.AI
 		private TacticalGoal[] goals;
 		private int goalCounter;
 
-		private TacticalGoal currentGoal = null;
+		public TacticalGoal currentGoal { get; private set; } = null;
 		public TacticalGoalExitCondition lastGoalExitCondition { get; private set; }
 
 		private void AdvanceAndStart()
@@ -24,7 +24,7 @@ namespace SS.AI
 			this.currentGoal.Start( this );
 		}
 	
-		public void SetGoal( params TacticalGoal[] goals )
+		public void SetGoals( params TacticalGoal[] goals )
 		{
 			for( int i = 0; i < goals.Length; i++ )
 			{
@@ -78,7 +78,7 @@ namespace SS.AI
 		{
 			if( this.goalCounter >= this.goals.Length )
 			{
-				this.SetGoal( TacticalGoalController.GetDefaultGoal() );
+				this.SetGoals( TacticalGoalController.GetDefaultGoal() );
 			}
 			else
 			{
@@ -88,7 +88,7 @@ namespace SS.AI
 				}
 				else
 				{
-					this.SetGoal( TacticalGoalController.GetDefaultGoal() );
+					this.SetGoals( TacticalGoalController.GetDefaultGoal() );
 				}
 			}
 			this.lastGoalExitCondition = exitCondition;
@@ -98,7 +98,7 @@ namespace SS.AI
 		{
 			if( this.currentGoal == null )
 			{
-				this.SetGoal( TacticalGoalController.GetDefaultGoal() );
+				this.SetGoals( TacticalGoalController.GetDefaultGoal() );
 			}
 		}
 

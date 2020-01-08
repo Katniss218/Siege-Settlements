@@ -177,7 +177,8 @@ namespace SS.AI.Goals
 					{
 						this.navMeshAgent.ResetPath();
 					}
-					controller.goal = TacticalGoalController.GetDefaultGoal();
+#warning todo?
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
 			}

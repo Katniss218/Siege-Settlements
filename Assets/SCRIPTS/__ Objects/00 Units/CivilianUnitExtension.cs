@@ -34,9 +34,9 @@ namespace SS.Objects.Units
 
 		bool IsGoingToHome( TacticalGoalController goalController )
 		{
-			if( goalController.goal is TacticalMoveToGoal )
+			if( goalController.currentGoal is TacticalMoveToGoal )
 			{
-				TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.goal;
+				TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.currentGoal;
 				if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.workplace.interior )
 				{
 					return true;
@@ -47,7 +47,7 @@ namespace SS.Objects.Units
 
 		bool IsGoingToWorkplace( TacticalGoalController goalController )
 		{
-			if( goalController.goal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.goal).destinationInterior == this.workplace.interior )
+			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationInterior == this.workplace.interior )
 			{
 				return true;
 			}
@@ -116,7 +116,7 @@ namespace SS.Objects.Units
 				}
 			}
 
-			if( ResourceCollectorWorkplaceModule.IsGoingToDropOff( goalController, automaticDutyResourceId, TacticalDropOffGoal.ObjectDropOffMode.PAYMENT ) )
+			if( ResourceCollectorWorkplaceModule.IsGoingToDropOff( goalController, automaticDutyResourceId, TacticalDropOffGoal.DropOffMode.PAYMENT_RECEIVER ) )
 			{
 				return;
 			}
@@ -147,10 +147,11 @@ namespace SS.Objects.Units
 
 								TacticalPickUpGoal goal = new TacticalPickUpGoal();
 
+								goal.SetDestination( closestinventory );
+								goal.resources = new Dictionary<string, int>();
 #warning only pick up required amount.
-								goal.destinationObject = closestinventory.ssObject;
-								goal.resourceId = this.automaticDutyResourceId;
-								goalController.goal = goal;
+								goal.resources.Add( this.automaticDutyResourceId, 5 );
+								goalController.SetGoals( goal );
 
 								foundinventory = true;
 							}
@@ -201,10 +202,11 @@ namespace SS.Objects.Units
 							// - - - MAKE_PAYMENT
 							TacticalDropOffGoal goal = new TacticalDropOffGoal();
 
-							goal.SetDestination( this.automaticDutyReceiverObject );
-							goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.PAYMENT;
-							goal.resourceId = this.automaticDutyResourceId;
-							goalController.goal = goal;
+							goal.SetDestination( this.automaticDutyReceiver );
+							goal.resources = new Dictionary<string, int>();
+#warning only pick up required amount.
+							goal.resources.Add( this.automaticDutyResourceId, 5 );
+							goalController.SetGoals( goal );
 
 							break;
 						}
@@ -293,7 +295,7 @@ namespace SS.Objects.Units
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 
 					goal.SetDestination( closestHouse, InteriorModule.SlotType.Generic );
-					goalController.goal = goal;
+					goalController.SetGoals( goal );
 				}
 
 				return;
@@ -319,7 +321,7 @@ namespace SS.Objects.Units
 				{
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
-					goalController.goal = goal;
+					goalController.SetGoals( goal );
 				}
 			}
 		}

@@ -1,16 +1,18 @@
 ﻿using KFF;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.AI.Goals
 {
 	public class TacticalDropOffGoalData : TacticalGoalData
 	{
-		public string resourceId { get; set; }
-		public TacticalDropOffGoal.DestinationType destination { get; set; }
+		public Dictionary<string, Tuple<int, int>> resources { get; set; } // initial & remaining in a single thing. null for not specified.
 
-		public Vector3? destinationPosition { get; set; }
-		public Guid? destinationObjectGuid { get; set; }
+
+		public TacticalDropOffGoal.DropOffMode dropOffMode { get; set; }
+		public Vector3 destinationPos { get; set; }
+		public Tuple<Guid,Guid> destinationGuid { get; set; }
 
 		public bool isHostile { get; set; }
 
@@ -23,45 +25,44 @@ namespace SS.AI.Goals
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			try
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Resources" );
+			if( analysisData.isSuccess )
 			{
-				this.resourceId = serializer.ReadString( "ResourceId" );
+				this.resources = new Dictionary<string, Tuple<int, int>>( analysisData.childCount );
+				try
+				{
+					for( int i = 0; i < analysisData.childCount; i++ )
+					{
+						string id = serializer.ReadString( new Path( "Resources.{0}.Id", i ) );
+						int amt = serializer.ReadInt( new Path( "Resources.{0}.Amount", i ) );
+						int amtRemaining = serializer.ReadInt( new Path( "Resources.{0}.AmountRemaining", i ) );
+						this.resources.Add( id, new Tuple<int, int>( amt, amtRemaining ) );
+					}
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'Resources' (" + serializer.file.fileName + ")." );
+				}
 			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'ResourceId' (" + serializer.file.fileName + ")." );
-			}
+
+			this.dropOffMode = (TacticalDropOffGoal.DropOffMode)serializer.ReadByte( "DropOffMode" );
 
 			try
 			{
-				this.destination = (TacticalDropOffGoal.DestinationType)serializer.ReadByte( "Destination" );
+				if( this.dropOffMode == TacticalDropOffGoal.DropOffMode.POSITION )
+				{
+					this.destinationPos = serializer.ReadVector3( "Destination" );
+				}
+				else
+				{
+					Guid obj = serializer.ReadGuid( "Destination.ObjectGuid" );
+					Guid module = serializer.ReadGuid( "Destination.ModuleId" );
+					this.destinationGuid = new Tuple<Guid, Guid>( obj, module );
+				}
 			}
 			catch
 			{
 				throw new Exception( "Missing or invalid value of 'Destination' (" + serializer.file.fileName + ")." );
-			}
-
-			if( this.destination == TacticalDropOffGoal.DestinationType.POSITION )
-			{
-				try
-				{
-					this.destinationPosition = serializer.ReadVector3( "DestinationPosition" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'DestinationPosition' (" + serializer.file.fileName + ")." );
-				}
-			}
-			if( this.destination == TacticalDropOffGoal.DestinationType.OBJECT )
-			{
-				try
-				{
-					this.destinationObjectGuid = serializer.ReadGuid( "DestinationObjectGuid" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'DestinationObjectGuid' (" + serializer.file.fileName + ")." );
-				}
 			}
 
 			try
@@ -76,17 +77,31 @@ namespace SS.AI.Goals
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "ResourceId", this.resourceId );
-
-			serializer.WriteByte( "", "Destination", (byte)this.destination );
-
-			if( this.destination == TacticalDropOffGoal.DestinationType.POSITION )
+			if( this.resources != null )
 			{
-				serializer.WriteVector3( "", "DestinationPosition", this.destinationPosition.Value );
+				serializer.WriteList( "", "Resources" );
+				int i = 0;
+				foreach( var kvp in this.resources )
+				{
+					serializer.AppendClass( "Resources" );
+					serializer.WriteString( new Path( "Resources.{0}", i ), "Id", kvp.Key );
+					serializer.WriteInt( new Path( "Resources.{0}", i ), "Amount", kvp.Value.Item1 );
+					serializer.WriteInt( new Path( "Resources.{0}", i ), "AmountRemaining", kvp.Value.Item2 );
+					i++;
+				}
 			}
-			if( this.destination == TacticalDropOffGoal.DestinationType.OBJECT )
+
+			serializer.WriteByte( "", "DropOffMode", (byte)this.dropOffMode );
+
+			if( this.dropOffMode == TacticalDropOffGoal.DropOffMode.POSITION )
 			{
-				serializer.WriteGuid( "", "DestinationObjectGuid", this.destinationObjectGuid.Value );
+				serializer.WriteVector3( "", "Destination", this.destinationPos );
+			}
+			else
+			{
+				serializer.WriteClass( "", "Destination" );
+				serializer.WriteGuid( "Destination", "ObjectGuid", this.destinationGuid.Item1 );
+				serializer.WriteGuid( "Destination", "ModuleId", this.destinationGuid.Item2 );
 			}
 
 			serializer.WriteBool( "", "IsHostile", this.isHostile );

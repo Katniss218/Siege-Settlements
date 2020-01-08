@@ -223,13 +223,13 @@ namespace SS
 						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
-						goalControllerBeacon.goal = goal;
+						goalControllerBeacon.SetGoals( goal );
 
 						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
 						goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
-						goalController.goal = goal;
+						goalController.SetGoals( goal );
 					}
 				}
 			}

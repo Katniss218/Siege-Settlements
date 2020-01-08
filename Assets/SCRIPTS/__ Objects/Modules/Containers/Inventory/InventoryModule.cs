@@ -224,7 +224,10 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
-			TacticalDropOffGoal.ExtractAndDrop( this.transform.position, this.transform.rotation, this.GetAll() );
+			foreach( var kvp in this.GetAll() )
+			{
+				TacticalDropOffGoal.ExtractAndDrop( this.transform.position, this.transform.rotation, kvp.Key, kvp.Value );
+			}
 
 			if( this.ssObject is IFactionMember )
 			{

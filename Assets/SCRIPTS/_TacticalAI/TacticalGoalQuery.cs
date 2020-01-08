@@ -171,7 +171,7 @@ namespace SS.AI
 				TacticalTargetGoal goal = new TacticalTargetGoal();
 				goal.target = target;
 				goal.targetForced = true;
-				goalController.goal = goal;
+				goalController.SetGoals( goal );
 			}
 		}
 
@@ -235,9 +235,8 @@ namespace SS.AI
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalDropOffGoal goal = new TacticalDropOffGoal();
 				goal.isHostile = false;
-				goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.INVENTORY;
-				goal.SetDestination( hitInfo.collider.GetComponent<SSObject>() );
-				goalController.goal = goal;
+				goal.SetDestination( hitInventory );
+				goalController.SetGoals( goal );
 			}
 		}
 		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFS[] selected )
@@ -291,7 +290,7 @@ namespace SS.AI
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.isHostile = false;
 					goal.SetDestination( gridPositionWorld );
-					goalController.goal = goal;
+					goalController.SetGoals( goal );
 				}
 				else
 				{
@@ -354,7 +353,7 @@ namespace SS.AI
 						goal.SetDestination( interior, InteriorModule.SlotType.Generic );
 					}
 				}
-				goalController.goal = goal;
+				goalController.SetGoals( goal );
 			}
 		}
 
@@ -403,8 +402,8 @@ namespace SS.AI
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalPickUpGoal goal = new TacticalPickUpGoal();
 				goal.isHostile = false;
-				goal.destinationObject = hitSSObject;
-				goalController.goal = goal;
+				goal.SetDestination( hitInventory );
+				goalController.SetGoals( goal );
 			}
 		}
 
@@ -458,8 +457,8 @@ namespace SS.AI
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalPickUpGoal goal = new TacticalPickUpGoal();
 				goal.isHostile = false;
-				goal.destinationObject = hitSSObject;
-				goalController.goal = goal;
+				goal.SetDestination( hitDeposit );
+				goalController.SetGoals( goal );
 			}
 		}
 
@@ -533,9 +532,9 @@ namespace SS.AI
 				TacticalGoalController goalController = toBeAssignedGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalDropOffGoal goal = new TacticalDropOffGoal();
 				goal.isHostile = false;
-				goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.PAYMENT;
-				goal.SetDestination( paymentReceiverSSObject );
-				goalController.goal = goal;
+#warning flawed way. need to search for the one that best fits.
+				goal.SetDestination( paymentReceivers[0] );
+				goalController.SetGoals( goal );
 			}
 		}
 	}

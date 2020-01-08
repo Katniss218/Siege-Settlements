@@ -10,7 +10,7 @@ namespace SS.AI.Goals
 
 
 		public Tuple<Guid, Guid> destinationGuid { get; set; } // either inventory or deposit, depending on the pickup mode.
-		public TacticalPickUpGoal.PickUpMode pickUpMode { get; private set; }
+		public TacticalPickUpGoal.PickUpMode pickUpMode { get; set; }
 
 
 		public bool isHostile { get; set; }
@@ -44,6 +44,8 @@ namespace SS.AI.Goals
 					throw new Exception( "Missing or invalid value of 'Resources' (" + serializer.file.fileName + ")." );
 				}
 			}
+
+			this.pickUpMode = (TacticalPickUpGoal.PickUpMode)serializer.ReadByte( "PickUpMode" );
 
 			try
 			{
@@ -81,6 +83,8 @@ namespace SS.AI.Goals
 					i++;
 				}
 			}
+
+			serializer.WriteByte( "", "PickUpMode", (byte)this.pickUpMode );
 
 			serializer.WriteClass( "", "Destination" );
 			serializer.WriteGuid( "Destination", "ObjectGuid", this.destinationGuid.Item1 );

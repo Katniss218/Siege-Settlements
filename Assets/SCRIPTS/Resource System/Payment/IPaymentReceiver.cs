@@ -4,7 +4,7 @@ using UnityEngine.Events;
 namespace SS.ResourceSystem.Payment
 {
 	/// <summary>
-	/// An interface that allows receiving payments of resources.
+	/// An interface that allows receiving payments of resources. Must be added to a MonoBehaviour, otherwise can cause exceptions with casting.
 	/// </summary>
 	public interface IPaymentReceiver
 	{

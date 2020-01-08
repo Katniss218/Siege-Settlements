@@ -252,14 +252,15 @@ namespace SS.Objects.Modules
 				{
 					TacticalPickUpGoal goal = new TacticalPickUpGoal();
 
-					goal.destinationObject = closestDeposit.ssObject;
-					goal.resourceId = this.resourceId;
-					goalController.goal = goal;
+					goal.SetDestination( closestDeposit );
+					goal.resources = new Dictionary<string, int>();
+					goal.resources.Add( this.resourceId, 5 );
+					goalController.SetGoals( goal );
 				}
 			}
 			else
 			{
-				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.ObjectDropOffMode.INVENTORY ) )
+				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.DropOffMode.INVENTORY ) )
 				{
 					return;
 				}
@@ -270,29 +271,30 @@ namespace SS.Objects.Modules
 				{
 					TacticalDropOffGoal goal = new TacticalDropOffGoal();
 
-					goal.SetDestination( closestinv.ssObject );
-					goal.objectDropOffMode = TacticalDropOffGoal.ObjectDropOffMode.INVENTORY;
-					goal.resourceId = this.resourceId;
-					goalController.goal = goal;
+					goal.SetDestination( closestinv );
+#warning pick up only required amount
+					goal.resources = new Dictionary<string, int>();
+					goal.resources.Add( this.resourceId, 5 );
+					goalController.SetGoals( goal );
 				}
 			}
 		}
 
 		public static bool IsGoingToPickUp( TacticalGoalController goalController, string resourceId )
 		{
-			if( goalController.goal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.goal).resourceId == resourceId )
+			if( goalController.currentGoal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.currentGoal).resources.ContainsKey( resourceId ) )
 			{
 				return true;
 			}
 			return false;
 		}
 
-		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.ObjectDropOffMode dropOffMode )
+		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.DropOffMode dropOffMode )
 		{
-			if( goalController.goal is TacticalDropOffGoal )
+			if( goalController.currentGoal is TacticalDropOffGoal )
 			{
-				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.goal;
-				if( dropOffGoal.resourceId == resourceId && dropOffGoal.objectDropOffMode == dropOffMode )
+				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.currentGoal;
+				if( dropOffGoal.dropOffMode == dropOffMode && dropOffGoal.resources.ContainsKey( resourceId ) )
 				{
 					return true;
 				}

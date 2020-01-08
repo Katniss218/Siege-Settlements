@@ -1,6 +1,7 @@
 ﻿using Katniss.Utils;
 using SS.Objects;
 using SS.Objects.Modules;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,16 +25,32 @@ namespace SS.AI.Goals
 
 		private static float INTERACTION_DISTANCE = 0.75f;
 
+#warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
+		Dictionary<string, int> __resources = null;
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
 		/// </summary>
-		public Dictionary<string, int> resources { get; set; } = null;
+		public Dictionary<string, int> resources
+		{
+			get
+			{
+				return this.__resources;
+			}
+			set
+			{
+				this.__resources = value;
+				this.resourcesRemaining = value;
+			}
+		}
 
 
 
+		/// <summary>
+		/// Specifies where it will look to pick up resources.
+		/// </summary>
+		public PickUpMode pickUpMode { get; private set; }
 		public InventoryModule destinationInventory { get; private set; }
 		public ResourceDepositModule destinationResourceDeposit { get; private set; }
-		public PickUpMode pickUpMode { get; private set; }
 		
 		public bool isHostile { get; set; }
 
@@ -75,7 +92,7 @@ namespace SS.AI.Goals
 
 		public override bool CanBeAddedTo( SSObject ssObject )
 		{
-			return ssObject is IMovable && ssObject.GetModules<InventoryModule>().Length > 0;
+			return ssObject.GetModules<InventoryModule>().Length > 0;
 		}
 
 		public override void Start( TacticalGoalController controller )
@@ -284,10 +301,37 @@ namespace SS.AI.Goals
 
 		public override TacticalGoalData GetData()
 		{
-			return new TacticalPickUpGoalData()
+			TacticalPickUpGoalData data = new TacticalPickUpGoalData()
 			{
 				isHostile = this.isHostile
 			};
+
+			data.pickUpMode = this.pickUpMode;
+			if( this.pickUpMode == PickUpMode.INVENTORY )
+			{
+				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationInventory.ssObject.guid, this.destinationInventory.moduleId );
+			}
+			else if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
+			{
+				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationResourceDeposit.ssObject.guid, this.destinationResourceDeposit.moduleId );
+			}
+			if( this.resources == null )
+			{
+				data.resources = null;
+			}
+			else
+			{
+				data.resources = new Dictionary<string, System.Tuple<int, int>>();
+				foreach( var kvp in this.resources )
+				{
+					string id = kvp.Key;
+					int amt = kvp.Value;
+					int amtRemaining = this.resourcesRemaining[id];
+
+					data.resources.Add( id, new Tuple<int, int>( amt, amtRemaining ) );
+				}
+			}
+			return data;
 		}
 
 		public override void SetData( TacticalGoalData _data )
@@ -295,11 +339,11 @@ namespace SS.AI.Goals
 			TacticalPickUpGoalData data = (TacticalPickUpGoalData)_data;
 
 			this.pickUpMode = data.pickUpMode;
-			if( pickUpMode == PickUpMode.INVENTORY )
+			if( this.pickUpMode == PickUpMode.INVENTORY )
 			{
 				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<InventoryModule>( data.destinationGuid.Item2 ) );
 			}
-			else if( pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
+			else if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
 			{
 				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<ResourceDepositModule>( data.destinationGuid.Item2 ) );
 			}
