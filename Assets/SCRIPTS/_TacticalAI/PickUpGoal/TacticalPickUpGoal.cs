@@ -23,7 +23,7 @@ namespace SS.AI.Goals
 			RESOURCE_DEPOSIT
 		}
 
-		private static float INTERACTION_DISTANCE = 0.75f;
+		private static float INTERACTION_DISTANCE = 0.9f;
 
 #warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
 		Dictionary<string, int> __resources = null;
@@ -58,7 +58,7 @@ namespace SS.AI.Goals
 
 		private Dictionary<string, int> resourcesRemaining;
 
-		private float amountCollectedFractional;
+		private float amountCollectedFractional = 0.0f;
 		
 		private InventoryModule inventory;
 		private IAttackModule[] attackModules;
@@ -133,11 +133,11 @@ namespace SS.AI.Goals
 
 				this.amountCollectedFractional += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
 				int amountCollectedFloored = Mathf.FloorToInt( amountCollectedFractional );
+				Debug.Log( amountCollectedFractional );
 				// when the amount collected has accumulated to over '1' - take '1' of any (wanted) resource.
 				if( amountCollectedFloored >= 1 )
 				{
-					// Take either what's left or enough to completely fill the remaining space.
-					int amountToTake = amountRemainingWanted > kvp.Value ? kvp.Value : amountRemainingWanted;
+					int amountToTake = amountCollectedFloored > kvp.Value ? kvp.Value : amountCollectedFloored;
 
 					// If tried to take more than can hold - clamped automatically.
 					int amountTaken = this.inventory.Add( kvp.Key, amountToTake );
@@ -157,27 +157,38 @@ namespace SS.AI.Goals
 			
 			bool isSomethingRemaining = false;
 			// check if there is still more resources remaining.
-			foreach( var kvp in this.resourcesRemaining )
+			if( this.resourcesRemaining != null )
 			{
-				if( kvp.Value > 0 )
+				foreach( var kvp in this.resourcesRemaining )
 				{
-					isSomethingRemaining = true;
+					if( kvp.Value > 0 )
+					{
+						isSomethingRemaining = true;
+					}
 				}
-			}
 
-			// only return actual success when there's no this.resourcesRemaining
-			// only return actual failure if the inventory is full.
-			// otherwise, wait - the operation is not done yet.
-			if( isSomethingRemaining )
-			{
-				if( this.inventory.isFull )
+				// only return actual success when there's no this.resourcesRemaining
+				// only return actual failure if the inventory is full.
+				// otherwise, wait - the operation is not done yet.
+				if( isSomethingRemaining )
 				{
-					return false;
+					if( this.inventory.isFull )
+					{
+						return false;
+					}
+					return null; // operation not done yet, can still take more, but picking up from deposits takes time.
 				}
-				return null; // operation not done yet, can still take more, but picking up from deposits takes time.
+				else
+				{
+					return true;
+				}
 			}
 			else
 			{
+				if( !this.inventory.isFull )
+				{
+					return null;
+				}
 				return true;
 			}
 		}
@@ -255,7 +266,8 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-			
+#warning failure when destination is no longer usable.
+
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
@@ -277,7 +289,7 @@ namespace SS.AI.Goals
 			}
 			if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
 			{
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationResourceDeposit.transform, INTERACTION_DISTANCE ) )
 				{
 					bool? outcome = this.PickUpFromDeposit( controller );
 

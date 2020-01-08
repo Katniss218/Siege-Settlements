@@ -12,6 +12,7 @@ namespace SS.AI.Goals
 		public const string KFF_TYPEID = "move_to";
 
 		private const float OBJECT_MODE_STOPPING_DISTANCE = 0.75f;
+		private const float INTERIOR_MODE_STOPPING_DISTANCE = 0.75f;
 
 		public enum DestinationType : byte
 		{
@@ -113,6 +114,14 @@ namespace SS.AI.Goals
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
+
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
+				{
+					this.navMeshAgent.ResetPath();
+					controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
+					return;
+				}
+
 				this.oldDestination = currDestPos;
 				return;
 			}
@@ -129,11 +138,9 @@ namespace SS.AI.Goals
 				{
 					currDestPos = this.destinationInterior.EntranceWorldPosition();
 				}
-
-				this.oldDestination = currDestPos;
-
+				
 				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, INTERIOR_MODE_STOPPING_DISTANCE ) )
 				{
 					this.navMeshAgent.ResetPath();
 
@@ -154,6 +161,7 @@ namespace SS.AI.Goals
 						unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 					}
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
 				

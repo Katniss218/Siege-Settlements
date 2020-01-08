@@ -127,17 +127,8 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
-
-			bool isInside = false;
-			if( controller.ssObject is Unit )
-			{
-				if( ((Unit)controller.ssObject).isInside )
-				{
-					isInside = true;
-				}
-			}
-
+			SSObjectDFS ssobj = (SSObjectDFS)controller.ssObject;
+			
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
 			{
@@ -173,9 +164,12 @@ namespace SS.AI.Goals
 				// If the target can no longer be targeted.
 				if( this.target == null )
 				{
-					if( !isInside )
+					if( controller.ssObject is IInteriorUser )
 					{
-						this.navMeshAgent.ResetPath();
+						if( !((IInteriorUser)controller.ssObject).isInside )
+						{
+							this.navMeshAgent.ResetPath();
+						}
 					}
 #warning todo?
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );

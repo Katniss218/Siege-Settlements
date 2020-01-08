@@ -321,6 +321,7 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
+#warning failure when destination is no longer usable.
 
 			if( attackModules.Length > 0 )
 			{

@@ -32,7 +32,8 @@ namespace SS.AI.Goals
 		{
 			if( isHostile )
 			{
-				SSObjectDFS ssobj = controller.GetComponent<SSObjectDFS>();
+				SSObjectDFS ssobj = (SSObjectDFS)controller.ssObject;
+
 				for( int i = 0; i < attackModules.Length; i++ )
 				{
 					if( attackModules[i].target == null )

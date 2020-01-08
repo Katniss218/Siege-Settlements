@@ -175,7 +175,7 @@ namespace SS.AI
 			}
 		}
 
-		internal static void AssignDropoffToInventoryGoal( RaycastHit hitInfo, InventoryModule hitInventory, SSObjectDFS[] selected )
+		internal static void AssignDropoffToInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFS[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
 			
@@ -233,12 +233,17 @@ namespace SS.AI
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
-				TacticalDropOffGoal goal = new TacticalDropOffGoal();
-				goal.isHostile = false;
-				goal.SetDestination( hitInventory );
-				goalController.SetGoals( goal );
+				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+				goal1.isHostile = false;
+				goal1.SetDestination( hitSSObject );
+
+				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
+				goal2.isHostile = false;
+				goal2.SetDestination( hitInventory );
+				goalController.SetGoals( goal1, goal2 );
 			}
 		}
+
 		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFS[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
@@ -455,10 +460,14 @@ namespace SS.AI
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
-				TacticalPickUpGoal goal = new TacticalPickUpGoal();
-				goal.isHostile = false;
-				goal.SetDestination( hitDeposit );
-				goalController.SetGoals( goal );
+				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+				goal1.isHostile = false;
+				goal1.SetDestination( hitSSObject );
+
+				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+				goal2.isHostile = false;
+				goal2.SetDestination( hitDeposit );
+				goalController.SetGoals( goal1, goal2 );
 			}
 		}
 
