@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SS.Objects;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace SS.ResourceSystem.Payment
@@ -8,6 +9,8 @@ namespace SS.ResourceSystem.Payment
 	/// </summary>
 	public interface IPaymentReceiver
 	{
+		SSObject ssObject { get; }
+
 		UnityEvent onPaymentReceived { get; }
 
 		/// <summary>

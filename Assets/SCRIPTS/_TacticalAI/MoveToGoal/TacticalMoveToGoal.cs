@@ -127,7 +127,7 @@ namespace SS.AI.Goals
 			}
 			if( this.destination == DestinationType.INTERIOR )
 			{
-				Vector3 currDestPos = this.destinationObject.transform.position;
+				Vector3 currDestPos = this.destinationInterior.transform.position;
 
 				if( this.oldDestination != currDestPos )
 				{
@@ -191,8 +191,17 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
+
+			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
+			if( (this.destination == DestinationType.INTERIOR) && this.destinationInterior == null )
+			{
+				this.navMeshAgent.ResetPath();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
+			}
+
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
 			{
 				this.navMeshAgent.ResetPath();
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );

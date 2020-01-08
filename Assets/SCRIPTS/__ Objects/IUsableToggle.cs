@@ -1,6 +1,6 @@
 ﻿namespace SS.Objects
 {
-	interface IUsableSSObject
+	interface ISSObjectUsableUnusable
 	{
 		bool IsUsable();
 	}

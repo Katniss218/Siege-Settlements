@@ -528,6 +528,7 @@ namespace SS.Objects.Units
 
 				popTotal += (byte)additional[i].population;
 
+				// Find the population of the new, joined unit (total population of all units, clamped to highest valid population size).
 				if( popTotal > selfPop )
 				{
 					healthTotal += additional[i].health;
@@ -612,9 +613,11 @@ namespace SS.Objects.Units
 
 			bool isSelected = Selection.IsSelected( beacon );
 
+			// Split into new units (largest-possible) as long as there is enough population in the pool.
 			while( populationPool > 0 )
 			{
 				PopulationSize newSize = PopulationSize.x1;
+				// Find the largest unit possible to make from the available population pool.
 				if( populationPool >= 8 )
 				{
 					populationPool -= 8;

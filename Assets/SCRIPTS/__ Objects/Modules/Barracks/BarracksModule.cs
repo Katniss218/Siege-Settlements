@@ -458,7 +458,7 @@ namespace SS.Objects.Modules
 			}
 
 			// If it's not usable - return, don't train anything.
-			if( this.ssObject is IUsableSSObject && !(this.ssObject as IUsableSSObject).IsUsable() )
+			if( this.ssObject is ISSObjectUsableUnusable && !(this.ssObject as ISSObjectUsableUnusable).IsUsable() )
 			{
 				return;
 			}

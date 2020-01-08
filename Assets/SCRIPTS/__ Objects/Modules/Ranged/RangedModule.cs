@@ -125,7 +125,7 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			// If it's not usable - return, don't attack.
-			if( this.ssObject is IUsableSSObject && !((IUsableSSObject)this.ssObject).IsUsable() )
+			if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).IsUsable() )
 			{
 				return;
 			}

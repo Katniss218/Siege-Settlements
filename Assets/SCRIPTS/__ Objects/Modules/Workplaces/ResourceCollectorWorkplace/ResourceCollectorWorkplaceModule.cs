@@ -52,6 +52,7 @@ namespace SS.Objects.Modules
 
 
 #warning take into account object being unusable.
+
 				// If has resource deposit.
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
 				
@@ -250,11 +251,13 @@ namespace SS.Objects.Modules
 				ResourceDepositModule closestDeposit = GetClosestInRangeContaining( this.aoi.center, this.aoi.radius, this.resourceId );
 				if( closestDeposit != null )
 				{
+#error needs to move to the object first (and exit interiors, etc, etc.).
 					TacticalPickUpGoal goal = new TacticalPickUpGoal();
 
 					goal.SetDestination( closestDeposit );
 					goal.resources = new Dictionary<string, int>();
 					goal.resources.Add( this.resourceId, 5 );
+					goal.ApplyResources();
 					goalController.SetGoals( goal );
 				}
 			}
@@ -269,12 +272,14 @@ namespace SS.Objects.Modules
 				
 				if( closestinv != null )
 				{
+#error needs to move to the object first (and exit interiors, etc, etc.).
 					TacticalDropOffGoal goal = new TacticalDropOffGoal();
 
 					goal.SetDestination( closestinv );
 #warning pick up only required amount
 					goal.resources = new Dictionary<string, int>();
 					goal.resources.Add( this.resourceId, 5 );
+					goal.ApplyResources();
 					goalController.SetGoals( goal );
 				}
 			}
@@ -282,6 +287,7 @@ namespace SS.Objects.Modules
 
 		public static bool IsGoingToPickUp( TacticalGoalController goalController, string resourceId )
 		{
+#error needs to check either if it's moving or extracting...
 			if( goalController.currentGoal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.currentGoal).resources.ContainsKey( resourceId ) )
 			{
 				return true;
@@ -291,6 +297,7 @@ namespace SS.Objects.Modules
 
 		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.DropOffMode dropOffMode )
 		{
+#error needs to check either if it's moving or dropping off...
 			if( goalController.currentGoal is TacticalDropOffGoal )
 			{
 				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.currentGoal;

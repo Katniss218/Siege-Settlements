@@ -1,6 +1,7 @@
 ﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.SubObjects;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.UI;
@@ -31,10 +32,12 @@ namespace SS.Objects.Buildings
 
 		public UnityEvent onPaymentReceived { get; private set; }
 		
+		public SSObject ssObject
+		{
+			get { return this.building; }
+		}
 		private Building building;
-		private MeshRenderer[] renderers;
-
-
+		
 		float buildingHeight = 0.0f;
 
 		/// <summary>
@@ -101,10 +104,9 @@ namespace SS.Objects.Buildings
 					this.building.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.building.onFactionChange.RemoveListener( this.OnFactionChange );
 
-					for( int i = 0; i < this.renderers.Length; i++ )
-					{
-						this.renderers[i].material.SetFloat( "_YOffset", 0.0f );
-					}
+
+					UpdateYOffset( this.building, 0.0f );
+					
 					this.building.health = this.building.healthMax;
 
 					Object.Destroy( this.transform.Find( "construction_site_graphics" ).gameObject );
@@ -136,6 +138,21 @@ namespace SS.Objects.Buildings
 				this.UpdateStatus_UI();
 
 				return;
+			}
+		}
+
+		private static void UpdateYOffset( SSObject ssObject, float value )
+		{
+			MeshSubObject[] meshes = ssObject.GetSubObjects<MeshSubObject>();
+			MeshPredicatedSubObject[] meshes2 = ssObject.GetSubObjects<MeshPredicatedSubObject>();
+
+			for( int i = 0; i < meshes.Length; i++ )
+			{
+				meshes[i].GetMaterial().SetFloat( "_YOffset", value );
+			}
+			for( int i = 0; i < meshes2.Length; i++ )
+			{
+				meshes2[i].GetMaterial().SetFloat( "_YOffset", value );
 			}
 		}
 
@@ -380,9 +397,8 @@ namespace SS.Objects.Buildings
 			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
 			constructionSite.building = building;
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
-			constructionSite.renderers = building.GetComponentsInChildren<MeshRenderer>();
 
-			constructionSite.buildingHeight = building.GetComponent<BoxCollider>().size.y;
+			constructionSite.buildingHeight = building.size.y;
 
 			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
@@ -412,12 +428,9 @@ namespace SS.Objects.Buildings
 
 
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
-			for( int i = 0; i < constructionSite.renderers.Length; i++ )
-			{
-				constructionSite.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
-			}
 
-
+			UpdateYOffset( constructionSite.building, Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
+			
 			// Re-Display to update.
 			if( Selection.IsDisplayed( building ) )
 			{
@@ -429,10 +442,9 @@ namespace SS.Objects.Buildings
 		private void OnHealthChange( float deltaHP )
 		{
 			this.UpdateStatus_UI();
-			for( int i = 0; i < this.renderers.Length; i++ )
-			{
-				this.renderers[i].material.SetFloat( "_YOffset", Mathf.Lerp( -this.buildingHeight, 0.0f, building.healthPercent ) );
-			}
+
+			UpdateYOffset( this.building, Mathf.Lerp( -this.buildingHeight, 0.0f, building.healthPercent ) );
+						
 			if( deltaHP < 0 )
 			{
 				foreach( var kvp in this.resourceInfo )

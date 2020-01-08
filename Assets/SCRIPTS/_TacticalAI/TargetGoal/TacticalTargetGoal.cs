@@ -199,7 +199,7 @@ namespace SS.AI.Goals
 		public override void Update( TacticalGoalController controller )
 		{
 			// If it's not usable - return, don't attack.
-			if( controller.ssObject is IUsableSSObject && !((IUsableSSObject)controller.ssObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
 			{
 				return;
 			}

@@ -151,6 +151,7 @@ namespace SS.Objects.Units
 								goal.resources = new Dictionary<string, int>();
 #warning only pick up required amount.
 								goal.resources.Add( this.automaticDutyResourceId, 5 );
+								goal.ApplyResources();
 								goalController.SetGoals( goal );
 
 								foundinventory = true;
@@ -206,6 +207,7 @@ namespace SS.Objects.Units
 							goal.resources = new Dictionary<string, int>();
 #warning only pick up required amount.
 							goal.resources.Add( this.automaticDutyResourceId, 5 );
+							goal.ApplyResources();
 							goalController.SetGoals( goal );
 
 							break;

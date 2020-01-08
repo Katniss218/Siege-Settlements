@@ -26,21 +26,14 @@ namespace SS.AI.Goals
 		private static float INTERACTION_DISTANCE = 0.9f;
 
 #warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
-		Dictionary<string, int> __resources = null;
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
 		/// </summary>
-		public Dictionary<string, int> resources
+		public Dictionary<string, int> resources { get; set; } = null;
+
+		public void ApplyResources()
 		{
-			get
-			{
-				return this.__resources;
-			}
-			set
-			{
-				this.__resources = value;
-				this.resourcesRemaining = value;
-			}
+			this.resourcesRemaining = this.resources;
 		}
 
 
@@ -261,7 +254,7 @@ namespace SS.AI.Goals
 			}
 
 			
-			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;

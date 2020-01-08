@@ -46,24 +46,15 @@ namespace SS.AI.Goals
 #warning this needs to be identifyable by GUID or something (construction sites pose MAJOR problem, as they can't be identified using anything else than memory reference - doesn't work for saving)
 #warning also, what if I decide that buildings/units themselves can receive payments? (technically, CS's are part of buildings).
 		private MonoBehaviour destinationPaymentReceiverBeh;
-
-
-#warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
-		Dictionary<string, int> __resources = null;
+	
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
 		/// </summary>
-		public Dictionary<string, int> resources
+		public Dictionary<string, int> resources { get; set; } = null;
+
+		public void ApplyResources()
 		{
-			get
-			{
-				return this.__resources;
-			}
-			set
-			{
-				this.__resources = value;
-				this.resourcesRemaining = value;
-			}
+			this.resourcesRemaining = this.resources;
 		}
 
 		public bool isHostile { get; set; }
@@ -310,7 +301,7 @@ namespace SS.AI.Goals
 				return;
 			}
 
-			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
@@ -321,6 +312,7 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
+
 #warning failure when destination is no longer usable.
 
 			if( attackModules.Length > 0 )
@@ -345,6 +337,12 @@ namespace SS.AI.Goals
 			{
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
+					if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !(this.destinationInventory.ssObject as ISSObjectUsableUnusable).IsUsable() )
+					{
+						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+						return;
+					}
+
 					bool outcome = this.OnArrivalInventory( controller );
 
 					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
@@ -358,6 +356,12 @@ namespace SS.AI.Goals
 			{
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationPaymentReceiverBeh.transform, INTERACTION_DISTANCE ) )
 				{
+					if( this.destinationPaymentReceiver.ssObject is ISSObjectUsableUnusable && !(this.destinationPaymentReceiver.ssObject as ISSObjectUsableUnusable).IsUsable() )
+					{
+						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+						return;
+					}
+
 					bool outcome = this.OnArrivalPayment( controller );
 
 					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
@@ -392,10 +396,13 @@ namespace SS.AI.Goals
 			}
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-#warning need a way to perststently save payment receivers (either object or module).
-				throw new Exception("PAYMENT RECEIVER not implemented yet. report error to Katniss");
-				//data.destinationGuid = new Tuple<Guid, Guid>( this.destinationPaymentReceiver.ssObject.guid, this.destinationPaymentReceiver.moduleId );
-				//data.destinationPos = this.destinationPos;
+				Guid obj = this.destinationPaymentReceiver.ssObject.guid;
+				Guid module = default;
+				if( this.destinationPaymentReceiver is SSModule )
+				{
+					module = ((SSModule)this.destinationPaymentReceiver).moduleId;
+				}
+				data.destinationGuid = new Tuple<Guid, Guid>( obj, module );
 			}
 
 			return data;
@@ -424,9 +431,16 @@ namespace SS.AI.Goals
 			}
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-#warning need a way to perststently save payment receivers (either object or module).
-				throw new Exception( "PAYMENT RECEIVER not implemented yet. report error to Katniss" );
-				//this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<IPaymentReceiver>( data.destinationGuid.Item2 ) );
+#warning Ugly way of doing that.
+#warning Might break for certain serializable value of guid (wouldn't be able to load module with that moduleId).
+				if( data.destinationGuid.Item2 == default )
+				{
+					this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetComponent<ConstructionSite>() );
+				}
+				else
+				{
+					this.SetDestination( (IPaymentReceiver)SSObject.Find( data.destinationGuid.Item1 ).GetModule( data.destinationGuid.Item2 ) );
+				}
 			}
 			
 			this.isHostile = data.isHostile;

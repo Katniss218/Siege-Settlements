@@ -163,7 +163,7 @@ namespace SS
 			}
 
 
-			if( !(obj is IUsableSSObject) || ((IUsableSSObject)obj).IsUsable() )
+			if( !(obj is ISSObjectUsableUnusable) || ((ISSObjectUsableUnusable)obj).IsUsable() )
 			{
 				SSModule[] modules = ((SSObject)obj).GetModules();
 				
