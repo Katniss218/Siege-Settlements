@@ -37,6 +37,7 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// Specifies where to drop off resources.
 		/// </summary>
+#warning destinations can be null, to find the best-fit when it's needed.
 		public DropOffMode dropOffMode { get; private set; }
 		public Vector3 destinationPos { get; private set; }
 		public InventoryModule destinationInventory { get; private set; }
@@ -391,8 +392,9 @@ namespace SS.AI.Goals
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
 #warning need a way to perststently save payment receivers (either object or module).
-				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationPaymentReceiver.ssObject.guid, this.destinationPaymentReceiver.moduleId );
-				data.destinationPos = this.destinationPos;
+				throw new Exception("PAYMENT RECEIVER not implemented yet. report error to Katniss");
+				//data.destinationGuid = new Tuple<Guid, Guid>( this.destinationPaymentReceiver.ssObject.guid, this.destinationPaymentReceiver.moduleId );
+				//data.destinationPos = this.destinationPos;
 			}
 
 			return data;
@@ -422,7 +424,8 @@ namespace SS.AI.Goals
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
 #warning need a way to perststently save payment receivers (either object or module).
-				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<IPaymentReceiver>( data.destinationGuid.Item2 ) );
+				throw new Exception( "PAYMENT RECEIVER not implemented yet. report error to Katniss" );
+				//this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<IPaymentReceiver>( data.destinationGuid.Item2 ) );
 			}
 			
 			this.isHostile = data.isHostile;

@@ -2,7 +2,6 @@
 using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,17 +11,20 @@ namespace SS.AI.Goals
 	{
 		public const string KFF_TYPEID = "move_to";
 
-		private const float OBJECT_MODE_STOPPING_DISTANCE = 1.0f;
+		private const float OBJECT_MODE_STOPPING_DISTANCE = 0.75f;
 
 		public enum DestinationType : byte
 		{
 			POSITION,
-			OBJECT
+			OBJECT,
+			INTERIOR
 		}
 
 		public DestinationType destination { get; private set; }
-		public Vector3? destinationPos { get; private set; }
+		public Vector3 destinationPos { get; private set; }
 		public SSObject destinationObject { get; private set; }
+		public InteriorModule destinationInterior { get; private set; }
+		public InteriorModule.SlotType interiorSlotType { get; private set; }
 
 		public bool isHostile { get; set; }
 
@@ -31,8 +33,6 @@ namespace SS.AI.Goals
 		private NavMeshAgent navMeshAgent;
 		private IAttackModule[] attackModules;
 
-		public InteriorModule destinationInterior { get; private set; }
-		public InteriorModule.SlotType destinationSlotType { get; private set; }
 
 		public TacticalMoveToGoal()
 		{
@@ -56,17 +56,15 @@ namespace SS.AI.Goals
 		public void SetDestination( SSObject destination )
 		{
 			this.destination = DestinationType.OBJECT;
-			this.destinationPos = null;
 			this.destinationObject = destination;
 		}
 
 		public void SetDestination( InteriorModule interior, InteriorModule.SlotType destinationSlotType )
 		{
-			this.destination = DestinationType.OBJECT;
-			this.destinationPos = null;
-			this.destinationObject = interior.ssObject;
+			this.destination = DestinationType.INTERIOR;
+			this.destinationObject = null;
 			this.destinationInterior = interior;
-			this.destinationSlotType = destinationSlotType;
+			this.interiorSlotType = destinationSlotType;
 		}
 
 
@@ -85,7 +83,7 @@ namespace SS.AI.Goals
 		{
 			if( this.destination == DestinationType.POSITION )
 			{
-				Vector3 currDestPos = this.destinationPos.Value;
+				Vector3 currDestPos = this.destinationPos;
 				if( this.oldDestination != currDestPos )
 				{
 #warning setdestination needs to take into account the side from which it's coming. Not perfect, but works in most simple & obvious conditions.
@@ -98,64 +96,68 @@ namespace SS.AI.Goals
 					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
 					{
 						this.navMeshAgent.ResetPath();
-						controller.goal = TacticalGoalController.GetDefaultGoal();
+						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 						return;
 					}
 				}
 
 				this.oldDestination = currDestPos;
-
 				return;
 			}
 			if( this.destination == DestinationType.OBJECT )
 			{
 				Vector3 currDestPos = this.destinationObject.transform.position;
 
-				if( this.destinationInterior != null )
-				{
-					if( controller.ssObject is Unit )
-					{
-						currDestPos = this.destinationInterior.EntranceWorldPosition();
-					}
-				}
-
 				if( this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 
+				this.oldDestination = currDestPos;
+				return;
+			}
+			if( this.destination == DestinationType.INTERIOR )
+			{
+				Vector3 currDestPos = this.destinationObject.transform.position;
 
-				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
+				if( this.oldDestination != currDestPos )
 				{
-					this.navMeshAgent.ResetPath();
-					if( this.destinationInterior != null )
-					{
-						if( controller.ssObject is Unit )
-						{
-							Unit unit = (Unit)controller.ssObject;
-
-							InteriorModule.SlotType slotType = this.destinationSlotType;
-							int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
-
-							if( slotIndex == null )
-							{
-								Debug.LogWarning( "Can't enter slot: " + this.destinationInterior.ssObject.definitionId );
-								this.navMeshAgent.ResetPath();
-								controller.goal = TacticalGoalController.GetDefaultGoal();
-								return;
-							}
-							unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
-							controller.goal = TacticalGoalController.GetDefaultGoal();
-						}
-					}
-
-					return;
+					this.navMeshAgent.SetDestination( currDestPos );
 				}
-
+				
+				if( controller.ssObject is IInteriorUser )
+				{
+					currDestPos = this.destinationInterior.EntranceWorldPosition();
+				}
 
 				this.oldDestination = currDestPos;
 
+				// If the agent has travelled to the destination - switch back to the default Goal.
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
+				{
+					this.navMeshAgent.ResetPath();
+
+					if( controller.ssObject is Unit )
+					{
+						Unit unit = (Unit)controller.ssObject;
+
+						InteriorModule.SlotType slotType = this.interiorSlotType;
+						int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
+
+						if( slotIndex == null )
+						{
+							Debug.LogWarning( "Can't enter slot: " + this.destinationInterior.ssObject.definitionId );
+							this.navMeshAgent.ResetPath();
+							controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+							return;
+						}
+						unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
+						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
+					}
+					return;
+				}
+				
+				this.oldDestination = currDestPos;
 				return;
 			}
 		}
@@ -164,45 +166,37 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
-			if( controller.ssObject is Unit )
+			if( controller.ssObject is IInteriorUser )
 			{
-				Unit unit = (Unit)controller.ssObject;
+				IInteriorUser interiorUser = (IInteriorUser)controller.ssObject;
 
-				if( unit.isInside )
+				if( interiorUser.isInside )
 				{
-					unit.SetOutside();
+					interiorUser.SetOutside();
 				}
 			}
 
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
-			if( this.destination == DestinationType.OBJECT )
+			if( (this.destination == DestinationType.OBJECT) && this.destinationObject == null )
 			{
-				if( this.destinationObject == null )
-				{
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-					return;
-				}
-
-				if( this.destinationObject == controller.ssObject )
-				{
-					Debug.LogWarning( controller.ssObject.definitionId + ": Destination was set to itself." );
-					this.navMeshAgent.ResetPath();
-					controller.goal = TacticalGoalController.GetDefaultGoal();
-					return;
-				}
+				this.navMeshAgent.ResetPath();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				return;
 			}
 			// If it's not usable - return, don't move.
 			if( controller.ssObject is IUsableSSObject && !(controller.ssObject as IUsableSSObject).IsUsable() )
 			{
+				this.navMeshAgent.ResetPath();
+				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 
-			this.UpdatePosition( controller );
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
+
+			this.UpdatePosition( controller );
 		}
 
 
@@ -217,14 +211,20 @@ namespace SS.AI.Goals
 			{
 				isHostile = this.isHostile
 			};
-			data.destination = this.destination;
-			if( this.destination == DestinationType.OBJECT )
+			data.destinationType = this.destination;
+			if( this.destination == DestinationType.POSITION )
+			{
+				data.destinationPosition = this.destinationPos;
+			}
+			else if( this.destination == DestinationType.OBJECT )
 			{
 				data.destinationObjectGuid = this.destinationObject.guid;
 			}
-			else if( this.destination == DestinationType.POSITION )
+			else if( this.destination == DestinationType.INTERIOR )
 			{
-				data.destinationPosition = this.destinationPos;
+				data.destinationObjectGuid = this.destinationInterior.ssObject.guid;
+				data.interiorModuleId = this.destinationInterior.moduleId;
+				data.interiorSlotType = this.interiorSlotType;
 			}
 
 			return data;
@@ -234,15 +234,19 @@ namespace SS.AI.Goals
 		{
 			TacticalMoveToGoalData data = (TacticalMoveToGoalData)_data;
 
-			this.destination = data.destination;
-
-			if( this.destination == DestinationType.OBJECT )
-			{
-				this.destinationObject = SSObject.Find( data.destinationObjectGuid.Value );
-			}
-			else if( this.destination == DestinationType.POSITION )
+			this.destination = data.destinationType;
+			
+			if( this.destination == DestinationType.POSITION )
 			{
 				this.destinationPos = data.destinationPosition;
+			}
+			else if( this.destination == DestinationType.OBJECT )
+			{
+				this.SetDestination( SSObject.Find( data.destinationObjectGuid ) );
+			}
+			else if( this.destination == DestinationType.INTERIOR )
+			{
+				this.SetDestination( SSObject.Find( data.destinationObjectGuid ).GetModule<InteriorModule>( data.interiorModuleId ), data.interiorSlotType );
 			}
 
 			this.isHostile = data.isHostile;

@@ -9,26 +9,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Units
 {
-	public interface IEnterableInside
-	{
-		Transform transform { get; }
-
-		Sprite icon { get; }
-
-		InteriorModule interior { get; }
-		int slotIndex { get; }
-
-		bool isInside
-		{
-			get;
-		}
-		bool isInsideHidden { get; }
-
-		void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex );
-		void SetOutside();
-	}
-
-	public class Unit : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IEnterableInside
+	public class Unit : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent

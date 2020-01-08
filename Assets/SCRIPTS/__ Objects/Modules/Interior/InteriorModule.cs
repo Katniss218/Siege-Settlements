@@ -23,7 +23,7 @@ namespace SS.Objects.Modules
 			public Vector3 localPos { get; set; }
 			public Quaternion localRot { get; set; }
 
-			public IEnterableInside objInside;
+			public IInteriorUser objInside;
 
 			public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
 
@@ -220,7 +220,7 @@ namespace SS.Objects.Modules
 					{
 						continue;
 					}
-					IEnterableInside u = this.slots[i].objInside;
+					IInteriorUser u = this.slots[i].objInside;
 
 					u.transform.position = this.SlotWorldPosition( slots[i] );
 					u.transform.rotation = this.SlotWorldRotation( slots[i] );
@@ -274,11 +274,11 @@ namespace SS.Objects.Modules
 			//return;
 			foreach( var kvp in data.slots )
 			{
-				((IEnterableInside)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
+				((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
 			}
 			foreach( var kvp in data.workerSlots )
 			{
-				((IEnterableInside)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
+				((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
 			}
 		}
 
@@ -288,7 +288,7 @@ namespace SS.Objects.Modules
 		//
 
 
-		private void TrySelectInside_UI( IEnterableInside insideObj )
+		private void TrySelectInside_UI( IInteriorUser insideObj )
 		{
 			if( insideObj != null )
 			{
@@ -305,7 +305,7 @@ namespace SS.Objects.Modules
 			GameObject[] gridElements = new GameObject[this.slots.Length];
 			for( int i = 0; i < this.slots.Length; i++ )
 			{
-				IEnterableInside insideObj = this.slots[i].objInside;
+				IInteriorUser insideObj = this.slots[i].objInside;
 				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
 					TrySelectInside_UI( insideObj );
@@ -320,7 +320,7 @@ namespace SS.Objects.Modules
 			GameObject[] gridElements = new GameObject[this.workerSlots.Length];
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
-				IEnterableInside insideObj = this.workerSlots[i].objInside;
+				IInteriorUser insideObj = this.workerSlots[i].objInside;
 				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
 					TrySelectInside_UI( insideObj );

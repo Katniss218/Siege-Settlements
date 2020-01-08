@@ -76,7 +76,7 @@ namespace SS.AI
 		/// </summary>
 		public void ExitCurrent( TacticalGoalExitCondition exitCondition )
 		{
-			if( this.goalCounter >= this.goals.Length )
+			if( this.goalCounter >= this.goals.Length - 1 )
 			{
 				this.SetGoals( TacticalGoalController.GetDefaultGoal() );
 			}

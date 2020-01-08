@@ -25,7 +25,7 @@ namespace SS.Objects.Modules
 			{
 				for( int i = 0; i < this.interior.slots.Length; i++ )
 				{
-					IEnterableInside objInside = this.interior.slots[i].objInside;
+					IInteriorUser objInside = this.interior.slots[i].objInside;
 					if( objInside == null )
 					{
 						continue;

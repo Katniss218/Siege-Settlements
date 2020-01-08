@@ -202,6 +202,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\04 Extras\ExtraDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IDamageable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IFactionMember.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\IInteriorUser.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IPopulationScaler.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IUsableToggle.cs" />

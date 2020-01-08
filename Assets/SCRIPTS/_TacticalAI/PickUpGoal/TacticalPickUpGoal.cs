@@ -48,6 +48,7 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// Specifies where it will look to pick up resources.
 		/// </summary>
+#warning destinations can be null, to find the best-fit when it's needed.
 		public PickUpMode pickUpMode { get; private set; }
 		public InventoryModule destinationInventory { get; private set; }
 		public ResourceDepositModule destinationResourceDeposit { get; private set; }
