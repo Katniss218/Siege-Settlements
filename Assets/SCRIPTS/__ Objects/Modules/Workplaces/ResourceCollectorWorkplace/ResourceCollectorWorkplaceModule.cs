@@ -251,43 +251,55 @@ namespace SS.Objects.Modules
 				ResourceDepositModule closestDeposit = GetClosestInRangeContaining( this.aoi.center, this.aoi.radius, this.resourceId );
 				if( closestDeposit != null )
 				{
-#error needs to move to the object first (and exit interiors, etc, etc.).
-					TacticalPickUpGoal goal = new TacticalPickUpGoal();
-
-					goal.SetDestination( closestDeposit );
-					goal.resources = new Dictionary<string, int>();
-					goal.resources.Add( this.resourceId, 5 );
-					goal.ApplyResources();
-					goalController.SetGoals( goal );
+					TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+					goal1.SetDestination( closestDeposit.ssObject );
+					goal1.isHostile = false;
+					
+					TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+					goal2.SetDestination( closestDeposit );
+#warning pick up only required amount
+					goal2.resources = new Dictionary<string, int>();
+					goal2.resources.Add( this.resourceId, 5 );
+					goal2.ApplyResources();
+					goalController.SetGoals( goal1, goal2 );
 				}
 			}
 			else
 			{
 				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.DropOffMode.INVENTORY ) )
 				{
+					Debug.Log( this.resourceId + goalController.transform.position );
 					return;
 				}
-
+#warning units get blocked when they move to deposit as it gets destroyed (if they can't drop it off?).
+#warning units get blocked as they move to warehouse, as it get's full (if they can't drop it off?).
 				InventoryModule closestinv = GetClosestWithSpace( worker, worker.transform.position, this.resourceId, worker.factionId );
 				
 				if( closestinv != null )
 				{
-#error needs to move to the object first (and exit interiors, etc, etc.).
-					TacticalDropOffGoal goal = new TacticalDropOffGoal();
+					TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+					goal1.SetDestination( closestinv.ssObject );
+					goal1.isHostile = false;
 
-					goal.SetDestination( closestinv );
+					
+					TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
+					goal2.SetDestination( closestinv );
 #warning pick up only required amount
-					goal.resources = new Dictionary<string, int>();
-					goal.resources.Add( this.resourceId, 5 );
-					goal.ApplyResources();
-					goalController.SetGoals( goal );
+					goal2.resources = new Dictionary<string, int>();
+					goal2.resources.Add( this.resourceId, 5 );
+					goal2.ApplyResources();
+					goalController.SetGoals( goal1, goal2 );
 				}
 			}
 		}
 
 		public static bool IsGoingToPickUp( TacticalGoalController goalController, string resourceId )
 		{
-#error needs to check either if it's moving or extracting...
+#warning needs to check either if it's moving or extracting...
+			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationObject != null )
+			{
+				return true;
+			}
 			if( goalController.currentGoal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.currentGoal).resources.ContainsKey( resourceId ) )
 			{
 				return true;
@@ -297,7 +309,11 @@ namespace SS.Objects.Modules
 
 		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.DropOffMode dropOffMode )
 		{
-#error needs to check either if it's moving or dropping off...
+#warning needs to check either if it's moving or dropping off...
+			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationObject != null )
+			{
+				return true;
+			}
 			if( goalController.currentGoal is TacticalDropOffGoal )
 			{
 				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.currentGoal;

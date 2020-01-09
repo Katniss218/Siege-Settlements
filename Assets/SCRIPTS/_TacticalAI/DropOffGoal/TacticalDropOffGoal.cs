@@ -237,6 +237,11 @@ namespace SS.AI.Goals
 					failed = true;
 				}
 
+				if( amountDroppedOff == 0 )
+				{
+					continue;
+				}
+
 				this.inventory.Remove( kvp.Key, amountDroppedOff );
 
 				ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
@@ -269,6 +274,11 @@ namespace SS.AI.Goals
 				}
 
 				int amountPaid = amountWanted > kvp.Value ? kvp.Value : amountWanted;
+
+				if( amountPaid == 0 )
+				{
+					continue;
+				}
 
 				// Only pay the amount it wants. Otherwise it will scream at you.
 				this.destinationPaymentReceiver.ReceivePayment( kvp.Key, amountPaid );

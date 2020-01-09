@@ -183,7 +183,7 @@ namespace SS.Objects.Modules
 			}
 			return null;
 		}
-
+#warning hud interior icons don't get reset when the unit inside dies. only on exiting.
 		private void RegisterHUD()
 		{
 			// integrate hud.

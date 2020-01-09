@@ -126,7 +126,7 @@ namespace SS.AI.Goals
 
 				this.amountCollectedFractional += ResourceDepositModule.MINING_SPEED * Time.deltaTime;
 				int amountCollectedFloored = Mathf.FloorToInt( amountCollectedFractional );
-				Debug.Log( amountCollectedFractional );
+
 				// when the amount collected has accumulated to over '1' - take '1' of any (wanted) resource.
 				if( amountCollectedFloored >= 1 )
 				{

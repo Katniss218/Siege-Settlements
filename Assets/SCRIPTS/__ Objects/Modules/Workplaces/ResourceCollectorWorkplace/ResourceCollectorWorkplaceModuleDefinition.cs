@@ -30,7 +30,7 @@ namespace SS.Objects.Modules
 			module.icon = this.icon;
 
 			module.resourceId = this.resourceId;
-			module.aoi = new AreaOfInfluence( ssObject.transform.position, 5.0f );
+			module.aoi = new AreaOfInfluence( ssObject.transform.position, 7.5f );
 		}
 		
 
