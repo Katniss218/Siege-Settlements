@@ -131,7 +131,7 @@ namespace SS.Objects.Units
 
 								goal.SetDestination( closestinventory );
 								goal.resources = new Dictionary<string, int>();
-#warning only pick up required amount.
+#warning only pick up required amount. -picks up from a single inventory, picks up every wanted resource type (if possible), then, if at least one of the inv slots is full, goes to the receiver.
 								goal.resources.Add( this.automaticDutyResourceId, 5 );
 								goal.ApplyResources();
 								goalController.SetGoals( TAG_GOING_TO_PICKUP, goal );
@@ -185,11 +185,8 @@ namespace SS.Objects.Units
 							// - - - MAKE_PAYMENT
 							TacticalDropOffGoal goal = new TacticalDropOffGoal();
 
+#warning "smart" drop off (not specified resources).
 							goal.SetDestination( this.automaticDutyReceiver );
-							goal.resources = new Dictionary<string, int>();
-#warning only pick up required amount.
-							goal.resources.Add( this.automaticDutyResourceId, 5 );
-							goal.ApplyResources();
 							goalController.SetGoals( TAG_GOING_TO_PAY, goal );
 
 							break;
@@ -204,6 +201,7 @@ namespace SS.Objects.Units
 						selfInventory.GetAll().Keys.ToArray()
 					);
 
+#warning if can't find receiver that wants ANY of the carried resources, drop off at least one of the resources carried, and try again.
 					this.automaticDutyReceiver = receiver.Item2; // if null, will be set to null.
 					this.automaticDutyReceiverObject = receiver.Item1;
 				}
@@ -249,13 +247,31 @@ namespace SS.Objects.Units
 				return;
 			}
 
-#warning stop working & go home if the workplace is damaged.
+			TacticalGoalController controller = this.GetComponent<TacticalGoalController>();
+
+			// If workplace is damaged - stop working, go home.
+			if( this.workplace.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.workplace.ssObject).IsUsable() )
+			{
+				if( controller.goalTag == TAG_GOING_TO_HOUSE )
+				{
+					return;
+				}
+
+				TacticalMoveToGoal goal = new TacticalMoveToGoal();
+
+				InteriorModule closestHouse = this.GetClosestInteriorBuilding();
+
+				goal.SetDestination( closestHouse, InteriorModule.SlotType.Generic );
+				controller.SetGoals( TAG_GOING_TO_HOUSE, goal );
+
+				return;
+			}
+			
 			if( !DaylightCycleController.instance.IsWorkTime() )
 			{
-				TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
 				// Unit tries to find nearest unoccupied house. If the house gets occupied, it finds next nearest suitable (unoccupied) house.
 				// - In the future, make it so that it coordinates with other units (as a part of strategic AI) & each unit only goes to buildings that won't be occupied by other unit currently on the way there.
-				if( goalController.goalTag == TAG_GOING_TO_HOUSE )
+				if( controller.goalTag == TAG_GOING_TO_HOUSE )
 				{
 					return;
 				}
@@ -273,15 +289,10 @@ namespace SS.Objects.Units
 
 				if( closestHouse != null )
 				{
-					// goes to sleep normally, enters building when near it.
-
-					// when time comes to go out to work, it either appears at workplace, or at home.
-
-
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 
 					goal.SetDestination( closestHouse, InteriorModule.SlotType.Generic );
-					goalController.SetGoals( TAG_GOING_TO_HOUSE, goal );
+					controller.SetGoals( TAG_GOING_TO_HOUSE, goal );
 				}
 
 				return;
@@ -293,8 +304,7 @@ namespace SS.Objects.Units
 			}
 			else
 			{
-				TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
-				if( goalController.goalTag == TAG_GOING_TO_WORKPLACE )
+				if( controller.goalTag == TAG_GOING_TO_WORKPLACE )
 				{
 					return;
 				}
@@ -307,7 +317,7 @@ namespace SS.Objects.Units
 				{
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
-					goalController.SetGoals( TAG_GOING_TO_WORKPLACE, goal );
+					controller.SetGoals( TAG_GOING_TO_WORKPLACE, goal );
 				}
 			}
 		}

@@ -353,16 +353,7 @@ namespace SS.AI
 				}
 				else
 				{
-					if( movableGameObjects[i].definitionId == "unit.civilian" )
-					{
-#warning change back after testing.
-						goal.SetDestination( interior, InteriorModule.SlotType.Worker );
-					}
-					else
-					{
-
-						goal.SetDestination( interior, InteriorModule.SlotType.Generic );
-					}
+					goal.SetDestination( interior, InteriorModule.SlotType.Generic );
 				}
 				goalController.SetGoals( TAG_CUSTOM, goal );
 			}

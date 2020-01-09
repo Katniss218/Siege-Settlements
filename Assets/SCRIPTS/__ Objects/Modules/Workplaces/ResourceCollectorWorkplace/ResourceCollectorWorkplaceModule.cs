@@ -116,7 +116,7 @@ namespace SS.Objects.Modules
 
 			IPaymentReceiver ret = null;
 			SSObject retObj = null;
-			float dstSq = float.MaxValue;
+			float dstSqToLastValid = float.MaxValue;
 
 			Dictionary<string, int> resourcesWanted;
 			IPaymentReceiver[] paymentReceivers;
@@ -133,7 +133,7 @@ namespace SS.Objects.Modules
 				}
 				
 				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
-				if( newDstSq > dstSq )
+				if( newDstSq > dstSqToLastValid )
 				{
 					continue;
 				}
@@ -141,7 +141,9 @@ namespace SS.Objects.Modules
 
 				// If has resource deposit.
 				paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
-				
+
+#warning filter out construction sites at this stage, instead of at payment.
+#warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
@@ -157,7 +159,7 @@ namespace SS.Objects.Modules
 						{
 							if( resourcesWanted.ContainsKey( resourceIds[k] ) )
 							{
-								dstSq = newDstSq;
+								dstSqToLastValid = newDstSq;
 								ret = paymentReceivers[j];
 								retObj = objects[i];
 								break; // break inner loop
@@ -183,6 +185,11 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
+				if( !objects[i].hasInventoryModule )
+				{
+					continue;
+				}
+
 				// If is in range.
 				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
 				if( newDstSq > dstSqToLastValid )
@@ -195,22 +202,21 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
-#warning take into account object being unusable.
-				// If has resource deposit.
-				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
-
-				if( inventories.Length == 0 )
+				// discard any objects that are unusable.
+				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
 				{
 					continue;
 				}
-				
+
+				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
+								
 				for( int j = 0; j < inventories.Length; j++ )
 				{
 					if( inventories[j].isStorage )
 					{
 						if( inventories[j].GetSpaceLeft( resourceId ) > 0 )
 						{
-							dstSqToLastValid = newDstSq;
+							dstSqToLastValid = newDstSq; // only mark distance to an actual valid objects.
 							ret = inventories[j];
 							break; // break inner loop
 						}
@@ -245,10 +251,12 @@ namespace SS.Objects.Modules
 			
 			if( spaceLeft > 0 )
 			{
+				// If already going to pick up something - don't re-assign it.
 				if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 				{
 					return;
 				}
+
 
 				ResourceDepositModule closestDeposit = GetClosestInRangeContaining( this.aoi.center, this.aoi.radius, this.resourceId );
 				if( closestDeposit != null )
@@ -268,13 +276,14 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
+				// If already going to drop off something - don't re-assign it.
 				if( goalController.goalTag == TAG_GOING_TO_DROPOFF )
 				{
 					return;
 				}
 
+
 				InventoryModule closestinv = GetClosestWithSpace( worker, worker.transform.position, this.resourceId, worker.factionId );
-				
 				if( closestinv != null )
 				{
 					TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
