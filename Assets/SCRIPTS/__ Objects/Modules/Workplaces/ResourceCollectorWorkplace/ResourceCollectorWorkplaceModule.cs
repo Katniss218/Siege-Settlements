@@ -22,9 +22,9 @@ namespace SS.Objects.Modules
 
 		void Update()
 		{
-			
+
 		}
-		
+
 		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
@@ -55,7 +55,7 @@ namespace SS.Objects.Modules
 
 				// If has resource deposit.
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
-				
+
 				// If inventory is storage & contains wanted resource.
 				for( int j = 0; j < inventories.Length; j++ )
 				{
@@ -78,7 +78,7 @@ namespace SS.Objects.Modules
 			Extra[] extras = SSObject.GetAllExtras();
 
 			ResourceDepositModule ret = null;
-			float dstSq = range*range;
+			float dstSq = range * range;
 			for( int i = 0; i < extras.Length; i++ )
 			{
 				// If is in range.
@@ -131,7 +131,7 @@ namespace SS.Objects.Modules
 				{
 					continue;
 				}
-				
+
 				float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
 				if( newDstSq > dstSqToLastValid )
 				{
@@ -175,7 +175,7 @@ namespace SS.Objects.Modules
 		public InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
-			
+
 			InventoryModule ret = null;
 			float dstSqToLastValid = float.MaxValue;
 			for( int i = 0; i < objects.Length; i++ )
@@ -209,7 +209,7 @@ namespace SS.Objects.Modules
 				}
 
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
-								
+
 				for( int j = 0; j < inventories.Length; j++ )
 				{
 					if( inventories[j].isStorage )
@@ -243,12 +243,12 @@ namespace SS.Objects.Modules
 
 #warning object might not be able to pick up desired resource due to cluttered inventory.
 			TacticalGoalController goalController = worker.GetComponent<TacticalGoalController>();
-			
-			
-			
+
+
+
 
 			int spaceLeft = inventory.GetSpaceLeft( this.resourceId );
-			
+
 			if( spaceLeft > 0 )
 			{
 				// If already going to pick up something - don't re-assign it.
@@ -264,7 +264,7 @@ namespace SS.Objects.Modules
 					TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 					goal1.SetDestination( closestDeposit.ssObject );
 					goal1.isHostile = false;
-					
+
 					TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 					goal2.SetDestination( closestDeposit );
 #warning pick up only required amount
@@ -290,7 +290,7 @@ namespace SS.Objects.Modules
 					goal1.SetDestination( closestinv.ssObject );
 					goal1.isHostile = false;
 
-					
+
 					TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 					goal2.SetDestination( closestinv );
 #warning pick up only required amount
@@ -301,7 +301,7 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-		
+
 		public override ModuleData GetData()
 		{
 			ResourceCollectorWorkplaceModuleData data = new ResourceCollectorWorkplaceModuleData()

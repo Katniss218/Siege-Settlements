@@ -71,7 +71,6 @@ namespace SS.Objects.Units
 		public bool isOnAutomaticDuty { get; set; }
 		IPaymentReceiver automaticDutyReceiver;
 		SSObject automaticDutyReceiverObject;
-		string automaticDutyResourceId = null;
 
 		public const int TAG_GOING_TO_PICKUP = 76;
 		public const int TAG_GOING_TO_PAY = 77;
@@ -91,7 +90,6 @@ namespace SS.Objects.Units
 
 			if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 			{
-#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
 				if( !selfInventory.isFull )
 				{
 					return;
@@ -125,16 +123,19 @@ namespace SS.Objects.Units
 
 							if( closestinventory != null )
 							{
-								this.automaticDutyResourceId = kvp.Key;
+								TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+								goal1.SetDestination( closestinventory.ssObject );
 
-								TacticalPickUpGoal goal = new TacticalPickUpGoal();
+								TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+								goal2.SetDestination( closestinventory );
 
-								goal.SetDestination( closestinventory );
-								goal.resources = new Dictionary<string, int>();
-#warning only pick up required amount. -picks up from a single inventory, picks up every wanted resource type (if possible), then, if at least one of the inv slots is full, goes to the receiver.
-								goal.resources.Add( this.automaticDutyResourceId, 5 );
-								goal.ApplyResources();
-								goalController.SetGoals( TAG_GOING_TO_PICKUP, goal );
+								// only pick up required amount. -picks up from a single inventory, picks up every wanted resource type (if possible)
+
+#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
+								// then, if at least one of the inv slots is full, goes to the receiver.
+								goal2.resources = wantedResources;
+								goal2.ApplyResources();
+								goalController.SetGoals( TAG_GOING_TO_PICKUP, goal2, goal2 );
 
 								foundinventory = true;
 							}
@@ -185,7 +186,7 @@ namespace SS.Objects.Units
 							// - - - MAKE_PAYMENT
 							TacticalDropOffGoal goal = new TacticalDropOffGoal();
 
-#warning "smart" drop off (not specified resources).
+#warning "smart" drop off (not specified resources, drops only what's wanted).
 							goal.SetDestination( this.automaticDutyReceiver );
 							goalController.SetGoals( TAG_GOING_TO_PAY, goal );
 
