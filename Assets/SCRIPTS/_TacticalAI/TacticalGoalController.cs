@@ -12,6 +12,7 @@ namespace SS.AI
 	{
 		private TacticalGoal[] goals;
 		private int goalCounter;
+		public int goalTag { get; private set; }
 
 		public TacticalGoal currentGoal { get; private set; } = null;
 		public TacticalGoalExitCondition lastGoalExitCondition { get; private set; }
@@ -27,7 +28,7 @@ namespace SS.AI
 		/// <summary>
 		/// Sets goals from save data.
 		/// </summary>
-		public void SetGoalData( TacticalGoalData[] data )
+		public void SetGoalData( TacticalGoalData[] data, int tag )
 		{
 			TacticalGoal[] goals = new TacticalGoal[data.Length];
 
@@ -36,7 +37,7 @@ namespace SS.AI
 				goals[i] = data[i].GetGoal();
 			}
 
-			this.SetGoals( goals );
+			this.SetGoals( tag, goals );
 		}
 
 		/// <summary>
@@ -56,7 +57,7 @@ namespace SS.AI
 
 
 #warning tag the goals (one tag per array/assignment) with an int & check that int to see if the goal changed/has failed.
-		public void SetGoals( params TacticalGoal[] goals )
+		public void SetGoals( int goalTag, params TacticalGoal[] goals )
 		{
 			for( int i = 0; i < goals.Length; i++ )
 			{
@@ -71,6 +72,7 @@ namespace SS.AI
 			}
 
 			this.goals = goals;
+			this.goalTag = goalTag;
 			this.goalCounter = -1; // advance&start will increment to 0.
 
 			this.AdvanceAndStart();
@@ -92,6 +94,8 @@ namespace SS.AI
 			}
 		}
 
+		public const int DEFAULT_GOAL_TAG = -1;
+
 		/// <summary>
 		/// Returns a default goal (idle).
 		/// </summary>
@@ -110,7 +114,7 @@ namespace SS.AI
 		{
 			if( this.goalCounter >= this.goals.Length - 1 )
 			{
-				this.SetGoals( TacticalGoalController.GetDefaultGoal() );
+				this.SetGoals( DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 			}
 			else
 			{
@@ -120,7 +124,7 @@ namespace SS.AI
 				}
 				else
 				{
-					this.SetGoals( TacticalGoalController.GetDefaultGoal() );
+					this.SetGoals( DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 				}
 			}
 			this.lastGoalExitCondition = exitCondition;
@@ -130,7 +134,7 @@ namespace SS.AI
 		{
 			if( this.currentGoal == null )
 			{
-				this.SetGoals( TacticalGoalController.GetDefaultGoal() );
+				this.SetGoals( DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 			}
 		}
 

@@ -13,7 +13,13 @@ namespace SS.AI
 {
 	public static class TacticalGoalQuery
 	{
-		public static void InputQuery( Ray viewRay )
+		/// <summary>
+		/// Added to everything user-input-related.
+		/// </summary>
+		public const int TAG_CUSTOM = -5;
+
+
+		public static void QueryAt( Ray viewRay )
 		{
 			if( EventSystem.current.IsPointerOverGameObject() )
 			{
@@ -119,7 +125,7 @@ namespace SS.AI
 				return;
 			}
 		}
-		
+
 
 
 
@@ -131,7 +137,7 @@ namespace SS.AI
 		private static void AssignAttackGoal( SSObjectDFS target, SSObjectDFS[] selected )
 		{
 			List<SSObjectDFS> filteredObjects = new List<SSObjectDFS>();
-			
+
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -144,7 +150,7 @@ namespace SS.AI
 				{
 					continue;
 				}
-				
+
 				bool canTarget = false;
 				for( int j = 0; j < targeters.Length; j++ )
 				{
@@ -171,14 +177,14 @@ namespace SS.AI
 				TacticalTargetGoal goal = new TacticalTargetGoal();
 				goal.target = target;
 				goal.targetForced = true;
-				goalController.SetGoals( goal );
+				goalController.SetGoals( TAG_CUSTOM, goal );
 			}
 		}
 
 		internal static void AssignDropoffToInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFS[] selected )
 		{
 			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
-			
+
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -240,7 +246,7 @@ namespace SS.AI
 				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 				goal2.isHostile = false;
 				goal2.SetDestination( hitInventory );
-				goalController.SetGoals( goal1, goal2 );
+				goalController.SetGoals( TAG_CUSTOM, goal1, goal2 );
 			}
 		}
 
@@ -274,7 +280,7 @@ namespace SS.AI
 			}
 
 			//Calculate the grid position.
-			
+
 			MovementGridInfo gridInfo = new MovementGridInfo( movableGameObjects );
 
 
@@ -295,7 +301,7 @@ namespace SS.AI
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.isHostile = false;
 					goal.SetDestination( gridPositionWorld );
-					goalController.SetGoals( goal );
+					goalController.SetGoals( TAG_CUSTOM, goal );
 				}
 				else
 				{
@@ -331,7 +337,7 @@ namespace SS.AI
 					biggestRadius = navMeshAgent.radius;
 				}
 			}
-			
+
 			if( movableGameObjects.Count > 0 )
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
@@ -358,7 +364,7 @@ namespace SS.AI
 						goal.SetDestination( interior, InteriorModule.SlotType.Generic );
 					}
 				}
-				goalController.SetGoals( goal );
+				goalController.SetGoals( TAG_CUSTOM, goal );
 			}
 		}
 
@@ -408,7 +414,7 @@ namespace SS.AI
 				TacticalPickUpGoal goal = new TacticalPickUpGoal();
 				goal.isHostile = false;
 				goal.SetDestination( hitInventory );
-				goalController.SetGoals( goal );
+				goalController.SetGoals( TAG_CUSTOM, goal );
 			}
 		}
 
@@ -467,7 +473,7 @@ namespace SS.AI
 				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 				goal2.isHostile = false;
 				goal2.SetDestination( hitDeposit );
-				goalController.SetGoals( goal1, goal2 );
+				goalController.SetGoals( TAG_CUSTOM, goal1, goal2 );
 			}
 		}
 
@@ -543,7 +549,7 @@ namespace SS.AI
 				goal.isHostile = false;
 #warning flawed way. need to search for the one that best fits.
 				goal.SetDestination( paymentReceivers[0] );
-				goalController.SetGoals( goal );
+				goalController.SetGoals( TAG_CUSTOM, goal );
 			}
 		}
 	}

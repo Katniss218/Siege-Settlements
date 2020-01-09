@@ -91,9 +91,11 @@ namespace SS.Content
 
 
 
-		protected static TacticalGoalData[] DeserializeTacticalGoalKFF( KFFSerializer serializer )
+		protected static TacticalGoalData[] DeserializeTacticalGoalKFF( KFFSerializer serializer, out int goalTag )
 		{
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "TacticalGoals" );
+			goalTag = serializer.ReadInt( "TacticalGoalTag" );
+
 			TacticalGoalData[] goalData = new TacticalGoalData[analysisData.childCount];
 
 			for( int i = 0; i < analysisData.childCount; i++ )
@@ -107,8 +109,10 @@ namespace SS.Content
 			return goalData;
 		}
 
-		protected static void SerializeTacticalGoalKFF( KFFSerializer serializer, TacticalGoalData[] goalData )
+		protected static void SerializeTacticalGoalKFF( KFFSerializer serializer, TacticalGoalData[] goalData, int goalTag )
 		{
+			serializer.WriteInt( "", "TacticalGoalTag", goalTag );
+
 			serializer.SerializeArray<IKFFSerializable>( "", "TacticalGoals", goalData );
 			for( int i = 0; i < goalData.Length; i++ )
 			{

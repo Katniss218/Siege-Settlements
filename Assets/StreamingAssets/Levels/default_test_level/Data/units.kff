@@ -773,7 +773,8 @@
 					"building.campfire",
 					"building.tavern",
 					"building.lumberjacks_hut",
-					"building.stone_mine"
+					"building.stone_mine",
+					"building.iron_mine"
 				];
 				Icon = "extern:Textures/Modules/constructor_icon.png";
 			}

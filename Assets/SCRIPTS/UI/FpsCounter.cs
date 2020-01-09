@@ -26,9 +26,21 @@ namespace SS.UI
 			return Mathf.CeilToInt( 1.0f / Time.deltaTime );
 		}
 
-		void Update()
+		private float samplingInterval = 0.25f;
+		private float lastSampleTimestamp;
+
+		private void SampleFPS()
 		{
 			this.textField.text = string.Format( this.format, this.GetFps() );
+			this.lastSampleTimestamp = Time.time;
+		}
+
+		void Update()
+		{
+			if( Time.time > this.lastSampleTimestamp + samplingInterval )
+			{
+				this.SampleFPS();
+			}
 		}
 	}
 }

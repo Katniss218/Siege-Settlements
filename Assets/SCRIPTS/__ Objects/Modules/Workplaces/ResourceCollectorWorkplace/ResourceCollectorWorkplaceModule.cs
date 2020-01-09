@@ -24,7 +24,7 @@ namespace SS.Objects.Modules
 		{
 			
 		}
-
+		
 		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
@@ -220,6 +220,8 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+		public const int TAG_GOING_TO_DROPOFF = 55;
+		public const int TAG_GOING_TO_PICKUP = 56;
 
 		public override void MakeDoWork( Unit worker )
 		{
@@ -243,7 +245,7 @@ namespace SS.Objects.Modules
 			
 			if( spaceLeft > 0 )
 			{
-				if( IsGoingToPickUp( goalController, this.resourceId ) )
+				if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 				{
 					return;
 				}
@@ -261,17 +263,16 @@ namespace SS.Objects.Modules
 					goal2.resources = new Dictionary<string, int>();
 					goal2.resources.Add( this.resourceId, 5 );
 					goal2.ApplyResources();
-					goalController.SetGoals( goal1, goal2 );
+					goalController.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
 				}
 			}
 			else
 			{
-				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.DropOffMode.INVENTORY ) )
+				if( goalController.goalTag == TAG_GOING_TO_DROPOFF )
 				{
 					return;
 				}
-#warning units get blocked when they move to deposit as it gets destroyed (if they can't drop it off?).
-#warning units get blocked as they move to warehouse, as it get's full (if they can't drop it off?).
+
 				InventoryModule closestinv = GetClosestWithSpace( worker, worker.transform.position, this.resourceId, worker.factionId );
 				
 				if( closestinv != null )
@@ -287,43 +288,11 @@ namespace SS.Objects.Modules
 					goal2.resources = new Dictionary<string, int>();
 					goal2.resources.Add( this.resourceId, 5 );
 					goal2.ApplyResources();
-					goalController.SetGoals( goal1, goal2 );
+					goalController.SetGoals( TAG_GOING_TO_DROPOFF, goal1, goal2 );
 				}
 			}
 		}
-
-		public static bool IsGoingToPickUp( TacticalGoalController goalController, string resourceId )
-		{
-#warning needs to check either if it's moving or extracting...
-			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationObject != null )
-			{
-				return true;
-			}
-			if( goalController.currentGoal is TacticalPickUpGoal && ((TacticalPickUpGoal)goalController.currentGoal).resources.ContainsKey( resourceId ) )
-			{
-				return true;
-			}
-			return false;
-		}
-
-		public static bool IsGoingToDropOff( TacticalGoalController goalController, string resourceId, TacticalDropOffGoal.DropOffMode dropOffMode )
-		{
-#warning needs to check either if it's moving or dropping off...
-			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationObject != null )
-			{
-				return true;
-			}
-			if( goalController.currentGoal is TacticalDropOffGoal )
-			{
-				TacticalDropOffGoal dropOffGoal = (TacticalDropOffGoal)goalController.currentGoal;
-				if( dropOffGoal.dropOffMode == dropOffMode && dropOffGoal.resources.ContainsKey( resourceId ) )
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
+		
 		public override ModuleData GetData()
 		{
 			ResourceCollectorWorkplaceModuleData data = new ResourceCollectorWorkplaceModuleData()

@@ -120,7 +120,7 @@ namespace SS
 
 		private void Inp_Right( InputQueue self )
 		{
-			TacticalGoalQuery.InputQuery( Main.camera.ScreenPointToRay( Input.mousePosition ) );
+			TacticalGoalQuery.QueryAt( Main.camera.ScreenPointToRay( Input.mousePosition ) );
 		}
 
 		private void Inp_L( InputQueue self )
@@ -225,13 +225,13 @@ namespace SS
 						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
-						goalControllerBeacon.SetGoals( goal );
+						goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 
 						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
 						goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
-						goalController.SetGoals( goal );
+						goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 					}
 				}
 			}

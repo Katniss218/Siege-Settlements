@@ -31,28 +31,7 @@ namespace SS.Objects.Units
 		public WorkplaceModule workplace { get; set; } = null;
 		public int workplaceSlotId { get; set; }
 		public bool isWorking { get; private set; }
-
-		bool IsGoingToHome( TacticalGoalController goalController )
-		{
-			if( goalController.currentGoal is TacticalMoveToGoal )
-			{
-				TacticalMoveToGoal moveToGoal = (TacticalMoveToGoal)goalController.currentGoal;
-				if( moveToGoal.destinationInterior != null && moveToGoal.destinationInterior != this.workplace.interior )
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		bool IsGoingToWorkplace( TacticalGoalController goalController )
-		{
-			if( goalController.currentGoal is TacticalMoveToGoal && ((TacticalMoveToGoal)goalController.currentGoal).destinationInterior == this.workplace.interior )
-			{
-				return true;
-			}
-			return false;
-		}
+		
 
 		private InteriorModule GetClosestInteriorBuilding()
 		{
@@ -94,6 +73,9 @@ namespace SS.Objects.Units
 		SSObject automaticDutyReceiverObject;
 		string automaticDutyResourceId = null;
 
+		public const int TAG_GOING_TO_PICKUP = 76;
+		public const int TAG_GOING_TO_PAY = 77;
+
 		void UpdateAutomaticDuty()
 		{
 			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
@@ -107,7 +89,7 @@ namespace SS.Objects.Units
 
 			InventoryModule selfInventory = inventories[0];
 
-			if( ResourceCollectorWorkplaceModule.IsGoingToPickUp( goalController, automaticDutyResourceId ) )
+			if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 			{
 #warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
 				if( !selfInventory.isFull )
@@ -116,7 +98,7 @@ namespace SS.Objects.Units
 				}
 			}
 
-			if( ResourceCollectorWorkplaceModule.IsGoingToDropOff( goalController, automaticDutyResourceId, TacticalDropOffGoal.DropOffMode.PAYMENT_RECEIVER ) )
+			if( goalController.goalTag == TAG_GOING_TO_PAY )
 			{
 				return;
 			}
@@ -152,7 +134,7 @@ namespace SS.Objects.Units
 #warning only pick up required amount.
 								goal.resources.Add( this.automaticDutyResourceId, 5 );
 								goal.ApplyResources();
-								goalController.SetGoals( goal );
+								goalController.SetGoals( TAG_GOING_TO_PICKUP, goal );
 
 								foundinventory = true;
 							}
@@ -208,7 +190,7 @@ namespace SS.Objects.Units
 #warning only pick up required amount.
 							goal.resources.Add( this.automaticDutyResourceId, 5 );
 							goal.ApplyResources();
-							goalController.SetGoals( goal );
+							goalController.SetGoals( TAG_GOING_TO_PAY, goal );
 
 							break;
 						}
@@ -252,6 +234,8 @@ namespace SS.Objects.Units
 			// if has receiver & resources - go pay.
 		}
 
+		public const int TAG_GOING_TO_HOUSE = -20;
+		public const int TAG_GOING_TO_WORKPLACE = -21;
 
 		void Update()
 		{
@@ -271,7 +255,7 @@ namespace SS.Objects.Units
 				TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
 				// Unit tries to find nearest unoccupied house. If the house gets occupied, it finds next nearest suitable (unoccupied) house.
 				// - In the future, make it so that it coordinates with other units (as a part of strategic AI) & each unit only goes to buildings that won't be occupied by other unit currently on the way there.
-				if( this.IsGoingToHome( goalController ) )
+				if( goalController.goalTag == TAG_GOING_TO_HOUSE )
 				{
 					return;
 				}
@@ -297,7 +281,7 @@ namespace SS.Objects.Units
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 
 					goal.SetDestination( closestHouse, InteriorModule.SlotType.Generic );
-					goalController.SetGoals( goal );
+					goalController.SetGoals( TAG_GOING_TO_HOUSE, goal );
 				}
 
 				return;
@@ -310,7 +294,7 @@ namespace SS.Objects.Units
 			else
 			{
 				TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
-				if( this.IsGoingToWorkplace( goalController ) )
+				if( goalController.goalTag == TAG_GOING_TO_WORKPLACE )
 				{
 					return;
 				}
@@ -323,7 +307,7 @@ namespace SS.Objects.Units
 				{
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
-					goalController.SetGoals( goal );
+					goalController.SetGoals( TAG_GOING_TO_WORKPLACE, goal );
 				}
 			}
 		}

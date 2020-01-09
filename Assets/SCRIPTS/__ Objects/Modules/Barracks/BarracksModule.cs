@@ -198,7 +198,7 @@ namespace SS.Objects.Modules
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
 			goal.isHostile = false;
 			goal.SetDestination( rallyPointWorld );
-			goalController.SetGoals( goal );
+			goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 		}
 
 		public void EndTraining( bool isSuccess )

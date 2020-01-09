@@ -39,6 +39,7 @@ namespace SS.Levels.SaveStates
 		public float? rotationSpeed { get; set; }
 		
 		public TacticalGoalData[] tacticalGoalData { get; set; }
+		public int tacticalGoalTag { get; set; }
 				
 		public Tuple<Guid, Guid, int> workplace { get; set; }
 
@@ -134,8 +135,10 @@ namespace SS.Levels.SaveStates
 				int slotIndex = serializer.ReadInt( "Workplace.SlotIndex" );
 				this.workplace = new Tuple<Guid, Guid, int>( insideObj, insideMod, slotIndex );
 			}
-			
-			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
+
+			int tag;
+			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out tag );
+			this.tacticalGoalTag = tag;
 
 			this.DeserializeModulesKFF( serializer );
 		}
@@ -173,7 +176,7 @@ namespace SS.Levels.SaveStates
 				serializer.WriteInt( "Workplace", "SlotIndex", this.workplace.Item3 );
 			}
 
-			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );
+			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData, this.tacticalGoalTag );
 
 			this.SerializeModulesKFF( serializer );
 		}

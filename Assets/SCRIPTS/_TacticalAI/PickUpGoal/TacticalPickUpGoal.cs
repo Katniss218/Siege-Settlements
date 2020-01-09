@@ -327,7 +327,7 @@ namespace SS.AI.Goals
 			}
 			else
 			{
-				data.resources = new Dictionary<string, System.Tuple<int, int>>();
+				data.resources = new Dictionary<string, Tuple<int, int>>();
 				foreach( var kvp in this.resources )
 				{
 					string id = kvp.Key;

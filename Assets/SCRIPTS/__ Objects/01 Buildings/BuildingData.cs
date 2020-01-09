@@ -36,6 +36,7 @@ namespace SS.Levels.SaveStates
 		public ConstructionSiteData constructionSaveState { get; set; }
 
 		public TacticalGoalData[] tacticalGoalData { get; set; }
+		public int tacticalGoalTag { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
@@ -90,7 +91,9 @@ namespace SS.Levels.SaveStates
 				serializer.Deserialize( "ConstructionSaveState", this.constructionSaveState );
 			}
 
-			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer );
+			int tag;
+			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out tag );
+			this.tacticalGoalTag = tag;
 
 			this.DeserializeModulesKFF( serializer );
 		}
@@ -110,7 +113,7 @@ namespace SS.Levels.SaveStates
 				serializer.Serialize( "", "ConstructionSaveState", this.constructionSaveState );
 			}
 
-			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData );
+			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData, this.tacticalGoalTag );
 
 			this.SerializeModulesKFF( serializer );
 		}

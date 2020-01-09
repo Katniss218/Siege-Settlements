@@ -48,7 +48,7 @@ namespace SS.Objects.Buildings
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoalData( data.tacticalGoalData );
+				tacticalGoalController.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
 
 			//

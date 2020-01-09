@@ -37,7 +37,7 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// Specifies where to drop off resources.
 		/// </summary>
-#warning destinations can be null, to find the best-fit when it's needed.
+#warning Some destinations can be null, to find the best-fit when it's needed.
 		public DropOffMode dropOffMode { get; private set; }
 		public Vector3 destinationPos { get; private set; }
 		public InventoryModule destinationInventory { get; private set; }
@@ -322,9 +322,7 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-
-#warning failure when destination is no longer usable.
-
+			
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
@@ -395,6 +393,22 @@ namespace SS.AI.Goals
 			{
 				isHostile = this.isHostile
 			};
+			if( this.resources == null )
+			{
+				data.resources = null;
+			}
+			else
+			{
+				data.resources = new Dictionary<string, Tuple<int, int>>();
+				foreach( var kvp in this.resources )
+				{
+					string id = kvp.Key;
+					int amt = kvp.Value;
+					int amtRemaining = this.resourcesRemaining[id];
+
+					data.resources.Add( id, new Tuple<int, int>( amt, amtRemaining ) );
+				}
+			}
 			data.dropOffMode = this.dropOffMode;
 			if( this.dropOffMode == DropOffMode.POSITION )
 			{
@@ -422,12 +436,15 @@ namespace SS.AI.Goals
 		{
 			TacticalDropOffGoalData data = (TacticalDropOffGoalData)_data;
 
-			this.resources = new Dictionary<string, int>();
-			this.resourcesRemaining = new Dictionary<string, int>();
-			foreach( var kvp in data.resources )
+			if( data.resources != null )
 			{
-				this.resources.Add( kvp.Key, kvp.Value.Item1 );
-				this.resourcesRemaining.Add( kvp.Key, kvp.Value.Item2 );
+				this.resources = new Dictionary<string, int>();
+				this.resourcesRemaining = new Dictionary<string, int>();
+				foreach( var kvp in data.resources )
+				{
+					this.resources.Add( kvp.Key, kvp.Value.Item1 );
+					this.resourcesRemaining.Add( kvp.Key, kvp.Value.Item2 );
+				}
 			}
 
 			this.dropOffMode = data.dropOffMode;
