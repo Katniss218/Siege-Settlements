@@ -23,7 +23,13 @@ namespace SS.AI
 			this.currentGoal = this.goals[this.goalCounter];
 			this.currentGoal.Start( this );
 		}
-	
+
+		public TacticalGoal[] GetGoals()
+		{
+			return this.goals;
+		}
+
+#warning tag the goals (one tag per array/assignment) with an int & check that int to see if the goal changed/has failed.
 		public void SetGoals( params TacticalGoal[] goals )
 		{
 			for( int i = 0; i < goals.Length; i++ )

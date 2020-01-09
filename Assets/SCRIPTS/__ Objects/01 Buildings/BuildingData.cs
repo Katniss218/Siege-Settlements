@@ -35,7 +35,7 @@ namespace SS.Levels.SaveStates
 		
 		public ConstructionSiteData constructionSaveState { get; set; }
 
-		public TacticalGoalData tacticalGoalData { get; set; }
+		public TacticalGoalData[] tacticalGoalData { get; set; }
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

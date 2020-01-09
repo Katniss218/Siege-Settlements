@@ -1,4 +1,5 @@
 ﻿using SS.AI;
+using SS.AI.Goals;
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
@@ -47,7 +48,7 @@ namespace SS.Objects.Buildings
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoals( data.tacticalGoalData.GetGoal() );
+				tacticalGoalController.SetGoals( TacticalGoalData.GetGoalsArray( data.tacticalGoalData ) );
 			}
 
 			//
@@ -313,7 +314,7 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.ExtractModulesToData( building, data );
 
-			data.tacticalGoalData = building.GetComponent<TacticalGoalController>().currentGoal.GetData();
+			data.tacticalGoalData = TacticalGoalData.GetGoalDataArray( building.GetComponent<TacticalGoalController>().GetGoals() );
 
 			return data;
 		}

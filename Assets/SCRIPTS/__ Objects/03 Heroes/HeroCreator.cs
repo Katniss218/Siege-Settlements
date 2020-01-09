@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using SS.AI;
 using Object = UnityEngine.Object;
 using SS.Objects.SubObjects;
+using SS.AI.Goals;
 
 namespace SS.Objects.Heroes
 {
@@ -61,7 +62,7 @@ namespace SS.Objects.Heroes
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoals( data.tacticalGoalData.GetGoal() );
+				tacticalGoalController.SetGoals( TacticalGoalData.GetGoalsArray( data.tacticalGoalData ) );
 			}
 		}
 
@@ -298,7 +299,7 @@ namespace SS.Objects.Heroes
 
 			SSObjectCreator.ExtractModulesToData( hero, data );
 
-			data.tacticalGoalData = hero.GetComponent<TacticalGoalController>().currentGoal.GetData();
+			data.tacticalGoalData = TacticalGoalData.GetGoalDataArray( hero.GetComponent<TacticalGoalController>().GetGoals() );
 
 			return data;
 		}

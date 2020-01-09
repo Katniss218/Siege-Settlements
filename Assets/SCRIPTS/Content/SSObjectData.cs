@@ -1,4 +1,5 @@
 ﻿using KFF;
+using SS.AI;
 using SS.AI.Goals;
 using SS.Objects.Modules;
 using System;
@@ -88,32 +89,35 @@ namespace SS.Content
 			this.moduleCache.Add( new ModuleCacheItem( moduleId, module ) );
 		}
 
-		protected static TacticalGoalData DeserializeTacticalGoalKFF( KFFSerializer serializer )
-		{
-			TacticalGoalData goalData = null;
-			try
-			{
-				string typeId = serializer.ReadString( "TacticalGoal.TypeId" );
-				goalData = TacticalGoalData.TypeIdToInstance( typeId );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'TacticalGoal.TypeId' (" + serializer.file.fileName + ")." );
-			}
 
-			serializer.Deserialize<IKFFSerializable>( "TacticalGoal", goalData );
+
+		protected static TacticalGoalData[] DeserializeTacticalGoalKFF( KFFSerializer serializer )
+		{
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "TacticalGoals" );
+			TacticalGoalData[] goalData = new TacticalGoalData[analysisData.childCount];
+
+			for( int i = 0; i < analysisData.childCount; i++ )
+			{
+				string typeId = serializer.ReadString( new Path( "TacticalGoals.{0}.TypeId", i ) );
+
+				goalData[i] = TacticalGoalData.TypeIdToInstance( typeId );
+				serializer.Deserialize<IKFFSerializable>( new Path( "TacticalGoals.{0}", i ), goalData[i] );
+			}
 
 			return goalData;
 		}
 
-		protected static void SerializeTacticalGoalKFF( KFFSerializer serializer, TacticalGoalData goalData )
+		protected static void SerializeTacticalGoalKFF( KFFSerializer serializer, TacticalGoalData[] goalData )
 		{
-			serializer.Serialize<IKFFSerializable>( "", "TacticalGoal", goalData );
-
-			string typeId = TacticalGoalData.InstanceToTypeId( goalData );
-
-			serializer.WriteString( "TacticalGoal", "TypeId", typeId );
+			serializer.SerializeArray<IKFFSerializable>( "", "TacticalGoals", goalData );
+			for( int i = 0; i < goalData.Length; i++ )
+			{
+				string typeId = TacticalGoalData.InstanceToTypeId( goalData[i] );
+				serializer.WriteString( new Path( "TacticalGoals.{0}", i ), "TypeId", typeId );
+			}
 		}
+
+
 
 		protected void DeserializeModulesKFF( KFFSerializer serializer )
 		{

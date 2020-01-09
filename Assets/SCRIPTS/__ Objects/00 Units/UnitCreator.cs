@@ -10,6 +10,7 @@ using Object = UnityEngine.Object;
 using SS.AI;
 using SS.Objects.SubObjects;
 using SS.Objects.Modules;
+using SS.AI.Goals;
 
 namespace SS.Objects.Units
 {
@@ -79,8 +80,7 @@ namespace SS.Objects.Units
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-#warning save chains of goals.
-				tacticalGoalController.SetGoals( data.tacticalGoalData.GetGoal() );
+				tacticalGoalController.SetGoals( TacticalGoalData.GetGoalsArray( data.tacticalGoalData ) );
 			}
 #warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
 #warning   data should set the population in a different way maybe?
@@ -338,9 +338,8 @@ namespace SS.Objects.Units
 			//
 
 			SSObjectCreator.ExtractModulesToData( unit, data );
-
-#warning save chains of goals.
-			data.tacticalGoalData = unit.GetComponent<TacticalGoalController>().currentGoal.GetData();
+			
+			data.tacticalGoalData = TacticalGoalData.GetGoalDataArray( unit.GetComponent<TacticalGoalController>().GetGoals() );
 
 			return data;
 		}

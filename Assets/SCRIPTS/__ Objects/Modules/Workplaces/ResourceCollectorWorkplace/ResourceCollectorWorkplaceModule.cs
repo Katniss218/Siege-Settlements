@@ -268,7 +268,6 @@ namespace SS.Objects.Modules
 			{
 				if( IsGoingToDropOff( goalController, this.resourceId, TacticalDropOffGoal.DropOffMode.INVENTORY ) )
 				{
-					Debug.Log( this.resourceId + goalController.transform.position );
 					return;
 				}
 #warning units get blocked when they move to deposit as it gets destroyed (if they can't drop it off?).

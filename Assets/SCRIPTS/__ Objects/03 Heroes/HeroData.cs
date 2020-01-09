@@ -35,7 +35,7 @@ namespace SS.Levels.SaveStates
 		public float? movementSpeed { get; set; }
 		public float? rotationSpeed { get; set; }
 
-		public TacticalGoalData tacticalGoalData { get; set; }
+		public TacticalGoalData[] tacticalGoalData { get; set; }
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )
