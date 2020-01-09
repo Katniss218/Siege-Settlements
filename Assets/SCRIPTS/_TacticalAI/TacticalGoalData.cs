@@ -10,30 +10,6 @@ namespace SS.AI.Goals
 
 		public abstract TacticalGoal GetGoal();
 
-		public static TacticalGoal[] GetGoalsArray( TacticalGoalData[] goalData )
-		{
-			TacticalGoal[] ret = new TacticalGoal[goalData.Length];
-
-			for( int i = 0; i < goalData.Length; i++ )
-			{
-				ret[i] = goalData[i].GetGoal();
-			}
-
-			return ret;
-		}
-
-		public static TacticalGoalData[] GetGoalDataArray( TacticalGoal[] goals )
-		{
-			TacticalGoalData[] ret = new TacticalGoalData[goals.Length];
-
-			for( int i = 0; i < goals.Length; i++ )
-			{
-				ret[i] = goals[i].GetData();
-			}
-
-			return ret;
-		}
-
 		public static TacticalGoalData TypeIdToInstance( string typeId )
 		{
 			if( typeId == TacticalIdleGoal.KFF_TYPEID )

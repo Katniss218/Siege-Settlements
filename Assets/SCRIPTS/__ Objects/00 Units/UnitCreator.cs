@@ -80,7 +80,7 @@ namespace SS.Objects.Units
 			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoals( TacticalGoalData.GetGoalsArray( data.tacticalGoalData ) );
+				tacticalGoalController.SetGoalData( data.tacticalGoalData );
 			}
 #warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
 #warning   data should set the population in a different way maybe?
@@ -339,7 +339,7 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.ExtractModulesToData( unit, data );
 			
-			data.tacticalGoalData = TacticalGoalData.GetGoalDataArray( unit.GetComponent<TacticalGoalController>().GetGoals() );
+			data.tacticalGoalData = unit.GetComponent<TacticalGoalController>().GetGoalData();
 
 			return data;
 		}

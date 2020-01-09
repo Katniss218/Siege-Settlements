@@ -24,10 +24,36 @@ namespace SS.AI
 			this.currentGoal.Start( this );
 		}
 
-		public TacticalGoal[] GetGoals()
+		/// <summary>
+		/// Sets goals from save data.
+		/// </summary>
+		public void SetGoalData( TacticalGoalData[] data )
 		{
-			return this.goals;
+			TacticalGoal[] goals = new TacticalGoal[data.Length];
+
+			for( int i = 0; i < data.Length; i++ )
+			{
+				goals[i] = data[i].GetGoal();
+			}
+
+			this.SetGoals( goals );
 		}
+
+		/// <summary>
+		/// Returns the save data of all goals currently running.
+		/// </summary>
+		public TacticalGoalData[] GetGoalData()
+		{
+			TacticalGoalData[] data = new TacticalGoalData[this.goals.Length];
+
+			for( int i = 0; i < this.goals.Length; i++ )
+			{
+				data[i] = this.goals[i].GetData();
+			}
+
+			return data;
+		}
+
 
 #warning tag the goals (one tag per array/assignment) with an int & check that int to see if the goal changed/has failed.
 		public void SetGoals( params TacticalGoal[] goals )
