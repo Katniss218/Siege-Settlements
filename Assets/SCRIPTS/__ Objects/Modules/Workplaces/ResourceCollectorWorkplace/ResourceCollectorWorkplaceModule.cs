@@ -50,8 +50,11 @@ namespace SS.Objects.Modules
 					continue;
 				}
 
-
-#warning take into account object being unusable.
+				// discard any objects that are unusable.
+				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
+				{
+					continue;
+				}
 
 				// If has resource deposit.
 				InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
@@ -110,12 +113,11 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
-		public static Tuple<SSObject, IPaymentReceiver> GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
+		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
 
 			IPaymentReceiver ret = null;
-			SSObject retObj = null;
 			float dstSqToLastValid = float.MaxValue;
 
 			Dictionary<string, int> resourcesWanted;
@@ -139,10 +141,15 @@ namespace SS.Objects.Modules
 				}
 
 
-				// If has resource deposit.
-				paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
-
-#warning filter out construction sites at this stage, instead of at payment.
+				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
+				{
+					paymentReceivers = new IPaymentReceiver[] { objects[i].GetComponent<ConstructionSite>() };
+				}
+				else
+				{
+					paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
+				}
+				
 #warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
@@ -161,18 +168,17 @@ namespace SS.Objects.Modules
 							{
 								dstSqToLastValid = newDstSq;
 								ret = paymentReceivers[j];
-								retObj = objects[i];
 								break; // break inner loop
 							}
 						}
 					}
 				}
 			}
-			return new Tuple<SSObject, IPaymentReceiver>( retObj, ret );
+			return ret;
 		}
 
 
-		public InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
+		public static InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
 
@@ -267,9 +273,8 @@ namespace SS.Objects.Modules
 
 					TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 					goal2.SetDestination( closestDeposit );
-#warning pick up only required amount
 					goal2.resources = new Dictionary<string, int>();
-					goal2.resources.Add( this.resourceId, 5 );
+					goal2.resources.Add( this.resourceId, int.MaxValue );
 					goal2.ApplyResources();
 					goalController.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
 				}
@@ -293,9 +298,8 @@ namespace SS.Objects.Modules
 
 					TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 					goal2.SetDestination( closestinv );
-#warning pick up only required amount
 					goal2.resources = new Dictionary<string, int>();
-					goal2.resources.Add( this.resourceId, 5 );
+					goal2.resources.Add( this.resourceId, int.MaxValue );
 					goal2.ApplyResources();
 					goalController.SetGoals( TAG_GOING_TO_DROPOFF, goal1, goal2 );
 				}

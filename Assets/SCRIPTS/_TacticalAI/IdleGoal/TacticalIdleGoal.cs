@@ -39,6 +39,12 @@ namespace SS.AI.Goals
 		{
 			if( attackModules.Length > 0 )
 			{
+				if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
+				{
+					// don't exit, since exiting would make it return to this specific goal type anyway.
+					return;
+				}
+
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 		}

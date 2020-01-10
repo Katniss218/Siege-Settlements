@@ -31,7 +31,8 @@ namespace SS.AI.Goals
 			PAYMENT_RECEIVER
 		}
 
-		private static float INTERACTION_DISTANCE = 0.75f;
+		private const float INTERACTION_DISTANCE = 0.75f;
+		private const float INTERACTION_DELAY = 0.3f;
 
 
 		/// <summary>
@@ -45,7 +46,6 @@ namespace SS.AI.Goals
 		public IPaymentReceiver destinationPaymentReceiver { get; private set; }
 #warning this needs to be identifyable by GUID or something (construction sites pose MAJOR problem, as they can't be identified using anything else than memory reference - doesn't work for saving)
 #warning also, what if I decide that buildings/units themselves can receive payments? (technically, CS's are part of buildings).
-		private MonoBehaviour destinationPaymentReceiverBeh;
 	
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
@@ -98,7 +98,6 @@ namespace SS.AI.Goals
 			this.dropOffMode = DropOffMode.PAYMENT_RECEIVER;
 			this.destinationInventory = null;
 			this.destinationPaymentReceiver = paymentReceiver;
-			this.destinationPaymentReceiverBeh = (MonoBehaviour)paymentReceiver;
 		}
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -115,6 +114,7 @@ namespace SS.AI.Goals
 		{
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
 			this.attackModules = controller.GetComponents<IAttackModule>();
+			this.delayTimeStamp = Time.time + INTERACTION_DELAY;
 		}
 
 		public static void ExtractAndDrop( Vector3 position, Quaternion rotation, string id, int amount )
@@ -294,9 +294,9 @@ namespace SS.AI.Goals
 			return !failed;
 		}
 
-		
 
 
+		private float delayTimeStamp;
 
 		public override void Update( TacticalGoalController controller )
 		{
@@ -311,7 +311,7 @@ namespace SS.AI.Goals
 				return;
 			}
 
-			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
@@ -328,6 +328,14 @@ namespace SS.AI.Goals
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 
+
+			// Prevents spam-firing the pickup-dropoff goal pairs when the unit is in range of both the receiver & source (storage).
+			if( Time.time < this.delayTimeStamp )
+			{
+				return;
+			}
+
+
 			if( this.dropOffMode == DropOffMode.POSITION )
 			{
 				if( Vector3.Distance( controller.transform.position, this.destinationPos ) <= INTERACTION_DISTANCE )
@@ -343,14 +351,14 @@ namespace SS.AI.Goals
 			}
 			if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
+				if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInventory.ssObject).IsUsable() )
+				{
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+					return;
+				}
+
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
-					if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !(this.destinationInventory.ssObject as ISSObjectUsableUnusable).IsUsable() )
-					{
-						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
-						return;
-					}
-
 					bool outcome = this.OnArrivalInventory( controller );
 
 					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
@@ -362,13 +370,9 @@ namespace SS.AI.Goals
 			}
 			if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationPaymentReceiverBeh.transform, INTERACTION_DISTANCE ) )
+				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationPaymentReceiver.ssObject.transform, INTERACTION_DISTANCE ) )
 				{
-					if( this.destinationPaymentReceiver.ssObject is ISSObjectUsableUnusable && !(this.destinationPaymentReceiver.ssObject as ISSObjectUsableUnusable).IsUsable() )
-					{
-						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
-						return;
-					}
+#warning needs to only block if the payment receiver isn't the object wanting repairs. Block only when delivering to modules that are unusable, don't block CS's.
 
 					bool outcome = this.OnArrivalPayment( controller );
 
@@ -458,8 +462,7 @@ namespace SS.AI.Goals
 			}
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-#warning Ugly way of doing that.
-#warning Might break for certain serializable value of guid (wouldn't be able to load module with that moduleId).
+#warning Ugly way of doing that. Might break for certain serializable value of guid (wouldn't be able to load module with that moduleId).
 				if( data.destinationGuid.Item2 == default )
 				{
 					this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetComponent<ConstructionSite>() );

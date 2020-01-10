@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
@@ -120,7 +121,25 @@ namespace SS.Objects.Units
 
 		public bool hasBeenHiddenSinceLastDamage { get; set; }
 
-		private static int avoidancePriorityIncrement = 10;
+
+		private static int avoidancePriorityIncremented = 10;
+		/// <summary>
+		/// Returns a value for the avoidance priority (helps prevent units blocking each other in tight spaces - they'll just push the troublesome unit aside).
+		/// </summary>
+		public static int GetNextAvPriority( bool employed )
+		{
+			// 10 - 49, 50 - 89
+			avoidancePriorityIncremented++;
+			if( avoidancePriorityIncremented == 50 )
+			{
+				avoidancePriorityIncremented = 10;
+			}
+			return employed ? avoidancePriorityIncremented + 40 : avoidancePriorityIncremented;
+		}
+
+		public const int AVOIDANCE_PRORITY_GENERAL = 1;
+
+
 
 		private bool __isCivilian;
 		public bool isCivilian
@@ -135,15 +154,22 @@ namespace SS.Objects.Units
 				// if the unit is civilian, make sure to set it's avoidance priority to 10-99, otherwise set them to 1. Do this to reduce civilians getting stuck on each other.
 				if( value )
 				{
-					this.navMeshAgent.avoidancePriority = avoidancePriorityIncrement++;
-					if( avoidancePriorityIncrement > 99 )
+					CivilianUnitExtension cue = this.gameObject.AddComponent<CivilianUnitExtension>();
+
+					if( cue.workplace == null )
 					{
-						avoidancePriorityIncrement = 10;
+						this.navMeshAgent.avoidancePriority = GetNextAvPriority( false );
+					}
+					else
+					{
+						this.navMeshAgent.avoidancePriority = GetNextAvPriority( true );
 					}
 				}
 				else
 				{
-					navMeshAgent.avoidancePriority = 1;
+					Object.Destroy( this.GetComponent<CivilianUnitExtension>() );
+
+					navMeshAgent.avoidancePriority = AVOIDANCE_PRORITY_GENERAL;
 				}
 			}
 		}

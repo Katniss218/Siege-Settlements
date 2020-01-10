@@ -201,7 +201,7 @@ namespace SS.AI.Goals
 			}
 
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
 			{
 				this.navMeshAgent.ResetPath();
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );

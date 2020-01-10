@@ -17,8 +17,7 @@ namespace SS.Objects.Units
 	public static class UnitCreator
 	{
 		private const string GAMEOBJECT_NAME = "Unit";
-
-
+		
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -137,10 +136,6 @@ namespace SS.Objects.Units
 			unit.health = def.healthMax;
 			unit.armor = def.armor;
 
-			if( unit.isCivilian )
-			{
-				gameObject.AddComponent<CivilianUnitExtension>();
-			}
 
 			unit.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{

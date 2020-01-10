@@ -183,19 +183,19 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					/*
+					
 					CivilianUnitExtension cue = hitInfo.collider.GetComponent<CivilianUnitExtension>();
 					cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
-					Debug.Log( "Auto: " + cue.isOnAutomaticDuty );
-					*/
+					Debug.LogWarning( "Auto: " + cue.isOnAutomaticDuty );
 					
-					InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
+					
+					/*InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
 
 
 					if( hitInventory != null )
 					{
 						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInventory.ssObject, hitInventory, Selection.GetSelectedObjects() );
-					}
+					}*/
 				}
 			}
 		}

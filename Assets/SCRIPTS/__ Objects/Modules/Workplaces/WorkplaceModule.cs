@@ -47,6 +47,7 @@ namespace SS.Objects.Modules
 			w.interior.workerSlots[slotIndex].worker = c;
 			c.workplace = w;
 			c.workplaceSlotId = slotIndex;
+			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( true);
 		}
 
 		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
@@ -54,6 +55,7 @@ namespace SS.Objects.Modules
 			w.interior.workerSlots[slotIndex].worker = null;
 			c.workplace = null;
 			c.workplaceSlotId = 0;
+			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( false );
 		}
 
 		public void Employ( CivilianUnitExtension civilian )

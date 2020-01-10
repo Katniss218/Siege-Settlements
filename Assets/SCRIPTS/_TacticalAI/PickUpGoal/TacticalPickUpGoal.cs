@@ -1,6 +1,8 @@
 ﻿using Katniss.Utils;
+using SS.Content;
 using SS.Objects;
 using SS.Objects.Modules;
+using SS.ResourceSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,9 +25,9 @@ namespace SS.AI.Goals
 			RESOURCE_DEPOSIT
 		}
 
-		private static float INTERACTION_DISTANCE = 0.9f;
-
-#warning this won't account for adding via Dictionary.Add(...). Need a custom method for setting the resources.
+		private const float INTERACTION_DISTANCE = 0.9f;
+		private const float INTERACTION_DELAY = 0.3f;
+		
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
 		/// </summary>
@@ -93,6 +95,7 @@ namespace SS.AI.Goals
 		{
 			this.inventory = controller.ssObject.GetModules<InventoryModule>()[0];
 			this.attackModules = controller.GetComponents<IAttackModule>();
+			this.delayTimeStamp = Time.time + INTERACTION_DELAY;
 		}
 
 
@@ -227,6 +230,9 @@ namespace SS.AI.Goals
 				{
 					// Remove the actual amount taken by the inventory.
 					this.destinationInventory.Remove( kvp.Key, amountTaken );
+
+					ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
+					AudioManager.PlaySound( def.pickupSound, controller.transform.position );
 				}
 				else
 				{
@@ -235,10 +241,14 @@ namespace SS.AI.Goals
 						tookEverythingWantedOrAny = false;
 					}
 				}
+
 			}
 
 			return tookEverythingWantedOrAny; // true for successful exit. false for failure.
 		}
+
+
+		private float delayTimeStamp;
 
 		public override void Update( TacticalGoalController controller )
 		{
@@ -247,27 +257,40 @@ namespace SS.AI.Goals
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
+
 			if( (this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT) && (this.destinationResourceDeposit == null) )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 
-			
-			if( controller.ssObject is ISSObjectUsableUnusable && !(controller.ssObject as ISSObjectUsableUnusable).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-#warning failure when destination is no longer usable.
 
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 
+
+			// Prevents spam-firing the pickup-dropoff goal pairs when the unit is in range of both the receiver & source (storage).
+			if( Time.time < this.delayTimeStamp )
+			{
+				return;
+			}
+
+
 			if( this.pickUpMode == PickUpMode.INVENTORY )
 			{
+				if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInventory.ssObject).IsUsable() )
+				{
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+					return;
+				}
+
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
 					bool outcome = this.PickUpFromInventory( controller );
@@ -282,6 +305,12 @@ namespace SS.AI.Goals
 			}
 			if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
 			{
+				if( this.destinationResourceDeposit.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationResourceDeposit.ssObject).IsUsable() )
+				{
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+					return;
+				}
+
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationResourceDeposit.transform, INTERACTION_DISTANCE ) )
 				{
 					bool? outcome = this.PickUpFromDeposit( controller );
