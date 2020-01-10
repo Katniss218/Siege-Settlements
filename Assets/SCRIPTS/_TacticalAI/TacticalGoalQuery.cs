@@ -37,7 +37,6 @@ namespace SS.AI
 			ResourceDepositModule hitDeposit = null;
 
 			SSObjectDFS hitReceiverSSObject = null;
-			IPaymentReceiver[] hitPaymentReceivers = null;
 
 			SSObjectDFS hitDamageable = null;
 
@@ -229,8 +228,7 @@ namespace SS.AI
 					movableWithInvGameObjects.Add( selected[i].gameObject );
 				}
 			}
-
-#warning if the unit is an employed civilian or civilian on auto duty, lock the interaction.
+			
 			if( movableWithInvGameObjects.Count > 0 )
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
@@ -508,8 +506,7 @@ namespace SS.AI
 				{
 					continue;
 				}
-
-#warning needs to return construction site if the obj is under construction.
+				
 				// loop over every receiver and check if any of them wants resources that are in the selected obj's inventory.
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{

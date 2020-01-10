@@ -290,7 +290,7 @@ namespace SS
 						continue;
 					}
 
-					Unit.Split( u, PopulationSize.x1 );
+					Unit.Split( u, null );
 				}
 			}
 		}

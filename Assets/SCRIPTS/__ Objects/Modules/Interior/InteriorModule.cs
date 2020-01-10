@@ -183,8 +183,7 @@ namespace SS.Objects.Modules
 			}
 			return null;
 		}
-
-#warning when unit dies, the slot is still marked as occupied.
+		
 		private void RegisterHUD()
 		{
 			// integrate hud.

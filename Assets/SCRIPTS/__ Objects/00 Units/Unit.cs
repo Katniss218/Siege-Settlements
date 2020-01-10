@@ -618,21 +618,29 @@ namespace SS.Objects.Units
 		/// Splits the unit so that one of the results has population size of specified value.
 		/// </summary>
 		/// <param name="beacon">The unit to split.</param>
-		/// <param name="targetPopulation">Beacon unit after splitting will be this size.</param>
-		public static List<Unit> Split( Unit beacon, PopulationSize? targetPopulation )
+		/// <param name="desiredPopulation">Beacon unit after splitting will be this size.</param>
+		public static List<Unit> Split( Unit beacon, PopulationSize? desiredPopulation )
 		{
 			// If target pop is equal to this pop - don't split.
 			// else
 			// - beacon becomes the specified size, and additional units are spawned.
 			// - only additional units are added to return list.
-
+			
 			byte populationPool = (byte)beacon.population;
 
-			byte populationTarget = (byte)targetPopulation;
-
-			if( populationTarget > populationPool )
+			byte populationTarget = 1;
+			if( desiredPopulation == null )
 			{
-				throw new Exception( "Tried to split unit into bigger unit. That doesn't make sense. Don't do that." );
+				populationTarget = beacon.population == PopulationSize.x1 ? (byte)1 : (byte)((int)beacon.population / 2);
+			}
+			else
+			{
+				populationTarget = (byte)desiredPopulation;
+			}
+
+			if( populationTarget >= populationPool )
+			{
+				throw new Exception( "Tried to split into bigger or equally-sized unit." );
 			}
 
 			populationPool -= populationTarget;

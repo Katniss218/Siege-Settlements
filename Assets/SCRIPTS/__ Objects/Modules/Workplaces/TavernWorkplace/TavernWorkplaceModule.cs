@@ -45,18 +45,19 @@ namespace SS.Objects.Modules
 
 		public override void MakeDoWork( Unit worker )
 		{
-#warning worker schedule. But what do they do?
+			// empty at the moment.
 		}
 
 
 		public override ModuleData GetData()
 		{
+			// no data needs to be saved.
 			return new TavernWorkplaceModuleData();
-#warning data.
 		}
 
 		public override void SetData( ModuleData _data )
 		{
+			// no data needs to be saved.
 			TavernWorkplaceModuleData data = ValidateDataType<TavernWorkplaceModuleData>( _data );
 		}
 	}

@@ -171,7 +171,6 @@ namespace SS.AI.Goals
 							this.navMeshAgent.ResetPath();
 						}
 					}
-#warning todo?
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}

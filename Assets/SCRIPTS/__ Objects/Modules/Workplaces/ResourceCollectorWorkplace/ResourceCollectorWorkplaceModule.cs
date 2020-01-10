@@ -7,6 +7,7 @@ using SS.Objects.Units;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SS.Objects.Modules
 {
@@ -73,43 +74,53 @@ namespace SS.Objects.Modules
 			}
 			return ret;
 		}
-
-#warning sample whe navmesh & return object closest to that sampled position on the navmesh. Setting the AoI only allows for placing it in places where the navmesh is present (not obstacled).
+		
 		public static ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
-		{
-			Extra[] extras = SSObject.GetAllExtras();
-
-			ResourceDepositModule ret = null;
-			float dstSq = range * range;
-			for( int i = 0; i < extras.Length; i++ )
+		{			
+			if( NavMesh.SamplePosition( pos, out NavMeshHit hit, range, int.MaxValue ) )
 			{
-				// If is in range.
-				float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;
-				if( newDstSq > dstSq )
-				{
-					continue;
-				}
+				pos = hit.position;
 
-				// If has resource deposit.
-				ResourceDepositModule[] resourceDeposits = extras[i].GetModules<ResourceDepositModule>();
+				Extra[] extras = SSObject.GetAllExtras();
+				ResourceDepositModule ret = null;
 
-				if( resourceDeposits.Length == 0 )
+				float dstSq = range * range;
+				
+				for( int i = 0; i < extras.Length; i++ )
 				{
-					continue;
-				}
-
-				// If deposit contains wanted resource.
-				for( int j = 0; j < resourceDeposits.Length; j++ )
-				{
-					if( resourceDeposits[j].GetAll().ContainsKey( resourceId ) )
+					// If is in range.
+					float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;
+					if( newDstSq > dstSq )
 					{
-						dstSq = newDstSq;
-						ret = resourceDeposits[j];
-						break; // break inner loop
+						continue;
+					}
+
+					// If has resource deposit.
+					ResourceDepositModule[] resourceDeposits = extras[i].GetModules<ResourceDepositModule>();
+
+					if( resourceDeposits.Length == 0 )
+					{
+						continue;
+					}
+
+					// If deposit contains wanted resource.
+					for( int j = 0; j < resourceDeposits.Length; j++ )
+					{
+						if( resourceDeposits[j].GetAll().ContainsKey( resourceId ) )
+						{
+							dstSq = newDstSq;
+							ret = resourceDeposits[j];
+							break; // break inner loop
+						}
 					}
 				}
+				return ret;
 			}
-			return ret;
+			else
+			{
+				// nothing can be reached.
+				return null;
+			}
 		}
 
 		public static IPaymentReceiver[] GetAvailableReceivers( SSObject obj )
@@ -250,8 +261,7 @@ namespace SS.Objects.Modules
 			this.aoi.center = this.transform.position;
 
 			InventoryModule inventory = inventories[0];
-
-#warning object might not be able to pick up desired resource due to cluttered inventory.
+			
 			TacticalGoalController goalController = worker.GetComponent<TacticalGoalController>();
 
 

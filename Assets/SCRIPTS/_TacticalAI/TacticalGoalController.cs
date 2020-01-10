@@ -55,8 +55,7 @@ namespace SS.AI
 			return data;
 		}
 
-
-#warning tag the goals (one tag per array/assignment) with an int & check that int to see if the goal changed/has failed.
+		
 		public void SetGoals( int goalTag, params TacticalGoal[] goals )
 		{
 			for( int i = 0; i < goals.Length; i++ )

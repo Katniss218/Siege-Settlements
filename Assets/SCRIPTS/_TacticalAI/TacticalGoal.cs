@@ -68,23 +68,7 @@ namespace SS.AI.Goals
 				}
 			}
 		}
-
-#warning I need the ability to create compound tactical goals. Goals have an exit condition, and can be chained together. They also can be forced to exit prematurely.
-		// dropOff, PickUp don't move. that's accomplished by chaining. They have an entry cooldown (take 0.5s just sitting around before picking up and exiting - doesn't pick up if too far away).
-		// if there's no goal leftover, it can be notified via reset to default goal.
 		
-		// resource collector:
-		// inventory can hold more   :: -> moveTo(deposit) -> pickUp -> moveTo(storage) -> dropOff -> ::
-		// inventory can't hold more :: -> moveTo(storage) -> dropOff -> ::
-
-		// moveTo triggers it's exit when it's at it's destination.
-		// moveTo can be flagged to stop triggering (useful for e.g. following an enemy).
-		// moveTo can have custom stopping distance.
-
-		// move to, drop off, pick up, etc. all are forced to exit by killing the destination.
-
-		
-
 		public abstract TacticalGoalData GetData();
 
 		public abstract void SetData( TacticalGoalData _data );
