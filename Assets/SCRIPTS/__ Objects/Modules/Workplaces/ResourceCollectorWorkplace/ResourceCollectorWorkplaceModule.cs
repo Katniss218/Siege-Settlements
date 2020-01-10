@@ -5,7 +5,6 @@ using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Units;
 using SS.ResourceSystem.Payment;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,8 +15,7 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "workplace_resource_collector";
 
 		public string resourceId { get; set; }
-
-#warning if they get stuck, resetting the AoI recalculates the goals.
+		
 		public AreaOfInfluence aoi { get; set; }
 
 		void Update()
@@ -76,6 +74,7 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+#warning sample whe navmesh & return object closest to that sampled position on the navmesh. Setting the AoI only allows for placing it in places where the navmesh is present (not obstacled).
 		public static ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
 		{
 			Extra[] extras = SSObject.GetAllExtras();
@@ -113,6 +112,19 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+		public static IPaymentReceiver[] GetAvailableReceivers( SSObject obj )
+		{
+			if( obj is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)obj).IsUsable() )
+			{
+#warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
+				return new IPaymentReceiver[] { obj.GetComponent<ConstructionSite>() };
+			}
+			else
+			{
+				return obj.GetComponents<IPaymentReceiver>();
+			}
+		}
+
 		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
 			SSObjectDFS[] objects = SSObject.GetAllDFS();
@@ -141,16 +153,8 @@ namespace SS.Objects.Modules
 				}
 
 
-				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
-				{
-					paymentReceivers = new IPaymentReceiver[] { objects[i].GetComponent<ConstructionSite>() };
-				}
-				else
-				{
-					paymentReceivers = objects[i].GetComponents<IPaymentReceiver>();
-				}
+				paymentReceivers = GetAvailableReceivers( objects[i] );
 				
-#warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
@@ -273,8 +277,10 @@ namespace SS.Objects.Modules
 
 					TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 					goal2.SetDestination( closestDeposit );
-					goal2.resources = new Dictionary<string, int>();
-					goal2.resources.Add( this.resourceId, int.MaxValue );
+					goal2.resources = new Dictionary<string, int>
+					{
+						{ this.resourceId, int.MaxValue }
+					};
 					goal2.ApplyResources();
 					goalController.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
 				}
@@ -298,8 +304,10 @@ namespace SS.Objects.Modules
 
 					TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 					goal2.SetDestination( closestinv );
-					goal2.resources = new Dictionary<string, int>();
-					goal2.resources.Add( this.resourceId, int.MaxValue );
+					goal2.resources = new Dictionary<string, int>
+					{
+						{ this.resourceId, int.MaxValue }
+					};
 					goal2.ApplyResources();
 					goalController.SetGoals( TAG_GOING_TO_DROPOFF, goal1, goal2 );
 				}

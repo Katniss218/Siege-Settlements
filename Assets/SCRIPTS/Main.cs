@@ -1,22 +1,21 @@
-﻿using SS.Content;
+﻿using SS.AI;
+using SS.AI.Goals;
+using SS.Content;
 using SS.InputSystem;
-using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Objects.Modules;
 using SS.Objects;
-using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Heroes;
+using SS.Objects.Modules;
+using SS.Objects.Units;
 using SS.ResourceSystem.Payment;
+using SS.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
-using SS.AI;
-using SS.AI.Goals;
-using SS.Objects.Units;
 
 namespace SS
 {
@@ -72,6 +71,27 @@ namespace SS
 			}
 		}
 
+		private static Transform __levelGUICanvas = null;
+		public static Transform levelGUICanvas
+		{
+			get
+			{
+				if( __levelGUICanvas == null )
+				{
+					Canvas[] canvases = FindObjectsOfType<Canvas>();
+					for( int i = 0; i < canvases.Length; i++ )
+					{
+						if( canvases[i].gameObject.CompareTag( "Level GUI canvas" ) )
+						{
+							__levelGUICanvas = canvases[i].transform;
+							break;
+						}
+					}
+				}
+				return __levelGUICanvas;
+			}
+		}
+
 		private static QueuedKeyboardInput __keyboardInput = null;
 		public static QueuedKeyboardInput keyboardInput
 		{
@@ -115,6 +135,22 @@ namespace SS
 					__camera = cameraPivot.GetChild( 0 ).GetComponent<Camera>();
 				}
 				return __camera;
+			}
+		}
+
+		private void Inp_F1( InputQueue self )
+		{
+			if( levelGUICanvas.gameObject.activeSelf )
+			{
+				levelGUICanvas.gameObject.SetActive( false );
+				objectHUDCanvas.gameObject.SetActive( false );
+				ToolTip.canvas.gameObject.SetActive( false );
+			}
+			else
+			{
+				levelGUICanvas.gameObject.SetActive( true );
+				objectHUDCanvas.gameObject.SetActive( true );
+				ToolTip.canvas.gameObject.SetActive( true );
 			}
 		}
 
@@ -590,6 +626,7 @@ namespace SS
 			}
 			if( Main.keyboardInput != null )
 			{
+				Main.keyboardInput.RegisterOnPress( KeyCode.F1, 99.0f, Inp_F1, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
@@ -621,6 +658,7 @@ namespace SS
 			}
 			if( Main.keyboardInput != null )
 			{
+				Main.keyboardInput.ClearOnPress( KeyCode.F1, Inp_F1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
 				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );

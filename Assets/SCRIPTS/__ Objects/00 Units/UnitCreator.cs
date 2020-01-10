@@ -252,6 +252,11 @@ namespace SS.Objects.Units
 			{
 				Object.Destroy( unit.hud.gameObject );
 
+				if( unit.isInside )
+				{
+					unit.SetOutside();
+				}
+
 				if( Selection.IsSelected( unit ) )
 				{
 					Selection.Deselect( unit ); // We have all of the references of this unit here, so we can just simply pass it like this. Amazing, right?

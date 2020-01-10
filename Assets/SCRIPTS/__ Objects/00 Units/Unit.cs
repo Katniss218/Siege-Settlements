@@ -352,6 +352,13 @@ namespace SS.Objects.Units
 		/// </summary>
 		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
 		{
+			if( this.isInside )
+			{
+				return;
+			}
+
+			// - Interior fields
+
 			InteriorModule.Slot slot = null;
 			HUDInterior.Element slotHud = null;
 			if( slotType == InteriorModule.SlotType.Generic )
@@ -364,20 +371,16 @@ namespace SS.Objects.Units
 				slot = interior.workerSlots[slotIndex];
 				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
-			
+			slot.objInside = this;
+			slotHud.SetSprite( this.icon );
+
 			this.navMeshAgent.enabled = false;
 
-			this.interior = interior;
-			this.slotType = slotType;
-			this.slotIndex = slotIndex;
-
-			slot.objInside = this;
-
+			// -
+			
 			this.transform.position = interior.SlotWorldPosition( slot );
 			this.transform.rotation = interior.SlotWorldRotation( slot );
 			
-			slotHud.SetSprite( this.icon );
-
 			if( slot.isHidden )
 			{
 				SubObject[] subObjects = this.GetSubObjects();
@@ -389,6 +392,10 @@ namespace SS.Objects.Units
 
 				this.isInsideHidden = true;
 			}
+
+			this.interior = interior;
+			this.slotIndex = slotIndex;
+			this.slotType = slotType;
 		}
 
 		/// <summary>
@@ -401,10 +408,8 @@ namespace SS.Objects.Units
 				return;
 			}
 
-			this.transform.position = this.interior.EntranceWorldPosition();
-			this.transform.rotation = Quaternion.identity;
 
-			this.navMeshAgent.enabled = true;
+			// - Interior fields.
 
 			InteriorModule.Slot slot = null;
 			HUDInterior.Element slotHud = null;
@@ -418,11 +423,16 @@ namespace SS.Objects.Units
 				slot = interior.workerSlots[slotIndex];
 				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
-
 			slot.objInside = null;
-
 			slotHud.ClearSprite();
 
+			// -
+
+			this.transform.position = this.interior.EntranceWorldPosition();
+			this.transform.rotation = Quaternion.identity;
+
+			this.navMeshAgent.enabled = true;
+			
 			if( this.isInsideHidden )
 			{
 				SubObject[] subObjects = this.GetSubObjects();

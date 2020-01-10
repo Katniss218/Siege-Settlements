@@ -66,11 +66,10 @@ namespace SS.AI
 						hitInventory = inventory;
 					}
 
-					IPaymentReceiver[] receivers = raycastHits[i].collider.GetComponents<IPaymentReceiver>();
-					if( receivers.Length > 0 && hitReceiverSSObject == null )
+					IPaymentReceiver receivers = raycastHits[i].collider.GetComponent<IPaymentReceiver>();
+					if( receivers != null && hitReceiverSSObject == null )
 					{
 						hitReceiverSSObject = raycastHits[i].collider.GetComponent<SSObjectDFS>();
-						hitPaymentReceivers = receivers;
 					}
 
 					SSObjectDFS damageable = raycastHits[i].collider.GetComponent<SSObjectDFS>();
@@ -96,7 +95,7 @@ namespace SS.AI
 
 			if( hitReceiverSSObject != null && (hitReceiverSSObject.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMakePaymentGoal( hitReceiverSSObject, hitPaymentReceivers, Selection.GetSelectedObjects() );
+				AssignMakePaymentGoal( hitReceiverSSObject, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitInterior != null && (hitInteriorDFS.factionId == LevelDataManager.PLAYER_FAC) )
@@ -402,10 +401,14 @@ namespace SS.AI
 			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
 			{
 				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
-				TacticalPickUpGoal goal = new TacticalPickUpGoal();
-				goal.isHostile = false;
-				goal.SetDestination( hitInventory );
-				goalController.SetGoals( TAG_CUSTOM, goal );
+				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+				goal1.isHostile = false;
+				goal1.SetDestination( hitSSObject );
+			
+				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+				goal2.isHostile = false;
+				goal2.SetDestination( hitInventory );
+				goalController.SetGoals( TAG_CUSTOM, goal1, goal2 );
 			}
 		}
 
@@ -468,7 +471,7 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMakePaymentGoal( SSObjectDFS paymentReceiverSSObject, IPaymentReceiver[] paymentReceivers, SSObjectDFS[] selected )
+		private static void AssignMakePaymentGoal( SSObjectDFS paymentReceiverSSObject, SSObjectDFS[] selected )
 		{
 			if( paymentReceiverSSObject != null )
 			{
@@ -483,27 +486,30 @@ namespace SS.AI
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<SSObjectDFS> toBeAssignedGameObjects = new List<SSObjectDFS>();
 
+			IPaymentReceiver[] paymentReceivers = ResourceCollectorWorkplaceModule.GetAvailableReceivers( paymentReceiverSSObject );
+
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<NavMeshAgent>() == null )
+				if( !(selected[i] is IMovable) )
 				{
 					continue;
 				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
+				if( !selected[i].hasInventoryModule )
 				{
 					continue;
 				}
+				InventoryModule inv = selected[i].GetModules<InventoryModule>()[0];
 				// If the inventory doesn't have any resources that can be left at the payment receiver.
 				if( inv.isEmpty )
 				{
 					continue;
 				}
 
+#warning needs to return construction site if the obj is under construction.
 				// loop over every receiver and check if any of them wants resources that are in the selected obj's inventory.
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
@@ -511,7 +517,6 @@ namespace SS.AI
 					bool hasWantedItem_s = false;
 					foreach( var kvp in wantedRes )
 					{
-						//Debug.Log( paymentReceiverSSObject.displayName + " wants: " + kvp.Value + "x " + kvp.Key );
 						if( inv.Get( kvp.Key ) > 0 )
 						{
 							hasWantedItem_s = true;
@@ -536,11 +541,14 @@ namespace SS.AI
 			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
 			{
 				TacticalGoalController goalController = toBeAssignedGameObjects[i].GetComponent<TacticalGoalController>();
-				TacticalDropOffGoal goal = new TacticalDropOffGoal();
-				goal.isHostile = false;
-#warning flawed way. need to search for the one that best fits.
-				goal.SetDestination( paymentReceivers[0] );
-				goalController.SetGoals( TAG_CUSTOM, goal );
+				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
+				goal1.isHostile = false;
+				goal1.SetDestination( paymentReceiverSSObject );
+				
+				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
+				goal2.isHostile = false;
+				goal2.SetDestination( paymentReceivers[0] );
+				goalController.SetGoals( TAG_CUSTOM, goal1, goal2 );
 			}
 		}
 	}

@@ -516,7 +516,7 @@ namespace SS.Levels
 
 			// resource panel loaded via the scene additive.
 			ResourcePanel.instance.InitReset();
-			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/World UI Canvas" ) );
+			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/Object HUD Canvas" ) );
 			Object.Instantiate( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Game Scene/ToolTip Canvas" ) );
 
 			LevelDataManager.LoadMapData( serializerLevel );

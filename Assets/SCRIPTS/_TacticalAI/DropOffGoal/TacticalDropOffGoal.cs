@@ -5,7 +5,6 @@ using SS.Objects;
 using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Modules;
-using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using System;

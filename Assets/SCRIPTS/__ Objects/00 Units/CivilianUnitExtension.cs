@@ -77,22 +77,19 @@ namespace SS.Objects.Units
 
 		void UpdateAutomaticDuty()
 		{
-			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
-			if( inventories.Length == 0 )
+			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
+
+			if( goalController.goalTag == TacticalGoalQuery.TAG_CUSTOM )
 			{
 				this.isOnAutomaticDuty = false;
 				return;
 			}
 
-			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
-
-			InventoryModule selfInventory = inventories[0];
-
 			if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 			{
 				//if( !selfInventory.isFull )
 				//{
-					return;
+				return;
 				//}
 			}
 
@@ -106,7 +103,17 @@ namespace SS.Objects.Units
 				return;
 			}
 
-#warning turn off automatic duty when goal is assigned by the player.
+			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
+			if( inventories.Length == 0 )
+			{
+				this.isOnAutomaticDuty = false;
+				return;
+			}
+			
+			InventoryModule selfInventory = inventories[0];
+
+
+			
 			if( selfInventory.isEmpty )
 			{
 				if( this.automaticDutyReceiver != null )
@@ -135,8 +142,6 @@ namespace SS.Objects.Units
 								goal2.SetDestination( closestinventory );
 
 								// only pick up required amount. -picks up from a single inventory, picks up every wanted resource type (if possible)
-
-#warning when has receiver, and has enough of that resource, don't bother filling it up to full (avoids wasting time & also blocking itself by having resources leftover).
 								// then, if at least one of the inv slots is full, goes to the receiver.
 								goal2.resources = wantedResources;
 								goal2.ApplyResources();

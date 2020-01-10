@@ -816,7 +816,7 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+		Icon = "extern:Textures/Buildings/campfire_icon.png";
 	},
 	{
 		Id = "building.tavern";
@@ -949,7 +949,7 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/house_icon.png";
+		Icon = "extern:Textures/Buildings/tavern_icon.png";
 	},
 	{
 		Id = "building.lumberjacks_hut";
@@ -1033,7 +1033,7 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+		Icon = "extern:Textures/Buildings/lumberjacks_hut_icon.png";
 	},
 	{
 		Id = "building.stone_mine";
@@ -1134,7 +1134,7 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+		Icon = "extern:Textures/Buildings/stone_mine_icon.png";
 	},
 	{
 		Id = "building.iron_mine";
@@ -1235,6 +1235,6 @@
 		BuildSound = "extern:Sounds/construction_site.wav";
 		HurtSound = "extern:Sounds/damage_generic.wav";
 		DeathSound = "extern:Sounds/building_dest_wood.wav";
-		Icon = "extern:Textures/Buildings/wooden_ballista_tower_icon.png";
+		Icon = "extern:Textures/Buildings/iron_mine_icon.png";
 	}
 ];
