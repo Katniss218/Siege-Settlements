@@ -4,10 +4,10 @@ using SS.Levels;
 using SS.Objects.Buildings;
 using SS.Objects.Modules;
 using SS.ResourceSystem.Payment;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace SS.Objects.Units
 {
@@ -28,6 +28,9 @@ namespace SS.Objects.Units
 
 
 #warning clear workplace tai goal on change.
+		/// <summary>
+		/// Use WorkplaceModule.Employ or WorkplaceModule.Unemploy to toggle.
+		/// </summary>
 		public WorkplaceModule workplace { get; set; } = null;
 		public int workplaceSlotId { get; set; }
 		public bool isWorking { get; private set; }
@@ -68,12 +71,41 @@ namespace SS.Objects.Units
 			return interior;
 		}
 
-		public bool isOnAutomaticDuty { get; set; }
+		bool __isOnAutomaticDuty;
+		public bool isOnAutomaticDuty
+		{
+			get
+			{
+				return this.__isOnAutomaticDuty;
+			}
+			set
+			{
+				if( this.workplace != null )
+				{
+					this.__isOnAutomaticDuty = false;
+					return;
+					//throw new System.Exception( "Tried to set automatic duty for an employed civilian." );
+				}
+				this.__isOnAutomaticDuty = value;
+				// if automatic duty assigned any goals - clear them.
+				if( !value )
+				{
+					this.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
+				}
+				this.onAutomaticDutyToggle?.Invoke();
+			}
+		}
+
 		IPaymentReceiver automaticDutyReceiver;
 
 		public const int TAG_MAKING_SPACE = 75;
 		public const int TAG_GOING_TO_PICKUP = 76;
 		public const int TAG_GOING_TO_PAY = 77;
+
+
+		public UnityEvent onAutomaticDutyToggle { get; private set; } = new UnityEvent();
+		public UnityEvent onEmploy { get; private set; } = new UnityEvent();
+		public UnityEvent onUnemploy { get; private set; } = new UnityEvent();
 
 		void UpdateAutomaticDuty()
 		{

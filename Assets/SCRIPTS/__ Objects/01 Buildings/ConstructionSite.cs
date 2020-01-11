@@ -1,6 +1,7 @@
 ﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
@@ -393,7 +394,7 @@ namespace SS.Objects.Buildings
 			{
 				throw new Exception( building.displayName + " - Building is not repairable." );
 			}
-			
+
 			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
 			constructionSite.building = building;
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
@@ -419,7 +420,11 @@ namespace SS.Objects.Buildings
 				}
 			}
 
-
+			InteriorModule[] interiors = building.GetModules<InteriorModule>();
+			for( int i = 0; i < interiors.Length; i++ )
+			{
+				interiors[i].ExitAll();
+			}
 			building.constructionSite = constructionSite;
 			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
@@ -430,7 +435,7 @@ namespace SS.Objects.Buildings
 			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
 
 			UpdateYOffset( constructionSite.building, Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
-			
+
 			// Re-Display to update.
 			if( Selection.IsDisplayed( building ) )
 			{

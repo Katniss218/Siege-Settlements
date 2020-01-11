@@ -175,6 +175,9 @@
     <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverrideDropOffQuery.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverrideEmployment.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverridePickUpQuery.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />

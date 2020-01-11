@@ -80,6 +80,24 @@ namespace SS.AI.Goals
 			this.attackModules = controller.GetComponents<IAttackModule>();
 		}
 
+		public override void OnSuccess()
+		{
+			if( this.navMeshAgent.hasPath )
+			{
+				this.navMeshAgent.ResetPath();
+			}
+			base.OnSuccess();
+		}
+
+		public override void OnFail()
+		{
+			if( this.navMeshAgent.hasPath )
+			{
+				this.navMeshAgent.ResetPath();
+			}
+			base.OnFail();
+		}
+
 		private void UpdatePosition( TacticalGoalController controller )
 		{
 			if( this.destination == DestinationType.POSITION )
@@ -96,7 +114,6 @@ namespace SS.AI.Goals
 				{
 					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
 					{
-						this.navMeshAgent.ResetPath();
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 						return;
 					}
@@ -117,7 +134,6 @@ namespace SS.AI.Goals
 
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
 				{
-					this.navMeshAgent.ResetPath();
 					controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 					return;
 				}
@@ -154,12 +170,12 @@ namespace SS.AI.Goals
 						if( slotIndex == null )
 						{
 							Debug.LogWarning( "Can't enter slot: " + this.destinationInterior.ssObject.definitionId );
-							this.navMeshAgent.ResetPath();
 							controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 							return;
 						}
 						unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
+						return;
 					}
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
@@ -187,7 +203,6 @@ namespace SS.AI.Goals
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( (this.destination == DestinationType.OBJECT) && this.destinationObject == null )
 			{
-				this.navMeshAgent.ResetPath();
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
@@ -195,7 +210,6 @@ namespace SS.AI.Goals
 			// If the object was picked up/destroyed/etc. (is no longer on the map), stop the Goal.
 			if( (this.destination == DestinationType.INTERIOR) && this.destinationInterior == null )
 			{
-				this.navMeshAgent.ResetPath();
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
@@ -203,7 +217,6 @@ namespace SS.AI.Goals
 			// If it's not usable - return, don't move.
 			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
 			{
-				this.navMeshAgent.ResetPath();
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}

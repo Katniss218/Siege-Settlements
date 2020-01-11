@@ -15,7 +15,7 @@
 		DisplayName = "Horse Riding";
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 5; },
+			{ Id = "resource.wood"; Amount = 10; },
 			{ Id = "resource.stone"; Amount = 5; }
 		];
 		Icon = "extern:Textures/Technologies/horse_riding_icon.png";
@@ -25,8 +25,7 @@
 		DisplayName = "Archery";
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 6; },
-			{ Id = "resource.stone"; Amount = 4; }
+			{ Id = "resource.wood"; Amount = 15; }
 		];
 		Icon = "extern:Textures/Technologies/archery_icon.png";
 	}

@@ -109,7 +109,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public void GetOutAll()
+		public void ExitAll()
 		{
 			for( int i = 0; i < this.slots.Length; i++ )
 			{
@@ -232,7 +232,7 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
-			this.GetOutAll();
+			this.ExitAll();
 		}
 
 

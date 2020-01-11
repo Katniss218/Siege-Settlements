@@ -17,10 +17,21 @@ namespace SS.AI
 		public TacticalGoal currentGoal { get; private set; } = null;
 		public TacticalGoalExitCondition lastGoalExitCondition { get; private set; }
 
-		private void AdvanceAndStart()
+		private void ExitAdvanceAndStart( TacticalGoalExitCondition exit )
 		{
+			if( this.currentGoal != null )
+			{
+				if( exit == TacticalGoalExitCondition.FAILURE )
+				{
+					this.currentGoal.OnFail();
+				}
+				if( exit == TacticalGoalExitCondition.SUCCESS )
+				{
+					this.currentGoal.OnSuccess();
+				}
+			}
 			this.goalCounter++;
-
+			
 			this.currentGoal = this.goals[this.goalCounter];
 			this.currentGoal.Start( this );
 		}
@@ -69,12 +80,13 @@ namespace SS.AI
 					throw new Exception( "Tactical Goal '" + goals[i].GetType().Name + "' was added to a '" + this.ssObject.definitionId + "' object." );
 				}
 			}
-
+			
 			this.goals = goals;
 			this.goalTag = goalTag;
 			this.goalCounter = -1; // advance&start will increment to 0.
 
-			this.AdvanceAndStart();
+			// Should exit previous goal, if it's still assigned to "currentGoal".
+			this.ExitAdvanceAndStart( TacticalGoalExitCondition.FAILURE );
 		}
 
 		private SSObject __ssObject = null;
@@ -119,7 +131,7 @@ namespace SS.AI
 			{
 				if( exitCondition == TacticalGoalExitCondition.SUCCESS )
 				{
-					this.AdvanceAndStart();
+					this.ExitAdvanceAndStart( TacticalGoalExitCondition.SUCCESS );
 				}
 				else
 				{

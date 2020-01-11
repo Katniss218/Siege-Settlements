@@ -156,9 +156,7 @@ namespace SS.Objects
 
 		private bool hasPaymentReceiverModule;
 		public bool hasInventoryModule { get; private set; }
-
-		public InventoryModule inventory { get; private set; } = null;
-
+		
 		internal T AddModule<T>( Guid moduleId ) where T : SSModule
 		{
 			for( int i = 0; i < this.modulesTemp.Count; i++ )

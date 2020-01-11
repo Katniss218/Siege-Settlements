@@ -42,6 +42,7 @@ namespace SS.Levels.SaveStates
 		public int tacticalGoalTag { get; set; }
 				
 		public Tuple<Guid, Guid, int> workplace { get; set; }
+		public bool? isOnAutomaticDuty { get; set; }
 
 
 
@@ -136,6 +137,11 @@ namespace SS.Levels.SaveStates
 				this.workplace = new Tuple<Guid, Guid, int>( insideObj, insideMod, slotIndex );
 			}
 
+			if( serializer.Analyze( "IsOnAutomaticDuty" ).isSuccess )
+			{
+				this.isOnAutomaticDuty = serializer.ReadBool( "IsOnAutomaticDuty" );
+			}
+
 			int tag;
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out tag );
 			this.tacticalGoalTag = tag;
@@ -174,6 +180,11 @@ namespace SS.Levels.SaveStates
 				serializer.WriteGuid( "Workplace", "ObjectGuid", this.workplace.Item1 );
 				serializer.WriteGuid( "Workplace", "ModuleId", this.workplace.Item2 );
 				serializer.WriteInt( "Workplace", "SlotIndex", this.workplace.Item3 );
+			}
+
+			if( this.isOnAutomaticDuty != null )
+			{
+				serializer.WriteBool( "", "IsOnAutomaticDuty", this.isOnAutomaticDuty.Value );
 			}
 
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData, this.tacticalGoalTag );

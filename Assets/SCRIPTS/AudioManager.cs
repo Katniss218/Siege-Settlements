@@ -37,7 +37,9 @@ namespace SS
 			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
 			audioSource.spatialBlend = 1.0f;
-			audioSource.maxDistance = 1f;
+			audioSource.rolloffMode = AudioRolloffMode.Linear;
+			audioSource.minDistance = 1.5f;
+			audioSource.maxDistance = 15.0f;
 			TimerHandler timerHandler = gameObject.AddComponent<TimerHandler>();
 
 			// Setup the timer.

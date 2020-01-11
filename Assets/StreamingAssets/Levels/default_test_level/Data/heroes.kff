@@ -5,7 +5,7 @@
 		DisplayName = "Cerberos";
 		DisplayTitle = "The King of Darkness";
 		ViewRange = 7.0;
-		MaxHealth = 100.0;
+		MaxHealth = 50.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -27,7 +27,7 @@
 				ProjectileId = "projectile.arrow"; // can be any defined projectile's id.
 				ProjectileCount = 2;
 				DamageType = 1; // 0 - Slash, 1 - Pierce, 2 - Concussion
-				Damage = 2.0;
+				Damage = 2.5;
 				ArmorPenetration = 0.0;
 				AttackRange = 5.0;
 				AttackCooldown = 3.0;

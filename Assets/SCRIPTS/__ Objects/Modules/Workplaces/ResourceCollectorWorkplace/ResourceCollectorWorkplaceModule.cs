@@ -127,6 +127,11 @@ namespace SS.Objects.Modules
 		{
 			if( obj is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)obj).IsUsable() )
 			{
+				ConstructionSite cs = obj.GetComponent<ConstructionSite>();
+				if( cs == null ) // if repair hasn't started yet - can't pay.
+				{
+					return new IPaymentReceiver[0];
+				}
 #warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
 				return new IPaymentReceiver[] { obj.GetComponent<ConstructionSite>() };
 			}

@@ -521,7 +521,7 @@ namespace SS.Objects.Modules
 
 		private void CreateRallyButton()
 		{
-			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/set_rally" ), "Set Rally Point", "Click to set the rally point (units move towards it when trained)...", () =>
+			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/rally" ), "Set Rally Point", "Click to set the rally point (units move towards it when trained)...", () =>
 			{
 				if( Main.mouseInput != null )
 				{

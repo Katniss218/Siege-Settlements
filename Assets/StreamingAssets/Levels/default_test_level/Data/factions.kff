@@ -10,6 +10,6 @@
 	},
 	{
 		DisplayName = "Barmecia";
-		Color = { R = 0.0; G = 0.9; B = 0.25; A = 1.0; };
+		Color = { R = 0.0; G = 0.8; B = 0.25; A = 1.0; };
 	}
 ];

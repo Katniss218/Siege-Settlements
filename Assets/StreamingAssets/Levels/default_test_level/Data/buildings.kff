@@ -4,7 +4,7 @@
 		Id = "building.town_center";
 		DisplayName = "Town Center";
 		ViewRange = 7.0;
-		MaxHealth = 450.0;
+		MaxHealth = 400.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -104,7 +104,7 @@
 		Id = "building.house_0";
 		DisplayName = "House";
 		ViewRange = 7.0;
-		MaxHealth = 60.0;
+		MaxHealth = 80.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -300,7 +300,7 @@
 		Id = "building.college";
 		DisplayName = "College";
 		ViewRange = 7.0;
-		MaxHealth = 200.0;
+		MaxHealth = 250.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -362,7 +362,7 @@
 		Id = "building.barracks";
 		DisplayName = "Barracks";
 		ViewRange = 7.0;
-		MaxHealth = 200.0;
+		MaxHealth = 180.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -428,7 +428,7 @@
 		Id = "building.stables";
 		DisplayName = "Stables";
 		ViewRange = 7.0;
-		MaxHealth = 200.0;
+		MaxHealth = 180.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -493,7 +493,7 @@
 		Id = "building.siege_workshop";
 		DisplayName = "Siege Workshop";
 		ViewRange = 7.0;
-		MaxHealth = 200.0;
+		MaxHealth = 180.0;
 		Armor =
 		{
 			ArmorValues = [
@@ -556,12 +556,12 @@
 		Id = "building.wooden_wall";
 		DisplayName = "Palisade";
 		ViewRange = 7.0;
-		MaxHealth = 80.0;
+		MaxHealth = 120.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
+				0.6, // Slash
+				0.8, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -606,12 +606,12 @@
 		Id = "building.wooden_tower";
 		DisplayName = "Wooden Tower";
 		ViewRange = 7.0;
-		MaxHealth = 90.0;
+		MaxHealth = 120.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
+				0.6, // Slash
+				0.8, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -681,12 +681,12 @@
 		Id = "building.campfire";
 		DisplayName = "Campfire";
 		ViewRange = 3;
-		MaxHealth = 15.0;
+		MaxHealth = 25.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.0, // Slash
-				0.0, // Pierce
+				0.3, // Slash
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -955,12 +955,12 @@
 		Id = "building.lumberjacks_hut";
 		DisplayName = "Lumberjack's Hut";
 		ViewRange = 7.0;
-		MaxHealth = 90.0;
+		MaxHealth = 150.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
+				0.3, // Slash
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -1039,12 +1039,12 @@
 		Id = "building.stone_mine";
 		DisplayName = "Stone Mine";
 		ViewRange = 7.0;
-		MaxHealth = 90.0;
+		MaxHealth = 150.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
+				0.3, // Slash
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};
@@ -1140,12 +1140,12 @@
 		Id = "building.iron_mine";
 		DisplayName = "Iron Mine";
 		ViewRange = 7.0;
-		MaxHealth = 90.0;
+		MaxHealth = 150.0;
 		Armor =
 		{
 			ArmorValues = [
-				0.2, // Slash
-				0.45, // Pierce
+				0.3, // Slash
+				0.6, // Pierce
 				0.0  // Concussion
 			];
 		};

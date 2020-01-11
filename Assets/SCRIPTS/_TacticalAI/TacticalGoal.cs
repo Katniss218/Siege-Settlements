@@ -68,6 +68,16 @@ namespace SS.AI.Goals
 				}
 			}
 		}
+
+		public virtual void OnFail()
+		{
+
+		}
+
+		public virtual void OnSuccess()
+		{
+
+		}
 		
 		public abstract TacticalGoalData GetData();
 

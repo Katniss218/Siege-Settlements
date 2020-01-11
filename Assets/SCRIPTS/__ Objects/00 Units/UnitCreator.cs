@@ -54,7 +54,9 @@ namespace SS.Objects.Units
 			{
 				unit.rotationSpeedOverride = data.rotationSpeed.Value;
 			}
-			
+
+			CivilianUnitExtension cue = gameObject.GetComponent<CivilianUnitExtension>();
+
 			// Set the workplace (if unit is a civilian & workplace is present).
 			if( data.workplace != null )
 			{
@@ -63,11 +65,21 @@ namespace SS.Objects.Units
 					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
 				}
 
-				CivilianUnitExtension cue = gameObject.GetComponent<CivilianUnitExtension>();
 				SSObject obj = SSObject.Find( data.workplace.Item1 );
 				WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
 
 				WorkplaceModule.SetWorker( workplace, cue, data.workplace.Item3 );
+			}
+
+			// Set the automatic duty (only for civilians).
+			if( data.isOnAutomaticDuty != null )
+			{
+				if( !unit.isCivilian )
+				{
+					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
+				}
+
+				cue.isOnAutomaticDuty = data.isOnAutomaticDuty.Value;
 			}
 
 			//
@@ -331,6 +343,8 @@ namespace SS.Objects.Units
 							cue.workplaceSlotId
 						);
 				}
+
+				data.isOnAutomaticDuty = cue.isOnAutomaticDuty;
 			}
 
 			//

@@ -166,25 +166,13 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					WorkplaceModule workplace = hitInfo.collider.GetComponent<WorkplaceModule>();
-
-					SSObjectDFS[] selected = Selection.GetSelectedObjects();
-
-					for( int i = 0; i < selected.Length; i++ )
+					TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
+					if( goalController == null )
 					{
-						CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-						if( cue.workplace == null )
-						{
-							if( workplace != null )
-							{
-								workplace.Employ( cue );
-							}
-						}
-						else
-						{
-							cue.workplace.UnEmploy( cue );
-						}
+						return;
 					}
+					TacticalTargetGoal goal = new TacticalTargetGoal();
+					goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 				}
 			}
 		}
@@ -211,31 +199,7 @@ namespace SS
 				}
 			}
 		}
-
-		private void Inp_O( InputQueue self )
-		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					
-					CivilianUnitExtension cue = hitInfo.collider.GetComponent<CivilianUnitExtension>();
-					cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
-					Debug.LogWarning( "Auto: " + cue.isOnAutomaticDuty );
-					
-					
-					/*InventoryModule hitInventory = hitInfo.collider.GetComponent<InventoryModule>();
-
-
-					if( hitInventory != null )
-					{
-						TacticalGoalQuery.AssignDropoffToInventoryGoal( hitInventory.ssObject, hitInventory, Selection.GetSelectedObjects() );
-					}*/
-				}
-			}
-		}
-
+		
 		private void Inp_I( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
@@ -302,13 +266,6 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					/*TacticalGoalController goalController = hitInfo.collider.GetComponent<TacticalGoalController>();
-					if( goalController == null )
-					{
-						return;
-					}
-					TacticalTargetGoal goal = new TacticalTargetGoal();
-					goalController.goal = goal;*/
 					IPopulationScaler popScaler = hitInfo.collider.GetComponent<IPopulationScaler>();
 					if( popScaler == null )
 					{
@@ -410,6 +367,16 @@ namespace SS
 					continue;
 				}
 				faction.factionId = fac;
+			}
+		}
+
+		private void Inp_F3( InputQueue self )
+		{
+			SSObjectDFS[] damageables = SSObject.GetAllDFS();
+
+			for( int i = 0; i < damageables.Length; i++ )
+			{
+				damageables[i].health = damageables[i].healthMax;
 			}
 		}
 
@@ -627,9 +594,9 @@ namespace SS
 			if( Main.keyboardInput != null )
 			{
 				Main.keyboardInput.RegisterOnPress( KeyCode.F1, 99.0f, Inp_F1, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.F3, 99.0f, Inp_F3, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.I, 60.0f, Inp_I, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.U, 60.0f, Inp_U, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
@@ -659,9 +626,9 @@ namespace SS
 			if( Main.keyboardInput != null )
 			{
 				Main.keyboardInput.ClearOnPress( KeyCode.F1, Inp_F1 );
+				Main.keyboardInput.ClearOnPress( KeyCode.F3, Inp_F3 );
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
-				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
 				Main.keyboardInput.ClearOnPress( KeyCode.I, Inp_I );
 				Main.keyboardInput.ClearOnPress( KeyCode.U, Inp_U );
 				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );

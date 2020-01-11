@@ -209,31 +209,34 @@ namespace SS.Objects.Buildings
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
-			if( this.factionId == LevelDataManager.PLAYER_FAC )
+			if( !this.IsDisplaySafe() )
 			{
-				ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
-
-				if( constructionSite != null )
-				{
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + constructionSite.GetStatusString() );
-					SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
-				}
-				if( !this.IsUsable() )
-				{
-					GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -125.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Not usable (under construction or <50% health)." );
-					SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
-				}
-
-				if( Building.CanStartRepair( this ) )
-				{
-					this.DisplayRepairButton();
-				}
-
-				ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...", () =>
-				{
-					this.Die();
-				} );
+				return;
 			}
+
+			ConstructionSite constructionSite = this.GetComponent<ConstructionSite>();
+
+			if( constructionSite != null )
+			{
+				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + constructionSite.GetStatusString() );
+				SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
+			}
+			if( !this.IsUsable() )
+			{
+				GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -125.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Not usable (under construction or <50% health)." );
+				SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );
+			}
+
+			if( Building.CanStartRepair( this ) )
+			{
+				this.DisplayRepairButton();
+			}
+
+			ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...", () =>
+			{
+				this.Die();
+			} );
+
 		}
 
 		public override void OnHide()

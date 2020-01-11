@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
@@ -83,10 +84,6 @@ namespace SS.Objects.Units
 					}
 
 					inventories[i].SetSlots( slotGroups );
-					/*for( int j = 0; j < inventories[i].slotCount; j++ )
-					{
-						inventories[i].slotGroups[j].capacityOverride = (int)(inventories[i].slotGroups[j].capacity * (float)value);
-					}*/
 				}
 				RangedModule[] ranged = this.GetModules<RangedModule>();
 				for( int i = 0; i < ranged.Length; i++ )
@@ -141,6 +138,8 @@ namespace SS.Objects.Units
 
 
 
+#warning This should be handled by a separate class "CivilianUnitExtension" - move everything civilian-related to there, and call it's ondisplay, etc. when the unit is displayed, etc.
+#warning IsCivilian is simply an indication that cue is present.
 		private bool __isCivilian;
 		public bool isCivilian
 		{
@@ -164,6 +163,51 @@ namespace SS.Objects.Units
 					{
 						this.navMeshAgent.avoidancePriority = GetNextAvPriority( true );
 					}
+
+					cue.onAutomaticDutyToggle.AddListener( () =>
+					{
+						if( !Selection.IsDisplayed( this ) )
+						{
+							return;
+						}
+
+						Transform t = ActionPanel.instance.GetActionButton( "civilian.autoduty" );
+						if( cue.isOnAutomaticDuty )
+						{
+							t.GetComponent<Image>().sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" );
+						}
+						else
+						{
+							t.GetComponent<Image>().sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autoduty" );
+						}
+					} );
+
+					cue.onEmploy.AddListener( () =>
+					{
+						if( !Selection.IsDisplayed( this ) )
+						{
+							return;
+						}
+
+						ActionPanel.instance.Clear( "civilian.autoduty" );
+						ActionPanel.instance.Clear( "civilian.employ" );
+						this.CreateUnemployButton( cue );
+						ActionPanel.instance.Clear( "unit.ap.pickup" );
+						ActionPanel.instance.Clear( "unit.ap.dropoff" );
+					} );
+
+					cue.onUnemploy.AddListener( () =>
+					{
+						if( !Selection.IsDisplayed( this ) )
+						{
+							return;
+						}
+
+						ActionPanel.instance.Clear( "civilian.unemploy" );
+						this.CreateAutodutyButton( cue );
+						this.CreateEmployButton( cue );
+						this.CreateQueryButtons();
+					} );
 				}
 				else
 				{
@@ -484,7 +528,62 @@ namespace SS.Objects.Units
 			}
 			this.hud.isVisible = false;
 		}
+		
+		private void CreateAutodutyButton( CivilianUnitExtension cue )
+		{
+			Sprite s = cue.isOnAutomaticDuty ?
+						AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" ) :
+						AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autoduty" );
 
+			ActionPanel.instance.CreateButton( "civilian.autoduty", s, "Toggle automatic duty", "Makes the civilian deliver resources to where they are needed.", () =>
+			{
+				cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
+			} );
+		}
+
+		private void CreateEmployButton( CivilianUnitExtension cue )
+		{
+			ActionPanel.instance.CreateButton( "civilian.employ", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/employ" )
+				, "Employ civilian", "Makes the civilian employed at a specified workplace.", () =>
+			{
+				InputOverrideEmployment.EnableEmploymentInput( cue );
+			} );
+		}
+
+		private void CreateUnemployButton( CivilianUnitExtension cue )
+		{
+			ActionPanel.instance.CreateButton( "civilian.unemploy", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/unemploy" )
+				, "Fire civilian", "Makes the civilian unemployed.", () =>
+			{
+				cue.workplace.UnEmploy( cue );
+			} );
+		}
+
+		protected override void OnObjDestroyed()
+		{
+			// prevent killed units making the employ input stuck in 'on' position.
+			if( InputOverrideEmployment.cueTracker == this )
+			{
+				InputOverrideEmployment.DisableEmploymentInput();
+			}
+			base.OnObjDestroyed();
+		}
+
+		private void CreateQueryButtons()
+		{
+#warning it's possible to enable both inputs, don't do that.
+			ActionPanel.instance.CreateButton( "unit.ap.dropoff", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/dropoff" )
+			, "Drop off resources", "Select storage to drop off the resources at. OR, deliver resources to construction sites, barracks, etc.", () =>
+			{
+				InputOverrideDropOffQuery.EnableInput();
+			} );
+
+			ActionPanel.instance.CreateButton( "unit.ap.pickup", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/pickup" )
+			, "Pick up resources", "Select storage or resource deposit to pick the resources up from.", () =>
+			{
+				InputOverridePickUpQuery.EnableInput();
+			} );
+		}
 
 		public override void OnDisplay()
 		{
@@ -494,19 +593,46 @@ namespace SS.Objects.Units
 
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
+
+			if( !this.IsDisplaySafe() )
+			{
+				return;
+			}
+
+			bool blockManual = false;
+			if( this.isCivilian )
+			{
+				CivilianUnitExtension cue = this.GetComponent<CivilianUnitExtension>();
+
+				if( cue.workplace == null )
+				{
+					this.CreateAutodutyButton( cue );
+					this.CreateEmployButton( cue );
+				}
+				else
+				{
+					this.CreateUnemployButton( cue );
+					blockManual = true;
+				}
+			}
+
+			if( this.hasInventoryModule && !blockManual )
+			{
+				CreateQueryButtons();
+			}
+
 		}
 
 		public override void OnHide()
 		{
-
+			
 		}
-
+		
 		public bool CanChangePopulation()
 		{
 			if( this.isPopulationLocked )
 			{
 #warning figure out something for the pop locking.
-				//Debug.Log( "PL: " + this.guid );
 				return false;
 			}
 			SSModule[] modules = this.GetModules();
@@ -516,24 +642,22 @@ namespace SS.Objects.Units
 				{
 					if( !((IPopulationChangeBlockerModule)modules[i]).CanChangePopulation() )
 					{
-						//Debug.Log( "PL: " + this.guid + " -    " + modules[i].moduleId );
 						return false;
 					}
 				}
 			}
 			return true;
 		}
-
 		
 
 		// // // =-    -    -  -       -  -  -   -    -   -  -  -      -      -    -  -  -  -  -        -  -  -     -   -    -
 
-		
+
 		// // //
 		// // //			STATIC METHODS
 		// // //
 
-		
+
 		// // // =-    -      - -       -  -  -   -     -  -   - -      -      -    -  -  -  -  -        -  -  -     -  -    -
 
 
