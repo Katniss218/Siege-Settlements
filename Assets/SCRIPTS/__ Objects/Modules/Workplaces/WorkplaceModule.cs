@@ -48,8 +48,10 @@ namespace SS.Objects.Modules
 			c.workplace = w;
 			c.workplaceSlotId = slotIndex;
 			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( true );
-			c.onEmploy?.Invoke();
+			w.interior.hudInterior.workerSlots[slotIndex].SetSprite( c.unit.icon );
+			w.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
 			c.isOnAutomaticDuty = false;
+			c.onEmploy?.Invoke();
 		}
 
 		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
@@ -58,9 +60,10 @@ namespace SS.Objects.Modules
 			c.workplace = null;
 			c.workplaceSlotId = 0;
 			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( false );
-			c.onUnemploy?.Invoke();
+			w.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
 			// clear the workplace goal (nothing else is trying to set it so..)
 			c.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
+			c.onUnemploy?.Invoke();
 		}
 
 		public void Employ( CivilianUnitExtension civilian )

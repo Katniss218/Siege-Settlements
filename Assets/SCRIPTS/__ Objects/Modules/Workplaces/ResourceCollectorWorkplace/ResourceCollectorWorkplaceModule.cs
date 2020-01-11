@@ -16,7 +16,7 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "workplace_resource_collector";
 
 		public string resourceId { get; set; }
-		
+
 		public AreaOfInfluence aoi { get; set; }
 
 		void Update()
@@ -74,9 +74,9 @@ namespace SS.Objects.Modules
 			}
 			return ret;
 		}
-		
+
 		public static ResourceDepositModule GetClosestInRangeContaining( Vector3 pos, float range, string resourceId )
-		{			
+		{
 			if( NavMesh.SamplePosition( pos, out NavMeshHit hit, range, int.MaxValue ) )
 			{
 				pos = hit.position;
@@ -85,7 +85,7 @@ namespace SS.Objects.Modules
 				ResourceDepositModule ret = null;
 
 				float dstSq = range * range;
-				
+
 				for( int i = 0; i < extras.Length; i++ )
 				{
 					// If is in range.
@@ -170,7 +170,7 @@ namespace SS.Objects.Modules
 
 
 				paymentReceivers = GetAvailableReceivers( objects[i] );
-				
+
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
@@ -266,7 +266,7 @@ namespace SS.Objects.Modules
 			this.aoi.center = this.transform.position;
 
 			InventoryModule inventory = inventories[0];
-			
+
 			TacticalGoalController goalController = worker.GetComponent<TacticalGoalController>();
 
 

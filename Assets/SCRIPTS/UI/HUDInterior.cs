@@ -23,6 +23,11 @@ namespace SS.UI
 				icon.rectTransform.sizeDelta = s.rect.size / 2.0f;
 			}
 
+			public void SetVisible( bool f )
+			{
+				icon.color = f ? Color.white : new Color( 0.4f, 0.4f, 0.4f, 0.7f );
+			}
+
 			public void ClearSprite()
 			{
 				icon.sprite = null;
@@ -45,6 +50,7 @@ namespace SS.UI
 
 		public Element[] slots { get; private set; }
 		public Element[] workerSlots { get; private set; }
+
 
 		private Sprite GetSpriteUpper( int index, int rowLimit )
 		{

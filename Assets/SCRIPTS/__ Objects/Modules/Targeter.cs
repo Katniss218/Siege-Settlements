@@ -78,41 +78,65 @@ namespace SS.Objects.Modules
 
 		public static SSObjectDFS FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFS factionMemberSelf, bool requireExactDistance )
 		{
-			Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
-			if( col.Length == 0 )
-			{
-				return null;
-			}
-			SSObjectDFS ret = null;
-			float needThisCloseSq = float.MaxValue;
 			if( requireExactDistance )
 			{
-				needThisCloseSq = searchRange * searchRange;
-			}
+				SSObjectDFS[] dfs = SSObject.GetAllDFS();
 
-			for( int i = 0; i < col.Length; i++ )
-			{
-				SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
+				SSObjectDFS ret = null;
+				float needThisCloseSq = searchRange * searchRange;
 
-				// Check if the overlapped object can be targeted by this finder.
-				if( !factionMemberSelf.CanTargetAnother( facOther ) )
+
+				for( int i = 0; i < dfs.Length; i++ )
 				{
-					continue;
-				}
+					// Check if the overlapped object can be targeted by this finder.
+					if( !factionMemberSelf.CanTargetAnother( dfs[i] ) )
+					{
+						continue;
+					}
 
-				float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
-				if( requireExactDistance )
-				{
+					float distSq = (dfs[i].transform.position - positionSelf).sqrMagnitude;
 					if( distSq > needThisCloseSq )
 					{
 						continue;
 					}
+
+
+					needThisCloseSq = distSq;
+					ret = dfs[i];
 				}
-				
-				needThisCloseSq = distSq;
-				ret = facOther;
+				return ret;
 			}
-			return ret;
+			else
+			{
+				Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
+				if( col.Length == 0 )
+				{
+					return null;
+				}
+				SSObjectDFS ret = null;
+				float needThisCloseSq = float.MaxValue;
+
+				for( int i = 0; i < col.Length; i++ )
+				{
+					SSObjectDFS facOther = col[i].GetComponent<SSObjectDFS>();
+
+					// Check if the overlapped object can be targeted by this finder.
+					if( !factionMemberSelf.CanTargetAnother( facOther ) )
+					{
+						continue;
+					}
+
+					float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
+					if( distSq > needThisCloseSq )
+					{
+						continue;
+					}
+
+					needThisCloseSq = distSq;
+					ret = facOther;
+				}
+				return ret;
+			}
 		}
 	}
 }

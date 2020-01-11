@@ -3,6 +3,7 @@ using SS.Content;
 using SS.Levels;
 using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
@@ -66,17 +67,12 @@ namespace SS.AI
 			
 			if( hitInterior != null && (hitInteriorDFS.factionId == LevelDataManager.PLAYER_FAC) )
 			{
-				AssignMoveToInteriorOrObjGoal( null, hitInterior, Selection.GetSelectedObjects() );
+				AssignMoveToInteriorGoal( hitInterior, Selection.GetSelectedObjects() );
 				return;
 			}
 			if( hitDamageable != null && (hitDamageable.factionId != LevelDataManager.PLAYER_FAC) )
 			{
 				AssignAttackGoal( hitDamageable, Selection.GetSelectedObjects() );
-				return;
-			}
-			if( hitDamageable != null && (hitDamageable.factionId == LevelDataManager.PLAYER_FAC) )
-			{
-				AssignMoveToInteriorOrObjGoal( hitDamageable, null, Selection.GetSelectedObjects() );
 				return;
 			}
 		}
@@ -114,6 +110,12 @@ namespace SS.AI
 						canTarget = true;
 						break;
 					}
+				}
+
+				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
+				if( cue != null && cue.workplace != null )
+				{
+					continue;
 				}
 
 				if( canTarget )
@@ -159,6 +161,12 @@ namespace SS.AI
 					continue;
 				}
 
+				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
+				if( cue != null && cue.workplace != null )
+				{
+					continue;
+				}
+
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
 				movableGameObjects.Add( selected[i] );
 				if( navMeshAgent.radius > biggestRadius )
@@ -198,9 +206,12 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMoveToInteriorOrObjGoal( SSObject obj, InteriorModule interior, SSObjectDFS[] selected )
+		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObjectDFS[] selected )
 		{
-
+			if( interior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)interior.ssObject).IsUsable() )
+			{
+				return;
+			}
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<SSObject> movableGameObjects = new List<SSObject>();
 
@@ -214,6 +225,12 @@ namespace SS.AI
 				}
 				NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
 				if( navMeshAgent == null )
+				{
+					continue;
+				}
+
+				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
+				if( cue != null && cue.workplace != null )
 				{
 					continue;
 				}
@@ -234,19 +251,10 @@ namespace SS.AI
 			{
 				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
 				TacticalMoveToGoal goal = new TacticalMoveToGoal();
+				goal.SetDestination( interior, InteriorModule.SlotType.Generic );
 				goal.isHostile = false;
-				if( interior == null )
-				{
-					goal.SetDestination( obj );
-				}
-				else
-				{
-					goal.SetDestination( interior, InteriorModule.SlotType.Generic );
-				}
 				goalController.SetGoals( TAG_CUSTOM, goal );
 			}
-		}
-
-		
+		}		
 	}
 }

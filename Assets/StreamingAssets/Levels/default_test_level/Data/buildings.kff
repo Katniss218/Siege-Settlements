@@ -17,8 +17,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 40; },
-			{ Id = "resource.stone"; Amount = 30; }
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 40; }
 		];		
 		TechsRequired = [];
 		Modules =
@@ -117,7 +117,7 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 25; }
 		];
 		TechsRequired = [];
 		Modules =
@@ -251,8 +251,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 10; },
-			{ Id = "resource.stone"; Amount = 10; }
+			{ Id = "resource.wood"; Amount = 20; },
+			{ Id = "resource.stone"; Amount = 20; }
 		];
 		TechsRequired = [];
 		Modules =
@@ -313,8 +313,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 25; },
-			{ Id = "resource.stone"; Amount = 10; }
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 25; }
 		];
 		TechsRequired = [];
 		Modules =
@@ -375,8 +375,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; },
-			{ Id = "resource.stone"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 40; }
 		];
 		TechsRequired =
 		[
@@ -441,8 +441,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; },
-			{ Id = "resource.stone"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 40; }
 		];
 		TechsRequired =
 		[
@@ -506,8 +506,9 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; },
-			{ Id = "resource.stone"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 30; },
+			{ Id = "resource.iron"; Amount = 10; }
 		];
 		TechsRequired =
 		[
@@ -835,7 +836,7 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 30; }
 		];
 		TechsRequired = [];
 		Modules =
@@ -968,7 +969,7 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; }
+			{ Id = "resource.stone"; Amount = 20; }
 		];
 		TechsRequired = [ ];
 		Modules =
@@ -1136,7 +1137,8 @@
 		PlacementNodes = [ ];
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 20; }
+			{ Id = "resource.wood"; Amount = 10; },
+			{ Id = "resource.stone"; Amount = 10; }
 		];
 		TechsRequired = [ ];
 		Modules =

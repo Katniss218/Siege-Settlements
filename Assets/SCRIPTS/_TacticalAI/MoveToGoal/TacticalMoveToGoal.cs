@@ -71,7 +71,7 @@ namespace SS.AI.Goals
 
 		public override bool CanBeAddedTo( SSObject ssObject )
 		{
-			return ssObject is IMovable && ssObject is IInteriorUser;
+			return ssObject is IMovable;
 		}
 
 		public override void Start( TacticalGoalController controller )
@@ -144,7 +144,7 @@ namespace SS.AI.Goals
 			if( this.destination == DestinationType.INTERIOR )
 			{
 				Vector3 currDestPos = this.destinationInterior.transform.position;
-
+				
 				if( this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos );

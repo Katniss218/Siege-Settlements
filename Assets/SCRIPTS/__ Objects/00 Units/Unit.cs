@@ -416,7 +416,14 @@ namespace SS.Objects.Units
 				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
 			slot.objInside = this;
-			slotHud.SetSprite( this.icon );
+			if( slotType == InteriorModule.SlotType.Worker )
+			{
+				slotHud.SetVisible( true );
+			}
+			else
+			{
+				slotHud.SetSprite( this.icon );
+			}
 
 			this.navMeshAgent.enabled = false;
 
@@ -468,7 +475,14 @@ namespace SS.Objects.Units
 				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
 			slot.objInside = null;
-			slotHud.ClearSprite();
+			if( this.slotType == InteriorModule.SlotType.Worker )
+			{
+				slotHud.SetVisible( false );
+			}
+			else
+			{
+				slotHud.ClearSprite();
+			}
 
 			// -
 
