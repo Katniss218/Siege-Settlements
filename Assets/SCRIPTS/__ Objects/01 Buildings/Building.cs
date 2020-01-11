@@ -75,7 +75,8 @@ namespace SS.Objects.Buildings
 		public bool IsUsable()
 		{
 			// If not under construction/repair.
-			if( this.GetComponent<ConstructionSite>() == null )
+			//if( this.GetComponent<ConstructionSite>() == null )
+			if( this.constructionSite == null )
 			{
 				return this.healthPercent >= 0.5f;
 			}

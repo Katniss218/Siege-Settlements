@@ -1048,7 +1048,7 @@
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		Size = { X = 0.7; Y = 0.77; Z = 0.7; };
 		PlacementNodes = [ ];
 		Cost =
 		[
@@ -1102,29 +1102,12 @@
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Mesh = "extern:Models/Buildings/stone_mine.ksm";
 				Material =
 				{
 					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
-					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
-					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
-					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
-				};
-			},
-			{
-				TypeId = "MESH";
-				SubObjectId = "00000000-0000-0000-0002-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.6; Z = 0.0; };
-				LocalRotationEuler = { X = 0.0; Y = 45.0; Z = 0.0; };
-				
-				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
-				Material =
-				{
-					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/bowmen_color.png";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
+					ColorMap = "extern:Textures/Buildings/stone_mine_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_mine_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
 					SmoothnessMap = "builtin:Textures/pixel_black";
@@ -1149,7 +1132,7 @@
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 0.3; Y = 0.61; Z = 0.3; };
+		Size = { X = 0.7; Y = 0.77; Z = 0.7; };
 		PlacementNodes = [ ];
 		Cost =
 		[
@@ -1203,31 +1186,14 @@
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Mesh = "extern:Models/Buildings/stone_mine.ksm";
 				Material =
 				{
 					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
-					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
-					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					ColorMap = "extern:Textures/Buildings/stone_mine_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_mine_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
-				};
-			},
-			{
-				TypeId = "MESH";
-				SubObjectId = "00000000-0000-0000-0002-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.6; Z = 0.0; };
-				LocalRotationEuler = { X = 0.0; Y = 45.0; Z = 0.0; };
-				
-				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
-				Material =
-				{
-					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/bowmen_color.png";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
-					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_white";
 					SmoothnessMap = "builtin:Textures/pixel_black";
 				};
 			}

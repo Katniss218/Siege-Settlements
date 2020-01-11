@@ -25,7 +25,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 0.4;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.65;
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ]; // The module will point these sub-objects towards the target (used to achieve 'aiming' effect).
 				AttackSound = "extern:Sounds/melee.wav";
@@ -123,7 +123,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 0.6;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.65;
 				AttackCooldown = 0.75;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -237,7 +237,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 0.4;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.65;
 				AttackCooldown = 0.65;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";
@@ -334,7 +334,7 @@
 				DamageType = 0; // 0 - Slash, 1 - Pierce, 2 - Concussion
 				Damage = 0.6;
 				ArmorPenetration = 0.0;
-				AttackRange = 0.6;
+				AttackRange = 0.65;
 				AttackCooldown = 0.47;
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/melee.wav";

@@ -49,12 +49,17 @@ namespace SS.Objects.Units
 					continue;
 				}
 
+				if( !b[i].IsUsable() )
+				{
+					continue;
+				}
+
 				InteriorModule[] interiors = b[i].GetModules<InteriorModule>();
 				if( interiors.Length == 0 )
 				{
 					continue;
 				}
-
+				
 				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.unit ) == null )
 				{
 					continue;
@@ -82,6 +87,7 @@ namespace SS.Objects.Units
 			{
 				if( this.workplace != null )
 				{
+#warning for some reason, this doesn't save itself, even though it's set to false for workers.
 					this.__isOnAutomaticDuty = false;
 					return;
 					//throw new System.Exception( "Tried to set automatic duty for an employed civilian." );
@@ -90,6 +96,7 @@ namespace SS.Objects.Units
 				// if automatic duty assigned any goals - clear them.
 				if( !value )
 				{
+					this.automaticDutyReceiver = null;
 					this.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 				}
 				this.onAutomaticDutyToggle?.Invoke();
@@ -107,8 +114,25 @@ namespace SS.Objects.Units
 		public UnityEvent onEmploy { get; private set; } = new UnityEvent();
 		public UnityEvent onUnemploy { get; private set; } = new UnityEvent();
 
+		InventoryModule selfInventory = null;
+
+		private void Start()
+		{
+			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
+			if( inventories.Length > 0 )
+			{
+				this.selfInventory = inventories[0];
+			}
+		}
+		
 		void UpdateAutomaticDuty()
 		{
+			if( this.selfInventory == null )
+			{
+				this.isOnAutomaticDuty = false;
+				return;
+			}
+
 			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
 
 			if( goalController.goalTag == TacticalGoalQuery.TAG_CUSTOM )
@@ -135,18 +159,10 @@ namespace SS.Objects.Units
 				return;
 			}
 
-			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
-			if( inventories.Length == 0 )
-			{
-				this.isOnAutomaticDuty = false;
-				return;
-			}
 			
-			InventoryModule selfInventory = inventories[0];
-
 
 			
-			if( selfInventory.isEmpty )
+			if( this.selfInventory.isEmpty )
 			{
 				if( this.automaticDutyReceiver != null )
 				{

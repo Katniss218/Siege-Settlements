@@ -13,7 +13,12 @@ namespace SS.Objects.Modules
 						
 		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFS target, SSObjectDFS factionMemberSelf )
 		{
-			if( !factionMemberSelf.CanTargetAnother( target.GetComponent<IFactionMember>() ) )
+			if( target == null )
+			{
+				return false;
+			}
+
+			if( !factionMemberSelf.CanTargetAnother( target ) )
 			{
 				return false;
 			}
@@ -34,7 +39,6 @@ namespace SS.Objects.Modules
 			SSObjectDFS targetRet = null;
 			if( target == null )
 			{
-				targetRet = null;
 				return null;
 			}
 			// Check if the overlapped object can be targeted by this finder.

@@ -37,17 +37,21 @@ namespace SS
 				{
 					SSObject ssObject = hitInfo.collider.GetComponent<SSObject>();
 
-					InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
-					if( inventories.Length > 0 )
+					if( ssObject != null )
 					{
-						AssignPickupInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
-					}
-					else
-					{
-						ResourceDepositModule[] deposits = ssObject.GetModules<ResourceDepositModule>();
-						if( deposits.Length > 0 )
+
+						InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
+						if( inventories.Length > 0 )
 						{
-							AssignPickupDepositGoal( ssObject, deposits[0], Selection.GetSelectedObjects() );
+							AssignPickupInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+						}
+						else
+						{
+							ResourceDepositModule[] deposits = ssObject.GetModules<ResourceDepositModule>();
+							if( deposits.Length > 0 )
+							{
+								AssignPickupDepositGoal( ssObject, deposits[0], Selection.GetSelectedObjects() );
+							}
 						}
 					}
 				}

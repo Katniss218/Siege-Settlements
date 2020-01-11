@@ -71,7 +71,7 @@ namespace SS.AI.Goals
 
 		public override bool CanBeAddedTo( SSObject ssObject )
 		{
-			return ssObject is IMovable;
+			return ssObject is IMovable && ssObject is IInteriorUser;
 		}
 
 		public override void Start( TacticalGoalController controller )
@@ -82,7 +82,7 @@ namespace SS.AI.Goals
 
 		public override void OnSuccess()
 		{
-			if( this.navMeshAgent.hasPath )
+			if( this.navMeshAgent.isOnNavMesh )
 			{
 				this.navMeshAgent.ResetPath();
 			}
@@ -91,7 +91,7 @@ namespace SS.AI.Goals
 
 		public override void OnFail()
 		{
-			if( this.navMeshAgent.hasPath )
+			if( this.navMeshAgent.isOnNavMesh )
 			{
 				this.navMeshAgent.ResetPath();
 			}
@@ -150,16 +150,16 @@ namespace SS.AI.Goals
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 				
-				if( controller.ssObject is IInteriorUser )
-				{
-					currDestPos = this.destinationInterior.EntranceWorldPosition();
-				}
+				currDestPos = this.destinationInterior.EntranceWorldPosition();
+				
 				
 				// If the agent has travelled to the destination - switch back to the default Goal.
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, INTERIOR_MODE_STOPPING_DISTANCE ) )
 				{
-					this.navMeshAgent.ResetPath();
-
+					if( this.destinationInterior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInterior.ssObject).IsUsable() )
+					{
+						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+					}
 					if( controller.ssObject is Unit )
 					{
 						Unit unit = (Unit)controller.ssObject;

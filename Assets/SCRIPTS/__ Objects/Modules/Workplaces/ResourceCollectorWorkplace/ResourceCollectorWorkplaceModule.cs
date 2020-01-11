@@ -125,20 +125,20 @@ namespace SS.Objects.Modules
 
 		public static IPaymentReceiver[] GetAvailableReceivers( SSObject obj )
 		{
-			if( obj is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)obj).IsUsable() )
+			if( obj is Building )
 			{
-				ConstructionSite cs = obj.GetComponent<ConstructionSite>();
-				if( cs == null ) // if repair hasn't started yet - can't pay.
+				Building b = (Building)obj;
+				if( !b.IsUsable() )
 				{
-					return new IPaymentReceiver[0];
-				}
+					if( b.constructionSite == null ) // if repair hasn't started yet - can't pay.
+					{
+						return new IPaymentReceiver[0];
+					}
 #warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
-				return new IPaymentReceiver[] { obj.GetComponent<ConstructionSite>() };
+					return new IPaymentReceiver[] { b.constructionSite };
+				}
 			}
-			else
-			{
-				return obj.GetComponents<IPaymentReceiver>();
-			}
+			return obj.GetComponents<IPaymentReceiver>();
 		}
 
 		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )

@@ -38,17 +38,20 @@ namespace SS
 				{
 					SSObject ssObject = hitInfo.collider.GetComponent<SSObject>();
 
-					if( ssObject.HasPaymentReceivers() )
+					if( ssObject != null )
 					{
-						if( ssObject is SSObjectDFS )
-							AssignMakePaymentGoal( (SSObjectDFS)ssObject, Selection.GetSelectedObjects() );
-					}
-					else
-					{
-						InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
-						if( inventories.Length > 0 )
+						if( ssObject.HasPaymentReceivers() )
 						{
-							AssignDropoffToInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+							if( ssObject is SSObjectDFS )
+								AssignMakePaymentGoal( (SSObjectDFS)ssObject, Selection.GetSelectedObjects() );
+						}
+						else
+						{
+							InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
+							if( inventories.Length > 0 )
+							{
+								AssignDropoffToInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+							}
 						}
 					}
 				}

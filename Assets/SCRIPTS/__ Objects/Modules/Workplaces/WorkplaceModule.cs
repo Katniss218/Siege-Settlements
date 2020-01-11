@@ -49,6 +49,7 @@ namespace SS.Objects.Modules
 			c.workplaceSlotId = slotIndex;
 			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( true );
 			c.onEmploy?.Invoke();
+			c.isOnAutomaticDuty = false;
 		}
 
 		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )

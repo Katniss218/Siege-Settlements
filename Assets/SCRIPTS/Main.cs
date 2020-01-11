@@ -248,7 +248,12 @@ namespace SS
 					{
 						continue;
 					}
+
 					Unit u = (Unit)selected[i];
+					if( u.population == PopulationSize.x1 )
+					{
+						continue;
+					}
 					if( !u.CanChangePopulation() )
 					{
 						continue;

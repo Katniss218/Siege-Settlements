@@ -289,6 +289,10 @@ namespace SS.Objects
 
 		public bool HasPaymentReceivers()
 		{
+			if( this.hasPaymentReceiverModule )
+			{
+				return true;
+			}
 			if( this is Building )
 			{
 				if( ((Building)this).constructionSite != null )
@@ -296,7 +300,7 @@ namespace SS.Objects
 					return true;
 				}
 			}
-			return this.hasPaymentReceiverModule;
+			return false;
 		}
 		
 
