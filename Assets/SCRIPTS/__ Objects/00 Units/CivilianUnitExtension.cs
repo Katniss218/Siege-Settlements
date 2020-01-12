@@ -26,8 +26,7 @@ namespace SS.Objects.Units
 			}
 		}
 
-
-#warning clear workplace tai goal on change.
+		
 		/// <summary>
 		/// Use WorkplaceModule.Employ or WorkplaceModule.Unemploy to toggle.
 		/// </summary>

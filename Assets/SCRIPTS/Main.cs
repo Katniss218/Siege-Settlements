@@ -2,6 +2,7 @@
 using SS.AI.Goals;
 using SS.Content;
 using SS.InputSystem;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects;
 using SS.Objects.Extras;
@@ -176,7 +177,7 @@ namespace SS
 				}
 			}
 		}
-
+		
 		private void Inp_K( InputQueue self )
 		{
 			// Temporary resource payment speedup (every payment receiver to full).
@@ -199,45 +200,8 @@ namespace SS
 				}
 			}
 		}
-		
-		private void Inp_I( InputQueue self )
-		{
-			if( !EventSystem.current.IsPointerOverGameObject() )
-			{
-				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
-				{
-					Unit unitRay = hitInfo.collider.GetComponent<Unit>();
-					if( unitRay == null )
-					{
-						return;
-					}
 
-					SSObjectDFS[] selected = Selection.GetSelectedObjects();
-					for( int i = 0; i < selected.Length; i++ )
-					{
-						if( !(selected[i] is Unit) )
-						{
-							continue;
-						}
-
-						TacticalGoalController goalControllerBeacon = unitRay.GetComponent<TacticalGoalController>();
-						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
-						goal.isHostile = false;
-						goal.beacon = unitRay;
-						goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
-
-						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
-						goal = new TacticalMakeFormationGoal();
-						goal.isHostile = false;
-						goal.beacon = unitRay;
-						goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
-					}
-				}
-			}
-		}
-
-		private void Inp_U( InputQueue self )
+		private void Inp_SplitUnit( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
@@ -245,6 +209,18 @@ namespace SS
 				for( int i = 0; i < selected.Length; i++ )
 				{
 					if( !(selected[i] is Unit) )
+					{
+						continue;
+					}
+
+					if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+					{
+						continue;
+					}
+
+					// block units with non-empty inventories from splitting.
+					InventoryModule[] inventories = selected[i].GetModules<InventoryModule>();
+					if( inventories.Length > 0 && !inventories[0].isEmpty )
 					{
 						continue;
 					}
@@ -260,6 +236,67 @@ namespace SS
 					}
 
 					Unit.Split( u, null );
+
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), u.transform.position );
+				}
+			}
+		}
+
+		private void Inp_CombineUnit( InputQueue self )
+		{
+			if( !EventSystem.current.IsPointerOverGameObject() )
+			{
+				RaycastHit hitInfo;
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
+				{
+					Unit unitRay = hitInfo.collider.GetComponent<Unit>();
+					if( unitRay == null )
+					{
+						return;
+					}
+
+					if( unitRay.factionId != LevelDataManager.PLAYER_FAC )
+					{
+						return;
+					}
+
+					if( unitRay.population == PopulationSize.x8 )
+					{
+						return;
+					}
+
+					SSObjectDFS[] selected = Selection.GetSelectedObjects();
+					for( int i = 0; i < selected.Length; i++ )
+					{
+						if( !(selected[i] is Unit) )
+						{
+							continue;
+						}
+
+						if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+						{
+							continue;
+						}
+
+						if( ((Unit)selected[i]).population == PopulationSize.x8 )
+						{
+							continue;
+						}
+
+						TacticalGoalController goalControllerBeacon = unitRay.GetComponent<TacticalGoalController>();
+						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
+						goal.isHostile = false;
+						goal.beacon = unitRay;
+						goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
+
+						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
+						goal = new TacticalMakeFormationGoal();
+						goal.isHostile = false;
+						goal.beacon = unitRay;
+						goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
+
+						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), unitRay.transform.position );
+					}
 				}
 			}
 		}
@@ -302,7 +339,7 @@ namespace SS
 			}
 		}
 
-		private void Inp_Y( InputQueue self )
+		private void Inp_O( InputQueue self )
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
@@ -602,11 +639,10 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.F3, 99.0f, Inp_F3, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.L, 60.0f, Inp_L, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.K, 60.0f, Inp_K, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.I, 60.0f, Inp_I, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.U, 60.0f, Inp_U, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.G, 60.0f, Inp_SplitUnit, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_CombineUnit, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Y, 60.0f, Inp_Y, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.H, 60.0f, Inp_H, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
@@ -634,11 +670,10 @@ namespace SS
 				Main.keyboardInput.ClearOnPress( KeyCode.F3, Inp_F3 );
 				Main.keyboardInput.ClearOnPress( KeyCode.L, Inp_L );
 				Main.keyboardInput.ClearOnPress( KeyCode.K, Inp_K );
-				Main.keyboardInput.ClearOnPress( KeyCode.I, Inp_I );
-				Main.keyboardInput.ClearOnPress( KeyCode.U, Inp_U );
+				Main.keyboardInput.ClearOnPress( KeyCode.G, Inp_SplitUnit );
+				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_CombineUnit );
 				Main.keyboardInput.ClearOnPress( KeyCode.P, Inp_P );
-				Main.keyboardInput.ClearOnPress( KeyCode.Y, Inp_Y );
-				Main.keyboardInput.ClearOnPress( KeyCode.H, Inp_H );
+				Main.keyboardInput.ClearOnPress( KeyCode.O, Inp_O );
 				Main.keyboardInput.ClearOnPress( KeyCode.Tab, Inp_Tab );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_A1 );
 				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_A2 );

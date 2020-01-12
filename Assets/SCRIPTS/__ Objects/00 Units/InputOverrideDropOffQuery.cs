@@ -56,12 +56,12 @@ namespace SS
 					}
 				}
 			}
-			
+
 
 			DisableInput();
 			self.StopExecution();
 		}
-		
+
 		private static void Inp_BlockSelectionOverride( InputQueue self )
 		{
 			self.StopExecution();
@@ -113,7 +113,7 @@ namespace SS
 				{
 					continue;
 				}
-				
+
 				if( inventories[0].isEmpty )
 				{
 					continue;
@@ -125,18 +125,14 @@ namespace SS
 
 				Dictionary<string, int> inventoryItems = inventories[0].GetAll();
 
+				// Check if the storage inventory can hold any of the items.
 				foreach( var kvp in inventoryItems )
 				{
+					suitable = true;
 					if( hitInventory.GetSpaceLeft( kvp.Key ) == 0 )
 					{
 						suitable = false;
-						break;
-					}
-					// don't move if the deposit doesn't have space to leave resource (inv full of that specific resource).
-					if( hitInventory.GetSpaceLeft( kvp.Key ) == hitInventory.Get( kvp.Key ) )
-					{
-						suitable = false;
-						break;
+						continue;
 					}
 				}
 
@@ -166,6 +162,9 @@ namespace SS
 
 		private static void AssignMakePaymentGoal( SSObjectDFS paymentReceiverSSObject, SSObjectDFS[] selected )
 		{
+			// Assigns payment goal to selected objects.
+			// Can assign different receivers for different objects, depending on their inventories & wanted resources.
+
 			if( paymentReceiverSSObject != null )
 			{
 				// Don't assign make payment to non player.
@@ -177,8 +176,9 @@ namespace SS
 
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObjectDFS> toBeAssignedGameObjects = new List<SSObjectDFS>();
+			Dictionary<SSObjectDFS, IPaymentReceiver> toBeAssignedGameObjects = new Dictionary<SSObjectDFS, IPaymentReceiver>();
 
+			// this makes sure that if building is under construction - only the construction site receiver is returned.
 			IPaymentReceiver[] paymentReceivers = ResourceCollectorWorkplaceModule.GetAvailableReceivers( paymentReceiverSSObject );
 
 			for( int i = 0; i < selected.Length; i++ )
@@ -218,7 +218,7 @@ namespace SS
 
 					if( hasWantedItem_s )
 					{
-						toBeAssignedGameObjects.Add( selected[i] );
+						toBeAssignedGameObjects.Add( selected[i], paymentReceivers[j] );
 						break;
 					}
 					// if this receiver is not compatible - check the next one.
@@ -230,16 +230,16 @@ namespace SS
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
-			for( int i = 0; i < toBeAssignedGameObjects.Count; i++ )
+			foreach( var kvp in toBeAssignedGameObjects )
 			{
-				TacticalGoalController goalController = toBeAssignedGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalGoalController goalController = kvp.Key.GetComponent<TacticalGoalController>();
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
 				goal1.SetDestination( paymentReceiverSSObject );
 
 				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 				goal2.isHostile = false;
-				goal2.SetDestination( paymentReceivers[0] );
+				goal2.SetDestination( kvp.Value );
 				goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal1, goal2 );
 			}
 		}
