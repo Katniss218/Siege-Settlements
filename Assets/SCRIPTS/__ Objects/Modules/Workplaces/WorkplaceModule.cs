@@ -27,7 +27,7 @@ namespace SS.Objects.Modules
 		public bool CanEmploy( CivilianUnitExtension civilian )
 		{
 			// Returns true if there is space left in the interior's worker slots. Returns false if the civilian is already employed.
-			if( civilian.workplace != null )
+			if( civilian.isEmployed )
 			{
 				return false;
 			}
@@ -44,26 +44,35 @@ namespace SS.Objects.Modules
 
 		public static void SetWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
 		{
-			w.interior.workerSlots[slotIndex].worker = c;
 			c.workplace = w;
 			c.workplaceSlotId = slotIndex;
 			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( true );
-			w.interior.hudInterior.workerSlots[slotIndex].SetSprite( c.unit.icon );
-			w.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
+			c.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 			c.isOnAutomaticDuty = false;
 			c.onEmploy?.Invoke();
+
+			w.interior.workerSlots[slotIndex].worker = c;
+			w.interior.hudInterior.workerSlots[slotIndex].SetSprite( c.unit.icon );
+			w.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
 		}
 
 		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
 		{
-			w.interior.workerSlots[slotIndex].worker = null;
 			c.workplace = null;
 			c.workplaceSlotId = 0;
+			c.isWorking = false;
 			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( false );
-			w.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
 			// clear the workplace goal (nothing else is trying to set it so..)
 			c.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 			c.onUnemploy?.Invoke();
+
+			ClearWorker( w, slotIndex );
+		}
+
+		public static void ClearWorker( WorkplaceModule w, int slotIndex )
+		{
+			w.interior.workerSlots[slotIndex].worker = null;
+			w.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
 		}
 
 		public void Employ( CivilianUnitExtension civilian )

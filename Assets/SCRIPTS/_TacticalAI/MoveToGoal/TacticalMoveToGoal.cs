@@ -156,7 +156,7 @@ namespace SS.AI.Goals
 				// If the agent has travelled to the destination - switch back to the default Goal.
 				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, INTERIOR_MODE_STOPPING_DISTANCE ) )
 				{
-					if( this.destinationInterior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInterior.ssObject).IsUsable() )
+					if( this.destinationInterior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInterior.ssObject).isUsable )
 					{
 						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					}
@@ -215,7 +215,7 @@ namespace SS.AI.Goals
 			}
 
 			// If it's not usable - return, don't move.
-			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).isUsable )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;

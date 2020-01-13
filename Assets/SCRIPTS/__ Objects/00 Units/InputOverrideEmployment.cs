@@ -34,15 +34,15 @@ namespace SS
 					SSObjectDFS obj = Selection.displayedObject;
 
 					WorkplaceModule workplace = hitInfo.collider.GetComponent<WorkplaceModule>();
-
-					CivilianUnitExtension cue = obj.GetComponent<CivilianUnitExtension>();
-					if( cue.workplace != null )
-					{
-						throw new System.Exception( "Tried employing employed." );
-					}
-
 					if( workplace != null )
 					{
+						CivilianUnitExtension cue = obj.GetComponent<CivilianUnitExtension>();
+						if( cue.workplace != null )
+						{
+							throw new System.Exception( "Tried employing employed." );
+						}
+
+					
 						workplace.Employ( cue );
 						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), cue.transform.position );
 					}

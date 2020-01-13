@@ -1,15 +1,14 @@
-﻿using SS.Content;
+﻿using SS.AI;
+using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.SubObjects;
 using SS.UI;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using SS.AI;
 using Object = UnityEngine.Object;
-using SS.Objects.SubObjects;
-using SS.AI.Goals;
 
 namespace SS.Objects.Heroes
 {
@@ -101,6 +100,7 @@ namespace SS.Objects.Heroes
 
 			Hero hero = gameObject.AddComponent<Hero>();
 			hero.hud = hud;
+			hud.hudHolder = hero;
 			hero.guid = guid;
 			hero.definitionId = def.id;
 			hero.displayName = def.displayName;
@@ -160,7 +160,7 @@ namespace SS.Objects.Heroes
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
-				if( hero.hasBeenHiddenSinceLastDamage )
+				if( hero.hud.isDisplayedDueToDamage )
 				{
 					return;
 				}
@@ -174,7 +174,7 @@ namespace SS.Objects.Heroes
 					{
 						return;
 					}
-					if( (object)MouseOverHandler.currentObjectMouseOver == hero )
+					if( (object)MouseOverHandler.currentObjectMousedOver == hero )
 					{
 						return;
 					}
@@ -187,7 +187,7 @@ namespace SS.Objects.Heroes
 			hero.onSelect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -197,7 +197,7 @@ namespace SS.Objects.Heroes
 			hero.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -212,7 +212,7 @@ namespace SS.Objects.Heroes
 				if( deltaHP < 0 )
 				{
 					hero.hud.isVisible = true;
-					hero.hasBeenHiddenSinceLastDamage = true;
+					hero.hud.isDisplayedDueToDamage = true;
 				}
 
 				if( !Selection.IsDisplayed( hero ) )

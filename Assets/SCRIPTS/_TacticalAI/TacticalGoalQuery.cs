@@ -113,7 +113,7 @@ namespace SS.AI
 				}
 
 				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.workplace != null )
+				if( cue != null && cue.isEmployed )
 				{
 					continue;
 				}
@@ -162,7 +162,7 @@ namespace SS.AI
 				}
 
 				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.workplace != null )
+				if( cue != null && cue.isEmployed )
 				{
 					continue;
 				}
@@ -208,7 +208,7 @@ namespace SS.AI
 
 		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObjectDFS[] selected )
 		{
-			if( interior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)interior.ssObject).IsUsable() )
+			if( interior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)interior.ssObject).isUsable )
 			{
 				return;
 			}
@@ -230,7 +230,7 @@ namespace SS.AI
 				}
 
 				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.workplace != null )
+				if( cue != null && cue.isEmployed )
 				{
 					continue;
 				}

@@ -50,7 +50,7 @@ namespace SS.Objects.Modules
 				}
 
 				// discard any objects that are unusable.
-				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
+				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).isUsable )
 				{
 					continue;
 				}
@@ -128,7 +128,7 @@ namespace SS.Objects.Modules
 			if( obj is Building )
 			{
 				Building b = (Building)obj;
-				if( !b.IsUsable() )
+				if( !b.isUsable )
 				{
 					if( b.constructionSite == null ) // if repair hasn't started yet - can't pay.
 					{
@@ -229,7 +229,7 @@ namespace SS.Objects.Modules
 				}
 
 				// discard any objects that are unusable.
-				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).IsUsable() )
+				if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).isUsable )
 				{
 					continue;
 				}

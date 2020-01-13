@@ -65,10 +65,6 @@ namespace SS.Levels.SaveStates
 					throw new Exception( "Missing or invalid value of 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
 				}
 			}
-			else
-			{
-				throw new Exception( "Missing 'ResourcesRemaining' (" + serializer.file.fileName + ")." );
-			}
 
 			try
 			{

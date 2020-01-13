@@ -140,9 +140,9 @@
     <Compile Include="Assets\SCRIPTS\UI\FpsCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GameTimeCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GenericUIData.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUD.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUDInterior.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUDInventory.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUD\HUD.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInterior.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInventory.cs" />
     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\SaveButton.cs" />
@@ -208,7 +208,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\IInteriorUser.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IPopulationScaler.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\IUsableToggle.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\ISSObjectUsableUnusable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleDefinition.cs" />

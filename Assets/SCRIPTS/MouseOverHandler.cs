@@ -16,7 +16,7 @@ namespace SS
 
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
-		public static GameObject currentObjectMouseOver { get; private set; }
+		public static GameObject currentObjectMousedOver { get; private set; }
 		private static IMouseOverHandlerListener[] currentListeners;
 		
 		
@@ -26,7 +26,7 @@ namespace SS
 			if( EventSystem.current.IsPointerOverGameObject() )
 			{
 				// Only call the onMouseExit if the pointer leaves object that was there (!= null).
-				if( currentObjectMouseOver != null )
+				if( currentObjectMousedOver != null )
 				{
 					for( int i = 0; i < currentListeners.Length; i++ )
 					{
@@ -34,7 +34,7 @@ namespace SS
 					}
 					//onMouseExit?.Invoke( currentObjectMouseOver );
 
-					currentObjectMouseOver = null; // newObjectMouseOver
+					currentObjectMousedOver = null; // newObjectMouseOver
 				}
 			}
 			else
@@ -50,10 +50,10 @@ namespace SS
 					}*/
 
 					// If the object under mouse pointer has not changed (the same object or still nothing).
-					if( newObjectMouseOver == currentObjectMouseOver )
+					if( newObjectMouseOver == currentObjectMousedOver )
 					{
 						// Only call the onMouseStay if the pointer hovers over object that is there (!= null).
-						if( currentObjectMouseOver != null )
+						if( currentObjectMousedOver != null )
 						{
 							for( int i = 0; i < currentListeners.Length; i++ )
 							{
@@ -66,7 +66,7 @@ namespace SS
 					else
 					{
 						// Only call the onMouseExit if the pointer leaves object that was there (!= null).
-						if( currentObjectMouseOver != null )
+						if( currentObjectMousedOver != null )
 						{
 							for( int i = 0; i < currentListeners.Length; i++ )
 							{
@@ -75,11 +75,11 @@ namespace SS
 							//onMouseExit?.Invoke( currentObjectMouseOver );
 						}
 
-						currentObjectMouseOver = newObjectMouseOver;
+						currentObjectMousedOver = newObjectMouseOver;
 						currentListeners = newListeners;
 
 						// Only call the onMouseEnter if the pointer enters object that is there (!= null).
-						if( currentObjectMouseOver != null )
+						if( currentObjectMousedOver != null )
 						{
 							for( int i = 0; i < currentListeners.Length; i++ )
 							{
@@ -92,7 +92,7 @@ namespace SS
 				else
 				{
 					// Only call the onMouseExit if the pointer leaves object that was there (!= null).
-					if( currentObjectMouseOver != null )
+					if( currentObjectMousedOver != null )
 					{
 						for( int i = 0; i < currentListeners.Length; i++ )
 						{
@@ -100,7 +100,7 @@ namespace SS
 						}
 						//onMouseExit?.Invoke( currentObjectMouseOver );
 
-						currentObjectMouseOver = null;
+						currentObjectMousedOver = null;
 					}
 				}
 			}

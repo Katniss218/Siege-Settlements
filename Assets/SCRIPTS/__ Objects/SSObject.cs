@@ -16,9 +16,6 @@ namespace SS.Objects
 	[DisallowMultipleComponent]
 	public class SSObject : MonoBehaviour
 	{
-		public const float HUD_DAMAGE_DISPLAY_DURATION = 1.0f;
-
-
 		private static List<SSObject> allSSObjects = new List<SSObject>();
 
 		private static List<SSObjectDFS> allSelectables = new List<SSObjectDFS>();

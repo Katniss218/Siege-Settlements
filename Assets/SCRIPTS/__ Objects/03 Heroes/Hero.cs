@@ -30,7 +30,7 @@ namespace SS.Objects.Heroes
 			set
 			{
 				base.displayName = value;
-				this.hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
+				this.hud.transform.Find("HUD").Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
 				if( Selection.IsDisplayed( this ) )
 				{
 					SelectionPanel.instance.obj.displayNameText.text = value;
@@ -51,7 +51,7 @@ namespace SS.Objects.Heroes
 			set
 			{
 				this.__displayTitle = value;
-				this.hud.transform.Find( "Title" ).GetComponent<TextMeshProUGUI>().text = value;
+				this.hud.transform.Find( "HUD" ).Find( "Title" ).GetComponent<TextMeshProUGUI>().text = value;
 				
 				if( Selection.IsDisplayed( this ) )
 				{
@@ -70,7 +70,7 @@ namespace SS.Objects.Heroes
 		public HUD hud { get; set; }
 		
 
-		public bool hasBeenHiddenSinceLastDamage { get; set; }
+		//public bool hasBeenHiddenSinceLastDamage { get; set; }
 
 
 		//
@@ -149,46 +149,11 @@ namespace SS.Objects.Heroes
 		//
 		//
 
-		
-		void Update()
-		{
-			if( this.hud.isVisible )
-			{
-				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
-			}
 
-			if( !this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Main.isHudForcedVisible )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			if( Time.time > this.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
-			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					return;
-				}
-				this.hud.isVisible = false;
-				this.hasBeenHiddenSinceLastDamage = false;
-			}
-		}
 
 		public void OnMouseEnterListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = true;
+			this.hud.TryShow();
 		}
 
 		public void OnMouseStayListener()
@@ -196,18 +161,9 @@ namespace SS.Objects.Heroes
 
 		public void OnMouseExitListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = false;
+			this.hud.TryHide();
 		}
+
 
 		public override void OnDisplay()
 		{

@@ -130,6 +130,7 @@ namespace SS.Objects.Units
 			
 			Unit unit = gameObject.AddComponent<Unit>();
 			unit.hud = hud;
+			hud.hudHolder = unit;
 			unit.guid = guid;
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
@@ -194,7 +195,7 @@ namespace SS.Objects.Units
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
-				if( unit.hasBeenHiddenSinceLastDamage )
+				if( unit.hud.isDisplayedDueToDamage )
 				{
 					return;
 				}
@@ -208,7 +209,7 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					if( (object)MouseOverHandler.currentObjectMouseOver == unit )
+					if( (object)MouseOverHandler.currentObjectMousedOver == unit )
 					{
 						return;
 					}
@@ -221,7 +222,7 @@ namespace SS.Objects.Units
 			unit.onSelect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -231,7 +232,7 @@ namespace SS.Objects.Units
 			unit.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -244,7 +245,7 @@ namespace SS.Objects.Units
 				if( deltaHP < 0 )
 				{
 					unit.hud.isVisible = true;
-					unit.hasBeenHiddenSinceLastDamage = true;
+					unit.hud.isDisplayedDueToDamage = true;
 				}
 
 
@@ -267,6 +268,15 @@ namespace SS.Objects.Units
 				if( unit.isInside )
 				{
 					unit.SetOutside();
+				}
+
+				if( unit.isCivilian )
+				{
+					CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
+					if( cue.isEmployed )
+					{
+						WorkplaceModule.ClearWorker( cue.workplace, cue.workplaceSlotId );
+					}
 				}
 
 				if( Selection.IsSelected( unit ) )

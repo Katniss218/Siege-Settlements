@@ -57,7 +57,7 @@ namespace SS.Objects.Modules
 		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
 
 
-		public List<CivilianUnitExtension> GetEmployed( WorkplaceModule workplace = null )
+		public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
 		{
 			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
 			for( int i = 0; i < this.workerSlots.Length; i++ )

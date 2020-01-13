@@ -89,8 +89,7 @@ namespace SS.Objects.Buildings
 			//    CONTAINER GAMEOBJECT
 			//
 
-			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/h2" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 
 			HUD hud = hudGameObject.GetComponent<HUD>();
 			hud.isVisible = Main.isHudForcedVisible;
@@ -103,6 +102,7 @@ namespace SS.Objects.Buildings
 
 			Building building = gameObject.AddComponent<Building>();
 			building.hud = hud;
+			hud.hudHolder = building;
 			building.guid = guid;
 			building.definitionId = def.id;
 			building.displayName = def.displayName;
@@ -147,7 +147,7 @@ namespace SS.Objects.Buildings
 			building.onHealthPercentChanged.AddListener( () =>
 			{
 				building.hud.SetHealthBarFill( building.healthPercent );
-				
+								
 				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{
@@ -165,7 +165,7 @@ namespace SS.Objects.Buildings
 
 			UnityAction<bool> onHudLockChangeListener = ( bool isLocked ) =>
 			{
-				if( building.hasBeenHiddenSinceLastDamage )
+				if( building.hud.isDisplayedDueToDamage )
 				{
 					return;
 				}
@@ -179,7 +179,7 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					if( (object)MouseOverHandler.currentObjectMouseOver == building )
+					if( (object)MouseOverHandler.currentObjectMousedOver == building )
 					{
 						return;
 					}
@@ -192,7 +192,7 @@ namespace SS.Objects.Buildings
 			building.onSelect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -202,7 +202,7 @@ namespace SS.Objects.Buildings
 			building.onDeselect.AddListener( () =>
 			{
 				if( Main.isHudForcedVisible ) { return; }
-				if( MouseOverHandler.currentObjectMouseOver == gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == gameObject )
 				{
 					return;
 				}
@@ -215,7 +215,12 @@ namespace SS.Objects.Buildings
 				if( deltaHP < 0 )
 				{
 					building.hud.isVisible = true;
-					building.hasBeenHiddenSinceLastDamage = true;
+					building.hud.isDisplayedDueToDamage = true;
+
+					if( building.healthPercent < Building.UNUSABLE_THRESHOLD ) // if the health dropped below the point of usability.
+					{
+						building.isUsable = false;
+					}
 				}
 
 
@@ -237,11 +242,16 @@ namespace SS.Objects.Buildings
 				}
 
 				// If the health change changed the usability (health is above threshold).
-				if( building.IsUsable() )
+				if( building.isUsable )
 				{
 					// If the building was not usable before the health change.
 					SelectionPanel.instance.obj.TryClearElement( "building.unusable_flag" );
 				}
+			} );
+
+			building.onUsableStateChanged.AddListener( () =>
+			{
+				hud.SetUsable( building.isUsable );
 			} );
 
 			// When the building dies:

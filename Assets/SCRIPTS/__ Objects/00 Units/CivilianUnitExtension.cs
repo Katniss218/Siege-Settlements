@@ -27,12 +27,20 @@ namespace SS.Objects.Units
 		}
 
 		
+		public bool isEmployed
+		{
+			get
+			{
+				return this.workplace != null;
+			}
+		}
+
 		/// <summary>
 		/// Use WorkplaceModule.Employ or WorkplaceModule.Unemploy to toggle.
 		/// </summary>
 		public WorkplaceModule workplace { get; set; } = null;
 		public int workplaceSlotId { get; set; }
-		public bool isWorking { get; private set; }
+		public bool isWorking { get; set; }
 		
 
 		private InteriorModule GetClosestInteriorBuilding()
@@ -48,7 +56,7 @@ namespace SS.Objects.Units
 					continue;
 				}
 
-				if( !b[i].IsUsable() )
+				if( !b[i].isUsable )
 				{
 					continue;
 				}
@@ -84,7 +92,7 @@ namespace SS.Objects.Units
 			}
 			set
 			{
-				if( this.workplace != null )
+				if( this.isEmployed )
 				{
 #warning for some reason, this doesn't save itself, even though it's set to false for workers.
 					this.__isOnAutomaticDuty = false;
@@ -328,7 +336,7 @@ namespace SS.Objects.Units
 
 		void Update()
 		{
-			if( this.workplace == null )
+			if( !this.isEmployed )
 			{
 				if( isOnAutomaticDuty )
 				{
@@ -341,7 +349,7 @@ namespace SS.Objects.Units
 			TacticalGoalController controller = this.GetComponent<TacticalGoalController>();
 
 			// If workplace is damaged - stop working, go home.
-			if( this.workplace.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.workplace.ssObject).IsUsable() )
+			if( this.workplace.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.workplace.ssObject).isUsable )
 			{
 				if( controller.goalTag == TAG_GOING_TO_HOUSE )
 				{

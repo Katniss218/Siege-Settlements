@@ -102,6 +102,7 @@ namespace SS.Objects.Buildings
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					this.building.constructionSite = null;
+					this.building.isUsable = true;
 					this.building.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.building.onFactionChange.RemoveListener( this.OnFactionChange );
 
@@ -426,6 +427,7 @@ namespace SS.Objects.Buildings
 				interiors[i].ExitAll();
 			}
 			building.constructionSite = constructionSite;
+			building.isUsable = false;
 			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
 			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
 

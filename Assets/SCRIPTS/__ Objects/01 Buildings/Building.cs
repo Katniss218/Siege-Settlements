@@ -1,10 +1,10 @@
 ﻿using SS.Content;
-using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace SS.Objects.Buildings
 {
@@ -12,6 +12,7 @@ namespace SS.Objects.Buildings
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
+		public const float UNUSABLE_THRESHOLD = 0.5f;
 
 		private NavMeshObstacle __obstacle = null;
 		public NavMeshObstacle obstacle
@@ -52,7 +53,7 @@ namespace SS.Objects.Buildings
 
 		internal ConstructionSite constructionSite { get; set; }
 
-		public bool hasBeenHiddenSinceLastDamage { get; set; }
+		//public bool hasBeenHiddenSinceLastDamage { get; set; }
 
 		private Vector3 __size;
 		public Vector3 size
@@ -71,14 +72,33 @@ namespace SS.Objects.Buildings
 			}
 		}
 
+		public UnityEvent onUsableStateChanged { get; private set; } = new UnityEvent();
+
+		bool __isUsable = true;
+		public bool isUsable
+		{
+			get
+			{
+				return this.__isUsable;
+			}
+			set
+			{
+				bool oldUsable = this.__isUsable;
+				
+				this.__isUsable = value;
+				if( oldUsable != this.__isUsable )
+				{
+					this.onUsableStateChanged?.Invoke();
+				}
+			}
+		}
 
 		public bool IsUsable()
 		{
 			// If not under construction/repair.
-			//if( this.GetComponent<ConstructionSite>() == null )
 			if( this.constructionSite == null )
 			{
-				return this.healthPercent >= 0.5f;
+				return this.healthPercent >= UNUSABLE_THRESHOLD;
 			}
 			// If under construction/repair.
 			return false;
@@ -111,19 +131,13 @@ namespace SS.Objects.Buildings
 #warning Only one interior can be added to an object.
 		// Interior uses 2 rows of 6 icons to display slots.
 
-			// worker slots in the top
+		// worker slots in the top
 
-			// generic & population slots at the bottom (in the same row).
-		
+		// generic & population slots at the bottom (in the same row).
+
 		public void OnMouseEnterListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = true;
+			this.hud.TryShow();
 		}
 
 		public void OnMouseStayListener()
@@ -131,46 +145,14 @@ namespace SS.Objects.Buildings
 
 		public void OnMouseExitListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = false;
+			this.hud.TryHide();
 		}
 
 		void Update()
 		{
-			if( this.hud.isVisible )
+			if( !this.isUsable )
 			{
-				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
-			}
-
-			if( !this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Main.isHudForcedVisible )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			if( Time.time > this.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
-			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					return;
-				}
-				this.hud.isVisible = false;
-				this.hasBeenHiddenSinceLastDamage = false;
+				this.hud.SnapToHolder();
 			}
 		}
 
@@ -181,7 +163,7 @@ namespace SS.Objects.Buildings
 			{
 				// Display green repair icon if building can be repaired, red one if it needs to be repaired.
 				Sprite repairIconSprite = null;
-				if( this.IsUsable() )
+				if( this.isUsable )
 				{
 					repairIconSprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/repair_optional" );
 				}
@@ -222,7 +204,7 @@ namespace SS.Objects.Buildings
 				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + constructionSite.GetStatusString() );
 				SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
 			}
-			if( !this.IsUsable() )
+			if( !this.isUsable )
 			{
 				GameObject unusableFlagUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -125.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Not usable (under construction or <50% health)." );
 				SelectionPanel.instance.obj.RegisterElement( "building.unusable_flag", unusableFlagUI.transform );

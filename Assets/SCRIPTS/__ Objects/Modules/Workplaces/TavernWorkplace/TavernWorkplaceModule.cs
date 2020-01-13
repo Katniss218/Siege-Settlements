@@ -12,7 +12,7 @@ namespace SS.Objects.Modules
 		void Update()
 		{
 			bool isWorkerInside = false;
-			List<CivilianUnitExtension> emp = this.interior.GetEmployed();
+			List<CivilianUnitExtension> emp = this.interior.GetAllEmployed();
 			for( int i = 0; i < emp.Count; i++ )
 			{
 				if( emp[i].workplace == this && emp[i].unit.interior == this.interior && emp[i].unit.slotType == InteriorModule.SlotType.Worker )

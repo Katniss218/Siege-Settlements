@@ -263,7 +263,7 @@ namespace SS.AI.Goals
 				return;
 			}
 
-			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).IsUsable() )
+			if( controller.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)controller.ssObject).isUsable )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
@@ -284,7 +284,7 @@ namespace SS.AI.Goals
 
 			if( this.pickUpMode == PickUpMode.INVENTORY )
 			{
-				if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInventory.ssObject).IsUsable() )
+				if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInventory.ssObject).isUsable )
 				{
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
@@ -304,7 +304,7 @@ namespace SS.AI.Goals
 			}
 			if( this.pickUpMode == PickUpMode.RESOURCE_DEPOSIT )
 			{
-				if( this.destinationResourceDeposit.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationResourceDeposit.ssObject).IsUsable() )
+				if( this.destinationResourceDeposit.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationResourceDeposit.ssObject).isUsable )
 				{
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;

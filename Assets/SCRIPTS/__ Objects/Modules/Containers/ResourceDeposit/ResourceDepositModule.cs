@@ -128,7 +128,7 @@ namespace SS.Objects.Modules
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+				if( MouseOverHandler.currentObjectMousedOver == this.gameObject )
 				{
 					this.ShowTooltip();
 				}
@@ -141,7 +141,7 @@ namespace SS.Objects.Modules
 				}
 				else
 				{
-					if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+					if( MouseOverHandler.currentObjectMousedOver == this.gameObject )
 					{
 						this.ShowTooltip();
 					}
@@ -151,7 +151,7 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
-			if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
+			if( MouseOverHandler.currentObjectMousedOver == this.gameObject )
 			{
 				this.HideTooltip();
 			}

@@ -116,7 +116,7 @@ namespace SS.Objects.Units
 		public HUD hud { get; set; }
 
 
-		public bool hasBeenHiddenSinceLastDamage { get; set; }
+		//public bool hasBeenHiddenSinceLastDamage { get; set; }
 
 
 		private static int avoidancePriorityIncremented = 10;
@@ -155,7 +155,7 @@ namespace SS.Objects.Units
 				{
 					CivilianUnitExtension cue = this.gameObject.AddComponent<CivilianUnitExtension>();
 
-					if( cue.workplace == null )
+					if( !cue.isEmployed )
 					{
 						this.navMeshAgent.avoidancePriority = GetNextAvPriority( false );
 					}
@@ -339,36 +339,6 @@ namespace SS.Objects.Units
 		//
 		//
 		
-		void Update()
-		{
-			if( this.hud.isVisible )
-			{
-				this.hud.transform.position = Main.camera.WorldToScreenPoint( this.transform.position );
-			}
-			
-			if( !this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Main.isHudForcedVisible )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			if( Time.time > this.lastDamageTakenTimestamp + SSObject.HUD_DAMAGE_DISPLAY_DURATION )
-			{
-				if( MouseOverHandler.currentObjectMouseOver == this.gameObject )
-				{
-					return;
-				}
-				this.hud.isVisible = false;
-				this.hasBeenHiddenSinceLastDamage = false;
-			}
-		}
-
 
 		// = = = = = = = = = = =
 		// = = = = = = = = = = =
@@ -514,33 +484,15 @@ namespace SS.Objects.Units
 
 		public void OnMouseEnterListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = true;
+			this.hud.TryShow();
 		}
 
 		public void OnMouseStayListener()
-		{
-
-		}
+		{ }
 
 		public void OnMouseExitListener()
 		{
-			if( Main.isHudForcedVisible ) { return; }
-
-			if( this.hasBeenHiddenSinceLastDamage )
-			{
-				return;
-			}
-			if( Selection.IsSelected( this ) )
-			{
-				return;
-			}
-			this.hud.isVisible = false;
+			this.hud.TryHide();
 		}
 		
 		private void CreateAutodutyButton( CivilianUnitExtension cue )
@@ -585,7 +537,7 @@ namespace SS.Objects.Units
 
 		private void CreateQueryButtons()
 		{
-#warning it's possible to enable both inputs, don't do that.
+#warning it's technically possible to enable both inputs, don't do that.
 			ActionPanel.instance.CreateButton( "unit.ap.dropoff", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/dropoff" )
 			, "Drop off resources", "Select storage to drop off the resources at. OR, deliver resources to construction sites, barracks, etc.", () =>
 			{
@@ -618,7 +570,7 @@ namespace SS.Objects.Units
 			{
 				CivilianUnitExtension cue = this.GetComponent<CivilianUnitExtension>();
 
-				if( cue.workplace == null )
+				if( !cue.isEmployed )
 				{
 					this.CreateAutodutyButton( cue );
 					this.CreateEmployButton( cue );
