@@ -939,8 +939,8 @@
 				Material =
 				{
 					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
-					ColorMap = "extern:Textures/Buildings/house_0_color.png";
-					NormalMap = "extern:Textures/Buildings/house_0_normal.png";
+					ColorMap = "extern:Textures/Buildings/tavern_color.png";
+					NormalMap = "extern:Textures/Buildings/tavern_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
 					MetallicMap = "builtin:Textures/pixel_black";
 					SmoothnessMap = "builtin:Textures/pixel_black";
