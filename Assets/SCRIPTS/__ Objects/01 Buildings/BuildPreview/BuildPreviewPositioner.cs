@@ -92,7 +92,7 @@ namespace SS.Objects.Buildings
 			{
 				Vector3 cursorOnTerrain = this.transform.position; // since we are moving the obj to the cursor's position on the terrain.
 
-				Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation, ObjectLayer.OBJECTS_MASK );
+				Collider[] colliders = Physics.OverlapBox( this.transform.position + new Vector3( 0, this.nodesSearchRange.y * 0.5f, 0 ), this.nodesSearchRange, this.transform.rotation, ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK );
 
 				float nodePairMinDst = float.MaxValue;
 				Vector3? nodeSelf = null; // if null, no nodes found.

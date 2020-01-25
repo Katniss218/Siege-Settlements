@@ -35,7 +35,7 @@
 		/// </summary>
 		public const int EXTRAS = 24;
 
-		
+
 		public const int UNITS_MASK = 1 << UNITS;
 		public const int BUILDINGS_MASK = 1 << BUILDINGS;
 		public const int PROJECTILES_MASK = 1 << PROJECTILES;
@@ -43,11 +43,19 @@
 		public const int EXTRAS_MASK = 1 << EXTRAS;
 
 
-		public const int OBJECTS_MASK =
+		public const int POTENTIALLY_INTERACTIBLE_MASK =
 				ObjectLayer.UNITS_MASK |
 				ObjectLayer.BUILDINGS_MASK |
 				ObjectLayer.HEROES_MASK |
 				ObjectLayer.EXTRAS_MASK;
+
+		public const int SSOBJECTS_MASK =
+				ObjectLayer.UNITS_MASK |
+				ObjectLayer.BUILDINGS_MASK |
+				ObjectLayer.PROJECTILES_MASK |
+				ObjectLayer.HEROES_MASK |
+				ObjectLayer.EXTRAS_MASK;
+	
 
 		public const int ALL_MASK =
 			ObjectLayer.TERRAIN_MASK |

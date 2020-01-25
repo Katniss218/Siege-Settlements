@@ -46,6 +46,55 @@ namespace SS
 
 		private static List<SSObjectDFS> selected = new List<SSObjectDFS>();
 
+		private static List<SSObjectDFS>[] groups = new List<SSObjectDFS>[10]
+		{
+			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
+			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
+			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
+			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
+			new List<SSObjectDFS>(), new List<SSObjectDFS>()
+		};
+
+		public static SSObjectDFS[] GetGroup( byte index )
+		{
+			if( index < 0 || index > 9 )
+			{
+				throw new Exception( "Invalid index. Can only have groups <0-9>." );
+			}
+
+			// Skip all dead objects. They'll get clared when the group is reassigned.
+			List<SSObjectDFS> sel = new List<SSObjectDFS>();
+			for( int i = 0; i < groups[index].Count; i++ )
+			{
+				if( groups[index][i] == null )
+				{
+					continue;
+				}
+
+				sel.Add( groups[index][i] );
+			}
+			return sel.ToArray();
+		}
+
+		public static void SetGroup( byte index, SSObjectDFS[] objects )
+		{
+			if( index < 0 || index > 9 )
+			{
+				throw new Exception( "Invalid index. Can only have groups <0-9>." );
+			}
+
+			for( int i = 0; i < groups[index].Count; i++ )
+			{
+				((IHUDHolder)groups[index]).hud.SetSelectionGroup( null );
+			}
+			groups[index].Clear();
+			groups[index].AddRange( objects );
+			for( int i = 0; i < objects.Length; i++ )
+			{
+				((IHUDHolder)objects[i]).hud.SetSelectionGroup( index );
+			}
+		}
+
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>

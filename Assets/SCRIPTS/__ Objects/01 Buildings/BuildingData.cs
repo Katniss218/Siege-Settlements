@@ -1,5 +1,4 @@
-﻿using Katniss.ModifierAffectedValues;
-using KFF;
+﻿using KFF;
 using SS.AI.Goals;
 using SS.Content;
 using System;

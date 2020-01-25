@@ -344,7 +344,7 @@ namespace SS
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
 				RaycastHit hitInfo;
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, ObjectLayer.OBJECTS_MASK ) )
+				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, float.MaxValue, ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK ) )
 				{
 					IDamageable damageable = hitInfo.collider.GetComponent<IDamageable>();
 

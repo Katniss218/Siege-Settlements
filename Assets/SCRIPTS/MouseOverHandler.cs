@@ -17,91 +17,82 @@ namespace SS
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
 		public static GameObject currentObjectMousedOver { get; private set; }
-		private static IMouseOverHandlerListener[] currentListeners;
-		
-		
+		private static IMouseOverHandlerListener[] currentListenersCache; // list of mouse over handler listeners on the mouseovered object.
+
+
 		void Update()
 		{
-			// If the object under mouse pointer has changed to null (stopped mouseovering).
+			// If pointer is over GUI elements, stop mouseovering object.
 			if( EventSystem.current.IsPointerOverGameObject() )
 			{
 				// Only call the onMouseExit if the pointer leaves object that was there (!= null).
 				if( currentObjectMousedOver != null )
 				{
-					for( int i = 0; i < currentListeners.Length; i++ )
+					for( int i = 0; i < currentListenersCache.Length; i++ )
 					{
-						currentListeners[i].OnMouseExitListener();
+						currentListenersCache[i].OnMouseExitListener();
 					}
-					//onMouseExit?.Invoke( currentObjectMouseOver );
 
-					currentObjectMousedOver = null; // newObjectMouseOver
+					currentObjectMousedOver = null;
 				}
+				return;
 			}
-			else
+
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
 			{
-				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
+				GameObject newObjectMouseOver = hitInfo.collider.gameObject;
+				IMouseOverHandlerListener[] newListeners = newObjectMouseOver.GetComponents<IMouseOverHandlerListener>();
+
+				// If the object under mouse pointer has not changed (the same object or still nothing).
+				if( newObjectMouseOver == currentObjectMousedOver )
 				{
-					GameObject newObjectMouseOver = hitInfo.collider.gameObject;
-					IMouseOverHandlerListener[] newListeners = newObjectMouseOver.GetComponents<IMouseOverHandlerListener>();
-					/*IMouseOverHandlerListener newObjectMouseOver = hitInfo.collider.GetComponent<IMouseOverHandlerListener>();
-					if( newObjectMouseOver == null )
+					if( currentObjectMousedOver != null )
 					{
-						return;
-					}*/
-
-					// If the object under mouse pointer has not changed (the same object or still nothing).
-					if( newObjectMouseOver == currentObjectMousedOver )
-					{
-						// Only call the onMouseStay if the pointer hovers over object that is there (!= null).
-						if( currentObjectMousedOver != null )
+						for( int i = 0; i < currentListenersCache.Length; i++ )
 						{
-							for( int i = 0; i < currentListeners.Length; i++ )
-							{
-								currentListeners[i].OnMouseStayListener();
-							}
-							//onMouseStay?.Invoke( currentObjectMouseOver );
-						}
-					}
-					// If the object under mouse pointer has changed (either to another object or stopped mouseovering).
-					else
-					{
-						// Only call the onMouseExit if the pointer leaves object that was there (!= null).
-						if( currentObjectMousedOver != null )
-						{
-							for( int i = 0; i < currentListeners.Length; i++ )
-							{
-								currentListeners[i].OnMouseExitListener();
-							}
-							//onMouseExit?.Invoke( currentObjectMouseOver );
-						}
-
-						currentObjectMousedOver = newObjectMouseOver;
-						currentListeners = newListeners;
-
-						// Only call the onMouseEnter if the pointer enters object that is there (!= null).
-						if( currentObjectMousedOver != null )
-						{
-							for( int i = 0; i < currentListeners.Length; i++ )
-							{
-								currentListeners[i].OnMouseEnterListener();
-							}
-							//onMouseEnter?.Invoke( currentObjectMouseOver );
+							currentListenersCache[i].OnMouseStayListener();
 						}
 					}
 				}
+
+				// If the object under mouse pointer has changed.
 				else
 				{
 					// Only call the onMouseExit if the pointer leaves object that was there (!= null).
 					if( currentObjectMousedOver != null )
 					{
-						for( int i = 0; i < currentListeners.Length; i++ )
+						for( int i = 0; i < currentListenersCache.Length; i++ )
 						{
-							currentListeners[i].OnMouseExitListener();
+							currentListenersCache[i].OnMouseExitListener();
 						}
-						//onMouseExit?.Invoke( currentObjectMouseOver );
-
-						currentObjectMousedOver = null;
 					}
+
+					currentObjectMousedOver = newObjectMouseOver;
+					currentListenersCache = newListeners;
+
+					// Only call the onMouseEnter if the pointer enters object that is there (!= null).
+					if( currentObjectMousedOver != null )
+					{
+						for( int i = 0; i < currentListenersCache.Length; i++ )
+						{
+							currentListenersCache[i].OnMouseEnterListener();
+						}
+					}
+				}
+			}
+
+			// If the pointer is over empty space...
+			else
+			{
+				// Only call the onMouseExit if the pointer leaves object that was there (!= null).
+				if( currentObjectMousedOver != null )
+				{
+					for( int i = 0; i < currentListenersCache.Length; i++ )
+					{
+						currentListenersCache[i].OnMouseExitListener();
+					}
+
+					currentObjectMousedOver = null;
 				}
 			}
 		}

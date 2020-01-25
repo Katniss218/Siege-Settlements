@@ -1,15 +1,18 @@
 ﻿using SS.Content;
-using SS.Diplomacy;
 using SS.InputSystem;
 using SS.Levels;
 using SS.Objects;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace SS
 {
+	public enum SelectionMode : byte
+	{
+		Add,
+		Replace
+	}
+
 	public class SelectionController : MonoBehaviour
 	{
 		// How much the mouse needs to move before the selection is regarded as box-selection (on both axis).
@@ -17,11 +20,6 @@ namespace SS
 		// How much the mouse needs to move before the selection is regarded as box-selection (combined magnitude).
 		private const float MAGN_THRESHOLD = 16f;
 
-		private enum SelectionMode : byte
-		{
-			Add,
-			Replace
-		}
 
 		/// <summary>
 		/// Is the controller currently box-selecting something? (Read Only).
@@ -29,6 +27,7 @@ namespace SS
 		public static bool isDragging { get; private set; }
 
 		private bool pressOriginatedOnUI = false;
+		private bool pressOriginatedDoubleClick = false;
 
 		private static Vector2 beginDragPos;
 
@@ -76,83 +75,16 @@ namespace SS
 			selectionRect.gameObject.SetActive( false );
 		}
 
-		private static void HandleSelecting( SSObjectDFS[] uniqueSelectables, SelectionMode selectionMode )
-		{
-			// Select selectables on the list (if not selected).
-			if( selectionMode == SelectionMode.Add )
-			{
-				if( uniqueSelectables != null )
-				{
-					int numSelected = Selection.TrySelect( uniqueSelectables );
+		
 
-					if( numSelected > 0 )
-					{
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ), Main.cameraPivot.position );
-					}
-				}
-				return;
-			}
-			// Deselect already selected that are not present on the list.
-			// Select selectables on the list (if not selected).
-			if( selectionMode == SelectionMode.Replace )
-			{
-				if( uniqueSelectables == null )
-				{
-					if( Selection.GetSelectedObjects().Length == 0 )
-					{
-						return;
-					}
 
-					Selection.DeselectAll();
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ), Main.cameraPivot.position );
-				}
-				else
-				{
-					SSObjectDFS[] selectedObjs = Selection.GetSelectedObjects();
-					bool playDeselect = false;
-
-					for( int i = 0; i < selectedObjs.Length; i++ )
-					{
-						bool isToBeSelected = false;
-						for( int j = 0; j < uniqueSelectables.Length; j++ )
-						{
-							if( selectedObjs[i] == uniqueSelectables[j] )
-							{
-								isToBeSelected = true;
-							}
-						}
-						if( !isToBeSelected )
-						{
-							Selection.Deselect( selectedObjs[i] );
-							playDeselect = true;
-						}
-					}
-					int numSelected = Selection.TrySelect( uniqueSelectables );
-
-					if( numSelected > 0 )
-					{
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/select" ), Main.cameraPivot.position );
-					}
-					if( playDeselect )
-					{
-						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/deselect" ), Main.cameraPivot.position );
-					}
-				}
-				return;
-			}
-
-			throw new Exception( "Invalid selection mode" );
-		}
-
-		private static bool isDoublePress = false;
-
-		private void OnPress( InputQueue self )
+		private void Inp_Press( InputQueue self )
 		{
 			if( self.pressCount == 1 )
 			{
 				this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
 
-				isDoublePress = false;
+				this.pressOriginatedDoubleClick = false;
 
 				oldMousePos = Input.mousePosition;
 			}
@@ -160,188 +92,211 @@ namespace SS
 			{
 				this.pressOriginatedOnUI = EventSystem.current.IsPointerOverGameObject();
 
-				isDoublePress = true;
+				this.pressOriginatedDoubleClick = true;
 
 				oldMousePos = Input.mousePosition;
 			}
 		}
 
-		private void OnHold( InputQueue self )
+		private void Inp_Hold( InputQueue self )
 		{
 			if( !isDragging )
 			{
 				// Don't start drags that began over UI elements (required to not bug selection rect).
-				if( pressOriginatedOnUI )
+				if( this.pressOriginatedOnUI )
 				{
 					return;
 				}
 
 
-				if( isDoublePress ) // Technically, I'd need to know in advance if the click is going ot be single or double.
+				// Don't begin drags that originated via a double-click.
+				if( this.pressOriginatedDoubleClick ) // Technically, I'd need to know in advance if the click is going to be single or double.
 				{
 					return;
 				}
-				else
+
+				// Only drag-select once the mouse had moved enough in both directions or in magnitude.
+				if( (Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD) || (Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD) )
 				{
-					if( Mathf.Abs( oldMousePos.x - Input.mousePosition.x ) > XY_THRESHOLD && Mathf.Abs( oldMousePos.y - Input.mousePosition.y ) > XY_THRESHOLD ||
-					Vector3.Distance( oldMousePos, Input.mousePosition ) > MAGN_THRESHOLD )
-					{
-						BeginDrag();
-					}
+					BeginDrag();
 				}
 			}
+
+			// if was dragging or just began dragging...
 			if( isDragging )
 			{
 				UpdateDrag();
 			}
 		}
 
-		private void OnRelease( InputQueue self )
+		private void Inp_Release( InputQueue self )
 		{
+			// Don't process clicks or drags that began over UI elements.
+			if( this.pressOriginatedOnUI )
+			{
+				return;
+			}
+
+
 			if( isDragging )
 			{
-				// Don't process drags that began over UI elements.
-				if( pressOriginatedOnUI )
-				{
-					return;
-				}
-
-
-				if( isDoublePress )
-				{
-					return;
-				}
-				else
-				{
-					SSObjectDFS[] overlap = GetSelectablesInDragArea();
-
-					HandleSelecting( overlap, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
-
-
-					EndDrag();
-				}
+				SelectionUtils.SelectOnScreen( beginDragPos, Input.mousePosition, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+				EndDrag();
 			}
 			else
 			{
-				// Don't process clicks that began over UI elements.
-				if( pressOriginatedOnUI )
-				{
-					return;
-				}
-
-
-				if( isDoublePress )
+				// Double-Click - select the same as the clicked on (if player).
+				if( this.pressOriginatedDoubleClick )
 				{
 					SSObjectDFS atCursor = GetSelectableAtCursor();
 
-					if( atCursor != null && atCursor.factionId == LevelDataManager.PLAYER_FAC )
+					if( atCursor == null || atCursor.factionId != LevelDataManager.PLAYER_FAC )
 					{
-						SelectTheSame( atCursor.definitionId );
+						return;
 					}
+
+					SelectionUtils.SelectTheSame( atCursor.definitionId, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 				}
+				// Single-Click - select the clicked on.
 				else
 				{
 					SSObjectDFS atCursor = GetSelectableAtCursor();
 					SSObjectDFS[] array = atCursor == null ? null : new SSObjectDFS[] { atCursor };
-					HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+					SelectionUtils.Select( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 				}
 			}
 		}
 
-		private void SelectTheSame( string definitionId )
+		void Group( byte index )
 		{
-			SSObjectDFS[] selectables = SSObjectDFS.GetAllDFS();
-
-			List<SSObjectDFS> sameIdAndWithinView = new List<SSObjectDFS>();
-			for( int i = 0; i < selectables.Length; i++ )
+#if UNITY_EDITOR
+			if( Input.GetKey( KeyCode.LeftShift ) )
+#else
+			if( Input.GetKey( KeyCode.LeftControl ) )
+#endif
 			{
-				if( selectables[i].definitionId != definitionId )
-				{
-					continue;
-				}
-
-				if( selectables[i].factionId != LevelDataManager.PLAYER_FAC )
-				{
-					continue;
-				}
-
-				Vector3 viewportPos = Main.camera.WorldToViewportPoint( selectables[i].transform.position );
-				if( (viewportPos.x < 0 || viewportPos.x > 1) || (viewportPos.y < 0 || viewportPos.y > 1) )
-				{
-					continue;
-				}
-
-				sameIdAndWithinView.Add( selectables[i] );
+				Selection.SetGroup( index, Selection.GetSelectedObjects() );
 			}
+			else
+			{
+				SelectionUtils.Select( Selection.GetGroup( index ), SelectionMode.Replace );
+			}
+		}
 
-			SSObjectDFS[] array = sameIdAndWithinView.ToArray();
-			HandleSelecting( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
+		void Inp_1( InputQueue self )
+		{
+			Group( 0 );
+			self.StopExecution();
+		}
+
+		void Inp_2( InputQueue self )
+		{
+			Group( 1 );
+			self.StopExecution();
+		}
+
+		void Inp_3( InputQueue self )
+		{
+			Group( 2 );
+			self.StopExecution();
+		}
+
+		void Inp_4( InputQueue self )
+		{
+			Group( 3 );
+			self.StopExecution();
+		}
+
+		void Inp_5( InputQueue self )
+		{
+			Group( 4 );
+			self.StopExecution();
+		}
+
+		void Inp_6( InputQueue self )
+		{
+			Group( 5 );
+			self.StopExecution();
+		}
+
+		void Inp_7( InputQueue self )
+		{
+			Group( 6 );
+			self.StopExecution();
+		}
+
+		void Inp_8( InputQueue self )
+		{
+			Group( 7 );
+			self.StopExecution();
+		}
+
+		void Inp_9( InputQueue self )
+		{
+			Group( 8 );
+			self.StopExecution();
+		}
+
+		void Inp_0( InputQueue self )
+		{
+			Group( 9 );
+			self.StopExecution();
 		}
 
 		void OnEnable()
 		{
-			Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 50.0f, OnPress );
-			Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 50.0f, OnHold );
-			Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 50.0f, OnRelease );
+			if( Main.mouseInput != null )
+			{
+				Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 50.0f, Inp_Press );
+				Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 50.0f, Inp_Hold );
+				Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 50.0f, Inp_Release );
+			}
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 20.0f, Inp_1 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 20.0f, Inp_2 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 20.0f, Inp_3 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 20.0f, Inp_4 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 20.0f, Inp_5 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 20.0f, Inp_6 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 20.0f, Inp_7 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 20.0f, Inp_8 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 20.0f, Inp_9 );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 20.0f, Inp_0 );
+			}
 		}
 
 		void OnDisable()
 		{
 			if( Main.mouseInput != null )
 			{
-				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, OnPress );
-				Main.mouseInput.ClearOnHold( MouseCode.LeftMouseButton, OnHold );
-				Main.mouseInput.ClearOnRelease( MouseCode.LeftMouseButton, OnRelease );
+				Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, Inp_Press );
+				Main.mouseInput.ClearOnHold( MouseCode.LeftMouseButton, Inp_Hold );
+				Main.mouseInput.ClearOnRelease( MouseCode.LeftMouseButton, Inp_Release );
+			}
+			if( Main.keyboardInput != null )
+			{
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha1, Inp_1 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha2, Inp_2 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha3, Inp_3 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha4, Inp_4 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha5, Inp_5 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha6, Inp_6 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha7, Inp_7 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha8, Inp_8 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha9, Inp_9 );
+				Main.keyboardInput.ClearOnPress( KeyCode.Alpha0, Inp_0 );
 			}
 		}
 		
 		private static SSObjectDFS GetSelectableAtCursor()
 		{
-			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo ) )
+			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo, ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK ) )
 			{
 				// Returns null if the mouse is over non-selectable object.
 				return hitInfo.collider.GetComponent<SSObjectDFS>();
 			}
 			return null;
-		}
-
-		private static Bounds GetViewportBounds( Camera camera, Vector3 corner1, Vector3 corner2 )
-		{
-			Vector3 c1View = camera.ScreenToViewportPoint( corner1 );
-			Vector3 c2View = camera.ScreenToViewportPoint( corner2 );
-
-			Vector3 min = Vector3.Min( c1View, c2View );
-			min.z = camera.nearClipPlane;
-
-			Vector3 max = Vector3.Max( c1View, c2View );
-			max.z = camera.farClipPlane;
-
-			Bounds ret = new Bounds();
-			ret.SetMinMax( min, max );
-
-			return ret;
-		}
-
-		private static SSObjectDFS[] GetSelectablesInDragArea()
-		{
-			SSObjectDFS[] selectables = SSObject.GetAllDFS();
-
-			List<SSObjectDFS> ret = new List<SSObjectDFS>();
-
-			Bounds viewportBounds = GetViewportBounds( Main.camera, new Vector3( beginDragPos.x, beginDragPos.y, 0 ), Input.mousePosition );
-
-			for( int i = 0; i < selectables.Length; i++ )
-			{
-				if( viewportBounds.Contains( Main.camera.WorldToViewportPoint( selectables[i].gameObject.transform.position ) ) )
-				{
-					ret.Add( selectables[i] );
-				}
-			}
-			if( ret.Count == 0 )
-			{
-				return null;
-			}
-			return ret.ToArray();
 		}
 	}
 }

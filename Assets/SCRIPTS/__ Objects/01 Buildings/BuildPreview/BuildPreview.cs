@@ -241,7 +241,7 @@ namespace SS.Objects.Buildings
 
 			buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
 
-			buildPreview.objectsMask = ObjectLayer.OBJECTS_MASK;
+			buildPreview.objectsMask = ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK;
 
 			SubObjectDefinition[] subObjectDefs;
 			def.GetAllSubObjects( out subObjectDefs );

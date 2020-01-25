@@ -11,7 +11,7 @@ namespace SS.Objects
 	public class _UnityEvent_SSObjectDFS : UnityEvent<SSObjectDFS> { }
 
 	/// <summary>
-	/// Add this to any object to make it selectable by the player.
+	/// Represents any object that is 'Damageable', 'Faction Member', 'Selectable' (DFS)
 	/// </summary>
 	public abstract class SSObjectDFS : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
 	{

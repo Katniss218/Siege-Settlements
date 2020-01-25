@@ -36,6 +36,7 @@ namespace SS.UI
 		[SerializeField] GameObject HUDt = null;
 
 		public SSObjectDFS hudHolder { get; set; }
+		public byte? group { get; private set; }
 		
 
 		private bool __isVisible;
@@ -153,7 +154,7 @@ namespace SS.UI
 		void Update()
 		{
 			// Move the HUD to the containing object.
-			if( this.isVisible )
+			if( this.isVisible || this.group != null )
 			{
 				this.SnapToHolder();
 			}
@@ -165,6 +166,7 @@ namespace SS.UI
 
 		public void SetSelectionGroup( byte? group )
 		{
+			this.group = group;
 			if( group == null )
 			{
 				selectionGroup.gameObject.SetActive( false );
@@ -175,7 +177,7 @@ namespace SS.UI
 				{
 					selectionGroup.gameObject.SetActive( true );
 				}
-				selectionGroup.text = "" + group;
+				selectionGroup.text = "" + ((group + 1)%10); // 0->1, 1->2, ..., 9->0
 			}
 		}
 

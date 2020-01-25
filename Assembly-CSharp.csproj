@@ -119,6 +119,7 @@
     <Compile Include="Assets\SCRIPTS\Selection\ISelectDisplayHandler.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\Selection.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\SelectionController.cs" />
+    <Compile Include="Assets\SCRIPTS\Selection\SelectionUtils.cs" />
     <Compile Include="Assets\SCRIPTS\Technologies\ITechsRequired.cs" />
     <Compile Include="Assets\SCRIPTS\Technologies\TechLock.cs" />
     <Compile Include="Assets\SCRIPTS\Technologies\TechnologyDefinition.cs" />
@@ -170,9 +171,6 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TacticalGoalQuery.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TargetGoal\TacticalTargetGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TargetGoal\TacticalTargetGoalData.cs" />
-    <Compile Include="Assets\SCRIPTS\_Utils\BallisticSolver.cs" />
-    <Compile Include="Assets\SCRIPTS\_Utils\RaycastDistance.cs" />
-    <Compile Include="Assets\SCRIPTS\_Utils\Texture2DUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverrideDropOffQuery.cs" />
@@ -259,6 +257,10 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\Particles\ParticlesSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\SubObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\SubObjectDefinition.cs" />
+    <Compile Include="Assets\_Utils\BallisticSolver.cs" />
+    <Compile Include="Assets\_Utils\RaycastDistance.cs" />
+    <Compile Include="Assets\_Utils\Texture2DUtils.cs" />
+    <Compile Include="Assets\_Utils\UnityEngine_Camera_Extensions.cs" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
