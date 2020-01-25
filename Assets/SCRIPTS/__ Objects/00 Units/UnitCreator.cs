@@ -10,7 +10,6 @@ using Object = UnityEngine.Object;
 using SS.AI;
 using SS.Objects.SubObjects;
 using SS.Objects.Modules;
-using SS.AI.Goals;
 
 namespace SS.Objects.Units
 {
@@ -99,7 +98,7 @@ namespace SS.Objects.Units
 			// population needs to be set after modules, since it can change some properties of the modules (override values).
 			unit.population = data.population;
 		}
-		
+
 		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
@@ -127,7 +126,7 @@ namespace SS.Objects.Units
 			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
 			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
-			
+
 			Unit unit = gameObject.AddComponent<Unit>();
 			unit.hud = hud;
 			hud.hudHolder = unit;
@@ -300,7 +299,7 @@ namespace SS.Objects.Units
 				// Remove the now unused listeners.
 				Main.onHudLockChange.RemoveListener( onHudLockChangeListener );
 			} );
-			
+
 			//
 			//    SUB-OBJECTS
 			//
@@ -313,6 +312,16 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.AssignModules( unit, def );
 
+			InventoryModule[] inventory = unit.GetModules<InventoryModule>();
+			if( inventory.Length == 0 )
+			{
+				hud.GetComponent<HUDInventory>()?.Destroy();
+			}
+			InteriorModule[] interior = unit.GetModules<InteriorModule>();
+			if( interior.Length == 0 )
+			{
+				hud.GetComponent<HUDInterior>()?.Destroy();
+			}
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 

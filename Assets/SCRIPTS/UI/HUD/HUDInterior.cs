@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SS.UI
 {
+	[RequireComponent( typeof( HUD ) )]
 	public class HUDInterior : MonoBehaviour
 	{
 		[SerializeField] private Sprite upper1 = null;
@@ -13,11 +14,25 @@ namespace SS.UI
 		[SerializeField] private Sprite lower2 = null;
 		[SerializeField] private Sprite lower3 = null;
 
+		[SerializeField] private GameObject container = null;
 		[SerializeField] private Transform upperContainer = null;
 		[SerializeField] private Transform lowerContainer = null;
-		
+
 		public HUDInteriorSlot[] slots { get; private set; }
 		public HUDInteriorSlot[] workerSlots { get; private set; }
+
+		private HUD __hud = null;
+		public HUD hud
+		{
+			get
+			{
+				if( __hud == null )
+				{
+					this.__hud = GetComponent<HUD>();
+				}
+				return this.__hud;
+			}
+		}
 
 
 		private Sprite GetSpriteUpper( int index, int rowLimit )
@@ -52,7 +67,7 @@ namespace SS.UI
 
 			HUDInteriorSlot slot = go.GetComponent<HUDInteriorSlot>();
 			slot.background.sprite = GetSpriteLower( index, 6 );
-			
+
 			return slot;
 		}
 
@@ -62,10 +77,15 @@ namespace SS.UI
 
 			HUDInteriorSlot slot = go.GetComponent<HUDInteriorSlot>();
 			slot.background.sprite = GetSpriteUpper( index, 6 );
-			
+
 			return slot;
 		}
-		
+
+		public void Destroy()
+		{
+			Object.Destroy( this.container );
+		}
+
 		public void SetSlotCount( int slots, int workerSlots )
 		{
 			this.slots = new HUDInteriorSlot[slots];

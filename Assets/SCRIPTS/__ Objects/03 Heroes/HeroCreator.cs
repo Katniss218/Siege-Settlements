@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using System;
@@ -250,6 +251,17 @@ namespace SS.Objects.Heroes
 			//
 
 			SSObjectCreator.AssignModules( hero, def );
+
+			InventoryModule[] inventory = hero.GetModules<InventoryModule>();
+			if( inventory.Length == 0 )
+			{
+				hud.GetComponent<HUDInventory>()?.Destroy();
+			}
+			InteriorModule[] interior = hero.GetModules<InteriorModule>();
+			if( interior.Length == 0 )
+			{
+				hud.GetComponent<HUDInterior>()?.Destroy();
+			}
 
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 

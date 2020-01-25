@@ -201,25 +201,24 @@ namespace SS.UI
 				colored[i].color = c;
 			}
 
-			HUDInterior inte = this.GetComponent<HUDInterior>();
+			HUDInterior interior = this.GetComponent<HUDInterior>();
 			
-#warning slots should be colored also when they are set (might be set separately from faction change, and would be stuck on white).
-			if( inte == null )
+			if( interior == null )
 			{
 				return;
 			}
-			if( inte.slots != null )
+			if( interior.slots != null )
 			{
-				for( int i = 0; i < inte.slots.Length; i++ )
+				for( int i = 0; i < interior.slots.Length; i++ )
 				{
-					inte.slots[i].SetColor( c );
+					interior.slots[i].SetColor( c );
 				}
 			}
-			if( inte.workerSlots != null )
+			if( interior.workerSlots != null )
 			{
-				for( int i = 0; i < inte.workerSlots.Length; i++ )
+				for( int i = 0; i < interior.workerSlots.Length; i++ )
 				{
-					inte.workerSlots[i].SetColor( c );
+					interior.workerSlots[i].SetColor( c );
 				}
 			}
 		}

@@ -100,7 +100,7 @@ namespace SS.AI.Goals
 
 			if( this.oldDestination != currDestPos )
 			{
-				this.navMeshAgent.SetDestination( currDestPos );
+				this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 			}
 
 			if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )

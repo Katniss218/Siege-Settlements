@@ -128,7 +128,7 @@ namespace SS.AI.Goals
 
 				if( this.oldDestination != currDestPos )
 				{
-					this.navMeshAgent.SetDestination( currDestPos );
+					this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 				}
 
 
@@ -147,7 +147,7 @@ namespace SS.AI.Goals
 				
 				if( this.oldDestination != currDestPos )
 				{
-					this.navMeshAgent.SetDestination( currDestPos );
+					this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 				}
 				
 				currDestPos = this.destinationInterior.EntranceWorldPosition();

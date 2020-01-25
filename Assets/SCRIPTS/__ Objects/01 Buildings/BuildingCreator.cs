@@ -281,6 +281,17 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.AssignModules( building, def );
 
+			InventoryModule[] inventory = building.GetModules<InventoryModule>();
+			if( inventory.Length == 0 )
+			{
+				hud.GetComponent<HUDInventory>()?.Destroy();
+			}
+			InteriorModule[] interior = building.GetModules<InteriorModule>();
+			if( interior.Length == 0 )
+			{
+				hud.GetComponent<HUDInterior>()?.Destroy();
+			}
+
 			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
 
 			return gameObject;

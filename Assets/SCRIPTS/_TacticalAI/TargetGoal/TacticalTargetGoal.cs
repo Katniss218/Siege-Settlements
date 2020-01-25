@@ -98,7 +98,7 @@ namespace SS.AI.Goals
 
 							if( this.oldDestination != currDestPos )
 							{
-								this.navMeshAgent.SetDestination( currDestPos );
+								this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 							}
 
 							this.oldDestination = currDestPos;
@@ -116,7 +116,7 @@ namespace SS.AI.Goals
 
 						if( this.oldDestination != currDestPos )
 						{
-							this.navMeshAgent.SetDestination( currDestPos );
+							this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 						}
 
 						this.oldDestination = currDestPos;

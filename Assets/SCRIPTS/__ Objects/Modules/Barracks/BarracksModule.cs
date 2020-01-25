@@ -45,14 +45,23 @@ namespace SS.Objects.Modules
 		public UnitDefinition trainedUnit { get; private set; }
 
 		/// <summary>
-		/// Contains the local-space position, the units move towards, after creation.
+		/// Contains the world-space position, the units move towards, after creation.
 		/// </summary>
-		public Vector3 rallyPoint { get; set; }
+		public Vector3? rallyPoint { get; set; }
+
+		public Vector3 GetRallyPoint()
+		{
+			if( this.rallyPoint == null )
+			{
+				return this.transform.position;
+			}
+			return this.rallyPoint.Value;
+		}
 		
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
-		private float trainProgressRemaining = 0.0f;
+		private float buildTimeRemaining = 0.0f;
 
 		private Vector3 spawnPosition = Vector3.zero;
 
@@ -153,7 +162,7 @@ namespace SS.Objects.Modules
 			}
 
 			this.trainedUnit = def;
-			this.trainProgressRemaining = def.buildTime;
+			this.buildTimeRemaining = def.buildTime;
 
 			this.resourcesRemaining = new Dictionary<string, int>( this.trainedUnit.cost );
 			this.TrainingBegin_UI();
@@ -162,9 +171,9 @@ namespace SS.Objects.Modules
 
 		private void ProgressTraining()
 		{
-			this.trainProgressRemaining -= this.trainSpeed * Time.deltaTime;
+			this.buildTimeRemaining -= this.trainSpeed * Time.deltaTime;
 
-			if( this.trainProgressRemaining <= 0 )
+			if( this.buildTimeRemaining <= 0 )
 			{
 				this.EndTraining( true );
 			}
@@ -185,19 +194,17 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = spawnPos;
 			data.rotation = Quaternion.identity;
-			data.factionId = (this.ssObject as IFactionMember).factionId;
+			data.factionId = ((IFactionMember)this.ssObject).factionId;
 			data.population = PopulationSize.x4;
 
 			GameObject obj = UnitCreator.Create( this.trainedUnit, data.guid );
 			UnitCreator.SetData( obj, data );
 			
 			// Move the newly spawned unit to the rally position.
-			Vector3 rallyPointWorld = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
-
 			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
 			goal.isHostile = false;
-			goal.SetDestination( rallyPointWorld );
+			goal.SetDestination( this.GetRallyPoint() );
 			goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 		}
 
@@ -214,7 +221,7 @@ namespace SS.Objects.Modules
 			}
 
 			this.trainedUnit = null;
-			this.trainProgressRemaining = 0.0f;
+			this.buildTimeRemaining = 0.0f;
 			this.resourcesRemaining = null;
 			this.TrainingEnd_UI();
 			this.onTrainingEnd?.Invoke();
@@ -242,7 +249,7 @@ namespace SS.Objects.Modules
 			{
 				data.trainedUnitId = this.trainedUnit.id;
 			}
-			data.trainProgress = this.trainProgressRemaining;
+			data.buildTimeRemaining = this.buildTimeRemaining;
 			data.rallyPoint = this.rallyPoint;
 
 			return data;
@@ -268,7 +275,7 @@ namespace SS.Objects.Modules
 			{
 				this.trainedUnit = DefinitionManager.GetUnit( data.trainedUnitId );
 			}
-			this.trainProgressRemaining = data.trainProgress;
+			this.buildTimeRemaining = data.buildTimeRemaining;
 			this.rallyPoint = data.rallyPoint;
 		}
 
@@ -423,7 +430,7 @@ namespace SS.Objects.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgressRemaining + " s." );
+				UIUtils.EditText( statusUI.gameObject, "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.buildTimeRemaining + " s." );
 			}
 		}
 		
@@ -467,7 +474,7 @@ namespace SS.Objects.Modules
 			{
 				if( this.trainedUnit != null )
 				{
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 137.5f, 0.0f ), new Vector2( -325.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.trainProgressRemaining + " s." );
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 137.5f, 0.0f ), new Vector2( -325.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.buildTimeRemaining + " s." );
 					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 
 					ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
@@ -505,7 +512,7 @@ namespace SS.Objects.Modules
 			MeshFilter mf = rally.AddComponent<MeshFilter>();
 			mf.mesh = AssetManager.GetMesh( AssetManager.EXTERN_ASSET_ID + "Models/barracks_rally_point.ksm" );
 
-			rally.transform.position = barracks.transform.localToWorldMatrix.MultiplyPoint( barracks.rallyPoint );
+			rally.transform.position = barracks.GetRallyPoint();
 
 			MeshRenderer mr = rally.AddComponent<MeshRenderer>();
 
@@ -545,9 +552,8 @@ namespace SS.Objects.Modules
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.TERRAIN_MASK ) )
 			{
-				Vector3 localRallyPoint = this.transform.worldToLocalMatrix.MultiplyPoint( hitInfo.point );
-				this.rallyPoint = localRallyPoint;
-				rallyPointGameObject.transform.position = this.transform.localToWorldMatrix.MultiplyPoint( this.rallyPoint );
+				this.rallyPoint = hitInfo.point;
+				rallyPointGameObject.transform.position = hitInfo.point;
 			}
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // One-shot
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear complement cancel (can't cancel something that's done).
@@ -576,11 +582,11 @@ namespace SS.Objects.Modules
 			Gizmos.color = Color.blue;
 
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
-			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
+			Vector3 spawnPos = toWorld.MultiplyPoint( this.spawnPosition );
 
 			Gizmos.DrawSphere( spawnPos, 0.1f );
 
-			Vector3 rallyPos = toWorld.MultiplyVector( this.rallyPoint ) + this.transform.position;
+			Vector3 rallyPos = this.GetRallyPoint();
 
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawSphere( rallyPos, 0.15f );

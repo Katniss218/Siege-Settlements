@@ -6,7 +6,7 @@ namespace Katniss.Utils
 	public class BallisticSolver
 	{
 		// Checks if the number is near zero.
-		private static bool IsNearZero( double val )
+		private static bool IsApproximatelyZero( double val )
 		{
 			const double epsilon = 1e-9;
 			return val > -epsilon && val < epsilon;
@@ -26,7 +26,7 @@ namespace Katniss.Utils
 
 			double Delta = p * p - q;
 
-			if( IsNearZero( Delta ) )
+			if( IsApproximatelyZero( Delta ) )
 			{
 				solution0 = -p;
 				return 1;
@@ -70,9 +70,9 @@ namespace Katniss.Utils
 			double cbp = p * p * p;
 			double Delta = q * q + cbp;
 
-			if( IsNearZero( Delta ) )
+			if( IsApproximatelyZero( Delta ) )
 			{
-				if( IsNearZero( q ) ) // one triple solution
+				if( IsApproximatelyZero( q ) ) // one triple solution
 				{
 					solution0 = 0;
 					solutionCount = 1;
@@ -147,11 +147,11 @@ namespace Katniss.Utils
 
 			//  substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
 			double sqA = A * A;
-			double p = -3.0 / 8 * sqA + B;
-			double q = 1.0 / 8 * sqA * A - 1.0 / 2 * A * B + C;
-			double r = -3.0 / 256 * sqA * sqA + 1.0 / 16 * sqA * B - 1.0 / 4 * A * C + D;
+			double p = -3.0 / 8.0 * sqA + B;
+			double q = 1.0 / 8.0 * sqA * A - 1.0 / 2.0 * A * B + C;
+			double r = -3.0 / 256.0 * sqA * sqA + 1.0 / 16.0 * sqA * B - 1.0 / 4.0 * A * C + D;
 
-			if( IsNearZero( r ) )
+			if( IsApproximatelyZero( r ) )
 			{
 				// no absolute term: y(y^3 + py + q) = 0
 
@@ -165,10 +165,10 @@ namespace Katniss.Utils
 			else
 			{
 				// solve the resolvent cubic ...
-				coeffs[3] = 1.0 / 2 * r * p - 1.0 / 8 * q * q;
+				coeffs[3] = 1.0 / 2.0 * r * p - 1.0 / 8.0 * q * q;
 				coeffs[2] = -r;
-				coeffs[1] = -1.0 / 2 * p;
-				coeffs[0] = 1;
+				coeffs[1] = -1.0 / 2.0 * p;
+				coeffs[0] = 1.0;
 
 				SolveCubic( coeffs[0], coeffs[1], coeffs[2], coeffs[3], out solution0, out solution1, out solution2 );
 
@@ -179,11 +179,11 @@ namespace Katniss.Utils
 				double u = z * z - r;
 				double v = 2 * z - p;
 
-				if( IsNearZero( u ) )
+				if( IsApproximatelyZero( u ) )
 				{
-					u = 0;
+					u = 0.0;
 				}
-				else if( u > 0 )
+				else if( u > 0.0 )
 				{
 					u = Math.Sqrt( u );
 				}
@@ -192,11 +192,11 @@ namespace Katniss.Utils
 					return 0;
 				}
 
-				if( IsNearZero( v ) )
+				if( IsApproximatelyZero( v ) )
 				{
-					v = 0;
+					v = 0.0;
 				}
-				else if( v > 0 )
+				else if( v > 0.0 )
 				{
 					v = Math.Sqrt( v );
 				}
@@ -206,14 +206,14 @@ namespace Katniss.Utils
 				}
 
 				coeffs[2] = z - u;
-				coeffs[1] = q < 0 ? -v : v;
+				coeffs[1] = q < 0.0 ? -v : v;
 				coeffs[0] = 1;
 
 				solutionCount = SolveQuadratic( coeffs[0], coeffs[1], coeffs[2], out solution0, out solution1 );
 
 				coeffs[2] = z + u;
-				coeffs[1] = q < 0 ? v : -v;
-				coeffs[0] = 1;
+				coeffs[1] = q < 0.0 ? v : -v;
+				coeffs[0] = 1.0;
 
 				if( solutionCount == 0 )
 				{
@@ -232,7 +232,7 @@ namespace Katniss.Utils
 			}
 
 			// resubstitute
-			double sub = 1.0 / 4 * A;
+			double sub = 1.0 / 4.0 * A;
 
 			if( solutionCount > 0 )
 			{
