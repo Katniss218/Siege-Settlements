@@ -865,32 +865,32 @@
 				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/Units/formation_1x.ksm";
+				Mesh = "extern:Models/Units/ballista_body.ksm";
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "builtin:Textures/pixel_black";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
+					ColorMap = "extern:Textures/Units/ballista_color.png";
+					NormalMap = "extern:Textures/Units/ballista_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
+					MetallicMap = "extern:Textures/Units/ballista_metallic.png";
+					SmoothnessMap = "extern:Textures/Units/ballista_smoothness.png";
 				};
 			},
 			{
 				TypeId = "MESH";
 				SubObjectId = "00000000-0000-0000-0002-000000000000";
-				LocalPosition = { X = 0.0; Y = 0.15; Z = 0.0; };
+				LocalPosition = { X = 0.0; Y = 0.09; Z = 0.0; };
 				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
 				
-				Mesh = "extern:Models/ballista_elem.ksm";
+				Mesh = "extern:Models/Units/ballista.ksm";
 				Material =
 				{
 					MaterialType = 5; // 5 -> 'Faction Colored (Destroyable)'
-					ColorMap = "extern:Textures/Units/bowmen_color.png";
-					NormalMap = "extern:Textures/Units/unit_normal.png";
+					ColorMap = "extern:Textures/Units/ballista_color.png";
+					NormalMap = "extern:Textures/Units/ballista_normal.png";
 					EmissionMap = "builtin:Textures/pixel_black";
-					MetallicMap = "builtin:Textures/pixel_black";
-					SmoothnessMap = "builtin:Textures/pixel_black";
+					MetallicMap = "extern:Textures/Units/ballista_metallic.png";
+					SmoothnessMap = "extern:Textures/Units/ballista_smoothness.png";
 				};
 			}
 		];
