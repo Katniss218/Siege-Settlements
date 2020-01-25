@@ -55,16 +55,6 @@ namespace SS.Objects.Modules
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, () =>
 					{
-						// Block building if the player has not enough resources.
-						foreach( var kvp in buildingDef.cost )
-						{
-							if( kvp.Value > LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[kvp.Key] )
-							{
-								Debug.Log( "Can't build - not enough resources." );
-								return;
-							}
-						}
-
 						if( BuildPreview.isActive )
 						{
 							BuildPreview.Switch( buildingDef );
