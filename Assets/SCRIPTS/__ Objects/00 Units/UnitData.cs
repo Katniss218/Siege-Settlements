@@ -130,7 +130,6 @@ namespace SS.Levels.SaveStates
 
 			if( serializer.Analyze( "Workplace" ).isSuccess )
 			{
-#warning kff reading object-module tuples abstracted away & just call a method in the extensions.
 				Guid insideObj = serializer.ReadGuid( "Workplace.ObjectGuid" );
 				Guid insideMod = serializer.ReadGuid( "Workplace.ModuleId" );
 				int slotIndex = serializer.ReadInt( "Workplace.SlotIndex" );

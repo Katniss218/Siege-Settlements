@@ -143,6 +143,7 @@
     <Compile Include="Assets\SCRIPTS\UI\GenericUIData.cs" />
     <Compile Include="Assets\SCRIPTS\UI\HUD\HUD.cs" />
     <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInterior.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInteriorSlot.cs" />
     <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInventory.cs" />
     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />

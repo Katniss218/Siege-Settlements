@@ -85,7 +85,11 @@ namespace SS
 
 			for( int i = 0; i < groups[index].Count; i++ )
 			{
-				((IHUDHolder)groups[index]).hud.SetSelectionGroup( null );
+				if( groups[index][i] == null )
+				{
+					continue;
+				}
+				((IHUDHolder)groups[index][i]).hud.SetSelectionGroup( null );
 			}
 			groups[index].Clear();
 			groups[index].AddRange( objects );

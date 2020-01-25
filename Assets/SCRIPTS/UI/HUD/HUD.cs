@@ -23,7 +23,7 @@ namespace SS.UI
 		/// The list of Image components that are affected by faction color.
 		/// </summary>
 		[SerializeField] Image[] colored = null;
-
+		
 		/// <summary>
 		/// The Image component that displays current health percent.
 		/// </summary>
@@ -151,6 +151,11 @@ namespace SS.UI
 		//
 
 
+		void Start()
+		{
+			
+		}
+
 		void Update()
 		{
 			// Move the HUD to the containing object.
@@ -194,6 +199,28 @@ namespace SS.UI
 			for( int i = 0; i < colored.Length; i++ )
 			{
 				colored[i].color = c;
+			}
+
+			HUDInterior inte = this.GetComponent<HUDInterior>();
+			
+#warning slots should be colored also when they are set (might be set separately from faction change, and would be stuck on white).
+			if( inte == null )
+			{
+				return;
+			}
+			if( inte.slots != null )
+			{
+				for( int i = 0; i < inte.slots.Length; i++ )
+				{
+					inte.slots[i].SetColor( c );
+				}
+			}
+			if( inte.workerSlots != null )
+			{
+				for( int i = 0; i < inte.workerSlots.Length; i++ )
+				{
+					inte.workerSlots[i].SetColor( c );
+				}
 			}
 		}
 

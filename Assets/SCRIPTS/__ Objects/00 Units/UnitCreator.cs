@@ -178,6 +178,20 @@ namespace SS.Objects.Units
 			{
 				unit.hud.SetHealthBarFill( unit.healthPercent );
 
+				if( unit.isInside )
+				{
+					HUDInteriorSlot slotHud = null;
+					if( unit.slotType == InteriorModule.SlotType.Generic )
+					{
+						slotHud = unit.interior.hudInterior.slots[unit.slotIndex];
+					}
+					else if( unit.slotType == InteriorModule.SlotType.Worker )
+					{
+						slotHud = unit.interior.hudInterior.workerSlots[unit.slotIndex];
+					}
+					slotHud.SetHealth( unit.healthPercent );
+				}
+
 				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
 				for( int i = 0; i < meshes.Length; i++ )
 				{

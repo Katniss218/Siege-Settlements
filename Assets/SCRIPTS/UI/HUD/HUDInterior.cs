@@ -1,40 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SS.Content;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SS.UI
 {
 	public class HUDInterior : MonoBehaviour
 	{
-		public class Element
-		{
-			Image icon;
-
-			public Element( Image icon )
-			{
-				this.icon = icon;
-			}
-
-			public void SetSprite( Sprite s )
-			{
-				icon.sprite = s;
-				icon.gameObject.SetActive( true );
-				icon.rectTransform.sizeDelta = s.rect.size / 2.0f;
-			}
-
-			public void SetVisible( bool f )
-			{
-				icon.color = f ? Color.white : new Color( 0.4f, 0.4f, 0.4f, 0.7f );
-			}
-
-			public void ClearSprite()
-			{
-				icon.sprite = null;
-				icon.gameObject.SetActive( false );
-			}
-		}
-
 		[SerializeField] private Sprite upper1 = null;
 		[SerializeField] private Sprite upper2 = null;
 		[SerializeField] private Sprite upper3 = null;
@@ -45,11 +15,9 @@ namespace SS.UI
 
 		[SerializeField] private Transform upperContainer = null;
 		[SerializeField] private Transform lowerContainer = null;
-
-		[SerializeField] private Vector2 spriteCenterOffset = Vector2.zero;
-
-		public Element[] slots { get; private set; }
-		public Element[] workerSlots { get; private set; }
+		
+		public HUDInteriorSlot[] slots { get; private set; }
+		public HUDInteriorSlot[] workerSlots { get; private set; }
 
 
 		private Sprite GetSpriteUpper( int index, int rowLimit )
@@ -78,83 +46,39 @@ namespace SS.UI
 			return lower3;
 		}
 
-		private Image SpawnLower( int index )
+		private HUDInteriorSlot SpawnLower( int index )
 		{
-			GameObject go = new GameObject( "lower - " + index );
-			RectTransform t = go.AddComponent<RectTransform>();
-			t.SetParent( this.lowerContainer );
+			GameObject go = Object.Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/slot" ), this.lowerContainer );
 
-			Image image = go.AddComponent<Image>();
-			image.sprite = GetSpriteLower( index, 6 );
-
-			Mask mask = go.AddComponent<Mask>();
-
-			t.position = Vector3.zero;
-
-			GameObject icon = new GameObject( "ICON" );
-			RectTransform t2 = icon.AddComponent<RectTransform>();
-			t2.SetParent( t );
-			t.localPosition = this.spriteCenterOffset;
-
-			Image image2 = icon.AddComponent<Image>();
-			icon.SetActive( false );
-
-			return image2;
+			HUDInteriorSlot slot = go.GetComponent<HUDInteriorSlot>();
+			slot.background.sprite = GetSpriteLower( index, 6 );
+			
+			return slot;
 		}
 
-		private Image SpawnUpper( int index )
+		private HUDInteriorSlot SpawnUpper( int index )
 		{
-			GameObject go = new GameObject( "upper - " + index );
-			RectTransform t = go.AddComponent<RectTransform>();
-			t.SetParent( this.upperContainer );
+			GameObject go = Object.Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/slot" ), this.upperContainer );
 
-			Image image = go.AddComponent<Image>();
-			image.sprite = GetSpriteUpper( index, 6 );
-
-			Mask mask = go.AddComponent<Mask>();
-
-			t.position = Vector3.zero;
-
-			GameObject icon = new GameObject( "ICON" );
-			RectTransform t2 = icon.AddComponent<RectTransform>();
-			t2.SetParent( t );
-			t.localPosition = this.spriteCenterOffset;
-
-			Image image2 = icon.AddComponent<Image>();
-			icon.SetActive( false );
-
-			return image2;
+			HUDInteriorSlot slot = go.GetComponent<HUDInteriorSlot>();
+			slot.background.sprite = GetSpriteUpper( index, 6 );
+			
+			return slot;
 		}
-		/*
-		public Element GetSlotAny( int slotIndex )
-		{
-			if( slotIndex < this.slots.Length )
-			{
-				return this.slots[slotIndex];
-			}
-			if( slotIndex < this.slots.Length + this.workerSlots.Length )
-			{
-				return this.workerSlots[slotIndex - this.slots.Length];
-			}
-			return null;
-		}
-		*/
+		
 		public void SetSlotCount( int slots, int workerSlots )
 		{
-			this.slots = new Element[slots];
-			this.workerSlots = new Element[workerSlots];
+			this.slots = new HUDInteriorSlot[slots];
+			this.workerSlots = new HUDInteriorSlot[workerSlots];
 
 			for( int i = 0; i < workerSlots; i++ )
 			{
-				Image icon = SpawnUpper( i );
-				this.workerSlots[i] = new Element( icon );
+				this.workerSlots[i] = SpawnUpper( i );
 			}
 			for( int i = 0; i < slots; i++ )
 			{
-				Image icon = SpawnLower( i );
-				this.slots[i] = new Element( icon );
+				this.slots[i] = SpawnLower( i );
 			}
-			// worker slots on top, rest on bottom, one after another.
 		}
 	}
 }

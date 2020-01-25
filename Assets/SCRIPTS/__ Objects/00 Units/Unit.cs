@@ -374,7 +374,7 @@ namespace SS.Objects.Units
 			// - Interior fields
 
 			InteriorModule.Slot slot = null;
-			HUDInterior.Element slotHud = null;
+			HUDInteriorSlot slotHud = null;
 			if( slotType == InteriorModule.SlotType.Generic )
 			{
 				slot = interior.slots[slotIndex];
@@ -386,6 +386,7 @@ namespace SS.Objects.Units
 				slotHud = interior.hudInterior.workerSlots[slotIndex];
 			}
 			slot.objInside = this;
+			slotHud.SetHealth( this.healthPercent );
 			if( slotType == InteriorModule.SlotType.Worker )
 			{
 				slotHud.SetVisible( true );
@@ -433,18 +434,19 @@ namespace SS.Objects.Units
 			// - Interior fields.
 
 			InteriorModule.Slot slot = null;
-			HUDInterior.Element slotHud = null;
+			HUDInteriorSlot slotHud = null;
 			if( this.slotType == InteriorModule.SlotType.Generic )
 			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
+				slot = interior.slots[this.slotIndex];
+				slotHud = interior.hudInterior.slots[this.slotIndex];
 			}
 			else if( this.slotType == InteriorModule.SlotType.Worker )
 			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
+				slot = interior.workerSlots[this.slotIndex];
+				slotHud = interior.hudInterior.workerSlots[this.slotIndex];
 			}
 			slot.objInside = null;
+			slotHud.SetHealth( null );
 			if( this.slotType == InteriorModule.SlotType.Worker )
 			{
 				slotHud.SetVisible( false );
