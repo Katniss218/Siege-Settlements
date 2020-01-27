@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SS.Objects.Units;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace SS.UI
@@ -10,6 +11,12 @@ namespace SS.UI
 		[SerializeField] private Image healthBar = null;
 
 		public Image background = null;
+		
+
+		//
+		//
+		//
+
 
 		public void SetHealth( float? percent )
 		{

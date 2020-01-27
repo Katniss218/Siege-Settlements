@@ -235,7 +235,7 @@ namespace SS
 						continue;
 					}
 
-					Unit.Split( u, null );
+					PopulationUnitUtils.Split( u, null );
 
 					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), u.transform.position );
 				}

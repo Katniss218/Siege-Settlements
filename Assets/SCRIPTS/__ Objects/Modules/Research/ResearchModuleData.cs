@@ -10,33 +10,38 @@ namespace SS.Levels.SaveStates
 	/// </summary>
 	public class ResearchModuleData : ModuleData
 	{
-		public string researchedTechnologyId { get; set; }
-		public float researchProgress { get; set; }
+		public string[] queuedTechnologies { get; set; }
+		public float researchTimeRemaining { get; set; }
 		public Dictionary<string, int> resourcesRemaining { get; set; }
 
 
 		public ResearchModuleData()
 		{
-			this.researchedTechnologyId = "";
-			this.researchProgress = 0.0f;
 			this.resourcesRemaining = new Dictionary<string, int>();
 		}
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			try
+			if( serializer.Analyze( "ResearchedTechnologies" ).isSuccess )
 			{
-				this.researchedTechnologyId = serializer.ReadString( "ResearchedTechnologyId" );
+				try
+				{
+					this.queuedTechnologies = serializer.ReadStringArray( "ResearchedTechnologies" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'ResearchedTechnologies' (" + serializer.file.fileName + ")." );
+				}
 			}
-			catch
+			else
 			{
-				throw new Exception( "Missing or invalid value of 'ResearchedTechnologyId' (" + serializer.file.fileName + ")." );
+				this.queuedTechnologies = null;
 			}
 
 			try
 			{
-				this.researchProgress = serializer.ReadFloat( "ResearchProgress" );
+				this.researchTimeRemaining = serializer.ReadFloat( "ResearchProgress" );
 			}
 			catch
 			{
@@ -65,8 +70,8 @@ namespace SS.Levels.SaveStates
 
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "ResearchedTechnologyId", this.researchedTechnologyId );
-			serializer.WriteFloat( "", "ResearchProgress", this.researchProgress );
+			serializer.WriteStringArray( "", "ResearchedTechnologies", this.queuedTechnologies );
+			serializer.WriteFloat( "", "ResearchProgress", this.researchTimeRemaining );
 
 			if( resourcesRemaining != null )
 			{

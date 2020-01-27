@@ -1,18 +1,37 @@
 ﻿using SS.AI;
 using SS.AI.Goals;
+using SS.Content;
 using SS.Levels;
 using SS.Objects.Buildings;
 using SS.Objects.Modules;
 using SS.ResourceSystem.Payment;
+using SS.UI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace SS.Objects.Units
 {
+	[RequireComponent( typeof( Unit ) )]
 	public class CivilianUnitExtension : MonoBehaviour
 	{
+		private static int avoidancePriorityIncremented = 10;
+		/// <summary>
+		/// Returns a value for the avoidance priority (helps prevent units blocking each other in tight spaces - they'll just push the troublesome unit aside).
+		/// </summary>
+		public static int GetNextAvPriority( bool employed )
+		{
+			// 10 - 49, 50 - 89
+			avoidancePriorityIncremented++;
+			if( avoidancePriorityIncremented == 50 )
+			{
+				avoidancePriorityIncremented = 10;
+			}
+			return employed ? avoidancePriorityIncremented + 40 : avoidancePriorityIncremented;
+		}
+
 		private Unit __unit = null;
 		public Unit unit
 		{
@@ -26,7 +45,7 @@ namespace SS.Objects.Units
 			}
 		}
 
-		
+
 		public bool isEmployed
 		{
 			get
@@ -41,7 +60,7 @@ namespace SS.Objects.Units
 		public WorkplaceModule workplace { get; set; } = null;
 		public int workplaceSlotId { get; set; }
 		public bool isWorking { get; set; }
-		
+
 
 		private InteriorModule GetClosestInteriorBuilding()
 		{
@@ -66,7 +85,7 @@ namespace SS.Objects.Units
 				{
 					continue;
 				}
-				
+
 				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.unit ) == null )
 				{
 					continue;
@@ -111,18 +130,13 @@ namespace SS.Objects.Units
 		}
 
 		IPaymentReceiver automaticDutyReceiver;
-
-		public const int TAG_MAKING_SPACE = 75;
-		public const int TAG_GOING_TO_PICKUP = 76;
-		public const int TAG_GOING_TO_PAY = 77;
-
-
+			   
 		public UnityEvent onAutomaticDutyToggle { get; private set; } = new UnityEvent();
 		public UnityEvent onEmploy { get; private set; } = new UnityEvent();
 		public UnityEvent onUnemploy { get; private set; } = new UnityEvent();
 
 		InventoryModule selfInventory = null;
-
+		
 		private void Start()
 		{
 			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
@@ -130,8 +144,74 @@ namespace SS.Objects.Units
 			{
 				this.selfInventory = inventories[0];
 			}
+
+			this.onAutomaticDutyToggle.AddListener( () =>
+			{
+				if( !Selection.IsDisplayed( this.unit ) )
+				{
+					return;
+				}
+
+				Transform t = ActionPanel.instance.GetActionButton( "civilian.autoduty" );
+				if( this.isOnAutomaticDuty )
+				{
+					t.GetComponent<Image>().sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" );
+				}
+				else
+				{
+					t.GetComponent<Image>().sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autoduty" );
+				}
+			} );
+
+			this.onEmploy.AddListener( () =>
+			{
+				if( !Selection.IsDisplayed( this.unit ) )
+				{
+					return;
+				}
+
+				ActionPanel.instance.Clear( "civilian.autoduty" );
+				ActionPanel.instance.Clear( "civilian.employ" );
+				UnitDisplayManager.CreateUnemployButton( this );
+				ActionPanel.instance.Clear( "unit.ap.pickup" );
+				ActionPanel.instance.Clear( "unit.ap.dropoff" );
+			} );
+
+			this.onUnemploy.AddListener( () =>
+			{
+				if( !Selection.IsDisplayed( this.unit ) )
+				{
+					return;
+				}
+
+				ActionPanel.instance.Clear( "civilian.unemploy" );
+				UnitDisplayManager.CreateAutodutyButton( this );
+				UnitDisplayManager.CreateEmployButton( this );
+				UnitDisplayManager.CreateQueryButtons();
+			} );
 		}
-		
+
+
+
+
+
+
+
+		//
+		//
+		//
+
+
+
+
+
+
+
+
+		public const int TAG_MAKING_SPACE = 75;
+		public const int TAG_GOING_TO_PICKUP = 76;
+		public const int TAG_GOING_TO_PAY = 77;
+
 		void UpdateAutomaticDuty()
 		{
 			if( this.selfInventory == null )
@@ -150,10 +230,7 @@ namespace SS.Objects.Units
 
 			if( goalController.goalTag == TAG_GOING_TO_PICKUP )
 			{
-				//if( !selfInventory.isFull )
-				//{
 				return;
-				//}
 			}
 
 			if( goalController.goalTag == TAG_GOING_TO_PAY )
@@ -166,9 +243,9 @@ namespace SS.Objects.Units
 				return;
 			}
 
-			
 
-			
+
+
 			if( this.selfInventory.isEmpty )
 			{
 				if( this.automaticDutyReceiver != null )
@@ -210,10 +287,10 @@ namespace SS.Objects.Units
 					if( !foundInventory ) // else - can't pick up any of the wanted resources.
 					{
 						// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-						IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId, 
+						IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
 							LevelDataManager.factionData[this.unit.factionId].GetResourcesStored().ToArray()
 						);
-						
+
 						this.automaticDutyReceiver = receiver; // if null, will be set to null.
 					}
 				}
@@ -305,47 +382,13 @@ namespace SS.Objects.Units
 					}
 				}
 			}
-			// IF going to storage to pick up resources
-			// - if has enough of this resource in inventory (receiver wants less or equal to how much this civilian has).
-			// - - return
-
-			// IF going to payment receiver
-			// - return
-
-
-			// IF doesn't carry resources
-			// - IF has receiver
-			// - - if any of required resources can be picked up from storage (needs cache of all available resources per faction)
-			// - - - PICK_UP (any of the type wanted).
-			// - - else
-			// - - - find new receiver using resources that can be found (needs cache of all available resources per faction).
-			// - ELSE (no receiver)
-			// - - find any receiver, using resources that can be found (needs cache of all available resources per faction).
-			// ELSE (carries res)
-			// - IF has receiver
-			// - - if receiver wants resources
-			// - - - MAKE_PAYMENT
-			// - ELSE (no receiver)
-			// - - find receiver wanting any of the carried resources.
-
-			// if has receiver & resources - go pay.
 		}
 
 		public const int TAG_GOING_TO_HOUSE = -20;
 		public const int TAG_GOING_TO_WORKPLACE = -21;
 
-		void Update()
+		private void UpdateWorkerSchedule()
 		{
-			if( !this.isEmployed )
-			{
-				if( isOnAutomaticDuty )
-				{
-					UpdateAutomaticDuty();
-				}
-
-				return;
-			}
-
 			TacticalGoalController controller = this.GetComponent<TacticalGoalController>();
 
 			// If workplace is damaged - stop working, go home.
@@ -365,7 +408,7 @@ namespace SS.Objects.Units
 
 				return;
 			}
-			
+
 			if( !DaylightCycleController.instance.IsWorkTime() )
 			{
 				// Unit tries to find nearest unoccupied house. If the house gets occupied, it finds next nearest suitable (unoccupied) house.
@@ -407,7 +450,7 @@ namespace SS.Objects.Units
 				{
 					return;
 				}
-				
+
 				if( this.unit.interior == this.workplace.interior && this.unit.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
 				{
 					this.isWorking = true;
@@ -417,6 +460,22 @@ namespace SS.Objects.Units
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.SetDestination( this.workplace.interior, InteriorModule.SlotType.Worker );
 					controller.SetGoals( TAG_GOING_TO_WORKPLACE, goal );
+				}
+			}
+		}
+
+
+		void Update()
+		{
+			if( this.isEmployed )
+			{
+				this.UpdateWorkerSchedule();
+			}
+			else
+			{
+				if( this.isOnAutomaticDuty )
+				{
+					this.UpdateAutomaticDuty();
 				}
 			}
 		}

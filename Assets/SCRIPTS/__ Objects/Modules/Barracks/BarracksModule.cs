@@ -15,6 +15,7 @@ using Object = UnityEngine.Object;
 using SS.InputSystem;
 using SS.AI.Goals;
 using SS.AI;
+using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {
@@ -29,7 +30,7 @@ namespace SS.Objects.Modules
 		public UnityEvent onTrainingEnd = new UnityEvent();
 
 		public UnityEvent onPaymentReceived { get; private set; } = new UnityEvent();
-		
+
 		/// <summary>
 		/// Contains every unit that can be created in the barracks.
 		/// </summary>
@@ -40,9 +41,8 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public float trainSpeed { get; set; } = 1.0f;
 
-		
 
-		public UnitDefinition trainedUnit { get; private set; }
+
 
 		/// <summary>
 		/// Contains the world-space position, the units move towards, after creation.
@@ -57,7 +57,9 @@ namespace SS.Objects.Modules
 			}
 			return this.rallyPoint.Value;
 		}
-		
+
+
+		private List<UnitDefinition> queuedUnits = new List<UnitDefinition>();
 
 		private Dictionary<string, int> resourcesRemaining = new Dictionary<string, int>();
 
@@ -66,34 +68,6 @@ namespace SS.Objects.Modules
 		private Vector3 spawnPosition = Vector3.zero;
 
 		private GameObject rallyPointGameObject = null;
-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
-
-		void Awake()
-		{
-			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
-		}
-		
-		void Update()
-		{
-			if( this.IsPaymentDone() )
-			{
-				if( this.trainedUnit == null )
-				{
-					return;
-				}
-				this.ProgressTraining();
-			}
-		}
-
-		void OnDestroy()
-		{
-			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechStateChanged );
-		}
-
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
@@ -115,14 +89,14 @@ namespace SS.Objects.Modules
 			}
 			return true;
 		}
-		
+
 		public void ReceivePayment( string id, int amount )
 		{
 			if( this.resourcesRemaining == null )
 			{
-				Debug.LogWarning( "The payment of " + amount + "x '" + id + "' was not wanted." );
-				return;
+				throw new Exception( "Unwanted payment was received." );
 			}
+
 			if( this.resourcesRemaining.ContainsKey( id ) )
 			{
 				this.resourcesRemaining[id] -= amount;
@@ -152,44 +126,89 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+		//
+		//
+		//
 
-
-		public void BeginTraining( UnitDefinition def )
+		/// <summary>
+		/// Adds the specified unit to the training queue & updates everything accordingly.
+		/// </summary>
+		public void Enqueue( UnitDefinition unit )
 		{
-			if( this.trainedUnit != null )
+			this.queuedUnits.Add( unit );
+			this.RefreshQueue_UI();
+
+			if( this.queuedUnits.Count == 1 ) // if the object is the first one, begin training it.
 			{
-				throw new Exception( "You can't start training unit, when another one is already being trained." );
+				this.BeginTraining();
+			}
+		}
+
+		/// <summary>
+		/// Removes the unit from the training queue & updates everything accordingly.
+		/// </summary>
+		public void Dequeue( bool spawn, int index = 0 )
+		{
+			// Prevent dequeuing when the queue is empty.
+			if( index >= this.queuedUnits.Count )
+			{
+				return;
 			}
 
-			this.trainedUnit = def;
-			this.buildTimeRemaining = def.buildTime;
+			if( index == 0 )
+			{
+				this.EndTraining( spawn );
+			}
 
-			this.resourcesRemaining = new Dictionary<string, int>( this.trainedUnit.cost );
+			this.queuedUnits.RemoveAt( index );
+			this.RefreshQueue_UI();
+
+			if( index == 0 && this.queuedUnits.Count > 0 ) // if the training can continue.
+			{
+				this.BeginTraining();
+			}
+		}
+		
+
+		private void BeginTraining()
+		{
+			if( this.queuedUnits.Count == 0 )
+			{
+				throw new Exception( "Tried to begin training with an empty queue." );
+			}
+			
+			this.buildTimeRemaining = this.queuedUnits[0].buildTime;
+			this.resourcesRemaining = new Dictionary<string, int>( this.queuedUnits[0].cost );
 			this.TrainingBegin_UI();
 			this.onTrainingBegin?.Invoke();
 		}
-
-		private void ProgressTraining()
+		
+		private void EndTraining( bool spawn )
 		{
-			this.buildTimeRemaining -= this.trainSpeed * Time.deltaTime;
+			if( this.queuedUnits.Count == 0 )
+			{
+				throw new Exception( "Tried to end training with an empty queue." );
+			}
 
-			if( this.buildTimeRemaining <= 0 )
+			UnitDefinition unit = this.queuedUnits[0];
+			if( spawn )
 			{
-				this.EndTraining( true );
+				this.Spawn( unit );
 			}
-			else
-			{
-				this.TrainingProgress_UI();
-				this.onTrainingProgress?.Invoke();
-			}
+			
+			this.buildTimeRemaining = 0.0f;
+			this.resourcesRemaining = null;
+			this.TrainingEnd_UI();
+			this.onTrainingEnd?.Invoke();
 		}
+	
 
-		private void SpawnTrainedUnit()
+		private void Spawn( UnitDefinition def )
 		{
 			// Calculate world-space spawn position.
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
-			
+
 			UnitData data = new UnitData();
 			data.guid = Guid.NewGuid();
 			data.position = spawnPos;
@@ -197,9 +216,9 @@ namespace SS.Objects.Modules
 			data.factionId = ((IFactionMember)this.ssObject).factionId;
 			data.population = PopulationSize.x4;
 
-			GameObject obj = UnitCreator.Create( this.trainedUnit, data.guid );
+			GameObject obj = UnitCreator.Create( def, data.guid );
 			UnitCreator.SetData( obj, data );
-			
+
 			// Move the newly spawned unit to the rally position.
 			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
@@ -208,29 +227,51 @@ namespace SS.Objects.Modules
 			goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 		}
 
-		public void EndTraining( bool isSuccess )
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
+
+		void Awake()
 		{
-			if( this.trainedUnit == null )
-			{
-				throw new Exception( "You can't end training, when there's no unit being trained." );
-			}
-
-			if( isSuccess )
-			{
-				this.SpawnTrainedUnit();
-			}
-
-			this.trainedUnit = null;
-			this.buildTimeRemaining = 0.0f;
-			this.resourcesRemaining = null;
-			this.TrainingEnd_UI();
-			this.onTrainingEnd?.Invoke();
+			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
 		}
 		
+		void Update()
+		{
+			if( this.queuedUnits.Count == 0 )
+			{
+				return;
+			}
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			if( this.IsPaymentDone() )
+			{
+				// progress training.
+				this.buildTimeRemaining -= this.trainSpeed * Time.deltaTime;
+
+				if( this.buildTimeRemaining <= 0 )
+				{
+					this.Dequeue( true );
+				}
+				else
+				{
+					this.TrainingProgress_UI();
+					this.onTrainingProgress?.Invoke();
+				}
+			}
+		}
+
+		void OnDestroy()
+		{
+			LevelDataManager.onTechStateChanged.RemoveListener( this.OnTechStateChanged );
+		}
+
+
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 
 		/// <summary>
 		/// Creates a new BarracksModuleSaveState from a GameObject.
@@ -241,25 +282,24 @@ namespace SS.Objects.Modules
 			BarracksModuleData data = new BarracksModuleData();
 
 			data.resourcesRemaining = this.resourcesRemaining;
-			if( this.trainedUnit == null )
+			if( this.queuedUnits.Count == 0 )
 			{
-				data.trainedUnitId = "";
+				data.queuedUnits = null;
 			}
 			else
 			{
-				data.trainedUnitId = this.trainedUnit.id;
+				data.queuedUnits = new string[this.queuedUnits.Count];
+				for( int i = 0; i < this.queuedUnits.Count; i++ )
+				{
+					data.queuedUnits[i] = this.queuedUnits[i].id;
+				}
 			}
 			data.buildTimeRemaining = this.buildTimeRemaining;
 			data.rallyPoint = this.rallyPoint;
 
 			return data;
 		}
-
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		
+				
 		public override void SetData( ModuleData _data )
 		{
 			BarracksModuleData data = ValidateDataType<BarracksModuleData>( _data );
@@ -267,26 +307,30 @@ namespace SS.Objects.Modules
 			// ------          DATA
 
 			this.resourcesRemaining = data.resourcesRemaining;
-			if( data.trainedUnitId == "" )
+			if( data.queuedUnits != null )
 			{
-				this.trainedUnit = null;
-			}
-			else
-			{
-				this.trainedUnit = DefinitionManager.GetUnit( data.trainedUnitId );
+				for( int i = 0; i < data.queuedUnits.Length; i++ )
+				{
+					this.queuedUnits.Add( DefinitionManager.GetUnit( data.queuedUnits[i] ) );
+				}
 			}
 			this.buildTimeRemaining = data.buildTimeRemaining;
 			this.rallyPoint = data.rallyPoint;
 		}
 
 
+
+
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
+
 		//		UI INTEGRATION
 
 
-		private string GetStatusString()
+
+
+		private string GetResourcesString()
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -324,7 +368,7 @@ namespace SS.Objects.Modules
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon, () =>
 					{
-						this.BeginTraining( unitDef );
+						this.Enqueue( unitDef );
 					} );
 				}
 				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();
@@ -346,83 +390,62 @@ namespace SS.Objects.Modules
 			SelectionPanel.instance.obj.RegisterElement( "barracks.list", list.transform );
 		}
 
+		private void CreateQueueUI()
+		{
+			GameObject queue = new GameObject();
+			RectTransform t = queue.AddComponent<RectTransform>();
+			t.SetParent( SelectionPanel.instance.obj.transform );
+			t.ApplyUIData( new GenericUIData( new Vector2( 250.0f, 5.0f ), new Vector2( -500.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ) );
+
+			HorizontalLayoutGroup layout = queue.AddComponent<HorizontalLayoutGroup>();
+			layout.childControlWidth = true;
+			layout.childControlHeight = true;
+			layout.childScaleWidth = true;
+			layout.childForceExpandWidth = false;
+			layout.childForceExpandHeight = false;
+
+			int i = 0;
+			// Make the queue icons remove the unit from queue when clicked.
+			foreach( UnitDefinition unitDef in this.queuedUnits )
+			{
+				int j = i;
+				GameObject go = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), unitDef.icon, () =>
+				{
+					this.Dequeue( false, j );
+				} );
+				go.transform.SetParent( t );
+				i++;
+			}
+
+			SelectionPanel.instance.obj.RegisterElement( "barracks.queue", queue.transform );
+		}
+
+		public void RefreshQueue_UI()
+		{
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			SelectionPanel.instance.obj.TryClearElement( "barracks.queue" );
+			this.CreateQueueUI();
+		}
+
+
 		private void OnTechStateChanged( int factionId, string id, TechnologyResearchProgress newProgress )
 		{
-			if( factionId != (this.ssObject as IFactionMember).factionId )
-			{
-				return;
-			}
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			if( this.IsPaymentDone() )
-			{
-				if( this.trainedUnit == null )
-				{
-					SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
-					
-					this.ShowList();
-				}
-			}
-		}
-
-		private void PaymentReceived_UI()
-		{
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			if( !this.ssObject.IsDisplaySafe() )
-			{
-				return;
-			}
-
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
-			if( statusUI != null )
-			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.trainedUnit.displayName + "'): " + this.GetStatusString() );
-			}
-		}
-		
-		private void TrainingBegin_UI()
-		{
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			if( !this.ssObject.IsDisplaySafe() )
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
 			{
 				return;
 			}
 
 			SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
-			
-			if( !this.IsPaymentDone() )
-			{
-				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
-				if( statusUI != null )
-				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.trainedUnit.displayName + "'): " + this.GetStatusString() );
-				}
-				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
-				{
-					this.EndTraining( false );
-				} );
-			}
+			this.ShowList();
 		}
 
-		private void TrainingProgress_UI()
+		private void PaymentReceived_UI()
 		{
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			if( !this.ssObject.IsDisplaySafe() )
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
 			{
 				return;
 			}
@@ -430,18 +453,48 @@ namespace SS.Objects.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.buildTimeRemaining + " s." );
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + this.GetResourcesString() );
+			}
+		}
+		
+		private void TrainingBegin_UI()
+		{
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			if( !this.IsPaymentDone() )
+			{
+				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+				if( statusUI != null )
+				{
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + this.GetResourcesString() );
+				}
+
+				// clear if the begin was caused by decreasing queue.
+				ActionPanel.instance.Clear( "barracks.ap.cancel" );
+				DisplayCancelButton();
+			}
+		}
+
+		private void TrainingProgress_UI()
+		{
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Training... '" + this.queuedUnits[0].displayName + "' - " + (int)this.buildTimeRemaining + " s." );
 			}
 		}
 		
 		private void TrainingEnd_UI()
 		{
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			if( !this.ssObject.IsDisplaySafe() )
+			if( (!Selection.IsDisplayedModule( this )) || (!this.ssObject.IsDisplaySafe()) )
 			{
 				return;
 			}
@@ -451,10 +504,27 @@ namespace SS.Objects.Modules
 			{
 				UIUtils.EditText( statusUI.gameObject, "Select unit to make..." );
 			}
+			
+			SelectionPanel.instance.obj.TryClearElement( "barracks.queue" );
+			this.CreateQueueUI();
+			
+			if( this.queuedUnits.Count == 0 )
+			{
+				ActionPanel.instance.Clear( "barracks.ap.cancel" );
+			}
+		}
 
-			ActionPanel.instance.Clear( "barracks.ap.cancel" );
+		private static GenericUIData GetStatusPos()
+		{
+			return new GenericUIData( new Vector2( 300.0f, 0.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up );
+		}
 
-			this.ShowList();
+		private void DisplayCancelButton()
+		{
+			ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
+			{
+				this.Dequeue( false );
+			} );
 		}
 
 		public void OnDisplay()
@@ -470,41 +540,47 @@ namespace SS.Objects.Modules
 				return;
 			}
 
+			this.ShowList();
+			this.CreateQueueUI();
+
 			if( this.IsPaymentDone() )
 			{
-				if( this.trainedUnit != null )
+				if( this.queuedUnits.Count == 0 )
 				{
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 137.5f, 0.0f ), new Vector2( -325.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Training... '" + this.trainedUnit.displayName + "' - " + (int)this.buildTimeRemaining + " s." );
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Select unit to make..." );
 					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
-
-					ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
-					{
-						this.EndTraining( false );
-					} );
 				}
 				else
 				{
-					this.ShowList();
-
-					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 137.5f, 0.0f ), new Vector2( -325.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Select unit to make..." );
+					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Training... '" + this.queuedUnits[0].displayName + "' - " + (int)this.buildTimeRemaining + " s." );
 					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+					DisplayCancelButton();
 				}
 			}
 			else
 			{
-				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 137.5f, 0.0f ), new Vector2( -325.0f, 50.0f ), new Vector2( 0.5f, 1.0f ), Vector2.up, Vector2.one ), "Waiting for resources... ('" + this.trainedUnit.displayName + "'): " + GetStatusString() );
+				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + GetResourcesString() );
 				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
-				
-				ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
-				{
-					this.EndTraining( false );
-				} );
+				DisplayCancelButton();
 			}
 
 			CreateRallyButton();
 			SpawnRallyGameObject( this );
 		}
-		
+
+		public void OnHide()
+		{
+			Object.Destroy( this.rallyPointGameObject );
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_SetRally ); // Force remove input if hidden.
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelRally ); // Force remove input if hidden.
+		}
+
+
+		//
+		//
+		//
+
+
 		private static void SpawnRallyGameObject( BarracksModule barracks )
 		{
 			GameObject rally = new GameObject();
@@ -532,22 +608,15 @@ namespace SS.Objects.Modules
 			{
 				if( Main.mouseInput != null )
 				{
-					Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, -5, this.SetRally, true );
-					Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, -5, this.CancelRally, true );
+					Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, -5, this.Inp_SetRally, true );
+					Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, -5, this.Inp_CancelRally, true );
 				}
 				ActionPanel.instance.Clear( "barracks.ap.set_rally" );
 				// needs to set the left-mouse action to rally point.
 			} );
 		}
 
-		public void OnHide()
-		{
-			Object.Destroy( this.rallyPointGameObject );
-			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // Force remove input if hidden.
-			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Force remove input if hidden.
-		}
-
-		private void SetRally( InputQueue self )
+		private void Inp_SetRally( InputQueue self )
 		{
 			RaycastHit hitInfo;
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo, ObjectLayer.TERRAIN_MASK ) )
@@ -555,8 +624,8 @@ namespace SS.Objects.Modules
 				this.rallyPoint = hitInfo.point;
 				rallyPointGameObject.transform.position = hitInfo.point;
 			}
-			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // One-shot
-			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // Clear complement cancel (can't cancel something that's done).
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_SetRally ); // One-shot
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelRally ); // Clear complement cancel (can't cancel something that's done).
 
 			// (if still displayed, show the rally button again).
 			CreateRallyButton();
@@ -564,10 +633,10 @@ namespace SS.Objects.Modules
 			self.StopExecution();
 		}
 
-		private void CancelRally( InputQueue self )
+		private void Inp_CancelRally( InputQueue self )
 		{
-			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.SetRally ); // clear complement set (can't set something that's cancelled).
-			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.CancelRally ); // clear itself (one-shot).
+			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_SetRally ); // clear complement set (can't set something that's cancelled).
+			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelRally ); // clear itself (one-shot).
 
 			CreateRallyButton();
 

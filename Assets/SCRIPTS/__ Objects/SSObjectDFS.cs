@@ -45,9 +45,9 @@ namespace SS.Objects
 
 
 		[SerializeField] private int __factionId = -1; // Needs to be different then any index of the factions array (otherwise onFactionChange won't trigger on spawn).
-													   /// <summary>
-													   /// Contains the index of the faction that this object belongs to.
-													   /// </summary>
+		/// <summary>
+		/// Contains the index of the faction that this object belongs to.
+		/// </summary>
 		public int factionId
 		{
 			get
@@ -239,7 +239,7 @@ namespace SS.Objects
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
 		}
 
-		internal static string GetHealthDisplay( float health, float healthMax )
+		internal static string GetHealthString( float health, float healthMax )
 		{
 			return "Health: " + (int)health + "/" + (int)healthMax;
 		}

@@ -238,7 +238,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthDisplay( building.health, building.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( building.health, building.healthMax ) );
 				}
 
 				// If the health change changed the usability (health is above threshold).

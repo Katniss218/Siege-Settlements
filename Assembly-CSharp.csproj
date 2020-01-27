@@ -158,6 +158,9 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\DropOffGoal\TacticalDropOffGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\IdleGoal\TacticalIdleGoalData.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\InputOverrideDropOffQuery.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\InputOverrideEmployment.cs" />
+    <Compile Include="Assets\SCRIPTS\_TacticalAI\InputOverridePickUpQuery.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoal.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MakeFormationGoal\TacticalMakeFormationGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\_TacticalAI\MoveToGoal\MovementGridInfo.cs" />
@@ -174,14 +177,13 @@
     <Compile Include="Assets\SCRIPTS\_TacticalAI\TargetGoal\TacticalTargetGoalData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverrideDropOffQuery.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverrideEmployment.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\InputOverridePickUpQuery.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationUnitUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitDefinition.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\UnitDisplayManager.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreview.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\BuildPreview\BuildPreviewPositioner.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\01 Buildings\Building.cs" />

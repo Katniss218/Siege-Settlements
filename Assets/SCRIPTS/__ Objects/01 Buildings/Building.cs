@@ -189,7 +189,7 @@ namespace SS.Objects.Buildings
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), SSObjectDFS.GetHealthDisplay( this.health, this.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), SSObjectDFS.GetHealthString( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
 			if( !this.IsDisplaySafe() )

@@ -261,7 +261,7 @@ namespace SS.Objects.Units
 					unit.hud.isDisplayedDueToDamage = true;
 				}
 
-
+#warning display.
 				if( !Selection.IsDisplayed( unit ) )
 				{
 					return;
@@ -269,10 +269,11 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthDisplay( unit.health, unit.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( unit.health, unit.healthMax ) );
 				}
 			} );
 
+#warning onobjectdeath.
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			unit.onDeath.AddListener( () =>
 			{
@@ -288,7 +289,7 @@ namespace SS.Objects.Units
 					CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
 					if( cue.isEmployed )
 					{
-						WorkplaceModule.ClearWorker( cue.workplace, cue.workplaceSlotId );
+						cue.workplace.ClearWorker( cue.workplaceSlotId );
 					}
 				}
 

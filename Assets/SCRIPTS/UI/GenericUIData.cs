@@ -9,7 +9,7 @@ namespace SS.UI
 		public Vector2 pivot { get; set; }
 		public Vector2 anchorMin { get; set; }
 		public Vector2 anchorMax { get; set; }
-
+		
 		public GenericUIData( Vector2 position, Vector2 size )
 		{
 			this.position = position;

@@ -151,7 +151,7 @@ namespace SS.AI.Goals
 
 				List<Unit> unitsNearby = GetUnitsInRange( this.unitFormationSelf, INTERACTION_DISTANCE );
 
-				Unit.Join( this.unitFormationSelf, unitsNearby );
+				PopulationUnitUtils.Combine( this.unitFormationSelf, unitsNearby );
 			}
 		}
 

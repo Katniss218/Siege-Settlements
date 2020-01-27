@@ -9,7 +9,8 @@ namespace SS.Technologies
 	{
 		public string displayName { get; set; }
 
-		public Dictionary<string, int> cost { get; private set; }
+		public float researchTime { get; set; }
+		public Dictionary<string, int> cost { get; set; }
 
 		public AddressableAsset<Sprite> icon { get; private set; }
 
@@ -22,6 +23,8 @@ namespace SS.Technologies
 		{
 			this.id = serializer.ReadString( "Id" );
 			this.displayName = serializer.ReadString( "DisplayName" );
+
+			this.researchTime = serializer.ReadFloat( "ResearchTime" );
 
 			// Cost
 			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "Cost" );
@@ -39,8 +42,9 @@ namespace SS.Technologies
 		{
 			serializer.WriteString( "", "Id", this.id );
 			serializer.WriteString( "", "DisplayName", this.displayName );
-
-
+			
+			serializer.WriteFloat( "", "ResearchTime", this.researchTime );
+			
 			// Cost
 			serializer.WriteList( "", "Cost" );
 			int i = 0;

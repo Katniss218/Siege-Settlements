@@ -31,48 +31,15 @@ namespace SS.Objects.Modules
 			{
 				return false;
 			}
-			bool foundEmpty = false;
+			
 			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
 			{
 				if( this.interior.workerSlots[i].worker == null )
 				{
-					foundEmpty = true;
+					return true;
 				}
 			}
-			return foundEmpty;
-		}
-
-		public static void SetWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
-		{
-			c.workplace = w;
-			c.workplaceSlotId = slotIndex;
-			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( true );
-			c.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
-			c.isOnAutomaticDuty = false;
-			c.onEmploy?.Invoke();
-
-			w.interior.workerSlots[slotIndex].worker = c;
-			w.interior.hudInterior.workerSlots[slotIndex].SetSprite( c.unit.icon );
-			w.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
-		}
-
-		public static void ClearWorker( WorkplaceModule w, CivilianUnitExtension c, int slotIndex )
-		{
-			c.workplace = null;
-			c.workplaceSlotId = 0;
-			c.isWorking = false;
-			c.unit.navMeshAgent.avoidancePriority = Unit.GetNextAvPriority( false );
-			// clear the workplace goal (nothing else is trying to set it so..)
-			c.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
-			c.onUnemploy?.Invoke();
-
-			ClearWorker( w, slotIndex );
-		}
-
-		public static void ClearWorker( WorkplaceModule w, int slotIndex )
-		{
-			w.interior.workerSlots[slotIndex].worker = null;
-			w.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
+			return false;
 		}
 
 		public void Employ( CivilianUnitExtension civilian )
@@ -98,17 +65,53 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-
-		protected const string UI_WORKER_LIST_ID = "workplace.workerlist";
-
-		protected virtual void Start()
-		{
-
-		}
-
+		
 		/// <summary>
 		/// Controls the AI of the civilian while he's working.
 		/// </summary>
 		public abstract void MakeDoWork( Unit worker );
+
+
+		//
+
+		//
+		//
+		//
+	
+		//
+
+
+		public static void SetWorker( WorkplaceModule workplace, CivilianUnitExtension cue, int slotIndex )
+		{
+			cue.workplace = workplace;
+			cue.workplaceSlotId = slotIndex;
+			cue.unit.navMeshAgent.avoidancePriority = CivilianUnitExtension.GetNextAvPriority( true );
+			cue.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
+			cue.isOnAutomaticDuty = false;
+			cue.onEmploy?.Invoke();
+
+			workplace.interior.workerSlots[slotIndex].worker = cue;
+			workplace.interior.hudInterior.workerSlots[slotIndex].SetSprite( cue.unit.icon );
+			workplace.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
+		}
+
+		public static void ClearWorker( WorkplaceModule workplace, CivilianUnitExtension cue, int slotIndex )
+		{
+			cue.workplace = null;
+			cue.workplaceSlotId = 0;
+			cue.isWorking = false;
+			cue.unit.navMeshAgent.avoidancePriority = CivilianUnitExtension.GetNextAvPriority( false );
+			// clear the workplace goal (nothing else is trying to set it so..)
+			cue.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
+			cue.onUnemploy?.Invoke();
+
+			workplace.ClearWorker( slotIndex );
+		}
+
+		public void ClearWorker( int slotIndex )
+		{
+			this.interior.workerSlots[slotIndex].worker = null;
+			this.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
+		}
 	}
 }

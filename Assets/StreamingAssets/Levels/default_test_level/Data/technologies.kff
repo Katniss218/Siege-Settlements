@@ -1,8 +1,9 @@
 ﻿List =
 [
 	{
-		Id = "technology.weaponry";
-		DisplayName = "Weaponry";
+		Id = "technology.armed_martial_arts";
+		DisplayName = "Armed Martial Arts";
+		ResearchTime = 20.0;
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 5; },
@@ -13,6 +14,7 @@
 	{
 		Id = "technology.horse_riding";
 		DisplayName = "Horse Riding";
+		ResearchTime = 20.0;
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 10; },
@@ -23,9 +25,21 @@
 	{
 		Id = "technology.archery";
 		DisplayName = "Archery";
+		ResearchTime = 20.0;
 		Cost =
 		[
 			{ Id = "resource.wood"; Amount = 15; }
+		];
+		Icon = "extern:Textures/Technologies/archery_icon.png";
+	},
+	{
+		Id = "technology.fortifications";
+		DisplayName = "Fortifications";
+		ResearchTime = 20.0;
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 15; },
+			{ Id = "resource.stone"; Amount = 10; }
 		];
 		Icon = "extern:Textures/Technologies/archery_icon.png";
 	}

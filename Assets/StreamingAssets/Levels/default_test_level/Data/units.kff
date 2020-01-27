@@ -50,7 +50,7 @@
 			{ Id = "resource.wood"; Amount = 8; }
 		];
 		TechsRequired = [ ];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects = // A list of graphical sub-objects of this unit.
 		[
 			{
@@ -148,7 +148,7 @@
 			{ Id = "resource.wood"; Amount = 15; }
 		];
 		TechsRequired = [];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			//{
@@ -262,7 +262,7 @@
 			{ Id = "resource.wood"; Amount = 10; }
 		];
 		TechsRequired = [];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -359,7 +359,7 @@
 			{ Id = "resource.wood"; Amount = 6; }
 		];
 		TechsRequired = [];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -461,10 +461,11 @@
 		[
 			{ Id = "resource.wood"; Amount = 8; }
 		];
-		TechsRequired = [
+		TechsRequired =
+		[
 			"technology.archery"
 		];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -567,10 +568,11 @@
 		[
 			{ Id = "resource.wood"; Amount = 15; }
 		];
-		TechsRequired = [
+		TechsRequired =
+		[
 			"technology.archery"
 		];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -672,10 +674,11 @@
 		[
 			{ Id = "resource.wood"; Amount = 5; }
 		];
-		TechsRequired = [
+		TechsRequired =
+		[
 			"technology.archery"
 		];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -784,7 +787,7 @@
 			{ Id = "resource.wood"; Amount = 4; }
 		];
 		TechsRequired = [];
-		BuildTime = 3.0;
+		BuildTime = 10.0;
 		SubObjects =
 		[
 			{
@@ -854,9 +857,9 @@
 			{ Id = "resource.iron"; Amount = 5; }
 		];
 		TechsRequired = [
-			"technology.archery"
+			"technology.fortifications"
 		];
-		BuildTime = 8.0;
+		BuildTime = 15.0;
 		SubObjects =
 		[
 			{

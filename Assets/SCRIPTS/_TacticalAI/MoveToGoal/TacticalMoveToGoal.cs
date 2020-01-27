@@ -105,7 +105,6 @@ namespace SS.AI.Goals
 				Vector3 currDestPos = this.destinationPos;
 				if( this.oldDestination != currDestPos )
 				{
-#warning setdestination needs to take into account the side from which it's coming. Not perfect, but works in most simple & obvious conditions.
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
 

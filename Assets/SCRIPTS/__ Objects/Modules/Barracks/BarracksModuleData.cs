@@ -11,7 +11,7 @@ namespace SS.Levels.SaveStates
 	/// </summary>
 	public class BarracksModuleData : ModuleData
 	{
-		public string trainedUnitId { get; set; }
+		public string[] queuedUnits { get; set; }
 		public float buildTimeRemaining { get; set; }
 		public Dictionary<string, int> resourcesRemaining { get; set; }
 
@@ -20,22 +20,26 @@ namespace SS.Levels.SaveStates
 
 		public BarracksModuleData()
 		{
-			this.trainedUnitId = "";
-			this.buildTimeRemaining = 0.0f;
 			this.resourcesRemaining = new Dictionary<string, int>();
-			this.rallyPoint = Vector3.zero;
 		}
 
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			try
+			if( serializer.Analyze( "TrainedUnits" ).isSuccess )
 			{
-				this.trainedUnitId = serializer.ReadString( "TrainedUnitId" );
+				try
+				{
+					this.queuedUnits = serializer.ReadStringArray( "TrainedUnits" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'TrainedUnits' (" + serializer.file.fileName + ")." );
+				}
 			}
-			catch
+			else
 			{
-				throw new Exception( "Missing or invalid value of 'TrainedUnitId' (" + serializer.file.fileName + ")." );
+				this.queuedUnits = null;
 			}
 
 			try
@@ -85,7 +89,10 @@ namespace SS.Levels.SaveStates
 		
 		public override void SerializeKFF( KFFSerializer serializer )
 		{
-			serializer.WriteString( "", "TrainedUnitId", this.trainedUnitId );
+			if( this.queuedUnits != null )
+			{
+				serializer.WriteStringArray( "", "TrainedUnits", this.queuedUnits );
+			}
 			serializer.WriteFloat( "", "TrainProgress", this.buildTimeRemaining );
 
 			if( this.rallyPoint != null )

@@ -326,9 +326,10 @@
 				ResearchSpeed = 1.0;
 				ResearchableTechnologies =
 				[ // controls also the ordering of icons.
-					"technology.weaponry",
+					"technology.armed_martial_arts",
 					"technology.horse_riding",
-					"technology.archery"
+					"technology.archery",
+					"technology.fortifications"
 				];
 				Icon = "extern:Textures/Modules/research_icon.png";
 			}
@@ -380,7 +381,7 @@
 		];
 		TechsRequired =
 		[
-			"technology.weaponry"
+			"technology.armed_martial_arts"
 		];
 		Modules =
 		[
@@ -512,7 +513,7 @@
 		];
 		TechsRequired =
 		[
-			
+			"technology.fortifications"
 		];
 		Modules =
 		[
@@ -576,7 +577,10 @@
 		[
 			{ Id = "resource.wood"; Amount = 15; }
 		];
-		TechsRequired = [ ];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
 		Modules = [ ];
 		SubObjects =
 		[
@@ -622,7 +626,10 @@
 		[
 			{ Id = "resource.wood"; Amount = 20; }
 		];
-		TechsRequired = [ ];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
 		Modules =
 		[
 			{

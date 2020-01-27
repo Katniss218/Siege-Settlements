@@ -223,7 +223,7 @@ namespace SS.Objects.Heroes
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthDisplay( hero.health, hero.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( hero.health, hero.healthMax ) );
 				}
 			} );
 
