@@ -18,8 +18,8 @@ namespace SS.Objects.Modules
 
 		// it's the target finder.
 		
-		private SSObjectDFS __target;
-		public SSObjectDFS target
+		private SSObjectDFSC __target;
+		public SSObjectDFSC target
 		{
 			get
 			{
@@ -56,14 +56,14 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
-		private SSObjectDFS __factionMemberSelf = null;
-		private SSObjectDFS factionMemberSelf
+		private SSObjectDFSC __factionMemberSelf = null;
+		private SSObjectDFSC factionMemberSelf
 		{
 			get
 			{
 				if( __factionMemberSelf == null )
 				{
-					__factionMemberSelf = this.ssObject as SSObjectDFS;
+					__factionMemberSelf = this.ssObject as SSObjectDFSC;
 				}
 				return __factionMemberSelf;
 			}
@@ -107,7 +107,7 @@ namespace SS.Objects.Modules
 			this.target = Targeter.FindTargetClosest( this.transform.position, this.attackRange, this.factionMemberSelf, true );
 		}
 
-		public void TrySetTarget( SSObjectDFS target )
+		public void TrySetTarget( SSObjectDFSC target )
 		{
 			this.target = Targeter.TrySetTarget( this.transform.position, this.attackRange, this.factionMemberSelf, target, true );
 		}
@@ -223,7 +223,7 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
-			data.ownerFactionIdCache = (this.ssObject as SSObjectDFS).factionId;
+			data.ownerFactionIdCache = (this.ssObject as SSObjectDFSC).factionId;
 			data.damageTypeOverride = this.damageType;
 			data.damageOverride = this.damage;
 			data.armorPenetrationOverride = this.armorPenetration;
@@ -232,7 +232,7 @@ namespace SS.Objects.Modules
 				this.moduleId
 				);
 
-			GameObject projectile = ProjectileCreator.Create( this.projectile, data.guid );
+			Projectile projectile = ProjectileCreator.Create( this.projectile, data.guid );
 			ProjectileCreator.SetData( projectile, data );
 		}
 
@@ -263,7 +263,7 @@ namespace SS.Objects.Modules
 			
 			if( data.targetGuid != null )
 			{
-				this.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFS);
+				this.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFSC);
 			}
 			if( data.projectileCountOverride != null )
 			{

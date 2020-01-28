@@ -247,7 +247,7 @@
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 0.72; Y = 0.62; Z = 1.03; };
+		Size = { X = 0.61; Y = 0.72; Z = 0.92; };
 		PlacementNodes = [ ];
 		Cost =
 		[
@@ -839,7 +839,7 @@
 				0.0  // Concussion
 			];
 		};
-		Size = { X = 0.65; Y = 0.51; Z = 0.9; };
+		Size = { X = 0.88; Y = 0.8; Z = 0.99; };
 		PlacementNodes = [ ];
 		Cost =
 		[

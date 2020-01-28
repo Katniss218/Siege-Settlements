@@ -35,7 +35,7 @@ namespace SS.UI
 
 		[SerializeField] GameObject HUDt = null;
 
-		public SSObjectDFS hudHolder { get; set; }
+		public SSObjectDFSC hudHolder { get; set; }
 		public byte? group { get; private set; }
 		
 

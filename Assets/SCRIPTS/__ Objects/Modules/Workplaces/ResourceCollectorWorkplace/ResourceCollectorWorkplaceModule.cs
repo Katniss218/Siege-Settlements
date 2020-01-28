@@ -26,7 +26,7 @@ namespace SS.Objects.Modules
 
 		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
 		{
-			SSObjectDFS[] objects = SSObject.GetAllDFS();
+			SSObjectDFSC[] objects = SSObject.GetAllDFS();
 
 			InventoryModule ret = null;
 			float dstSq = float.MaxValue;
@@ -123,27 +123,10 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public static IPaymentReceiver[] GetAvailableReceivers( SSObject obj )
-		{
-			if( obj is Building )
-			{
-				Building b = (Building)obj;
-				if( !b.isUsable )
-				{
-					if( b.constructionSite == null ) // if repair hasn't started yet - can't pay.
-					{
-						return new IPaymentReceiver[0];
-					}
-#warning construction site functionality (repair) needs integration into the ISSObjectUsableUnusable interface.
-					return new IPaymentReceiver[] { b.constructionSite };
-				}
-			}
-			return obj.GetComponents<IPaymentReceiver>();
-		}
 
 		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
-			SSObjectDFS[] objects = SSObject.GetAllDFS();
+			SSObjectDFSC[] objects = SSObject.GetAllDFS();
 
 			IPaymentReceiver ret = null;
 			float dstSqToLastValid = float.MaxValue;
@@ -169,7 +152,7 @@ namespace SS.Objects.Modules
 				}
 
 
-				paymentReceivers = GetAvailableReceivers( objects[i] );
+				paymentReceivers = objects[i].GetAvailableReceivers();
 
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )
@@ -200,7 +183,7 @@ namespace SS.Objects.Modules
 
 		public static InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
-			SSObjectDFS[] objects = SSObject.GetAllDFS();
+			SSObjectDFSC[] objects = SSObject.GetAllDFS();
 
 			InventoryModule ret = null;
 			float dstSqToLastValid = float.MaxValue;
@@ -267,7 +250,7 @@ namespace SS.Objects.Modules
 
 			InventoryModule inventory = inventories[0];
 
-			TacticalGoalController goalController = worker.GetComponent<TacticalGoalController>();
+			TacticalGoalController controller = worker.controller;
 
 
 
@@ -277,7 +260,7 @@ namespace SS.Objects.Modules
 			if( spaceLeft > 0 )
 			{
 				// If already going to pick up something - don't re-assign it.
-				if( goalController.goalTag == TAG_GOING_TO_PICKUP )
+				if( controller.goalTag == TAG_GOING_TO_PICKUP )
 				{
 					return;
 				}
@@ -297,13 +280,13 @@ namespace SS.Objects.Modules
 						{ this.resourceId, int.MaxValue }
 					};
 					goal2.ApplyResources();
-					goalController.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
+					controller.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
 				}
 			}
 			else
 			{
 				// If already going to drop off something - don't re-assign it.
-				if( goalController.goalTag == TAG_GOING_TO_DROPOFF )
+				if( controller.goalTag == TAG_GOING_TO_DROPOFF )
 				{
 					return;
 				}
@@ -324,7 +307,7 @@ namespace SS.Objects.Modules
 						{ this.resourceId, int.MaxValue }
 					};
 					goal2.ApplyResources();
-					goalController.SetGoals( TAG_GOING_TO_DROPOFF, goal1, goal2 );
+					controller.SetGoals( TAG_GOING_TO_DROPOFF, goal1, goal2 );
 				}
 			}
 		}

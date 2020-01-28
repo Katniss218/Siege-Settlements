@@ -6,7 +6,7 @@ namespace SS.Objects
 	{
 		public static void ReDisplayDisplayed()
 		{
-			SSObjectDFS displayed = Selection.displayedObject;
+			SSObjectDFSC displayed = Selection.displayedObject;
 			SSModule displayedModule = Selection.displayedModule;
 			if( displayed != null )
 			{

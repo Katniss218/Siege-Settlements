@@ -144,7 +144,7 @@ namespace SS.InputSystem
 					if( 
 						   (Time.time <= kvp.Value.pressTimestamp + MAX_DOUBLE_CLICK_DELAY)
 						&& (kvp.Value.pressCount < MAX_CLICK_COUNT)
-						&& (Vector3.Distance( Input.mousePosition, kvp.Value.lastControllerPosition ) < 3.0f)
+						&& (kvp.Value.lastControllerPosition - Input.mousePosition).sqrMagnitude <= (3.0f * 3.0f)
 						)
 					{
 						kvp.Value.pressCount++;

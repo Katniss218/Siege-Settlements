@@ -14,23 +14,24 @@ namespace SS.Objects.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, ExtraData data )
+		public static void SetData( Extra extra, ExtraData data )
 		{
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+			extra.transform.SetPositionAndRotation( data.position, data.rotation );
 			
 			//
 			//    MODULES
 			//
-
-			Extra extra = gameObject.GetComponent<Extra>();
+			
 			SSObjectCreator.AssignModuleData( extra, data );
 		}
 
-		private static GameObject CreateExtra( ExtraDefinition def, Guid guid )
+
+
+		private static Extra CreateExtra( ExtraDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
 			gameObject.isStatic = true;
@@ -70,7 +71,7 @@ namespace SS.Objects.Extras
 
 			SSObjectCreator.AssignModules( extra, def );
 
-			return gameObject;
+			return extra;
 		}
 
 
@@ -78,10 +79,7 @@ namespace SS.Objects.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		/// <summary>
-		/// Creates a new ExtraData from a GameObject.
-		/// </summary>
-		/// <param name="extra">The GameObject to extract the save state from. Must be an extra.</param>
+
 		public static ExtraData GetData( Extra extra )
 		{
 			if( extra.guid == null )
@@ -110,7 +108,7 @@ namespace SS.Objects.Extras
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
-		public static GameObject Create( ExtraDefinition def, Guid guid )
+		public static Extra Create( ExtraDefinition def, Guid guid )
 		{
 			return CreateExtra( def, guid );
 		}

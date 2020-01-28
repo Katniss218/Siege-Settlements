@@ -4,7 +4,6 @@ using SS.Levels;
 using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
-using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -31,9 +30,9 @@ namespace SS.AI
 
 			Vector3? terrainHitPos = null;
 			
-			SSObjectDFS hitDamageable = null;
+			SSObjectDFSC hitDamageable = null;
 
-			SSObjectDFS hitInteriorDFS = null;
+			SSObjectDFSC hitInteriorDFS = null;
 			InteriorModule hitInterior = null;
 
 			for( int i = 0; i < raycastHits.Length; i++ )
@@ -44,7 +43,7 @@ namespace SS.AI
 				}
 				else
 				{
-					SSObjectDFS damageable = raycastHits[i].collider.GetComponent<SSObjectDFS>();
+					SSObjectDFSC damageable = raycastHits[i].collider.GetComponent<SSObjectDFSC>();
 					if( damageable != null && hitDamageable == null )
 					{
 						hitDamageable = damageable;
@@ -53,7 +52,7 @@ namespace SS.AI
 					InteriorModule interior = raycastHits[i].collider.GetComponent<InteriorModule>();
 					if( interior != null && hitInterior == null )
 					{
-						hitInteriorDFS = interior.ssObject as SSObjectDFS;
+						hitInteriorDFS = interior.ssObject as SSObjectDFSC;
 						hitInterior = interior;
 					}
 				}
@@ -85,9 +84,9 @@ namespace SS.AI
 		//
 
 
-		private static void AssignAttackGoal( SSObjectDFS target, SSObjectDFS[] selected )
+		private static void AssignAttackGoal( SSObjectDFSC target, SSObjectDFSC[] selected )
 		{
-			List<SSObjectDFS> filteredObjects = new List<SSObjectDFS>();
+			List<SSObjectDFSC> filteredObjects = new List<SSObjectDFSC>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
@@ -130,7 +129,7 @@ namespace SS.AI
 			}
 			for( int i = 0; i < filteredObjects.Count; i++ )
 			{
-				TacticalGoalController goalController = filteredObjects[i].GetComponent<TacticalGoalController>();
+				TacticalGoalController goalController = filteredObjects[i].controller;
 				TacticalTargetGoal goal = new TacticalTargetGoal();
 				goal.target = target;
 				goal.targetForced = true;
@@ -140,12 +139,12 @@ namespace SS.AI
 
 		
 
-		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFS[] selected )
+		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFSC[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObject> movableGameObjects = new List<SSObject>();
+			List<SSObjectDFSC> movableGameObjects = new List<SSObjectDFSC>();
 
 			float biggestRadius = float.MinValue;
 
@@ -155,23 +154,27 @@ namespace SS.AI
 				{
 					continue;
 				}
-				NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
-				if( navMeshAgent == null )
+
+				if( !(selected[i] is IMovable) )
 				{
 					continue;
 				}
 
-				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.isEmployed )
+				if( (selected[i] is Unit) )
 				{
-					continue;
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
 				}
 
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
 				movableGameObjects.Add( selected[i] );
-				if( navMeshAgent.radius > biggestRadius )
+				IMovable m = (IMovable)selected[i];
+				if( m.navMeshAgent.radius > biggestRadius )
 				{
-					biggestRadius = navMeshAgent.radius;
+					biggestRadius = m.navMeshAgent.radius;
 				}
 			}
 
@@ -193,7 +196,7 @@ namespace SS.AI
 				Ray r = new Ray( gridPositionWorld + new Vector3( 0.0f, 50.0f, 0.0f ), Vector3.down );
 				if( Physics.Raycast( r, out gridHit, 100.0f, ObjectLayer.TERRAIN_MASK ) )
 				{
-					TacticalGoalController goalController = kvp.Key.GetComponent<TacticalGoalController>();
+					TacticalGoalController goalController = kvp.Key.controller;
 					TacticalMoveToGoal goal = new TacticalMoveToGoal();
 					goal.isHostile = false;
 					goal.SetDestination( gridPositionWorld );
@@ -206,14 +209,14 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObjectDFS[] selected )
+		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObjectDFSC[] selected )
 		{
 			if( interior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)interior.ssObject).isUsable )
 			{
 				return;
 			}
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObject> movableGameObjects = new List<SSObject>();
+			List<SSObjectDFSC> movableGameObjects = new List<SSObjectDFSC>();
 
 			float biggestRadius = float.MinValue;
 
@@ -249,7 +252,7 @@ namespace SS.AI
 			}
 			for( int i = 0; i < movableGameObjects.Count; i++ )
 			{
-				TacticalGoalController goalController = movableGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalGoalController goalController = movableGameObjects[i].controller;
 				TacticalMoveToGoal goal = new TacticalMoveToGoal();
 				goal.SetDestination( interior, InteriorModule.SlotType.Generic );
 				goal.isHostile = false;

@@ -12,7 +12,7 @@ namespace SS.Objects.Units
 
 			SelectionPanel.instance.obj.displayNameText.text = u.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFS.GetHealthString( u.health, u.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFSC.GetHealthString( u.health, u.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
 
 			if( !u.IsDisplaySafe() )
@@ -47,21 +47,21 @@ namespace SS.Objects.Units
 		{
 
 		}
+		
 
-
-		internal static void CreateAutodutyButton( CivilianUnitExtension cue )
+		public static void CreateAutodutyButton( CivilianUnitExtension cue )
 		{
 			Sprite s = cue.isOnAutomaticDuty ?
-						AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" ) :
-						AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autoduty" );
+				AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" ) :
+				AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autoduty" );
 
 			ActionPanel.instance.CreateButton( "civilian.autoduty", s, "Toggle automatic duty", "Makes the civilian deliver resources to where they are needed.", () =>
 			{
-				cue.isOnAutomaticDuty = !cue.isOnAutomaticDuty;
+				cue.SetAutomaticDuty( !cue.isOnAutomaticDuty );
 			} );
 		}
 
-		internal static void CreateEmployButton( CivilianUnitExtension cue )
+		public static void CreateEmployButton( CivilianUnitExtension cue )
 		{
 			ActionPanel.instance.CreateButton( "civilian.employ", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/employ" )
 				, "Employ civilian", "Makes the civilian employed at a specified workplace.", () =>
@@ -70,7 +70,7 @@ namespace SS.Objects.Units
 				} );
 		}
 
-		internal static void CreateUnemployButton( CivilianUnitExtension cue )
+		public static void CreateUnemployButton( CivilianUnitExtension cue )
 		{
 			ActionPanel.instance.CreateButton( "civilian.unemploy", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/unemploy" )
 				, "Fire civilian", "Makes the civilian unemployed.", () =>
@@ -79,7 +79,7 @@ namespace SS.Objects.Units
 				} );
 		}
 
-		internal static void CreateQueryButtons()
+		public static void CreateQueryButtons()
 		{
 			ActionPanel.instance.CreateButton( "unit.ap.dropoff", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/dropoff" )
 			, "Drop off resources", "Select storage to drop off the resources at. OR, deliver resources to construction sites, barracks, etc.", () =>

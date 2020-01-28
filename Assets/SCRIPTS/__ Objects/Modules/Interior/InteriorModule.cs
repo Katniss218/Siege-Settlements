@@ -1,4 +1,5 @@
 ﻿using SS.AI;
+using SS.Content;
 using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
@@ -55,8 +56,7 @@ namespace SS.Objects.Modules
 
 		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
 		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
-
-
+		
 		public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
 		{
 			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
@@ -292,10 +292,10 @@ namespace SS.Objects.Modules
 		{
 			if( insideObj != null )
 			{
-				if( insideObj is SSObjectDFS )
+				if( insideObj is SSObjectDFSC )
 				{
 					Selection.DeselectAll();
-					Selection.TrySelect( (SSObjectDFS)insideObj );
+					Selection.TrySelect( (SSObjectDFSC)insideObj );
 				}
 			}
 		}

@@ -1,5 +1,4 @@
-﻿using SS.AI;
-using SS.Content;
+﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.Modules;
@@ -21,20 +20,19 @@ namespace SS.Objects.Heroes
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, HeroData data )
+		public static void SetData( Hero hero, HeroData data )
 		{
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+			hero.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			// Set the unit's movement parameters.
-			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+			NavMeshAgent navMeshAgent = hero.navMeshAgent;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the hero's native parameters.
-			Hero hero = gameObject.GetComponent<Hero>();
 			if( hero.guid != data.guid )
 			{
 				throw new Exception( "Mismatched guid." );
@@ -58,15 +56,14 @@ namespace SS.Objects.Heroes
 			//
 
 			SSObjectCreator.AssignModuleData( hero, data );
-
-			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
+			
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
+				hero.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
 		}
 
-		private static GameObject CreateHero( HeroDefinition def, Guid guid )
+		private static Hero CreateHero( HeroDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
 			gameObject.layer = ObjectLayer.HEROES;
@@ -223,7 +220,7 @@ namespace SS.Objects.Heroes
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( hero.health, hero.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( hero.health, hero.healthMax ) );
 				}
 			} );
 
@@ -263,20 +260,15 @@ namespace SS.Objects.Heroes
 				hud.GetComponent<HUDInterior>()?.Destroy();
 			}
 
-			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-
-			return gameObject;
+			return hero;
 		}
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 
-		/// <summary>
-		/// Creates a new HeroData from a GameObject.
-		/// </summary>
-		/// <param name="hero">The GameObject to extract the save state from. Must be a hero.</param>
 		public static HeroData GetData( Hero hero )
 		{
 			if( hero.guid == null )
@@ -311,7 +303,7 @@ namespace SS.Objects.Heroes
 
 			SSObjectCreator.ExtractModulesToData( hero, data );
 
-			data.tacticalGoalData = hero.GetComponent<TacticalGoalController>().GetGoalData();
+			data.tacticalGoalData = hero.controller.GetGoalData();
 
 			return data;
 		}
@@ -320,7 +312,7 @@ namespace SS.Objects.Heroes
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static GameObject Create( HeroDefinition def, Guid guid )
+		public static Hero Create( HeroDefinition def, Guid guid )
 		{
 			return CreateHero( def, guid );
 		}

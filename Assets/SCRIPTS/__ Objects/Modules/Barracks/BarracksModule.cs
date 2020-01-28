@@ -1,21 +1,20 @@
-﻿using SS.Content;
+﻿using SS.AI;
+using SS.AI.Goals;
+using SS.Content;
+using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
 using SS.UI;
-using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-using Object = UnityEngine.Object;
-using SS.InputSystem;
-using SS.AI.Goals;
-using SS.AI;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace SS.Objects.Modules
 {
@@ -216,15 +215,15 @@ namespace SS.Objects.Modules
 			data.factionId = ((IFactionMember)this.ssObject).factionId;
 			data.population = PopulationSize.x4;
 
-			GameObject obj = UnitCreator.Create( def, data.guid );
-			UnitCreator.SetData( obj, data );
+			Unit unit = UnitCreator.Create( def, data.guid );
+			UnitCreator.SetData( unit, data );
 
 			// Move the newly spawned unit to the rally position.
-			TacticalGoalController goalController = obj.GetComponent<TacticalGoalController>();
+			TacticalGoalController goalController = unit.controller;
 			TacticalMoveToGoal goal = new TacticalMoveToGoal();
 			goal.isHostile = false;
 			goal.SetDestination( this.GetRallyPoint() );
-			goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
+			goalController.SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG_ASSIGNED, goal );
 		}
 
 
@@ -328,29 +327,6 @@ namespace SS.Objects.Modules
 		//		UI INTEGRATION
 
 
-
-
-		private string GetResourcesString()
-		{
-			StringBuilder sb = new StringBuilder();
-
-			if( this.resourcesRemaining == null )
-			{
-				return "null";
-			}
-			foreach( var kvp in this.resourcesRemaining )
-			{
-				if( kvp.Value != 0 )
-				{
-					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-					sb.Append( kvp.Value + "x " + resDef.displayName );
-				}
-				sb.Append( ", " );
-			}
-
-			return sb.ToString();
-		}
-
 		private void ShowList()
 		{
 			GameObject[] gridElements = new GameObject[this.trainableUnits.Length];
@@ -453,7 +429,7 @@ namespace SS.Objects.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + this.GetResourcesString() );
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 			}
 		}
 		
@@ -469,7 +445,7 @@ namespace SS.Objects.Modules
 				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
 				if( statusUI != null )
 				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + this.GetResourcesString() );
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 				}
 
 				// clear if the begin was caused by decreasing queue.
@@ -559,7 +535,7 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
-				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + GetResourcesString() );
+				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
 				DisplayCancelButton();
 			}

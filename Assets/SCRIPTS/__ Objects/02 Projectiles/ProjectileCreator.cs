@@ -2,7 +2,6 @@
 using SS.Objects.Modules;
 using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace SS.Objects.Projectiles
 {
@@ -16,17 +15,16 @@ namespace SS.Objects.Projectiles
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, ProjectileData data )
+		public static void SetData( Projectile projectile, ProjectileData data )
 		{
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
 			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, Quaternion.identity );
+			projectile.transform.SetPositionAndRotation( data.position, Quaternion.identity );
 
 			// Set the projectile's native parameters.
-			Projectile projectile = gameObject.GetComponent<Projectile>();
 			if( projectile.guid != data.guid )
 			{
 				throw new Exception( "Mismatched guid." );
@@ -43,17 +41,17 @@ namespace SS.Objects.Projectiles
 
 
 			// Set the projectile's lifetime and reset the lifetime timer.
-			TimerHandler timerHandler = gameObject.GetComponent<TimerHandler>();
+			TimerHandler timerHandler = projectile.GetComponent<TimerHandler>();
 			timerHandler.StartTimer();
 
 			if( data.isStuck )
 			{
 				projectile.MakeStuck();
-				gameObject.transform.rotation = data.stuckRotation;
+				projectile.transform.rotation = data.stuckRotation;
 			}
 			else
 			{
-				Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
+				Rigidbody rigidbody = projectile.GetComponent<Rigidbody>();
 				rigidbody.velocity = data.velocity;
 			}
 
@@ -69,7 +67,7 @@ namespace SS.Objects.Projectiles
 			SSObjectCreator.AssignModuleData( projectile, data );
 		}
 
-		private static GameObject CreateProjectile( ProjectileDefinition def, Guid guid )
+		private static Projectile CreateProjectile( ProjectileDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
 			gameObject.layer = ObjectLayer.PROJECTILES;
@@ -115,18 +113,15 @@ namespace SS.Objects.Projectiles
 
 			SSObjectCreator.AssignModules( projectile, def );
 
-			return gameObject;
+			return projectile;
 		}
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 
-		/// <summary>
-		/// Creates a new ProjectileData from a GameObject.
-		/// </summary>
-		/// <param name="projectile">The GameObject to extract the save state from. Must be a projectile.</param>
 		public static ProjectileData GetData( Projectile projectile )
 		{
 			if( projectile.guid == null )
@@ -184,7 +179,7 @@ namespace SS.Objects.Projectiles
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static GameObject Create( ProjectileDefinition def, Guid guid )
+		public static Projectile Create( ProjectileDefinition def, Guid guid )
 		{
 			return CreateProjectile( def, guid );
 		}

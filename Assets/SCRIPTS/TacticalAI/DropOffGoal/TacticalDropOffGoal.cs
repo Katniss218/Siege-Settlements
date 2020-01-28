@@ -149,7 +149,7 @@ namespace SS.AI.Goals
 					data.rotation = rotation;
 
 
-					GameObject extra = ExtraCreator.Create( def, data.guid );
+					Extra extra = ExtraCreator.Create( def, data.guid );
 					ExtraCreator.SetData( extra, data );
 
 					ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
@@ -337,14 +337,14 @@ namespace SS.AI.Goals
 
 			if( this.dropOffMode == DropOffMode.POSITION )
 			{
-				if( Vector3.Distance( controller.transform.position, this.destinationPos ) <= INTERACTION_DISTANCE )
+				if( DistanceUtils.IsInRange( controller.transform.position, this.destinationPos, INTERACTION_DISTANCE ) )
 				{
 					bool outcome = this.OnArrivalPosition( controller );
 
 					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
 					return;
 				}
-
+			
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
@@ -356,7 +356,7 @@ namespace SS.AI.Goals
 					return;
 				}
 
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
 					bool outcome = this.OnArrivalInventory( controller );
 
@@ -369,7 +369,7 @@ namespace SS.AI.Goals
 			}
 			if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationPaymentReceiver.ssObject.transform, INTERACTION_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationPaymentReceiver.ssObject.transform, INTERACTION_DISTANCE ) )
 				{
 #warning needs to only block if the payment receiver isn't the object wanting repairs. Block only when delivering to modules that are unusable, don't block CS's.
 

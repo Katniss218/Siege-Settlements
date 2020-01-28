@@ -1,4 +1,5 @@
-﻿using SS.Objects;
+﻿using Katniss.Utils;
+using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// The object that the goal is going to try and attack.
 		/// </summary>
-		public SSObjectDFS target { get; set; }
+		public SSObjectDFSC target { get; set; }
 
 		/// <summary>
 		/// If set to true, the goal won't check if the target can be targeted (e.g. outside range, wrong faction, etc.). Useful when you want to attack objects outside of the view range.
@@ -88,7 +89,7 @@ namespace SS.AI.Goals
 				{
 					if( this.target == null )
 					{
-						if( Vector3.Distance( controller.transform.position, this.initialPosition ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+						if( DistanceUtils.IsInRange( controller.transform.position, this.initialPosition, Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM ) )
 						{
 							this.navMeshAgent.ResetPath();
 						}
@@ -106,11 +107,11 @@ namespace SS.AI.Goals
 
 						return;
 					}
-					if( Vector3.Distance( controller.transform.position, this.target.transform.position ) <= shortestAttackRange * STOPPING_FRACTION )
+					if( DistanceUtils.IsInRange( controller.transform, this.target.transform, (shortestAttackRange * STOPPING_FRACTION) ) )
 					{
 						this.navMeshAgent.ResetPath();
 					}
-					else if( Vector3.Distance( controller.transform.position, this.target.transform.position ) >= shortestAttackRange * MOVING_FACTION )
+					else if( !DistanceUtils.IsInRange( controller.transform, this.target.transform, (shortestAttackRange * MOVING_FACTION) ) )
 					{
 						Vector3 currDestPos = this.target.transform.position;
 
@@ -127,7 +128,7 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			SSObjectDFS ssobj = (SSObjectDFS)controller.ssObject;
+			SSObjectDFSC ssobj = (SSObjectDFSC)controller.ssObject;
 			
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
@@ -239,7 +240,7 @@ namespace SS.AI.Goals
 			}
 			else
 			{
-				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFS;
+				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFSC;
 			}
 		}
 	}

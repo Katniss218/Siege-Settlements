@@ -1,6 +1,4 @@
-﻿using SS.AI;
-using SS.AI.Goals;
-using SS.Content;
+﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.Modules;
@@ -23,15 +21,14 @@ namespace SS.Objects.Buildings
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, BuildingData data )
+		public static void SetData( Building building, BuildingData data )
 		{
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+			building.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			// Set the building's native parameters.
-			Building building = gameObject.GetComponent<Building>();
 			if( building.guid != data.guid )
 			{
 				throw new Exception( "Mismatched guid." );
@@ -44,11 +41,10 @@ namespace SS.Objects.Buildings
 			//
 
 			SSObjectCreator.AssignModuleData( building, data );
-
-			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
+			
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
+				building.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
 
 			//
@@ -79,7 +75,7 @@ namespace SS.Objects.Buildings
 			}
 		}
 
-		private static GameObject CreateBuilding( BuildingDefinition def, Guid guid )
+		private static Building CreateBuilding( BuildingDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
 			gameObject.layer = ObjectLayer.BUILDINGS;
@@ -238,7 +234,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( building.health, building.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( building.health, building.healthMax ) );
 				}
 
 				// If the health change changed the usability (health is above threshold).
@@ -291,21 +287,16 @@ namespace SS.Objects.Buildings
 			{
 				hud.GetComponent<HUDInterior>()?.Destroy();
 			}
-
-			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-
-			return gameObject;
+			
+			return building;
 		}
 
 
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
 
-		/// <summary>
-		/// Creates a new BuildingData from a GameObject.
-		/// </summary>
-		/// <param name="building">The GameObject to extract the save state from. Must be a building.</param>
 		public static BuildingData GetData( Building building )
 		{
 			if( building.guid == null )
@@ -335,7 +326,7 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.ExtractModulesToData( building, data );
 
-			data.tacticalGoalData = building.GetComponent<TacticalGoalController>().GetGoalData();
+			data.tacticalGoalData = building.controller.GetGoalData();
 
 			return data;
 		}
@@ -346,7 +337,7 @@ namespace SS.Objects.Buildings
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static GameObject Create( BuildingDefinition def, Guid guid )
+		public static Building Create( BuildingDefinition def, Guid guid )
 		{
 			return CreateBuilding( def, guid );
 		}

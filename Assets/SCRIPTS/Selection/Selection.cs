@@ -20,7 +20,7 @@ namespace SS
 		
 		private class DisplayedObjectData
 		{
-			public SSObjectDFS obj { get; private set; } = null;
+			public SSObjectDFSC obj { get; private set; } = null;
 			public ISelectDisplayHandler module { get; private set; } = null;
 			public bool isGroup { get; private set; } = false;
 
@@ -29,12 +29,12 @@ namespace SS
 				return new DisplayedObjectData() { obj = null, module = null, isGroup = true };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectDFS obj )
+			public static DisplayedObjectData NewObject( SSObjectDFSC obj )
 			{
 				return new DisplayedObjectData() { obj = obj, module = null, isGroup = false };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectDFS obj, SSModule module )
+			public static DisplayedObjectData NewObject( SSObjectDFSC obj, SSModule module )
 			{
 				if( !(module is ISelectDisplayHandler) )
 				{
@@ -44,18 +44,18 @@ namespace SS
 			}
 		}
 
-		private static List<SSObjectDFS> selected = new List<SSObjectDFS>();
+		private static List<SSObjectDFSC> selected = new List<SSObjectDFSC>();
 
-		private static List<SSObjectDFS>[] groups = new List<SSObjectDFS>[10]
+		private static List<SSObjectDFSC>[] groups = new List<SSObjectDFSC>[10]
 		{
-			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
-			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
-			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
-			new List<SSObjectDFS>(), new List<SSObjectDFS>(),
-			new List<SSObjectDFS>(), new List<SSObjectDFS>()
+			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(), new List<SSObjectDFSC>()
 		};
 
-		public static SSObjectDFS[] GetGroup( byte index )
+		public static SSObjectDFSC[] GetGroup( byte index )
 		{
 			if( index < 0 || index > 9 )
 			{
@@ -63,7 +63,7 @@ namespace SS
 			}
 
 			// Skip all dead objects. They'll get clared when the group is reassigned.
-			List<SSObjectDFS> sel = new List<SSObjectDFS>();
+			List<SSObjectDFSC> sel = new List<SSObjectDFSC>();
 			for( int i = 0; i < groups[index].Count; i++ )
 			{
 				if( groups[index][i] == null )
@@ -76,7 +76,7 @@ namespace SS
 			return sel.ToArray();
 		}
 
-		public static void SetGroup( byte index, SSObjectDFS[] objects )
+		public static void SetGroup( byte index, SSObjectDFSC[] objects )
 		{
 			if( index < 0 || index > 9 )
 			{
@@ -102,7 +102,7 @@ namespace SS
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
-		public static SSObjectDFS[] GetSelectedObjects()
+		public static SSObjectDFSC[] GetSelectedObjects()
 		{
 			return selected.ToArray();
 		}
@@ -117,7 +117,7 @@ namespace SS
 		// When module is not null, object also can't be null.
 		private static DisplayedObjectData displayedObjectData = null;
 
-		public static SSObjectDFS displayedObject
+		public static SSObjectDFSC displayedObject
 		{
 			get
 			{
@@ -158,7 +158,7 @@ namespace SS
 			return null;
 		}
 
-		public static bool IsDisplayed( SSObjectDFS obj )
+		public static bool IsDisplayed( SSObjectDFSC obj )
 		{
 			if( displayedObjectData == null )
 			{
@@ -208,7 +208,7 @@ namespace SS
 		/// <summary>
 		/// Displays an object.
 		/// </summary>
-		public static void DisplayObject( SSObjectDFS obj )
+		public static void DisplayObject( SSObjectDFSC obj )
 		{
 			if( obj == null )
 			{
@@ -269,7 +269,7 @@ namespace SS
 		/// <summary>
 		/// Displays a module on a specified object.
 		/// </summary>
-		public static void DisplayModule( SSObjectDFS obj, SSModule module )
+		public static void DisplayModule( SSObjectDFSC obj, SSModule module )
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
@@ -313,12 +313,12 @@ namespace SS
 		/// Checks if the object is currently selected.
 		/// </summary>
 		/// <param name="obj">The object to check.</param>
-		public static bool IsSelected( SSObjectDFS obj )
+		public static bool IsSelected( SSObjectDFSC obj )
 		{
 			return selected.Contains( obj );
 		}
 
-		public static int TrySelect( params SSObjectDFS[] objs )
+		public static int TrySelect( params SSObjectDFSC[] objs )
 		{
 			if( objs == null )
 			{
@@ -380,7 +380,7 @@ namespace SS
 		/// Deselects an object.
 		/// </summary>
 		/// <param name="obj">The object to deselect.</param>
-		public static void Deselect( SSObjectDFS obj )
+		public static void Deselect( SSObjectDFSC obj )
 		{
 			if( obj == null )
 			{

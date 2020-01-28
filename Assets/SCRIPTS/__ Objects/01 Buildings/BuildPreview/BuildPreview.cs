@@ -165,7 +165,7 @@ namespace SS.Objects.Buildings
 				data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
 				data.constructionSaveState = new ConstructionSiteData();
 
-				GameObject building = BuildingCreator.Create( this.def, data.guid );
+				Building building = BuildingCreator.Create( this.def, data.guid );
 				BuildingCreator.SetData( building, data );
 
 				Object.Destroy( this.gameObject );

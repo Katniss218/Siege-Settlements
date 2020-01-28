@@ -14,38 +14,28 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Units
 {
-	[RequireComponent( typeof( Unit ) )]
-	public class CivilianUnitExtension : MonoBehaviour
+	public class CivilianUnitExtension : SSObjectExtension<Unit>
 	{
-		private static int avoidancePriorityIncremented = 10;
+		private static int avoidancePriority = 10;
 		/// <summary>
 		/// Returns a value for the avoidance priority (helps prevent units blocking each other in tight spaces - they'll just push the troublesome unit aside).
 		/// </summary>
-		public static int GetNextAvPriority( bool employed )
+		public static int NextAvoidancePriority( bool employed )
 		{
 			// 10 - 49, 50 - 89
-			avoidancePriorityIncremented++;
-			if( avoidancePriorityIncremented == 50 )
+			avoidancePriority++;
+			if( avoidancePriority == 50 )
 			{
-				avoidancePriorityIncremented = 10;
+				avoidancePriority = 10;
 			}
-			return employed ? avoidancePriorityIncremented + 40 : avoidancePriorityIncremented;
+			return employed ? avoidancePriority + 40 : avoidancePriority;
 		}
+		
 
-		private Unit __unit = null;
-		public Unit unit
-		{
-			get
-			{
-				if( this.__unit == null )
-				{
-					this.__unit = this.GetComponent<Unit>();
-				}
-				return this.__unit;
-			}
-		}
-
-
+		/// <summary>
+		/// Use WorkplaceModule.Employ or WorkplaceModule.Unemploy to toggle.
+		/// </summary>
+		public WorkplaceModule workplace { get; internal set; } = null;
 		public bool isEmployed
 		{
 			get
@@ -57,97 +47,54 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Use WorkplaceModule.Employ or WorkplaceModule.Unemploy to toggle.
 		/// </summary>
-		public WorkplaceModule workplace { get; set; } = null;
-		public int workplaceSlotId { get; set; }
+		public int workplaceSlotIndex { get; internal set; }
 		public bool isWorking { get; set; }
 
-
-		private InteriorModule GetClosestInteriorBuilding()
-		{
-			Building[] b = SSObject.GetAllBuildings();
-
-			InteriorModule interior = null;
-			float dst = float.MaxValue;
-			for( int i = 0; i < b.Length; i++ )
-			{
-				if( b[i].factionId != this.unit.factionId )
-				{
-					continue;
-				}
-
-				if( !b[i].isUsable )
-				{
-					continue;
-				}
-
-				InteriorModule[] interiors = b[i].GetModules<InteriorModule>();
-				if( interiors.Length == 0 )
-				{
-					continue;
-				}
-
-				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.unit ) == null )
-				{
-					continue;
-				}
-
-				float newDst = Vector3.Distance( this.transform.position, b[i].transform.position );
-				if( newDst >= dst )
-				{
-					continue;
-				}
-
-				interior = interiors[0];
-			}
-			return interior;
-		}
-
-		bool __isOnAutomaticDuty;
-		public bool isOnAutomaticDuty
-		{
-			get
-			{
-				return this.__isOnAutomaticDuty;
-			}
-			set
-			{
-				if( this.isEmployed )
-				{
-#warning for some reason, this doesn't save itself, even though it's set to false for workers.
-					this.__isOnAutomaticDuty = false;
-					return;
-					//throw new System.Exception( "Tried to set automatic duty for an employed civilian." );
-				}
-				this.__isOnAutomaticDuty = value;
-				// if automatic duty assigned any goals - clear them.
-				if( !value )
-				{
-					this.automaticDutyReceiver = null;
-					this.GetComponent<TacticalGoalController>().SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
-				}
-				this.onAutomaticDutyToggle?.Invoke();
-			}
-		}
-
-		IPaymentReceiver automaticDutyReceiver;
-			   
 		public UnityEvent onAutomaticDutyToggle { get; private set; } = new UnityEvent();
 		public UnityEvent onEmploy { get; private set; } = new UnityEvent();
 		public UnityEvent onUnemploy { get; private set; } = new UnityEvent();
 
-		InventoryModule selfInventory = null;
+#warning automatic duty is a part of the strategic AI. It should take into account other units already going to pay / to houses, etc.
+#warning The same goes for employment.
+		// this would avoid 10 civilians going to a house that has only 4 slots.
+
+		public bool isOnAutomaticDuty { get; private set; } = false;
+		private IPaymentReceiver automaticDutyReceiver = null;
+		private InventoryModule inventory = null;
+
+
+
+		public void SetAutomaticDuty( bool value )
+		{
+			if( this.isEmployed )
+			{
+				this.isOnAutomaticDuty = false;
+				return;
+			}
+
+			this.isOnAutomaticDuty = value;
+			// if automatic duty assigned any goals - clear them.
+			if( !value )
+			{
+				this.automaticDutyReceiver = null;
+				this.obj.controller.SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
+			}
+			this.onAutomaticDutyToggle?.Invoke();
+		}
+
+
 		
 		private void Start()
 		{
-			InventoryModule[] inventories = this.unit.GetModules<InventoryModule>();
+			InventoryModule[] inventories = this.obj.GetModules<InventoryModule>();
 			if( inventories.Length > 0 )
 			{
-				this.selfInventory = inventories[0];
+				this.inventory = inventories[0];
 			}
 
 			this.onAutomaticDutyToggle.AddListener( () =>
 			{
-				if( !Selection.IsDisplayed( this.unit ) )
+				if( !Selection.IsDisplayed( this.obj ) )
 				{
 					return;
 				}
@@ -165,7 +112,7 @@ namespace SS.Objects.Units
 
 			this.onEmploy.AddListener( () =>
 			{
-				if( !Selection.IsDisplayed( this.unit ) )
+				if( !Selection.IsDisplayed( this.obj ) )
 				{
 					return;
 				}
@@ -179,7 +126,7 @@ namespace SS.Objects.Units
 
 			this.onUnemploy.AddListener( () =>
 			{
-				if( !Selection.IsDisplayed( this.unit ) )
+				if( !Selection.IsDisplayed( this.obj ) )
 				{
 					return;
 				}
@@ -206,6 +153,46 @@ namespace SS.Objects.Units
 
 
 
+		private InteriorModule GetClosestInteriorBuilding()
+		{
+			Building[] b = SSObject.GetAllBuildings();
+
+			InteriorModule interior = null;
+			float dstSq = float.MaxValue;
+			for( int i = 0; i < b.Length; i++ )
+			{
+				if( b[i].factionId != this.obj.factionId )
+				{
+					continue;
+				}
+
+				if( !b[i].isUsable )
+				{
+					continue;
+				}
+
+				InteriorModule[] interiors = b[i].GetModules<InteriorModule>();
+				if( interiors.Length == 0 )
+				{
+					continue;
+				}
+
+				if( interiors[0].GetFirstValid( InteriorModule.SlotType.Generic, this.obj ) == null )
+				{
+					continue;
+				}
+
+				float newDstSq = (b[i].transform.position - this.transform.position).sqrMagnitude;
+				if( newDstSq >= dstSq )
+				{
+					continue;
+				}
+
+				interior = interiors[0];
+			}
+			return interior;
+		}
+
 
 
 		public const int TAG_MAKING_SPACE = 75;
@@ -214,31 +201,31 @@ namespace SS.Objects.Units
 
 		void UpdateAutomaticDuty()
 		{
-			if( this.selfInventory == null )
+			if( this.inventory == null )
 			{
-				this.isOnAutomaticDuty = false;
+				this.SetAutomaticDuty( false );
 				return;
 			}
 
-			TacticalGoalController goalController = this.GetComponent<TacticalGoalController>();
+			TacticalGoalController controller = this.obj.controller;
 
-			if( goalController.goalTag == TacticalGoalQuery.TAG_CUSTOM )
+			if( controller.goalTag == TacticalGoalQuery.TAG_CUSTOM )
 			{
-				this.isOnAutomaticDuty = false;
+				this.SetAutomaticDuty( false );
 				return;
 			}
 
-			if( goalController.goalTag == TAG_GOING_TO_PICKUP )
-			{
-				return;
-			}
-
-			if( goalController.goalTag == TAG_GOING_TO_PAY )
+			if( controller.goalTag == TAG_GOING_TO_PICKUP )
 			{
 				return;
 			}
 
-			if( goalController.goalTag == TAG_MAKING_SPACE )
+			if( controller.goalTag == TAG_GOING_TO_PAY )
+			{
+				return;
+			}
+
+			if( controller.goalTag == TAG_MAKING_SPACE )
 			{
 				return;
 			}
@@ -246,7 +233,7 @@ namespace SS.Objects.Units
 
 
 
-			if( this.selfInventory.isEmpty )
+			if( this.inventory.isEmpty )
 			{
 				if( this.automaticDutyReceiver != null )
 				{
@@ -261,9 +248,9 @@ namespace SS.Objects.Units
 					bool foundInventory = false;
 					foreach( var kvp in wantedResources )
 					{
-						if( LevelDataManager.factionData[this.unit.factionId].resourcesStoredCache.ContainsKey( kvp.Key ) )
+						if( LevelDataManager.factionData[this.obj.factionId].resourcesStoredCache.ContainsKey( kvp.Key ) )
 						{
-							InventoryModule closestinventory = ResourceCollectorWorkplaceModule.GetClosestInventoryContaining( this.unit.transform.position, this.unit.factionId, kvp.Key );
+							InventoryModule closestinventory = ResourceCollectorWorkplaceModule.GetClosestInventoryContaining( this.obj.transform.position, this.obj.factionId, kvp.Key );
 
 							if( closestinventory != null )
 							{
@@ -277,7 +264,7 @@ namespace SS.Objects.Units
 								// then, if at least one of the inv slots is full, goes to the receiver.
 								goal2.resources = wantedResources;
 								goal2.ApplyResources();
-								goalController.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
+								controller.SetGoals( TAG_GOING_TO_PICKUP, goal1, goal2 );
 
 								foundInventory = true;
 							}
@@ -287,8 +274,8 @@ namespace SS.Objects.Units
 					if( !foundInventory ) // else - can't pick up any of the wanted resources.
 					{
 						// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-						IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
-							LevelDataManager.factionData[this.unit.factionId].GetResourcesStored().ToArray()
+						IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
+							LevelDataManager.factionData[this.obj.factionId].GetResourcesStored().ToArray()
 						);
 
 						this.automaticDutyReceiver = receiver; // if null, will be set to null.
@@ -297,8 +284,8 @@ namespace SS.Objects.Units
 				else
 				{
 					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
-						LevelDataManager.factionData[this.unit.factionId].GetResourcesStored().ToArray()
+					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
+						LevelDataManager.factionData[this.obj.factionId].GetResourcesStored().ToArray()
 					);
 
 					this.automaticDutyReceiver = receiver; // if null, will be set to null.
@@ -316,7 +303,7 @@ namespace SS.Objects.Units
 						return;
 					}
 
-					Dictionary<string, int> resourcesCarried = selfInventory.GetAll();
+					Dictionary<string, int> resourcesCarried = inventory.GetAll();
 
 					foreach( var kvp in wantedResources )
 					{
@@ -329,7 +316,7 @@ namespace SS.Objects.Units
 
 							TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 							goal2.SetDestination( this.automaticDutyReceiver );
-							goalController.SetGoals( TAG_GOING_TO_PAY, goal1, goal2 );
+							controller.SetGoals( TAG_GOING_TO_PAY, goal1, goal2 );
 
 							return;
 						}
@@ -339,7 +326,7 @@ namespace SS.Objects.Units
 
 					string[] resourceTypesCarried = resourcesCarried.Keys.ToArray();
 
-					InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.unit, this.unit.transform.position, resourceTypesCarried[0], this.unit.factionId );
+					InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
 
 					if( dropOffToThis != null )
 					{
@@ -348,23 +335,23 @@ namespace SS.Objects.Units
 
 						TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 						goal2.SetDestination( dropOffToThis );
-						goalController.SetGoals( TAG_MAKING_SPACE, goal1, goal2 );
+						controller.SetGoals( TAG_MAKING_SPACE, goal1, goal2 );
 					}
 				}
 				// inventory isn't empty, doesn't have a receiver to drop off at.
 				else
 				{
-					string[] resourceTypesCarried = selfInventory.GetAll().Keys.ToArray();
+					string[] resourceTypesCarried = inventory.GetAll().Keys.ToArray();
 					// - - find receiver that wants any of the carried resources.
 					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.unit.transform.position, this.unit.factionId,
+					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
 						resourceTypesCarried
 					);
 
 					// If can't find a receiver that wants ANY of the carried resources, drop off at least one of the carried resources, and then try again - using faction's stored resources.
 					if( receiver == null )
 					{
-						InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.unit, this.unit.transform.position, resourceTypesCarried[0], this.unit.factionId );
+						InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
 
 						if( dropOffToThis != null )
 						{
@@ -373,7 +360,7 @@ namespace SS.Objects.Units
 
 							TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 							goal2.SetDestination( dropOffToThis );
-							goalController.SetGoals( TAG_MAKING_SPACE, goal1, goal2 );
+							controller.SetGoals( TAG_MAKING_SPACE, goal1, goal2 );
 						}
 					}
 					else
@@ -389,7 +376,7 @@ namespace SS.Objects.Units
 
 		private void UpdateWorkerSchedule()
 		{
-			TacticalGoalController controller = this.GetComponent<TacticalGoalController>();
+			TacticalGoalController controller = this.obj.controller;
 
 			// If workplace is damaged - stop working, go home.
 			if( this.workplace.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.workplace.ssObject).isUsable )
@@ -419,7 +406,7 @@ namespace SS.Objects.Units
 				}
 
 				// if is at home
-				if( this.unit.interior != null && this.unit.interior != this.workplace.interior )
+				if( this.obj.interior != null && this.obj.interior != this.workplace.interior )
 				{
 					return;
 				}
@@ -442,7 +429,7 @@ namespace SS.Objects.Units
 
 			if( this.isWorking ) // set after the worker has checked in.
 			{
-				this.workplace.MakeDoWork( this.unit );
+				this.workplace.MakeDoWork( this.obj );
 			}
 			else
 			{
@@ -451,7 +438,7 @@ namespace SS.Objects.Units
 					return;
 				}
 
-				if( this.unit.interior == this.workplace.interior && this.unit.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
+				if( this.obj.interior == this.workplace.interior && this.obj.slotType == InteriorModule.SlotType.Worker && !this.isWorking )
 				{
 					this.isWorking = true;
 				}

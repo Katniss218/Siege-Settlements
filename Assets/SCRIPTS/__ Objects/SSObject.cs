@@ -18,7 +18,7 @@ namespace SS.Objects
 	{
 		private static List<SSObject> allSSObjects = new List<SSObject>();
 
-		private static List<SSObjectDFS> allSelectables = new List<SSObjectDFS>();
+		private static List<SSObjectDFSC> allSelectables = new List<SSObjectDFSC>();
 		
 		private static List<Unit> allUnits = new List<Unit>();
 		private static List<Building> allBuildings = new List<Building>();
@@ -31,7 +31,7 @@ namespace SS.Objects
 			return allSSObjects.ToArray();
 		}
 
-		public static SSObjectDFS[] GetAllDFS()
+		public static SSObjectDFSC[] GetAllDFS()
 		{
 			return allSelectables.ToArray();
 		}
@@ -323,9 +323,9 @@ namespace SS.Objects
 		protected virtual void OnEnable()
 		{
 			allSSObjects.Add( this );
-			if( this is SSObjectDFS )
+			if( this is SSObjectDFSC )
 			{
-				allSelectables.Add( this as SSObjectDFS );
+				allSelectables.Add( this as SSObjectDFSC );
 			}
 
 			if( this is Unit )
@@ -358,9 +358,9 @@ namespace SS.Objects
 		protected virtual void OnDisable()
 		{
 			allSSObjects.Remove( this );
-			if( this is SSObjectDFS )
+			if( this is SSObjectDFSC )
 			{
-				allSelectables.Remove( this as SSObjectDFS );
+				allSelectables.Remove( this as SSObjectDFSC );
 			}
 
 			if( this is Unit )
@@ -402,6 +402,25 @@ namespace SS.Objects
 				}
 			}
 			return null;
+		}
+
+
+		public IPaymentReceiver[] GetAvailableReceivers()
+		{
+			if( this is ISSObjectUsableUnusable )
+			{
+				ISSObjectUsableUnusable b = (ISSObjectUsableUnusable)this;
+				if( !b.isUsable )
+				{
+					if( b.paymentReceiver == null ) // if repair hasn't started yet - can't pay.
+					{
+						return new IPaymentReceiver[0];
+					}
+
+					return new IPaymentReceiver[] { b.paymentReceiver };
+				}
+			}
+			return this.GetComponents<IPaymentReceiver>();
 		}
 	}
 }

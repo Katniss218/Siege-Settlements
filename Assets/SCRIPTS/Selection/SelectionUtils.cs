@@ -9,7 +9,7 @@ namespace SS
 {
 	class SelectionUtils
 	{
-		public static void Select( SSObjectDFS[] uniqueSelectables, SelectionMode selectionMode )
+		public static void Select( SSObjectDFSC[] uniqueSelectables, SelectionMode selectionMode )
 		{
 			// Select selectables on the list (if not selected).
 			if( selectionMode == SelectionMode.Add )
@@ -41,7 +41,7 @@ namespace SS
 				}
 				else
 				{
-					SSObjectDFS[] selectedObjs = Selection.GetSelectedObjects();
+					SSObjectDFSC[] selectedObjs = Selection.GetSelectedObjects();
 					bool playDeselect = false;
 
 					for( int i = 0; i < selectedObjs.Length; i++ )
@@ -80,9 +80,9 @@ namespace SS
 
 		public static void SelectTheSame( string definitionId, SelectionMode selectionMode )
 		{
-			SSObjectDFS[] selectables = SSObjectDFS.GetAllDFS();
+			SSObjectDFSC[] selectables = SSObjectDFSC.GetAllDFS();
 
-			List<SSObjectDFS> sameIdAndWithinView = new List<SSObjectDFS>();
+			List<SSObjectDFSC> sameIdAndWithinView = new List<SSObjectDFSC>();
 			for( int i = 0; i < selectables.Length; i++ )
 			{
 				if( selectables[i].definitionId != definitionId )
@@ -104,15 +104,15 @@ namespace SS
 				sameIdAndWithinView.Add( selectables[i] );
 			}
 
-			SSObjectDFS[] array = sameIdAndWithinView.ToArray();
+			SSObjectDFSC[] array = sameIdAndWithinView.ToArray();
 			Select( array, selectionMode );
 		}
 
 		public static void SelectOnScreen( Vector2 pos1, Vector2 pos2, SelectionMode selectionMode )
 		{
-			SSObjectDFS[] selectables = SSObject.GetAllDFS();
+			SSObjectDFSC[] selectables = SSObject.GetAllDFS();
 
-			List<SSObjectDFS> ret = new List<SSObjectDFS>();
+			List<SSObjectDFSC> ret = new List<SSObjectDFSC>();
 
 			for( int i = 0; i < selectables.Length; i++ )
 			{

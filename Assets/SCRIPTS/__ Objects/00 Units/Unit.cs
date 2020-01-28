@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IInteriorUser
+	public class Unit : SSObjectDFSC, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -89,11 +89,11 @@ namespace SS.Objects.Units
 					this.civilian = this.gameObject.AddComponent<CivilianUnitExtension>();
 					if( !this.civilian.isEmployed )
 					{
-						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.GetNextAvPriority( false );
+						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( false );
 					}
 					else
 					{
-						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.GetNextAvPriority( true );
+						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( true );
 					}
 				}
 				else
@@ -209,6 +209,24 @@ namespace SS.Objects.Units
 		}
 		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
 
+		public static void GetSlot( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud )
+		{
+			slot = null;
+			slotHud = null;
+
+			if( slotType == InteriorModule.SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+				return;
+			}
+			if( slotType == InteriorModule.SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
+		}
+
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
@@ -220,20 +238,11 @@ namespace SS.Objects.Units
 			}
 
 			// - Interior fields
-
-			InteriorModule.Slot slot = null;
-			HUDInteriorSlot slotHud = null;
-			if( slotType == InteriorModule.SlotType.Generic )
-			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
-			}
-			else if( slotType == InteriorModule.SlotType.Worker )
-			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
+			
+			GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+			
 			slot.objInside = this;
+
 			slotHud.SetHealth( this.healthPercent );
 			if( slotType == InteriorModule.SlotType.Worker )
 			{
@@ -280,20 +289,11 @@ namespace SS.Objects.Units
 
 
 			// - Interior fields.
-
-			InteriorModule.Slot slot = null;
-			HUDInteriorSlot slotHud = null;
-			if( this.slotType == InteriorModule.SlotType.Generic )
-			{
-				slot = interior.slots[this.slotIndex];
-				slotHud = interior.hudInterior.slots[this.slotIndex];
-			}
-			else if( this.slotType == InteriorModule.SlotType.Worker )
-			{
-				slot = interior.workerSlots[this.slotIndex];
-				slotHud = interior.hudInterior.workerSlots[this.slotIndex];
-			}
+			
+			GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+			
 			slot.objInside = null;
+
 			slotHud.SetHealth( null );
 			if( this.slotType == InteriorModule.SlotType.Worker )
 			{
@@ -332,20 +332,13 @@ namespace SS.Objects.Units
 		//
 
 
-		public void OnMouseEnterListener()
-		{
-			this.hud.TryShow();
-		}
+		public void OnMouseEnterListener() => this.hud.TryShow();
 
-		public void OnMouseStayListener()
-		{ }
+		public void OnMouseStayListener() { }
 
-		public void OnMouseExitListener()
-		{
-			this.hud.TryHide();
-		}
-		
-		
+		public void OnMouseExitListener() => this.hud.TryHide();
+
+
 
 		protected override void OnObjDestroyed()
 		{
@@ -359,18 +352,12 @@ namespace SS.Objects.Units
 
 
 
-		
-		public override void OnDisplay()
-		{
-			UnitDisplayManager.Display( this );
-		}
 
-		public override void OnHide()
-		{
-			UnitDisplayManager.Hide( this );
-		}
+		public override void OnDisplay() => UnitDisplayManager.Display( this );
 
-		
+		public override void OnHide() => UnitDisplayManager.Hide( this );
+
+
 		public bool CanChangePopulation()
 		{
 			if( this.isPopulationLocked )

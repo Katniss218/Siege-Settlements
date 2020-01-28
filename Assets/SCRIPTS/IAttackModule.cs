@@ -10,10 +10,10 @@
 		bool isReadyToAttack { get; }
 
 		//Targeter targeter { get; }
-		SSObjectDFS target { get; set; }
+		SSObjectDFSC target { get; set; }
 		
 		void FindTargetClosest();
 
-		void TrySetTarget( SSObjectDFS target );
+		void TrySetTarget( SSObjectDFSC target );
 	}
 }

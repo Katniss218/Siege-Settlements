@@ -205,7 +205,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				SSObjectDFS[] selected = Selection.GetSelectedObjects();
+				SSObjectDFSC[] selected = Selection.GetSelectedObjects();
 				for( int i = 0; i < selected.Length; i++ )
 				{
 					if( !(selected[i] is Unit) )
@@ -265,7 +265,7 @@ namespace SS
 						return;
 					}
 
-					SSObjectDFS[] selected = Selection.GetSelectedObjects();
+					SSObjectDFSC[] selected = Selection.GetSelectedObjects();
 					for( int i = 0; i < selected.Length; i++ )
 					{
 						if( !(selected[i] is Unit) )
@@ -283,13 +283,13 @@ namespace SS
 							continue;
 						}
 
-						TacticalGoalController goalControllerBeacon = unitRay.GetComponent<TacticalGoalController>();
+						TacticalGoalController goalControllerBeacon = unitRay.controller;
 						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
 						goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 
-						TacticalGoalController goalController = selected[i].GetComponent<TacticalGoalController>();
+						TacticalGoalController goalController = selected[i].controller;
 						goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
@@ -372,7 +372,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					SSObjectDFS sel = hitInfo.collider.GetComponent<SSObjectDFS>();
+					SSObjectDFSC sel = hitInfo.collider.GetComponent<SSObjectDFSC>();
 					if( sel == null )
 					{
 						return;
@@ -384,7 +384,7 @@ namespace SS
 					}
 					else
 					{
-						Selection.TrySelect( new SSObjectDFS[] { sel } );
+						Selection.TrySelect( new SSObjectDFSC[] { sel } );
 					}
 				}
 			}
@@ -399,7 +399,7 @@ namespace SS
 
 		private static void SetFactionSelected( int fac )
 		{
-			SSObjectDFS[] selected = Selection.GetSelectedObjects();
+			SSObjectDFSC[] selected = Selection.GetSelectedObjects();
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				IFactionMember faction = selected[i].GetComponent<IFactionMember>();
@@ -414,7 +414,7 @@ namespace SS
 
 		private void Inp_F3( InputQueue self )
 		{
-			SSObjectDFS[] damageables = SSObject.GetAllDFS();
+			SSObjectDFSC[] damageables = SSObject.GetAllDFS();
 
 			for( int i = 0; i < damageables.Length; i++ )
 			{
@@ -466,7 +466,7 @@ namespace SS
 					data.position = hitInfo.point;
 					data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 
-					GameObject extra = ExtraCreator.Create( def, data.guid );
+					Extra extra = ExtraCreator.Create( def, data.guid );
 					ExtraCreator.SetData( extra, data );
 
 					ResourceDepositModule resDepo = extra.GetComponent<ResourceDepositModule>();
@@ -499,7 +499,7 @@ namespace SS
 						data.factionId = 0;
 						data.health = def.healthMax;
 
-						GameObject hero = HeroCreator.Create( def, data.guid );
+						Hero hero = HeroCreator.Create( def, data.guid );
 						HeroCreator.SetData( hero, data );
 					}
 				}
@@ -525,7 +525,7 @@ namespace SS
 						data.position = hitInfo.point;
 						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
 
-						GameObject extra = ExtraCreator.Create( def, data.guid );
+						Extra extra = ExtraCreator.Create( def, data.guid );
 						ExtraCreator.SetData( extra, data );
 					}
 				}
@@ -608,11 +608,11 @@ namespace SS
 
 		void Start()
 		{
-			SSObjectDFS.onHealthChangeAny.AddListener( ( SSObjectDFS obj, float deltaHealth ) =>
+			SSObjectDFSC.onHealthChangeAny.AddListener( ( SSObjectDFSC obj, float deltaHealth ) =>
 			{
 				if( Selection.IsDisplayedGroup() )
 				{
-					SSObjectDFS ssObjectSelectable = obj.GetComponent<SSObjectDFS>();
+					SSObjectDFSC ssObjectSelectable = obj.GetComponent<SSObjectDFSC>();
 					if( ssObjectSelectable  == null )
 					{
 						return;

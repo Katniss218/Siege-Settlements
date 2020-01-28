@@ -15,7 +15,7 @@ namespace SS.Objects.Modules
 			List<CivilianUnitExtension> emp = this.interior.GetAllEmployed();
 			for( int i = 0; i < emp.Count; i++ )
 			{
-				if( emp[i].workplace == this && emp[i].unit.interior == this.interior && emp[i].unit.slotType == InteriorModule.SlotType.Worker )
+				if( emp[i].workplace == this && emp[i].obj.interior == this.interior && emp[i].obj.slotType == InteriorModule.SlotType.Worker )
 				{
 					isWorkerInside = true;
 				}

@@ -267,29 +267,7 @@ namespace SS.Objects.Modules
 		//
 		//
 
-
-
-
-		private string Status()
-		{
-			StringBuilder sb = new StringBuilder();
-
-			if( this.resourcesRemaining == null )
-			{
-				return "null";
-			}
-			foreach( var kvp in this.resourcesRemaining )
-			{
-				if( kvp.Value != 0 )
-				{
-					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-					sb.Append( kvp.Value + "x " + resDef.displayName );
-				}
-				sb.Append( ", " );
-			}
-
-			return sb.ToString();
-		}
+			
 
 		private void ShowList()
 		{
@@ -391,7 +369,7 @@ namespace SS.Objects.Modules
 			Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 			if( statusUI != null )
 			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + Status() );
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 			}
 		}
 
@@ -407,7 +385,7 @@ namespace SS.Objects.Modules
 				Transform statusUI = SelectionPanel.instance.obj.GetElement( "research.status" );
 				if( statusUI != null )
 				{
-					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + Status() );
+					UIUtils.EditText( statusUI.gameObject, "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 				}
 
 				// clear if the begin was caused by decreasing queue.
@@ -498,7 +476,7 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
-				GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + Status() );
+				GameObject statusGO = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources ('" + this.queuedTechnologies[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 				SelectionPanel.instance.obj.RegisterElement( "research.status", statusGO.transform );
 				this.DisplayCancelButton();
 			}

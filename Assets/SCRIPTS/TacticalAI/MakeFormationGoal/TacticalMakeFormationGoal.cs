@@ -1,4 +1,5 @@
-﻿using SS.Objects;
+﻿using Katniss.Utils;
+using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
 using System.Collections.Generic;
@@ -77,7 +78,7 @@ namespace SS.AI.Goals
 					continue;
 				}
 
-				TacticalGoalController controller = unit.GetComponent<TacticalGoalController>();
+				TacticalGoalController controller = unit.controller;
 				if( !(controller.currentGoal is TacticalMakeFormationGoal) )
 				{
 					continue;
@@ -103,7 +104,7 @@ namespace SS.AI.Goals
 				this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 			}
 
-			if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+			if( DistanceUtils.IsInRange( this.navMeshAgent.pathEndPosition, controller.transform.position, Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM ) )
 			{
 				// If the agent has travelled to the destination - switch back to the default Goal.
 				if( this.navMeshAgent.hasPath )

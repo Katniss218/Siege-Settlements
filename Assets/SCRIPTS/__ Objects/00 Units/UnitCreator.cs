@@ -1,15 +1,14 @@
 ﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Modules;
+using SS.Objects.SubObjects;
 using SS.UI;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
-using SS.AI;
-using SS.Objects.SubObjects;
-using SS.Objects.Modules;
 
 namespace SS.Objects.Units
 {
@@ -17,25 +16,21 @@ namespace SS.Objects.Units
 	{
 		private const string GAMEOBJECT_NAME = "Unit";
 		
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static void SetData( GameObject gameObject, UnitData data )
+		public static void SetData( Unit unit, UnitData data )
 		{
 			//
 			//    CONTAINER GAMEOBJECT
 			//
 
 			// Set the position/movement information.
-			gameObject.transform.SetPositionAndRotation( data.position, data.rotation );
+			unit.transform.SetPositionAndRotation( data.position, data.rotation );
 
 			// Set the unit's movement parameters.
-			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+			NavMeshAgent navMeshAgent = unit.navMeshAgent;
 			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
 
 			// Set the unit's native parameters.
-			Unit unit = gameObject.GetComponent<Unit>();
 			if( unit.guid != data.guid )
 			{
 				throw new Exception( "Mismatched guid: '" + unit.guid + "'." );
@@ -54,31 +49,24 @@ namespace SS.Objects.Units
 				unit.rotationSpeedOverride = data.rotationSpeed.Value;
 			}
 
-			CivilianUnitExtension cue = gameObject.GetComponent<CivilianUnitExtension>();
-
-			// Set the workplace (if unit is a civilian & workplace is present).
-			if( data.workplace != null )
+			if( unit.isCivilian )
 			{
-				if( !unit.isCivilian )
+				CivilianUnitExtension cue = unit.civilian;
+
+				// Set the workplace (if unit is a civilian & workplace is present).
+				if( data.workplace != null )
 				{
-					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
+					SSObject obj = SSObject.Find( data.workplace.Item1 );
+					WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
+
+					WorkplaceModule.SetWorking( workplace, cue, data.workplace.Item3 );
 				}
 
-				SSObject obj = SSObject.Find( data.workplace.Item1 );
-				WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
-
-				WorkplaceModule.SetWorker( workplace, cue, data.workplace.Item3 );
-			}
-
-			// Set the automatic duty (only for civilians).
-			if( data.isOnAutomaticDuty != null )
-			{
-				if( !unit.isCivilian )
+				// Set the automatic duty (only for civilians).
+				if( data.isOnAutomaticDuty != null )
 				{
-					throw new Exception( "Can't have workplace set on a non-civilian unit. (guid: '" + unit.guid + "')." );
+					cue.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
 				}
-
-				cue.isOnAutomaticDuty = data.isOnAutomaticDuty.Value;
 			}
 
 			//
@@ -86,11 +74,10 @@ namespace SS.Objects.Units
 			//
 
 			SSObjectCreator.AssignModuleData( unit, data );
-
-			TacticalGoalController tacticalGoalController = gameObject.GetComponent<TacticalGoalController>();
+			
 			if( data.tacticalGoalData != null )
 			{
-				tacticalGoalController.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
+				unit.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
 #warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
 #warning   data should set the population in a different way maybe?
@@ -99,7 +86,10 @@ namespace SS.Objects.Units
 			unit.population = data.population;
 		}
 
-		private static GameObject CreateUnit( UnitDefinition def, Guid guid )
+
+
+
+		private static Unit CreateUnit( UnitDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
 			gameObject.layer = ObjectLayer.UNITS;
@@ -260,8 +250,7 @@ namespace SS.Objects.Units
 					unit.hud.isVisible = true;
 					unit.hud.isDisplayedDueToDamage = true;
 				}
-
-#warning display.
+				
 				if( !Selection.IsDisplayed( unit ) )
 				{
 					return;
@@ -269,11 +258,10 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFS.GetHealthString( unit.health, unit.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( unit.health, unit.healthMax ) );
 				}
 			} );
-
-#warning onobjectdeath.
+			
 			// Make the unit deselect itself, and destroy it's UI when killed.
 			unit.onDeath.AddListener( () =>
 			{
@@ -286,10 +274,9 @@ namespace SS.Objects.Units
 
 				if( unit.isCivilian )
 				{
-					CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
-					if( cue.isEmployed )
+					if( unit.civilian.isEmployed )
 					{
-						cue.workplace.ClearWorker( cue.workplaceSlotId );
+						WorkplaceModule.ClearWorking( unit.civilian.workplace, unit.civilian, unit.civilian.workplaceSlotIndex );
 					}
 				}
 
@@ -323,20 +310,16 @@ namespace SS.Objects.Units
 			{
 				hud.GetComponent<HUDInterior>()?.Destroy();
 			}
-
-			TacticalGoalController tacticalGoalController = gameObject.AddComponent<TacticalGoalController>();
-
-			return gameObject;
+			
+			return unit;
 		}
 
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		/// <summary>
-		/// Creates a new UnitData from a GameObject.
-		/// </summary>
-		/// <param name="unit">The GameObject to extract the save state from. Must be a unit.</param>
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		
+		
 		public static UnitData GetData( Unit unit )
 		{
 			if( unit.guid == null )
@@ -365,20 +348,19 @@ namespace SS.Objects.Units
 				data.rotationSpeed = unit.rotationSpeedOverride;
 			}
 			data.population = unit.population;
-			
-			CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
-			if( cue != null )
+
+			if( unit.isCivilian )
 			{
-				if( cue.workplace != null )
+				if( unit.civilian.workplace != null )
 				{
 					data.workplace = new Tuple<Guid, Guid, int>(
-							cue.workplace.ssObject.guid,
-							cue.workplace.moduleId,
-							cue.workplaceSlotId
+							unit.civilian.workplace.ssObject.guid,
+							unit.civilian.workplace.moduleId,
+							unit.civilian.workplaceSlotIndex
 						);
 				}
 
-				data.isOnAutomaticDuty = cue.isOnAutomaticDuty;
+				data.isOnAutomaticDuty = unit.civilian.isOnAutomaticDuty;
 			}
 
 			//
@@ -387,33 +369,34 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.ExtractModulesToData( unit, data );
 			
-			data.tacticalGoalData = unit.GetComponent<TacticalGoalController>().GetGoalData();
+			data.tacticalGoalData = unit.controller.GetGoalData();
 
 			return data;
 		}
 
+
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-		public static GameObject Create( UnitDefinition def, Guid guid )
+
+		public static Unit Create( UnitDefinition def, Guid guid )
 		{
 			return CreateUnit( def, guid );
 		}
 
-		public static GameObject Create( UnitDefinition def, Guid guid, Vector3 position, Quaternion rotation, int factionId )
+		public static Unit Create( UnitDefinition def, Guid guid, Vector3 position, Quaternion rotation, int factionId )
 		{
-			GameObject gameObject = CreateUnit( def, guid );
-			gameObject.transform.position = position;
-			gameObject.transform.rotation = rotation;
-
-			Unit unit = gameObject.GetComponent<Unit>();
+			Unit unit = CreateUnit( def, guid );
+			unit.transform.position = position;
+			unit.transform.rotation = rotation;
+			
 			unit.factionId = factionId;
 
-			NavMeshAgent navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+			NavMeshAgent navMeshAgent = unit.navMeshAgent;
 			navMeshAgent.enabled = true;
 
-			return gameObject;
+			return unit;
 		}
 	}
 }

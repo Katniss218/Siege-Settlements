@@ -158,42 +158,6 @@ namespace SS.Objects.Buildings
 			}
 		}
 
-		private void ConstructionComplete_UI()
-		{
-			if( !Selection.IsDisplayed( this.building ) )
-			{
-				return;
-			}
-			
-			SelectionPanel.instance.obj.TryClearElement( "building.construction_status" );
-		}
-
-		internal string GetStatusString()
-		{
-			StringBuilder sb = new StringBuilder();
-			
-			foreach( var kvp in this.GetWantedResources() )
-			{
-				if( kvp.Value != 0 )
-				{
-					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
-					sb.Append( kvp.Value + "x " + resDef.displayName );
-				}
-				sb.Append( ", " );
-			}
-
-			return sb.ToString();
-		}
-
-		private void UpdateStatus_UI()
-		{
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
-			if( statusUI != null )
-			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... " + this.GetStatusString() );
-			}
-		}
-
 		public Dictionary<string, int> GetWantedResources()
 		{
 			Dictionary<string, int> ret = new Dictionary<string, int>();
@@ -409,8 +373,9 @@ namespace SS.Objects.Buildings
 				foreach( var kvp in constructionSite.resourceInfo )
 				{
 					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
-					Debug.Log( kvp.Key + ", " + resAmt );
 					kvp.Value.remaining = resAmt;
+
+					Debug.Log( kvp.Key + ", " + resAmt );
 				}
 			}
 			else
@@ -432,10 +397,7 @@ namespace SS.Objects.Buildings
 			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
 
 			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject, building );
-
-
-			// When the construction starts, set the _Progress attrribute of the material to the current health percent (to make the building appear as being constructed).
-
+			
 			UpdateYOffset( constructionSite.building, Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
 
 			// Re-Display to update.
@@ -445,7 +407,7 @@ namespace SS.Objects.Buildings
 				Selection.DisplayObject( building );
 			}
 		}
-		
+
 		private void OnHealthChange( float deltaHP )
 		{
 			this.UpdateStatus_UI();
@@ -473,6 +435,42 @@ namespace SS.Objects.Buildings
 				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
 
 				meshRenderer.material.SetColor( "_FactionColor", facColor );
+			}
+		}
+
+
+		//
+		//
+		//
+
+
+		public void Display()
+		{
+			GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
+			SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
+		}
+
+		private void ConstructionComplete_UI()
+		{
+			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			SelectionPanel.instance.obj.TryClearElement( "building.construction_status" );
+		}
+
+		private void UpdateStatus_UI()
+		{
+			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
 			}
 		}
 	}

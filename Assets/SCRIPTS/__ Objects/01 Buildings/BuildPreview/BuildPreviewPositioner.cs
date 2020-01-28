@@ -1,5 +1,4 @@
-﻿using SS.Diplomacy;
-using SS.InputSystem;
+﻿using SS.InputSystem;
 using UnityEngine;
 
 namespace SS.Objects.Buildings
@@ -98,7 +97,7 @@ namespace SS.Objects.Buildings
 				Vector3? nodeSelf = null; // if null, no nodes found.
 				Vector3? nodeTarget = null; // if null, no nodes found.
 
-				float searchlength = this.nodesSearchRange.magnitude;
+				float searchRange = this.nodesSearchRange.magnitude;
 
 				for( int i = 0; i < colliders.Length; i++ )
 				{
@@ -117,22 +116,23 @@ namespace SS.Objects.Buildings
 
 					Vector3[] targetNodes = building.placementNodes;
 
+					// find closest pair.
 					for( int j = 0; j < this.placementNodes.Length; j++ )
 					{
 						for( int k = 0; k < targetNodes.Length; k++ )
 						{
 							Matrix4x4 toWorldSelf = this.transform.localToWorldMatrix;
-							Vector3 globalSelf = toWorldSelf.MultiplyVector( this.placementNodes[j] ) + this.transform.position;
+							Vector3 globalSelf = toWorldSelf.MultiplyPoint( this.placementNodes[j] );
 
 							Matrix4x4 toWorldTarget = colliders[i].transform.localToWorldMatrix;
-							Vector3 globalTarget = toWorldTarget.MultiplyVector( targetNodes[k] ) + colliders[i].transform.position;
+							Vector3 globalTarget = toWorldTarget.MultiplyPoint( targetNodes[k] );
 
-							float dst = Vector3.Distance( globalSelf, globalTarget );
-							if( dst <= searchlength && dst < nodePairMinDst )
+							float distance = Vector3.Distance( globalSelf, globalTarget );
+							if( distance <= searchRange && distance < nodePairMinDst )
 							{
 								nodeSelf = globalSelf;
 								nodeTarget = globalTarget;
-								nodePairMinDst = dst;
+								nodePairMinDst = distance;
 							}
 						}
 					}
@@ -168,7 +168,7 @@ namespace SS.Objects.Buildings
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			for( int i = 0; i < this.placementNodes.Length; i++ )
 			{
-				Gizmos.DrawSphere( toWorld.MultiplyVector( this.placementNodes[i] ) + this.transform.position, 0.05f );
+				Gizmos.DrawSphere( toWorld.MultiplyPoint( this.placementNodes[i] ), 0.05f );
 			}
 		}
 #endif

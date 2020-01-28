@@ -1,5 +1,7 @@
-﻿using SS.Objects;
+﻿using SS.Content;
+using SS.Objects;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine.Events;
 
 namespace SS.ResourceSystem.Payment
@@ -24,5 +26,37 @@ namespace SS.ResourceSystem.Payment
 		/// Returns a dictionary of every currently wanted resource.
 		/// </summary>
 		Dictionary<string, int> GetWantedResources();
+	}
+
+	public static class ResourceUtils
+	{
+		public static string ToResourceString( Dictionary<string, int> resources )
+		{
+			if( resources == null )
+			{
+				return "";
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			int i = 0;
+			foreach( var kvp in resources )
+			{
+				if( i > 0 )
+				{
+					sb.Append( ", " );
+				}
+
+				if( kvp.Value != 0 )
+				{
+					ResourceDefinition resDef = DefinitionManager.GetResource( kvp.Key );
+					sb.Append( kvp.Value + "x " + resDef.displayName );
+				}
+
+				i++;
+			}
+
+			return sb.ToString();
+		}
 	}
 }

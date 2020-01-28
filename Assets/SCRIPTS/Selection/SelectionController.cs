@@ -148,7 +148,7 @@ namespace SS
 				// Double-Click - select the same as the clicked on (if player).
 				if( this.pressOriginatedDoubleClick )
 				{
-					SSObjectDFS atCursor = GetSelectableAtCursor();
+					SSObjectDFSC atCursor = GetSelectableAtCursor();
 
 					if( atCursor == null || atCursor.factionId != LevelDataManager.PLAYER_FAC )
 					{
@@ -160,8 +160,8 @@ namespace SS
 				// Single-Click - select the clicked on.
 				else
 				{
-					SSObjectDFS atCursor = GetSelectableAtCursor();
-					SSObjectDFS[] array = atCursor == null ? null : new SSObjectDFS[] { atCursor };
+					SSObjectDFSC atCursor = GetSelectableAtCursor();
+					SSObjectDFSC[] array = atCursor == null ? null : new SSObjectDFSC[] { atCursor };
 					SelectionUtils.Select( array, (Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( KeyCode.RightShift )) ? SelectionMode.Add : SelectionMode.Replace );
 				}
 			}
@@ -289,12 +289,12 @@ namespace SS
 			}
 		}
 		
-		private static SSObjectDFS GetSelectableAtCursor()
+		private static SSObjectDFSC GetSelectableAtCursor()
 		{
 			if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out RaycastHit hitInfo, ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK ) )
 			{
 				// Returns null if the mouse is over non-selectable object.
-				return hitInfo.collider.GetComponent<SSObjectDFS>();
+				return hitInfo.collider.GetComponent<SSObjectDFSC>();
 			}
 			return null;
 		}

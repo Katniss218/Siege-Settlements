@@ -31,7 +31,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					SSObjectDFS obj = Selection.displayedObject;
+					SSObjectDFSC obj = Selection.displayedObject;
 
 					WorkplaceModule workplace = hitInfo.collider.GetComponent<WorkplaceModule>();
 					if( workplace != null )

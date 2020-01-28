@@ -10,6 +10,9 @@ namespace SS.AI
 	[RequireComponent( typeof( IFactionMember ) )]
 	public class TacticalGoalController : MonoBehaviour
 	{
+		public const int DEFAULT_GOAL_TAG = -1;
+		public const int DEFAULT_GOAL_TAG_ASSIGNED = -2;
+
 		private TacticalGoal[] goals;
 		private int goalCounter;
 		public int goalTag { get; private set; }
@@ -105,7 +108,6 @@ namespace SS.AI
 			}
 		}
 
-		public const int DEFAULT_GOAL_TAG = -1;
 
 		/// <summary>
 		/// Returns a default goal (idle).

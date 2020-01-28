@@ -111,7 +111,7 @@ namespace SS.AI.Goals
 				// If the agent has travelled to the destination - switch back to the default Goal.
 				if( this.navMeshAgent.hasPath )
 				{
-					if( Vector3.Distance( this.navMeshAgent.pathEndPosition, controller.transform.position ) <= Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM )
+					if( DistanceUtils.IsInRange( this.navMeshAgent.pathEndPosition, controller.transform.position, Main.DEFAULT_NAVMESH_STOPPING_DIST_CUSTOM ) )
 					{
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 						return;
@@ -131,7 +131,7 @@ namespace SS.AI.Goals
 				}
 
 
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationObject.transform, OBJECT_MODE_STOPPING_DISTANCE ) )
 				{
 					controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 					return;
@@ -153,7 +153,7 @@ namespace SS.AI.Goals
 				
 				
 				// If the agent has travelled to the destination - switch back to the default Goal.
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInterior.transform, INTERIOR_MODE_STOPPING_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationInterior.transform, INTERIOR_MODE_STOPPING_DISTANCE ) )
 				{
 					if( this.destinationInterior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInterior.ssObject).isUsable )
 					{

@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectDFS, IHUDHolder, IMovable, IMouseOverHandlerListener
+	public class Hero : SSObjectDFSC, IHUDHolder, IMovable, IMouseOverHandlerListener
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -174,7 +174,7 @@ namespace SS.Objects.Heroes
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFS.GetHealthString( this.health, this.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFSC.GetHealthString( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
 

@@ -4,6 +4,7 @@ using SS.Objects.SubObjects;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace SS.Objects.Units
 {
@@ -260,18 +261,18 @@ namespace SS.Objects.Units
 				}
 
 
-				Vector3 pos = beacon.transform.position + new Vector3( UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ), UnityEngine.Random.Range( -0.01f, 0.01f ) );
-				Quaternion rot = beacon.transform.rotation;
+				Vector3 position = beacon.transform.position + new Vector3( Random.Range( -0.01f, 0.01f ), Random.Range( -0.01f, 0.01f ), Random.Range( -0.01f, 0.01f ) );
+				Quaternion rotation = beacon.transform.rotation;
 
-				Unit u = UnitCreator.Create( beaconDef, Guid.NewGuid(), pos, rot, beacon.factionId ).GetComponent<Unit>();
-				u.population = newSize;
-				u.healthPercent = healthPercentSrc;
+				Unit unit = UnitCreator.Create( beaconDef, Guid.NewGuid(), position, rotation, beacon.factionId );
+				unit.population = newSize;
+				unit.healthPercent = healthPercentSrc;
 
-				ret.Add( u );
+				ret.Add( unit );
 
 				if( isSelected )
 				{
-					Selection.TrySelect( u );
+					Selection.TrySelect( unit );
 				}
 			}
 			return ret;

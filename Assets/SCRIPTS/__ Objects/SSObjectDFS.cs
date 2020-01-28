@@ -1,4 +1,5 @@
-﻿using SS.Diplomacy;
+﻿using SS.AI;
+using SS.Diplomacy;
 using SS.Levels;
 using System;
 using UnityEngine;
@@ -7,14 +8,28 @@ using UnityEngine.Events;
 namespace SS.Objects
 {
 	public class _UnityEvent_float : UnityEvent<float> { }
-	public class _UnityEvent_SSObjectDFS_float : UnityEvent<SSObjectDFS, float> { }
-	public class _UnityEvent_SSObjectDFS : UnityEvent<SSObjectDFS> { }
+	public class _UnityEvent_SSObjectDFSC_float : UnityEvent<SSObjectDFSC, float> { }
+	public class _UnityEvent_SSObjectDFSC : UnityEvent<SSObjectDFSC> { }
 
+	[RequireComponent( typeof( TacticalGoalController ) )]
 	/// <summary>
-	/// Represents any object that is 'Damageable', 'Faction Member', 'Selectable' (DFS)
+	/// Represents any object that is 'Damageable', 'Faction Member', 'Selectable', 'Controllable' (DFSC)
 	/// </summary>
-	public abstract class SSObjectDFS : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
+	public abstract class SSObjectDFSC : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
 	{
+		private TacticalGoalController __controller = null;
+		public TacticalGoalController controller
+		{
+			get
+			{
+				if( this.__controller == null )
+				{
+					this.__controller = this.GetComponent<TacticalGoalController>();
+				}
+				return this.__controller;
+			}
+		}
+
 		/// <summary>
 		/// The icon that is shown on the list of all selected objects.
 		/// </summary>
@@ -119,13 +134,13 @@ namespace SS.Objects
 		/// Fires when the 'health' value is changed.
 		/// </summary>
 		public _UnityEvent_float onHealthChange { get; set; } = new _UnityEvent_float();
-		public static _UnityEvent_SSObjectDFS_float onHealthChangeAny { get; set; } = new _UnityEvent_SSObjectDFS_float();
+		public static _UnityEvent_SSObjectDFSC_float onHealthChangeAny { get; set; } = new _UnityEvent_SSObjectDFSC_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
 		public UnityEvent onDeath { get; set; } = new UnityEvent();
-		public static _UnityEvent_SSObjectDFS onDeathAny { get; set; } = new _UnityEvent_SSObjectDFS();
+		public static _UnityEvent_SSObjectDFSC onDeathAny { get; set; } = new _UnityEvent_SSObjectDFSC();
 
 
 		public float lastDamageTakenTimestamp { get; private set; }

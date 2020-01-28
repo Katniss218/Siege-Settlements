@@ -666,11 +666,11 @@ namespace SS.Levels
 			LevelDataManager.LoadCameraData( serializerLevelSaveState );
 			LevelDataManager.LoadTimeData( serializerLevelSaveState );
 
-			GameObject[] units = new GameObject[sUnits.Count];
-			GameObject[] buildings = new GameObject[sBuildings.Count];
-			GameObject[] projectiles = new GameObject[sProjectiles.Count];
-			GameObject[] heroes = new GameObject[sHeroes.Count];
-			GameObject[] extras = new GameObject[sExtras.Count];
+			Unit[] units = new Unit[sUnits.Count];
+			Building[] buildings = new Building[sBuildings.Count];
+			Projectile[] projectiles = new Projectile[sProjectiles.Count];
+			Hero[] heroes = new Hero[sHeroes.Count];
+			Extra[] extras = new Extra[sExtras.Count];
 
 			// Spawn every object on the map (no data present yet, because that might need other objects's guids).
 

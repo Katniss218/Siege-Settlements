@@ -1,4 +1,5 @@
-﻿using SS.Objects.Extras;
+﻿using Katniss.Utils;
+using SS.Objects.Extras;
 using SS.Objects.Modules;
 using UnityEngine;
 using UnityEngine.Events;
@@ -112,12 +113,12 @@ namespace SS.Objects.Projectiles
 			}
 
 			IDamageable damageableOther = other.GetComponent<IDamageable>();
-			SSObjectDFS factionMemberOther = otherSSObject as SSObjectDFS;
+			SSObjectDFSC factionMemberOther = otherSSObject as SSObjectDFSC;
 			
 			this.DamageAndStuckLogic( damageableOther, factionMemberOther, this.canGetStuck );
 		}
 
-		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFS hitFactionMember, bool canGetStuck )
+		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFSC hitFactionMember, bool canGetStuck )
 		{
 			if( this.blastRadius == 0.0f )
 			{
@@ -127,7 +128,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFSC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 
@@ -144,26 +145,23 @@ namespace SS.Objects.Projectiles
 				for( int i = 0; i < col.Length; i++ )
 				{
 					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
-					if( !SSObjectDFS.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
+					if( !SSObjectDFSC.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
 					{
 						continue;
 					}
 
-					float distance = Vector3.Distance( this.transform.position, col[i].transform.position );
-					if( distance >= this.blastRadius )
+					if( DistanceUtils.IsInRange( this.transform, col[i].transform, this.blastRadius, out float distance ) )
 					{
-						continue;
-					}
+						float damageScale = (distance / this.blastRadius);
 
-					float damageScale = (distance / this.blastRadius);
-
-					float damageScaledToDist = DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ) * damageScale;
-					if( damageScaledToDist <= 0 )
-					{
-						Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
-						continue;
+						float damageScaledToDist = DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ) * damageScale;
+						if( damageScaledToDist <= 0 )
+						{
+							Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
+							continue;
+						}
+						(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
 					}
-					(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
 				}
 
 				if( hitDamageable == null )
@@ -172,7 +170,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( SSObjectDFS.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFSC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound, this.transform.position );
 						this.Destroy();

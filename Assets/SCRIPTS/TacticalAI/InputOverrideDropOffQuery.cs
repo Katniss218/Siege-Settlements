@@ -5,14 +5,15 @@ using SS.InputSystem;
 using SS.Levels;
 using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
+using SS.ResourceSystem.Payment;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 namespace SS
 {
-	public static class InputOverridePickUpQuery
+	public static class InputOverrideDropOffQuery
 	{
 		// block mouse inputs.
 
@@ -39,18 +40,17 @@ namespace SS
 
 					if( ssObject != null )
 					{
-
-						InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
-						if( inventories.Length > 0 )
+						if( ssObject.HasPaymentReceivers() )
 						{
-							AssignPickupInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+							if( ssObject is SSObjectDFSC )
+								AssignMakePaymentGoal( (SSObjectDFSC)ssObject, Selection.GetSelectedObjects() );
 						}
 						else
 						{
-							ResourceDepositModule[] deposits = ssObject.GetModules<ResourceDepositModule>();
-							if( deposits.Length > 0 )
+							InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
+							if( inventories.Length > 0 )
 							{
-								AssignPickupDepositGoal( ssObject, deposits[0], Selection.GetSelectedObjects() );
+								AssignDropoffToInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
 							}
 						}
 					}
@@ -95,67 +95,91 @@ namespace SS
 			}
 		}
 
-		private static void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFS[] selected )
+		static void AssignDropoffToInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFSC[] selected )
 		{
+			List<SSObjectDFSC> filteredObjs = new List<SSObjectDFSC>();
+
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
-
-			// Go pick up if the inventory can hold any of the resources in the deposit.
-			Dictionary<string, int> resourcesInDeposit = hitInventory.GetAll();
-
 			for( int i = 0; i < selected.Length; i++ )
 			{
+				bool suitable = true;
+
 				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<NavMeshAgent>() == null )
-				{
-					continue;
-				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
+				InventoryModule[] inventories = selected[i].GetModules<InventoryModule>();
+				if( inventories.Length == 0 )
 				{
 					continue;
 				}
 
-				foreach( var kvp in resourcesInDeposit )
+				if( inventories[0].isEmpty )
 				{
-					// if can pick up && has empty space for it.
-					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
+					continue;
+				}
+				if( !(selected[i] is IMovable) )
+				{
+					continue;
+				}
+
+				Dictionary<string, int> inventoryItems = inventories[0].GetAll();
+
+				// Check if the storage inventory can hold any of the items.
+				foreach( var kvp in inventoryItems )
+				{
+					suitable = true;
+					if( hitInventory.GetSpaceLeft( kvp.Key ) == 0 )
 					{
-						movableWithInvGameObjects.Add( selected[i].gameObject );
-						break;
+						suitable = false;
+						continue;
 					}
+				}
+
+				if( suitable )
+				{
+					filteredObjs.Add( selected[i] );
 				}
 			}
 
-
-			if( movableWithInvGameObjects.Count > 0 )
+			if( filteredObjs.Count > 0 )
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
-			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			for( int i = 0; i < filteredObjs.Count; i++ )
 			{
-				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalGoalController goalController = filteredObjs[i].controller;
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
 				goal1.SetDestination( hitSSObject );
 
-				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 				goal2.isHostile = false;
 				goal2.SetDestination( hitInventory );
 				goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal1, goal2 );
 			}
 		}
 
-		private static void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectDFS[] selected )
+		private static void AssignMakePaymentGoal( SSObjectDFSC paymentReceiverSSObject, SSObjectDFSC[] selected )
 		{
-			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<GameObject> movableWithInvGameObjects = new List<GameObject>();
+			// Assigns payment goal to selected objects.
+			// Can assign different receivers for different objects, depending on their inventories & wanted resources.
 
-			// Go pick up if the inventory can hold any of the resources in the deposit.
-			Dictionary<string, int> resourcesInDeposit = hitDeposit.GetAll();
+			if( paymentReceiverSSObject != null )
+			{
+				// Don't assign make payment to non player.
+				if( paymentReceiverSSObject.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					return;
+				}
+			}
+
+
+			// Extract only the objects that can have the goal assigned to them from the selected objects.
+			Dictionary<SSObjectDFSC, IPaymentReceiver> toBeAssignedGameObjects = new Dictionary<SSObjectDFSC, IPaymentReceiver>();
+
+			// this makes sure that if building is under construction - only the construction site receiver is returned.
+			IPaymentReceiver[] paymentReceivers = paymentReceiverSSObject.GetAvailableReceivers();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
@@ -163,50 +187,61 @@ namespace SS
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<NavMeshAgent>() == null )
+				if( !(selected[i] is IMovable) )
 				{
 					continue;
 				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
+				if( !selected[i].hasInventoryModule )
 				{
 					continue;
 				}
-				bool canPickupAny = false;
-				foreach( var kvp in resourcesInDeposit )
+				InventoryModule inv = selected[i].GetModules<InventoryModule>()[0];
+				// If the inventory doesn't have any resources that can be left at the payment receiver.
+				if( inv.isEmpty )
 				{
-					// if can pick up && has empty space for it.
-					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
-					{
-						canPickupAny = true;
-						break;
-					}
+					continue;
 				}
 
-				if( canPickupAny )
+				// loop over every receiver and check if any of them wants resources that are in the selected obj's inventory.
+				for( int j = 0; j < paymentReceivers.Length; j++ )
 				{
-					movableWithInvGameObjects.Add( selected[i].gameObject );
+					Dictionary<string, int> wantedRes = paymentReceivers[j].GetWantedResources();
+					bool hasWantedItem_s = false;
+					foreach( var kvp in wantedRes )
+					{
+						if( inv.Get( kvp.Key ) > 0 )
+						{
+							hasWantedItem_s = true;
+							break;
+						}
+					}
+
+					if( hasWantedItem_s )
+					{
+						toBeAssignedGameObjects.Add( selected[i], paymentReceivers[j] );
+						break;
+					}
+					// if this receiver is not compatible - check the next one.
 				}
 			}
 
 
-			if( movableWithInvGameObjects.Count > 0 )
+			if( toBeAssignedGameObjects.Count > 0 )
 			{
 				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
 			}
-			for( int i = 0; i < movableWithInvGameObjects.Count; i++ )
+			foreach( var kvp in toBeAssignedGameObjects )
 			{
-				TacticalGoalController goalController = movableWithInvGameObjects[i].GetComponent<TacticalGoalController>();
+				TacticalGoalController goalController = kvp.Key.controller;
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
-				goal1.SetDestination( hitSSObject );
+				goal1.SetDestination( paymentReceiverSSObject );
 
-				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
+				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 				goal2.isHostile = false;
-				goal2.SetDestination( hitDeposit );
+				goal2.SetDestination( kvp.Value );
 				goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal1, goal2 );
 			}
 		}
-
 	}
 }

@@ -290,7 +290,7 @@ namespace SS.AI.Goals
 					return;
 				}
 
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
 				{
 					bool outcome = this.PickUpFromInventory( controller );
 
@@ -310,7 +310,7 @@ namespace SS.AI.Goals
 					return;
 				}
 
-				if( PhysicsDistance.OverlapInRange( controller.transform, this.destinationResourceDeposit.transform, INTERACTION_DISTANCE ) )
+				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationResourceDeposit.transform, INTERACTION_DISTANCE ) )
 				{
 					bool? outcome = this.PickUpFromDeposit( controller );
 
