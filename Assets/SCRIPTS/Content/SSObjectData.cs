@@ -11,11 +11,11 @@ namespace SS.Content
 	{
 		private struct ModuleCacheItem
 		{
-			public ModuleData module { get; set; }
+			public SSModuleData module { get; set; }
 			public Type moduleType { get; set; }
 			public Guid moduleId { get; set; }
 
-			public ModuleCacheItem( Guid moduleId, ModuleData module )
+			public ModuleCacheItem( Guid moduleId, SSModuleData module )
 			{
 				this.moduleId = moduleId;
 				this.module = module;
@@ -37,7 +37,7 @@ namespace SS.Content
 		/// <summary>
 		/// Gets a single module of type T (if found). Returns null if no module of specified type is present.
 		/// </summary>
-		public T GetModuleData<T>() where T : ModuleData
+		public T GetModuleData<T>() where T : SSModuleData
 		{
 			Type wantedType = typeof( T );
 
@@ -54,7 +54,7 @@ namespace SS.Content
 		/// <summary>
 		/// Gets every module of type T (if found). Returns empty array if no module of specified type is present.
 		/// </summary>
-		public T[] GetModuleDatas<T>() where T : ModuleData
+		public T[] GetModuleDatas<T>() where T : SSModuleData
 		{
 			Type wantedType = typeof( T );
 			List<T> ret = new List<T>();
@@ -69,10 +69,10 @@ namespace SS.Content
 			return ret.ToArray();
 		}
 
-		public void GetAllModules( out Guid[] moduleIds, out ModuleData[] datas )
+		public void GetAllModules( out Guid[] moduleIds, out SSModuleData[] datas )
 		{
 			moduleIds = new Guid[this.moduleCache.Count];
-			datas = new ModuleData[this.moduleCache.Count];
+			datas = new SSModuleData[this.moduleCache.Count];
 
 			for( int i = 0; i < this.moduleCache.Count; i++ )
 			{
@@ -84,7 +84,7 @@ namespace SS.Content
 		/// <summary>
 		/// Adds a single module of type T to the object definition.
 		/// </summary>
-		public void AddModuleData<T>( Guid moduleId, T module ) where T : ModuleData
+		public void AddModuleData<T>( Guid moduleId, T module ) where T : SSModuleData
 		{
 			this.moduleCache.Add( new ModuleCacheItem( moduleId, module ) );
 		}
@@ -127,11 +127,11 @@ namespace SS.Content
 		{
 			for( int i = 0; i < serializer.Analyze( "Modules" ).childCount; i++ )
 			{
-				ModuleData module = null;
+				SSModuleData module = null;
 				try
 				{
 					string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
-					module = ModuleData.TypeIdToData( typeId );
+					module = SSModuleData.TypeIdToData( typeId );
 				}
 				catch
 				{
@@ -156,7 +156,7 @@ namespace SS.Content
 
 		protected void SerializeModulesKFF( KFFSerializer serializer )
 		{
-			ModuleData[] modulesArray;
+			SSModuleData[] modulesArray;
 			Guid[] moduleIdsArray;
 			this.GetAllModules( out moduleIdsArray, out modulesArray );
 
@@ -164,7 +164,7 @@ namespace SS.Content
 
 			for( int i = 0; i < modulesArray.Length; i++ )
 			{
-				string typeId = ModuleData.DataToTypeId( modulesArray[i] );
+				string typeId = SSModuleData.DataToTypeId( modulesArray[i] );
 				
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteGuid( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i] );

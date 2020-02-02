@@ -11,7 +11,7 @@ using SS.Objects.SubObjects;
 
 namespace SS.Objects.Modules
 {
-	public class RangedModuleDefinition : ModuleDefinition
+	public class RangedModuleDefinition : SSModuleDefinition
 	{
 		public string projectileId { get; set; }
 		public int projectileCount { get; set; }

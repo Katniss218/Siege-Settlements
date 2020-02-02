@@ -1,13 +1,15 @@
 ﻿using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
+using SS.UI.HUDs;
 using UnityEngine;
 using UnityEngine.AI;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
-	public class Unit : SSObjectDFSC, IHUDHolder, IMovable, IMouseOverHandlerListener, IPopulationScaler, IInteriorUser
+	[UseHud(typeof(UnitHUD), "hud")]
+	public class Unit : SSObjectDFSC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -64,7 +66,7 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Returns the hud that's attached to this object.
 		/// </summary>
-		public HUD hud { get; set; }
+		public UnitHUD hud { get; set; }
 
 
 		
@@ -209,23 +211,7 @@ namespace SS.Objects.Units
 		}
 		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
 
-		public static void GetSlot( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud )
-		{
-			slot = null;
-			slotHud = null;
 
-			if( slotType == InteriorModule.SlotType.Generic )
-			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
-				return;
-			}
-			if( slotType == InteriorModule.SlotType.Worker )
-			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
-		}
 
 		/// <summary>
 		/// Marks the unit as being inside.
@@ -239,7 +225,7 @@ namespace SS.Objects.Units
 
 			// - Interior fields
 			
-			GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+			InteriorModule.GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
 			
 			slot.objInside = this;
 
@@ -289,8 +275,8 @@ namespace SS.Objects.Units
 
 
 			// - Interior fields.
-			
-			GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+
+			InteriorModule.GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
 			
 			slot.objInside = null;
 

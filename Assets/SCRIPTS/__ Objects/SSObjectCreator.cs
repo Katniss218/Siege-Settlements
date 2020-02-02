@@ -29,7 +29,7 @@ namespace SS.Objects
 			SSModule[] modules = ssObject.GetModules();
 
 			Guid[] moduleDataIds;
-			ModuleData[] moduleData;
+			SSModuleData[] moduleData;
 			data.GetAllModules( out moduleDataIds, out moduleData );
 			
 			//
@@ -55,14 +55,15 @@ namespace SS.Objects
 		public static void AssignModules( SSObject ssObject, SSObjectDefinition def )
 		{
 			Guid[] moduleDefIds;
-			ModuleDefinition[] moduleDefinitions;
+			SSModuleDefinition[] moduleDefinitions;
 			
 			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
-
+			
 			for( int i = 0; i < moduleDefIds.Length; i++ )
 			{
 				moduleDefinitions[i].AddModule( ssObject, moduleDefIds[i] );
 			}
+
 			ssObject.SealModules();
 		}
 		
@@ -71,7 +72,7 @@ namespace SS.Objects
 			SSModule[] modules = ssObject.GetModules();
 			for( int i = 0; i < modules.Length; i++ )
 			{
-				ModuleData moduleData = modules[i].GetData();
+				SSModuleData moduleData = modules[i].GetData();
 				data.AddModuleData( modules[i].moduleId, moduleData );
 			}
 		}

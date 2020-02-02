@@ -8,7 +8,7 @@ using SS.Content;
 
 namespace SS.Objects.Modules
 {
-	public class BarracksModuleDefinition : ModuleDefinition
+	public class BarracksModuleDefinition : SSModuleDefinition
 	{
 		public string[] trainableUnits { get; set; }
 		public float trainSpeed { get; set; }

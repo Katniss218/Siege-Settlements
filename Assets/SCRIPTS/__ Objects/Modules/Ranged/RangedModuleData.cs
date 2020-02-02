@@ -4,7 +4,7 @@ using System;
 
 namespace SS.Levels.SaveStates
 {
-	public class RangedModuleData : ModuleData
+	public class RangedModuleData : SSModuleData
 	{
 		public Guid? targetGuid { get; set; }
 		public int? projectileCountOverride { get; set; }

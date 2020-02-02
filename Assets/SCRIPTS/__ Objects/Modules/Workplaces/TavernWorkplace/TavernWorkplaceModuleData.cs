@@ -4,7 +4,7 @@ using System;
 
 namespace SS.Levels.SaveStates
 {
-	public class TavernWorkplaceModuleData : ModuleData
+	public class TavernWorkplaceModuleData : SSModuleData
 	{
 		public TavernWorkplaceModuleData()
 		{

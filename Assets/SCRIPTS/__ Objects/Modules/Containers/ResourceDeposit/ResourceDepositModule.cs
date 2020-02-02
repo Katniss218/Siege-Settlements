@@ -9,6 +9,7 @@ using UnityEngine.Events;
 
 namespace SS.Objects.Modules
 {
+	[DisallowMultipleComponent]
 	public class ResourceDepositModule : SSModule, IMouseOverHandlerListener
 	{
 		public const string KFF_TYPEID = "resource_deposit";
@@ -124,7 +125,7 @@ namespace SS.Objects.Modules
 			this.HideTooltip();
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
 			this.onAdd.AddListener( ( string id, int amount ) =>
 			{
@@ -146,7 +147,9 @@ namespace SS.Objects.Modules
 						this.ShowTooltip();
 					}
 				}
-			} );			
+			} );
+
+			base.Awake();
 		}
 
 		public override void OnObjDestroyed()
@@ -308,7 +311,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			ResourceDepositModuleData data = new ResourceDepositModuleData();
 
@@ -317,7 +320,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			ResourceDepositModuleData data = ValidateDataType<ResourceDepositModuleData>( _data );
 			

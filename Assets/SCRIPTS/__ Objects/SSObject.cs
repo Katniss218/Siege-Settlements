@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using SS.ResourceSystem.Payment;
+using SS.UI;
+using SS.Content;
 
 namespace SS.Objects
 {
@@ -301,25 +303,6 @@ namespace SS.Objects
 		}
 		
 
-		protected virtual void OnObjDestroyed()
-		{
-
-		}
-
-		public void Destroy()
-		{
-			SSModule[] modules = this.GetModules();
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				modules[i].OnObjDestroyed();
-			}
-
-			this.OnObjDestroyed();
-			
-			Object.Destroy( this.gameObject );
-		}
-
-
 		protected virtual void OnEnable()
 		{
 			allSSObjects.Add( this );
@@ -422,5 +405,64 @@ namespace SS.Objects
 			}
 			return this.GetComponents<IPaymentReceiver>();
 		}
+
+		public void Destroy()
+		{
+			SSModule[] modules = this.GetModules();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				modules[i].OnObjDestroyed();
+			}
+
+			this.OnObjDestroyed();
+
+			Object.Destroy( this.gameObject );
+		}
+
+
+		internal HudContainer hudBase = null;
+
+		protected virtual void Awake()
+		{
+			AnalyzeAttributes( this, this );
+		}
+
+		protected virtual void Start()
+		{
+			this.OnObjSpawn();
+
+			for( int i = 0; i < this.modules.Length; i++ )
+			{
+				this.modules[i].OnObjSpawn();
+			}
+		}
+
+		public static void AnalyzeAttributes( SSObject ssObject, object obj )
+		{
+			Type type = obj.GetType();
+
+			object[] attributes = type.GetCustomAttributes( true );
+			
+			for( int i = 0; i < attributes.Length; i++ )
+			{
+				if( attributes[i] is UseHudAttribute )
+				{
+					if( ssObject.hudBase == null )
+					{
+						ssObject.hudBase = HudContainer.CreateGameObject( ssObject );
+					}
+
+					UseHudAttribute attrib = (UseHudAttribute)attributes[i];
+					
+					object hudComponent = ssObject.hudBase.gameObject.AddComponent( attrib.hudType );
+
+					type.GetProperty( attrib.fieldName ).SetValue( obj, hudComponent );
+				}
+			}
+		}
+		
+		protected virtual void OnObjSpawn() { }
+
+		protected virtual void OnObjDestroyed() { }
 	}
 }

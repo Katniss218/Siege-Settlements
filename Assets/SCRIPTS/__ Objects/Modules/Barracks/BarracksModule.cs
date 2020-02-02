@@ -232,9 +232,11 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		void Awake()
+		protected override void Awake()
 		{
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
+
+			base.Awake();
 		}
 		
 		void Update()
@@ -276,7 +278,7 @@ namespace SS.Objects.Modules
 		/// Creates a new BarracksModuleSaveState from a GameObject.
 		/// </summary>
 		/// <param name="unit">The GameObject to extract the save state from.</param>
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			BarracksModuleData data = new BarracksModuleData();
 
@@ -299,7 +301,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 				
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			BarracksModuleData data = ValidateDataType<BarracksModuleData>( _data );
 						

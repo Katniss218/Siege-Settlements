@@ -312,7 +312,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			ResourceCollectorWorkplaceModuleData data = new ResourceCollectorWorkplaceModuleData()
 			{
@@ -322,7 +322,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			ResourceCollectorWorkplaceModuleData data = ValidateDataType<ResourceCollectorWorkplaceModuleData>( _data );
 		}

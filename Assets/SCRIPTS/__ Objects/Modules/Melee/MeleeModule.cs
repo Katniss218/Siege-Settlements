@@ -143,7 +143,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			MeleeModuleData data = new MeleeModuleData();
 
@@ -158,7 +158,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			MeleeModuleData data = ValidateDataType<MeleeModuleData>( _data );
 

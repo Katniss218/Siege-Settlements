@@ -9,7 +9,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Used to round-trip modules, to and from file.
 	/// </summary>
-	public class BarracksModuleData : ModuleData
+	public class BarracksModuleData : SSModuleData
 	{
 		public string[] queuedUnits { get; set; }
 		public float buildTimeRemaining { get; set; }

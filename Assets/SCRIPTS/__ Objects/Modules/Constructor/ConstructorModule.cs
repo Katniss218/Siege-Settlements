@@ -14,16 +14,18 @@ namespace SS.Objects.Modules
 		public const string KFF_TYPEID = "constructor";
 
 		public BuildingDefinition[] constructibleBuildings { get; set; }
-		
+
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		void Awake()
+		protected override void Awake()
 		{			
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechChange );
+
+			base.Awake();
 		}
 
 		void OnDestroy()
@@ -110,7 +112,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			ConstructorModuleData saveState = new ConstructorModuleData();
 
@@ -118,7 +120,7 @@ namespace SS.Objects.Modules
 		}
 		
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			ConstructorModuleData data = ValidateDataType<ConstructorModuleData>( _data );	
 		}

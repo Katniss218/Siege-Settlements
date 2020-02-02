@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SS.Levels.SaveStates
 {
-	public class InteriorModuleData : ModuleData
+	public class InteriorModuleData : SSModuleData
 	{
 		public Dictionary<int, Guid> slots { get; set; }
 		public Dictionary<int, Guid> workerSlots { get; set; }

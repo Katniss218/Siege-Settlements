@@ -10,7 +10,7 @@ using SS.Objects.Buildings;
 
 namespace SS.Objects.Modules
 {
-	public class ConstructorModuleDefinition : ModuleDefinition
+	public class ConstructorModuleDefinition : SSModuleDefinition
 	{
 		public string[] constructibleBuildings { get; set; }
 

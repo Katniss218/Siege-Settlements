@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class ResourceDepositModuleDefinition : ModuleDefinition
+	public class ResourceDepositModuleDefinition : SSModuleDefinition
 	{
 		public struct Slot : IKFFSerializable
 		{

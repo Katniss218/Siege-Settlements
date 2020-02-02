@@ -3,7 +3,7 @@ using SS.Objects.Modules;
 
 namespace SS.Levels.SaveStates
 {
-	public class ResourceCollectorWorkplaceModuleData : ModuleData
+	public class ResourceCollectorWorkplaceModuleData : SSModuleData
 	{
 		public AreaOfInfluence aoi { get; set; }
 

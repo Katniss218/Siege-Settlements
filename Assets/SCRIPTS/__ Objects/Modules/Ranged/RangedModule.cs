@@ -242,7 +242,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			RangedModuleData data = new RangedModuleData();
 
@@ -257,7 +257,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			RangedModuleData data = ValidateDataType<RangedModuleData>( _data );
 			

@@ -46,14 +46,13 @@ namespace SS.Objects.Modules
 		//
 
 
-		public virtual void OnObjDestroyed() { }
 
 		/// <summary>
 		/// makes sure that the data is not null & of the specified type. Returns the data cast as the specified type. Throws exception if data is null or not the specified type.
 		/// </summary>
 		/// <exception cref="ArgumentNullException">Thrown when the data is null.</exception>
 		/// <exception cref="Exception">Thrown when the data is not of the specified type.</exception>
-		protected static T ValidateDataType<T>( ModuleData data ) where T : ModuleData
+		protected static T ValidateDataType<T>( SSModuleData data ) where T : SSModuleData
 		{
 			if( data == null )
 			{
@@ -66,14 +65,22 @@ namespace SS.Objects.Modules
 
 			return (T)data;
 		}
-		
+
+		public virtual void OnObjSpawn() { }
+
+		public virtual void OnObjDestroyed() { }
+
+		protected virtual void Awake()
+		{
+			SSObject.AnalyzeAttributes( this.ssObject, this );
+		}
 
 		//
 		//
 		//
 
 
-		public abstract ModuleData GetData();
-		public abstract void SetData( ModuleData _data );
+		public abstract SSModuleData GetData();
+		public abstract void SetData( SSModuleData _data );
 	}
 }

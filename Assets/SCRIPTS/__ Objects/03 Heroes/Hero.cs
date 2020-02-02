@@ -1,11 +1,15 @@
-﻿using SS.UI;
+﻿using SS.Objects.Modules;
+using SS.Objects.SubObjects;
+using SS.UI;
+using SS.UI.HUDs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	public class Hero : SSObjectDFSC, IHUDHolder, IMovable, IMouseOverHandlerListener
+	[UseHud(typeof(HeroHUD), "hud")]
+	public class Hero : SSObjectDFSC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -30,7 +34,7 @@ namespace SS.Objects.Heroes
 			set
 			{
 				base.displayName = value;
-				this.hud.transform.Find("HUD").Find( "Name" ).GetComponent<TextMeshProUGUI>().text = value;
+				this.hud.displayName = value;
 				if( Selection.IsDisplayed( this ) )
 				{
 					SelectionPanel.instance.obj.displayNameText.text = value;
@@ -51,8 +55,8 @@ namespace SS.Objects.Heroes
 			set
 			{
 				this.__displayTitle = value;
-				this.hud.transform.Find( "HUD" ).Find( "Title" ).GetComponent<TextMeshProUGUI>().text = value;
-				
+				this.hud.displayTitle = value;
+
 				if( Selection.IsDisplayed( this ) )
 				{
 					Transform titleUI = SelectionPanel.instance.obj.GetElement( "hero.title" );
@@ -67,10 +71,7 @@ namespace SS.Objects.Heroes
 		/// <summary>
 		/// Returns the hud that's attached to this object.
 		/// </summary>
-		public HUD hud { get; set; }
-		
-
-		//public bool hasBeenHiddenSinceLastDamage { get; set; }
+		public HeroHUD hud { get; set; }
 
 
 		//
@@ -144,25 +145,126 @@ namespace SS.Objects.Heroes
 			}
 		}
 
+		/// <summary>
+		/// The interior module the unit is currently in. Null if not is any interior.
+		/// </summary>
+		public InteriorModule interior { get; private set; }
+		public InteriorModule.SlotType slotType { get; private set; }
+		/// <summary>
+		/// The slot of the interior module the unit is currently in.
+		/// </summary>
+		public int slotIndex { get; private set; }
 
-		//
-		//
-		//
-
-
-
-		public void OnMouseEnterListener()
+		public bool isInside
 		{
-			this.hud.TryShow();
+			get { return this.interior != null; }
+		}
+		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
+
+
+
+		/// <summary>
+		/// Marks the unit as being inside.
+		/// </summary>
+		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
+		{
+			if( slotType == InteriorModule.SlotType.Worker )
+			{
+				throw new System.Exception( "Can't put a hero in a worker slot." );
+			}
+			if( this.isInside )
+			{
+				return;
+			}
+
+			// - Interior fields
+
+			InteriorModule.GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+
+			slot.objInside = this;
+
+			slotHud.SetHealth( this.healthPercent );
+			slotHud.SetSprite( this.icon );
+
+			this.navMeshAgent.enabled = false;
+
+			// -
+
+			this.transform.position = interior.SlotWorldPosition( slot );
+			this.transform.rotation = interior.SlotWorldRotation( slot );
+
+			if( slot.isHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int j = 0; j < subObjects.Length; j++ )
+				{
+					subObjects[j].gameObject.SetActive( false );
+				}
+
+				this.isInsideHidden = true;
+			}
+
+			this.interior = interior;
+			this.slotIndex = slotIndex;
+			this.slotType = slotType;
 		}
 
-		public void OnMouseStayListener()
-		{ }
-
-		public void OnMouseExitListener()
+		/// <summary>
+		/// Marks the unit as being outside.
+		/// </summary>
+		public void SetOutside()
 		{
-			this.hud.TryHide();
+			if( !this.isInside )
+			{
+				return;
+			}
+
+
+			// - Interior fields.
+
+			InteriorModule.GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+
+			slot.objInside = null;
+
+			slotHud.SetHealth( null );
+			slotHud.ClearSprite();
+			
+
+			// -
+
+			this.transform.position = this.interior.EntranceWorldPosition();
+			this.transform.rotation = Quaternion.identity;
+
+			this.navMeshAgent.enabled = true;
+
+			if( this.isInsideHidden )
+			{
+				SubObject[] subObjects = this.GetSubObjects();
+
+				for( int i = 0; i < subObjects.Length; i++ )
+				{
+					subObjects[i].gameObject.SetActive( true );
+				}
+			}
+
+			this.interior = null;
+			this.slotIndex = -1;
+			this.isInsideHidden = false;
 		}
+
+
+		//
+		//
+		//
+
+
+		
+		public void OnMouseEnterListener() => this.hud.TryShow();
+
+		public void OnMouseStayListener() { }
+
+		public void OnMouseExitListener() => this.hud.TryHide();
 
 
 		public override void OnDisplay()

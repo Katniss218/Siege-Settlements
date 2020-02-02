@@ -9,7 +9,7 @@ using SS.Technologies;
 
 namespace SS.Objects.Modules
 {
-	public class ResearchModuleDefinition : ModuleDefinition
+	public class ResearchModuleDefinition : SSModuleDefinition
 	{
 		public string[] researchableTechnologies { get; set; }
 		public float researchSpeed { get; set; }

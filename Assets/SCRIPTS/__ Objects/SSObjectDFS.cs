@@ -248,10 +248,12 @@ namespace SS.Objects
 		/// </summary>
 		public Armor armor { get; set; }
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
 			this.lastDamageTakenTimestamp = 0.0f; // init to 0 in constructor.
 			this.lastHealTimestamp = 0.0f; // init to 0 in constructor.
+
+			base.Awake();
 		}
 
 		internal static string GetHealthString( float health, float healthMax )

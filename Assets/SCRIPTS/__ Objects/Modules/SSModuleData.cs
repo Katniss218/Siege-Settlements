@@ -4,7 +4,7 @@ using System;
 
 namespace SS.Objects.Modules
 {
-	public abstract class ModuleData : IKFFSerializable
+	public abstract class SSModuleData : IKFFSerializable
 	{
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );
@@ -17,7 +17,7 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Reads a string type and returns an instance for that corresponding type.
 		/// </summary>
-		public static ModuleData TypeIdToData( string typeId )
+		public static SSModuleData TypeIdToData( string typeId )
 		{
 			if( typeId == MeleeModule.KFF_TYPEID )
 			{
@@ -67,7 +67,7 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Reads a instance and returns a string type for that corresponding instance.
 		/// </summary>
-		public static string DataToTypeId( ModuleData data )
+		public static string DataToTypeId( SSModuleData data )
 		{
 			if( data is MeleeModuleData )
 			{

@@ -1,5 +1,6 @@
 ﻿using KFF;
 using SS.Diplomacy;
+using SS.Objects;
 using SS.Technologies;
 using SS.TerrainCreation;
 using System;
@@ -145,11 +146,7 @@ namespace SS.Levels
 		
 		
 
-
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+			
 		public static void LoadMapData( KFFSerializer serializer )
 		{
 			mapSegments = serializer.ReadInt( "Map.Segments" );
@@ -360,10 +357,12 @@ namespace SS.Levels
 			}
 		}
 
-		//
-		//
-		//
 
+		//
+		//
+		//
+		
+			
 		public static void SaveFactionData( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "List", factionData );

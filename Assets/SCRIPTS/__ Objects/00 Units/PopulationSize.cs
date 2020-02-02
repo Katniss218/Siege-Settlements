@@ -1,4 +1,4 @@
-﻿namespace SS.Objects
+﻿namespace SS.Objects.Units
 {
 	/// <summary>
 	/// Determines to which slots the unit can fit.

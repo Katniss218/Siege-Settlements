@@ -8,7 +8,7 @@ namespace SS.Levels.SaveStates
 	/// <summary>
 	/// Used to round-trip modules, to and from file.
 	/// </summary>
-	public class ResearchModuleData : ModuleData
+	public class ResearchModuleData : SSModuleData
 	{
 		public string[] queuedTechnologies { get; set; }
 		public float researchTimeRemaining { get; set; }

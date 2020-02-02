@@ -1,12 +1,14 @@
 ﻿using SS.Objects;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SS.UI
+namespace SS.UI.HUDs
 {
 	[DisallowMultipleComponent]
-	public class HUD : MonoBehaviour
+	[RequireComponent(typeof(HudContainer))]
+	public class HUDDFSC : MonoBehaviour
 	{
 		public const float DAMAGE_DISPLAY_DURATION = 1.0f;
 
@@ -19,39 +21,45 @@ namespace SS.UI
 		/// </summary>
 		public float max = 0.75f;
 
-		/// <summary>
-		/// The list of Image components that are affected by faction color.
-		/// </summary>
-		[SerializeField] Image[] colored = null;
+
+		private List<Image> colored = new List<Image>();
+		private Color color = Color.white;
+
+		public void AddColored( Image image )
+		{
+			this.colored.Add( image );
+			image.color = this.color;
+		}
+		public void RemoveColored( Image image )
+		{
+			this.colored.Remove( image );
+		}
+
+
+		protected Image healthBar = null;
+
+		protected TextMeshProUGUI selectionGroup = null;
 		
-		/// <summary>
-		/// The Image component that displays current health percent.
-		/// </summary>
-		[SerializeField] Image healthBar = null;
+		protected GameObject HUDt = null;
 
-		[SerializeField] TextMeshProUGUI selectionGroup = null;
 
-		[SerializeField] GameObject unusableMark = null;
-
-		[SerializeField] GameObject HUDt = null;
-
-		public SSObjectDFSC hudHolder { get; set; }
-		public byte? group { get; private set; }
-		
-
-		private bool __isVisible;
-		public bool isVisible
+		private HudContainer __hudContainer = null;
+		public HudContainer hudContainer
 		{
 			get
 			{
-				return this.__isVisible;
-			}
-			set
-			{
-				this.__isVisible = value;
-				this.HUDt.SetActive( value );
+				if( this.__hudContainer == null )
+				{
+					this.__hudContainer = this.GetComponent<HudContainer>();
+				}
+				return this.__hudContainer;
 			}
 		}
+
+		public byte? group { get; private set; }
+		
+
+		
 		
 		/// <summary>
 		/// If true, the reason for displaying the HUD was taking damage (in this case, the HUD wants to stay displayed for a period of time).
@@ -63,7 +71,7 @@ namespace SS.UI
 		/// </summary>
 		public void SnapToHolder()
 		{
-			this.transform.position = Main.camera.WorldToScreenPoint( this.hudHolder.transform.position );
+			this.transform.position = Main.camera.WorldToScreenPoint( this.hudContainer.holder.transform.position );
 		}
 
 
@@ -77,11 +85,12 @@ namespace SS.UI
 			{
 				return;
 			}
-			if( Selection.IsSelected( this.hudHolder ) )
+#warning remove casting.
+			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
 			{
 				return;
 			}
-			this.isVisible = true;
+			this.hudContainer.isVisible = true;
 		}
 
 		/// <summary>
@@ -97,11 +106,11 @@ namespace SS.UI
 			{
 				return;
 			}
-			if( Selection.IsSelected( this.hudHolder ) )
+			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
 			{
 				return;
 			}
-			this.isVisible = false;
+			this.hudContainer.isVisible = false;
 		}
 
 
@@ -113,7 +122,7 @@ namespace SS.UI
 		void UpdateHideAfterDamage()
 		{
 			// Don't hide the HUD if DAMAGE_DISPLAY_DURATION seconds, after taking damage, didn't pass yet.
-			if( Time.time <= this.hudHolder.lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
+			if( Time.time <= ((SSObjectDFSC)this.hudContainer.holder).lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
 			{
 				return;
 			}
@@ -131,17 +140,17 @@ namespace SS.UI
 			}
 
 			// Don't hide the HUD if the object is selected.
-			if( Selection.IsSelected( this.hudHolder ) )
+			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
 			{
 				return;
 			}
 
 			// Don't hide if the hud holder is being moused over.
-			if( MouseOverHandler.currentObjectMousedOver == this.hudHolder.gameObject )
+			if( MouseOverHandler.currentObjectMousedOver == this.hudContainer.holder.gameObject )
 			{
 				return;
 			}
-			this.isVisible = false;
+			this.hudContainer.isVisible = false;
 			this.isDisplayedDueToDamage = false;
 		}
 
@@ -159,11 +168,12 @@ namespace SS.UI
 		void Update()
 		{
 			// Move the HUD to the containing object.
-			if( this.isVisible || this.group != null )
+			if( this.hudContainer.isVisible || this.group != null )
 			{
 				this.SnapToHolder();
 			}
 
+#warning todo hide after damage.
 			this.UpdateHideAfterDamage();
 		}
 
@@ -186,20 +196,17 @@ namespace SS.UI
 			}
 		}
 
-		public void SetUsable( bool isUsable )
-		{
-			this.unusableMark.SetActive( !isUsable );
-		}
-
 		/// <summary>
 		/// Colors the specified image components with a given faction color.
 		/// </summary>
-		public void SetColor( Color c )
+		public void SetColor( Color color )
 		{
-			for( int i = 0; i < colored.Length; i++ )
+			this.color = color;
+
+			for( int i = 0; i < this.colored.Count; i++ )
 			{
-				colored[i].color = c;
-			}
+				this.colored[i].color = color;
+			}/*
 
 			HUDInterior interior = this.GetComponent<HUDInterior>();
 			
@@ -220,7 +227,7 @@ namespace SS.UI
 				{
 					interior.workerSlots[i].SetColor( c );
 				}
-			}
+			}*/
 		}
 
 		/// <summary>

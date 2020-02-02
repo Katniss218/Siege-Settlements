@@ -72,10 +72,10 @@ namespace SS.Objects.Heroes
 			//    CONTAINER GAMEOBJECT
 			//
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 
-			HUD hud = hudGameObject.GetComponent<HUD>();
-			hud.isVisible = Main.isHudForcedVisible;
+			//HUD hud = hudGameObject.GetComponent<HUD>();
+			//hud.isVisible = Main.isHudForcedVisible;
 
 
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
@@ -97,8 +97,8 @@ namespace SS.Objects.Heroes
 			navMeshAgent.avoidancePriority = 1;
 
 			Hero hero = gameObject.AddComponent<Hero>();
-			hero.hud = hud;
-			hud.hudHolder = hero;
+			//hero.hud = hud;
+			//hud.hudHolder = hero;
 			hero.guid = guid;
 			hero.definitionId = def.id;
 			hero.displayName = def.displayName;
@@ -164,7 +164,7 @@ namespace SS.Objects.Heroes
 				}
 				if( isLocked )
 				{
-					hero.hud.isVisible = true;
+					hero.hud.hudContainer.isVisible = true;
 				}
 				else
 				{
@@ -176,7 +176,7 @@ namespace SS.Objects.Heroes
 					{
 						return;
 					}
-					hero.hud.isVisible = false;
+					hero.hud.hudContainer.isVisible = false;
 				}
 			};
 
@@ -189,7 +189,7 @@ namespace SS.Objects.Heroes
 				{
 					return;
 				}
-				hero.hud.isVisible = true;
+				hero.hud.hudContainer.isVisible = true;
 			} );
 
 			hero.onDeselect.AddListener( () =>
@@ -199,7 +199,7 @@ namespace SS.Objects.Heroes
 				{
 					return;
 				}
-				hero.hud.isVisible = false;
+				hero.hud.hudContainer.isVisible = false;
 			} );
 
 
@@ -209,7 +209,7 @@ namespace SS.Objects.Heroes
 				hero.hud.SetHealthBarFill( hero.healthPercent );
 				if( deltaHP < 0 )
 				{
-					hero.hud.isVisible = true;
+					hero.hud.hudContainer.isVisible = true;
 					hero.hud.isDisplayedDueToDamage = true;
 				}
 
@@ -249,7 +249,7 @@ namespace SS.Objects.Heroes
 
 			SSObjectCreator.AssignModules( hero, def );
 
-			InventoryModule[] inventory = hero.GetModules<InventoryModule>();
+			/*InventoryModule[] inventory = hero.GetModules<InventoryModule>();
 			if( inventory.Length == 0 )
 			{
 				hud.GetComponent<HUDInventory>()?.Destroy();
@@ -258,7 +258,7 @@ namespace SS.Objects.Heroes
 			if( interior.Length == 0 )
 			{
 				hud.GetComponent<HUDInterior>()?.Destroy();
-			}
+			}*/
 
 			return hero;
 		}

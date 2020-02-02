@@ -440,14 +440,14 @@ namespace SS.Levels
 				throw new Exception( "Can't open file '" + pathHeroes + "'." );
 			}
 
-			try
-			{
+			//try
+			//{
 				serializerExtras = KFFSerializer.ReadFromFile( pathExtras, DefinitionManager.FILE_ENCODING );
-			}
-			catch( Exception )
-			{
-				throw new Exception( "Can't open file '" + pathExtras + "'." );
-			}
+			//}
+			//catch( Exception )
+			//{
+			//	throw new Exception( "Can't open file '" + pathExtras + "'." );
+			//}
 
 
 			try

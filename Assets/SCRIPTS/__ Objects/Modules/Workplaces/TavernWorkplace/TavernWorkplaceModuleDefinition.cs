@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class TavernWorkplaceModuleDefinition : ModuleDefinition
+	public class TavernWorkplaceModuleDefinition : SSModuleDefinition
 	{
 		public override bool CheckTypeDefConstraints( Type objType )
 		{

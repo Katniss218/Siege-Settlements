@@ -85,10 +85,10 @@ namespace SS.Objects.Buildings
 			//    CONTAINER GAMEOBJECT
 			//
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 
-			HUD hud = hudGameObject.GetComponent<HUD>();
-			hud.isVisible = Main.isHudForcedVisible;
+			//HUD hud = hudGameObject.GetComponent<HUD>();
+			//hud.isVisible = Main.isHudForcedVisible;
 
 
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
@@ -97,8 +97,8 @@ namespace SS.Objects.Buildings
 			navMeshObstacle.carving = true;
 
 			Building building = gameObject.AddComponent<Building>();
-			building.hud = hud;
-			hud.hudHolder = building;
+			//building.hud = hud;
+			//hud.hudHolder = building;
 			building.guid = guid;
 			building.definitionId = def.id;
 			building.displayName = def.displayName;
@@ -167,7 +167,7 @@ namespace SS.Objects.Buildings
 				}
 				if( isLocked )
 				{
-					building.hud.isVisible = true;
+					building.hud.hudContainer.isVisible = true;
 				}
 				else
 				{
@@ -179,7 +179,7 @@ namespace SS.Objects.Buildings
 					{
 						return;
 					}
-					building.hud.isVisible = false;
+					building.hud.hudContainer.isVisible = false;
 				}
 			};
 
@@ -192,7 +192,7 @@ namespace SS.Objects.Buildings
 				{
 					return;
 				}
-				building.hud.isVisible = true;
+				building.hud.hudContainer.isVisible = true;
 			} );
 
 			building.onDeselect.AddListener( () =>
@@ -202,7 +202,7 @@ namespace SS.Objects.Buildings
 				{
 					return;
 				}
-				building.hud.isVisible = false;
+				building.hud.hudContainer.isVisible = false;
 			} );
 
 			// When the health is changed, make the building update it's healthbar and redraw the selection panel to show the changed health on it.
@@ -210,7 +210,7 @@ namespace SS.Objects.Buildings
 			{
 				if( deltaHP < 0 )
 				{
-					building.hud.isVisible = true;
+					building.hud.hudContainer.isVisible = true;
 					building.hud.isDisplayedDueToDamage = true;
 
 					if( building.healthPercent < Building.UNUSABLE_THRESHOLD ) // if the health dropped below the point of usability.
@@ -247,7 +247,7 @@ namespace SS.Objects.Buildings
 
 			building.onUsableStateChanged.AddListener( () =>
 			{
-				hud.SetUsable( building.isUsable );
+				building.hud.SetUsable( building.isUsable );
 			} );
 
 			// When the building dies:
@@ -277,17 +277,18 @@ namespace SS.Objects.Buildings
 
 			SSObjectCreator.AssignModules( building, def );
 
-			InventoryModule[] inventory = building.GetModules<InventoryModule>();
+#warning todo
+			/*InventoryModule[] inventory = building.GetModules<InventoryModule>();
 			if( inventory.Length == 0 )
 			{
-				hud.GetComponent<HUDInventory>()?.Destroy();
+				building.hud.GetComponent<HUDInventory>()?.Destroy();
 			}
 			InteriorModule[] interior = building.GetModules<InteriorModule>();
 			if( interior.Length == 0 )
 			{
-				hud.GetComponent<HUDInterior>()?.Destroy();
-			}
-			
+				building.hud.GetComponent<HUDInterior>()?.Destroy();
+			}*/
+
 			return building;
 		}
 

@@ -17,7 +17,7 @@ namespace SS
 			typeof( InteriorModule ),
 			typeof( InventoryModule ),
 		};
-		
+
 		private class DisplayedObjectData
 		{
 			public SSObjectDFSC obj { get; private set; } = null;
@@ -48,13 +48,18 @@ namespace SS
 
 		private static List<SSObjectDFSC>[] groups = new List<SSObjectDFSC>[10]
 		{
-			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(), new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(), new List<SSObjectDFSC>()
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>(),
+			new List<SSObjectDFSC>()
 		};
-
+	
 		public static SSObjectDFSC[] GetGroup( byte index )
 		{
 			if( index < 0 || index > 9 )
@@ -83,20 +88,21 @@ namespace SS
 				throw new Exception( "Invalid index. Can only have groups <0-9>." );
 			}
 
-			for( int i = 0; i < groups[index].Count; i++ )
+#warning TODO! - selection groups displaying on hud.
+			/*for( int i = 0; i < groups[index].Count; i++ )
 			{
 				if( groups[index][i] == null )
 				{
 					continue;
 				}
 				((IHUDHolder)groups[index][i]).hud.SetSelectionGroup( null );
-			}
+			}*/
 			groups[index].Clear();
 			groups[index].AddRange( objects );
-			for( int i = 0; i < objects.Length; i++ )
+			/*for( int i = 0; i < objects.Length; i++ )
 			{
 				((IHUDHolder)objects[i]).hud.SetSelectionGroup( index );
-			}
+			}*/
 		}
 
 		/// <summary>

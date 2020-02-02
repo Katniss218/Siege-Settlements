@@ -1,13 +1,15 @@
 ﻿using KFF;
 using SS.Content;
 using SS.Objects.Buildings;
+using SS.Objects.Extras;
+using SS.Objects.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class InteriorModuleDefinition : ModuleDefinition
+	public class InteriorModuleDefinition : SSModuleDefinition
 	{
 		public class Slot : IKFFSerializable
 		{
@@ -52,7 +54,9 @@ namespace SS.Objects.Modules
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return
-				objType == typeof( BuildingDefinition );
+				objType == typeof( UnitDefinition ) ||
+				objType == typeof( BuildingDefinition ) ||
+				objType == typeof( ExtraDefinition );
 		}
 
 		public override bool CheckModuleDefConstraints( List<Type> modTypes )
@@ -97,8 +101,8 @@ namespace SS.Objects.Modules
 					module.workerSlots[i] = slot;
 				}
 			}
-
-			module.OnAfterSlotsChanged();
+			
+			module.UpdateSlotDisplay();
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )

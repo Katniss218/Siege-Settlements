@@ -32,7 +32,7 @@ namespace SS.AI
 			
 			SSObjectDFSC hitDamageable = null;
 
-			SSObjectDFSC hitInteriorDFS = null;
+			IFactionMember hitInteriorFactionMember = null;
 			InteriorModule hitInterior = null;
 
 			for( int i = 0; i < raycastHits.Length; i++ )
@@ -52,10 +52,16 @@ namespace SS.AI
 					InteriorModule interior = raycastHits[i].collider.GetComponent<InteriorModule>();
 					if( interior != null && hitInterior == null )
 					{
-						hitInteriorDFS = interior.ssObject as SSObjectDFSC;
+						hitInteriorFactionMember = interior.ssObject as IFactionMember;
 						hitInterior = interior;
 					}
 				}
+			}
+
+			if( hitInterior != null && (hitInteriorFactionMember == null || hitInteriorFactionMember.factionId == LevelDataManager.PLAYER_FAC) )
+			{
+				AssignMoveToInteriorGoal( hitInterior, Selection.GetSelectedObjects() );
+				return;
 			}
 
 			if( hitDamageable == null && terrainHitPos.HasValue )
@@ -64,11 +70,6 @@ namespace SS.AI
 				return;
 			}
 			
-			if( hitInterior != null && (hitInteriorDFS.factionId == LevelDataManager.PLAYER_FAC) )
-			{
-				AssignMoveToInteriorGoal( hitInterior, Selection.GetSelectedObjects() );
-				return;
-			}
 			if( hitDamageable != null && (hitDamageable.factionId != LevelDataManager.PLAYER_FAC) )
 			{
 				AssignAttackGoal( hitDamageable, Selection.GetSelectedObjects() );

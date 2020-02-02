@@ -110,7 +110,7 @@ namespace SS.Objects.Modules
 			cue.workplaceSlotIndex = slotIndex;
 			cue.obj.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( true );
 			cue.obj.controller.SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
-
+			
 			workplace.interior.workerSlots[slotIndex].worker = cue;
 			workplace.interior.hudInterior.workerSlots[slotIndex].SetSprite( cue.obj.icon );
 			workplace.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );

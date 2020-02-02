@@ -4,7 +4,7 @@ using System;
 
 namespace SS.Levels.SaveStates
 {
-	public class InventoryModuleData : ModuleData
+	public class InventoryModuleData : SSModuleData
 	{
 		public struct SlotData : IKFFSerializable
 		{

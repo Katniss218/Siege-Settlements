@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public abstract class ModuleDefinition : IKFFSerializable
+	public abstract class SSModuleDefinition : IKFFSerializable
 	{
 		public string displayName { get; set; }
 
@@ -21,7 +21,7 @@ namespace SS.Objects.Modules
 		//
 		//
 		//
-
+		
 		/// <summary>
 		/// Use this to constrain to which objects this definition can be added (return true to allow, false to disallow).
 		/// </summary>
@@ -41,7 +41,7 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Reads a string type and returns an instance for that corresponding type.
 		/// </summary>
-		public static ModuleDefinition TypeIdToInstance( string typeId )
+		public static SSModuleDefinition TypeIdToInstance( string typeId )
 		{
 			if( typeId == MeleeModule.KFF_TYPEID )
 			{
@@ -91,7 +91,7 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Reads a instance and returns a string type for that corresponding instance.
 		/// </summary>
-		public static string InstanceToTypeId( ModuleDefinition def )
+		public static string InstanceToTypeId( SSModuleDefinition def )
 		{
 			if( def is MeleeModuleDefinition )
 			{

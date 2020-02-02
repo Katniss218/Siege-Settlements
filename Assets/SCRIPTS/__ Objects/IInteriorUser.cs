@@ -1,7 +1,6 @@
-﻿using SS.Objects.Modules;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace SS.Objects.Units
+namespace SS.Objects.Modules
 {
 	public interface IInteriorUser
 	{
@@ -9,17 +8,16 @@ namespace SS.Objects.Units
 
 		Sprite icon { get; }
 
+
 		InteriorModule interior { get; }
+		InteriorModule.SlotType slotType { get; }
 		int slotIndex { get; }
 
-		bool isInside
-		{
-			get;
-		}
+		bool isInside { get; }
 		bool isInsideHidden { get; }
+
 
 		void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex );
 		void SetOutside();
 	}
 }
- 

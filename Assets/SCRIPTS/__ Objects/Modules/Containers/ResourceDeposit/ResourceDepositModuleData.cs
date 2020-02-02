@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SS.Levels.SaveStates
 {
-	public class ResourceDepositModuleData : ModuleData
+	public class ResourceDepositModuleData : SSModuleData
 	{
 		public Dictionary<string, int> items { get; set; }
 

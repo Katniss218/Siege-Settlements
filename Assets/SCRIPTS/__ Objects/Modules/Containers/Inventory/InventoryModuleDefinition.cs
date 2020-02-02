@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class InventoryModuleDefinition : ModuleDefinition
+	public class InventoryModuleDefinition : SSModuleDefinition
 	{
 		public struct SlotDefinition : IKFFSerializable
 		{

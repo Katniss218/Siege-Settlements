@@ -1,14 +1,15 @@
-﻿using SS.AI;
-using SS.Content;
-using SS.Levels.SaveStates;
+﻿using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
+using SS.UI.HUDs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SS.Objects.Modules
 {
+	[DisallowMultipleComponent]
+	[UseHud(typeof(HUDInterior), "hudInterior")]
 	public class InteriorModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "interior";
@@ -77,6 +78,8 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
+
+
 		public Vector3 SlotWorldPosition( Slot slot )
 		{
 			return this.transform.TransformPoint( slot.localPos );
@@ -90,15 +93,38 @@ namespace SS.Objects.Modules
 
 		public Vector3 EntranceWorldPosition()
 		{
-			return this.entrancePosition == null ? this.transform.position : this.transform.TransformPoint( this.entrancePosition.Value );
+			return this.entrancePosition == null ?
+				this.transform.position :
+				this.transform.TransformPoint( this.entrancePosition.Value );
 		}
+
 
 		public HUDInterior hudInterior { get; private set; } = null;
 
-		public void OnAfterSlotsChanged()
+		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
+		{
+			slot = null;
+			slotHud = null;
+
+			if( slotType == SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+				return;
+			}
+			if( slotType == SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
+		}
+
+
+
+		public void UpdateSlotDisplay()
 		{
 			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
-
+			
 			if( Selection.IsDisplayedModule( this ) )
 			{
 				SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
@@ -113,24 +139,62 @@ namespace SS.Objects.Modules
 		{
 			for( int i = 0; i < this.slots.Length; i++ )
 			{
-				if( ((SSObject)this.slots[i].objInside) != null )
+				if( this.slots[i].objInside != null )
 				{
 					this.slots[i].objInside.SetOutside();
 				}
 			}
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
-				if( ((SSObject)this.workerSlots[i].objInside) != null )
+				if( this.workerSlots[i].objInside != null )
 				{
 					this.workerSlots[i].objInside.SetOutside();
 				}
 			}
 		}
 
-		public int? GetFirstValid( SlotType type, Unit unit )
+		public override void OnObjSpawn()
 		{
-			byte population = (byte)unit.population;
+#warning todo cleanup.
+			//this.UpdateSlotDisplay();
+			base.OnObjSpawn();
+		}
 
+		public int? GetFirstValid( SlotType type, IInteriorUser interiorUser )
+		{
+			byte population = 1;
+			Unit unit = null;
+			if( interiorUser is Unit )
+			{
+				unit = (Unit)interiorUser;
+				population = (byte)unit.population;
+			}
+
+			if( type == SlotType.Worker )
+			{
+				if( unit != null )
+				{
+					if( !unit.isCivilian )
+					{
+						return null;
+					}
+					for( int i = 0; i < this.workerSlots.Length; i++ )
+					{
+						if( population > (byte)this.workerSlots[i].maxPopulation )
+						{
+							continue;
+						}
+
+						if( this.workerSlots[i].worker != unit.civilian )
+						{
+							continue;
+						}
+
+						return i;
+					}
+				}
+				return null;
+			}
 			if( type == SlotType.Generic )
 			{
 				for( int i = 0; i < this.slots.Length; i++ )
@@ -145,68 +209,39 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
+					if( unit != null )
 					{
-						if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
+						for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
 						{
-							return i;
+							if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
+							{
+								return i;
+							}
 						}
 					}
-
-					return null;
+					else
+					{
+						return i;
+					}
 				}
 				return null;
 			}
-			if( type == SlotType.Worker )
-			{
-				if( !unit.isCivilian )
-				{
-					return null;
-				}
-				for( int i = 0; i < this.workerSlots.Length; i++ )
-				{
-					if( population > (byte)this.workerSlots[i].maxPopulation )
-					{
-						continue;
-					}
-
-					// Should be null checked before (isCivilian).
-					CivilianUnitExtension cue = unit.GetComponent<CivilianUnitExtension>();
-					if( this.workerSlots[i].worker != cue )
-					{
-						continue;
-					}
-
-					return i;
-				}
-				return null;
-			}
+			
 			return null;
 		}
 		
-		private void RegisterHUD()
-		{
-			// integrate hud.
-			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
-			this.hudInterior = hudObj.hud.GetComponent<HUDInterior>();
-		}
-
-
 		private Vector3 oldPosition;
 		private Quaternion oldRotation;
 
-		void Awake()
+		protected override void Awake()
 		{
-			if( this.ssObject is IHUDHolder )
-			{
-				this.RegisterHUD();
-			}
-
+#warning objects containing this module are selectable. So selectability of objects depends on the modules.
 			// Cache the starting position & rotation.
 			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
+
+			base.Awake();
 		}
 
 		private void Update()
@@ -241,7 +276,7 @@ namespace SS.Objects.Modules
 		//
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			InteriorModuleData data = new InteriorModuleData();
 			data.slots = new Dictionary<int, Guid>();
@@ -267,7 +302,7 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			InteriorModuleData data = ValidateDataType<InteriorModuleData>( _data );
 

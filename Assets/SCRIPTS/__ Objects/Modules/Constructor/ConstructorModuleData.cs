@@ -3,7 +3,7 @@ using SS.Objects.Modules;
 
 namespace SS.Levels.SaveStates
 {
-	public class ConstructorModuleData : ModuleData
+	public class ConstructorModuleData : SSModuleData
 	{
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{

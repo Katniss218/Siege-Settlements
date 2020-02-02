@@ -2,6 +2,7 @@
 using SS.Levels.SaveStates;
 using SS.ResourceSystem.Payment;
 using SS.UI;
+using SS.UI.HUDs;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,8 @@ using UnityEngine.Events;
 
 namespace SS.Objects.Buildings
 {
-	public class Building : SSObjectDFSC, IHUDHolder, ISSObjectUsableUnusable, IMouseOverHandlerListener
+	[UseHud(typeof(BuildingHUD), "hud")]
+	public class Building : SSObjectDFSC, ISSObjectUsableUnusable, IMouseOverHandlerListener
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -44,7 +46,7 @@ namespace SS.Objects.Buildings
 		/// <summary>
 		/// Returns the hud that's attached to this object.
 		/// </summary>
-		public HUD hud { get; set; }
+		public BuildingHUD hud { get; set; }
 
 		public Vector3[] placementNodes { get; set; }
 		

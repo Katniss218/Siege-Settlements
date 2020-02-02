@@ -10,11 +10,11 @@ namespace SS.Content
 	{
 		private struct ModuleCacheItem
 		{
-			public ModuleDefinition module { get; set; }
+			public SSModuleDefinition module { get; set; }
 			public Type moduleType { get; set; }
 			public Guid moduleId { get; set; }
 
-			public ModuleCacheItem( Guid moduleId, ModuleDefinition module )
+			public ModuleCacheItem( Guid moduleId, SSModuleDefinition module )
 			{
 				this.moduleId = moduleId;
 				this.module = module;
@@ -35,7 +35,7 @@ namespace SS.Content
 
 
 		// Checks if a module can be added to this obj, given the obj type and the modules added before this one.
-		private bool CanAddModuleType( ModuleDefinition mod )
+		private bool CanAddModuleType( SSModuleDefinition mod )
 		{
 			if( !mod.CheckTypeDefConstraints( this.GetType() ) )
 			{
@@ -57,7 +57,7 @@ namespace SS.Content
 		/// <summary>
 		/// Gets a single module of type T (if found). Returns null if no module of specified type is present.
 		/// </summary>
-		public T GetModule<T>() where T : ModuleDefinition
+		public T GetModule<T>() where T : SSModuleDefinition
 		{
 			Type wantedType = typeof( T );
 
@@ -74,7 +74,7 @@ namespace SS.Content
 		/// <summary>
 		/// Gets every module of type T (if found). Returns empty array if no module of specified type is present.
 		/// </summary>
-		public T[] GetModules<T>() where T : ModuleDefinition
+		public T[] GetModules<T>() where T : SSModuleDefinition
 		{
 			Type wantedType = typeof( T );
 			List<T> ret = new List<T>();
@@ -89,10 +89,10 @@ namespace SS.Content
 			return ret.ToArray();
 		}
 
-		public void GetAllModules( out Guid[] moduleIds, out ModuleDefinition[] defs )
+		public void GetAllModules( out Guid[] moduleIds, out SSModuleDefinition[] defs )
 		{
 			moduleIds = new Guid[this.moduleCache.Count];
-			defs = new ModuleDefinition[this.moduleCache.Count];
+			defs = new SSModuleDefinition[this.moduleCache.Count];
 
 			for( int i = 0; i < this.moduleCache.Count; i++ )
 			{
@@ -114,7 +114,7 @@ namespace SS.Content
 		/// <summary>
 		/// Adds a single module of type T to the object definition.
 		/// </summary>
-		public void AddModule<T>( Guid moduleId, T module ) where T : ModuleDefinition
+		public void AddModule<T>( Guid moduleId, T module ) where T : SSModuleDefinition
 		{
 			if( !this.CanAddModuleType( module ) )
 			{
@@ -164,7 +164,7 @@ namespace SS.Content
 			{
 				string typeId = serializer.ReadString( new Path( "Modules.{0}.TypeId", i ) );
 
-				ModuleDefinition module = ModuleDefinition.TypeIdToInstance( typeId );
+				SSModuleDefinition module = SSModuleDefinition.TypeIdToInstance( typeId );
 
 				serializer.Deserialize<IKFFSerializable>( new Path( "Modules.{0}", i ), module );
 				Guid moduleId = serializer.ReadGuid( new Path( "Modules.{0}.ModuleId", i ) );
@@ -190,7 +190,7 @@ namespace SS.Content
 			}
 
 
-			ModuleDefinition[] modulesArray;
+			SSModuleDefinition[] modulesArray;
 			Guid[] moduleIdsArray;
 			this.GetAllModules( out moduleIdsArray, out modulesArray );
 
@@ -198,7 +198,7 @@ namespace SS.Content
 
 			for( int i = 0; i < modulesArray.Length; i++ )
 			{
-				string typeId = ModuleDefinition.InstanceToTypeId( modulesArray[i] );
+				string typeId = SSModuleDefinition.InstanceToTypeId( modulesArray[i] );
 
 				serializer.WriteString( new Path( "Modules.{0}", i ), "TypeId", typeId );
 				serializer.WriteGuid( new Path( "Modules.{0}", i ), "ModuleId", moduleIdsArray[i] );

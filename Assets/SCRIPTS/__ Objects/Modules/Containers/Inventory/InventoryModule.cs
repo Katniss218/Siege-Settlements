@@ -4,6 +4,7 @@ using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.ResourceSystem;
 using SS.UI;
+using SS.UI.HUDs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ using UnityEngine.Events;
 
 namespace SS.Objects.Modules
 {
+	[DisallowMultipleComponent]
+	[UseHud(typeof(HUDInventory), "hudInventory")]
 	public sealed class InventoryModule : SSModule, ISelectDisplayHandler
 	{
 		public const string KFF_TYPEID = "inventory";
@@ -118,58 +121,41 @@ namespace SS.Objects.Modules
 		public _UnityEvent_string_int onRemove { get; private set; } = new _UnityEvent_string_int();
 
 
+		public HUDInventory hudInventory { get; set; }
+
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		
 		
-		private void UpdateHud( HUDInventory hudInventory )
+		private void UpdateHud()
 		{
 			if( this.isEmpty )
 			{
-				hudInventory.HideResource();
+				this.hudInventory.HideResource();
 			}
 			else
 			{
 				Dictionary<string, int> res = this.GetAll();
 				foreach( var kvp in res )
 				{
-					hudInventory.DisplayResource( DefinitionManager.GetResource( kvp.Key ), kvp.Value, res.Count > 1 );
+					this.hudInventory.DisplayResource( DefinitionManager.GetResource( kvp.Key ), kvp.Value, res.Count > 1 );
 					return;
 				}
 			}
 		}
 		
-		private void RegisterHUD()
+		protected override void Awake()
 		{
-			// integrate hud.
-			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
-
-			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
-			if( hudInventory != null )
+			// Make the inventory update the HUD wien resources are added/removed.
+			this.onAdd.AddListener( ( string id, int amtAdded ) =>
 			{
-				// Make the inventory update the HUD wien resources are added/removed.
-				this.onAdd.AddListener( ( string id, int amtAdded ) =>
-				{
-					this.UpdateHud( hudInventory );
-				} );
-				this.onRemove.AddListener( ( string id, int amtRemoved ) =>
-				{
-					this.UpdateHud( hudInventory );
-				} );
-			}
-		}
-
-		void Awake()
-		{
-			// needs to be registered on Awake(), since the resources (data) are assigned before Start() happens.
-
-			if( this.ssObject is IHUDHolder )
+				this.UpdateHud();
+			} );
+			this.onRemove.AddListener( ( string id, int amtRemoved ) =>
 			{
-				this.RegisterHUD();
-			}
-			
+				this.UpdateHud();
+			} );
 
 			if( this.ssObject is IFactionMember )
 			{
@@ -220,6 +206,8 @@ namespace SS.Objects.Modules
 					}
 				} );
 			}
+
+			base.Awake();
 		}
 
 		public override void OnObjDestroyed()
@@ -492,7 +480,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			InventoryModuleData data = new InventoryModuleData();
 
@@ -505,17 +493,12 @@ namespace SS.Objects.Modules
 			return data;
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			InventoryModuleData data = ValidateDataType<InventoryModuleData>( _data );
 
 			// ------          DATA
-
-			// integrate hud.
-			IHUDHolder hudObj = (IHUDHolder)this.ssObject;
-
-			HUDInventory hudInventory = hudObj.hud.GetComponent<HUDInventory>();
-
+			
 			if( data.items != null )
 			{
 				if( data.items.Length != this.slotCount )
@@ -555,10 +538,7 @@ namespace SS.Objects.Modules
 				}
 			}
 			
-			if( hudInventory != null )
-			{
-				this.UpdateHud( hudInventory );
-			}
+			this.UpdateHud();
 		}
 
 

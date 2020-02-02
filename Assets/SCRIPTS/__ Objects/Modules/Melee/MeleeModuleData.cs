@@ -4,7 +4,7 @@ using System;
 
 namespace SS.Levels.SaveStates
 {
-	public class MeleeModuleData : ModuleData
+	public class MeleeModuleData : SSModuleData
 	{
 		public Guid? targetGuid { get; set; }
 		public float? damageOverride { get; set; }

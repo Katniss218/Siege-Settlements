@@ -60,6 +60,7 @@ namespace SS.Objects.Units
 					WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
 
 					WorkplaceModule.SetWorking( workplace, cue, data.workplace.Item3 );
+					cue.isWorking = data.isWorking ?? false;
 				}
 
 				// Set the automatic duty (only for civilians).
@@ -98,10 +99,10 @@ namespace SS.Objects.Units
 			//    CONTAINER GAMEOBJECT
 			//
 
-			GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
+			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
 
-			HUD hud = hudGameObject.GetComponent<HUD>();
-			hud.isVisible = Main.isHudForcedVisible;
+			//HUD hud = hudGameObject.GetComponent<HUD>();
+			//hud.isVisible = Main.isHudForcedVisible;
 
 
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
@@ -118,8 +119,8 @@ namespace SS.Objects.Units
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 			Unit unit = gameObject.AddComponent<Unit>();
-			unit.hud = hud;
-			hud.hudHolder = unit;
+			//unit.hud = hud;
+			//hud.hudHolder = unit;
 			unit.guid = guid;
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
@@ -204,7 +205,7 @@ namespace SS.Objects.Units
 				}
 				if( isLocked )
 				{
-					unit.hud.isVisible = true;
+					unit.hud.hudContainer.isVisible = true;
 				}
 				else
 				{
@@ -216,7 +217,7 @@ namespace SS.Objects.Units
 					{
 						return;
 					}
-					unit.hud.isVisible = false;
+					unit.hud.hudContainer.isVisible = false;
 				}
 			};
 
@@ -229,7 +230,7 @@ namespace SS.Objects.Units
 				{
 					return;
 				}
-				unit.hud.isVisible = true;
+				unit.hud.hudContainer.isVisible = true;
 			} );
 
 			unit.onDeselect.AddListener( () =>
@@ -239,7 +240,7 @@ namespace SS.Objects.Units
 				{
 					return;
 				}
-				unit.hud.isVisible = false;
+				unit.hud.hudContainer.isVisible = false;
 			} );
 
 			// Make the unit update it's healthbar and material when health changes.
@@ -247,7 +248,7 @@ namespace SS.Objects.Units
 			{
 				if( deltaHP < 0 )
 				{
-					unit.hud.isVisible = true;
+					unit.hud.hudContainer.isVisible = true;
 					unit.hud.isDisplayedDueToDamage = true;
 				}
 				
@@ -300,16 +301,16 @@ namespace SS.Objects.Units
 
 			SSObjectCreator.AssignModules( unit, def );
 
-			InventoryModule[] inventory = unit.GetModules<InventoryModule>();
+			/*InventoryModule[] inventory = unit.GetModules<InventoryModule>();
 			if( inventory.Length == 0 )
 			{
-				hud.GetComponent<HUDInventory>()?.Destroy();
+				unit.hud.GetComponent<HUDInventory>()?.Destroy();
 			}
 			InteriorModule[] interior = unit.GetModules<InteriorModule>();
 			if( interior.Length == 0 )
 			{
-				hud.GetComponent<HUDInterior>()?.Destroy();
-			}
+				unit.hud.GetComponent<HUDInterior>()?.Destroy();
+			}*/
 			
 			return unit;
 		}
@@ -358,6 +359,7 @@ namespace SS.Objects.Units
 							unit.civilian.workplace.moduleId,
 							unit.civilian.workplaceSlotIndex
 						);
+					data.isWorking = unit.civilian.isWorking;
 				}
 
 				data.isOnAutomaticDuty = unit.civilian.isOnAutomaticDuty;

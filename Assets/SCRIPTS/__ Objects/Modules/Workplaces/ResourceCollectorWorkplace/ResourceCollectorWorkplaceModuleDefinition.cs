@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	public class ResourceCollectorWorkplaceModuleDefinition : ModuleDefinition
+	public class ResourceCollectorWorkplaceModuleDefinition : SSModuleDefinition
 	{
 		public string resourceId { get; set; }
-
+		
 		public override bool CheckTypeDefConstraints( Type objType )
 		{
 			return

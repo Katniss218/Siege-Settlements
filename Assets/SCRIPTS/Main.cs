@@ -308,31 +308,30 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					IPopulationScaler popScaler = hitInfo.collider.GetComponent<IPopulationScaler>();
-					if( popScaler == null )
+					Unit unit = hitInfo.collider.GetComponent<Unit>();
+					if( unit == null )
 					{
 						return;
 					}
-					if( popScaler is Unit )
+
+					if( !unit.CanChangePopulation() )
 					{
-						if( !((Unit)popScaler).CanChangePopulation() )
-						{
-							return;
-						}
+						return;
 					}
-					switch( popScaler.population )
+					
+					switch( unit.population )
 					{
 						case PopulationSize.x1:
-							popScaler.population = PopulationSize.x2;
+							unit.population = PopulationSize.x2;
 							break;
 						case PopulationSize.x2:
-							popScaler.population = PopulationSize.x4;
+							unit.population = PopulationSize.x4;
 							break;
 						case PopulationSize.x4:
-							popScaler.population = PopulationSize.x8;
+							unit.population = PopulationSize.x8;
 							break;
 						case PopulationSize.x8:
-							popScaler.population = PopulationSize.x1;
+							unit.population = PopulationSize.x1;
 							break;
 					}
 				}
@@ -519,7 +518,8 @@ namespace SS
 				{
 					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 					{
-						ExtraDefinition def = DefinitionManager.GetExtra( "extra.grass" );
+						//ExtraDefinition def = DefinitionManager.GetExtra( "extra.grass" );
+						ExtraDefinition def = DefinitionManager.GetExtra( "extra.hideout" );
 						ExtraData data = new ExtraData();
 						data.guid = Guid.NewGuid();
 						data.position = hitInfo.point;
@@ -644,16 +644,16 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 60.0f, Inp_A3, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, -60.0f, Inp_A1, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, -60.0f, Inp_A2, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, -60.0f, Inp_A3, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, -60.0f, Inp_A4, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, -60.0f, Inp_A5, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, -60.0f, Inp_A6, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, -60.0f, Inp_A7, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, -60.0f, Inp_A8, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, -60.0f, Inp_A9, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, -60.0f, Inp_A0, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
 			}
 		}

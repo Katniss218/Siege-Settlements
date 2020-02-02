@@ -10,7 +10,7 @@ using SS.Objects.SubObjects;
 
 namespace SS.Objects.Modules
 {
-	public class MeleeModuleDefinition : ModuleDefinition
+	public class MeleeModuleDefinition : SSModuleDefinition
 	{
 		public DamageType damageType { get; set; }
 		public float damage { get; set; }

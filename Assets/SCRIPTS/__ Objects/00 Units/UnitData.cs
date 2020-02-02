@@ -1,8 +1,7 @@
 ﻿using KFF;
 using SS.AI.Goals;
 using SS.Content;
-using SS.Objects;
-using SS.Objects.Modules;
+using SS.Objects.Units;
 using System;
 using UnityEngine;
 
@@ -43,6 +42,7 @@ namespace SS.Levels.SaveStates
 				
 		public Tuple<Guid, Guid, int> workplace { get; set; }
 		public bool? isOnAutomaticDuty { get; set; }
+		public bool? isWorking { get; set; }
 
 
 
@@ -136,13 +136,17 @@ namespace SS.Levels.SaveStates
 				this.workplace = new Tuple<Guid, Guid, int>( insideObj, insideMod, slotIndex );
 			}
 
+			if( serializer.Analyze( "IsWorking" ).isSuccess )
+			{
+				this.isWorking = serializer.ReadBool( "IsWorking" );
+			}
+
 			if( serializer.Analyze( "IsOnAutomaticDuty" ).isSuccess )
 			{
 				this.isOnAutomaticDuty = serializer.ReadBool( "IsOnAutomaticDuty" );
 			}
-
-			int tag;
-			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out tag );
+			
+			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out int tag );
 			this.tacticalGoalTag = tag;
 
 			this.DeserializeModulesKFF( serializer );
@@ -179,6 +183,11 @@ namespace SS.Levels.SaveStates
 				serializer.WriteGuid( "Workplace", "ObjectGuid", this.workplace.Item1 );
 				serializer.WriteGuid( "Workplace", "ModuleId", this.workplace.Item2 );
 				serializer.WriteInt( "Workplace", "SlotIndex", this.workplace.Item3 );
+			}
+
+			if( this.isWorking != null )
+			{
+				serializer.WriteBool( "", "IsWorking", this.isWorking.Value );
 			}
 
 			if( this.isOnAutomaticDuty != null )

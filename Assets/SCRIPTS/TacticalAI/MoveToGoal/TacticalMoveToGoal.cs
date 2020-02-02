@@ -1,7 +1,6 @@
 ﻿using Katniss.Utils;
 using SS.Objects;
 using SS.Objects.Modules;
-using SS.Objects.Units;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -100,10 +99,11 @@ namespace SS.AI.Goals
 
 		private void UpdatePosition( TacticalGoalController controller )
 		{
+			
 			if( this.destination == DestinationType.POSITION )
 			{
 				Vector3 currDestPos = this.destinationPos;
-				if( this.oldDestination != currDestPos )
+				if( !this.navMeshAgent.hasPath || this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos );
 				}
@@ -125,7 +125,7 @@ namespace SS.AI.Goals
 			{
 				Vector3 currDestPos = this.destinationObject.transform.position;
 
-				if( this.oldDestination != currDestPos )
+				if( !this.navMeshAgent.hasPath || this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 				}
@@ -142,14 +142,13 @@ namespace SS.AI.Goals
 			}
 			if( this.destination == DestinationType.INTERIOR )
 			{
-				Vector3 currDestPos = this.destinationInterior.transform.position;
+				Vector3 currDestPos = this.destinationInterior.EntranceWorldPosition();
 				
-				if( this.oldDestination != currDestPos )
+				if( !this.navMeshAgent.hasPath || this.oldDestination != currDestPos )
 				{
 					this.navMeshAgent.SetDestination( currDestPos + ((controller.transform.position - currDestPos).normalized * 0.025f) );
 				}
 				
-				currDestPos = this.destinationInterior.EntranceWorldPosition();
 				
 				
 				// If the agent has travelled to the destination - switch back to the default Goal.
@@ -159,12 +158,12 @@ namespace SS.AI.Goals
 					{
 						controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					}
-					if( controller.ssObject is Unit )
+					if( controller.ssObject is IInteriorUser )
 					{
-						Unit unit = (Unit)controller.ssObject;
+						IInteriorUser interiorUser = (IInteriorUser)controller.ssObject;
 
 						InteriorModule.SlotType slotType = this.interiorSlotType;
-						int? slotIndex = this.destinationInterior.GetFirstValid( slotType, unit );
+						int? slotIndex = this.destinationInterior.GetFirstValid( slotType, interiorUser );
 
 						if( slotIndex == null )
 						{
@@ -172,10 +171,11 @@ namespace SS.AI.Goals
 							controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 							return;
 						}
-						unit.SetInside( this.destinationInterior, slotType, slotIndex.Value );
+						interiorUser.SetInside( this.destinationInterior, slotType, slotIndex.Value );
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 						return;
 					}
+					Debug.LogWarning( "MoveToInterior assigned to object that can't enter." );
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}

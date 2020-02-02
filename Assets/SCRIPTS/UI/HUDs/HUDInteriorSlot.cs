@@ -11,6 +11,7 @@ namespace SS.UI
 
 		public Image background = null;
 		
+		public Image HealthBar { get { return this.healthBar; } }
 
 		//
 		//

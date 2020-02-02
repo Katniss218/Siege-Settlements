@@ -96,7 +96,6 @@
     <Compile Include="Assets\SCRIPTS\Factions &amp; Diplomacy\RelationMap.cs" />
     <Compile Include="Assets\SCRIPTS\FontManager.cs" />
     <Compile Include="Assets\SCRIPTS\IAttackModule.cs" />
-    <Compile Include="Assets\SCRIPTS\IHUDHolder.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\InputQueue.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\MouseCode.cs" />
     <Compile Include="Assets\SCRIPTS\Input System\QueuedKeyboardInput.cs" />
@@ -162,10 +161,14 @@
     <Compile Include="Assets\SCRIPTS\UI\FpsCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GameTimeCounter.cs" />
     <Compile Include="Assets\SCRIPTS\UI\GenericUIData.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUD\HUD.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInterior.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInteriorSlot.cs" />
-    <Compile Include="Assets\SCRIPTS\UI\HUD\HUDInventory.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\HUDDFSC.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\HUDInterior.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\HUDInteriorSlot.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\HUDInventory.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\HudContainer.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\BuildingHUD.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\HeroHUD.cs" />
+    <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\UnitHUD.cs" />
     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />
     <Compile Include="Assets\SCRIPTS\UI\SaveButton.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="Assets\SCRIPTS\UI\ToolTip.cs" />
     <Compile Include="Assets\SCRIPTS\UI\ToolTipUIHandler.cs" />
     <Compile Include="Assets\SCRIPTS\UI\UIUtils.cs" />
+    <Compile Include="Assets\SCRIPTS\UseHudAttribute.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
@@ -208,7 +212,6 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\IFactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IInteriorUser.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\IPopulationScaler.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\ISSObjectUsableUnusable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleData.cs" />
@@ -228,8 +231,6 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Melee\MeleeModuleDefinition.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\ModuleData.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\ModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\ObjectType.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Ranged\RangedModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Ranged\RangedModuleData.cs" />
@@ -238,6 +239,8 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleData.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Research\ResearchModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModule.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModuleData.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\Modules\SSModuleDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Targeter.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\ResourceCollectorWorkplace\ResourceCollectorWorkplaceModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Workplaces\ResourceCollectorWorkplace\ResourceCollectorWorkplaceModuleData.cs" />

@@ -49,13 +49,13 @@ namespace SS.Objects.Modules
 		}
 
 
-		public override ModuleData GetData()
+		public override SSModuleData GetData()
 		{
 			// no data needs to be saved.
 			return new TavernWorkplaceModuleData();
 		}
 
-		public override void SetData( ModuleData _data )
+		public override void SetData( SSModuleData _data )
 		{
 			// no data needs to be saved.
 			TavernWorkplaceModuleData data = ValidateDataType<TavernWorkplaceModuleData>( _data );
