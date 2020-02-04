@@ -34,8 +34,6 @@ namespace SS.Levels.SaveStates
 		public PopulationSize population { get; set; }
 
 		public float? health { get; set; }
-		public float? movementSpeed { get; set; }
-		public float? rotationSpeed { get; set; }
 		
 		public TacticalGoalData[] tacticalGoalData { get; set; }
 		public int tacticalGoalTag { get; set; }
@@ -104,30 +102,7 @@ namespace SS.Levels.SaveStates
 					throw new Exception( "Missing or invalid value of 'Health' (" + serializer.file.fileName + ")." );
 				}
 			}
-
-			if( serializer.Analyze( "MovementSpeed" ).isSuccess )
-			{
-				try
-				{
-					this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'MovementSpeed' (" + serializer.file.fileName + ")." );
-				}
-			}
-			if( serializer.Analyze( "RotationSpeed" ).isSuccess )
-			{
-				try
-				{
-					this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'RotationSpeed' (" + serializer.file.fileName + ")." );
-				}
-			}
-
+			
 			if( serializer.Analyze( "Workplace" ).isSuccess )
 			{
 				Guid insideObj = serializer.ReadGuid( "Workplace.ObjectGuid" );
@@ -167,16 +142,7 @@ namespace SS.Levels.SaveStates
 			{
 				serializer.WriteFloat( "", "Health", this.health.Value );
 			}
-
-			if( this.movementSpeed != null )
-			{
-				serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed.Value );
-			}
-			if( this.rotationSpeed != null )
-			{
-				serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed.Value );
-			}
-			
+						
 			if( this.workplace != null )
 			{
 				serializer.WriteClass( "", "Workplace" );

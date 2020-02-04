@@ -346,7 +346,7 @@
 				IsStorage = false;
 				Slots =
 				[
-					{ SlotId = ""; Capacity = 20; }
+					{ SlotId = ""; Capacity = 2; }
 				];
 				Icon = "extern:Textures/Modules/inventory_icon.png";
 			}

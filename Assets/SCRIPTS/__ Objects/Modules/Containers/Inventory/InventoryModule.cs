@@ -509,12 +509,7 @@ namespace SS.Objects.Modules
 				{
 					this.slotGroups[i].id = data.items[i].id;
 					this.slotGroups[i].amount = data.items[i].amount;
-
-					if( data.items[i].capacityOverride != null )
-					{
-						this.slotGroups[i].capacityOverride = data.items[i].capacityOverride;
-					}
-
+					
 					if( this.ssObject is IFactionMember )
 					{
 						IFactionMember fac = (IFactionMember)this.ssObject;

@@ -33,8 +33,9 @@ namespace SS.UI.HUDs
 			this.min = 0.2f;
 			this.max = 0.8f;
 
-			GameObject hud = CreateHudObject( this.hudContainer.toggleable.transform );
-			this.HUDt = hud;
+			GameObject hud = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/HeroHUD" ), this.hudContainer.toggleable.transform );
+
+			this.selectionGroup = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/selgroup" ), this.hudContainer.transform ).GetComponent<TextMeshProUGUI>();
 
 			this.healthBar = hud.transform.Find( "Health Bar" ).GetComponent<Image>();
 			this.displayNameText = hud.transform.Find( "Name" ).GetComponent<TextMeshProUGUI>();
@@ -44,13 +45,6 @@ namespace SS.UI.HUDs
 
 			this.AddColored( this.healthBar );
 			this.AddColored( foreground );
-		}
-
-		private static GameObject CreateHudObject( Transform parent )
-		{
-			GameObject gameObject = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/HeroHUD" ), parent );
-
-			return gameObject;
 		}
 	}
 }

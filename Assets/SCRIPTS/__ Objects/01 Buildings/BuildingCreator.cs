@@ -276,19 +276,7 @@ namespace SS.Objects.Buildings
 			//
 
 			SSObjectCreator.AssignModules( building, def );
-
-#warning todo
-			/*InventoryModule[] inventory = building.GetModules<InventoryModule>();
-			if( inventory.Length == 0 )
-			{
-				building.hud.GetComponent<HUDInventory>()?.Destroy();
-			}
-			InteriorModule[] interior = building.GetModules<InteriorModule>();
-			if( interior.Length == 0 )
-			{
-				building.hud.GetComponent<HUDInterior>()?.Destroy();
-			}*/
-
+			
 			return building;
 		}
 

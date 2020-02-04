@@ -20,6 +20,7 @@ namespace SS.UI
 		private Dictionary<string, ResourceListEntry> entries = new Dictionary<string, ResourceListEntry>();
 
 		[SerializeField] private Transform resourceEntryContainer = null;
+		[SerializeField] private TextMeshProUGUI populationCounter = null;
 
 
 		public static ResourcePanel instance { get; private set; }
@@ -40,6 +41,7 @@ namespace SS.UI
 			this.SetEntries( definedRes );
 		}
 		
+
 		private void AddEntry( string id, Sprite i, int amount )
 		{
 			GameObject container = Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Resource (UI)" ), resourceEntryContainer );
@@ -57,34 +59,6 @@ namespace SS.UI
 			entries.Add( id, new ResourceListEntry() { container = container.transform, text = textText, amount = amount } );
 		}
 
-		public void UpdateResourceEntry( string id, int amount, int amount2 )
-		{
-			ResourceListEntry entry;
-			if( entries.TryGetValue( id, out entry ) )
-			{
-				entry.amount = amount;
-				entry.text.text = amount + " (" + amount2 + ")";
-			}
-			else
-			{
-				throw new System.Exception( "Didn't find resource '" + id + "'." );
-			}
-		}
-
-		/*public void UpdateResourceEntryDelta( string id, int amountDelta )
-		{
-			ResourceListEntry entry;
-			if( entries.TryGetValue( id, out entry ) )
-			{
-				entry.amount += amountDelta;
-				entry.text.text = entry.amount.ToString();
-			}
-			else
-			{
-				throw new System.Exception( "Didn't find resource '" + id + "'." );
-			}
-		}*/
-
 		public void SetEntries( ResourceDefinition[] resources )
 		{
 			this.RemoveAllEntries();
@@ -92,6 +66,25 @@ namespace SS.UI
 			{
 				this.AddEntry( resources[i].id, resources[i].icon, 0 );
 			}
+		}
+
+		public void UpdateResourceEntry( string id, int amountTotal, int amountStored )
+		{
+			ResourceListEntry entry;
+			if( entries.TryGetValue( id, out entry ) )
+			{
+				entry.amount = amountTotal;
+				entry.text.text = amountTotal + " (" + amountStored + ")";
+			}
+			else
+			{
+				throw new System.Exception( "Didn't find resource '" + id + "'." );
+			}
+		}
+
+		public void UpdatePopulationDisplay( int amount )
+		{
+			this.populationCounter.text = "pop: " + amount;
 		}
 
 		public void RemoveAllEntries()

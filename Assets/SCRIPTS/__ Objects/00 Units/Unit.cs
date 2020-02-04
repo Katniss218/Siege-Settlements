@@ -1,4 +1,5 @@
-﻿using SS.Objects.Modules;
+﻿using SS.Levels;
+using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using SS.UI.HUDs;
@@ -58,6 +59,21 @@ namespace SS.Objects.Units
 				}
 
 				PopulationSize populationBefore = this.__population;
+
+				if( populationBefore != value )
+				{
+					if( populationBefore != PopulationSize.x1 )
+					{
+						LevelDataManager.factionData[this.factionId].populationCache -= (int)populationBefore;
+					}
+					LevelDataManager.factionData[this.factionId].populationCache += (int)value;
+					if( this.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+					}
+				}
+
+				
 				this.__population = value;
 				PopulationUnitUtils.ScaleStats( this, populationBefore, value );
 			}
@@ -67,9 +83,9 @@ namespace SS.Objects.Units
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public UnitHUD hud { get; set; }
+		public override HUDDFSC hudDFSC { get { return this.hud; } }
 
 
-		
 
 		public const int AVOIDANCE_PRORITY_GENERAL = 1;
 
@@ -122,30 +138,10 @@ namespace SS.Objects.Units
 			set
 			{
 				this.__movementSpeed = value;
-				if( this.movementSpeedOverride == null ) // if an override is not present - set the speed.
-				{
-					this.navMeshAgent.speed = value;
-				}
+				this.navMeshAgent.speed = value;
 			}
 		}
-
-		float? __movementSpeedOverride;
-		public float? movementSpeedOverride
-		{
-			get
-			{
-				return this.__movementSpeedOverride;
-			}
-			set
-			{
-				this.__movementSpeedOverride = value;
-				if( value != null ) // if the new override is not null - set the speed.
-				{
-					this.navMeshAgent.speed = value.Value;
-				}
-			}
-		}
-
+		
 		float __rotationSpeed;
 		public float rotationSpeed
 		{
@@ -156,26 +152,7 @@ namespace SS.Objects.Units
 			set
 			{
 				this.__rotationSpeed = value;
-				if( this.rotationSpeedOverride == null ) // if an override is not present - set the speed.
-				{
-					this.navMeshAgent.angularSpeed = value;
-				}
-			}
-		}
-		float? __rotationSpeedOverride;
-		public float? rotationSpeedOverride
-		{
-			get
-			{
-				return this.__rotationSpeedOverride;
-			}
-			set
-			{
-				this.__rotationSpeedOverride = value;
-				if( value != null ) // if the new override is not null - set the speed.
-				{
-					this.navMeshAgent.angularSpeed = value.Value;
-				}
+				this.navMeshAgent.angularSpeed = value;
 			}
 		}
 
@@ -318,13 +295,26 @@ namespace SS.Objects.Units
 		//
 
 
-		public void OnMouseEnterListener() => this.hud.TryShow();
+		public void OnMouseEnterListener() => this.hud.ConditionalShow();
 
 		public void OnMouseStayListener() { }
 
-		public void OnMouseExitListener() => this.hud.TryHide();
+		public void OnMouseExitListener() => this.hud.ConditionalHide();
 
 
+		protected override void OnObjSpawn()
+		{
+			if( this.population == PopulationSize.x1 )
+			{
+				LevelDataManager.factionData[this.factionId].populationCache += (int)this.population;
+				if( this.factionId == LevelDataManager.PLAYER_FAC )
+				{
+					ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+				}
+			}
+		
+			base.OnObjSpawn();
+		}
 
 		protected override void OnObjDestroyed()
 		{
@@ -333,6 +323,13 @@ namespace SS.Objects.Units
 			{
 				InputOverrideEmployment.DisableEmploymentInput();
 			}
+
+			LevelDataManager.factionData[this.factionId].populationCache -= (int)this.population;
+			if( this.factionId == LevelDataManager.PLAYER_FAC )
+			{
+				ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[this.factionId].populationCache );
+			}
+
 			base.OnObjDestroyed();
 		}
 
@@ -346,23 +343,8 @@ namespace SS.Objects.Units
 
 		public bool CanChangePopulation()
 		{
-			if( this.isPopulationLocked )
-			{
 #warning figure out something for the pop locking.
-				return false;
-			}
-			SSModule[] modules = this.GetModules();
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				if( modules[i] is IPopulationChangeBlockerModule )
-				{
-					if( !((IPopulationChangeBlockerModule)modules[i]).CanChangePopulation() )
-					{
-						return false;
-					}
-				}
-			}
-			return true;
+			return !this.isPopulationLocked;
 		}
 	}
 }

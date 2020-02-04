@@ -87,22 +87,21 @@ namespace SS
 			{
 				throw new Exception( "Invalid index. Can only have groups <0-9>." );
 			}
-
-#warning TODO! - selection groups displaying on hud.
-			/*for( int i = 0; i < groups[index].Count; i++ )
+			
+			for( int i = 0; i < groups[index].Count; i++ )
 			{
 				if( groups[index][i] == null )
 				{
 					continue;
 				}
-				((IHUDHolder)groups[index][i]).hud.SetSelectionGroup( null );
-			}*/
+				groups[index][i].hudDFSC.SetSelectionGroup( null );
+			}
 			groups[index].Clear();
 			groups[index].AddRange( objects );
-			/*for( int i = 0; i < objects.Length; i++ )
+			for( int i = 0; i < objects.Length; i++ )
 			{
-				((IHUDHolder)objects[i]).hud.SetSelectionGroup( index );
-			}*/
+				objects[i].hudDFSC.SetSelectionGroup( index );
+			}
 		}
 
 		/// <summary>

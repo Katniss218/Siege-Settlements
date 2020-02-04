@@ -47,6 +47,8 @@ namespace SS.Objects.Buildings
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public BuildingHUD hud { get; set; }
+		public override HUDDFSC hudDFSC { get { return this.hud; } }
+
 
 		public Vector3[] placementNodes { get; set; }
 		
@@ -139,7 +141,7 @@ namespace SS.Objects.Buildings
 
 		public void OnMouseEnterListener()
 		{
-			this.hud.TryShow();
+			this.hud.ConditionalShow();
 		}
 
 		public void OnMouseStayListener()
@@ -147,7 +149,7 @@ namespace SS.Objects.Buildings
 
 		public void OnMouseExitListener()
 		{
-			this.hud.TryHide();
+			this.hud.ConditionalHide();
 		}
 
 		void Update()

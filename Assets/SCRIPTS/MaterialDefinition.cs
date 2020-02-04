@@ -16,12 +16,7 @@ namespace SS
 
 		public float? windDisplacementScale { get; set; } // plants only
 
-
-		public MaterialDefinition()
-		{
-
-		}
-
+		
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.materialType = (MaterialType)serializer.ReadByte( "MaterialType" );

@@ -40,14 +40,6 @@ namespace SS.Objects.Units
 			{
 				unit.health = data.health.Value;
 			}
-			if( data.movementSpeed != null )
-			{
-				unit.movementSpeedOverride = data.movementSpeed.Value;
-			}
-			if( data.rotationSpeed != null )
-			{
-				unit.rotationSpeedOverride = data.rotationSpeed.Value;
-			}
 
 			if( unit.isCivilian )
 			{
@@ -69,6 +61,8 @@ namespace SS.Objects.Units
 					cue.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
 				}
 			}
+			
+			unit.population = data.population;
 
 			//
 			//    MODULES
@@ -83,8 +77,6 @@ namespace SS.Objects.Units
 #warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
 #warning   data should set the population in a different way maybe?
 
-			// population needs to be set after modules, since it can change some properties of the modules (override values).
-			unit.population = data.population;
 		}
 
 
@@ -98,13 +90,7 @@ namespace SS.Objects.Units
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-
-			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/unit_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-
-			//HUD hud = hudGameObject.GetComponent<HUD>();
-			//hud.isVisible = Main.isHudForcedVisible;
-
-
+			
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
 
 			// Add a kinematic rigidbody to the unit (required by the NavMeshAgent).
@@ -119,8 +105,6 @@ namespace SS.Objects.Units
 			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
 
 			Unit unit = gameObject.AddComponent<Unit>();
-			//unit.hud = hud;
-			//hud.hudHolder = unit;
 			unit.guid = guid;
 			unit.definitionId = def.id;
 			unit.displayName = def.displayName;
@@ -142,7 +126,7 @@ namespace SS.Objects.Units
 
 			unit.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{
-				Color color = LevelDataManager.factions[unit.factionId].color;
+				Color color = LevelDataManager.factions[toFac].color;
 
 				unit.hud.SetColor( color );
 				MeshSubObject[] meshes = unit.GetSubObjects<MeshSubObject>();
@@ -155,6 +139,19 @@ namespace SS.Objects.Units
 				{
 					meshes2[i].GetMaterial().SetColor( "_FactionColor", color );
 				}
+
+				// only for "real" faction changes.
+				if( fromFac != SSObjectDFSC.FACTIONID_INVALID )
+				{
+					LevelDataManager.factionData[fromFac].populationCache -= (int)unit.population;
+					LevelDataManager.factionData[toFac].populationCache += (int)unit.population;
+
+					if( toFac == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+					}
+				}
+				
 
 				// Re-Display the object
 
@@ -300,17 +297,6 @@ namespace SS.Objects.Units
 			//
 
 			SSObjectCreator.AssignModules( unit, def );
-
-			/*InventoryModule[] inventory = unit.GetModules<InventoryModule>();
-			if( inventory.Length == 0 )
-			{
-				unit.hud.GetComponent<HUDInventory>()?.Destroy();
-			}
-			InteriorModule[] interior = unit.GetModules<InteriorModule>();
-			if( interior.Length == 0 )
-			{
-				unit.hud.GetComponent<HUDInterior>()?.Destroy();
-			}*/
 			
 			return unit;
 		}
@@ -340,14 +326,7 @@ namespace SS.Objects.Units
 			{
 				data.health = unit.health;
 			}
-			if( unit.movementSpeedOverride != null )
-			{
-				data.movementSpeed = unit.movementSpeedOverride;
-			}
-			if( unit.rotationSpeedOverride != null )
-			{
-				data.rotationSpeed = unit.rotationSpeedOverride;
-			}
+
 			data.population = unit.population;
 
 			if( unit.isCivilian )

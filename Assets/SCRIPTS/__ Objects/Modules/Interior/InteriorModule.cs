@@ -152,14 +152,7 @@ namespace SS.Objects.Modules
 				}
 			}
 		}
-
-		public override void OnObjSpawn()
-		{
-#warning todo cleanup.
-			//this.UpdateSlotDisplay();
-			base.OnObjSpawn();
-		}
-
+		
 		public int? GetFirstValid( SlotType type, IInteriorUser interiorUser )
 		{
 			byte population = 1;
@@ -235,7 +228,7 @@ namespace SS.Objects.Modules
 
 		protected override void Awake()
 		{
-#warning objects containing this module are selectable. So selectability of objects depends on the modules.
+#warning Selectability of objects depends on more factors than just the base class of the object. Objects containing Interior Module are selectable.
 			// Cache the starting position & rotation.
 			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;

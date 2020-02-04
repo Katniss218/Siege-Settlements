@@ -12,7 +12,7 @@ namespace SS.AI.Goals
 
 		public TacticalDropOffGoal.DropOffMode dropOffMode { get; set; }
 		public Vector3 destinationPos { get; set; }
-		public Tuple<Guid,Guid> destinationGuid { get; set; }
+		public Tuple<Guid,Guid?> destinationGuid { get; set; }
 
 		public bool isHostile { get; set; }
 
@@ -56,8 +56,12 @@ namespace SS.AI.Goals
 				else
 				{
 					Guid obj = serializer.ReadGuid( "Destination.ObjectGuid" );
-					Guid module = serializer.ReadGuid( "Destination.ModuleId" );
-					this.destinationGuid = new Tuple<Guid, Guid>( obj, module );
+					Guid? module = null;
+					if( serializer.Analyze( "Destination.ModuleId" ).isSuccess )
+					{
+						module = serializer.ReadGuid( "Destination.ModuleId" );
+					}
+					this.destinationGuid = new Tuple<Guid, Guid?>( obj, module );
 				}
 			}
 			catch
@@ -101,7 +105,10 @@ namespace SS.AI.Goals
 			{
 				serializer.WriteClass( "", "Destination" );
 				serializer.WriteGuid( "Destination", "ObjectGuid", this.destinationGuid.Item1 );
-				serializer.WriteGuid( "Destination", "ModuleId", this.destinationGuid.Item2 );
+				if( this.destinationGuid.Item2 != null )
+				{
+					serializer.WriteGuid( "Destination", "ModuleId", this.destinationGuid.Item2.Value );
+				}
 			}
 
 			serializer.WriteBool( "", "IsHostile", this.isHostile );

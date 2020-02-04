@@ -42,14 +42,6 @@ namespace SS.Objects.Heroes
 			{
 				hero.health = data.health.Value;
 			}
-			if( data.movementSpeed != null )
-			{
-				hero.movementSpeedOverride = data.movementSpeed.Value;
-			}
-			if( data.rotationSpeed != null )
-			{
-				hero.rotationSpeedOverride = data.rotationSpeed.Value;
-			}
 
 			//
 			//    MODULES
@@ -248,18 +240,7 @@ namespace SS.Objects.Heroes
 			//
 
 			SSObjectCreator.AssignModules( hero, def );
-
-			/*InventoryModule[] inventory = hero.GetModules<InventoryModule>();
-			if( inventory.Length == 0 )
-			{
-				hud.GetComponent<HUDInventory>()?.Destroy();
-			}
-			InteriorModule[] interior = hero.GetModules<InteriorModule>();
-			if( interior.Length == 0 )
-			{
-				hud.GetComponent<HUDInterior>()?.Destroy();
-			}*/
-
+			
 			return hero;
 		}
 
@@ -287,14 +268,6 @@ namespace SS.Objects.Heroes
 			if( hero.health != hero.healthMax )
 			{
 				data.health = hero.health;
-			}
-			if( hero.movementSpeedOverride != null )
-			{
-				data.movementSpeed = hero.movementSpeedOverride;
-			}
-			if( hero.rotationSpeedOverride != null )
-			{
-				data.rotationSpeed = hero.rotationSpeedOverride;
 			}
 
 			//

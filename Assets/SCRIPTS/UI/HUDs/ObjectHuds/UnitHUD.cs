@@ -1,4 +1,5 @@
 ﻿using SS.Content;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,19 +9,13 @@ namespace SS.UI.HUDs
 	{
 		public void Awake()
 		{
-			GameObject hud = CreateHudObject( this.hudContainer.toggleable.transform );
-			this.HUDt = hud;
+			GameObject hud = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/UnitHUD" ), this.hudContainer.toggleable.transform );
+
+			this.selectionGroup = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/selgroup" ), this.hudContainer.transform ).GetComponent<TextMeshProUGUI>();
 
 			this.healthBar = hud.transform.Find( "Health Bar" ).GetComponent<Image>();
 
 			this.AddColored( this.healthBar );
-		}
-
-		private static GameObject CreateHudObject( Transform parent )
-		{
-			GameObject gameObject = Instantiate<GameObject>( AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/UnitHUD" ), parent );
-
-			return gameObject;
 		}
 	}
 }

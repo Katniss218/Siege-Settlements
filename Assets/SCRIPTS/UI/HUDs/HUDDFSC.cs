@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace SS.UI.HUDs
 {
 	[DisallowMultipleComponent]
-	[RequireComponent(typeof(HudContainer))]
+	[RequireComponent( typeof( HudContainer ) )]
 	public class HUDDFSC : MonoBehaviour
 	{
 		public const float DAMAGE_DISPLAY_DURATION = 1.0f;
@@ -39,8 +39,6 @@ namespace SS.UI.HUDs
 		protected Image healthBar = null;
 
 		protected TextMeshProUGUI selectionGroup = null;
-		
-		protected GameObject HUDt = null;
 
 
 		private HudContainer __hudContainer = null;
@@ -57,10 +55,10 @@ namespace SS.UI.HUDs
 		}
 
 		public byte? group { get; private set; }
-		
 
-		
-		
+
+
+
 		/// <summary>
 		/// If true, the reason for displaying the HUD was taking damage (in this case, the HUD wants to stay displayed for a period of time).
 		/// </summary>
@@ -79,16 +77,18 @@ namespace SS.UI.HUDs
 		/// <summary>
 		/// Called by the hud holder whan it wants to show the hud (checks if should be shown).
 		/// </summary>
-		public void TryShow() // on mouse enter.
+		public void ConditionalShow() // on mouse enter.
 		{
 			if( Main.isHudForcedVisible )
 			{
 				return;
 			}
-#warning remove casting.
-			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+			if( this.hudContainer.holder is SSObjectDFSC )
 			{
-				return;
+				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				{
+					return;
+				}
 			}
 			this.hudContainer.isVisible = true;
 		}
@@ -96,7 +96,7 @@ namespace SS.UI.HUDs
 		/// <summary>
 		/// Called by the hud holder when it wants to hide the hud (checks if should be hidden).
 		/// </summary>
-		public void TryHide() // on mouse exit.
+		public void ConditionalHide() // on mouse exit.
 		{
 			if( Main.isHudForcedVisible )
 			{
@@ -106,9 +106,12 @@ namespace SS.UI.HUDs
 			{
 				return;
 			}
-			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+			if( this.hudContainer.holder is SSObjectDFSC )
 			{
-				return;
+				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				{
+					return;
+				}
 			}
 			this.hudContainer.isVisible = false;
 		}
@@ -119,14 +122,8 @@ namespace SS.UI.HUDs
 		//
 
 
-		void UpdateHideAfterDamage()
+		private void UpdateHideAfterDamage()
 		{
-			// Don't hide the HUD if DAMAGE_DISPLAY_DURATION seconds, after taking damage, didn't pass yet.
-			if( Time.time <= ((SSObjectDFSC)this.hudContainer.holder).lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
-			{
-				return;
-			}
-
 			// Don't hide the hud if it's already hidden.
 			if( !this.isDisplayedDueToDamage )
 			{
@@ -139,17 +136,27 @@ namespace SS.UI.HUDs
 				return;
 			}
 
-			// Don't hide the HUD if the object is selected.
-			if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+			if( this.hudContainer.holder is SSObjectDFSC )
 			{
-				return;
+				// Don't hide the HUD if DAMAGE_DISPLAY_DURATION seconds, after taking damage, didn't pass yet.
+				if( Time.time <= ((SSObjectDFSC)this.hudContainer.holder).lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
+				{
+					return;
+				}
+
+				// Don't hide the HUD if the object is selected.
+				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				{
+					return;
+				}
+
+				// Don't hide if the hud holder is being moused over.
+				if( MouseOverHandler.currentObjectMousedOver == this.hudContainer.holder.gameObject )
+				{
+					return;
+				}
 			}
 
-			// Don't hide if the hud holder is being moused over.
-			if( MouseOverHandler.currentObjectMousedOver == this.hudContainer.holder.gameObject )
-			{
-				return;
-			}
 			this.hudContainer.isVisible = false;
 			this.isDisplayedDueToDamage = false;
 		}
@@ -160,11 +167,6 @@ namespace SS.UI.HUDs
 		//
 
 
-		void Start()
-		{
-			
-		}
-
 		void Update()
 		{
 			// Move the HUD to the containing object.
@@ -173,7 +175,6 @@ namespace SS.UI.HUDs
 				this.SnapToHolder();
 			}
 
-#warning todo hide after damage.
 			this.UpdateHideAfterDamage();
 		}
 
@@ -192,7 +193,7 @@ namespace SS.UI.HUDs
 				{
 					selectionGroup.gameObject.SetActive( true );
 				}
-				selectionGroup.text = "" + ((group + 1)%10); // 0->1, 1->2, ..., 9->0
+				selectionGroup.text = "" + ((group + 1) % 10); // 0->1, 1->2, ..., 9->0
 			}
 		}
 
@@ -206,28 +207,7 @@ namespace SS.UI.HUDs
 			for( int i = 0; i < this.colored.Count; i++ )
 			{
 				this.colored[i].color = color;
-			}/*
-
-			HUDInterior interior = this.GetComponent<HUDInterior>();
-			
-			if( interior == null )
-			{
-				return;
 			}
-			if( interior.slots != null )
-			{
-				for( int i = 0; i < interior.slots.Length; i++ )
-				{
-					interior.slots[i].SetColor( c );
-				}
-			}
-			if( interior.workerSlots != null )
-			{
-				for( int i = 0; i < interior.workerSlots.Length; i++ )
-				{
-					interior.workerSlots[i].SetColor( c );
-				}
-			}*/
 		}
 
 		/// <summary>
@@ -236,10 +216,9 @@ namespace SS.UI.HUDs
 		public void SetHealthBarFill( float percentHealth )
 		{
 			float scale = this.max - this.min;
-			float p = percentHealth * scale;
-			p += this.min;
+			float fillAmount = (percentHealth * scale) + this.min;
 
-			this.healthBar.fillAmount = p;
+			this.healthBar.fillAmount = fillAmount;
 		}
 	}
 }

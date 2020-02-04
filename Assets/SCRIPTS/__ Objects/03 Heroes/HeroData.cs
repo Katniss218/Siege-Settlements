@@ -1,5 +1,4 @@
-﻿using Katniss.ModifierAffectedValues;
-using KFF;
+﻿using KFF;
 using SS.AI.Goals;
 using SS.Content;
 using System;
@@ -32,8 +31,6 @@ namespace SS.Levels.SaveStates
 		}
 
 		public float? health { get; set; }
-		public float? movementSpeed { get; set; }
-		public float? rotationSpeed { get; set; }
 
 		public TacticalGoalData[] tacticalGoalData { get; set; }
 		public int tacticalGoalTag { get; set; }
@@ -89,29 +86,6 @@ namespace SS.Levels.SaveStates
 				}
 			}
 
-			if( serializer.Analyze( "MovementSpeed" ).isSuccess )
-			{
-				try
-				{
-					this.movementSpeed = serializer.ReadFloat( "MovementSpeed" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'MovementSpeed' (" + serializer.file.fileName + ")." );
-				}
-			}
-			if( serializer.Analyze( "RotationSpeed" ).isSuccess )
-			{
-				try
-				{
-					this.rotationSpeed = serializer.ReadFloat( "RotationSpeed" );
-				}
-				catch
-				{
-					throw new Exception( "Missing or invalid value of 'RotationSpeed' (" + serializer.file.fileName + ")." );
-				}
-			}
-
 			int tag;
 			this.tacticalGoalData = SSObjectData.DeserializeTacticalGoalKFF( serializer, out tag );
 			this.tacticalGoalTag = tag;
@@ -132,16 +106,7 @@ namespace SS.Levels.SaveStates
 			{
 				serializer.WriteFloat( "", "Health", this.health.Value );
 			}
-
-			if( this.movementSpeed != null )
-			{
-				serializer.WriteFloat( "", "MovementSpeed", this.movementSpeed.Value );
-			}
-			if( this.rotationSpeed != null )
-			{
-				serializer.WriteFloat( "", "RotationSpeed", this.rotationSpeed.Value );
-			}
-
+			
 			SSObjectData.SerializeTacticalGoalKFF( serializer, this.tacticalGoalData, this.tacticalGoalTag );
 
 			this.SerializeModulesKFF( serializer );

@@ -1,6 +1,7 @@
 ﻿using SS.AI;
 using SS.Diplomacy;
 using SS.Levels;
+using SS.UI.HUDs;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -50,6 +51,7 @@ namespace SS.Objects
 		/// </summary>
 		public UnityEvent onDeselect { get; private set; } = new UnityEvent();
 
+		public abstract HUDDFSC hudDFSC { get; }
 
 		//
 		//
@@ -58,8 +60,8 @@ namespace SS.Objects
 
 		public float viewRange { get; set; }
 
-
-		[SerializeField] private int __factionId = -1; // Needs to be different then any index of the factions array (otherwise onFactionChange won't trigger on spawn).
+		public const int FACTIONID_INVALID = -1;
+		[SerializeField] private int __factionId = FACTIONID_INVALID; // Needs to be different then any index of the factions array (otherwise onFactionChange won't trigger on spawn).
 		/// <summary>
 		/// Contains the index of the faction that this object belongs to.
 		/// </summary>

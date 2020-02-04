@@ -33,18 +33,13 @@ namespace SS.AI.Goals
 		private const float INTERACTION_DISTANCE = 0.75f;
 		private const float INTERACTION_DELAY = 0.3f;
 
-
-		/// <summary>
-		/// Specifies where to drop off resources.
-		/// </summary>
-#warning Some destinations can be null, to find the best-fit when it's needed.
+		
 		public DropOffMode dropOffMode { get; private set; }
 		public Vector3 destinationPos { get; private set; }
+		private SSObject destination;
 		public InventoryModule destinationInventory { get; private set; }
 
 		public IPaymentReceiver destinationPaymentReceiver { get; private set; }
-#warning this needs to be identifyable by GUID or something (construction sites pose MAJOR problem, as they can't be identified using anything else than memory reference - doesn't work for saving)
-#warning also, what if I decide that buildings/units themselves can receive payments? (technically, CS's are part of buildings).
 	
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
@@ -88,6 +83,7 @@ namespace SS.AI.Goals
 		public void SetDestination( InventoryModule inventory )
 		{
 			this.dropOffMode = DropOffMode.INVENTORY;
+			this.destination = inventory.ssObject;
 			this.destinationInventory = inventory;
 			this.destinationPaymentReceiver = null;
 		}
@@ -95,6 +91,7 @@ namespace SS.AI.Goals
 		public void SetDestination( IPaymentReceiver paymentReceiver )
 		{
 			this.dropOffMode = DropOffMode.PAYMENT_RECEIVER;
+			this.destination = paymentReceiver.ssObject;
 			this.destinationInventory = null;
 			this.destinationPaymentReceiver = paymentReceiver;
 		}
@@ -197,10 +194,14 @@ namespace SS.AI.Goals
 
 		private bool OnArrivalPosition( TacticalGoalController controller )
 		{
+			// Tries to drop off contents of it's inventory on the ground.
+			// Fails if the position is not on/above/below the map.
+
 			if( Physics.Raycast( this.destinationPos + new Vector3( 0, 100.0f, 0 ), Vector3.down, out RaycastHit hitInfo ) )
 			{
 				if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 				{
+					// Places deposits on a vertical axis going through the destinationPos, at the point of collision with the ground.
 					Vector3 depositPosition = hitInfo.point;
 
 					Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
@@ -222,6 +223,12 @@ namespace SS.AI.Goals
 
 		private bool OnArrivalInventory( TacticalGoalController controller )
 		{
+			// Don't drop off resources in unusable inventories.
+			if( this.destination is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destination).isUsable )
+			{
+				return false;
+			}
+
 			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 			bool didClamp; // if true, the resources were clamped (not all dropped).
@@ -246,7 +253,7 @@ namespace SS.AI.Goals
 				ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
 				AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
 			}
-			if( didClamp )
+			if( didClamp ) // if not every resource was delivered - fail.
 			{
 				return false;
 			}
@@ -255,6 +262,20 @@ namespace SS.AI.Goals
 
 		private bool OnArrivalPayment( TacticalGoalController controller )
 		{
+			// If the destination is an unusable object, and the receiver we want to pay to, is not the unusable's receiver - fail goal.
+			// Only ISSObjectUsableUnusable.paymentReceiver is allowed to receive payments when the ISSObjectUsableUnusable is not usable.
+			if( this.destination is ISSObjectUsableUnusable )
+			{
+				ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.destinationInventory.ssObject;
+				if( !usableUnusable.isUsable )
+				{
+					if( this.destinationPaymentReceiver != usableUnusable.paymentReceiver )
+					{
+						return false;
+					}
+				}
+			}
+			
 			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 			bool didClamp; // if true, the resources were clamped (not all dropped).
@@ -286,7 +307,7 @@ namespace SS.AI.Goals
 				ResourceDefinition def = DefinitionManager.GetResource( kvp.Key );
 				AudioManager.PlaySound( def.dropoffSound, controller.transform.position );
 			}
-			if( didClamp )
+			if( didClamp ) // if not every resource was delivered - fail.
 			{
 				return false;
 			}
@@ -299,12 +320,13 @@ namespace SS.AI.Goals
 
 		public override void Update( TacticalGoalController controller )
 		{
-			if( (this.dropOffMode == DropOffMode.INVENTORY) && (this.destinationInventory == null) )
+			if( this.destination == null ) // if the object was killed, fail goal.
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
 			}
-			if( (this.dropOffMode == DropOffMode.PAYMENT_RECEIVER) && (this.destinationPaymentReceiver == null) )
+
+			if( this.inventory.isEmpty )
 			{
 				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 				return;
@@ -316,70 +338,59 @@ namespace SS.AI.Goals
 				return;
 			}
 
-			if( this.inventory.isEmpty )
-			{
-				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
-				return;
-			}
-			
 			if( attackModules.Length > 0 )
 			{
 				this.UpdateTargeting( controller, this.isHostile, this.attackModules );
 			}
 
 
+			// Wait for 'INTERACTION_DELAY' seconds since the assignment of the goal before proceeding.
 			// Prevents spam-firing the pickup-dropoff goal pairs when the unit is in range of both the receiver & source (storage).
 			if( Time.time < this.delayTimeStamp )
 			{
 				return;
 			}
-
-
+			
 			if( this.dropOffMode == DropOffMode.POSITION )
 			{
-				if( DistanceUtils.IsInRange( controller.transform.position, this.destinationPos, INTERACTION_DISTANCE ) )
-				{
-					bool outcome = this.OnArrivalPosition( controller );
-
-					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
-					return;
-				}
-			
-				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
-				return;
-			}
-			if( this.dropOffMode == DropOffMode.INVENTORY )
-			{
-				if( this.destinationInventory.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.destinationInventory.ssObject).isUsable )
+				// Don't drop off resources when too far away.
+				if( !DistanceUtils.IsInRange( controller.transform.position, this.destinationPos, INTERACTION_DISTANCE ) )
 				{
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
 
-				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
-				{
-					bool outcome = this.OnArrivalInventory( controller );
+				bool outcome = this.OnArrivalPosition( controller );
 
-					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+				return; 
+			}
+			if( this.dropOffMode == DropOffMode.INVENTORY )
+			{
+				// Don't drop off resources when too far away.
+				if( !DistanceUtils.IsInRangePhysical( controller.transform, this.destinationInventory.transform, INTERACTION_DISTANCE ) )
+				{
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
+				
+				bool outcome = this.OnArrivalInventory( controller );
 
-				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 			if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-				if( DistanceUtils.IsInRangePhysical( controller.transform, this.destinationPaymentReceiver.ssObject.transform, INTERACTION_DISTANCE ) )
+				// Don't drop off resources when too far away.
+				if( !DistanceUtils.IsInRangePhysical( controller.transform, this.destination.transform, INTERACTION_DISTANCE ) )
 				{
-#warning needs to only block if the payment receiver isn't the object wanting repairs. Block only when delivering to modules that are unusable, don't block CS's.
-
-					bool outcome = this.OnArrivalPayment( controller );
-
-					controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
+					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
+				
+				bool outcome = this.OnArrivalPayment( controller );
 
-				controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
+				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 		}
@@ -419,17 +430,17 @@ namespace SS.AI.Goals
 			}
 			else if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
-				data.destinationGuid = new Tuple<Guid, Guid>( this.destinationInventory.ssObject.guid, this.destinationInventory.moduleId );
+				data.destinationGuid = new Tuple<Guid, Guid?>( this.destinationInventory.ssObject.guid, this.destinationInventory.moduleId );
 			}
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
 				Guid obj = this.destinationPaymentReceiver.ssObject.guid;
-				Guid module = default;
+				Guid? module = null;
 				if( this.destinationPaymentReceiver is SSModule )
 				{
 					module = ((SSModule)this.destinationPaymentReceiver).moduleId;
 				}
-				data.destinationGuid = new Tuple<Guid, Guid>( obj, module );
+				data.destinationGuid = new Tuple<Guid, Guid?>( obj, module );
 			}
 
 			return data;
@@ -457,18 +468,20 @@ namespace SS.AI.Goals
 			}
 			else if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
-				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<InventoryModule>( data.destinationGuid.Item2 ) );
+				// Don't set this to null for inventories. Since an inventory can't be an object (must be a module).
+				this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetModule<InventoryModule>( data.destinationGuid.Item2.Value ) );
 			}
 			else if( this.dropOffMode == DropOffMode.PAYMENT_RECEIVER )
 			{
-#warning Ugly way of doing that. Might break for certain serializable value of guid (wouldn't be able to load module with that moduleId).
-				if( data.destinationGuid.Item2 == default )
+#warning What if specific extensions of objects can receive payments?
+				if( data.destinationGuid.Item2 == null )
 				{
-					this.SetDestination( SSObject.Find( data.destinationGuid.Item1 ).GetComponent<ConstructionSite>() );
+					ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)SSObject.Find( data.destinationGuid.Item1 );
+					this.SetDestination( usableUnusable.paymentReceiver );
 				}
 				else
 				{
-					this.SetDestination( (IPaymentReceiver)SSObject.Find( data.destinationGuid.Item1 ).GetModule( data.destinationGuid.Item2 ) );
+					this.SetDestination( (IPaymentReceiver)SSObject.Find( data.destinationGuid.Item1 ).GetModule( data.destinationGuid.Item2.Value ) );
 				}
 			}
 			

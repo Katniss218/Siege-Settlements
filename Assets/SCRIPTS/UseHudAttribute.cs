@@ -1,14 +1,7 @@
-﻿using SS.UI;
-using System;
+﻿using System;
 
 namespace SS
 {
-#warning cleanup comment.
-	/*public interface IHUDHolder
-	{
-		HUD hud { get; set; }
-	}
-	*/
 	public class UseHudAttribute : Attribute
 	{
 		public Type hudType { get; set; }

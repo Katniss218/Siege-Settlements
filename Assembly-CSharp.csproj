@@ -180,7 +180,6 @@
     <Compile Include="Assets\SCRIPTS\UI\UIUtils.cs" />
     <Compile Include="Assets\SCRIPTS\UseHudAttribute.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationChangeBlockerModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationUnitUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />
@@ -211,7 +210,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\IDamageable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IFactionMember.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\IInteriorUser.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\INavMeshAgent.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\IMovable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\ISSObjectUsableUnusable.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModule.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\Modules\Barracks\BarracksModuleData.cs" />

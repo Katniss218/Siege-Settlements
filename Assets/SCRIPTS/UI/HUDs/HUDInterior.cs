@@ -29,8 +29,8 @@ namespace SS.UI.HUDs
 		{
 			get
 			{
-				if( __upper2 == null ) { __upper2 = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/slot_u_3" ); }
-				return __upper2;
+				if( __upper3 == null ) { __upper3 = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/slot_u_3" ); }
+				return __upper3;
 			}
 		}
 
@@ -39,8 +39,8 @@ namespace SS.UI.HUDs
 		{
 			get
 			{
-				if( __upper2 == null ) { __upper2 = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/slot_l_1" ); }
-				return __upper2;
+				if( __lower1 == null ) { __lower1 = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/slot_l_1" ); }
+				return __lower1;
 			}
 		}
 		private static Sprite __lower2 = null;
@@ -122,9 +122,6 @@ namespace SS.UI.HUDs
 
 			this.upperContainer = hud.transform.Find( "Upper" ).transform;
 			this.lowerContainer = hud.transform.Find( "Lower" ).transform;
-			// spawn game objects.
-			
-#warning set image sprites depending on the hud type (hero,building,unit)
 		}
 		
 		private static GameObject CreateHudObject( Transform parent )

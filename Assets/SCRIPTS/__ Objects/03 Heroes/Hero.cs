@@ -72,6 +72,7 @@ namespace SS.Objects.Heroes
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public HeroHUD hud { get; set; }
+		public override HUDDFSC hudDFSC { get { return this.hud; } }
 
 
 		//
@@ -88,29 +89,10 @@ namespace SS.Objects.Heroes
 			set
 			{
 				this.__movementSpeed = value;
-				if( this.movementSpeedOverride == null ) // if an override is not present - set the speed.
-				{
-					this.navMeshAgent.speed = value;
-				}
+				this.navMeshAgent.speed = value;
 			}
 		}
-
-		float? __movementSpeedOverride;
-		public float? movementSpeedOverride
-		{
-			get
-			{
-				return this.__movementSpeedOverride;
-			}
-			set
-			{
-				this.__movementSpeedOverride = value;
-				if( value != null ) // if the new override is not null - set the speed.
-				{
-					this.navMeshAgent.speed = value.Value;
-				}
-			}
-		}
+		
 
 		float __rotationSpeed;
 		public float rotationSpeed
@@ -122,26 +104,7 @@ namespace SS.Objects.Heroes
 			set
 			{
 				this.__rotationSpeed = value;
-				if( this.rotationSpeedOverride == null ) // if an override is not present - set the speed.
-				{
-					this.navMeshAgent.angularSpeed = value;
-				}
-			}
-		}
-		float? __rotationSpeedOverride;
-		public float? rotationSpeedOverride
-		{
-			get
-			{
-				return this.__rotationSpeedOverride;
-			}
-			set
-			{
-				this.__rotationSpeedOverride = value;
-				if( value != null ) // if the new override is not null - set the speed.
-				{
-					this.navMeshAgent.angularSpeed = value.Value;
-				}
+				this.navMeshAgent.angularSpeed = value;
 			}
 		}
 
@@ -260,11 +223,11 @@ namespace SS.Objects.Heroes
 
 
 		
-		public void OnMouseEnterListener() => this.hud.TryShow();
+		public void OnMouseEnterListener() => this.hud.ConditionalShow();
 
 		public void OnMouseStayListener() { }
 
-		public void OnMouseExitListener() => this.hud.TryHide();
+		public void OnMouseExitListener() => this.hud.ConditionalHide();
 
 
 		public override void OnDisplay()

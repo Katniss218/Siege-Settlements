@@ -54,11 +54,11 @@ namespace SS.Objects.Units
 		public UnityEvent onEmploy { get; private set; } = new UnityEvent();
 		public UnityEvent onUnemploy { get; private set; } = new UnityEvent();
 
-#warning automatic duty is a part of the strategic AI. It should take into account other units already going to pay / to houses, etc.
-#warning The same goes for employment.
+#warning automatic duty & employment are parts of the strategic AI. It should take into account other units already going to pay / to houses, etc.
 		// this would avoid 10 civilians going to a house that has only 4 slots.
 
 		public bool isOnAutomaticDuty { get; private set; } = false;
+		private SSObject automaticDutyReceiverObject = null;
 		private IPaymentReceiver automaticDutyReceiver = null;
 		private InventoryModule inventory = null;
 
@@ -228,18 +228,19 @@ namespace SS.Objects.Units
 				return;
 			}
 
-
-
+			
+			// controller's goal tag is what?
 
 			if( this.inventory.isEmpty )
 			{
-				if( this.automaticDutyReceiver != null )
+				if( this.automaticDutyReceiver != null && automaticDutyReceiverObject != null )
 				{
 					Dictionary<string, int> wantedResources = this.automaticDutyReceiver.GetWantedResources();
 					// If the receiver no longer needs anything - find new.
 					if( wantedResources.Count == 0 )
 					{
 						this.automaticDutyReceiver = null;
+						this.automaticDutyReceiverObject = null;
 						return;
 					}
 
@@ -277,6 +278,7 @@ namespace SS.Objects.Units
 						);
 
 						this.automaticDutyReceiver = receiver; // if null, will be set to null.
+						this.automaticDutyReceiverObject = receiver == null ? null : receiver.ssObject;
 					}
 				}
 				else
@@ -287,17 +289,19 @@ namespace SS.Objects.Units
 					);
 
 					this.automaticDutyReceiver = receiver; // if null, will be set to null.
+					this.automaticDutyReceiverObject = receiver == null ? null : receiver.ssObject;
 				}
 			}
 			else
 			{
-				if( this.automaticDutyReceiver != null )
+				if( this.automaticDutyReceiver != null && automaticDutyReceiverObject != null )
 				{
 					Dictionary<string, int> wantedResources = this.automaticDutyReceiver.GetWantedResources();
 					// If the receiver no longer needs anything - find new.
 					if( wantedResources.Count == 0 )
 					{
 						this.automaticDutyReceiver = null;
+						this.automaticDutyReceiverObject = null;
 						return;
 					}
 
@@ -364,6 +368,7 @@ namespace SS.Objects.Units
 					else
 					{
 						this.automaticDutyReceiver = receiver;
+						this.automaticDutyReceiverObject = receiver.ssObject;
 					}
 				}
 			}

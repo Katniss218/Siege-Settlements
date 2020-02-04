@@ -47,6 +47,8 @@ namespace SS.Diplomacy
 		public Dictionary<string, int> resourcesStoredCache { get; internal set; }
 
 
+		public int populationCache { get; internal set; }
+
 		/// <summary>
 		/// Returns a list of resources belonging to this faction, that this faction has at least the specified amount.
 		/// </summary>
