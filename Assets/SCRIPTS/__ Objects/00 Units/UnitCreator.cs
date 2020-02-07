@@ -105,6 +105,7 @@ namespace SS.Objects.Units
 			Unit unit = gameObject.AddComponent<Unit>();
 			unit.guid = guid;
 			unit.definitionId = def.id;
+			unit.isSelectable = true;
 			unit.displayName = def.displayName;
 			unit.icon = def.icon;
 			unit.movementSpeed = def.movementSpeed;
@@ -139,14 +140,16 @@ namespace SS.Objects.Units
 				}
 
 				// only for "real" faction changes.
-				if( fromFac != SSObjectDFSC.FACTIONID_INVALID )
+				if( fromFac != SSObjectDFC.FACTIONID_INVALID )
 				{
 					LevelDataManager.factionData[fromFac].populationCache -= (int)unit.population;
 					LevelDataManager.factionData[toFac].populationCache += (int)unit.population;
 
 					if( toFac == LevelDataManager.PLAYER_FAC )
 					{
-						ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+						ResourcePanel.instance.UpdatePopulationDisplay(
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 					}
 				}
 				
@@ -254,7 +257,7 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( unit.health, unit.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( unit.health, unit.healthMax ) );
 				}
 			} );
 			

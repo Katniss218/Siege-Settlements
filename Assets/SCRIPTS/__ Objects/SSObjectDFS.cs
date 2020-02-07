@@ -9,14 +9,14 @@ using UnityEngine.Events;
 namespace SS.Objects
 {
 	public class _UnityEvent_float : UnityEvent<float> { }
-	public class _UnityEvent_SSObjectDFSC_float : UnityEvent<SSObjectDFSC, float> { }
-	public class _UnityEvent_SSObjectDFSC : UnityEvent<SSObjectDFSC> { }
+	public class _UnityEvent_SSObjectDFC_float : UnityEvent<IDamageable, float> { }
+	public class _UnityEvent_SSObjectDFC : UnityEvent<IDamageable> { }
 
 	[RequireComponent( typeof( TacticalGoalController ) )]
 	/// <summary>
-	/// Represents any object that is 'Damageable', 'Faction Member', 'Selectable', 'Controllable' (DFSC)
+	/// Represents any object that is 'Damageable', 'Faction Member', 'Controllable' (DFSC)
 	/// </summary>
-	public abstract class SSObjectDFSC : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
+	public abstract class SSObjectDFC : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
 	{
 		private TacticalGoalController __controller = null;
 		public TacticalGoalController controller
@@ -31,31 +31,13 @@ namespace SS.Objects
 			}
 		}
 
-		/// <summary>
-		/// The icon that is shown on the list of all selected objects.
-		/// </summary>
-		public Sprite icon { get; set; }
 
-		/// <summary>
-		/// Is called when the object gets selected.
-		/// </summary>
-		public UnityEvent onSelect { get; private set; } = new UnityEvent();
+		//
+		//
+		//
 
-		/// <summary>
-		/// Is called when the object gets highlighted.
-		/// </summary>
-		public UnityEvent onHighlight { get; private set; } = new UnityEvent();
-
-		/// <summary>
-		/// Is called when the object gets deselected.
-		/// </summary>
-		public UnityEvent onDeselect { get; private set; } = new UnityEvent();
-
+		
 		public abstract HUDDFSC hudDFSC { get; }
-
-		//
-		//
-		//
 
 
 		public float viewRange { get; set; }
@@ -136,13 +118,13 @@ namespace SS.Objects
 		/// Fires when the 'health' value is changed.
 		/// </summary>
 		public _UnityEvent_float onHealthChange { get; set; } = new _UnityEvent_float();
-		public static _UnityEvent_SSObjectDFSC_float onHealthChangeAny { get; set; } = new _UnityEvent_SSObjectDFSC_float();
+		public static _UnityEvent_SSObjectDFC_float onHealthChangeAny { get; set; } = new _UnityEvent_SSObjectDFC_float();
 
 		/// <summary>
 		/// Fires when the damageable is killed ('health' value is less or equal to 0, or by using Die()).
 		/// </summary>
 		public UnityEvent onDeath { get; set; } = new UnityEvent();
-		public static _UnityEvent_SSObjectDFSC onDeathAny { get; set; } = new _UnityEvent_SSObjectDFSC();
+		public static _UnityEvent_SSObjectDFC onDeathAny { get; set; } = new _UnityEvent_SSObjectDFC();
 
 
 		public float lastDamageTakenTimestamp { get; private set; }

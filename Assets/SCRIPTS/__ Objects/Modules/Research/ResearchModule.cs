@@ -7,7 +7,6 @@ using SS.Technologies;
 using SS.UI;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

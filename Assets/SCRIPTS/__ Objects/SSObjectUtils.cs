@@ -11,22 +11,22 @@ namespace SS.Objects
 	{
 		public static void ReDisplayDisplayed()
 		{
-			SSObjectDFSC displayed = Selection.displayedObject;
-			SSModule displayedModule = Selection.displayedModule;
+			ISelectDisplayHandler displayed = Selection.displayedObject;
+			ISelectDisplayHandler displayedModule = Selection.displayedModule;
 			if( displayed != null )
 			{
 				Selection.StopDisplaying();
-				Selection.DisplayObject( displayed );
+				Selection.DisplayObject( (SSObject)displayed );
 				if( displayedModule != null )
 				{
-					Selection.DisplayModule( displayed, displayedModule );
+					Selection.DisplayModule( (SSObject)displayed, (SSModule)displayedModule );
 				}
 			}
 		}
 
 		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
 		{
-			SSObjectDFSC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFSC();
 
 			InventoryModule ret = null;
 			float dstSq = float.MaxValue;
@@ -126,7 +126,7 @@ namespace SS.Objects
 
 		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
-			SSObjectDFSC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFSC();
 
 			IPaymentReceiver ret = null;
 			float dstSqToLastValid = float.MaxValue;
@@ -183,7 +183,7 @@ namespace SS.Objects
 
 		public static InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
-			SSObjectDFSC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFSC();
 
 			InventoryModule ret = null;
 			float dstSqToLastValid = float.MaxValue;

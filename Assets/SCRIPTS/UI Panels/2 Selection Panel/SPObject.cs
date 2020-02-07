@@ -123,7 +123,7 @@ namespace SS.UI
 			
 			GameObject moduleIconGameObject = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>
 			{
-				Selection.DisplayModule( module.ssObject as SSObjectDFSC, module );
+				Selection.DisplayModule( module.ssObject as SSObjectDFC, module );
 			} );
 
 			ToolTipUIHandler toolTipUIhandler = moduleIconGameObject.AddComponent<ToolTipUIHandler>();

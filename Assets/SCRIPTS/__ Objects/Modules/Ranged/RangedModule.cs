@@ -18,8 +18,8 @@ namespace SS.Objects.Modules
 
 		// it's the target finder.
 		
-		private SSObjectDFSC __target;
-		public SSObjectDFSC target
+		private SSObjectDFC __target;
+		public SSObjectDFC target
 		{
 			get
 			{
@@ -56,14 +56,14 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
-		private SSObjectDFSC __factionMemberSelf = null;
-		private SSObjectDFSC factionMemberSelf
+		private SSObjectDFC __factionMemberSelf = null;
+		private SSObjectDFC factionMemberSelf
 		{
 			get
 			{
 				if( __factionMemberSelf == null )
 				{
-					__factionMemberSelf = this.ssObject as SSObjectDFSC;
+					__factionMemberSelf = this.ssObject as SSObjectDFC;
 				}
 				return __factionMemberSelf;
 			}
@@ -107,7 +107,7 @@ namespace SS.Objects.Modules
 			this.target = Targeter.FindTargetClosest( this.transform.position, this.attackRange, this.factionMemberSelf, true );
 		}
 
-		public void TrySetTarget( SSObjectDFSC target )
+		public void TrySetTarget( SSObjectDFC target )
 		{
 			this.target = Targeter.TrySetTarget( this.transform.position, this.attackRange, this.factionMemberSelf, target, true );
 		}
@@ -223,7 +223,7 @@ namespace SS.Objects.Modules
 			data.guid = Guid.NewGuid();
 			data.position = pos;
 			data.velocity = vel;
-			data.ownerFactionIdCache = (this.ssObject as SSObjectDFSC).factionId;
+			data.ownerFactionIdCache = (this.ssObject as SSObjectDFC).factionId;
 			data.damageTypeOverride = this.damageType;
 			data.damageOverride = this.damage;
 			data.armorPenetrationOverride = this.armorPenetration;
@@ -263,7 +263,7 @@ namespace SS.Objects.Modules
 			
 			if( data.targetGuid != null )
 			{
-				this.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFSC);
+				this.target = (SSObject.Find( data.targetGuid.Value ) as SSObjectDFC);
 			}
 			if( data.projectileCountOverride != null )
 			{

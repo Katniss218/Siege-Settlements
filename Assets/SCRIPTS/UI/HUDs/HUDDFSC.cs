@@ -83,9 +83,9 @@ namespace SS.UI.HUDs
 			{
 				return;
 			}
-			if( this.hudContainer.holder is SSObjectDFSC )
+			if( this.hudContainer.holder is SSObjectDFC )
 			{
-				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				if( Selection.IsSelected( (SSObjectDFC)this.hudContainer.holder ) )
 				{
 					return;
 				}
@@ -106,9 +106,9 @@ namespace SS.UI.HUDs
 			{
 				return;
 			}
-			if( this.hudContainer.holder is SSObjectDFSC )
+			if( this.hudContainer.holder is SSObjectDFC )
 			{
-				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				if( Selection.IsSelected( (SSObjectDFC)this.hudContainer.holder ) )
 				{
 					return;
 				}
@@ -136,16 +136,16 @@ namespace SS.UI.HUDs
 				return;
 			}
 
-			if( this.hudContainer.holder is SSObjectDFSC )
+			if( this.hudContainer.holder is SSObjectDFC )
 			{
 				// Don't hide the HUD if DAMAGE_DISPLAY_DURATION seconds, after taking damage, didn't pass yet.
-				if( Time.time <= ((SSObjectDFSC)this.hudContainer.holder).lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
+				if( Time.time <= ((SSObjectDFC)this.hudContainer.holder).lastDamageTakenTimestamp + DAMAGE_DISPLAY_DURATION )
 				{
 					return;
 				}
 
 				// Don't hide the HUD if the object is selected.
-				if( Selection.IsSelected( (SSObjectDFSC)this.hudContainer.holder ) )
+				if( Selection.IsSelected( (SSObjectDFC)this.hudContainer.holder ) )
 				{
 					return;
 				}

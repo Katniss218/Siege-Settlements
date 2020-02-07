@@ -82,9 +82,9 @@ namespace SS.UI
 			}
 		}
 
-		public void UpdatePopulationDisplay( int amount )
+		public void UpdatePopulationDisplay( int amount, int amount2 )
 		{
-			this.populationCounter.text = "pop: " + amount;
+			this.populationCounter.text = "pop: " + amount + " / " + amount2;
 		}
 
 		public void RemoveAllEntries()

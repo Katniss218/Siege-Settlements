@@ -32,7 +32,7 @@ namespace SS.AI.Goals
 		{
 			if( isHostile )
 			{
-				SSObjectDFSC ssobj = (SSObjectDFSC)controller.ssObject;
+				SSObjectDFC ssobj = (SSObjectDFC)controller.ssObject;
 
 				for( int i = 0; i < attackModules.Length; i++ )
 				{

@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace SS
 {
-	class SelectionUtils
+	public class SelectionUtils
 	{
-		public static void Select( SSObjectDFSC[] uniqueSelectables, SelectionMode selectionMode )
+		public static void Select( SSObject[] uniqueSelectables, SelectionMode selectionMode )
 		{
 			// Select selectables on the list (if not selected).
 			if( selectionMode == SelectionMode.Add )
@@ -41,7 +41,7 @@ namespace SS
 				}
 				else
 				{
-					SSObjectDFSC[] selectedObjs = Selection.GetSelectedObjects();
+					SSObject[] selectedObjs = Selection.GetSelectedObjects();
 					bool playDeselect = false;
 
 					for( int i = 0; i < selectedObjs.Length; i++ )
@@ -80,9 +80,9 @@ namespace SS
 
 		public static void SelectTheSame( string definitionId, SelectionMode selectionMode )
 		{
-			SSObjectDFSC[] selectables = SSObjectDFSC.GetAllDFSC();
+			SSObject[] selectables = SSObject.GetAll();
 
-			List<SSObjectDFSC> sameIdAndWithinView = new List<SSObjectDFSC>();
+			List<SSObject> sameIdAndWithinView = new List<SSObject>();
 			for( int i = 0; i < selectables.Length; i++ )
 			{
 				if( selectables[i].definitionId != definitionId )
@@ -90,9 +90,12 @@ namespace SS
 					continue;
 				}
 
-				if( selectables[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( selectables[i] is IFactionMember )
 				{
-					continue;
+					if( ((IFactionMember)selectables[i]).factionId != LevelDataManager.PLAYER_FAC )
+					{
+						continue;
+					}
 				}
 
 				Vector3 viewportPos = Main.camera.WorldToViewportPoint( selectables[i].transform.position );
@@ -104,30 +107,30 @@ namespace SS
 				sameIdAndWithinView.Add( selectables[i] );
 			}
 
-			SSObjectDFSC[] array = sameIdAndWithinView.ToArray();
+			SSObject[] array = sameIdAndWithinView.ToArray();
 			Select( array, selectionMode );
 		}
 
 		public static void SelectOnScreen( Vector2 pos1, Vector2 pos2, SelectionMode selectionMode )
 		{
-			SSObjectDFSC[] selectables = SSObject.GetAllDFSC();
+			SSObject[] selectables = SSObject.GetAll();
 
-			List<SSObjectDFSC> ret = new List<SSObjectDFSC>();
+			List<SSObject> toBeSelected = new List<SSObject>();
 
 			for( int i = 0; i < selectables.Length; i++ )
 			{
 				if( Main.camera.InContainedScreen( selectables[i].gameObject.transform.position, pos1, pos2 ) )
 				{
-					ret.Add( selectables[i] );
+					toBeSelected.Add( selectables[i] );
 				}
 			}
-			if( ret.Count == 0 )
+			if( toBeSelected.Count == 0 )
 			{
 				SelectionUtils.Select( null, selectionMode );
 			}
 			else
 			{
-				SelectionUtils.Select( ret.ToArray(), selectionMode );
+				SelectionUtils.Select( toBeSelected.ToArray(), selectionMode );
 			}
 		}
 	}

@@ -42,15 +42,15 @@ namespace SS
 					{
 						if( ssObject.HasPaymentReceivers() )
 						{
-							if( ssObject is SSObjectDFSC )
-								AssignMakePaymentGoal( (SSObjectDFSC)ssObject, Selection.GetSelectedObjects() );
+							if( ssObject is SSObjectDFC )
+								AssignMakePaymentGoal( (SSObjectDFC)ssObject, Selection.GetSelectedObjects() );
 						}
 						else
 						{
 							InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
 							if( inventories.Length > 0 )
 							{
-								AssignDropoffToInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+								AssignDropoffToInventoryGoal( inventories[0], Selection.GetSelectedObjects() );
 							}
 						}
 					}
@@ -95,36 +95,52 @@ namespace SS
 			}
 		}
 
-		static void AssignDropoffToInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFSC[] selected )
+		static void AssignDropoffToInventoryGoal( InventoryModule hitInventory, SSObject[] selected )
 		{
-			List<SSObjectDFSC> filteredObjs = new List<SSObjectDFSC>();
+			List<SSObjectDFC> filteredObjs = new List<SSObjectDFC>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
+				if( !(selected[i] is SSObjectDFC) )
+				{
+					continue;
+				}
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+				
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+				if( !(dfc is IMovable) )
+				{
+					continue;
+				}
+
+				if( (selected[i] is Unit) )
+				{
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
+				}
+
+				if( !dfc.hasInventoryModule )
+				{
+					continue;
+				}
+				InventoryModule inv = dfc.GetModules<InventoryModule>()[0];
+
+				if( inv.isEmpty )
+				{
+					continue;
+				}
+
+				Dictionary<string, int> inventoryItems = inv.GetAll();
+
 				bool suitable = true;
-
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
-				{
-					continue;
-				}
-				InventoryModule[] inventories = selected[i].GetModules<InventoryModule>();
-				if( inventories.Length == 0 )
-				{
-					continue;
-				}
-
-				if( inventories[0].isEmpty )
-				{
-					continue;
-				}
-				if( !(selected[i] is IMovable) )
-				{
-					continue;
-				}
-
-				Dictionary<string, int> inventoryItems = inventories[0].GetAll();
-
 				// Check if the storage inventory can hold any of the items.
 				foreach( var kvp in inventoryItems )
 				{
@@ -138,7 +154,7 @@ namespace SS
 
 				if( suitable )
 				{
-					filteredObjs.Add( selected[i] );
+					filteredObjs.Add( dfc );
 				}
 			}
 
@@ -151,7 +167,7 @@ namespace SS
 				TacticalGoalController goalController = filteredObjs[i].controller;
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
-				goal1.SetDestination( hitSSObject );
+				goal1.SetDestination( hitInventory.ssObject );
 
 				TacticalDropOffGoal goal2 = new TacticalDropOffGoal();
 				goal2.isHostile = false;
@@ -160,7 +176,7 @@ namespace SS
 			}
 		}
 
-		private static void AssignMakePaymentGoal( SSObjectDFSC paymentReceiverSSObject, SSObjectDFSC[] selected )
+		private static void AssignMakePaymentGoal( SSObjectDFC paymentReceiverSSObject, SSObject[] selected )
 		{
 			// Assigns payment goal to selected objects.
 			// Can assign different receivers for different objects, depending on their inventories & wanted resources.
@@ -176,26 +192,44 @@ namespace SS
 
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			Dictionary<SSObjectDFSC, IPaymentReceiver> toBeAssignedGameObjects = new Dictionary<SSObjectDFSC, IPaymentReceiver>();
+			Dictionary<SSObjectDFC, IPaymentReceiver> toBeAssignedGameObjects = new Dictionary<SSObjectDFC, IPaymentReceiver>();
 
 			// this makes sure that if building is under construction - only the construction site receiver is returned.
 			IPaymentReceiver[] paymentReceivers = paymentReceiverSSObject.GetAvailableReceivers();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
-				if( !(selected[i] is IMovable) )
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
-				if( !selected[i].hasInventoryModule )
+				if( !(dfc is IMovable) )
 				{
 					continue;
 				}
-				InventoryModule inv = selected[i].GetModules<InventoryModule>()[0];
+
+				if( (selected[i] is Unit) )
+				{
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
+				}
+
+				if( !dfc.hasInventoryModule )
+				{
+					continue;
+				}
+				InventoryModule inv = dfc.GetModules<InventoryModule>()[0];
+
 				// If the inventory doesn't have any resources that can be left at the payment receiver.
 				if( inv.isEmpty )
 				{
@@ -218,7 +252,7 @@ namespace SS
 
 					if( hasWantedItem_s )
 					{
-						toBeAssignedGameObjects.Add( selected[i], paymentReceivers[j] );
+						toBeAssignedGameObjects.Add( dfc, paymentReceivers[j] );
 						break;
 					}
 					// if this receiver is not compatible - check the next one.

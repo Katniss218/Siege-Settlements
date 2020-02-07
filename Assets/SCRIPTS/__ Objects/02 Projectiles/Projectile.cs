@@ -113,12 +113,12 @@ namespace SS.Objects.Projectiles
 			}
 
 			IDamageable damageableOther = other.GetComponent<IDamageable>();
-			SSObjectDFSC factionMemberOther = otherSSObject as SSObjectDFSC;
+			SSObjectDFC factionMemberOther = otherSSObject as SSObjectDFC;
 			
 			this.DamageAndStuckLogic( damageableOther, factionMemberOther, this.canGetStuck );
 		}
 
-		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFSC hitFactionMember, bool canGetStuck )
+		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFC hitFactionMember, bool canGetStuck )
 		{
 			if( this.blastRadius == 0.0f )
 			{
@@ -128,7 +128,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( SSObjectDFSC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
 
@@ -145,7 +145,7 @@ namespace SS.Objects.Projectiles
 				for( int i = 0; i < col.Length; i++ )
 				{
 					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
-					if( !SSObjectDFSC.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
+					if( !SSObjectDFC.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
 					{
 						continue;
 					}
@@ -170,7 +170,7 @@ namespace SS.Objects.Projectiles
 				}
 				else
 				{
-					if( SSObjectDFSC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
+					if( SSObjectDFC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
 						AudioManager.PlaySound( this.hitSound, this.transform.position );
 						this.Destroy();

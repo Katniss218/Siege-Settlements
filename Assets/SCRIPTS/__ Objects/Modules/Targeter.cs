@@ -11,7 +11,7 @@ namespace SS.Objects.Modules
 			TARGET
 		}
 						
-		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFSC target, SSObjectDFSC factionMemberSelf )
+		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFC target, SSObjectDFC factionMemberSelf )
 		{
 			if( target == null )
 			{
@@ -34,9 +34,9 @@ namespace SS.Objects.Modules
 		public const int LAYERS = ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK;
 
 
-		public static SSObjectDFSC TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFSC self, SSObjectDFSC target, bool requireExactDistance )
+		public static SSObjectDFC TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFC self, SSObjectDFC target, bool requireExactDistance )
 		{
-			SSObjectDFSC targetRet = null;
+			SSObjectDFC targetRet = null;
 			if( target == null )
 			{
 				return null;
@@ -64,7 +64,7 @@ namespace SS.Objects.Modules
 				}
 				for( int i = 0; i < col.Length; i++ )
 				{
-					SSObjectDFSC facOther = col[i].GetComponent<SSObjectDFSC>();
+					SSObjectDFC facOther = col[i].GetComponent<SSObjectDFC>();
 
 					if( facOther == target )
 					{
@@ -76,13 +76,13 @@ namespace SS.Objects.Modules
 			return targetRet;
 		}
 
-		public static SSObjectDFSC FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFSC factionMemberSelf, bool requireExactDistance )
+		public static SSObjectDFC FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFC factionMemberSelf, bool requireExactDistance )
 		{
 			if( requireExactDistance )
 			{
-				SSObjectDFSC[] dfs = SSObject.GetAllDFSC();
+				SSObjectDFC[] dfs = SSObject.GetAllDFSC();
 
-				SSObjectDFSC ret = null;
+				SSObjectDFC ret = null;
 				float needThisCloseSq = searchRange * searchRange;
 
 
@@ -113,12 +113,12 @@ namespace SS.Objects.Modules
 				{
 					return null;
 				}
-				SSObjectDFSC ret = null;
+				SSObjectDFC ret = null;
 				float needThisCloseSq = float.MaxValue;
 
 				for( int i = 0; i < col.Length; i++ )
 				{
-					SSObjectDFSC facOther = col[i].GetComponent<SSObjectDFSC>();
+					SSObjectDFC facOther = col[i].GetComponent<SSObjectDFC>();
 
 					// Check if the overlapped object can be targeted by this finder.
 					if( !factionMemberSelf.CanTargetAnother( facOther ) )

@@ -1,4 +1,5 @@
-﻿using SS.Levels.SaveStates;
+﻿using SS.Levels;
+using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
 using SS.UI.HUDs;
@@ -38,12 +39,25 @@ namespace SS.Objects.Modules
 			}
 
 			public bool isHidden { get; set; }
+
 		}
 
 		public class SlotGeneric : Slot
 		{
-#warning how to define max population?
+#warning MaxPopulation is defined by a separate variable of the slot.
+			//public bool countsTowardsMaxPopulation { get; set; }
 			public string[] whitelistedUnits { get; set; } = new string[0];
+
+
+			public static int GetMaxPopulationTotal( SlotGeneric[] slots )
+			{
+				int accumulator = 0;
+				for( int i = 0; i < slots.Length; i++ )
+				{
+					accumulator += 1;
+				}
+				return accumulator;
+			}
 		}
 
 		public class SlotWorker : Slot
@@ -58,9 +72,14 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public Vector3? entrancePosition { get; set; }
 
-		public SlotGeneric[] slots { get; private set; } = new SlotGeneric[0];
-		public SlotWorker[] workerSlots { get; private set; } = new SlotWorker[0];
+		private SlotGeneric[] slots = new SlotGeneric[0];
+		private SlotWorker[] workerSlots = new SlotWorker[0];
 		
+		public int SlotCount( SlotType type )
+		{
+			return type == SlotType.Generic ? this.slots.Length : this.workerSlots.Length;
+		}
+
 		public void SetSlots( SlotGeneric[] slots, SlotWorker[] workerSlots )
 		{
 			if( slots == null )
@@ -71,22 +90,25 @@ namespace SS.Objects.Modules
 			{
 				workerSlots = new SlotWorker[0];
 			}
+			
+			if( this.ssObject is IFactionMember )
+			{
+				IFactionMember factionMember = (IFactionMember)this.ssObject;
+				if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
+				{
+					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( slots );
+					ResourcePanel.instance.UpdatePopulationDisplay(
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+				}
+			}
 
 			this.slots = slots;
 			this.workerSlots = workerSlots;
 
 			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
-#warning TODO! - subtract previous value.
-#warning slots contain a reference to the interior maybe?
-#warning TODO! - event based callback.
-			if( this.ssObject is IFactionMember )
-			{
-				IFactionMember factionMember = (IFactionMember)this.ssObject;
-				if( factionMember.factionId != SSObjectDFSC.FACTIONID_INVALID )
-				{
-					Levels.LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += this.slots.Length;
-				}
-			}
+
 
 			ReDisplaySlots_UI();
 		}
@@ -100,6 +122,25 @@ namespace SS.Objects.Modules
 		public Quaternion SlotWorldRotation( Slot slot )
 		{
 			return this.transform.rotation * slot.localRot;
+		}
+
+		public IInteriorUser GetUser( SlotType type, int i )
+		{
+			return type == SlotType.Generic ? this.slots[i].objInside : this.workerSlots[i].objInside;
+		}
+		public void SetUser( SlotType type, int i, IInteriorUser value )
+		{
+			if( type == SlotType.Generic ) { this.slots[i].objInside = value; return; }
+			if( type == SlotType.Worker ) { this.workerSlots[i].objInside = value; return; }
+		}
+
+		public CivilianUnitExtension GetWorker( int i )
+		{
+			return this.workerSlots[i].worker;
+		}
+		public void SetWorker( int i, CivilianUnitExtension value )
+		{
+			this.workerSlots[i].worker = value;
 		}
 
 
@@ -135,24 +176,6 @@ namespace SS.Objects.Modules
 			return ret;
 		}
 
-		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
-		{
-			slot = null;
-			slotHud = null;
-
-			if( slotType == SlotType.Generic )
-			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
-				return;
-			}
-			if( slotType == SlotType.Worker )
-			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
-		}
-
 
 
 		public void ExitAll()
@@ -185,30 +208,32 @@ namespace SS.Objects.Modules
 
 			if( type == SlotType.Worker )
 			{
-				if( unit != null )
+				if( unit == null )
 				{
-					if( !unit.isCivilian )
-					{
-						return null;
-					}
-					for( int i = 0; i < this.workerSlots.Length; i++ )
-					{
-						if( population > (byte)this.workerSlots[i].maxPopulation )
-						{
-							continue;
-						}
-
-						if( this.workerSlots[i].worker != unit.civilian )
-						{
-							continue;
-						}
-
-						return i;
-					}
+					return null;
 				}
-				return null;
+
+				if( !unit.isCivilian )
+				{
+					return null;
+				}
+
+				for( int i = 0; i < this.workerSlots.Length; i++ )
+				{
+					if( population > (byte)this.workerSlots[i].maxPopulation )
+					{
+						continue;
+					}
+
+					if( this.workerSlots[i].worker != unit.civilian )
+					{
+						continue;
+					}
+
+					return i;
+				}
 			}
-			if( type == SlotType.Generic )
+			else if( type == SlotType.Generic )
 			{
 				for( int i = 0; i < this.slots.Length; i++ )
 				{
@@ -222,7 +247,11 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					if( unit != null )
+					if( unit == null )
+					{
+						return i;
+					}
+					else
 					{
 						for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
 						{
@@ -232,48 +261,50 @@ namespace SS.Objects.Modules
 							}
 						}
 					}
-					else
-					{
-						return i;
-					}
 				}
 				return null;
 			}
-			
 			return null;
 		}
+		
+
+
+		//
+		//
+		//
+
+		
 		
 		private Vector3 oldPosition;
 		private Quaternion oldRotation;
 
 		protected override void Awake()
 		{
-#warning EVERY SINGLE object is potentially selectable, even projectiles (for simplicity).
-#warning Not every object responds to selection queries, so not every object can be selected by clicking on it.
-#warning - Selectability (selection queries) of objects depends on the base class type & any of the modules added to it.
+#warning Add ssObject.isSelectable = true, for modules which require selectability.
 			// Cache the starting position & rotation.
 			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
 
-			base.Awake();
-		}
-
-		public override void OnObjSpawn()
-		{
-#warning todo.
 			if( this.ssObject is IFactionMember )
 			{
-				IFactionMember factionMember = (IFactionMember)this.ssObject;
-				if( factionMember.factionId != SSObjectDFSC.FACTIONID_INVALID )
+				((IFactionMember)this.ssObject).onFactionChange.AddListener( (int before, int after) =>
 				{
-					Levels.LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += this.slots.Length;
-				}
+					if( before != SSObjectDFC.FACTIONID_INVALID )
+					{
+						LevelDataManager.factionData[before].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+					}
+					LevelDataManager.factionData[after].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
+
+					ResourcePanel.instance.UpdatePopulationDisplay(
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+				} );
 			}
 
-			base.OnObjSpawn();
+			base.Awake();
 		}
-
+		
 		private void Update()
 		{
 			// If the position or rotation is changed, update the carried units, and cache the new, changed position & rotation.
@@ -297,16 +328,21 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
-			Levels.LevelDataManager.factionData[((IFactionMember)this.ssObject).factionId].maxPopulationCache -= this.slots.Length;
+			LevelDataManager.factionData[((IFactionMember)this.ssObject).factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+			ResourcePanel.instance.UpdatePopulationDisplay(
+				LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+				LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 			this.ExitAll();
 		}
 
 
+
 		//
 		//
 		//
 
-
+		
+		
 		public override SSModuleData GetData()
 		{
 			InteriorModuleData data = new InteriorModuleData();
@@ -372,10 +408,10 @@ namespace SS.Objects.Modules
 		{
 			if( insideObj != null )
 			{
-				if( insideObj is SSObjectDFSC )
+				if( insideObj is SSObjectDFC )
 				{
 					Selection.DeselectAll();
-					Selection.TrySelect( (SSObjectDFSC)insideObj );
+					Selection.TrySelect( (SSObjectDFC)insideObj );
 				}
 			}
 		}
@@ -420,6 +456,32 @@ namespace SS.Objects.Modules
 		public void OnHide()
 		{
 
+		}
+
+		
+
+		//
+		//
+		//
+
+		
+		
+		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
+		{
+			slot = null;
+			slotHud = null;
+
+			if( slotType == SlotType.Generic )
+			{
+				slot = interior.slots[slotIndex];
+				slotHud = interior.hudInterior.slots[slotIndex];
+				return;
+			}
+			if( slotType == SlotType.Worker )
+			{
+				slot = interior.workerSlots[slotIndex];
+				slotHud = interior.hudInterior.workerSlots[slotIndex];
+			}
 		}
 	}
 }

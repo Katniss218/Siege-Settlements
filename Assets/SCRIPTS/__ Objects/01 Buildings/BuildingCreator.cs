@@ -91,6 +91,7 @@ namespace SS.Objects.Buildings
 			Building building = gameObject.AddComponent<Building>();
 			building.guid = guid;
 			building.definitionId = def.id;
+			building.isSelectable = true;
 			building.displayName = def.displayName;
 			building.icon = def.icon;
 			building.placementNodes = def.placementNodes;
@@ -224,7 +225,7 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( building.health, building.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( building.health, building.healthMax ) );
 				}
 
 				// If the health change changed the usability (health is above threshold).

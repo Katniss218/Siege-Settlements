@@ -8,7 +8,7 @@ using UnityEngine.AI;
 namespace SS.Objects.Heroes
 {
 	[UseHud( typeof( HeroHUD ), "hud" )]
-	public class Hero : SSObjectDFSC, IMovable, IMouseOverHandlerListener, IInteriorUser
+	public class Hero : SSObjectDFC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -230,7 +230,7 @@ namespace SS.Objects.Heroes
 			GameObject titleUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), this.displayTitle );
 			SelectionPanel.instance.obj.RegisterElement( "hero.title", titleUI.transform );
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFSC.GetHealthString( this.health, this.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFC.GetHealthString( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "hero.health", healthUI.transform );
 		}
 

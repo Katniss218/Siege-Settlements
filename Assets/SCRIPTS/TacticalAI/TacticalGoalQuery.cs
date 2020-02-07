@@ -30,7 +30,7 @@ namespace SS.AI
 
 			Vector3? terrainHitPos = null;
 			
-			SSObjectDFSC hitDamageable = null;
+			SSObjectDFC hitDamageable = null;
 
 			IFactionMember hitInteriorFactionMember = null;
 			InteriorModule hitInterior = null;
@@ -43,7 +43,7 @@ namespace SS.AI
 				}
 				else
 				{
-					SSObjectDFSC damageable = raycastHits[i].collider.GetComponent<SSObjectDFSC>();
+					SSObjectDFC damageable = raycastHits[i].collider.GetComponent<SSObjectDFC>();
 					if( damageable != null && hitDamageable == null )
 					{
 						hitDamageable = damageable;
@@ -85,18 +85,25 @@ namespace SS.AI
 		//
 
 
-		private static void AssignAttackGoal( SSObjectDFSC target, SSObjectDFSC[] selected )
+		private static void AssignAttackGoal( SSObjectDFC target, SSObject[] selected )
 		{
-			List<SSObjectDFSC> filteredObjects = new List<SSObjectDFSC>();
+			List<SSObjectDFC> filteredObjects = new List<SSObjectDFC>();
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
-				IAttackModule[] targeters = selected[i].GetComponents<IAttackModule>();
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+				IAttackModule[] targeters = dfc.GetComponents<IAttackModule>();
 				if( targeters == null || targeters.Length == 0 )
 				{
 					continue;
@@ -105,7 +112,7 @@ namespace SS.AI
 				bool canTarget = false;
 				for( int j = 0; j < targeters.Length; j++ )
 				{
-					if( target.CanTargetAnother( selected[i] ) )
+					if( dfc.CanTargetAnother( target ) )
 					{
 						canTarget = true;
 						break;
@@ -123,7 +130,7 @@ namespace SS.AI
 
 				if( canTarget )
 				{
-					filteredObjects.Add( selected[i] );
+					filteredObjects.Add( dfc );
 				}
 			}
 
@@ -143,23 +150,30 @@ namespace SS.AI
 
 		
 
-		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObjectDFSC[] selected )
+		private static void AssignMoveToGoal( Vector3 terrainHitPos, SSObject[] selected )
 		{
 			const float GRID_MARGIN = 0.125f;
 
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObjectDFSC> movableGameObjects = new List<SSObjectDFSC>();
+			List<SSObjectDFC> movableGameObjects = new List<SSObjectDFC>();
 
 			float biggestRadius = float.MinValue;
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
 
-				if( !(selected[i] is IMovable) )
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+
+				if( !(dfc is IMovable) )
 				{
 					continue;
 				}
@@ -174,7 +188,7 @@ namespace SS.AI
 				}
 
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
-				movableGameObjects.Add( selected[i] );
+				movableGameObjects.Add( dfc );
 				IMovable m = (IMovable)selected[i];
 				if( m.navMeshAgent.radius > biggestRadius )
 				{
@@ -213,25 +227,32 @@ namespace SS.AI
 			}
 		}
 
-		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObjectDFSC[] selected )
+		private static void AssignMoveToInteriorGoal( InteriorModule interior, SSObject[] selected )
 		{
 			if( interior.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)interior.ssObject).isUsable )
 			{
 				return;
 			}
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObjectDFSC> movableGameObjects = new List<SSObjectDFSC>();
+			List<SSObjectDFC> movableGameObjects = new List<SSObjectDFC>();
 
 			float biggestRadius = float.MinValue;
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
-				NavMeshAgent navMeshAgent = selected[i].GetComponent<NavMeshAgent>();
-				if( navMeshAgent == null )
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
+				{
+					continue;
+				}
+
+				if( !(dfc is IMovable) )
 				{
 					continue;
 				}
@@ -246,10 +267,11 @@ namespace SS.AI
 				}
 
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
-				movableGameObjects.Add( selected[i] );
-				if( navMeshAgent.radius > biggestRadius )
+				movableGameObjects.Add( dfc );
+				IMovable m = (IMovable)selected[i];
+				if( m.navMeshAgent.radius > biggestRadius )
 				{
-					biggestRadius = navMeshAgent.radius;
+					biggestRadius = m.navMeshAgent.radius;
 				}
 			}
 

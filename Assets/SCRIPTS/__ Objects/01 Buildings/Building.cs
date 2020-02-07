@@ -11,7 +11,7 @@ using UnityEngine.Events;
 namespace SS.Objects.Buildings
 {
 	[UseHud(typeof(BuildingHUD), "hud")]
-	public class Building : SSObjectDFSC, ISSObjectUsableUnusable, IMouseOverHandlerListener
+	public class Building : SSObjectDFC, ISSObjectUsableUnusable, IMouseOverHandlerListener
 	{
 		// The amount of health that the building marked as being constructed is going to start with.
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
@@ -193,7 +193,7 @@ namespace SS.Objects.Buildings
 
 			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), SSObjectDFSC.GetHealthString( this.health, this.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), SSObjectDFC.GetHealthString( this.health, this.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "building.health", healthUI.transform );
 
 			if( !this.IsDisplaySafe() )

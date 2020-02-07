@@ -20,7 +20,7 @@ namespace SS
 
 		private class DisplayedObjectData
 		{
-			public SSObjectDFSC obj { get; private set; } = null;
+			public ISelectDisplayHandler obj { get; private set; } = null;
 			public ISelectDisplayHandler module { get; private set; } = null;
 			public bool isGroup { get; private set; } = false;
 
@@ -29,38 +29,34 @@ namespace SS
 				return new DisplayedObjectData() { obj = null, module = null, isGroup = true };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectDFSC obj )
+			public static DisplayedObjectData NewObject( ISelectDisplayHandler obj )
 			{
 				return new DisplayedObjectData() { obj = obj, module = null, isGroup = false };
 			}
 
-			public static DisplayedObjectData NewObject( SSObjectDFSC obj, SSModule module )
+			public static DisplayedObjectData NewObject( ISelectDisplayHandler obj, ISelectDisplayHandler module )
 			{
-				if( !(module is ISelectDisplayHandler) )
-				{
-					throw new System.Exception( "Module isn't displayable." );
-				}
-				return new DisplayedObjectData() { obj = obj, module = ((ISelectDisplayHandler)module), isGroup = false };
+				return new DisplayedObjectData() { obj = obj, module = module, isGroup = false };
 			}
 		}
 
-		private static List<SSObjectDFSC> selected = new List<SSObjectDFSC>();
+		private static List<SSObject> selected = new List<SSObject>();
 
-		private static List<SSObjectDFSC>[] groups = new List<SSObjectDFSC>[10]
+		private static List<SSObject>[] groups = new List<SSObject>[10]
 		{
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>(),
-			new List<SSObjectDFSC>()
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>(),
+			new List<SSObject>()
 		};
 	
-		public static SSObjectDFSC[] GetGroup( byte index )
+		public static SSObject[] GetGroup( byte index )
 		{
 			if( index < 0 || index > 9 )
 			{
@@ -68,7 +64,7 @@ namespace SS
 			}
 
 			// Skip all dead objects. They'll get clared when the group is reassigned.
-			List<SSObjectDFSC> sel = new List<SSObjectDFSC>();
+			List<SSObject> sel = new List<SSObject>();
 			for( int i = 0; i < groups[index].Count; i++ )
 			{
 				if( groups[index][i] == null )
@@ -81,7 +77,7 @@ namespace SS
 			return sel.ToArray();
 		}
 
-		public static void SetGroup( byte index, SSObjectDFSC[] objects )
+		public static void SetGroup( byte index, SSObject[] objects )
 		{
 			if( index < 0 || index > 9 )
 			{
@@ -94,20 +90,21 @@ namespace SS
 				{
 					continue;
 				}
-				groups[index][i].hudDFSC.SetSelectionGroup( null );
+#warning decouple groups from this. Don't spawn the selectiongroup hud for ALL objects. Have a field on the ssObject (isselectable) and spawn/despawn hud when it changes.
+				//groups[index][i].hudDFSC.SetSelectionGroup( null );
 			}
 			groups[index].Clear();
 			groups[index].AddRange( objects );
-			for( int i = 0; i < objects.Length; i++ )
+			/*for( int i = 0; i < objects.Length; i++ )
 			{
 				objects[i].hudDFSC.SetSelectionGroup( index );
-			}
+			}*/
 		}
 
 		/// <summary>
 		/// Returns a copy of the selected objects.
 		/// </summary>
-		public static SSObjectDFSC[] GetSelectedObjects()
+		public static SSObject[] GetSelectedObjects()
 		{
 			return selected.ToArray();
 		}
@@ -122,7 +119,7 @@ namespace SS
 		// When module is not null, object also can't be null.
 		private static DisplayedObjectData displayedObjectData = null;
 
-		public static SSObjectDFSC displayedObject
+		public static ISelectDisplayHandler displayedObject
 		{
 			get
 			{
@@ -134,7 +131,7 @@ namespace SS
 			}
 		}
 
-		public static SSModule displayedModule
+		public static ISelectDisplayHandler displayedModule
 		{
 			get
 			{
@@ -142,7 +139,7 @@ namespace SS
 				{
 					return null;
 				}
-				return (SSModule)displayedObjectData.module;
+				return displayedObjectData.module;
 			}
 		}
 
@@ -163,13 +160,13 @@ namespace SS
 			return null;
 		}
 
-		public static bool IsDisplayed( SSObjectDFSC obj )
+		public static bool IsDisplayed( SSObject obj )
 		{
 			if( displayedObjectData == null )
 			{
 				return false;
 			}
-			return displayedObjectData.obj == obj;
+			return (object)displayedObjectData.obj == (object)obj;
 		}
 
 		public static bool IsDisplayedGroup()
@@ -181,7 +178,7 @@ namespace SS
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
-				throw new System.Exception( "This module can't be displayed" );
+				throw new Exception( "This module can't be displayed" );
 			}
 			if( displayedObjectData == null )
 			{
@@ -203,8 +200,13 @@ namespace SS
 			float healthMaxTotal = 0.0f;
 			for( int i = 0; i < selected.Count; i++ )
 			{
-				healthTotal += selected[i].health;
-				healthMaxTotal += selected[i].healthMax;
+				if( selected[i] is IDamageable )
+				{
+					IDamageable damageable = (IDamageable)selected[i];
+
+					healthTotal += damageable.health;
+					healthMaxTotal += damageable.healthMax;
+				}
 			}
 			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 300.0f, 25.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ), new Vector2( 0.5f, 1.0f ) ), "Total Health: " + (int)healthTotal + "/" + (int)healthMaxTotal );
 			SelectionPanel.instance.obj.RegisterElement( "group.health", healthUI.transform );
@@ -213,17 +215,23 @@ namespace SS
 		/// <summary>
 		/// Displays an object.
 		/// </summary>
-		public static void DisplayObject( SSObjectDFSC obj )
+		public static void DisplayObject( SSObject obj )
 		{
 			if( obj == null )
 			{
 				throw new Exception( "Object can't be null." );
 			}
+			if( !(obj is ISelectDisplayHandler) )
+			{
+				throw new Exception( "Object is not selectable." );
+			}
 
+			ISelectDisplayHandler objSel = (ISelectDisplayHandler)obj;
+			
 
 			if( !(obj is ISSObjectUsableUnusable) || ((ISSObjectUsableUnusable)obj).isUsable )
 			{
-				SSModule[] modules = ((SSObject)obj).GetModules();
+				SSModule[] modules = obj.GetModules();
 				
 				for( int i = 0; i < modules.Length; i++ )
 				{
@@ -236,8 +244,8 @@ namespace SS
 				}
 				if( modules.Length == 0 )
 				{
-					displayedObjectData = DisplayedObjectData.NewObject( obj );
-					obj.OnDisplay();
+					displayedObjectData = DisplayedObjectData.NewObject( objSel );
+					objSel.OnDisplay();
 				}
 				else
 				{
@@ -250,46 +258,57 @@ namespace SS
 								continue;
 							}
 
-							displayedObjectData = DisplayedObjectData.NewObject( obj, modules[j] );
-							obj.OnDisplay();
-							((ISelectDisplayHandler)modules[j]).OnDisplay();
+							ISelectDisplayHandler moduleSel = (ISelectDisplayHandler)modules[j];
+							displayedObjectData = DisplayedObjectData.NewObject( objSel, moduleSel );
+							objSel.OnDisplay();
+							moduleSel.OnDisplay();
 							SelectionPanel.instance.obj.HighlightIcon( modules[j] );
 
 							return;
 						}
 					}
-					
+
 					// If there is no modules to display on this object (no displayable modules or no modules at all).
-					displayedObjectData = DisplayedObjectData.NewObject( obj );
-					obj.OnDisplay();
+					displayedObjectData = DisplayedObjectData.NewObject( objSel );
+					objSel.OnDisplay();
 				}
 			}
 			else
 			{
-				displayedObjectData = DisplayedObjectData.NewObject( obj );
-				obj.OnDisplay();
+				displayedObjectData = DisplayedObjectData.NewObject( objSel );
+				objSel.OnDisplay();
 			}
 		}
 
 		/// <summary>
 		/// Displays a module on a specified object.
 		/// </summary>
-		public static void DisplayModule( SSObjectDFSC obj, SSModule module )
+		public static void DisplayModule( SSObject obj, SSModule module )
 		{
+			if( !(obj is ISelectDisplayHandler) )
+			{
+				throw new Exception( "This module can't be displayed" );
+			}
 			if( !(module is ISelectDisplayHandler) )
 			{
-				throw new System.Exception( "This module can't be displayed" );
+				throw new Exception( "This module can't be displayed" );
 			}
 			if( !IsDisplayed( obj ) )
 			{
-				throw new System.Exception( "Object needs to be displayed to display it's module." );
+				throw new Exception( "Object needs to be displayed to display it's module." );
 			}
+
 			GetDisplayedThing()?.OnHide();
 			SelectionPanel.instance.obj.ClearAllElements();
 			ActionPanel.instance.ClearAll();
-			displayedObjectData = DisplayedObjectData.NewObject( obj, module );
-			obj.OnDisplay();
-			(module as ISelectDisplayHandler).OnDisplay();
+
+			ISelectDisplayHandler objSel = (ISelectDisplayHandler)obj;
+			ISelectDisplayHandler moduleSel = (ISelectDisplayHandler)module;
+
+			displayedObjectData = DisplayedObjectData.NewObject( objSel, moduleSel );
+
+			objSel.OnDisplay();
+			moduleSel.OnDisplay();
 			SelectionPanel.instance.obj.HighlightIcon( module );
 		}
 
@@ -300,6 +319,7 @@ namespace SS
 		{
 			GetDisplayedThing()?.OnHide();
 			displayedObjectData = null;
+
 			SelectionPanel.instance.obj.ClearAllElements();
 			SelectionPanel.instance.obj.ClearAllModules();
 			SelectionPanel.instance.obj.ClearIcon();
@@ -309,21 +329,23 @@ namespace SS
 		}
 
 
+
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
 
+		
 		/// <summary>
 		/// Checks if the object is currently selected.
 		/// </summary>
 		/// <param name="obj">The object to check.</param>
-		public static bool IsSelected( SSObjectDFSC obj )
+		public static bool IsSelected( SSObject obj )
 		{
 			return selected.Contains( obj );
 		}
 
-		public static int TrySelect( params SSObjectDFSC[] objs )
+		public static int TrySelect( params SSObject[] objs )
 		{
 			if( objs == null )
 			{
@@ -353,6 +375,12 @@ namespace SS
 				{
 					continue;
 				}
+
+				if( !objs[i].isSelectable )
+				{
+					continue;
+				}
+
 				SelectionPanel.instance.list.AddIcon( objs[i], objs[i].icon );
 				selected.Add( objs[i] );
 
@@ -385,7 +413,7 @@ namespace SS
 		/// Deselects an object.
 		/// </summary>
 		/// <param name="obj">The object to deselect.</param>
-		public static void Deselect( SSObjectDFSC obj )
+		public static void Deselect( SSObject obj )
 		{
 			if( obj == null )
 			{
@@ -442,6 +470,9 @@ namespace SS
 			ActionPanel.instance.gameObject.SetActive( false );
 		}
 
+		/// <summary>
+		/// Clears the selection. Useful for deselecting everything when the scene is unloaded.
+		/// </summary>
 		public static void Clear()
 		{
 			selected.Clear();

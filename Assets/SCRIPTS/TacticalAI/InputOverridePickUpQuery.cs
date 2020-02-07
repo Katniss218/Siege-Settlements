@@ -5,6 +5,7 @@ using SS.InputSystem;
 using SS.Levels;
 using SS.Objects;
 using SS.Objects.Modules;
+using SS.Objects.Units;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -43,14 +44,14 @@ namespace SS
 						InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
 						if( inventories.Length > 0 )
 						{
-							AssignPickupInventoryGoal( ssObject, inventories[0], Selection.GetSelectedObjects() );
+							AssignPickupInventoryGoal( inventories[0], Selection.GetSelectedObjects() );
 						}
 						else
 						{
 							ResourceDepositModule[] deposits = ssObject.GetModules<ResourceDepositModule>();
 							if( deposits.Length > 0 )
 							{
-								AssignPickupDepositGoal( ssObject, deposits[0], Selection.GetSelectedObjects() );
+								AssignPickupDepositGoal( deposits[0], Selection.GetSelectedObjects() );
 							}
 						}
 					}
@@ -95,36 +96,53 @@ namespace SS
 			}
 		}
 
-		private static void AssignPickupInventoryGoal( SSObject hitSSObject, InventoryModule hitInventory, SSObjectDFSC[] selected )
+		private static void AssignPickupInventoryGoal( InventoryModule hitInventory, SSObject[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObjectDFSC> movableWithInvGameObjects = new List<SSObjectDFSC>();
+			List<SSObjectDFC> movableWithInvGameObjects = new List<SSObjectDFC>();
 
 			// Go pick up if the inventory can hold any of the resources in the deposit.
 			Dictionary<string, int> resourcesInDeposit = hitInventory.GetAll();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<NavMeshAgent>() == null )
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
+				if( !(dfc is IMovable) )
 				{
 					continue;
 				}
+
+				if( (selected[i] is Unit) )
+				{
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
+				}
+
+				if( !dfc.hasInventoryModule )
+				{
+					continue;
+				}
+				InventoryModule inv = dfc.GetModules<InventoryModule>()[0];
 
 				foreach( var kvp in resourcesInDeposit )
 				{
 					// if can pick up && has empty space for it.
 					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
 					{
-						movableWithInvGameObjects.Add( selected[i] );
+						movableWithInvGameObjects.Add( dfc );
 						break;
 					}
 				}
@@ -140,7 +158,7 @@ namespace SS
 				TacticalGoalController goalController = movableWithInvGameObjects[i].controller;
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
-				goal1.SetDestination( hitSSObject );
+				goal1.SetDestination( hitInventory.ssObject );
 
 				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 				goal2.isHostile = false;
@@ -149,43 +167,55 @@ namespace SS
 			}
 		}
 
-		private static void AssignPickupDepositGoal( SSObject hitSSObject, ResourceDepositModule hitDeposit, SSObjectDFSC[] selected )
+		private static void AssignPickupDepositGoal( ResourceDepositModule hitDeposit, SSObject[] selected )
 		{
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
-			List<SSObjectDFSC> movableWithInvGameObjects = new List<SSObjectDFSC>();
+			List<SSObjectDFC> movableWithInvGameObjects = new List<SSObjectDFC>();
 
 			// Go pick up if the inventory can hold any of the resources in the deposit.
 			Dictionary<string, int> resourcesInDeposit = hitDeposit.GetAll();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+				if( !(selected[i] is SSObjectDFC) )
 				{
 					continue;
 				}
-				if( selected[i].GetComponent<NavMeshAgent>() == null )
+
+				SSObjectDFC dfc = (SSObjectDFC)selected[i];
+
+				if( dfc.factionId != LevelDataManager.PLAYER_FAC )
 				{
 					continue;
 				}
-				InventoryModule inv = selected[i].GetComponent<InventoryModule>();
-				if( inv == null )
+				if( !(dfc is IMovable) )
 				{
 					continue;
 				}
-				bool canPickupAny = false;
+
+				if( (selected[i] is Unit) )
+				{
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
+				}
+
+				if( !dfc.hasInventoryModule )
+				{
+					continue;
+				}
+				InventoryModule inv = dfc.GetModules<InventoryModule>()[0];
+
 				foreach( var kvp in resourcesInDeposit )
 				{
 					// if can pick up && has empty space for it.
 					if( inv.GetSpaceLeft( kvp.Key ) > 0 )
 					{
-						canPickupAny = true;
+						movableWithInvGameObjects.Add( dfc );
 						break;
 					}
-				}
-
-				if( canPickupAny )
-				{
-					movableWithInvGameObjects.Add( selected[i] );
 				}
 			}
 
@@ -199,7 +229,7 @@ namespace SS
 				TacticalGoalController goalController = movableWithInvGameObjects[i].controller;
 				TacticalMoveToGoal goal1 = new TacticalMoveToGoal();
 				goal1.isHostile = false;
-				goal1.SetDestination( hitSSObject );
+				goal1.SetDestination( hitDeposit.ssObject );
 
 				TacticalPickUpGoal goal2 = new TacticalPickUpGoal();
 				goal2.isHostile = false;

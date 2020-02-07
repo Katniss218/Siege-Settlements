@@ -205,7 +205,7 @@ namespace SS
 		{
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				SSObjectDFSC[] selected = Selection.GetSelectedObjects();
+				SSObject[] selected = Selection.GetSelectedObjects();
 				for( int i = 0; i < selected.Length; i++ )
 				{
 					if( !(selected[i] is Unit) )
@@ -213,31 +213,31 @@ namespace SS
 						continue;
 					}
 
-					if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+					Unit unit = (Unit)selected[i];
+					if( unit.factionId != LevelDataManager.PLAYER_FAC )
 					{
 						continue;
 					}
 
 					// block units with non-empty inventories from splitting.
-					InventoryModule[] inventories = selected[i].GetModules<InventoryModule>();
+					InventoryModule[] inventories = unit.GetModules<InventoryModule>();
 					if( inventories.Length > 0 && !inventories[0].isEmpty )
 					{
 						continue;
 					}
-
-					Unit u = (Unit)selected[i];
-					if( u.population == PopulationSize.x1 )
+					
+					if( unit.population == PopulationSize.x1 )
 					{
 						continue;
 					}
-					if( !u.CanChangePopulation() )
+					if( !unit.CanChangePopulation() )
 					{
 						continue;
 					}
 
-					PopulationUnitUtils.Split( u, null );
+					PopulationUnitUtils.Split( unit, null );
 
-					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), u.transform.position );
+					AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), unit.transform.position );
 				}
 			}
 		}
@@ -265,7 +265,13 @@ namespace SS
 						return;
 					}
 
-					SSObjectDFSC[] selected = Selection.GetSelectedObjects();
+					TacticalGoalController goalControllerBeacon = unitRay.controller;
+					TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
+					goal.isHostile = false;
+					goal.beacon = unitRay;
+					goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
+
+					SSObject[] selected = Selection.GetSelectedObjects();
 					for( int i = 0; i < selected.Length; i++ )
 					{
 						if( !(selected[i] is Unit) )
@@ -273,27 +279,23 @@ namespace SS
 							continue;
 						}
 
-						if( selected[i].factionId != LevelDataManager.PLAYER_FAC )
+						Unit unit = (Unit)selected[i];
+
+						if( unit.factionId != LevelDataManager.PLAYER_FAC )
 						{
 							continue;
 						}
 
-						if( ((Unit)selected[i]).population == PopulationSize.x8 )
+						if( unit.population == PopulationSize.x8 )
 						{
 							continue;
 						}
-
-						TacticalGoalController goalControllerBeacon = unitRay.controller;
-						TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
-						goal.isHostile = false;
-						goal.beacon = unitRay;
-						goalControllerBeacon.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
-
-						TacticalGoalController goalController = selected[i].controller;
+						
+						TacticalGoalController goalControllerSelected = unit.controller;
 						goal = new TacticalMakeFormationGoal();
 						goal.isHostile = false;
 						goal.beacon = unitRay;
-						goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
+						goalControllerSelected.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal );
 
 						AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), unitRay.transform.position );
 					}
@@ -371,7 +373,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					SSObjectDFSC sel = hitInfo.collider.GetComponent<SSObjectDFSC>();
+					SSObjectDFC sel = hitInfo.collider.GetComponent<SSObjectDFC>();
 					if( sel == null )
 					{
 						return;
@@ -383,7 +385,7 @@ namespace SS
 					}
 					else
 					{
-						Selection.TrySelect( new SSObjectDFSC[] { sel } );
+						Selection.TrySelect( new SSObjectDFC[] { sel } );
 					}
 				}
 			}
@@ -398,22 +400,21 @@ namespace SS
 
 		private static void SetFactionSelected( int fac )
 		{
-			SSObjectDFSC[] selected = Selection.GetSelectedObjects();
+			SSObject[] selected = Selection.GetSelectedObjects();
 			for( int i = 0; i < selected.Length; i++ )
 			{
-				IFactionMember faction = selected[i].GetComponent<IFactionMember>();
-
-				if( faction == null )
+				if( !(selected[i] is IFactionMember) )
 				{
-					continue;
+					return;
 				}
-				faction.factionId = fac;
+
+				((IFactionMember)selected[i]).factionId = fac;
 			}
 		}
 
 		private void Inp_F3( InputQueue self )
 		{
-			SSObjectDFSC[] damageables = SSObject.GetAllDFSC();
+			SSObjectDFC[] damageables = SSObject.GetAllDFSC();
 
 			for( int i = 0; i < damageables.Length; i++ )
 			{
@@ -608,16 +609,11 @@ namespace SS
 
 		void Start()
 		{
-			SSObjectDFSC.onHealthChangeAny.AddListener( ( SSObjectDFSC obj, float deltaHealth ) =>
+			SSObjectDFC.onHealthChangeAny.AddListener( ( IDamageable obj, float deltaHealth ) =>
 			{
 				if( Selection.IsDisplayedGroup() )
 				{
-					SSObjectDFSC ssObjectSelectable = obj.GetComponent<SSObjectDFSC>();
-					if( ssObjectSelectable  == null )
-					{
-						return;
-					}
-					if( !Selection.IsSelected( ssObjectSelectable ) )
+					if( !Selection.IsSelected( (SSObject)obj ) )
 					{
 						return;
 					}
@@ -644,9 +640,9 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.P, 60.0f, Inp_P, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.O, 60.0f, Inp_O, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Tab, 60.0f, Inp_Tab, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, 60.0f, Inp_A1, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, 60.0f, Inp_A2, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, 60.0f, Inp_A3, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, -60.0f, Inp_A1, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, -60.0f, Inp_A2, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, -60.0f, Inp_A3, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );

@@ -12,7 +12,7 @@ namespace SS.AI
 		/// <summary>
 		/// A list of grid positions for the corresponding SSObjects.
 		/// </summary>
-		public Dictionary<SSObjectDFSC, Vector2Int> positions { get; private set; }
+		public Dictionary<SSObjectDFC, Vector2Int> positions { get; private set; }
 
 		/// <summary>
 		/// The number of rows in the grid.
@@ -26,12 +26,12 @@ namespace SS.AI
 		/// <summary>
 		/// Returns normalized grid positions (0,0; 0,1; 0,2; 1,0; 1,1; etc.) for any number of specified gameObjects.
 		/// </summary>
-		public MovementGridInfo( List<SSObjectDFSC> objects )
+		public MovementGridInfo( List<SSObjectDFC> objects )
 		{
 			int count = objects.Count;
 			int sideLen = Mathf.CeilToInt( Mathf.Sqrt( count ) );
 
-			Dictionary<SSObjectDFSC, Vector2Int> ret = new Dictionary<SSObjectDFSC, Vector2Int>();
+			Dictionary<SSObjectDFC, Vector2Int> ret = new Dictionary<SSObjectDFC, Vector2Int>();
 
 			int i = 0;
 			int x = 0, z = 0;

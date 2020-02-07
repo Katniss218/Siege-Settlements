@@ -62,12 +62,6 @@ namespace SS.Objects.Heroes
 			//    CONTAINER GAMEOBJECT
 			//
 
-			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/hero_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-
-			//HUD hud = hudGameObject.GetComponent<HUD>();
-			//hud.isVisible = Main.isHudForcedVisible;
-
-
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
 			collider.size = new Vector3( def.radius * 2.0f, def.height, def.radius * 2.0f );
 			collider.center = new Vector3( 0.0f, def.height / 2.0f, 0.0f );
@@ -87,10 +81,9 @@ namespace SS.Objects.Heroes
 			navMeshAgent.avoidancePriority = 1;
 
 			Hero hero = gameObject.AddComponent<Hero>();
-			//hero.hud = hud;
-			//hud.hudHolder = hero;
 			hero.guid = guid;
 			hero.definitionId = def.id;
+			hero.isSelectable = true;
 			hero.displayName = def.displayName;
 			hero.displayTitle = def.displayTitle;
 			hero.icon = def.icon;
@@ -210,7 +203,7 @@ namespace SS.Objects.Heroes
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "hero.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFSC.GetHealthString( hero.health, hero.healthMax ) );
+					UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( hero.health, hero.healthMax ) );
 				}
 			} );
 

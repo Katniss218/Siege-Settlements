@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 namespace SS.Objects.Units
 {
 	[UseHud(typeof(UnitHUD), "hud")]
-	public class Unit : SSObjectDFSC, IMovable, IMouseOverHandlerListener, IInteriorUser
+	public class Unit : SSObjectDFC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
 		public NavMeshAgent navMeshAgent
@@ -61,7 +61,7 @@ namespace SS.Objects.Units
 				PopulationSize populationBefore = this.__population;
 
 
-				if( this.factionId != SSObjectDFSC.FACTIONID_INVALID && populationBefore != value )
+				if( this.factionId != SSObjectDFC.FACTIONID_INVALID && populationBefore != value )
 				{
 					if( populationBefore != PopulationSize.x1 )
 					{
@@ -70,7 +70,9 @@ namespace SS.Objects.Units
 					LevelDataManager.factionData[this.factionId].populationCache += (int)value;
 					if( this.factionId == LevelDataManager.PLAYER_FAC )
 					{
-						ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+						ResourcePanel.instance.UpdatePopulationDisplay(
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 					}
 				}
 
@@ -299,7 +301,9 @@ namespace SS.Objects.Units
 				LevelDataManager.factionData[this.factionId].populationCache += (int)this.population;
 				if( this.factionId == LevelDataManager.PLAYER_FAC )
 				{
-					ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache );
+					ResourcePanel.instance.UpdatePopulationDisplay(
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 				}
 			}
 		
@@ -317,7 +321,9 @@ namespace SS.Objects.Units
 			LevelDataManager.factionData[this.factionId].populationCache -= (int)this.population;
 			if( this.factionId == LevelDataManager.PLAYER_FAC )
 			{
-				ResourcePanel.instance.UpdatePopulationDisplay( LevelDataManager.factionData[this.factionId].populationCache );
+				ResourcePanel.instance.UpdatePopulationDisplay(
+					LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+					LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 			}
 
 			base.OnObjDestroyed();

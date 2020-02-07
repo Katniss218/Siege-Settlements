@@ -8,7 +8,7 @@ namespace SS.UI
 	[DisallowMultipleComponent]
 	public class SPList : MonoBehaviour
 	{
-		private Dictionary<SSObjectDFSC, GameObject> icons = new Dictionary<SSObjectDFSC, GameObject>();
+		private Dictionary<SSObject, GameObject> icons = new Dictionary<SSObject, GameObject>();
 
 		void Start()
 		{
@@ -25,7 +25,7 @@ namespace SS.UI
 		/// </summary>
 		/// <param name="obj">The object to associate the icon with.</param>
 		/// <param name="icon">The icon to display.</param>
-		public void AddIcon( SSObjectDFSC obj, Sprite icon )
+		public void AddIcon( SSObject obj, Sprite icon )
 		{
 			if( obj == null )
 			{
@@ -46,7 +46,7 @@ namespace SS.UI
 		/// Removes an icon associated with the specified object. Also, un-associates the object with any icon.
 		/// </summary>
 		/// <param name="obj">The object whose icon to remove.</param>
-		public void RemoveIcon( SSObjectDFSC obj )
+		public void RemoveIcon( SSObject obj )
 		{
 			if( obj == null )
 			{

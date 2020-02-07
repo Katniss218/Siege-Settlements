@@ -18,7 +18,7 @@ namespace SS.AI.Goals
 		/// <summary>
 		/// The object that the goal is going to try and attack.
 		/// </summary>
-		public SSObjectDFSC target { get; set; }
+		public SSObjectDFC target { get; set; }
 
 		/// <summary>
 		/// If set to true, the goal won't check if the target can be targeted (e.g. outside range, wrong faction, etc.). Useful when you want to attack objects outside of the view range.
@@ -128,7 +128,7 @@ namespace SS.AI.Goals
 
 		private void UpdateTargeting( TacticalGoalController controller )
 		{
-			SSObjectDFSC ssobj = (SSObjectDFSC)controller.ssObject;
+			SSObjectDFC ssobj = (SSObjectDFC)controller.ssObject;
 			
 			// If the target isn't forced - check if it still can be targeted - if it can't be targeted by every targeter - reset the target.
 			if( !this.targetForced )
@@ -240,7 +240,7 @@ namespace SS.AI.Goals
 			}
 			else
 			{
-				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFSC;
+				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFC;
 			}
 		}
 	}

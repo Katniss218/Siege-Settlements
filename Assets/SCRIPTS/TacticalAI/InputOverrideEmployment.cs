@@ -1,6 +1,5 @@
 ﻿using SS.Content;
 using SS.InputSystem;
-using SS.Objects;
 using SS.Objects.Modules;
 using SS.Objects.Units;
 using UnityEngine;
@@ -37,7 +36,7 @@ namespace SS
 				RaycastHit hitInfo;
 				if( Physics.Raycast( Main.camera.ScreenPointToRay( Input.mousePosition ), out hitInfo ) )
 				{
-					SSObjectDFSC obj = Selection.displayedObject;
+					ISelectDisplayHandler obj = Selection.displayedObject;
 
 					if( !(obj is Unit) )
 					{

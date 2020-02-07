@@ -12,8 +12,8 @@ namespace SS.Objects.Modules
 
 		public float attackRange { get; set; }
 
-		private SSObjectDFSC __target;
-		public SSObjectDFSC target
+		private SSObjectDFC __target;
+		public SSObjectDFC target
 		{
 			get
 			{
@@ -41,14 +41,14 @@ namespace SS.Objects.Modules
 		public AudioClip attackSoundEffect;
 
 		private float lastAttackTimestamp;
-		private SSObjectDFSC __factionMemberSelf = null;
-		private SSObjectDFSC factionMemberSelf
+		private SSObjectDFC __factionMemberSelf = null;
+		private SSObjectDFC factionMemberSelf
 		{
 			get
 			{
 				if( __factionMemberSelf == null )
 				{
-					__factionMemberSelf = this.ssObject as SSObjectDFSC;
+					__factionMemberSelf = this.ssObject as SSObjectDFC;
 				}
 				return __factionMemberSelf;
 			}
@@ -72,7 +72,7 @@ namespace SS.Objects.Modules
 			this.target = Targeter.FindTargetClosest( this.transform.position, this.attackRange, this.factionMemberSelf, false );
 		}
 
-		public void TrySetTarget( SSObjectDFSC target )
+		public void TrySetTarget( SSObjectDFC target )
 		{
 			this.target = Targeter.TrySetTarget( this.transform.position, this.attackRange, this.factionMemberSelf, target, false );
 		}
@@ -164,7 +164,7 @@ namespace SS.Objects.Modules
 
 			if( data.targetGuid != null )
 			{
-				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFSC;
+				this.target = SSObject.Find( data.targetGuid.Value ) as SSObjectDFC;
 			}
 			if( data.damageOverride != null )
 			{

@@ -36,9 +36,9 @@ namespace SS.Objects.Modules
 				return false;
 			}
 			
-			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
+			for( int i = 0; i < this.interior.SlotCount( InteriorModule.SlotType.Worker ); i++ )
 			{
-				if( this.interior.workerSlots[i].worker == null )
+				if( this.interior.GetWorker( i ) == null )
 				{
 					return true;
 				}
@@ -57,9 +57,9 @@ namespace SS.Objects.Modules
 				throw new System.Exception( "Can't employ an already employed civilian." );
 			}
 
-			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
+			for( int i = 0; i < this.interior.SlotCount( InteriorModule.SlotType.Worker ); i++ )
 			{
-				if( this.interior.workerSlots[i].worker == null )
+				if( this.interior.GetWorker( i ) == null )
 				{
 					SetWorking( this, civilian, i );
 					return;
@@ -78,9 +78,9 @@ namespace SS.Objects.Modules
 				throw new System.Exception( "Can't fire an already fired civilian." );
 			}
 
-			for( int i = 0; i < this.interior.workerSlots.Length; i++ )
+			for( int i = 0; i < this.interior.SlotCount( InteriorModule.SlotType.Worker ); i++ )
 			{
-				if( this.interior.workerSlots[i].worker == civilian )
+				if( this.interior.GetWorker( i ) == civilian )
 				{
 					ClearWorking( this, civilian, i );
 					return;
@@ -111,7 +111,7 @@ namespace SS.Objects.Modules
 			cue.obj.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( true );
 			cue.obj.controller.SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 			
-			workplace.interior.workerSlots[slotIndex].worker = cue;
+			workplace.interior.SetWorker( slotIndex, cue );
 			workplace.interior.hudInterior.workerSlots[slotIndex].SetSprite( cue.obj.icon );
 			workplace.interior.hudInterior.workerSlots[slotIndex].SetVisible( false );
 
@@ -126,7 +126,7 @@ namespace SS.Objects.Modules
 			cue.obj.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( false );
 			cue.obj.controller.SetGoals( TacticalGoalController.DEFAULT_GOAL_TAG, TacticalGoalController.GetDefaultGoal() );
 
-			workplace.interior.workerSlots[slotIndex].worker = null;
+			workplace.interior.SetWorker( slotIndex, null );
 			workplace.interior.hudInterior.workerSlots[slotIndex].ClearSprite();
 
 			cue.onUnemploy?.Invoke();

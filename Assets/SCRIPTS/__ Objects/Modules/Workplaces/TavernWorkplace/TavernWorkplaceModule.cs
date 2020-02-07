@@ -23,9 +23,9 @@ namespace SS.Objects.Modules
 
 			if( isWorkerInside )
 			{
-				for( int i = 0; i < this.interior.slots.Length; i++ )
+				for( int i = 0; i < this.interior.SlotCount( InteriorModule.SlotType.Generic ); i++ )
 				{
-					IInteriorUser objInside = this.interior.slots[i].objInside;
+					IInteriorUser objInside = this.interior.GetUser( InteriorModule.SlotType.Generic, i );
 					if( objInside == null )
 					{
 						continue;

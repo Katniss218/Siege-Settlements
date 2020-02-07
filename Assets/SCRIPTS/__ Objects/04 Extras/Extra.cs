@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using SS.UI;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Extras
 {
-	public class Extra : SSObject
+	public class Extra : SSObject, ISelectDisplayHandler
 	{
 		NavMeshObstacle __obstacle = null;
 		private bool isObstacleGet = false;
@@ -30,6 +31,18 @@ namespace SS.Objects.Extras
 				}
 				return this.__collider;
 			}
+		}
+
+		public void OnDisplay()
+		{
+			SelectionPanel.instance.obj.SetIcon( this.icon );
+
+			SelectionPanel.instance.obj.displayNameText.text = this.displayName;
+		}
+
+		public void OnHide()
+		{
+
 		}
 	}
 }

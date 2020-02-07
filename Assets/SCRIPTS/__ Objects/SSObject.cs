@@ -10,6 +10,7 @@ using SS.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects
@@ -19,7 +20,7 @@ namespace SS.Objects
 	{
 		private static List<SSObject> allSSObjects = new List<SSObject>();
 
-		private static List<SSObjectDFSC> allSelectables = new List<SSObjectDFSC>();
+		private static List<SSObjectDFC> allSelectables = new List<SSObjectDFC>();
 		
 		private static List<Unit> allUnits = new List<Unit>();
 		private static List<Building> allBuildings = new List<Building>();
@@ -32,7 +33,7 @@ namespace SS.Objects
 			return allSSObjects.ToArray();
 		}
 		
-		public static SSObjectDFSC[] GetAllDFSC()
+		public static SSObjectDFC[] GetAllDFSC()
 		{
 			return allSelectables.ToArray();
 		}
@@ -62,6 +63,35 @@ namespace SS.Objects
 			return allExtras.ToArray();
 		}
 
+
+
+		//
+		//
+		//
+
+		
+		
+		public bool isSelectable { get; set; }
+
+		/// <summary>
+		/// The icon that is shown on the list of all selected objects.
+		/// </summary>
+		public Sprite icon { get; set; }
+
+		/// <summary>
+		/// Is called when the object gets selected.
+		/// </summary>
+		public UnityEvent onSelect { get; private set; } = new UnityEvent();
+
+		/// <summary>
+		/// Is called when the object gets highlighted.
+		/// </summary>
+		public UnityEvent onHighlight { get; private set; } = new UnityEvent();
+
+		/// <summary>
+		/// Is called when the object gets deselected.
+		/// </summary>
+		public UnityEvent onDeselect { get; private set; } = new UnityEvent();
 
 		/// <summary>
 		/// Returns true if the object should display it's parameters on the Selection Panel. By default always true for non-faction objects.
@@ -157,11 +187,13 @@ namespace SS.Objects
 		}
 
 		
+
 		//
 		//
 		//
 
-
+		
+		
 		public bool HasPaymentReceivers()
 		{
 			if( this.hasPaymentReceiverModule )
@@ -316,11 +348,13 @@ namespace SS.Objects
 		}
 		
 
+
 		//
 		//
 		//
 
-
+		
+		
 		internal Tuple<GameObject,T> AddSubObject<T>( Guid subObjectId ) where T : SubObject
 		{
 			if( this.subObjectsSealed )
@@ -407,18 +441,20 @@ namespace SS.Objects
 			this.subObjectsTemp = null; // Garbage Collect unused data
 		}
 		
+
 		
 		//
 		//
 		//
 
-
+		
+		
 		protected virtual void OnEnable()
 		{
 			allSSObjects.Add( this );
-			if( this is SSObjectDFSC )
+			if( this is SSObjectDFC )
 			{
-				allSelectables.Add( this as SSObjectDFSC );
+				allSelectables.Add( this as SSObjectDFC );
 			}
 
 			if( this is Unit )
@@ -451,9 +487,9 @@ namespace SS.Objects
 		protected virtual void OnDisable()
 		{
 			allSSObjects.Remove( this );
-			if( this is SSObjectDFSC )
+			if( this is SSObjectDFC )
 			{
-				allSelectables.Remove( this as SSObjectDFSC );
+				allSelectables.Remove( this as SSObjectDFC );
 			}
 
 			if( this is Unit )
@@ -503,7 +539,8 @@ namespace SS.Objects
 		//
 		//
 
-
+		
+		
 		protected virtual void OnObjSpawn() { }
 
 		protected virtual void OnObjDestroyed() { }
