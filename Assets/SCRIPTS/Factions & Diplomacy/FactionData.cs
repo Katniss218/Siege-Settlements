@@ -45,9 +45,10 @@ namespace SS.Diplomacy
 		/// Only stored resources belonging to this faction (inside inventories marked as storage).
 		/// </summary>
 		public Dictionary<string, int> resourcesStoredCache { get; internal set; }
-
+		
 
 		public int populationCache { get; internal set; }
+		public int maxPopulationCache { get; internal set; }
 
 		/// <summary>
 		/// Returns a list of resources belonging to this faction, that this faction has at least the specified amount.

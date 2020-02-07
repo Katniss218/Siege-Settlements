@@ -1,7 +1,5 @@
-﻿using SS.Content;
-using SS.Levels;
+﻿using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using System;
@@ -126,7 +124,7 @@ namespace SS.Objects.Heroes
 
 				if( Selection.IsDisplayed( hero ) )
 				{
-					SSObjectHelper.ReDisplayDisplayed();
+					SSObjectUtils.ReDisplayDisplayed();
 				}
 			} );
 
@@ -233,7 +231,7 @@ namespace SS.Objects.Heroes
 			//    SUB-OBJECTS
 			//
 
-			SSObjectCreator.AssignSubObjects( gameObject, def );
+			SSObjectCreator.AssignSubObjects( hero, def );
 
 			//
 			//    MODULES

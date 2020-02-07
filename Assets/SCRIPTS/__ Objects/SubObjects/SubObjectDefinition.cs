@@ -26,10 +26,10 @@ namespace SS.Objects.SubObjects
 
 
 		/// <summary>
-		/// Adds the Sub-Object to a GameObject.
+		/// Adds the Sub-Object to an SSObject.
 		/// </summary>
-		/// <param name="gameObject">The GameObject to add this Sub-object to.</param>
-		public abstract SubObject AddTo( GameObject gameObject );
+		/// <param name="ssObject">The SSObject to add this Sub-object to.</param>
+		public abstract SubObject AddTo( SSObject ssObject );
 
 		public abstract void DeserializeKFF( KFFSerializer serializer );
 		public abstract void SerializeKFF( KFFSerializer serializer );

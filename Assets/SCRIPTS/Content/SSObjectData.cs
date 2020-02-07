@@ -1,5 +1,4 @@
 ﻿using KFF;
-using SS.AI;
 using SS.AI.Goals;
 using SS.Objects.Modules;
 using System;
@@ -34,9 +33,6 @@ namespace SS.Content
 			this.moduleCache = new List<ModuleCacheItem>();
 		}
 		
-		/// <summary>
-		/// Gets a single module of type T (if found). Returns null if no module of specified type is present.
-		/// </summary>
 		public T GetModuleData<T>() where T : SSModuleData
 		{
 			Type wantedType = typeof( T );
@@ -50,10 +46,7 @@ namespace SS.Content
 			}
 			return null;
 		}
-
-		/// <summary>
-		/// Gets every module of type T (if found). Returns empty array if no module of specified type is present.
-		/// </summary>
+		
 		public T[] GetModuleDatas<T>() where T : SSModuleData
 		{
 			Type wantedType = typeof( T );
@@ -80,10 +73,7 @@ namespace SS.Content
 				datas[i] = this.moduleCache[i].module;
 			}
 		}
-
-		/// <summary>
-		/// Adds a single module of type T to the object definition.
-		/// </summary>
+		
 		public void AddModuleData<T>( Guid moduleId, T module ) where T : SSModuleData
 		{
 			this.moduleCache.Add( new ModuleCacheItem( moduleId, module ) );

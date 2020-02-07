@@ -12,26 +12,23 @@ namespace SS.Objects.SubObjects
 
 		public Dictionary<int, AddressableAsset<Mesh>> meshes { get; set; }
 		public MaterialDefinition materialData { get; set; }
-		
-		
-		public override SubObject AddTo( GameObject gameObject )
+
+
+		public override SubObject AddTo( SSObject ssObject )
 		{
 			if( this.meshes == null || this.meshes.Count < 1 )
 			{
 				throw new Exception( "Mesh dictionary must have at least 1 element." );
 			}
-			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
-			child.transform.SetParent( gameObject.transform );
 
-			child.transform.localPosition = this.localPosition;
-			child.transform.localRotation = this.localRotation;
+			var sub = ssObject.AddSubObject<MeshPredicatedSubObject>( this.subObjectId );
 
-			MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
+			sub.Item1.transform.localPosition = this.localPosition;
+			sub.Item1.transform.localRotation = this.localRotation;
 
-			MeshPredicatedSubObject subObject = child.AddComponent<MeshPredicatedSubObject>();
-			subObject.subObjectId = this.subObjectId;
-			subObject.meshes = new Dictionary<int, Mesh>( this.meshes.Count );
+			sub.Item2.defaultPosition = this.localPosition;
+			sub.Item2.defaultRotation = this.localRotation;
+			sub.Item2.meshes = new Dictionary<int, Mesh>( this.meshes.Count );
 			int? firstKey = null;
 			foreach( var kvp in this.meshes )
 			{
@@ -39,16 +36,12 @@ namespace SS.Objects.SubObjects
 				{
 					firstKey = kvp.Key;
 				}
-				subObject.meshes.Add( kvp.Key, (Mesh)kvp.Value );
+				sub.Item2.meshes.Add( kvp.Key, (Mesh)kvp.Value );
 			}
+			sub.Item2.lookupKey = firstKey.Value;
+			sub.Item2.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
-			subObject.lookupKey = firstKey.Value;
-			subObject.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
-
-			subObject.defaultPosition = this.localPosition;
-			subObject.defaultRotation = this.localRotation;
-
-			return subObject;
+			return sub.Item2;
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )
@@ -120,7 +113,7 @@ namespace SS.Objects.SubObjects
 
 			serializer.WriteVector3( "", "LocalPosition", this.localPosition );
 			serializer.WriteVector3( "", "LocalRotationEuler", this.localRotation.eulerAngles );
-			
+
 
 			serializer.WriteList( "", "MeshMats" );
 			int i = 0;

@@ -38,13 +38,10 @@ namespace SS.Objects.SubObjects
 		int __lookupKey;
 		public int lookupKey
 		{
-			get
-			{
-				return this.__lookupKey;
-			}
+			get => this.__lookupKey;
 			set
 			{
-				this.__lookupKey = value;				
+				this.__lookupKey = value;
 				this.meshFilter.mesh = this.meshes[value];
 			}
 		}

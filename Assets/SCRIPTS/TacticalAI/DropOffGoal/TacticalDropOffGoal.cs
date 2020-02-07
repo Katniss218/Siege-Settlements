@@ -266,7 +266,7 @@ namespace SS.AI.Goals
 			// Only ISSObjectUsableUnusable.paymentReceiver is allowed to receive payments when the ISSObjectUsableUnusable is not usable.
 			if( this.destination is ISSObjectUsableUnusable )
 			{
-				ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.destinationInventory.ssObject;
+				ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.destination;
 				if( !usableUnusable.isUsable )
 				{
 					if( this.destinationPaymentReceiver != usableUnusable.paymentReceiver )
@@ -477,7 +477,14 @@ namespace SS.AI.Goals
 				if( data.destinationGuid.Item2 == null )
 				{
 					ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)SSObject.Find( data.destinationGuid.Item1 );
+					//Debug.Log( usableUnusable.GetType() );
+					//Debug.Log( usableUnusable.paymentReceiver.GetType() );
+#warning Building.constructionSite is null. So... unit was delivering to a CS, another unit in the same time finished constructing, and that other unit remained.
+#warning And the IPaymentReceiver remained not-null, construction site was destroyed, but the reference is an interface so it persisted.
+					//if( usableUnusable.paymentReceiver != null )
+					//{
 					this.SetDestination( usableUnusable.paymentReceiver );
+					//}
 				}
 				else
 				{

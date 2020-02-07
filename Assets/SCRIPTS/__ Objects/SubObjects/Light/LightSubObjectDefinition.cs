@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SS.Objects.SubObjects
 {
+	[RequireComponent( typeof( Light ) )]
 	public class LightSubObjectDefinition : SubObjectDefinition
 	{
 		public const string KFF_TYPEID = "LIGHT";
@@ -60,27 +61,23 @@ namespace SS.Objects.SubObjects
 			}
 		}
 
-		public override SubObject AddTo( GameObject gameObject )
+		public override SubObject AddTo( SSObject ssObject )
 		{
-			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
-			child.transform.SetParent( gameObject.transform );
+			var sub = ssObject.AddSubObject<LightSubObject>( this.subObjectId );
 
-			child.transform.localPosition = this.localPosition;
-			child.transform.localRotation = this.localRotation;
+			sub.Item1.transform.localPosition = this.localPosition;
+			sub.Item1.transform.localRotation = this.localRotation;
 
-			
-			Light light = child.AddComponent<Light>();
+			sub.Item2.minIntensity = this.minIntensity;
+			sub.Item2.maxIntensity = this.maxIntensity;
+			sub.Item2.flickerSpeed = 8.0f;
+			sub.Item2.color = this.color;
+			sub.Item2.range = this.range;
+
+			Light light = sub.Item1.GetComponent<Light>();
 			light.type = LightType.Point;
 			
-			LightSubObject subObject = child.AddComponent<LightSubObject>();
-			subObject.subObjectId = this.subObjectId;
-			subObject.minIntensity = this.minIntensity;
-			subObject.maxIntensity = this.maxIntensity;
-			subObject.flickerSpeed = 8.0f;
-			subObject.color = this.color;
-			subObject.range = this.range;
-
-			return subObject;
+			return sub.Item2;
 		}
 
 

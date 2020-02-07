@@ -21,32 +21,21 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		private Guid __moduleId = Guid.Empty;
 		/// <summary>
 		/// A unique identifier that identifies this specific module (Must be unique on an per-SSObject basis).
 		/// </summary>
-		public Guid moduleId
-		{
-			get
-			{
-				return this.__moduleId;
-			}
-			internal set
-			{
-				this.__moduleId = value; // intended to only be used by 'SSObject.AddModule<T>( Guid moduleId )'
-			}
-		}
+		public Guid moduleId { get; internal set; } = Guid.Empty;
+
 
 		public string displayName { get; set; }
-		
 		public Sprite icon { get; set; }
 
+
 		//
 		//
 		//
 
-
-
+		
 		/// <summary>
 		/// makes sure that the data is not null & of the specified type. Returns the data cast as the specified type. Throws exception if data is null or not the specified type.
 		/// </summary>
@@ -72,8 +61,10 @@ namespace SS.Objects.Modules
 
 		protected virtual void Awake()
 		{
-			SSObject.AnalyzeAttributes( this.ssObject, this );
+			// analyze attributes assigned to this class instance, to spawn HUDs, etc.
+			SSObjectCreator.AnalyzeAttributes( this.ssObject, this );
 		}
+		
 
 		//
 		//

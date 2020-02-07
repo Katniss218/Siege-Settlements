@@ -7,9 +7,14 @@ namespace SS.Objects.SubObjects
 {
 	public class ParticlesSubObjectDefinition : SubObjectDefinition
 	{
-		public abstract class Shape
-		{
-		}
+		public const string KFF_TYPEID = "PARTICLES";
+
+		public const string SHAPE_SPHERE_KFFID = "sphere";
+		public const string SHAPE_CONE_KFFID = "cone";
+		public const string SHAPE_BOX_KFFID = "box";
+
+
+		public abstract class Shape { }
 
 		public class SphereShape : Shape
 		{
@@ -27,12 +32,7 @@ namespace SS.Objects.SubObjects
 			public Vector3 size;
 		}
 
-		public const string KFF_TYPEID = "PARTICLES";
 
-		public const string SHAPE_SPHERE_KFFID = "sphere";
-		public const string SHAPE_CONE_KFFID = "cone";
-		public const string SHAPE_BOX_KFFID = "box";
-		
 		public bool isWorldSpace { get; set; }
 
 		public float lifetimeMin { get; set; }
@@ -53,49 +53,42 @@ namespace SS.Objects.SubObjects
 		public Color? emissionColor { get; set; }
 
 
-		public override SubObject AddTo( GameObject gameObject )
+		public override SubObject AddTo( SSObject ssObject )
 		{
 			if( this.shape == null )
 			{
 				throw new Exception( "Shape can't be null" );
 			}
 
-			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
-			child.transform.SetParent( gameObject.transform );
 
-			child.transform.localPosition = this.localPosition;
-			child.transform.localRotation = this.localRotation;
+			var sub = ssObject.AddSubObject<ParticlesSubObject>( this.subObjectId );
 
-			
+			sub.Item1.transform.localPosition = this.localPosition;
+			sub.Item1.transform.localRotation = this.localRotation;
 
-
-			ParticleSystem particleSystem = child.AddComponent<ParticleSystem>();
-			
-			ParticlesSubObject subObject = child.AddComponent<ParticlesSubObject>();
-			subObject.subObjectId = this.subObjectId;
-			subObject.SetShape( this.shape );
-			subObject.SetMaterial( this.particleTexture, this.emissionColor );
-			subObject.SetSimulationSpace( this.isWorldSpace ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local );
-			subObject.SetLifetime( this.lifetimeMin, this.lifetimeMax );
-			subObject.SetSize( this.startSizeMin, this.startSizeMax );
-			subObject.SetSpeed( this.startSpeedMin, this.startSpeedMax );
-			subObject.SetEmission( this.emissionRateTime );
+			sub.Item2.SetShape( this.shape );
+			sub.Item2.SetMaterial( this.particleTexture, this.emissionColor );
+			sub.Item2.SetSimulationSpace( this.isWorldSpace ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local );
+			sub.Item2.SetLifetime( this.lifetimeMin, this.lifetimeMax );
+			sub.Item2.SetSize( this.startSizeMin, this.startSizeMax );
+			sub.Item2.SetSpeed( this.startSpeedMin, this.startSpeedMax );
+			sub.Item2.SetEmission( this.emissionRateTime );
 
 			if( this.velocityOverLifetime != null )
 			{
-				subObject.SetVelocityOverLifetime( this.velocityOverLifetime );
+				sub.Item2.SetVelocityOverLifetime( this.velocityOverLifetime );
 			}
 
 			if( this.colorOverLifetime != null )
 			{
-				subObject.SetColorOverLifetime( this.colorOverLifetime );
+				sub.Item2.SetColorOverLifetime( this.colorOverLifetime );
 			}
 
 			if( this.sizeOverLifetime != null )
 			{
-				subObject.SetSizeOverLifetime( this.sizeOverLifetime );
+				sub.Item2.SetSizeOverLifetime( this.sizeOverLifetime );
 			}
-			return subObject;
+			return sub.Item2;
 		}
 
 
@@ -210,6 +203,7 @@ namespace SS.Objects.SubObjects
 			{
 				throw new Exception( "Missing 'Shape.Type' (" + serializer.file.fileName + ")." );
 			}
+
 			if( strShape == SHAPE_BOX_KFFID )
 			{
 				BoxShape shape = new BoxShape();

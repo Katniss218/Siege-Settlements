@@ -80,7 +80,7 @@ namespace SS
 
 		public static void SelectTheSame( string definitionId, SelectionMode selectionMode )
 		{
-			SSObjectDFSC[] selectables = SSObjectDFSC.GetAllDFS();
+			SSObjectDFSC[] selectables = SSObjectDFSC.GetAllDFSC();
 
 			List<SSObjectDFSC> sameIdAndWithinView = new List<SSObjectDFSC>();
 			for( int i = 0; i < selectables.Length; i++ )
@@ -110,7 +110,7 @@ namespace SS
 
 		public static void SelectOnScreen( Vector2 pos1, Vector2 pos2, SelectionMode selectionMode )
 		{
-			SSObjectDFSC[] selectables = SSObject.GetAllDFS();
+			SSObjectDFSC[] selectables = SSObject.GetAllDFSC();
 
 			List<SSObjectDFSC> ret = new List<SSObjectDFSC>();
 

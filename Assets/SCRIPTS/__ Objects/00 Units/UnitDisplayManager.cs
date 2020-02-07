@@ -23,9 +23,7 @@ namespace SS.Objects.Units
 			bool blockManual = false;
 			if( u.isCivilian )
 			{
-				CivilianUnitExtension cue = u.GetComponent<CivilianUnitExtension>();
-
-				if( !cue.isEmployed )
+				if( !u.civilian.isEmployed )
 				{
 					CreateAutodutyButton( u.civilian );
 					CreateEmployButton( u.civilian );

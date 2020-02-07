@@ -356,7 +356,7 @@
 		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 6; }
+			{ Id = "resource.wood"; Amount = 20; }
 		];
 		TechsRequired = [];
 		BuildTime = 10.0;
@@ -672,7 +672,7 @@
 		Size = { X = 0.3125; Y = 0.1875; Z = 0.3125; }; // The size of the hitbox.
 		Cost =
 		[
-			{ Id = "resource.wood"; Amount = 5; }
+			{ Id = "resource.wood"; Amount = 12; }
 		];
 		TechsRequired =
 		[

@@ -105,7 +105,7 @@ namespace SS.Objects.Projectiles
 			//    SUB-OBJECTS
 			//
 
-			SSObjectCreator.AssignSubObjects( gameObject, def );
+			SSObjectCreator.AssignSubObjects( projectile, def );
 
 			//
 			//    MODULES

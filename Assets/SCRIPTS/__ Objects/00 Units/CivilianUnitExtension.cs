@@ -16,12 +16,15 @@ namespace SS.Objects.Units
 {
 	public class CivilianUnitExtension : SSObjectExtension<Unit>
 	{
+		public const int AVOIDANCE_PRORITY_GENERAL = 1;
+
 		private static int avoidancePriority = 10;
 		/// <summary>
 		/// Returns a value for the avoidance priority (helps prevent units blocking each other in tight spaces - they'll just push the troublesome unit aside).
 		/// </summary>
 		public static int NextAvoidancePriority( bool employed )
 		{
+			// unempl , empl
 			// 10 - 49, 50 - 89
 			avoidancePriority++;
 			if( avoidancePriority == 50 )
@@ -249,7 +252,7 @@ namespace SS.Objects.Units
 					{
 						if( LevelDataManager.factionData[this.obj.factionId].resourcesStoredCache.ContainsKey( kvp.Key ) )
 						{
-							InventoryModule closestinventory = ResourceCollectorWorkplaceModule.GetClosestInventoryContaining( this.obj.transform.position, this.obj.factionId, kvp.Key );
+							InventoryModule closestinventory = SSObjectUtils.GetClosestInventoryContaining( this.obj.transform.position, this.obj.factionId, kvp.Key );
 
 							if( closestinventory != null )
 							{
@@ -273,7 +276,7 @@ namespace SS.Objects.Units
 					if( !foundInventory ) // else - can't pick up any of the wanted resources.
 					{
 						// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-						IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
+						IPaymentReceiver receiver = SSObjectUtils.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
 							LevelDataManager.factionData[this.obj.factionId].GetResourcesStored().ToArray()
 						);
 
@@ -284,7 +287,7 @@ namespace SS.Objects.Units
 				else
 				{
 					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
+					IPaymentReceiver receiver = SSObjectUtils.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
 						LevelDataManager.factionData[this.obj.factionId].GetResourcesStored().ToArray()
 					);
 
@@ -328,7 +331,7 @@ namespace SS.Objects.Units
 
 					string[] resourceTypesCarried = resourcesCarried.Keys.ToArray();
 
-					InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
+					InventoryModule dropOffToThis = SSObjectUtils.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
 
 					if( dropOffToThis != null )
 					{
@@ -346,14 +349,14 @@ namespace SS.Objects.Units
 					string[] resourceTypesCarried = inventory.GetAll().Keys.ToArray();
 					// - - find receiver that wants any of the carried resources.
 					// - - - find any receiver that wants resources that can be found (needs cache of all available resources per faction).
-					IPaymentReceiver receiver = ResourceCollectorWorkplaceModule.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
+					IPaymentReceiver receiver = SSObjectUtils.GetClosestWantingPayment( this.obj.transform.position, this.obj.factionId,
 						resourceTypesCarried
 					);
 
 					// If can't find a receiver that wants ANY of the carried resources, drop off at least one of the carried resources, and then try again - using faction's stored resources.
 					if( receiver == null )
 					{
-						InventoryModule dropOffToThis = ResourceCollectorWorkplaceModule.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
+						InventoryModule dropOffToThis = SSObjectUtils.GetClosestWithSpace( this.obj, this.obj.transform.position, resourceTypesCarried[0], this.obj.factionId );
 
 						if( dropOffToThis != null )
 						{

@@ -60,7 +60,8 @@ namespace SS.Objects.Units
 
 				PopulationSize populationBefore = this.__population;
 
-				if( populationBefore != value )
+
+				if( this.factionId != SSObjectDFSC.FACTIONID_INVALID && populationBefore != value )
 				{
 					if( populationBefore != PopulationSize.x1 )
 					{
@@ -87,7 +88,6 @@ namespace SS.Objects.Units
 
 
 
-		public const int AVOIDANCE_PRORITY_GENERAL = 1;
 
 
 
@@ -101,23 +101,20 @@ namespace SS.Objects.Units
 			}
 			set
 			{
+				if( this.isCivilian == value )
+				{
+					return;
+				}
 				// if the unit is civilian, make sure to set it's avoidance priority to 10-99, otherwise set them to 1. Do this to reduce civilians getting stuck on each other.
 				if( value )
 				{
 					this.civilian = this.gameObject.AddComponent<CivilianUnitExtension>();
-					if( !this.civilian.isEmployed )
-					{
-						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( false );
-					}
-					else
-					{
-						this.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( true );
-					}
+					this.navMeshAgent.avoidancePriority = CivilianUnitExtension.NextAvoidancePriority( false ); // no need for employed, since there's no time for the civilian to get employed.
 				}
 				else
 				{
-					Object.Destroy( this.GetComponent<CivilianUnitExtension>() );
-					navMeshAgent.avoidancePriority = AVOIDANCE_PRORITY_GENERAL;
+					Object.Destroy( this.civilian );
+					navMeshAgent.avoidancePriority = CivilianUnitExtension.AVOIDANCE_PRORITY_GENERAL;
 				}
 			}
 		}
@@ -295,13 +292,6 @@ namespace SS.Objects.Units
 		//
 
 
-		public void OnMouseEnterListener() => this.hud.ConditionalShow();
-
-		public void OnMouseStayListener() { }
-
-		public void OnMouseExitListener() => this.hud.ConditionalHide();
-
-
 		protected override void OnObjSpawn()
 		{
 			if( this.population == PopulationSize.x1 )
@@ -318,8 +308,8 @@ namespace SS.Objects.Units
 
 		protected override void OnObjDestroyed()
 		{
-			// prevent killed units making the employ input stuck in 'on' position.
-			if( InputOverrideEmployment.cueTracker == this )
+			// prevent killed units making the 'employ' input stuck in 'on' position.
+			if( InputOverrideEmployment.affectedCivilian == this )
 			{
 				InputOverrideEmployment.DisableEmploymentInput();
 			}
@@ -336,8 +326,12 @@ namespace SS.Objects.Units
 
 
 
-		public override void OnDisplay() => UnitDisplayManager.Display( this );
 
+		public void OnMouseEnterListener() => this.hud.ConditionalShow();
+		public void OnMouseStayListener() { }
+		public void OnMouseExitListener() => this.hud.ConditionalHide();
+
+		public override void OnDisplay() => UnitDisplayManager.Display( this );
 		public override void OnHide() => UnitDisplayManager.Hide( this );
 
 

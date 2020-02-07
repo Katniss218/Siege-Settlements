@@ -25,14 +25,14 @@ namespace SS.AI.Goals
 
 		public override void DeserializeKFF( KFFSerializer serializer )
 		{
-			try
-			{
+			//try
+			//{
 				this.destinationType = (TacticalMoveToGoal.DestinationType)serializer.ReadByte( "Destination" );
-			}
-			catch
-			{
-				throw new Exception( "Missing or invalid value of 'Destination' (" + serializer.file.fileName + ")." );
-			}
+			//}
+			//catch
+			//{
+			//	throw new Exception( "Missing or invalid value of 'Destination' (" + serializer.file.fileName + ")." );
+			//}
 
 			if( this.destinationType == TacticalMoveToGoal.DestinationType.POSITION )
 			{

@@ -257,7 +257,7 @@ namespace SS.Objects
 
 			base.Awake();
 		}
-
+		
 		internal static string GetHealthString( float health, float healthMax )
 		{
 			return "Health: " + (int)health + "/" + (int)healthMax;

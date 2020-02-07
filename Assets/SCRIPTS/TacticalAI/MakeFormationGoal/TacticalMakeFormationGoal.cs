@@ -10,7 +10,7 @@ namespace SS.AI.Goals
 {
 	public class TacticalMakeFormationGoal : TacticalGoal
 	{
-		public const string KFF_TYPEID = "move_to";
+		public const string KFF_TYPEID = "make_formation";
 
 		public enum DestinationType : byte
 		{

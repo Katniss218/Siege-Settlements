@@ -32,7 +32,7 @@ namespace SS.Objects.Modules
 				{
 					for( int i = 0; i < this.traversibleSubObjects.Length; i++ )
 					{
-						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].GetComponent<SubObject>().defaultRotation;
+						this.traversibleSubObjects[i].transform.localRotation = this.traversibleSubObjects[i].defaultRotation;
 					}
 				}
 			}

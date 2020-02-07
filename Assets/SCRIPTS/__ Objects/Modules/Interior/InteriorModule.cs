@@ -26,7 +26,7 @@ namespace SS.Objects.Modules
 			public Quaternion localRot { get; set; }
 
 			public IInteriorUser objInside;
-
+			
 			public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
 
 			public bool isEmpty
@@ -42,6 +42,7 @@ namespace SS.Objects.Modules
 
 		public class SlotGeneric : Slot
 		{
+#warning how to define max population?
 			public string[] whitelistedUnits { get; set; } = new string[0];
 		}
 
@@ -50,34 +51,45 @@ namespace SS.Objects.Modules
 			public CivilianUnitExtension worker { get; set; }
 		}
 
+
+
 		/// <summary>
 		/// Specifies the local-space position of the entrance.
 		/// </summary>
 		public Vector3? entrancePosition { get; set; }
 
-		public SlotGeneric[] slots { get; set; } = new SlotGeneric[0];
-		public SlotWorker[] workerSlots { get; set; } = new SlotWorker[0];
+		public SlotGeneric[] slots { get; private set; } = new SlotGeneric[0];
+		public SlotWorker[] workerSlots { get; private set; } = new SlotWorker[0];
 		
-		public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
+		public void SetSlots( SlotGeneric[] slots, SlotWorker[] workerSlots )
 		{
-			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
-			for( int i = 0; i < this.workerSlots.Length; i++ )
+			if( slots == null )
 			{
-				if( this.workerSlots[i].worker == null )
-				{
-					continue;
-				}
-
-				if( workplace != null && this.workerSlots[i].worker.workplace != workplace )
-				{
-					continue;
-				}
-
-				ret.Add( this.workerSlots[i].worker );
+				slots = new SlotGeneric[0];
 			}
-			return ret;
-		}
+			if( workerSlots == null )
+			{
+				workerSlots = new SlotWorker[0];
+			}
 
+			this.slots = slots;
+			this.workerSlots = workerSlots;
+
+			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
+#warning TODO! - subtract previous value.
+#warning slots contain a reference to the interior maybe?
+#warning TODO! - event based callback.
+			if( this.ssObject is IFactionMember )
+			{
+				IFactionMember factionMember = (IFactionMember)this.ssObject;
+				if( factionMember.factionId != SSObjectDFSC.FACTIONID_INVALID )
+				{
+					Levels.LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += this.slots.Length;
+				}
+			}
+
+			ReDisplaySlots_UI();
+		}
 
 
 		public Vector3 SlotWorldPosition( Slot slot )
@@ -101,6 +113,28 @@ namespace SS.Objects.Modules
 
 		public HUDInterior hudInterior { get; private set; } = null;
 
+
+
+		public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
+		{
+			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
+			for( int i = 0; i < this.workerSlots.Length; i++ )
+			{
+				if( this.workerSlots[i].worker == null )
+				{
+					continue;
+				}
+
+				if( workplace != null && this.workerSlots[i].worker.workplace != workplace )
+				{
+					continue;
+				}
+
+				ret.Add( this.workerSlots[i].worker );
+			}
+			return ret;
+		}
+
 		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
 		{
 			slot = null;
@@ -120,20 +154,6 @@ namespace SS.Objects.Modules
 		}
 
 
-
-		public void UpdateSlotDisplay()
-		{
-			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
-			
-			if( Selection.IsDisplayedModule( this ) )
-			{
-				SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
-				SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
-				
-				DisplaySlotsList_UI();
-				DisplayWorkerSlotsList_UI();
-			}
-		}
 
 		public void ExitAll()
 		{
@@ -228,13 +248,30 @@ namespace SS.Objects.Modules
 
 		protected override void Awake()
 		{
-#warning Selectability of objects depends on more factors than just the base class of the object. Objects containing Interior Module are selectable.
+#warning EVERY SINGLE object is potentially selectable, even projectiles (for simplicity).
+#warning Not every object responds to selection queries, so not every object can be selected by clicking on it.
+#warning - Selectability (selection queries) of objects depends on the base class type & any of the modules added to it.
 			// Cache the starting position & rotation.
 			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
 
 			base.Awake();
+		}
+
+		public override void OnObjSpawn()
+		{
+#warning todo.
+			if( this.ssObject is IFactionMember )
+			{
+				IFactionMember factionMember = (IFactionMember)this.ssObject;
+				if( factionMember.factionId != SSObjectDFSC.FACTIONID_INVALID )
+				{
+					Levels.LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += this.slots.Length;
+				}
+			}
+
+			base.OnObjSpawn();
 		}
 
 		private void Update()
@@ -260,6 +297,7 @@ namespace SS.Objects.Modules
 
 		public override void OnObjDestroyed()
 		{
+			Levels.LevelDataManager.factionData[((IFactionMember)this.ssObject).factionId].maxPopulationCache -= this.slots.Length;
 			this.ExitAll();
 		}
 
@@ -316,7 +354,21 @@ namespace SS.Objects.Modules
 		//
 
 
-		private void TrySelectInside_UI( IInteriorUser insideObj )
+		public void ReDisplaySlots_UI()
+		{
+			if( !Selection.IsDisplayedModule( this ) )
+			{
+				return;
+			}
+
+			SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
+			SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
+			DisplaySlotsList_UI();
+			DisplayWorkerSlotsList_UI();
+		}
+
+
+		private void TrySelectInside( IInteriorUser insideObj )
 		{
 			if( insideObj != null )
 			{
@@ -336,7 +388,7 @@ namespace SS.Objects.Modules
 				IInteriorUser insideObj = this.slots[i].objInside;
 				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
-					TrySelectInside_UI( insideObj );
+					TrySelectInside( insideObj );
 				} );
 			}
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
@@ -351,7 +403,7 @@ namespace SS.Objects.Modules
 				IInteriorUser insideObj = this.workerSlots[i].objInside;
 				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
 				{
-					TrySelectInside_UI( insideObj );
+					TrySelectInside( insideObj );
 				} );
 			}
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );

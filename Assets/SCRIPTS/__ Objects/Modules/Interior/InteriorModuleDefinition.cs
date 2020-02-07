@@ -71,9 +71,11 @@ namespace SS.Objects.Modules
 			module.icon = this.icon;
 			module.entrancePosition = this.entrancePosition;
 
+			InteriorModule.SlotGeneric[] slots = null;
+			InteriorModule.SlotWorker[] workerSlots = null;
 			if( this.slots != null )
 			{
-				module.slots = new InteriorModule.SlotGeneric[this.slots.Length];
+				slots = new InteriorModule.SlotGeneric[this.slots.Length];
 				for( int i = 0; i < this.slots.Length; i++ )
 				{
 					InteriorModule.SlotGeneric slot = new InteriorModule.SlotGeneric();
@@ -83,13 +85,13 @@ namespace SS.Objects.Modules
 					slot.isHidden = this.slots[i].isHidden;
 					slot.whitelistedUnits = this.slots[i].whitelistedUnits;
 
-					module.slots[i] = slot;
+					slots[i] = slot;
 				}
 			}
 			
 			if( this.workerSlots != null )
 			{
-				module.workerSlots = new InteriorModule.SlotWorker[this.workerSlots.Length];
+				workerSlots = new InteriorModule.SlotWorker[this.workerSlots.Length];
 				for( int i = 0; i < this.workerSlots.Length; i++ )
 				{
 					InteriorModule.SlotWorker slot = new InteriorModule.SlotWorker();
@@ -98,11 +100,11 @@ namespace SS.Objects.Modules
 					slot.maxPopulation = this.workerSlots[i].maxPopulation;
 					slot.isHidden = this.workerSlots[i].isHidden;
 
-					module.workerSlots[i] = slot;
+					workerSlots[i] = slot;
 				}
 			}
 			
-			module.UpdateSlotDisplay();
+			module.SetSlots( slots, workerSlots );
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )

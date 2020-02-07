@@ -252,7 +252,7 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectCreator.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectDFS.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectExtension.cs" />
-    <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectHelper.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\SSObjectUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\Light\LightSubObject.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\Light\LightSubObjectDefinition.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\Mesh\MeshSubObject.cs" />

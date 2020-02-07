@@ -112,10 +112,13 @@ namespace SS.AI
 					}
 				}
 
-				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.isEmployed )
+				if( (selected[i] is Unit) )
 				{
-					continue;
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
 				}
 
 				if( canTarget )
@@ -233,10 +236,13 @@ namespace SS.AI
 					continue;
 				}
 
-				CivilianUnitExtension cue = selected[i].GetComponent<CivilianUnitExtension>();
-				if( cue != null && cue.isEmployed )
+				if( (selected[i] is Unit) )
 				{
-					continue;
+					CivilianUnitExtension cue = ((Unit)selected[i]).civilian;
+					if( cue != null && cue.isEmployed )
+					{
+						continue;
+					}
 				}
 
 				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.

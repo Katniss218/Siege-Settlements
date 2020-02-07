@@ -63,7 +63,7 @@ namespace SS.Objects.Extras
 			//    SUB-OBJECTS
 			//
 
-			SSObjectCreator.AssignSubObjects( gameObject, def );
+			SSObjectCreator.AssignSubObjects( extra, def );
 
 			//
 			//    MODULES

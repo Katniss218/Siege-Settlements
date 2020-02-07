@@ -43,22 +43,20 @@ namespace SS.Objects.Units
 
 			if( unit.isCivilian )
 			{
-				CivilianUnitExtension cue = unit.civilian;
-
 				// Set the workplace (if unit is a civilian & workplace is present).
 				if( data.workplace != null )
 				{
 					SSObject obj = SSObject.Find( data.workplace.Item1 );
 					WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
 
-					WorkplaceModule.SetWorking( workplace, cue, data.workplace.Item3 );
-					cue.isWorking = data.isWorking ?? false;
+					WorkplaceModule.SetWorking( workplace, unit.civilian, data.workplace.Item3 );
+					unit.civilian.isWorking = data.isWorking ?? false;
 				}
 
 				// Set the automatic duty (only for civilians).
 				if( data.isOnAutomaticDuty != null )
 				{
-					cue.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
+					unit.civilian.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
 				}
 			}
 			
@@ -157,7 +155,7 @@ namespace SS.Objects.Units
 
 				if( Selection.IsDisplayed( unit ) )
 				{
-					SSObjectHelper.ReDisplayDisplayed();
+					SSObjectUtils.ReDisplayDisplayed();
 				}
 			} );
 
@@ -290,7 +288,7 @@ namespace SS.Objects.Units
 			//    SUB-OBJECTS
 			//
 
-			SSObjectCreator.AssignSubObjects( gameObject, def );
+			SSObjectCreator.AssignSubObjects( unit, def );
 
 			//
 			//    MODULES

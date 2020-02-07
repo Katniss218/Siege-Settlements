@@ -5,7 +5,6 @@ using UnityEngine;
 namespace SS.Objects.SubObjects
 {
 	[RequireComponent( typeof( ParticleSystem ) )]
-	[RequireComponent( typeof( ParticleSystemRenderer ) )]
 	public class ParticlesSubObject : SubObject
 	{
 		ParticleSystem __particleSystem;
@@ -34,6 +33,12 @@ namespace SS.Objects.SubObjects
 			}
 		}
 
+
+		//
+		//	Main properties
+		//
+
+		
 		public void SetLifetime( float min, float max )
 		{
 			ParticleSystem.MainModule main = particleSystem.main;
@@ -57,6 +62,11 @@ namespace SS.Objects.SubObjects
 			ParticleSystem.MainModule main = particleSystem.main;
 			main.simulationSpace = space;
 		}
+
+
+		//
+		//	Base stats (shape/emission)
+		//
 
 
 		public void SetShape( ParticlesSubObjectDefinition.Shape shape )
@@ -90,17 +100,11 @@ namespace SS.Objects.SubObjects
 			emission.rateOverTime = overTime;
 		}
 
-		public void SetMaterial( Texture2D colorMap, Color? emission )
-		{
-			this.particleSystemRenderer.material = MaterialManager.CreateParticles( colorMap, emission );
-			List<ParticleSystemVertexStream> streams = new List<ParticleSystemVertexStream>()
-			{
-				 ParticleSystemVertexStream.Position,
-				 ParticleSystemVertexStream.Color,
-				 ParticleSystemVertexStream.UV
-			};
-			this.particleSystemRenderer.SetActiveVertexStreams( streams );
-		}
+
+		//
+		//	Additional stats (particle system modules)
+		//
+
 
 		public void SetVelocityOverLifetime( Tuple<float, Vector3>[] values )
 		{
@@ -150,6 +154,24 @@ namespace SS.Objects.SubObjects
 				size.AddKey( values[i].Item1, values[i].Item2 );
 			}
 			sizeOverTime.size = new ParticleSystem.MinMaxCurve( 1.0f, size );
+		}
+
+
+		//
+		//	Rendering
+		//
+
+		
+		public void SetMaterial( Texture2D colorMap, Color? emission )
+		{
+			this.particleSystemRenderer.material = MaterialManager.CreateParticles( colorMap, emission );
+			List<ParticleSystemVertexStream> streams = new List<ParticleSystemVertexStream>()
+			{
+				 ParticleSystemVertexStream.Position,
+				 ParticleSystemVertexStream.Color,
+				 ParticleSystemVertexStream.UV
+			};
+			this.particleSystemRenderer.SetActiveVertexStreams( streams );
 		}
 	}
 }

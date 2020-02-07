@@ -413,7 +413,7 @@ namespace SS
 
 		private void Inp_F3( InputQueue self )
 		{
-			SSObjectDFSC[] damageables = SSObject.GetAllDFS();
+			SSObjectDFSC[] damageables = SSObject.GetAllDFSC();
 
 			for( int i = 0; i < damageables.Length; i++ )
 			{

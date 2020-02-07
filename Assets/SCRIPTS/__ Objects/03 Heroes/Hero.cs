@@ -2,13 +2,12 @@
 using SS.Objects.SubObjects;
 using SS.UI;
 using SS.UI.HUDs;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SS.Objects.Heroes
 {
-	[UseHud(typeof(HeroHUD), "hud")]
+	[UseHud( typeof( HeroHUD ), "hud" )]
 	public class Hero : SSObjectDFSC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
@@ -82,25 +81,19 @@ namespace SS.Objects.Heroes
 		float __movementSpeed;
 		public float movementSpeed
 		{
-			get
-			{
-				return this.__movementSpeed;
-			}
+			get => this.__movementSpeed;
 			set
 			{
 				this.__movementSpeed = value;
 				this.navMeshAgent.speed = value;
 			}
 		}
-		
+
 
 		float __rotationSpeed;
 		public float rotationSpeed
 		{
-			get
-			{
-				return this.__rotationSpeed;
-			}
+			get => this.__rotationSpeed;
 			set
 			{
 				this.__rotationSpeed = value;
@@ -120,7 +113,7 @@ namespace SS.Objects.Heroes
 
 		public bool isInside
 		{
-			get { return this.interior != null; }
+			get => this.interior != null;
 		}
 		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
 
@@ -192,7 +185,7 @@ namespace SS.Objects.Heroes
 
 			slotHud.SetHealth( null );
 			slotHud.ClearSprite();
-			
+
 
 			// -
 
@@ -222,11 +215,9 @@ namespace SS.Objects.Heroes
 		//
 
 
-		
+
 		public void OnMouseEnterListener() => this.hud.ConditionalShow();
-
 		public void OnMouseStayListener() { }
-
 		public void OnMouseExitListener() => this.hud.ConditionalHide();
 
 

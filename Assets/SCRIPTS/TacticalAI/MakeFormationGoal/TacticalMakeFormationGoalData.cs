@@ -13,7 +13,7 @@ namespace SS.AI.Goals
 
 		public override TacticalGoal GetGoal()
 		{
-			TacticalMoveToGoal goal = new TacticalMoveToGoal();
+			TacticalMakeFormationGoal goal = new TacticalMakeFormationGoal();
 			goal.SetData( this );
 			return goal;
 		}

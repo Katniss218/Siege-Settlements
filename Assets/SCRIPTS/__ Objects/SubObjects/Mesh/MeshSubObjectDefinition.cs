@@ -14,26 +14,19 @@ namespace SS.Objects.SubObjects
 		public MaterialDefinition materialData { get; set; }
 		
 
-		public override SubObject AddTo( GameObject gameObject )
+		public override SubObject AddTo( SSObject ssObject )
 		{
-			GameObject child = new GameObject( "Sub-Object [" + KFF_TYPEID + "] '" + this.subObjectId.ToString( "D" ) + "'" );
-			child.transform.SetParent( gameObject.transform );
+			var sub = ssObject.AddSubObject<MeshSubObject>( this.subObjectId );
 
-			child.transform.localPosition = this.localPosition;
-			child.transform.localRotation = this.localRotation;
-			
-			MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-			MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
+			sub.Item1.transform.localPosition = this.localPosition;
+			sub.Item1.transform.localRotation = this.localRotation;
 
-			MeshSubObject subObject = child.AddComponent<MeshSubObject>();
-			subObject.subObjectId = this.subObjectId;
-			subObject.SetMesh( this.mesh );
-			subObject.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
+			sub.Item2.defaultPosition = this.localPosition;
+			sub.Item2.defaultRotation = this.localRotation;
+			sub.Item2.SetMesh( this.mesh );
+			sub.Item2.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
-			subObject.defaultPosition = this.localPosition;
-			subObject.defaultRotation = this.localRotation;
-
-			return subObject;
+			return sub.Item2;
 		}
 
 

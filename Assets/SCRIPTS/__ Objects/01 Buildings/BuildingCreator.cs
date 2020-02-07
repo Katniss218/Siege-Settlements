@@ -1,7 +1,5 @@
-﻿using SS.Content;
-using SS.Levels;
+﻿using SS.Levels;
 using SS.Levels.SaveStates;
-using SS.Objects.Modules;
 using SS.Objects.SubObjects;
 using SS.UI;
 using System;
@@ -84,21 +82,13 @@ namespace SS.Objects.Buildings
 			//
 			//    CONTAINER GAMEOBJECT
 			//
-
-			//GameObject hudGameObject = Object.Instantiate( (GameObject)AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/Object HUDs/building_hud" ), Main.camera.WorldToScreenPoint( gameObject.transform.position ), Quaternion.identity, Main.objectHUDCanvas );
-
-			//HUD hud = hudGameObject.GetComponent<HUD>();
-			//hud.isVisible = Main.isHudForcedVisible;
-
-
+			
 			BoxCollider collider = gameObject.AddComponent<BoxCollider>();
 
 			NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
 			navMeshObstacle.carving = true;
 
 			Building building = gameObject.AddComponent<Building>();
-			//building.hud = hud;
-			//hud.hudHolder = building;
 			building.guid = guid;
 			building.definitionId = def.id;
 			building.displayName = def.displayName;
@@ -136,7 +126,7 @@ namespace SS.Objects.Buildings
 
 				if( Selection.IsDisplayed( building ) )
 				{
-					SSObjectHelper.ReDisplayDisplayed();
+					SSObjectUtils.ReDisplayDisplayed();
 				}
 			} );
 
@@ -269,7 +259,7 @@ namespace SS.Objects.Buildings
 			//    SUB-OBJECTS
 			//
 
-			SSObjectCreator.AssignSubObjects( gameObject, def );
+			SSObjectCreator.AssignSubObjects( building, def );
 
 			//
 			//    MODULES
