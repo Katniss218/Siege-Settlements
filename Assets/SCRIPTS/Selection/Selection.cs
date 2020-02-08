@@ -90,15 +90,22 @@ namespace SS
 				{
 					continue;
 				}
-#warning decouple groups from this. Don't spawn the selectiongroup hud for ALL objects. Have a field on the ssObject (isselectable) and spawn/despawn hud when it changes.
-				//groups[index][i].hudDFSC.SetSelectionGroup( null );
+				
+				if( groups[index][i] is SSObjectDFC )
+				{
+					((SSObjectDFC)groups[index][i]).hudDFSC.SetSelectionGroup( null );
+				}
 			}
 			groups[index].Clear();
 			groups[index].AddRange( objects );
-			/*for( int i = 0; i < objects.Length; i++ )
+
+			for( int i = 0; i < objects.Length; i++ )
 			{
-				objects[i].hudDFSC.SetSelectionGroup( index );
-			}*/
+				if( groups[index][i] is SSObjectDFC )
+				{
+					((SSObjectDFC)groups[index][i]).hudDFSC.SetSelectionGroup( index );
+				}
+			}
 		}
 
 		/// <summary>

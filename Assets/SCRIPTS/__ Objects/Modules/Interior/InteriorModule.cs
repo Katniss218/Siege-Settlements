@@ -93,6 +93,10 @@ namespace SS.Objects.Modules
 			
 			if( this.ssObject is IFactionMember )
 			{
+				if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable )
+				{
+					goto skip_cache;
+				}
 				IFactionMember factionMember = (IFactionMember)this.ssObject;
 				if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
 				{
@@ -103,6 +107,7 @@ namespace SS.Objects.Modules
 						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 				}
 			}
+	skip_cache:
 
 			this.slots = slots;
 			this.workerSlots = workerSlots;
@@ -288,19 +293,51 @@ namespace SS.Objects.Modules
 
 			if( this.ssObject is IFactionMember )
 			{
-				((IFactionMember)this.ssObject).onFactionChange.AddListener( (int before, int after) =>
+				IFactionMember factionMember = (IFactionMember)this.ssObject;
+				factionMember.onFactionChange.AddListener( (int before, int after) =>
 				{
+					if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable )
+					{
+						return;
+					}
+
 					if( before != SSObjectDFC.FACTIONID_INVALID )
 					{
 						LevelDataManager.factionData[before].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
 					}
 					LevelDataManager.factionData[after].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
-
 					ResourcePanel.instance.UpdatePopulationDisplay(
 						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
 						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 				} );
+
+				if( this.ssObject is ISSObjectUsableUnusable )
+				{
+					ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.ssObject;
+					usableUnusable.onUsableStateChanged.AddListener( () =>
+					{
+						if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
+						{
+							if( usableUnusable.isUsable )
+							{
+								LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
+							}
+							else
+							{
+								this.ExitAll();
+								LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+							}
+							if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+							{
+								ResourcePanel.instance.UpdatePopulationDisplay(
+									LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+									LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+							}
+						}
+					} );
+				}
 			}
+
 
 			base.Awake();
 		}
