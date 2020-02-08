@@ -151,14 +151,7 @@ namespace SS.Objects.Modules
 
 			base.Awake();
 		}
-
-		public override void OnObjSpawn()
-		{
-			this.ssObject.isSelectable = true;
-
-			base.OnObjSpawn();
-		}
-
+		
 		public override void OnObjDestroyed()
 		{
 #warning this is called frame after? (doesn't hide when rapidly moving mouse over trees and pressing destroy button at the same time). Doesn't hide when the mouse manages to exit in the same frame as destroy.

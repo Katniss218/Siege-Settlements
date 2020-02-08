@@ -60,7 +60,7 @@ namespace SS.Objects.Units
 				}
 			}
 			
-			unit.population = data.population;
+			unit.SetPopulation( data.population, true, true );
 
 			//
 			//    MODULES
@@ -72,9 +72,7 @@ namespace SS.Objects.Units
 			{
 				unit.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
-#warning inventory can't block setting the population. It could block splitting & overall needs better handling of population changing.
-#warning   data should set the population in a different way maybe?
-
+#warning &Inventory can't block setting the population&. It could block splitting & overall needs better handling of population changing - TODO: Add modules being able to contribute to blocks by non-forced.
 		}
 
 

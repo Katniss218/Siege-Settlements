@@ -44,8 +44,7 @@ namespace SS.Objects.Modules
 
 		public class SlotGeneric : Slot
 		{
-#warning MaxPopulation is defined by a separate variable of the slot.
-			//public bool countsTowardsMaxPopulation { get; set; }
+			public bool countsTowardsMaxPopulation { get; set; }
 			public string[] whitelistedUnits { get; set; } = new string[0];
 
 
@@ -54,7 +53,10 @@ namespace SS.Objects.Modules
 				int accumulator = 0;
 				for( int i = 0; i < slots.Length; i++ )
 				{
-					accumulator += 1;
+					if( slots[i].countsTowardsMaxPopulation )
+					{
+						accumulator += (int)slots[i].maxPopulation;
+					}
 				}
 				return accumulator;
 			}
@@ -102,9 +104,13 @@ namespace SS.Objects.Modules
 				{
 					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
 					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( slots );
-					ResourcePanel.instance.UpdatePopulationDisplay(
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+
+					if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdatePopulationDisplay(
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+					}
 				}
 			}
 	skip_cache:
@@ -285,11 +291,12 @@ namespace SS.Objects.Modules
 
 		protected override void Awake()
 		{
-#warning Add ssObject.isSelectable = true, for modules which require selectability.
 			// Cache the starting position & rotation.
 			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
 			this.oldPosition = this.transform.position;
 			this.oldRotation = this.transform.rotation;
+
+			this.ssObject.isSelectable = true;
 
 			if( this.ssObject is IFactionMember )
 			{
@@ -306,9 +313,13 @@ namespace SS.Objects.Modules
 						LevelDataManager.factionData[before].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
 					}
 					LevelDataManager.factionData[after].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
-					ResourcePanel.instance.UpdatePopulationDisplay(
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+
+					if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+					{
+						ResourcePanel.instance.UpdatePopulationDisplay(
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+					}
 				} );
 
 				if( this.ssObject is ISSObjectUsableUnusable )

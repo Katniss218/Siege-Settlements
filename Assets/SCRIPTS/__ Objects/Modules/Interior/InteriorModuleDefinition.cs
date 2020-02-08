@@ -18,6 +18,7 @@ namespace SS.Objects.Modules
 
 			public PopulationSize maxPopulation { get; set; }
 
+			public bool countsTowardsMaxPopulation { get; set; }
 			public bool isHidden { get; set; }
 
 			public string[] whitelistedUnits { get; set; }
@@ -26,8 +27,9 @@ namespace SS.Objects.Modules
 			{
 				this.position = serializer.ReadVector3( "Position" );
 				this.rotation = serializer.ReadQuaternion( "Rotation" );
-
+#warning split definition types into generic & worker slots.
 				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
+				this.countsTowardsMaxPopulation = serializer.ReadBool( "CountsTowardsMaxPopulation" );
 				this.isHidden = serializer.ReadBool( "IsHidden" );
 
 				this.whitelistedUnits = serializer.ReadStringArray( "WhitelistedUnits" );
@@ -38,6 +40,7 @@ namespace SS.Objects.Modules
 				serializer.WriteVector3( "", "Position", this.position );
 				serializer.WriteQuaternion( "", "Rotation", this.rotation );
 				serializer.WriteByte( "", "MaxPopulation", (byte)this.maxPopulation );
+				serializer.WriteBool( "", "CountsTowardsMaxPopulation", this.countsTowardsMaxPopulation );
 				serializer.WriteBool( "", "IsHidden", this.isHidden );
 
 				serializer.WriteStringArray( "", "WhitelistedUnits", this.whitelistedUnits );
@@ -82,6 +85,7 @@ namespace SS.Objects.Modules
 					slot.localPos = this.slots[i].position;
 					slot.localRot = this.slots[i].rotation;
 					slot.maxPopulation = this.slots[i].maxPopulation;
+					slot.countsTowardsMaxPopulation = this.slots[i].countsTowardsMaxPopulation;
 					slot.isHidden = this.slots[i].isHidden;
 					slot.whitelistedUnits = this.slots[i].whitelistedUnits;
 

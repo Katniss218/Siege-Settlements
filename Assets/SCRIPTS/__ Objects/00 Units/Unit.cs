@@ -39,47 +39,59 @@ namespace SS.Objects.Units
 		}
 		
 		public bool isPopulationLocked { get; set; }
-		public byte? populationSizeLimit { get; set; }
-		private PopulationSize __population = PopulationSize.x1;
-		public PopulationSize population
+		public byte? populationSizeLimit { get; set; } = null;
+		public PopulationSize population { get; private set; } = PopulationSize.x1;
+
+		/// <summary>
+		/// Sets the population, with additional functionality.
+		/// </summary>
+		/// <param name="newPopulation">The new population.</param>
+		/// <param name="scaleStats">If true, the stats will be rescaled to fit the new population size.</param>
+		/// <param name="force">If true, it bypasses additional checks, such as is the population locked, etc.</param>
+		public void SetPopulation( PopulationSize newPopulation, bool scaleStats, bool force )
 		{
-			get
-			{
-				return this.__population;
-			}
-			set
+			// If not forced assignment - check if the population can be changed, throw exception if not.
+			if( !force )
 			{
 				if( !this.CanChangePopulation() )
 				{
-					return;
+					throw new System.Exception( "Can't set non-forced population: Population can't be changed currently." );
 				}
-				if( this.populationSizeLimit != null && (byte)value > this.populationSizeLimit )
+				if( this.populationSizeLimit != null && (byte)newPopulation > this.populationSizeLimit )
 				{
-					return;
+					throw new System.Exception( "Can't set non-forced population: " + (byte)newPopulation + " is larger than population limit (" + this.populationSizeLimit + ")." );
 				}
-
-				PopulationSize populationBefore = this.__population;
-
-
-				if( this.factionId != SSObjectDFC.FACTIONID_INVALID && populationBefore != value )
-				{
-					if( populationBefore != PopulationSize.x1 )
-					{
-						LevelDataManager.factionData[this.factionId].populationCache -= (int)populationBefore;
-					}
-					LevelDataManager.factionData[this.factionId].populationCache += (int)value;
-					if( this.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						ResourcePanel.instance.UpdatePopulationDisplay(
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
-					}
-				}
-
-				
-				this.__population = value;
-				PopulationUnitUtils.ScaleStats( this, populationBefore, value );
 			}
+
+			PopulationSize oldPopulation = this.population;
+
+			this.population = newPopulation;
+
+			if( this.factionId != SSObjectDFC.FACTIONID_INVALID && oldPopulation != newPopulation )
+			{
+				if( oldPopulation != PopulationSize.x1 )
+				{
+					LevelDataManager.factionData[this.factionId].populationCache -= (int)oldPopulation;
+				}
+				LevelDataManager.factionData[this.factionId].populationCache += (int)newPopulation;
+				if( this.factionId == LevelDataManager.PLAYER_FAC )
+				{
+					ResourcePanel.instance.UpdatePopulationDisplay(
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+				}
+			}
+
+			if( scaleStats )
+			{
+				PopulationUnitUtils.ScaleStats( this, oldPopulation, newPopulation );
+			}
+		}
+
+		public bool CanChangePopulation()
+		{
+#warning Population locking?
+			return !this.isPopulationLocked;
 		}
 
 		/// <summary>
@@ -340,12 +352,6 @@ namespace SS.Objects.Units
 		public override void OnDisplay() => UnitDisplayManager.Display( this );
 		public override void OnHide() => UnitDisplayManager.Hide( this );
 
-
-		public bool CanChangePopulation()
-		{
-#warning figure out something for the pop locking.
-			return !this.isPopulationLocked;
-		}
 	}
 }
  

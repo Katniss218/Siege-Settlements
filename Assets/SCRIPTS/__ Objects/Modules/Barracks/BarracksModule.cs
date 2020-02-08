@@ -236,6 +236,8 @@ namespace SS.Objects.Modules
 		{
 			LevelDataManager.onTechStateChanged.AddListener( this.OnTechStateChanged );
 
+			this.ssObject.isSelectable = true;
+
 			base.Awake();
 		}
 		

@@ -324,16 +324,16 @@ namespace SS
 					switch( unit.population )
 					{
 						case PopulationSize.x1:
-							unit.population = PopulationSize.x2;
+							unit.SetPopulation( PopulationSize.x2, true, true );
 							break;
 						case PopulationSize.x2:
-							unit.population = PopulationSize.x4;
+							unit.SetPopulation( PopulationSize.x4, true, true );
 							break;
 						case PopulationSize.x4:
-							unit.population = PopulationSize.x8;
+							unit.SetPopulation( PopulationSize.x8, true, true );
 							break;
 						case PopulationSize.x8:
-							unit.population = PopulationSize.x1;
+							unit.SetPopulation( PopulationSize.x1, true, true );
 							break;
 					}
 				}
