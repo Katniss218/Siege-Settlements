@@ -180,6 +180,7 @@
     <Compile Include="Assets\SCRIPTS\UI\UIUtils.cs" />
     <Compile Include="Assets\SCRIPTS\UseHudAttribute.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\CivilianUnitExtension.cs" />
+    <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\IPopulationBlocker.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationSize.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\PopulationUnitUtils.cs" />
     <Compile Include="Assets\SCRIPTS\__ Objects\00 Units\Unit.cs" />

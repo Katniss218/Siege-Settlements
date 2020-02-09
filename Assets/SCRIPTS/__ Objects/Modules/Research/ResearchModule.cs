@@ -1,6 +1,7 @@
 ﻿using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.Technologies;
@@ -13,7 +14,7 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Modules
 {
-	public class ResearchModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
+	public class ResearchModule : SSModule, ISelectDisplayHandler, IPaymentReceiver, IPopulationBlocker
 	{
 		public const string KFF_TYPEID = "research";
 
@@ -488,6 +489,11 @@ namespace SS.Objects.Modules
 		public void OnHide()
 		{
 
+		}
+
+		public bool CanChangePopulation()
+		{
+			return false;
 		}
 	}
 }

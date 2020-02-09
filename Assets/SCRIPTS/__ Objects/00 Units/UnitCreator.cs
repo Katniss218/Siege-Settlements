@@ -72,7 +72,6 @@ namespace SS.Objects.Units
 			{
 				unit.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
 			}
-#warning &Inventory can't block setting the population&. It could block splitting & overall needs better handling of population changing - TODO: Add modules being able to contribute to blocks by non-forced.
 		}
 
 
@@ -377,6 +376,11 @@ namespace SS.Objects.Units
 			navMeshAgent.enabled = true;
 
 			return unit;
+		}
+
+		public static bool CanCreate( int factionId, PopulationSize population )
+		{
+			return (LevelDataManager.factionData[factionId].populationCache + (int)population) <= (LevelDataManager.factionData[factionId].maxPopulationCache);
 		}
 	}
 }

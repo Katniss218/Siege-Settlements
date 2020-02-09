@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Modules
 {
-	public class BarracksModule : SSModule, ISelectDisplayHandler, IPaymentReceiver
+	public class BarracksModule : SSModule, ISelectDisplayHandler, IPaymentReceiver, IPopulationBlocker
 	{
 		public const string KFF_TYPEID = "barracks";
 
@@ -200,7 +200,20 @@ namespace SS.Objects.Modules
 			this.TrainingEnd_UI();
 			this.onTrainingEnd?.Invoke();
 		}
-	
+
+
+		private PopulationSize GetSpawnSize( UnitDefinition def )
+		{
+			if( def.isPopulationLocked )
+			{
+				return PopulationSize.x1;
+			}
+			if( def.populationSizeLimit != null && def.populationSizeLimit < (byte)PopulationSize.x4 )
+			{
+				return (PopulationSize)def.populationSizeLimit;
+			}
+			return PopulationSize.x4;
+		}
 
 		private void Spawn( UnitDefinition def )
 		{
@@ -213,7 +226,7 @@ namespace SS.Objects.Modules
 			data.position = spawnPos;
 			data.rotation = Quaternion.identity;
 			data.factionId = ((IFactionMember)this.ssObject).factionId;
-			data.population = PopulationSize.x4;
+			data.population = GetSpawnSize( def );
 
 			Unit unit = UnitCreator.Create( def, data.guid );
 			UnitCreator.SetData( unit, data );
@@ -250,6 +263,12 @@ namespace SS.Objects.Modules
 
 			if( this.IsPaymentDone() )
 			{
+				if( !UnitCreator.CanCreate( ((IFactionMember)this.ssObject).factionId, GetSpawnSize( this.queuedUnits[0] ) ) )
+				{
+#warning info on selection panel.
+					return;
+				}
+
 				// progress training.
 				this.buildTimeRemaining -= this.trainSpeed * Time.deltaTime;
 
@@ -553,6 +572,11 @@ namespace SS.Objects.Modules
 			Object.Destroy( this.rallyPointGameObject );
 			Main.mouseInput.ClearOnPress( MouseCode.LeftMouseButton, this.Inp_SetRally ); // Force remove input if hidden.
 			Main.mouseInput.ClearOnPress( MouseCode.RightMouseButton, this.Inp_CancelRally ); // Force remove input if hidden.
+		}
+
+		public bool CanChangePopulation()
+		{
+			return false;
 		}
 
 

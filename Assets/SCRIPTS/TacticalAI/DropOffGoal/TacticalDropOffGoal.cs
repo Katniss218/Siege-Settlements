@@ -33,14 +33,14 @@ namespace SS.AI.Goals
 		private const float INTERACTION_DISTANCE = 0.75f;
 		private const float INTERACTION_DELAY = 0.3f;
 
-		
+
 		public DropOffMode dropOffMode { get; private set; }
 		public Vector3 destinationPos { get; private set; }
 		private SSObject destination;
 		public InventoryModule destinationInventory { get; private set; }
 
 		public IPaymentReceiver destinationPaymentReceiver { get; private set; }
-	
+
 		/// <summary>
 		/// Specified which resources to pick up (set to null to take any and all resources).
 		/// </summary>
@@ -158,7 +158,7 @@ namespace SS.AI.Goals
 				}
 			}
 		}
-	
+
 		private static Dictionary<string, int> GetClampedRes( Dictionary<string, int> max, Dictionary<string, int> preferred, out bool didClamp )
 		{
 			// Resources that will be dropped (either this.resources, or resources carried, depends if the resources carried contains enough).
@@ -214,7 +214,7 @@ namespace SS.AI.Goals
 						this.inventory.Remove( kvp.Key, kvp.Value );
 						ExtractAndDrop( depositPosition, Quaternion.identity, kvp.Key, kvp.Value );
 					}
-					
+
 					return didClamp;
 				}
 			}
@@ -232,7 +232,7 @@ namespace SS.AI.Goals
 			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 			bool didClamp; // if true, the resources were clamped (not all dropped).
-			Dictionary<string,int> resourcesToDrop = GetClampedRes( resourcesCarried, this.resources, out didClamp );
+			Dictionary<string, int> resourcesToDrop = GetClampedRes( resourcesCarried, this.resources, out didClamp );
 
 			bool failed = false;
 			foreach( var kvp in resourcesToDrop )
@@ -275,7 +275,7 @@ namespace SS.AI.Goals
 					}
 				}
 			}
-			
+
 			Dictionary<string, int> resourcesCarried = this.inventory.GetAll();
 
 			bool didClamp; // if true, the resources were clamped (not all dropped).
@@ -350,7 +350,7 @@ namespace SS.AI.Goals
 			{
 				return;
 			}
-			
+
 			if( this.dropOffMode == DropOffMode.POSITION )
 			{
 				// Don't drop off resources when too far away.
@@ -363,7 +363,7 @@ namespace SS.AI.Goals
 				bool outcome = this.OnArrivalPosition( controller );
 
 				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
-				return; 
+				return;
 			}
 			if( this.dropOffMode == DropOffMode.INVENTORY )
 			{
@@ -373,7 +373,7 @@ namespace SS.AI.Goals
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
-				
+
 				bool outcome = this.OnArrivalInventory( controller );
 
 				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
@@ -387,20 +387,20 @@ namespace SS.AI.Goals
 					controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 					return;
 				}
-				
+
 				bool outcome = this.OnArrivalPayment( controller );
 
 				controller.ExitCurrent( outcome ? TacticalGoalExitCondition.SUCCESS : TacticalGoalExitCondition.FAILURE );
 				return;
 			}
 		}
-		
+
 
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-		
+
 		public override TacticalGoalData GetData()
 		{
 			TacticalDropOffGoalData data = new TacticalDropOffGoalData()
@@ -479,8 +479,8 @@ namespace SS.AI.Goals
 					ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)SSObject.Find( data.destinationGuid.Item1 );
 					//Debug.Log( usableUnusable.GetType() );
 					//Debug.Log( usableUnusable.paymentReceiver.GetType() );
-#warning Building.constructionSite is null. So... unit was delivering to a CS, another unit in the same time finished constructing, and that other unit remained.
-#warning And the IPaymentReceiver remained not-null, construction site was destroyed, but the reference is an interface so it persisted.
+#warning Construction site was destroyed, but the reference to it is an interface, so it persisted. IPaymentReceiver remained not-null.
+#warning  Destination wasn't set to null either, since the object itself is alive and well, it's just the construction site that's dead.
 					//if( usableUnusable.paymentReceiver != null )
 					//{
 					this.SetDestination( usableUnusable.paymentReceiver );
@@ -491,7 +491,7 @@ namespace SS.AI.Goals
 					this.SetDestination( (IPaymentReceiver)SSObject.Find( data.destinationGuid.Item1 ).GetModule( data.destinationGuid.Item2.Value ) );
 				}
 			}
-			
+
 			this.isHostile = data.isHostile;
 		}
 	}

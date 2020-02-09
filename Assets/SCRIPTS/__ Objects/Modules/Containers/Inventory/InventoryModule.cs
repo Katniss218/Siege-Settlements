@@ -2,6 +2,7 @@
 using SS.Content;
 using SS.Levels;
 using SS.Levels.SaveStates;
+using SS.Objects.Units;
 using SS.ResourceSystem;
 using SS.UI;
 using SS.UI.HUDs;
@@ -14,7 +15,7 @@ namespace SS.Objects.Modules
 {
 	[DisallowMultipleComponent]
 	[UseHud(typeof(HUDInventory), "hudInventory")]
-	public sealed class InventoryModule : SSModule, ISelectDisplayHandler
+	public sealed class InventoryModule : SSModule, ISelectDisplayHandler, IPopulationBlocker
 	{
 		public const string KFF_TYPEID = "inventory";
 
@@ -596,6 +597,11 @@ namespace SS.Objects.Modules
 		public void OnHide()
 		{
 
+		}
+
+		public bool CanChangePopulation()
+		{
+			return this.isEmpty;
 		}
 	}
 }

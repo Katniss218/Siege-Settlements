@@ -11,7 +11,7 @@ namespace SS.Objects.Modules
 {
 	[DisallowMultipleComponent]
 	[UseHud(typeof(HUDInterior), "hudInterior")]
-	public class InteriorModule : SSModule, ISelectDisplayHandler
+	public class InteriorModule : SSModule, ISelectDisplayHandler, IPopulationBlocker
 	{
 		public const string KFF_TYPEID = "interior";
 
@@ -506,14 +506,18 @@ namespace SS.Objects.Modules
 
 		}
 
-		
+		public bool CanChangePopulation()
+		{
+			return false;
+		}
+
 
 		//
 		//
 		//
 
-		
-		
+
+
 		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
 		{
 			slot = null;

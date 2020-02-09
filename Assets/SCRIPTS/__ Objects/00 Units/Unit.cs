@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
-	[UseHud(typeof(UnitHUD), "hud")]
+	[UseHud( typeof( UnitHUD ), "hud" )]
 	public class Unit : SSObjectDFC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
 		private NavMeshAgent __navMeshAgent = null;
@@ -37,9 +37,26 @@ namespace SS.Objects.Units
 				return this.__collider;
 			}
 		}
-		
+
+
+		//
+		//
+		//
+
+
+		/// <summary>
+		/// If true, the population can't be changed without forcing.
+		/// </summary>
 		public bool isPopulationLocked { get; set; }
+
+		/// <summary>
+		/// Contains the maximum population allowed for this unit.
+		/// </summary>
 		public byte? populationSizeLimit { get; set; } = null;
+
+		/// <summary>
+		/// Contains the current population size of the unit (Read Only) - Use SetPopulation( ... ) to set.
+		/// </summary>
 		public PopulationSize population { get; private set; } = PopulationSize.x1;
 
 		/// <summary>
@@ -47,7 +64,7 @@ namespace SS.Objects.Units
 		/// </summary>
 		/// <param name="newPopulation">The new population.</param>
 		/// <param name="scaleStats">If true, the stats will be rescaled to fit the new population size.</param>
-		/// <param name="force">If true, it bypasses additional checks, such as is the population locked, etc.</param>
+		/// <param name="force">If true, it bypasses all additional checks, such as is the population locked, population limits, etc.</param>
 		public void SetPopulation( PopulationSize newPopulation, bool scaleStats, bool force )
 		{
 			// If not forced assignment - check if the population can be changed, throw exception if not.
@@ -88,11 +105,36 @@ namespace SS.Objects.Units
 			}
 		}
 
+		/// <summary>
+		/// Checks if the unit can change population. Returns true if nothing is blocking the population change.
+		/// </summary>
 		public bool CanChangePopulation()
 		{
-#warning Population locking?
-			return !this.isPopulationLocked;
+			if( this.isPopulationLocked )
+			{
+				return false;
+			}
+
+			SSModule[] modules = this.GetModules();
+			for( int i = 0; i < modules.Length; i++ )
+			{
+				if( modules[i] is IPopulationBlocker )
+				{
+					if( !((IPopulationBlocker)modules[i]).CanChangePopulation() )
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
 		}
+
+
+		//
+		//
+		//
+
 
 		/// <summary>
 		/// Returns the hud that's attached to this object.
@@ -106,7 +148,7 @@ namespace SS.Objects.Units
 
 
 		public CivilianUnitExtension civilian { get; private set; }
-		
+
 		public bool isCivilian
 		{
 			get
@@ -139,7 +181,7 @@ namespace SS.Objects.Units
 		//
 
 
-		float __movementSpeed;
+		private float __movementSpeed;
 		public float movementSpeed
 		{
 			get
@@ -152,8 +194,8 @@ namespace SS.Objects.Units
 				this.navMeshAgent.speed = value;
 			}
 		}
-		
-		float __rotationSpeed;
+
+		private float __rotationSpeed;
 		public float rotationSpeed
 		{
 			get
@@ -182,14 +224,18 @@ namespace SS.Objects.Units
 		//
 		//
 		//
-		
+
+
 		/// <summary>
-		/// The interior module the unit is currently in. Null if not is any interior.
+		/// The interior module the unit is currently in. Null if not is any interior (Read Only).
 		/// </summary>
 		public InteriorModule interior { get; private set; }
+		/// <summary>
+		/// The slot type that the unit is currently inside (Read Only).
+		/// </summary>
 		public InteriorModule.SlotType slotType { get; private set; }
 		/// <summary>
-		/// The slot of the interior module the unit is currently in.
+		/// The slot of the interior module the unit is currently in (Read Only).
 		/// </summary>
 		public int slotIndex { get; private set; }
 
@@ -198,7 +244,6 @@ namespace SS.Objects.Units
 			get { return this.interior != null; }
 		}
 		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
-
 
 
 		/// <summary>
@@ -212,9 +257,9 @@ namespace SS.Objects.Units
 			}
 
 			// - Interior fields
-			
+
 			InteriorModule.GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
-			
+
 			slot.objInside = this;
 
 			slotHud.SetHealth( this.healthPercent );
@@ -230,10 +275,10 @@ namespace SS.Objects.Units
 			this.navMeshAgent.enabled = false;
 
 			// -
-			
+
 			this.transform.position = interior.SlotWorldPosition( slot );
 			this.transform.rotation = interior.SlotWorldRotation( slot );
-			
+
 			if( slot.isHidden )
 			{
 				SubObject[] subObjects = this.GetSubObjects();
@@ -265,7 +310,7 @@ namespace SS.Objects.Units
 			// - Interior fields.
 
 			InteriorModule.GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
-			
+
 			slot.objInside = null;
 
 			slotHud.SetHealth( null );
@@ -284,7 +329,7 @@ namespace SS.Objects.Units
 			this.transform.rotation = Quaternion.identity;
 
 			this.navMeshAgent.enabled = true;
-			
+
 			if( this.isInsideHidden )
 			{
 				SubObject[] subObjects = this.GetSubObjects();
@@ -311,6 +356,7 @@ namespace SS.Objects.Units
 			if( this.population == PopulationSize.x1 )
 			{
 				LevelDataManager.factionData[this.factionId].populationCache += (int)this.population;
+
 				if( this.factionId == LevelDataManager.PLAYER_FAC )
 				{
 					ResourcePanel.instance.UpdatePopulationDisplay(
@@ -318,7 +364,7 @@ namespace SS.Objects.Units
 						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
 				}
 			}
-		
+
 			base.OnObjSpawn();
 		}
 
@@ -330,7 +376,9 @@ namespace SS.Objects.Units
 				InputOverrideEmployment.DisableEmploymentInput();
 			}
 
+			// Update population cache and display.
 			LevelDataManager.factionData[this.factionId].populationCache -= (int)this.population;
+
 			if( this.factionId == LevelDataManager.PLAYER_FAC )
 			{
 				ResourcePanel.instance.UpdatePopulationDisplay(
@@ -351,7 +399,5 @@ namespace SS.Objects.Units
 
 		public override void OnDisplay() => UnitDisplayManager.Display( this );
 		public override void OnHide() => UnitDisplayManager.Hide( this );
-
 	}
 }
- 

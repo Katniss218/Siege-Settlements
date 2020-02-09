@@ -218,13 +218,6 @@ namespace SS
 					{
 						continue;
 					}
-
-					// block units with non-empty inventories from splitting.
-					InventoryModule[] inventories = unit.GetModules<InventoryModule>();
-					if( inventories.Length > 0 && !inventories[0].isEmpty )
-					{
-						continue;
-					}
 					
 					if( unit.population == PopulationSize.x1 )
 					{

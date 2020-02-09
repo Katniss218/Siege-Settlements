@@ -124,6 +124,7 @@ namespace SS.Objects.Units
 		/// <param name="additional">Units to take the additional population from.</param>
 		public static void Combine( Unit beacon, List<Unit> additional )
 		{
+#warning TODO! - refactor these two to use safe combine.
 			byte selfPop = (byte)beacon.population;
 			byte popTotal = selfPop; // total population of the new unit
 			byte targetPop = 0; // total population of the new unit (if popTotal is a valid PopulationSize).
@@ -189,7 +190,7 @@ namespace SS.Objects.Units
 					Selection.TrySelect( beacon );
 				}
 				// assign the new, "joined" population.
-				beacon.SetPopulation( (PopulationSize)selfPop, true, false );
+				beacon.SetPopulation( (PopulationSize)selfPop, true, true );
 				beacon.health = healthTotal; // override health, since additionals can have any health percent and won't necessarily match beacon's health percent.
 			}
 		}
@@ -201,7 +202,6 @@ namespace SS.Objects.Units
 		/// <param name="desiredPopulation">Beacon unit after splitting will be this size.</param>
 		public static List<Unit> Split( Unit beacon, PopulationSize? desiredPopulation = null )
 		{
-#warning refactor.
 			// splits in half if desiredPopulation == null.
 
 			byte populationPool = (byte)beacon.population;
@@ -266,7 +266,7 @@ namespace SS.Objects.Units
 				Quaternion rotation = beacon.transform.rotation;
 
 				Unit unit = UnitCreator.Create( beaconDef, Guid.NewGuid(), position, rotation, beacon.factionId );
-				unit.SetPopulation( newSize, true, false );
+				unit.SetPopulation( newSize, true, true );
 				unit.healthPercent = healthPercentSrc;
 
 				ret.Add( unit );

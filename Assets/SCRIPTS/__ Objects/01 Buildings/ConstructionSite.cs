@@ -3,12 +3,10 @@ using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.Modules;
 using SS.Objects.SubObjects;
-using SS.ResourceSystem;
 using SS.ResourceSystem.Payment;
 using SS.UI;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
@@ -21,7 +19,7 @@ namespace SS.Objects.Buildings
 	[RequireComponent( typeof( Building ) )]
 	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
-		public class ResourceInfo
+		private class ResourceInfo
 		{
 			public int initialResource { get; set; }
 			public float remaining { get; set; }
@@ -29,18 +27,17 @@ namespace SS.Objects.Buildings
 		}
 
 		// Contains info about resources remaining.
-		private Dictionary<string, ResourceInfo> resourceInfo;
+		private Dictionary<string, ResourceInfo> resourceInfo = null;
 
-		public UnityEvent onPaymentReceived { get; private set; }
 		
+		private Building building;
 		public SSObject ssObject
 		{
 			get { return this.building; }
 		}
-		private Building building;
-		
-		float buildingHeight = 0.0f;
 
+		public UnityEvent onPaymentReceived { get; private set; }
+		
 		/// <summary>
 		/// Checks if the construction (payment) has finished. Construction is finished when there are no more resources wanted.
 		/// </summary>
@@ -180,22 +177,19 @@ namespace SS.Objects.Buildings
 		{
 			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources.Count );
 
-			float totalResourcesNeeded = 0;
-			//int i = 0;
-			foreach( var id in requiredResources.Keys )
+			float totalResourceAmount = 0;
+			foreach( var kvp in requiredResources )
 			{
-				int amount = requiredResources[id];
-				this.resourceInfo.Add( id, new ResourceInfo() { initialResource = amount, remaining = amount } );
+				int amount = kvp.Value;
+				this.resourceInfo.Add( kvp.Key, new ResourceInfo() { initialResource = amount, remaining = amount } );
 
-				totalResourcesNeeded += amount;
-
-				//i++;
+				totalResourceAmount += amount;
 			}
 
 			// Once we have our total, calculate how much each resource contributes to the total.
 			foreach( var kvp in this.resourceInfo )
 			{
-				kvp.Value.healthToResource = kvp.Value.remaining / totalResourcesNeeded;
+				kvp.Value.healthToResource = kvp.Value.remaining / totalResourceAmount;
 			}
 		}
 
@@ -221,10 +215,139 @@ namespace SS.Objects.Buildings
 			return data;
 		}
 
+		/// <summary>
+		/// Starts the construction / repair of the specified building.
+		/// </summary>
+		public static void BeginConstructionOrRepair( Building building, ConstructionSiteData data )
+		{
+			if( !Building.CanStartRepair( building ) )
+			{
+				throw new Exception( building.displayName + " - Building is not repairable." );
+			}
+
+			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
+			constructionSite.building = building;
+			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
+			
+			// If no data about remaining resources is present - calculate them from the current health.
+			if( data.resourcesRemaining == null )
+			{
+				float deltaHP = building.health - building.healthMax;
+				foreach( var kvp in constructionSite.resourceInfo )
+				{
+					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
+					kvp.Value.remaining = resAmt;
+
+					Debug.Log( kvp.Key + ", " + resAmt );
+				}
+			}
+			// Otherwise, assign the remaining resources.
+			else
+			{
+				foreach( var kvp in data.resourcesRemaining )
+				{
+					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
+				}
+			}
+
+			InteriorModule[] interiors = building.GetModules<InteriorModule>();
+			for( int i = 0; i < interiors.Length; i++ )
+			{
+				interiors[i].ExitAll();
+			}
+			building.constructionSite = constructionSite;
+			building.isUsable = false;
+			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
+			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
+
+			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject, building );
+			
+			UpdateYOffset( constructionSite.building, Mathf.Lerp( -constructionSite.building.size.y, 0.0f, building.healthPercent ) );
+
+			// Re-Display to update.
+			if( Selection.IsDisplayed( building ) )
+			{
+				Selection.StopDisplaying();
+				Selection.DisplayObject( building );
+			}
+		}
+
+		private void OnHealthChange( float deltaHP )
+		{
+			this.UpdateStatus_UI();
+
+			UpdateYOffset( this.building, Mathf.Lerp( -this.building.size.y, 0.0f, building.healthPercent ) );
+						
+			if( deltaHP < 0 )
+			{
+				foreach( var kvp in this.resourceInfo )
+				{
+					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
+
+					kvp.Value.remaining += resAmt;
+				}
+			}
+		}
+
+		private void OnFactionChange( int fromFac, int toFac )
+		{
+			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
+			Color facColor = LevelDataManager.factions[this.building.factionId].color;
+
+			for( int i = 0; i < constr_gfx.childCount; i++ )
+			{
+				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
+
+				meshRenderer.material.SetColor( "_FactionColor", facColor );
+			}
+		}
+
+
+		//
+		//	UI integration
+		//
+
+		
+		private void ConstructionComplete_UI()
+		{
+			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			SelectionPanel.instance.obj.TryClearElement( "building.construction_status" );
+		}
+
+		private void UpdateStatus_UI()
+		{
+			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
+			{
+				return;
+			}
+
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
+			if( statusUI != null )
+			{
+				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
+			}
+		}
+
+		public void Display()
+		{
+			GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
+			SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
+		}
+
+
+		//
+		//
+		//
+
+
 		private static GameObject CreateConstructionSiteGraphics( GameObject gameObject, IFactionMember fac )
 		{
 			BoxCollider collider = gameObject.GetComponent<BoxCollider>();
-			
+
 			Color color = fac != null ? LevelDataManager.factions[fac.factionId].color : Color.gray;
 
 			int numX = Mathf.FloorToInt( collider.size.x * 2.0f );
@@ -348,130 +471,6 @@ namespace SS.Objects.Buildings
 			}
 
 			return constructionSiteGfx;
-		}
-
-		/// <summary>
-		/// Starts the construction / repair of the specified building.
-		/// </summary>
-		public static void BeginConstructionOrRepair( Building building, ConstructionSiteData data )
-		{
-			if( !Building.CanStartRepair( building ) )
-			{
-				throw new Exception( building.displayName + " - Building is not repairable." );
-			}
-
-			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
-			constructionSite.building = building;
-			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
-
-			constructionSite.buildingHeight = building.size.y;
-
-			// If no data about remaining resources is present - calculate them from the current health.
-			if( data.resourcesRemaining == null )
-			{
-				float deltaHP = building.health - building.healthMax;
-				foreach( var kvp in constructionSite.resourceInfo )
-				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
-					kvp.Value.remaining = resAmt;
-
-					Debug.Log( kvp.Key + ", " + resAmt );
-				}
-			}
-			else
-			{
-				foreach( var kvp in data.resourcesRemaining )
-				{
-					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
-				}
-			}
-
-			InteriorModule[] interiors = building.GetModules<InteriorModule>();
-			for( int i = 0; i < interiors.Length; i++ )
-			{
-				interiors[i].ExitAll();
-			}
-			building.constructionSite = constructionSite;
-			building.isUsable = false;
-			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
-			building.onFactionChange.AddListener( constructionSite.OnFactionChange );
-
-			GameObject constructionSiteGfx = CreateConstructionSiteGraphics( building.gameObject, building );
-			
-			UpdateYOffset( constructionSite.building, Mathf.Lerp( -constructionSite.buildingHeight, 0.0f, building.healthPercent ) );
-
-			// Re-Display to update.
-			if( Selection.IsDisplayed( building ) )
-			{
-				Selection.StopDisplaying();
-				Selection.DisplayObject( building );
-			}
-		}
-
-		private void OnHealthChange( float deltaHP )
-		{
-			this.UpdateStatus_UI();
-
-			UpdateYOffset( this.building, Mathf.Lerp( -this.buildingHeight, 0.0f, building.healthPercent ) );
-						
-			if( deltaHP < 0 )
-			{
-				foreach( var kvp in this.resourceInfo )
-				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
-
-					kvp.Value.remaining += resAmt;
-				}
-			}
-		}
-
-		private void OnFactionChange( int fromFac, int toFac )
-		{
-			Transform constr_gfx = this.transform.Find( "construction_site_graphics" );
-			Color facColor = LevelDataManager.factions[this.building.factionId].color;
-
-			for( int i = 0; i < constr_gfx.childCount; i++ )
-			{
-				MeshRenderer meshRenderer = constr_gfx.GetChild( i ).GetComponent<MeshRenderer>();
-
-				meshRenderer.material.SetColor( "_FactionColor", facColor );
-			}
-		}
-
-
-		//
-		//
-		//
-
-
-		public void Display()
-		{
-			GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -50.0f ), new Vector2( 200.0f, 25.0f ), Vector2.up, Vector2.up, Vector2.up ), "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
-			SelectionPanel.instance.obj.RegisterElement( "building.construction_status", status.transform );
-		}
-
-		private void ConstructionComplete_UI()
-		{
-			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
-			{
-				return;
-			}
-
-			SelectionPanel.instance.obj.TryClearElement( "building.construction_status" );
-		}
-
-		private void UpdateStatus_UI()
-		{
-			if( (!Selection.IsDisplayed( this.building )) || (!this.building.IsDisplaySafe()) )
-			{
-				return;
-			}
-
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "building.construction_status" );
-			if( statusUI != null )
-			{
-				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... " + ResourceUtils.ToResourceString( this.GetWantedResources() ) );
-			}
 		}
 	}
 }
