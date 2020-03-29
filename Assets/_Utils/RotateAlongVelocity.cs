@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SS
+namespace Katniss.Utils
 {
 	/// <summary>
 	/// Rotates the gameObject to face the velocity vector (by default the forward vector is oriented along the velocity vector).

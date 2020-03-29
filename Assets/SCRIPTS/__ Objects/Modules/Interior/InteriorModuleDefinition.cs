@@ -27,7 +27,6 @@ namespace SS.Objects.Modules
 			{
 				this.position = serializer.ReadVector3( "Position" );
 				this.rotation = serializer.ReadQuaternion( "Rotation" );
-#warning split definition types into generic & worker slots.
 				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
 				this.countsTowardsMaxPopulation = serializer.ReadBool( "CountsTowardsMaxPopulation" );
 				this.isHidden = serializer.ReadBool( "IsHidden" );
@@ -47,9 +46,35 @@ namespace SS.Objects.Modules
 			}
 		}
 
+		public class WorkerSlot : IKFFSerializable
+		{
+			public Vector3 position { get; set; }
+			public Quaternion rotation { get; set; }
+
+			public PopulationSize maxPopulation { get; set; }
+			
+			public bool isHidden { get; set; }
+			
+			public void DeserializeKFF( KFFSerializer serializer )
+			{
+				this.position = serializer.ReadVector3( "Position" );
+				this.rotation = serializer.ReadQuaternion( "Rotation" );
+				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
+				this.isHidden = serializer.ReadBool( "IsHidden" );
+			}
+
+			public void SerializeKFF( KFFSerializer serializer )
+			{
+				serializer.WriteVector3( "", "Position", this.position );
+				serializer.WriteQuaternion( "", "Rotation", this.rotation );
+				serializer.WriteByte( "", "MaxPopulation", (byte)this.maxPopulation );
+				serializer.WriteBool( "", "IsHidden", this.isHidden );
+			}
+		}
+
 
 		public Slot[] slots { get; set; }
-		public Slot[] workerSlots { get; set; }
+		public WorkerSlot[] workerSlots { get; set; }
 
 		public Vector3? entrancePosition { get; set; }
 		
@@ -127,10 +152,10 @@ namespace SS.Objects.Modules
 			analysisData = serializer.Analyze( "WorkerSlots" );
 			if( analysisData.isSuccess )
 			{
-				this.workerSlots = new Slot[analysisData.childCount];
+				this.workerSlots = new WorkerSlot[analysisData.childCount];
 				for( int i = 0; i < this.workerSlots.Length; i++ )
 				{
-					this.workerSlots[i] = new Slot();
+					this.workerSlots[i] = new WorkerSlot();
 				}
 				serializer.DeserializeArray( "WorkerSlots", this.workerSlots );
 			}

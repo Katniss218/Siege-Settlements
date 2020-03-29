@@ -1,4 +1,5 @@
-﻿using SS.Levels.SaveStates;
+﻿using Katniss.Utils;
+using SS.Levels.SaveStates;
 using SS.Objects.Modules;
 using System;
 using UnityEngine;

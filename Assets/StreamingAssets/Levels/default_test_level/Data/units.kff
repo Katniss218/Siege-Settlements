@@ -773,6 +773,8 @@
 					"building.college",
 					"building.wooden_wall",
 					"building.wooden_tower",
+					"building.stone_wall",
+					"building.stone_tower",
 					"building.campfire",
 					"building.tavern",
 					"building.lumberjacks_hut",

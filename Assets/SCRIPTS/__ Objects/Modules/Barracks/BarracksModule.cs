@@ -293,7 +293,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-
+#warning barracks don't like training stuff. for whatever reason.
 
 		/// <summary>
 		/// Creates a new BarracksModuleSaveState from a GameObject.

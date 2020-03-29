@@ -113,8 +113,6 @@
     <Compile Include="Assets\SCRIPTS\PositionerCurve.cs" />
     <Compile Include="Assets\SCRIPTS\Resource System\Payment\IPaymentReceiver.cs" />
     <Compile Include="Assets\SCRIPTS\Resource System\ResourceDefinition.cs" />
-    <Compile Include="Assets\SCRIPTS\RotateAlongVelocity.cs" />
-    <Compile Include="Assets\SCRIPTS\ScaleOscillator.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\ISelectDisplayHandler.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\Selection.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\SelectionController.cs" />
@@ -266,6 +264,8 @@
     <Compile Include="Assets\SCRIPTS\__ Objects\SubObjects\SubObjectDefinition.cs" />
     <Compile Include="Assets\_Utils\BallisticSolver.cs" />
     <Compile Include="Assets\_Utils\DistanceUtils.cs" />
+    <Compile Include="Assets\_Utils\RotateAlongVelocity.cs" />
+    <Compile Include="Assets\_Utils\ScaleOscillator.cs" />
     <Compile Include="Assets\_Utils\Texture2DUtils.cs" />
     <Compile Include="Assets\_Utils\UnityEngine_Camera_Extensions.cs" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />

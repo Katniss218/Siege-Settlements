@@ -45,6 +45,13 @@ namespace SS.Diplomacy
 		/// Only stored resources belonging to this faction (inside inventories marked as storage).
 		/// </summary>
 		public Dictionary<string, int> resourcesStoredCache { get; internal set; }
+
+
+		/// <summary>
+		/// The dynamic amount of space in this faction's storage modules (total). Changes when a non-constrained slot is updated).
+		/// </summary>
+		public Dictionary<string, int> storageSpaceCache { get; internal set; }
+
 		
 
 		public int populationCache { get; internal set; }
@@ -81,6 +88,7 @@ namespace SS.Diplomacy
 			this.LoadRegisteredTechnologies( TechnologyResearchProgress.Available );
 			this.resourcesAvailableCache = new Dictionary<string, int>();
 			this.resourcesStoredCache = new Dictionary<string, int>();
+			this.storageSpaceCache = new Dictionary<string, int>();
 			this.LoadRegisteredResources();
 		}
 		
@@ -98,6 +106,7 @@ namespace SS.Diplomacy
 			{
 				resourcesAvailableCache.Add( resourcesLoaded[i].id, 0 );
 				resourcesStoredCache.Add( resourcesLoaded[i].id, 0 );
+				storageSpaceCache.Add( resourcesLoaded[i].id, 0 );
 			}
 		}
 

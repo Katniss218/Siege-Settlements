@@ -30,6 +30,8 @@ namespace SS.Objects.Modules
 			
 			public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
 
+			public bool isHidden { get; set; }
+
 			public bool isEmpty
 			{
 				get
@@ -37,14 +39,12 @@ namespace SS.Objects.Modules
 					return this.objInside == null;
 				}
 			}
-
-			public bool isHidden { get; set; }
-
 		}
 
 		public class SlotGeneric : Slot
 		{
 			public bool countsTowardsMaxPopulation { get; set; }
+
 			public string[] whitelistedUnits { get; set; } = new string[0];
 
 
@@ -64,7 +64,7 @@ namespace SS.Objects.Modules
 
 		public class SlotWorker : Slot
 		{
-			public CivilianUnitExtension worker { get; set; }
+			public CivilianUnitExtension assignedWorker { get; set; }
 		}
 
 
@@ -147,11 +147,11 @@ namespace SS.Objects.Modules
 
 		public CivilianUnitExtension GetWorker( int i )
 		{
-			return this.workerSlots[i].worker;
+			return this.workerSlots[i].assignedWorker;
 		}
 		public void SetWorker( int i, CivilianUnitExtension value )
 		{
-			this.workerSlots[i].worker = value;
+			this.workerSlots[i].assignedWorker = value;
 		}
 
 
@@ -172,17 +172,17 @@ namespace SS.Objects.Modules
 			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
 			for( int i = 0; i < this.workerSlots.Length; i++ )
 			{
-				if( this.workerSlots[i].worker == null )
+				if( this.workerSlots[i].assignedWorker == null )
 				{
 					continue;
 				}
 
-				if( workplace != null && this.workerSlots[i].worker.workplace != workplace )
+				if( workplace != null && this.workerSlots[i].assignedWorker.workplace != workplace )
 				{
 					continue;
 				}
 
-				ret.Add( this.workerSlots[i].worker );
+				ret.Add( this.workerSlots[i].assignedWorker );
 			}
 			return ret;
 		}
@@ -236,7 +236,7 @@ namespace SS.Objects.Modules
 						continue;
 					}
 
-					if( this.workerSlots[i].worker != unit.civilian )
+					if( this.workerSlots[i].assignedWorker != unit.civilian )
 					{
 						continue;
 					}

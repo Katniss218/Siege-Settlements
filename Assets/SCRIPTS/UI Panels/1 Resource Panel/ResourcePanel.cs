@@ -68,13 +68,13 @@ namespace SS.UI
 			}
 		}
 
-		public void UpdateResourceEntry( string id, int amountTotal, int amountStored )
+		public void UpdateResourceEntry( string id, int amountTotal, int amountStored, bool isFull )
 		{
 			ResourceListEntry entry;
 			if( entries.TryGetValue( id, out entry ) )
 			{
 				entry.amount = amountTotal;
-				entry.text.text = amountTotal + " (" + amountStored + ")";
+				entry.text.text = amountTotal + (isFull ? " (<color=#aa0000>" + amountStored + "</color>)" : " (" + amountStored + ")");
 			}
 			else
 			{
