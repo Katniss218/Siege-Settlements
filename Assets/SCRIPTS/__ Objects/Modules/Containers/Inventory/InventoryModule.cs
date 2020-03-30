@@ -74,32 +74,34 @@ namespace SS.Objects.Modules
 				if( this.ssObject is IFactionMember )
 				{
 					IFactionMember fac = (IFactionMember)this.ssObject;
-
-					// --  --  --
-					// if the object belongs to a faction - update the stored resources cache.
-					Dictionary<string, int> res = this.GetAll();
-					foreach( var resource in res )
+					
+					if( fac.factionId != SSObjectDFC.FACTIONID_INVALID )
 					{
-						// if becomes storage - add, else - remove
-						if( value )
-							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] += resource.Value;
-						else
-							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] -= resource.Value;
+						// --  --  --
+						// if the object belongs to a faction - update the stored resources cache.
+						Dictionary<string, int> res = this.GetAll();
+						foreach( var resource in res )
+						{
+							// if becomes storage - add, else - remove
+							if( value )
+								LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] += resource.Value;
+							else
+								LevelDataManager.factionData[fac.factionId].resourcesStoredCache[resource.Key] -= resource.Value;
+						}
+
+						// --  --  --
+						// remove every slot from the storage space.
+						for( int i = 0; i < this.slotCount; i++ )
+						{
+							// if becomes storage - add, else - remove
+							if( value )
+								this.ProcessStorageSpaceSlot( i, fac.factionId, 1 );
+							else
+								this.ProcessStorageSpaceSlot( i, fac.factionId, -1 );
+						}
+
+						// --  --  --
 					}
-
-					// --  --  --
-					// remove every slot from the storage space.
-					for( int i = 0; i < this.slotCount; i++ )
-					{
-						// if becomes storage - add, else - remove
-						if( value )
-							this.ProcessStorageSpaceSlot( i, fac.factionId, 1 );
-						else
-							this.ProcessStorageSpaceSlot( i, fac.factionId, -1 );
-					}
-
-					// --  --  --
-
 				}
 
 				this.__isStorage = value;
@@ -268,40 +270,7 @@ namespace SS.Objects.Modules
 			if( this.ssObject is IFactionMember )
 			{
 				IFactionMember fac = (IFactionMember)this.ssObject;
-				/*this.onAdd.AddListener( ( string id, int amount ) =>
-				{
-					// will just throw an exception if non-existing resource is added/removed.
-					LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] += amount;
-					if( this.isStorage )
-					{
-						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] += amount;
-					}
 
-					if( fac.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						ResourcePanel.instance.UpdateResourceEntry( id,
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id],
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id],
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id] );
-					}
-				} );
-				this.onRemove.AddListener( ( string id, int amount ) =>
-				{
-					// will just throw an exception if non-existing resource is added/removed.
-					LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] -= amount;
-					if( this.isStorage )
-					{
-						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] -= amount;
-					}
-
-					if( fac.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						ResourcePanel.instance.UpdateResourceEntry( id,
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id],
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id],
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id] );
-					}
-				} );*/
 				fac.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 				{
 					Dictionary<string, int> res = this.GetAll();
@@ -342,10 +311,12 @@ namespace SS.Objects.Modules
 
 					usUnus.onUsableStateChanged.AddListener( () =>
 					{
-						Debug.Log( "UsUnus" );
 						if( this.isStorage )
 						{
-							Debug.Log( "UsUnus222   " + fac.factionId );
+							if( fac.factionId == SSObjectDFC.FACTIONID_INVALID )
+							{
+								return;
+							}
 							for( int i = 0; i < this.slotCount; i++ )
 							{
 								if( usUnus.isUsable )
