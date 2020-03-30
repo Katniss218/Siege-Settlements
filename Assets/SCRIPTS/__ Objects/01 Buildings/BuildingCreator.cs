@@ -1,7 +1,6 @@
 ﻿using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
-using SS.Objects.Units;
 using SS.UI;
 using System;
 using UnityEngine;
@@ -32,8 +31,8 @@ namespace SS.Objects.Buildings
 			{
 				throw new Exception( "Mismatched guid." );
 			}
-			building.health = data.health;
 			building.factionId = data.factionId;
+			building.health = data.health;
 
 			//
 			//    MODULES
@@ -52,7 +51,6 @@ namespace SS.Objects.Buildings
 
 			if( data.constructionSaveState == null )
 			{
-
 				building.hud.SetHealthBarFill( building.healthPercent );
 
 				MeshSubObject[] meshes = building.GetSubObjects<MeshSubObject>();

@@ -307,6 +307,9 @@ namespace SS.Objects.Modules
 					Dictionary<string, int> res = this.GetAll();
 					foreach( var resource in res )
 					{
+						LevelDataManager.factionData[fromFac].resourcesAvailableCache[resource.Key] -= resource.Value;
+						LevelDataManager.factionData[toFac].resourcesAvailableCache[resource.Key] += resource.Value;
+
 						LevelDataManager.factionData[fromFac].resourcesStoredCache[resource.Key] -= resource.Value;
 						LevelDataManager.factionData[toFac].resourcesStoredCache[resource.Key] += resource.Value;
 					}
@@ -316,19 +319,45 @@ namespace SS.Objects.Modules
 
 					if( this.isStorage )
 					{
-						for( int i = 0; i < this.slotCount; i++ )
+						// Don't move if the object is not usable (was removed from current fac already when it was set to unusable).
+						if( !(this.ssObject is ISSObjectUsableUnusable) || (((ISSObjectUsableUnusable)this.ssObject).isUsable) )
 						{
-							if( fromFac != SSObjectDFC.FACTIONID_INVALID )
+							for( int i = 0; i < this.slotCount; i++ )
 							{
-								this.ProcessStorageSpaceSlot( i, fromFac, -1 );
+								if( fromFac != SSObjectDFC.FACTIONID_INVALID )
+								{
+									this.ProcessStorageSpaceSlot( i, fromFac, -1 );
+								}
+								this.ProcessStorageSpaceSlot( i, toFac, 1 );
 							}
-							this.ProcessStorageSpaceSlot( i, toFac, 1 );
 						}
 					}
 
 					// --  --  --
 				} );
+
+				if( this.ssObject is ISSObjectUsableUnusable )
+				{
+					ISSObjectUsableUnusable usUnus = (ISSObjectUsableUnusable)this.ssObject;
+
+					usUnus.onUsableStateChanged.AddListener( () =>
+					{
+						Debug.Log( "UsUnus" );
+						if( this.isStorage )
+						{
+							Debug.Log( "UsUnus222   " + fac.factionId );
+							for( int i = 0; i < this.slotCount; i++ )
+							{
+								if( usUnus.isUsable )
+									this.ProcessStorageSpaceSlot( i, fac.factionId, 1 );
+								else
+									this.ProcessStorageSpaceSlot( i, fac.factionId, -1 );
+							}
+						}
+					} );
+				}
 			}
+
 
 			base.Awake();
 		}
@@ -354,11 +383,14 @@ namespace SS.Objects.Modules
 					}
 				}
 
-				if( this.isStorage )
+				if( !(this.ssObject is ISSObjectUsableUnusable) || (((ISSObjectUsableUnusable)this.ssObject).isUsable) )
 				{
-					for( int i = 0; i < this.slotCount; i++ )
+					if( this.isStorage )
 					{
-						this.ProcessStorageSpaceSlot( i, fac.factionId, -1 );
+						for( int i = 0; i < this.slotCount; i++ )
+						{
+							this.ProcessStorageSpaceSlot( i, fac.factionId, -1 );
+						}
 					}
 				}
 			}

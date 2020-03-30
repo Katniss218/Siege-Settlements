@@ -96,18 +96,7 @@ namespace SS.Objects.Buildings
 				}
 			}
 		}
-
-		public bool IsUsable()
-		{
-			// If not under construction/repair.
-			if( this.constructionSite == null )
-			{
-				return this.healthPercent >= UNUSABLE_THRESHOLD;
-			}
-			// If under construction/repair.
-			return false;
-		}
-
+		
 
 		/// <summary>
 		/// Checks if the building can be repaired (repair hasn't started already).

@@ -265,7 +265,7 @@ namespace SS.Objects.Modules
 			{
 				if( !UnitCreator.CanCreate( ((IFactionMember)this.ssObject).factionId, GetSpawnSize( this.queuedUnits[0] ) ) )
 				{
-#warning info on selection panel.
+#warning Display warning on the selection panel if the population space isn't enough.
 					return;
 				}
 
@@ -293,7 +293,6 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
-#warning barracks don't like training stuff. for whatever reason.
 
 		/// <summary>
 		/// Creates a new BarracksModuleSaveState from a GameObject.
