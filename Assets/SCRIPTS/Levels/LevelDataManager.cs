@@ -4,6 +4,7 @@ using SS.Objects;
 using SS.Technologies;
 using SS.TerrainCreation;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
@@ -357,12 +358,89 @@ namespace SS.Levels
 			}
 		}
 
+		public static void LoadSelectionGroupData( KFFSerializer serializer )
+		{
+			Guid[][] groups = new Guid[10][];
+
+
+			KFFSerializer.AnalysisData analysisData = serializer.Analyze( "SelectionGroups.Group1" );
+			groups[0] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[0][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group1.{0}", j ) );
+			}
+		
+			analysisData = serializer.Analyze( "SelectionGroups.Group2" );
+			groups[1] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[1][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group2.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group3" );
+			groups[2] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[2][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group3.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group4" );
+			groups[3] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[3][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group4.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group5" );
+			groups[4] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[4][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group5.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group6" );
+			groups[5] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[5][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group6.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group7" );
+			groups[6] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[6][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group7.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group8" );
+			groups[7] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[7][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group8.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group9" );
+			groups[8] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[8][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group9.{0}", j ) );
+			}
+
+			analysisData = serializer.Analyze( "SelectionGroups.Group10" );
+			groups[9] = new Guid[analysisData.childCount];
+			for( int j = 0; j < analysisData.childCount; j++ )
+			{
+				groups[9][j] = serializer.ReadGuid( new Path( "SelectionGroups.Group10.{0}", j ) );
+			}
+
+			SelectionGroupUtils.SetSaveData( groups );
+		}
 
 		//
 		//
 		//
-		
-			
+
+
 		public static void SaveFactionData( KFFSerializer serializer )
 		{
 			serializer.SerializeArray( "", "List", factionData );
@@ -413,6 +491,24 @@ namespace SS.Levels
 			}
 
 			serializer.WriteFloat( "", "GameTimeElapsed", gameTimeCounter.GetElapsed() );
+		}
+
+		public static void SaveSelectionGroupData( KFFSerializer serializer )
+		{
+			Guid[][] groups = SelectionGroupUtils.GetSaveData();
+
+			serializer.WriteClass( "", "SelectionGroups" );
+			
+			serializer.WriteGuidArray( "SelectionGroups", "Group1", groups[0] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group2", groups[1] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group3", groups[2] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group4", groups[3] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group5", groups[4] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group6", groups[5] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group7", groups[6] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group8", groups[7] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group9", groups[8] );
+			serializer.WriteGuidArray( "SelectionGroups", "Group10", groups[9] );
 		}
 	}
 }

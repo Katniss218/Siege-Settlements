@@ -734,6 +734,8 @@ namespace SS.Levels
 			sw.Start();
 
 
+			LevelDataManager.LoadSelectionGroupData( serializerLevelSaveState );
+
 			currentLevelId = levelIdentifier;
 			currentLevelSaveStateId = levelSaveStateIdentifier;
 
@@ -968,8 +970,10 @@ namespace SS.Levels
 			LevelDataManager.SaveDaylightCycleData( serializerSaveState );
 			LevelDataManager.SaveCameraData( serializerSaveState );
 			LevelDataManager.SaveTimeData( serializerSaveState );
+			LevelDataManager.SaveSelectionGroupData( serializerSaveState );
 
 			LevelDataManager.SaveFactionData( serializerFactionData );
+
 
 			SaveUnits( unitData, serializerSavedUnits );
 			SaveBuildings( buildingData, serializerSavedBuildings );

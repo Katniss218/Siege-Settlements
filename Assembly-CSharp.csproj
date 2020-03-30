@@ -116,6 +116,7 @@
     <Compile Include="Assets\SCRIPTS\Selection\ISelectDisplayHandler.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\Selection.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\SelectionController.cs" />
+    <Compile Include="Assets\SCRIPTS\Selection\SelectionGroupUtils.cs" />
     <Compile Include="Assets\SCRIPTS\Selection\SelectionUtils.cs" />
     <Compile Include="Assets\SCRIPTS\TacticalAI\DropOffGoal\TacticalDropOffGoal.cs" />
     <Compile Include="Assets\SCRIPTS\TacticalAI\DropOffGoal\TacticalDropOffGoalData.cs" />

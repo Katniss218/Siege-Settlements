@@ -55,7 +55,7 @@ namespace SS
 			new List<SSObject>(),
 			new List<SSObject>()
 		};
-	
+			
 		public static SSObject[] GetGroup( byte index )
 		{
 			if( index < 0 || index > 9 )
