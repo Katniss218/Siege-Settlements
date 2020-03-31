@@ -165,12 +165,13 @@ namespace SS.Objects.Buildings
 					repairIconSprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/repair" );
 				}
 
-				ActionPanel.instance.CreateButton( "building.ap.repair", repairIconSprite, "Repair", "Click to repair building...", () =>
+				ActionPanel.instance.CreateButton( "building.ap.repair", repairIconSprite, "Repair", "Click to repair building...",
+					ActionButtonAlignment.MiddleRight, ActionButtonType.Object, () =>
 				{
 					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
 
 					ConstructionSite.BeginConstructionOrRepair( this, constructionSiteData );
-					ActionPanel.instance.Clear( "building.ap.repair" );
+					ActionPanel.instance.Clear( "building.ap.repair", ActionButtonType.Object );
 				} );
 			}
 		}
@@ -207,7 +208,8 @@ namespace SS.Objects.Buildings
 				this.DisplayRepairButton();
 			}
 
-			ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...", () =>
+			ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...",
+				ActionButtonAlignment.LowerRight, ActionButtonType.Object, () =>
 			{
 				this.Die();
 			} );

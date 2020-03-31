@@ -393,7 +393,7 @@ namespace SS.Objects.Modules
 				}
 
 				// clear if the begin was caused by decreasing queue.
-				ActionPanel.instance.Clear( "research.ap.cancel" );
+				ActionPanel.instance.Clear( "research.ap.cancel", ActionButtonType.Module );
 				DisplayCancelButton();
 			}
 		}
@@ -430,14 +430,15 @@ namespace SS.Objects.Modules
 
 			if( this.queuedTechnologies.Count == 0 )
 			{
-				ActionPanel.instance.Clear( "research.ap.cancel" );
+				ActionPanel.instance.Clear( "research.ap.cancel", ActionButtonType.Module );
 			}
 		}
 
 
 		private void DisplayCancelButton()
 		{
-			ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel research...", () =>
+			ActionPanel.instance.CreateButton( "research.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel research...",
+				ActionButtonAlignment.LowerLeft, ActionButtonType.Module, () =>
 			{
 				this.Dequeue( false );
 			} );

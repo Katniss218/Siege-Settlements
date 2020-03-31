@@ -102,7 +102,7 @@ namespace SS.Objects.Units
 					return;
 				}
 
-				Transform t = ActionPanel.instance.GetActionButton( "civilian.autoduty" );
+				Transform t = ActionPanel.instance.GetActionButton( "civilian.autoduty", ActionButtonType.Object );
 				if( this.isOnAutomaticDuty )
 				{
 					t.GetComponent<Image>().sprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/autodutyoff" );
@@ -120,11 +120,11 @@ namespace SS.Objects.Units
 					return;
 				}
 
-				ActionPanel.instance.Clear( "civilian.autoduty" );
-				ActionPanel.instance.Clear( "civilian.employ" );
+				ActionPanel.instance.Clear( "civilian.autoduty", ActionButtonType.Object );
+				ActionPanel.instance.Clear( "civilian.employ", ActionButtonType.Object );
 				UnitDisplayManager.CreateUnemployButton( this );
-				ActionPanel.instance.Clear( "unit.ap.pickup" );
-				ActionPanel.instance.Clear( "unit.ap.dropoff" );
+				ActionPanel.instance.Clear( "unit.ap.pickup", ActionButtonType.Object );
+				ActionPanel.instance.Clear( "unit.ap.dropoff", ActionButtonType.Object );
 			} );
 
 			this.onUnemploy.AddListener( () =>
@@ -134,7 +134,7 @@ namespace SS.Objects.Units
 					return;
 				}
 
-				ActionPanel.instance.Clear( "civilian.unemploy" );
+				ActionPanel.instance.Clear( "civilian.unemploy", ActionButtonType.Object );
 				UnitDisplayManager.CreateAutodutyButton( this );
 				UnitDisplayManager.CreateEmployButton( this );
 				UnitDisplayManager.CreateQueryButtons();

@@ -4,14 +4,30 @@ using UnityEngine.Events;
 
 namespace SS.UI
 {
+	public enum ActionButtonAlignment : byte
+	{
+		UpperLeft,
+		UpperRight,
+		MiddleLeft,
+		MiddleRight,
+		LowerLeft,
+		LowerRight
+	}
+
+	public enum ActionButtonType : byte
+	{
+		Object,
+		Module
+	}
+
 	[DisallowMultipleComponent]
 	public class ActionPanel : MonoBehaviour
 	{
+		private Dictionary<string, Transform> objectButtons = new Dictionary<string, Transform>();
+		private Dictionary<string, Transform> moduleButtons = new Dictionary<string, Transform>();
+
+
 		public static ActionPanel instance { get; private set; }
-
-		private Dictionary<string, Transform> actionButtons = new Dictionary<string, Transform>();
-
-		[SerializeField] private Transform buttonsParent = null;
 
 		void Awake()
 		{
@@ -22,53 +38,161 @@ namespace SS.UI
 			instance = this;
 		}
 
-
-		public void CreateButton( string id, Sprite icon, string displayName, string displayDescription, UnityAction onClick )
+		private static Vector2 AlignmentToPosition( ActionButtonAlignment alignment, ActionButtonType offset )
 		{
-			if( this.actionButtons.Count >= 9 )
+			Vector2 position = Vector2.zero;
+			switch( alignment )
 			{
-				Debug.LogWarning( "Tried adding more than 9 action buttons." );
-				return;
+				case ActionButtonAlignment.UpperLeft:
+					position = new Vector2( 0, 104 + 20 );
+					break;
+				case ActionButtonAlignment.UpperRight:
+					position = new Vector2( 47 + 10, 104 + 20 );
+					break;
+				case ActionButtonAlignment.MiddleLeft:
+					position = new Vector2( 0, 57 + 10 );
+					break;
+				case ActionButtonAlignment.MiddleRight:
+					position = new Vector2( 47 + 10, 57+10 );
+					break;
+				case ActionButtonAlignment.LowerLeft:
+					position = new Vector2( 0, 10 );
+					break;
+				case ActionButtonAlignment.LowerRight:
+					position = new Vector2( 47 + 10, 10 );
+					break;
 			}
-
-			GameObject button = UIUtils.InstantiateIconButton( buttonsParent, new GenericUIData(), icon, onClick );
-			ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
-			toolTipUIhandler.constructToolTip = () =>
+			if( offset == ActionButtonType.Object )
 			{
-				ToolTip.Create( 450.0f, displayName );
-
-				ToolTip.AddText( displayDescription );
-				ToolTip.Style.SetPadding( 48, 48 );
-			};
-
-			this.actionButtons.Add( id, button.transform );
+				position += new Vector2( 50, 0 );
+			}
+			if( offset == ActionButtonType.Module )
+			{
+				position += new Vector2( 184, 0 );
+			}
+			return position;
 		}
 
-		public Transform GetActionButton( string id )
+		// if an action button wants to be created where another action button already is - throw an exception.
+
+		public void CreateButton( string id, Sprite icon, string displayName, string description, ActionButtonAlignment alignment, ActionButtonType type, UnityAction onClick )
 		{
-			if( this.actionButtons.TryGetValue( id, out Transform ret ) )
+			Vector2 position = AlignmentToPosition( alignment, type );
+			if( type == ActionButtonType.Object )
 			{
-				return ret;
+				if( this.objectButtons.ContainsKey( id ) )
+				{
+					throw new System.Exception( "A button with an id '" + id + "' already exists." );
+				}
+
+				GameObject button = UIUtils.InstantiateIconButton( this.transform, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
+				ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
+				toolTipUIhandler.constructToolTip = () =>
+				{
+					ToolTip.Create( 450.0f, displayName );
+
+					ToolTip.AddText( description );
+					ToolTip.Style.SetPadding( 48, 48 );
+				};
+
+				// left
+				this.objectButtons.Add( id, button.transform );
+			}
+			else if( type == ActionButtonType.Module )
+			{
+				if( this.moduleButtons.ContainsKey( id ) )
+				{
+					throw new System.Exception( "A button with an id '" + id + "' already exists." );
+				}
+
+				GameObject button = UIUtils.InstantiateIconButton( this.transform, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
+				ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
+				toolTipUIhandler.constructToolTip = () =>
+				{
+					ToolTip.Create( 450.0f, displayName );
+
+					ToolTip.AddText( description );
+					ToolTip.Style.SetPadding( 48, 48 );
+				};
+				
+				// right
+				this.moduleButtons.Add( id, button.transform );
+			}
+		}
+		
+		public Transform GetActionButton( string id, ActionButtonType type )
+		{
+			if( type == ActionButtonType.Object )
+			{
+				if( this.objectButtons.TryGetValue( id, out Transform ret ) )
+				{
+					return ret;
+				}
+			}
+			else if( type == ActionButtonType.Module )
+			{
+				if( this.moduleButtons.TryGetValue( id, out Transform ret ) )
+				{
+					return ret;
+				}
 			}
 			return null;
 		}
-		
+
 		public void ClearAll()
 		{
-			foreach( Transform obj in this.actionButtons.Values )
+			foreach( Transform obj in this.objectButtons.Values )
 			{
 				Object.Destroy( obj.gameObject );
 			}
-			this.actionButtons.Clear();
-		}
-		
-		public bool Clear( string id )
-		{
-			if( this.actionButtons.TryGetValue( id, out Transform obj ) )
+			foreach( Transform obj in this.moduleButtons.Values )
 			{
 				Object.Destroy( obj.gameObject );
-				this.actionButtons.Remove( id );
-				return true;
+			}
+			this.objectButtons.Clear();
+			this.moduleButtons.Clear();
+		}
+
+		public void ClearAll( ActionButtonType type )
+		{
+			if( type == ActionButtonType.Object )
+			{
+				foreach( Transform obj in this.objectButtons.Values )
+				{
+					Object.Destroy( obj.gameObject );
+				}
+				this.objectButtons.Clear();
+			}
+			else if( type == ActionButtonType.Module )
+			{
+				foreach( Transform obj in this.moduleButtons.Values )
+				{
+					Object.Destroy( obj.gameObject );
+				}
+				this.moduleButtons.Clear();
+			}
+		}
+		
+		public bool Clear( string id, ActionButtonType type )
+		{
+			Transform obj;
+			if( type == ActionButtonType.Object )
+			{
+				if( this.objectButtons.TryGetValue( id, out obj ) )
+				{
+					Object.Destroy( obj.gameObject );
+					this.objectButtons.Remove( id );
+					return true;
+				}
+			}
+			else if( type == ActionButtonType.Module )
+			{
+				if( this.moduleButtons.TryGetValue( id, out obj ) )
+				{
+					Object.Destroy( obj.gameObject );
+					this.moduleButtons.Remove( id );
+					return true;
+				}
 			}
 			return false;
 		}

@@ -166,6 +166,12 @@ namespace SS.Objects.Modules
 			{
 				this.BeginTraining();
 			}
+
+			// remove the cancel button if there is no more things to cancel.
+			if( this.queuedUnits.Count == 0 )
+			{
+				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
+			}
 		}
 		
 
@@ -471,7 +477,7 @@ namespace SS.Objects.Modules
 				}
 
 				// clear if the begin was caused by decreasing queue.
-				ActionPanel.instance.Clear( "barracks.ap.cancel" );
+				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
 				DisplayCancelButton();
 			}
 		}
@@ -508,7 +514,7 @@ namespace SS.Objects.Modules
 			
 			if( this.queuedUnits.Count == 0 )
 			{
-				ActionPanel.instance.Clear( "barracks.ap.cancel" );
+				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
 			}
 		}
 
@@ -519,7 +525,8 @@ namespace SS.Objects.Modules
 
 		private void DisplayCancelButton()
 		{
-			ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...", () =>
+			ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...",
+				 ActionButtonAlignment.LowerLeft, ActionButtonType.Module, () =>
 			{
 				this.Dequeue( false );
 			} );
@@ -607,14 +614,15 @@ namespace SS.Objects.Modules
 
 		private void CreateRallyButton()
 		{
-			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/rally" ), "Set Rally Point", "Click to set the rally point (units move towards it when trained)...", () =>
+			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/rally" ),
+				"Set Rally Point", "Click to set the rally point (units move towards it when trained)...", ActionButtonAlignment.UpperLeft, ActionButtonType.Module, () =>
 			{
 				if( Main.mouseInput != null )
 				{
 					Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, -5, this.Inp_SetRally, true );
 					Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, -5, this.Inp_CancelRally, true );
 				}
-				ActionPanel.instance.Clear( "barracks.ap.set_rally" );
+				ActionPanel.instance.Clear( "barracks.ap.set_rally", ActionButtonType.Module );
 				// needs to set the left-mouse action to rally point.
 			} );
 		}

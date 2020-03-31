@@ -218,7 +218,7 @@ namespace SS.Objects.Buildings
 				if( Building.CanStartRepair( building ) )
 				{
 					// clear the previous button (if any) & display new, possibly updated to be red or green.
-					ActionPanel.instance.Clear( "building.ap.repair" );
+					ActionPanel.instance.Clear( "building.ap.repair", ActionButtonType.Object );
 					building.DisplayRepairButton();
 				}
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
