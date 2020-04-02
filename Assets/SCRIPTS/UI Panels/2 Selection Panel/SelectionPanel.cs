@@ -58,6 +58,7 @@ namespace SS.UI
 		}
 		
 		public static SelectionPanel instance { get; private set; }
+		public Transform moduleSubPanelTransform = null;
 
 
 

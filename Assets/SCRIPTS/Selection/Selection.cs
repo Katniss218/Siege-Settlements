@@ -366,6 +366,7 @@ namespace SS
 			if( !SelectionPanel.instance.gameObject.activeSelf )
 			{
 				SelectionPanel.instance.gameObject.SetActive( true );
+				SelectionPanel.instance.moduleSubPanelTransform.gameObject.SetActive( true );
 			}
 			if( !ActionPanel.instance.gameObject.activeSelf )
 			{
@@ -404,6 +405,7 @@ namespace SS
 			else if( selected.Count == 0 )
 			{
 				SelectionPanel.instance.gameObject.SetActive( false );
+				SelectionPanel.instance.moduleSubPanelTransform.gameObject.SetActive( false );
 				ActionPanel.instance.gameObject.SetActive( false );
 			}
 			else
@@ -447,6 +449,7 @@ namespace SS
 			else if( selected.Count == 0 )
 			{
 				SelectionPanel.instance.gameObject.SetActive( false );
+				SelectionPanel.instance.moduleSubPanelTransform.gameObject.SetActive( false );
 				ActionPanel.instance.gameObject.SetActive( false );
 			}
 			else
@@ -474,6 +477,7 @@ namespace SS
 			selected.Clear();
 
 			SelectionPanel.instance.gameObject.SetActive( false );
+			SelectionPanel.instance.moduleSubPanelTransform.gameObject.SetActive( false );
 			ActionPanel.instance.gameObject.SetActive( false );
 		}
 

@@ -26,6 +26,7 @@ namespace SS.UI
 		private Dictionary<string, Transform> objectButtons = new Dictionary<string, Transform>();
 		private Dictionary<string, Transform> moduleButtons = new Dictionary<string, Transform>();
 
+		[SerializeField] private Transform buttonsParent = null;
 
 		public static ActionPanel instance { get; private set; }
 
@@ -44,31 +45,31 @@ namespace SS.UI
 			switch( alignment )
 			{
 				case ActionButtonAlignment.UpperLeft:
-					position = new Vector2( 0, 104 + 20 );
+					position = new Vector2( 0, 135.5f );
 					break;
 				case ActionButtonAlignment.UpperRight:
-					position = new Vector2( 47 + 10, 104 + 20 );
+					position = new Vector2( 47 + 10, 135.5f );
 					break;
 				case ActionButtonAlignment.MiddleLeft:
-					position = new Vector2( 0, 57 + 10 );
+					position = new Vector2( 0, 82 );
 					break;
 				case ActionButtonAlignment.MiddleRight:
-					position = new Vector2( 47 + 10, 57+10 );
+					position = new Vector2( 47 + 10, 82 );
 					break;
 				case ActionButtonAlignment.LowerLeft:
-					position = new Vector2( 0, 10 );
+					position = new Vector2( 0, 26 );
 					break;
 				case ActionButtonAlignment.LowerRight:
-					position = new Vector2( 47 + 10, 10 );
+					position = new Vector2( 47 + 10, 26 );
 					break;
 			}
 			if( offset == ActionButtonType.Object )
 			{
-				position += new Vector2( 50, 0 );
+				position += new Vector2( 75.5f, 0 );
 			}
 			if( offset == ActionButtonType.Module )
 			{
-				position += new Vector2( 184, 0 );
+				position += new Vector2( 210.5f, 0 );
 			}
 			return position;
 		}
@@ -85,7 +86,7 @@ namespace SS.UI
 					throw new System.Exception( "A button with an id '" + id + "' already exists." );
 				}
 
-				GameObject button = UIUtils.InstantiateIconButton( this.transform, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
+				GameObject button = UIUtils.InstantiateIconButton( this.buttonsParent, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
 				ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
 				toolTipUIhandler.constructToolTip = () =>
 				{
@@ -105,7 +106,7 @@ namespace SS.UI
 					throw new System.Exception( "A button with an id '" + id + "' already exists." );
 				}
 
-				GameObject button = UIUtils.InstantiateIconButton( this.transform, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
+				GameObject button = UIUtils.InstantiateIconButton( this.buttonsParent, new GenericUIData( position, new Vector2( 47, 47 ), Vector2.zero, Vector2.zero, Vector2.zero ), icon, onClick );
 				ToolTipUIHandler toolTipUIhandler = button.AddComponent<ToolTipUIHandler>();
 				toolTipUIhandler.constructToolTip = () =>
 				{

@@ -1,4 +1,5 @@
-﻿using SS.Levels;
+﻿using SS.Content;
+using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.Units;
 using SS.UI;
@@ -186,8 +187,7 @@ namespace SS.Objects.Modules
 			}
 			return ret;
 		}
-
-
+		
 
 		public void ExitAll()
 		{
@@ -499,6 +499,25 @@ namespace SS.Objects.Modules
 		{
 			DisplaySlotsList_UI();
 			DisplayWorkerSlotsList_UI();
+
+			ActionPanel.instance.CreateButton( "interior.ap.exitall", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/exit_all" ), "Exit all", "Press to exit and select all objects from this interior.", ActionButtonAlignment.UpperRight, ActionButtonType.Module, () =>
+			{
+				List<SSObjectDFC> selectables = new List<SSObjectDFC>();
+
+				for( int i = 0; i < this.slots.Length; i++ )
+				{
+					if( this.slots[i].objInside != null )
+					{
+						if( this.slots[i].objInside is SSObjectDFC )
+						{
+							selectables.Add( (SSObjectDFC)this.slots[i].objInside );
+						}
+						this.slots[i].objInside.SetOutside();
+					}
+				}
+
+				SelectionUtils.Select( selectables.ToArray(), SelectionMode.Replace );
+			} );
 		}
 
 		public void OnHide()

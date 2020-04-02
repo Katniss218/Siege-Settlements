@@ -725,6 +725,7 @@ namespace SS.Levels
 
 			// Set inactive, since by default, there's no selection.
 			SelectionPanel.instance.gameObject.SetActive( false );
+			SelectionPanel.instance.moduleSubPanelTransform.gameObject.SetActive( false );
 			ActionPanel.instance.gameObject.SetActive( false );
 			
 			sw.Stop();
