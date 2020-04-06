@@ -43,15 +43,19 @@ namespace SS
 						if( ssObject.HasPaymentReceivers() )
 						{
 							if( ssObject is SSObjectDFC )
-								AssignMakePaymentGoal( (SSObjectDFC)ssObject, Selection.GetSelectedObjects() );
-						}
-						else
-						{
-							InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
-							if( inventories.Length > 0 )
 							{
-								AssignDropoffToInventoryGoal( inventories[0], Selection.GetSelectedObjects() );
+								bool flag = AssignMakePaymentGoal( (SSObjectDFC)ssObject, Selection.GetSelectedObjects() );
+								if( flag )
+								{
+									return;
+								}
 							}
+						}
+
+						InventoryModule[] inventories = ssObject.GetModules<InventoryModule>();
+						if( inventories.Length > 0 )
+						{
+							AssignDropoffToInventoryGoal( inventories[0], Selection.GetSelectedObjects() );
 						}
 					}
 				}
@@ -176,7 +180,7 @@ namespace SS
 			}
 		}
 
-		private static void AssignMakePaymentGoal( SSObjectDFC paymentReceiverSSObject, SSObject[] selected )
+		private static bool AssignMakePaymentGoal( SSObjectDFC paymentReceiverSSObject, SSObject[] selected )
 		{
 			// Assigns payment goal to selected objects.
 			// Can assign different receivers for different objects, depending on their inventories & wanted resources.
@@ -186,7 +190,7 @@ namespace SS
 				// Don't assign make payment to non player.
 				if( paymentReceiverSSObject.factionId != LevelDataManager.PLAYER_FAC )
 				{
-					return;
+					return false;
 				}
 			}
 
@@ -260,10 +264,6 @@ namespace SS
 			}
 
 
-			if( toBeAssignedGameObjects.Count > 0 )
-			{
-				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
-			}
 			foreach( var kvp in toBeAssignedGameObjects )
 			{
 				TacticalGoalController goalController = kvp.Key.controller;
@@ -276,6 +276,12 @@ namespace SS
 				goal2.SetDestination( kvp.Value );
 				goalController.SetGoals( TacticalGoalQuery.TAG_CUSTOM, goal1, goal2 );
 			}
+			if( toBeAssignedGameObjects.Count > 0 )
+			{
+				AudioManager.PlaySound( AssetManager.GetAudioClip( AssetManager.BUILTIN_ASSET_ID + "Sounds/ai_response" ), Main.cameraPivot.position );
+				return true;
+			}
+			return false;
 		}
 	}
 }

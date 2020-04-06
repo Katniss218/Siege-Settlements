@@ -2,7 +2,6 @@
 using SS.Objects.Extras;
 using SS.Objects.Modules;
 using UnityEngine;
-using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 namespace SS.Objects.Projectiles
@@ -18,6 +17,8 @@ namespace SS.Objects.Projectiles
 		public float damage;
 		public float armorPenetration;
 		public DamageType damageType;
+
+		public float? originY { get; set; }
 
 		public AudioClip hitSound { get; set; }
 		public AudioClip missSound { get; set; }
@@ -78,7 +79,7 @@ namespace SS.Objects.Projectiles
 			}
 			AudioManager.PlaySound( this.missSound, this.transform.position );
 		}
-
+		
 		private void OnTriggerEnter( Collider other )
 		{
 			if( this.isStuck )
@@ -113,12 +114,12 @@ namespace SS.Objects.Projectiles
 			}
 
 			IDamageable damageableOther = other.GetComponent<IDamageable>();
-			SSObjectDFC factionMemberOther = otherSSObject as SSObjectDFC;
+			IFactionMember factionMemberOther = otherSSObject as IFactionMember;
 			
 			this.DamageAndStuckLogic( damageableOther, factionMemberOther, this.canGetStuck );
 		}
 
-		public void DamageAndStuckLogic( IDamageable hitDamageable, SSObjectDFC hitFactionMember, bool canGetStuck )
+		public void DamageAndStuckLogic( IDamageable hitDamageable, IFactionMember hitFactionMember, bool canGetStuck )
 		{
 			if( this.blastRadius == 0.0f )
 			{
@@ -130,9 +131,18 @@ namespace SS.Objects.Projectiles
 				{
 					if( SSObjectDFC.CanTarget( this.ownerFactionIdCache, hitFactionMember ) )
 					{
-						hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
+						SSObject targetObj = ((SSObject)hitDamageable);
+						float hitChance = Main.CalculateHitChance( targetObj, this.originY ?? this.transform.position.y );
+						if( Main.IsHit( hitChance ) )
+						{
+							hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
+							AudioManager.PlaySound( this.hitSound, this.transform.position );
+						}
+						else
+						{
+							AudioManager.PlaySound( this.hitSound, this.transform.position, 0.5f, 1.5f );
+						}
 
-						AudioManager.PlaySound( this.hitSound, this.transform.position );
 						this.Destroy();
 					}
 				}
@@ -160,7 +170,13 @@ namespace SS.Objects.Projectiles
 							Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
 							continue;
 						}
-						(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
+
+						SSObject targetObj = ((SSObject)hitDamageable);
+						float hitChance = Main.CalculateHitChance( targetObj, this.originY ?? this.transform.position.y );
+						if( Main.IsHit( hitChance ) )
+						{
+							(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
+						}
 					}
 				}
 

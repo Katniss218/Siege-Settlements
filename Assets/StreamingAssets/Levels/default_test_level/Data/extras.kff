@@ -17,6 +17,7 @@
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1; // Max size of unit that can fit inside.
 						CountsTowardsMaxPopulation = false;
+						CoverValue = 0;
 						IsHidden = false; // If true, the unit will dissappear after entering this slot.
 						WhitelistedUnits = [ "unit.civilian" ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					},
@@ -25,6 +26,7 @@
 						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
 						MaxPopulation = 1; // Max size of unit that can fit inside.
 						CountsTowardsMaxPopulation = false;
+						CoverValue = 0;
 						IsHidden = false; // If true, the unit will dissappear after entering this slot.
 						WhitelistedUnits = [ "unit.civilian" ]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
 					}

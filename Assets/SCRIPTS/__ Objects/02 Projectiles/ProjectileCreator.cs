@@ -61,6 +61,8 @@ namespace SS.Objects.Projectiles
 			projectile.damage = data.damageOverride;
 			projectile.armorPenetration = data.armorPenetrationOverride;
 
+			projectile.originY = data.originY;
+
 			//
 			//    MODULES
 			//
@@ -152,6 +154,8 @@ namespace SS.Objects.Projectiles
 			data.damageTypeOverride = projectile.damageType;
 			data.damageOverride = projectile.damage;
 			data.armorPenetrationOverride = projectile.armorPenetration;
+
+			data.originY = projectile.originY;
 
 			if( projectile.owner == null )
 			{

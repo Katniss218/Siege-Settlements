@@ -207,6 +207,9 @@ namespace SS.Objects
 			return false;
 		}
 
+		/// <summary>
+		/// Returns every payment receiver that wants to receive payment.
+		/// </summary>
 		public IPaymentReceiver[] GetAvailableReceivers()
 		{
 			if( this is ISSObjectUsableUnusable )

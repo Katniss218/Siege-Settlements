@@ -436,9 +436,10 @@
 				AttackRange = 5.0;
 				AttackCooldown = 3.0;
 				Velocity = 2.3;
-				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+				UseHitboxOffset = true;
+				//LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
-				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				//LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
 			},
@@ -649,9 +650,10 @@
 				AttackRange = 4.0;
 				AttackCooldown = 3.0;
 				Velocity = 2.1;
-				LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
+				UseHitboxOffset = true;
+				//LocalOffsetMin = { X = -0.5; Y = 0.1875; Z = -0.25; }; // The projectiles' position will be randomized inside of a box from LocalOffsetMin to LocalOffsetMax.
 																	   // To prevent randomization, set the specific coordinate in both fields to the same value.
-				LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
+				//LocalOffsetMax = { X = 0.5; Y = 0.1875; Z = 0.25; };
 				TraversibleSubObjects = [ ];
 				AttackSound = "extern:Sounds/loose.wav";
 			},

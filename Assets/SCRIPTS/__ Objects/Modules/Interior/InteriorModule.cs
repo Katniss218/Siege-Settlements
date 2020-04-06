@@ -31,6 +31,8 @@ namespace SS.Objects.Modules
 			
 			public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
 
+			public float coverValue { get; set; }
+
 			public bool isHidden { get; set; }
 
 			public bool isEmpty
@@ -75,8 +77,9 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public Vector3? entrancePosition { get; set; }
 
-		private SlotGeneric[] slots = new SlotGeneric[0];
-		private SlotWorker[] workerSlots = new SlotWorker[0];
+#warning encapsulate?
+		public SlotGeneric[] slots = new SlotGeneric[0];
+		public SlotWorker[] workerSlots = new SlotWorker[0];
 		
 		public int SlotCount( SlotType type )
 		{

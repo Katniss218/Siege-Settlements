@@ -14,7 +14,7 @@ namespace SS.Objects.Projectiles
 		public float blastRadius { get; set; } // set to 0 for no blast.
 
 		public float lifetime { get; set; }
-
+		
 		public AddressableAsset<AudioClip> hitSoundEffect { get; private set; }
 		public AddressableAsset<AudioClip> missSoundEffect { get; private set; }
 

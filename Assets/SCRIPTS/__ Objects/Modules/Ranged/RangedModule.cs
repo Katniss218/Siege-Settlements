@@ -227,6 +227,7 @@ namespace SS.Objects.Modules
 			data.damageTypeOverride = this.damageType;
 			data.damageOverride = this.damage;
 			data.armorPenetrationOverride = this.armorPenetration;
+			data.originY = this.transform.position.y;
 			data.owner = new Tuple<Guid, Guid>(
 				this.ssObject.guid,
 				this.moduleId

@@ -129,10 +129,22 @@ namespace SS.Objects.Modules
 		/// </summary>
 		public void Attack( IDamageable target )
 		{
-			float damage = this.damageOverride == null ? this.damage : this.damageOverride.Value;
+			SSObject targetObj = ((SSObject)target);
+			float hitChance = Main.CalculateHitChance( targetObj, this.transform.position.y );
+			if( Main.IsHit( hitChance ) )
+			{
+				float damage = this.damageOverride == null ? this.damage : this.damageOverride.Value;
 
-			target.TakeDamage( this.damageType, DamageUtils.GetRandomized( damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
-			AudioManager.PlaySound( this.attackSoundEffect, this.transform.position );
+				float damageRand = DamageUtils.GetRandomized( damage, DamageUtils.RANDOM_DEVIATION );
+
+				target.TakeDamage( this.damageType, damageRand, this.armorPenetration );
+
+				AudioManager.PlaySound( this.attackSoundEffect, this.transform.position );
+			}
+			else
+			{
+				AudioManager.PlaySound( this.attackSoundEffect, this.transform.position, 0.5f, 1.5f );
+			}
 			this.lastAttackTimestamp = Time.time;
 			this.isReady2 = false;
 		}

@@ -21,6 +21,8 @@ namespace SS.Objects.Modules
 			public bool countsTowardsMaxPopulation { get; set; }
 			public bool isHidden { get; set; }
 
+			public float coverValue { get; set; }
+
 			public string[] whitelistedUnits { get; set; }
 
 			public void DeserializeKFF( KFFSerializer serializer )
@@ -30,6 +32,8 @@ namespace SS.Objects.Modules
 				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
 				this.countsTowardsMaxPopulation = serializer.ReadBool( "CountsTowardsMaxPopulation" );
 				this.isHidden = serializer.ReadBool( "IsHidden" );
+
+				this.coverValue = serializer.ReadFloat( "CoverValue" );
 
 				this.whitelistedUnits = serializer.ReadStringArray( "WhitelistedUnits" );
 			}
@@ -42,6 +46,8 @@ namespace SS.Objects.Modules
 				serializer.WriteBool( "", "CountsTowardsMaxPopulation", this.countsTowardsMaxPopulation );
 				serializer.WriteBool( "", "IsHidden", this.isHidden );
 
+				serializer.WriteFloat( "", "CoverValue", this.coverValue );
+
 				serializer.WriteStringArray( "", "WhitelistedUnits", this.whitelistedUnits );
 			}
 		}
@@ -52,7 +58,9 @@ namespace SS.Objects.Modules
 			public Quaternion rotation { get; set; }
 
 			public PopulationSize maxPopulation { get; set; }
-			
+
+			public float coverValue { get; set; }
+
 			public bool isHidden { get; set; }
 			
 			public void DeserializeKFF( KFFSerializer serializer )
@@ -61,6 +69,8 @@ namespace SS.Objects.Modules
 				this.rotation = serializer.ReadQuaternion( "Rotation" );
 				this.maxPopulation = (PopulationSize)serializer.ReadByte( "MaxPopulation" );
 				this.isHidden = serializer.ReadBool( "IsHidden" );
+
+				this.coverValue = serializer.ReadFloat( "CoverValue" );
 			}
 
 			public void SerializeKFF( KFFSerializer serializer )
@@ -69,6 +79,8 @@ namespace SS.Objects.Modules
 				serializer.WriteQuaternion( "", "Rotation", this.rotation );
 				serializer.WriteByte( "", "MaxPopulation", (byte)this.maxPopulation );
 				serializer.WriteBool( "", "IsHidden", this.isHidden );
+
+				serializer.WriteFloat( "", "CoverValue", this.coverValue );
 			}
 		}
 
@@ -112,6 +124,7 @@ namespace SS.Objects.Modules
 					slot.maxPopulation = this.slots[i].maxPopulation;
 					slot.countsTowardsMaxPopulation = this.slots[i].countsTowardsMaxPopulation;
 					slot.isHidden = this.slots[i].isHidden;
+					slot.coverValue = this.slots[i].coverValue;
 					slot.whitelistedUnits = this.slots[i].whitelistedUnits;
 
 					slots[i] = slot;
@@ -128,6 +141,7 @@ namespace SS.Objects.Modules
 					slot.localRot = this.workerSlots[i].rotation;
 					slot.maxPopulation = this.workerSlots[i].maxPopulation;
 					slot.isHidden = this.workerSlots[i].isHidden;
+					slot.coverValue = this.workerSlots[i].coverValue;
 
 					workerSlots[i] = slot;
 				}

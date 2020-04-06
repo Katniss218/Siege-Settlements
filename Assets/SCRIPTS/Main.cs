@@ -683,5 +683,47 @@ namespace SS
 		{
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
 		}
+
+		const float LINEAR_HIT_GROW_FACTOR = 0.5f; // hot much the chance to hit increases per 1 meter offset.
+		
+
+		public static float CalculateHitChance( SSObject victim, float attackerPosY )
+		{
+			float perc = 0;
+
+			if( victim is IInteriorUser )
+			{
+				IInteriorUser victimIU = (IInteriorUser)victim;
+
+				if( victimIU.isInside )
+				{
+					perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - victimIU.interior.transform.position.y) );
+
+					Debug.Log( "A = " + (attackerPosY) );
+					Debug.Log( "VI = " + (victimIU.interior.transform.position.y) );
+					//Debug.Log( "P" + perc );
+					if( victimIU.slotType == InteriorModule.SlotType.Generic )
+					{
+						perc -= victimIU.interior.slots[victimIU.slotIndex].coverValue;
+					}
+					else if( victimIU.slotType == InteriorModule.SlotType.Worker )
+					{
+						perc -= victimIU.interior.workerSlots[victimIU.slotIndex].coverValue;
+					}
+					//Debug.Log( "Q" + perc );
+					return perc;
+				}
+			}
+
+			perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - victim.transform.position.y) );
+			return perc;
+		}
+
+		public static bool IsHit( float hitChancePerc )
+		{
+			float p = UnityEngine.Random.Range( 0.0f, 1.0f );
+			//Debug.Log( p + ",  " + hitChancePerc );
+			return p <= hitChancePerc;
+		}
 	}
 }

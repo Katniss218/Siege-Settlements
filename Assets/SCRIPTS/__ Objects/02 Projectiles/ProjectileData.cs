@@ -19,6 +19,8 @@ namespace SS.Levels.SaveStates
 		public float damageOverride { get; set; }
 		public float armorPenetrationOverride { get; set; }
 		
+		public float? originY { get; set; }
+
 		public int ownerFactionIdCache { get; set; }
 		public Tuple<Guid,Guid> owner { get; set; }
 
@@ -101,6 +103,18 @@ namespace SS.Levels.SaveStates
 				throw new Exception( "Missing or invalid value of 'ArmorPenetrationOverride' (" + serializer.file.fileName + ")." );
 			}
 
+			if( serializer.Analyze( "OriginY" ).isSuccess )
+			{
+				try
+				{
+					this.originY = serializer.ReadFloat( "OriginY" );
+				}
+				catch
+				{
+					throw new Exception( "Missing or invalid value of 'OriginY' (" + serializer.file.fileName + ")." );
+				}
+			}
+
 			try
 			{
 				this.ownerFactionIdCache = serializer.ReadInt( "FactionId" );
@@ -155,6 +169,11 @@ namespace SS.Levels.SaveStates
 			serializer.WriteByte( "", "DamageTypeOverride", (byte)this.damageTypeOverride );
 			serializer.WriteFloat( "", "DamageOverride", this.damageOverride );
 			serializer.WriteFloat( "", "ArmorPenetrationOverride", this.armorPenetrationOverride );
+
+			if( this.originY != null )
+			{
+				serializer.WriteFloat( "", "OriginY", this.originY.Value );
+			}
 
 			serializer.WriteInt( "", "FactionId", this.ownerFactionIdCache );
 
