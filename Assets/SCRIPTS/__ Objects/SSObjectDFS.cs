@@ -242,7 +242,7 @@ namespace SS.Objects
 		
 		internal static string GetHealthString( float health, float healthMax )
 		{
-			return "Health: " + (int)health + "/" + (int)healthMax;
+			return /*"Health: " +*/ (int)health + "/" + (int)healthMax;
 		}
 
 		/// <summary>

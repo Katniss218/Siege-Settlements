@@ -12,7 +12,8 @@ namespace SS.Objects.Units
 
 			SelectionPanel.instance.obj.displayNameText.text = u.displayName;
 
-			GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFC.GetHealthString( u.health, u.healthMax ) );
+			//GameObject healthUI = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 25.0f, -25.0f ), new Vector2( 200.0f, 25.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), SSObjectDFC.GetHealthString( u.health, u.healthMax ) );
+			GameObject healthUI = UIUtils.InstantiateValueBar( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 0.0f, -25.0f ), new Vector2( 234.0f, 35.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ), new Vector2( 0.0f, 1.0f ) ), Levels.LevelDataManager.factions[u.factionId].color, u.healthPercent, SSObjectDFC.GetHealthString( u.health, u.healthMax ) );
 			SelectionPanel.instance.obj.RegisterElement( "unit.health", healthUI.transform );
 
 			if( !u.IsDisplaySafe() )

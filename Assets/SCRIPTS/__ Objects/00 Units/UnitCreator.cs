@@ -254,7 +254,8 @@ namespace SS.Objects.Units
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "unit.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( unit.health, unit.healthMax ) );
+					//UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( unit.health, unit.healthMax ) );
+					UIUtils.EditValueBar( healthUI.gameObject, LevelDataManager.factions[unit.factionId].color, unit.healthPercent, SSObjectDFC.GetHealthString( unit.health, unit.healthMax ) );
 				}
 			} );
 			

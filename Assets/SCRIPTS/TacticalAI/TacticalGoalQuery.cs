@@ -72,10 +72,13 @@ namespace SS.AI
 				if( paymentReceivers.Length > 0 )
 				{
 					// the rest stays
-					Assign_MakePayment( dfc, paymentReceivers, Selection.GetSelectedObjects() );
-					return;
+					bool flag = Assign_MakePayment( dfc, paymentReceivers, Selection.GetSelectedObjects() );
+					if( flag )
+					{
+						return;
+					}
 				}
-
+				
 				if( resourceDeposits.Length > 0 )
 				{
 					// the rest stays
@@ -266,9 +269,7 @@ namespace SS.AI
 			}
 			// Extract only the objects that can have the goal assigned to them from the selected objects.
 			List<SSObjectDFC> filteredObjects = new List<SSObjectDFC>();
-
-			float biggestRadius = float.MinValue;
-
+			
 			for( int i = 0; i < selected.Length; i++ )
 			{
 				if( !(selected[i] is SSObjectDFC) )
@@ -297,12 +298,7 @@ namespace SS.AI
 					}
 				}
 
-				// Calculate how big is the biggest unit/hero/etc. to be used when specifying movement grid size.
-				IMovable m = (IMovable)selected[i];
-				if( m.navMeshAgent.radius > biggestRadius )
-				{
-					biggestRadius = m.navMeshAgent.radius;
-				}
+				filteredObjects.Add( dfc );
 			}
 
 			if( filteredObjects.Count > 0 )

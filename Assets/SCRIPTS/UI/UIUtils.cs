@@ -89,6 +89,19 @@ namespace SS.UI
 			}
 		}
 
+		private static GameObject __valueBar = null;
+		private static GameObject valueBar
+		{
+			get
+			{
+				if( __valueBar == null )
+				{
+					__valueBar = AssetManager.GetPrefab( AssetManager.BUILTIN_ASSET_ID + "Prefabs/UI Elements/value_bar" );
+				}
+				return __valueBar;
+			}
+		}
+
 
 
 
@@ -217,5 +230,25 @@ namespace SS.UI
 
 			return obj;
 		}
+
+		public static GameObject InstantiateValueBar( Transform parent, GenericUIData basicData, Color color, float fillPercent, string text )
+		{
+			GameObject obj = Object.Instantiate( UIUtils.valueBar, parent );
+			obj.GetComponent<RectTransform>().ApplyUIData( basicData );
+
+			EditValueBar( obj, color, fillPercent, text );
+
+			return obj;
+		}
+		public static void EditValueBar( GameObject obj, Color newColor, float fillPercent, string newText )
+		{
+			Image imageComp = obj.transform.Find("i").GetComponent<Image>();
+			TextMeshProUGUI textComp = obj.transform.Find("t").GetComponent<TextMeshProUGUI>();
+
+			imageComp.color = newColor;
+			imageComp.fillAmount = fillPercent;
+			textComp.text = newText;
+		}
+
 	}
 }

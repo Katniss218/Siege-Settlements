@@ -224,7 +224,8 @@ namespace SS.Objects.Buildings
 				Transform healthUI = SelectionPanel.instance.obj.GetElement( "building.health" );
 				if( healthUI != null )
 				{
-					UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( building.health, building.healthMax ) );
+					UIUtils.EditValueBar( healthUI.gameObject, LevelDataManager.factions[building.factionId].color, building.healthPercent, SSObjectDFC.GetHealthString( building.health, building.healthMax ) );
+					//UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( building.health, building.healthMax ) );
 				}
 
 				// If the health change changed the usability (health is above threshold).
