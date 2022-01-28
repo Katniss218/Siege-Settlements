@@ -12,7 +12,7 @@ namespace SS.Levels.SaveStates
 			public int amount { get; set; }
 
 
-			public SlotData( InventoryModule.SlotGroup slotGroup )
+			public SlotData( InventoryModule.Slot slotGroup )
 			{
 				this.id = slotGroup.id;
 				this.amount = slotGroup.amount;

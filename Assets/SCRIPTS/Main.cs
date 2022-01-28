@@ -407,7 +407,7 @@ namespace SS
 
 		private void Inp_F3( InputQueue self )
 		{
-			SSObjectDFC[] damageables = SSObject.GetAllDFSC();
+			SSObjectDFC[] damageables = SSObject.GetAllDFC();
 
 			for( int i = 0; i < damageables.Length; i++ )
 			{
@@ -684,45 +684,36 @@ namespace SS
 			return (pos1 - pos2).sqrMagnitude <= threshold * threshold;
 		}
 
-		const float LINEAR_HIT_GROW_FACTOR = 0.5f; // hot much the chance to hit increases per 1 meter offset.
-		
 
-		public static float CalculateHitChance( SSObject victim, float attackerPosY )
+		public static float CalculateHitChance( SSObject target, float attackerPosY )
 		{
+			const float LINEAR_HIT_GROW_FACTOR = 0.5f; // how much the chance to hit increases per 1 meter offset.
+
 			float perc = 0;
 
-			if( victim is IInteriorUser )
+			if( target is IInteriorUser )
 			{
-				IInteriorUser victimIU = (IInteriorUser)victim;
+				IInteriorUser targetInteriorUser = (IInteriorUser)target;
 
-				if( victimIU.isInside )
+				if( targetInteriorUser.isInside )
 				{
-					perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - victimIU.interior.transform.position.y) );
+					(InteriorModule.Slot slot, HUDInteriorSlot _) = targetInteriorUser.interior.GetSlot( targetInteriorUser.slotType, targetInteriorUser.slotIndex );
 
-					Debug.Log( "A = " + (attackerPosY) );
-					Debug.Log( "VI = " + (victimIU.interior.transform.position.y) );
-					//Debug.Log( "P" + perc );
-					if( victimIU.slotType == InteriorModule.SlotType.Generic )
-					{
-						perc -= victimIU.interior.slots[victimIU.slotIndex].coverValue;
-					}
-					else if( victimIU.slotType == InteriorModule.SlotType.Worker )
-					{
-						perc -= victimIU.interior.workerSlots[victimIU.slotIndex].coverValue;
-					}
-					//Debug.Log( "Q" + perc );
+					perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - targetInteriorUser.interior.transform.position.y) );
+
+					perc -= slot.coverValue;
+
 					return perc;
 				}
 			}
 
-			perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - victim.transform.position.y) );
+			perc = Mathf.LerpUnclamped( 1, 1 + LINEAR_HIT_GROW_FACTOR, (attackerPosY - target.transform.position.y) );
 			return perc;
 		}
 
 		public static bool IsHit( float hitChancePerc )
 		{
 			float p = UnityEngine.Random.Range( 0.0f, 1.0f );
-			//Debug.Log( p + ",  " + hitChancePerc );
 			return p <= hitChancePerc;
 		}
 	}

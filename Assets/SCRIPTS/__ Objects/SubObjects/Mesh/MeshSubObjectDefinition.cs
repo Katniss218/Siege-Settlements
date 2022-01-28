@@ -16,17 +16,17 @@ namespace SS.Objects.SubObjects
 
 		public override SubObject AddTo( SSObject ssObject )
 		{
-			var sub = ssObject.AddSubObject<MeshSubObject>( this.subObjectId );
+			var subTuple = ssObject.AddSubObject<MeshSubObject>( this.subObjectId );
 
-			sub.Item1.transform.localPosition = this.localPosition;
-			sub.Item1.transform.localRotation = this.localRotation;
+			subTuple.go.transform.localPosition = this.localPosition;
+			subTuple.go.transform.localRotation = this.localRotation;
 
-			sub.Item2.defaultPosition = this.localPosition;
-			sub.Item2.defaultRotation = this.localRotation;
-			sub.Item2.SetMesh( this.mesh );
-			sub.Item2.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
+			subTuple.sub.defaultPosition = this.localPosition;
+			subTuple.sub.defaultRotation = this.localRotation;
+			subTuple.sub.SetMesh( this.mesh );
+			subTuple.sub.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
-			return sub.Item2;
+			return subTuple.Item2;
 		}
 
 

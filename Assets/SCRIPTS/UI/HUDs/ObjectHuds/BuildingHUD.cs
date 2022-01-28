@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace SS.UI.HUDs
 {
-	public class BuildingHUD : HUDDFSC
+	public class BuildingHUD : HUDDFC
 	{
 		protected GameObject unusableMark = null;
 		

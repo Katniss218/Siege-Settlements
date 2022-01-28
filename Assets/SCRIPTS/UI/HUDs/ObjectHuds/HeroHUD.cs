@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace SS.UI.HUDs
 {
-	public class HeroHUD : HUDDFSC
+	public class HeroHUD : HUDDFC
 	{
 		public string displayName
 		{

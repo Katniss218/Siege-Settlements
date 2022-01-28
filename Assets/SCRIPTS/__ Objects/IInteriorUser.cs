@@ -2,6 +2,9 @@
 
 namespace SS.Objects.Modules
 {
+	/// <summary>
+	/// Represents a thing that can go inside interiors.
+	/// </summary>
 	public interface IInteriorUser
 	{
 		Transform transform { get; }

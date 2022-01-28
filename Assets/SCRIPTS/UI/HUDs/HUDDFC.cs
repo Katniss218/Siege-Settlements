@@ -8,7 +8,7 @@ namespace SS.UI.HUDs
 {
 	[DisallowMultipleComponent]
 	[RequireComponent( typeof( HudContainer ) )]
-	public class HUDDFSC : MonoBehaviour
+	public class HUDDFC : MonoBehaviour
 	{
 		public const float DAMAGE_DISPLAY_DURATION = 1.0f;
 

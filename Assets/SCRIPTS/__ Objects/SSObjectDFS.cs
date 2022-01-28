@@ -14,7 +14,7 @@ namespace SS.Objects
 
 	[RequireComponent( typeof( TacticalGoalController ) )]
 	/// <summary>
-	/// Represents any object that is 'Damageable', 'Faction Member', 'Controllable' (DFSC)
+	/// Represents any object that is 'Damageable', 'Faction Member', 'Controllable' (DFC)
 	/// </summary>
 	public abstract class SSObjectDFC : SSObject, ISelectDisplayHandler, IDamageable, IFactionMember
 	{
@@ -37,7 +37,7 @@ namespace SS.Objects
 		//
 
 		
-		public abstract HUDDFSC hudDFSC { get; }
+		public abstract HUDDFC hudDFC { get; }
 
 
 		public float viewRange { get; set; }

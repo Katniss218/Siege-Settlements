@@ -7,7 +7,6 @@ namespace SS.Objects
 		float health { get; set; }
 
 		float healthMax { get; set; }
-		//FloatM healthMax { get; }
 
 		float healthPercent { get; set; }
 

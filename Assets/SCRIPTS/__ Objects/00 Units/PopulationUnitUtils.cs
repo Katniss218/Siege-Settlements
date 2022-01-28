@@ -88,7 +88,7 @@ namespace SS.Objects.Units
 		{
 			for( int i = 0; i < inventories.Length; i++ )
 			{
-				InventoryModule.SlotGroup[] slotGroups = inventories[i].GetSlots();
+				InventoryModule.Slot[] slotGroups = inventories[i].GetSlots();
 
 				for( int j = 0; j < slotGroups.Length; j++ )
 				{
@@ -121,10 +121,10 @@ namespace SS.Objects.Units
 		/// Tries to join specified units with additional units to make a bigger unit.
 		/// </summary>
 		/// <param name="beacon">The unit to enlarge (increase population).</param>
-		/// <param name="additional">Units to take the additional population from.</param>
-		public static void Combine( Unit beacon, List<Unit> additional )
+		/// <param name="additionalUnits">Units to take the additional population from.</param>
+		public static void Combine( Unit beacon, List<Unit> additionalUnits )
 		{
-#warning TODO! - refactor these two to use safe combine.
+#warning TODO! - refactor these two to use safe combine. - what is safe combine?
 			byte selfPop = (byte)beacon.population;
 			byte popTotal = selfPop; // total population of the new unit
 			byte targetPop = 0; // total population of the new unit (if popTotal is a valid PopulationSize).
@@ -133,22 +133,22 @@ namespace SS.Objects.Units
 
 			bool isSelectedAdditionalAny = false;
 
-			for( int i = 0; i < additional.Count; i++ )
+			foreach( var additional in additionalUnits )
 			{
 				if( !isSelectedAdditionalAny )
 				{
-					if( Selection.IsSelected( additional[i] ) )
+					if( Selection.IsSelected( additional ) )
 					{
 						isSelectedAdditionalAny = true;
 					}
 				}
 
-				popTotal += (byte)additional[i].population;
+				popTotal += (byte)additional.population;
 
 				// Find the population of the new, joined unit (total population of all units, clamped to highest valid population size).
 				if( popTotal > selfPop )
 				{
-					healthTotal += additional[i].health;
+					healthTotal += additional.health;
 					if( popTotal == 8 )
 					{
 						targetPop = 8;
@@ -177,9 +177,9 @@ namespace SS.Objects.Units
 				int i = 0;
 				do
 				{
-					selfPop += (byte)additional[i].population;
+					selfPop += (byte)additionalUnits[i].population;
 
-					additional[i].Die();
+					additionalUnits[i].Die();
 
 					i++;
 					// Join as long as selfPop is less than targetPop AND as long as the selfPop is not a valid pop number.
@@ -189,6 +189,7 @@ namespace SS.Objects.Units
 				{
 					Selection.TrySelect( beacon );
 				}
+
 				// assign the new, "joined" population.
 				beacon.SetPopulation( (PopulationSize)selfPop, true, true );
 				beacon.health = healthTotal; // override health, since additionals can have any health percent and won't necessarily match beacon's health percent.

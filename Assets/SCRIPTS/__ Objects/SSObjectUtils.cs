@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace SS.Objects
 {
-	public class SSObjectUtils
+	public static class SSObjectUtils
 	{
 		public static void ReDisplayDisplayed()
 		{
@@ -26,7 +26,7 @@ namespace SS.Objects
 
 		public static InventoryModule GetClosestInventoryContaining( Vector3 pos, int factionId, string resourceId )
 		{
-			SSObjectDFC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFC();
 
 			InventoryModule ret = null;
 			float dstSq = float.MaxValue;
@@ -126,7 +126,7 @@ namespace SS.Objects
 
 		public static IPaymentReceiver GetClosestWantingPayment( Vector3 pos, int factionId, string[] resourceIds )
 		{
-			SSObjectDFC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFC();
 
 			IPaymentReceiver ret = null;
 			float dstSqToLastValid = float.MaxValue;
@@ -180,10 +180,12 @@ namespace SS.Objects
 			return ret;
 		}
 
-
+		/// <summary>
+		/// Returns the inventory module of the closest object of a given faction that has space for a given resource
+		/// </summary>
 		public static InventoryModule GetClosestWithSpace( SSObject self, Vector3 pos, string resourceId, int factionId )
 		{
-			SSObjectDFC[] objects = SSObject.GetAllDFSC();
+			SSObjectDFC[] objects = SSObject.GetAllDFC();
 
 			InventoryModule ret = null;
 			float dstSqToLastValid = float.MaxValue;

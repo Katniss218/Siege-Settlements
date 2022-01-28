@@ -6,7 +6,7 @@ namespace SS.Objects
 	{
 		private T __obj = null;
 		/// <summary>
-		/// Returns the base object.
+		/// Returns the underlying component.
 		/// </summary>
 		public T obj
 		{
@@ -20,9 +20,9 @@ namespace SS.Objects
 			}
 		}
 
-		// Force require base component.
 		protected virtual void Awake()
 		{
+			// Force require base component.
 			if( this.obj == null )
 			{
 				this.__obj = this.gameObject.AddComponent<T>();

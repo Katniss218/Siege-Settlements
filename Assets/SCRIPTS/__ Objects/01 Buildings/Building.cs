@@ -13,9 +13,17 @@ namespace SS.Objects.Buildings
 	[UseHud(typeof(BuildingHUD), "hud")]
 	public class Building : SSObjectDFC, ISSObjectUsableUnusable, IMouseOverHandlerListener
 	{
-		// The amount of health that the building marked as being constructed is going to start with.
+		/// <summary>
+		/// The amount of health that the building being constructed is going to start with.
+		/// </summary>
 		public const float STARTING_HEALTH_PERCENT = 0.1f;
+		/// <summary>
+		/// Below this amount, the building becomes "unusable".
+		/// </summary>
 		public const float UNUSABLE_THRESHOLD = 0.5f;
+
+		const string ACTIONPANEL_ID_REPAIR = "building.ap.repair";
+		const string ACTIONPANEL_ID_DEMOLISH = "building.ap.demolish";
 
 		private NavMeshObstacle __obstacle = null;
 		public NavMeshObstacle obstacle
@@ -47,11 +55,14 @@ namespace SS.Objects.Buildings
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public BuildingHUD hud { get; set; }
-		public override HUDDFSC hudDFSC { get { return this.hud; } }
+		public override HUDDFC hudDFC { get { return this.hud; } }
 
 
 		public Vector3[] placementNodes { get; set; }
-		
+
+		/// <summary>
+		/// How much resources you need to construct this object (from STARTING_HEALTH_PERCENT to 1)
+		/// </summary>
 		public Dictionary<string, int> StartToEndConstructionCost { get; set; }
 
 		public AudioClip buildSoundEffect { get; set; }
@@ -165,13 +176,13 @@ namespace SS.Objects.Buildings
 					repairIconSprite = AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/repair" );
 				}
 
-				ActionPanel.instance.CreateButton( "building.ap.repair", repairIconSprite, "Repair", "Click to repair building...",
+				ActionPanel.instance.CreateButton( ACTIONPANEL_ID_REPAIR, repairIconSprite, "Repair", "Click to repair building...",
 					ActionButtonAlignment.MiddleRight, ActionButtonType.Object, () =>
 				{
 					ConstructionSiteData constructionSiteData = new ConstructionSiteData();
 
 					ConstructionSite.BeginConstructionOrRepair( this, constructionSiteData );
-					ActionPanel.instance.Clear( "building.ap.repair", ActionButtonType.Object );
+					ActionPanel.instance.Clear( ACTIONPANEL_ID_REPAIR, ActionButtonType.Object );
 				} );
 			}
 		}
@@ -209,7 +220,7 @@ namespace SS.Objects.Buildings
 				this.DisplayRepairButton();
 			}
 
-			ActionPanel.instance.CreateButton( "building.ap.demolish", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...",
+			ActionPanel.instance.CreateButton( ACTIONPANEL_ID_DEMOLISH, AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/demolish" ), "Demolish", "Click to demolish building...",
 				ActionButtonAlignment.LowerRight, ActionButtonType.Object, () =>
 			{
 				this.Die();

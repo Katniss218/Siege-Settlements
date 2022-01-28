@@ -1,7 +1,7 @@
 ﻿namespace SS.Objects.Units
 {
 	/// <summary>
-	/// Determines to which slots the unit can fit.
+	/// Determines inside which slots the unit can fit.
 	/// </summary>
 	public enum PopulationSize : byte
 	{

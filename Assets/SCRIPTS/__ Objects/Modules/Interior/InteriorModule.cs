@@ -10,552 +10,596 @@ using UnityEngine;
 
 namespace SS.Objects.Modules
 {
-	[DisallowMultipleComponent]
-	[UseHud(typeof(HUDInterior), "hudInterior")]
-	public class InteriorModule : SSModule, ISelectDisplayHandler, IPopulationBlocker
-	{
-		public const string KFF_TYPEID = "interior";
-
-		public enum SlotType : byte
-		{
-			Generic, // any unit can enter (whitelist-based)
-			Worker // only the unit employed at this particular slot can enter.
-		}
-
-		public abstract class Slot
-		{
-			public Vector3 localPos { get; set; }
-			public Quaternion localRot { get; set; }
-
-			public IInteriorUser objInside;
-			
-			public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
-
-			public float coverValue { get; set; }
-
-			public bool isHidden { get; set; }
-
-			public bool isEmpty
-			{
-				get
-				{
-					return this.objInside == null;
-				}
-			}
-		}
-
-		public class SlotGeneric : Slot
-		{
-			public bool countsTowardsMaxPopulation { get; set; }
-
-			public string[] whitelistedUnits { get; set; } = new string[0];
-
-
-			public static int GetMaxPopulationTotal( SlotGeneric[] slots )
-			{
-				int accumulator = 0;
-				for( int i = 0; i < slots.Length; i++ )
-				{
-					if( slots[i].countsTowardsMaxPopulation )
-					{
-						accumulator += (int)slots[i].maxPopulation;
-					}
-				}
-				return accumulator;
-			}
-		}
-
-		public class SlotWorker : Slot
-		{
-			public CivilianUnitExtension assignedWorker { get; set; }
-		}
-
-
-
-		/// <summary>
-		/// Specifies the local-space position of the entrance.
-		/// </summary>
-		public Vector3? entrancePosition { get; set; }
-
-#warning encapsulate?
-		public SlotGeneric[] slots = new SlotGeneric[0];
-		public SlotWorker[] workerSlots = new SlotWorker[0];
-		
-		public int SlotCount( SlotType type )
-		{
-			return type == SlotType.Generic ? this.slots.Length : this.workerSlots.Length;
-		}
-
-		public void SetSlots( SlotGeneric[] slots, SlotWorker[] workerSlots )
-		{
-			if( slots == null )
-			{
-				slots = new SlotGeneric[0];
-			}
-			if( workerSlots == null )
-			{
-				workerSlots = new SlotWorker[0];
-			}
-			
-			if( this.ssObject is IFactionMember )
-			{
-				if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable )
-				{
-					goto skip_cache;
-				}
-				IFactionMember factionMember = (IFactionMember)this.ssObject;
-				if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
-				{
-					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
-					LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( slots );
-
-					if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						ResourcePanel.instance.UpdatePopulationDisplay(
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
-					}
-				}
-			}
-	skip_cache:
-
-			this.slots = slots;
-			this.workerSlots = workerSlots;
-
-			this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
-
-
-			ReDisplaySlots_UI();
-		}
-
-
-		public Vector3 SlotWorldPosition( Slot slot )
-		{
-			return this.transform.TransformPoint( slot.localPos );
-		}
-
-		public Quaternion SlotWorldRotation( Slot slot )
-		{
-			return this.transform.rotation * slot.localRot;
-		}
-
-		public IInteriorUser GetUser( SlotType type, int i )
-		{
-			return type == SlotType.Generic ? this.slots[i].objInside : this.workerSlots[i].objInside;
-		}
-		public void SetUser( SlotType type, int i, IInteriorUser value )
-		{
-			if( type == SlotType.Generic ) { this.slots[i].objInside = value; return; }
-			if( type == SlotType.Worker ) { this.workerSlots[i].objInside = value; return; }
-		}
-
-		public CivilianUnitExtension GetWorker( int i )
-		{
-			return this.workerSlots[i].assignedWorker;
-		}
-		public void SetWorker( int i, CivilianUnitExtension value )
-		{
-			this.workerSlots[i].assignedWorker = value;
-		}
-
-
-		public Vector3 EntranceWorldPosition()
-		{
-			return this.entrancePosition == null ?
-				this.transform.position :
-				this.transform.TransformPoint( this.entrancePosition.Value );
-		}
-
-
-		public HUDInterior hudInterior { get; private set; } = null;
-
-
-
-		public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
-		{
-			List<CivilianUnitExtension> ret = new List<CivilianUnitExtension>();
-			for( int i = 0; i < this.workerSlots.Length; i++ )
-			{
-				if( this.workerSlots[i].assignedWorker == null )
-				{
-					continue;
-				}
-
-				if( workplace != null && this.workerSlots[i].assignedWorker.workplace != workplace )
-				{
-					continue;
-				}
-
-				ret.Add( this.workerSlots[i].assignedWorker );
-			}
-			return ret;
-		}
-		
-
-		public void ExitAll()
-		{
-			for( int i = 0; i < this.slots.Length; i++ )
-			{
-				if( this.slots[i].objInside != null )
-				{
-					this.slots[i].objInside.SetOutside();
-				}
-			}
-			for( int i = 0; i < this.workerSlots.Length; i++ )
-			{
-				if( this.workerSlots[i].objInside != null )
-				{
-					this.workerSlots[i].objInside.SetOutside();
-				}
-			}
-		}
-		
-		public int? GetFirstValid( SlotType type, IInteriorUser interiorUser )
-		{
-			byte population = 1;
-			Unit unit = null;
-			if( interiorUser is Unit )
-			{
-				unit = (Unit)interiorUser;
-				population = (byte)unit.population;
-			}
-
-			if( type == SlotType.Worker )
-			{
-				if( unit == null )
-				{
-					return null;
-				}
-
-				if( !unit.isCivilian )
-				{
-					return null;
-				}
-
-				for( int i = 0; i < this.workerSlots.Length; i++ )
-				{
-					if( population > (byte)this.workerSlots[i].maxPopulation )
-					{
-						continue;
-					}
-
-					if( this.workerSlots[i].assignedWorker != unit.civilian )
-					{
-						continue;
-					}
-
-					return i;
-				}
-			}
-			else if( type == SlotType.Generic )
-			{
-				for( int i = 0; i < this.slots.Length; i++ )
-				{
-					if( population > (byte)this.slots[i].maxPopulation )
-					{
-						continue;
-					}
-
-					if( !this.slots[i].isEmpty )
-					{
-						continue;
-					}
-
-					if( unit == null )
-					{
-						return i;
-					}
-					else
-					{
-						for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
-						{
-							if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
-							{
-								return i;
-							}
-						}
-					}
-				}
-				return null;
-			}
-			return null;
-		}
-		
-
-
-		//
-		//
-		//
-
-		
-		
-		private Vector3 oldPosition;
-		private Quaternion oldRotation;
-
-		protected override void Awake()
-		{
-			// Cache the starting position & rotation.
-			// Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
-			this.oldPosition = this.transform.position;
-			this.oldRotation = this.transform.rotation;
-
-			this.ssObject.isSelectable = true;
-
-			if( this.ssObject is IFactionMember )
-			{
-				IFactionMember factionMember = (IFactionMember)this.ssObject;
-				factionMember.onFactionChange.AddListener( (int before, int after) =>
-				{
-					if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable )
-					{
-						return;
-					}
-
-					if( before != SSObjectDFC.FACTIONID_INVALID )
-					{
-						LevelDataManager.factionData[before].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
-					}
-					LevelDataManager.factionData[after].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
-
-					if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
-					{
-						ResourcePanel.instance.UpdatePopulationDisplay(
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-							LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
-					}
-				} );
-
-				if( this.ssObject is ISSObjectUsableUnusable )
-				{
-					ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.ssObject;
-					usableUnusable.onUsableStateChanged.AddListener( () =>
-					{
-						if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
-						{
-							if( usableUnusable.isUsable )
-							{
-								LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
-							}
-							else
-							{
-								this.ExitAll();
-								LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
-							}
-							if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
-							{
-								ResourcePanel.instance.UpdatePopulationDisplay(
-									LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-									LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
-							}
-						}
-					} );
-				}
-			}
-
-
-			base.Awake();
-		}
-		
-		private void Update()
-		{
-			// If the position or rotation is changed, update the carried units, and cache the new, changed position & rotation.
-			if( this.transform.position != this.oldPosition || this.transform.rotation != this.oldRotation )
-			{
-				for( int i = 0; i < this.slots.Length; i++ )
-				{
-					if( this.slots[i].isEmpty )
-					{
-						continue;
-					}
-					IInteriorUser u = this.slots[i].objInside;
-
-					u.transform.position = this.SlotWorldPosition( slots[i] );
-					u.transform.rotation = this.SlotWorldRotation( slots[i] );
-				}
-				this.oldPosition = this.transform.position;
-				this.oldRotation = this.transform.rotation;
-			}
-		}
-
-		public override void OnObjDestroyed()
-		{
-			LevelDataManager.factionData[((IFactionMember)this.ssObject).factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
-			ResourcePanel.instance.UpdatePopulationDisplay(
-				LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
-				LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
-			this.ExitAll();
-		}
-
-
-
-		//
-		//
-		//
-
-		
-		
-		public override SSModuleData GetData()
-		{
-			InteriorModuleData data = new InteriorModuleData();
-			data.slots = new Dictionary<int, Guid>();
-			for( int i = 0; i < this.slots.Length; i++ )
-			{
-				if( this.slots[i].objInside == null )
-				{
-					continue;
-				}
-				data.slots.Add( i, ((SSObject)this.slots[i].objInside).guid );
-			}
-
-			data.workerSlots = new Dictionary<int, Guid>();
-			for( int i = 0; i < this.workerSlots.Length; i++ )
-			{
-				if( this.workerSlots[i].objInside == null )
-				{
-					continue;
-				}
-				data.workerSlots.Add( i, ((SSObject)this.workerSlots[i].objInside).guid );
-			}
-
-			return data;
-		}
-
-		public override void SetData( SSModuleData _data )
-		{
-			InteriorModuleData data = ValidateDataType<InteriorModuleData>( _data );
-
-			//return;
-			foreach( var kvp in data.slots )
-			{
-				((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
-			}
-			foreach( var kvp in data.workerSlots )
-			{
-				((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
-			}
-		}
-
-
-		//
-		//
-		//
-
-
-		public void ReDisplaySlots_UI()
-		{
-			if( !Selection.IsDisplayedModule( this ) )
-			{
-				return;
-			}
-
-			SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
-			SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
-			DisplaySlotsList_UI();
-			DisplayWorkerSlotsList_UI();
-		}
-
-
-		private void TrySelectInside( IInteriorUser insideObj )
-		{
-			if( insideObj != null )
-			{
-				if( insideObj is SSObjectDFC )
-				{
-					Selection.DeselectAll();
-					Selection.TrySelect( (SSObjectDFC)insideObj );
-				}
-			}
-		}
-
-		private void DisplaySlotsList_UI()
-		{
-			GameObject[] gridElements = new GameObject[this.slots.Length];
-			for( int i = 0; i < this.slots.Length; i++ )
-			{
-				IInteriorUser insideObj = this.slots[i].objInside;
-				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
-				{
-					TrySelectInside( insideObj );
-				} );
-			}
-			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
-			SelectionPanel.instance.obj.RegisterElement( "interior.slots", list.transform );
-		}
-
-		private void DisplayWorkerSlotsList_UI()
-		{
-			GameObject[] gridElements = new GameObject[this.workerSlots.Length];
-			for( int i = 0; i < this.workerSlots.Length; i++ )
-			{
-				IInteriorUser insideObj = this.workerSlots[i].objInside;
-				gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
-				{
-					TrySelectInside( insideObj );
-				} );
-			}
-			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
-			SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
-		}
-
-
-		public void OnDisplay()
-		{
-			DisplaySlotsList_UI();
-			DisplayWorkerSlotsList_UI();
-
-			ActionPanel.instance.CreateButton( "interior.ap.exitall", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/exit_all" ), "Exit all", "Press to exit and select all objects from this interior.", ActionButtonAlignment.UpperRight, ActionButtonType.Module, () =>
-			{
-				List<SSObjectDFC> selectables = new List<SSObjectDFC>();
-
-				for( int i = 0; i < this.slots.Length; i++ )
-				{
-					if( this.slots[i].objInside != null )
-					{
-						if( this.slots[i].objInside is SSObjectDFC )
-						{
-							selectables.Add( (SSObjectDFC)this.slots[i].objInside );
-						}
-						this.slots[i].objInside.SetOutside();
-					}
-				}
-
-				SelectionUtils.Select( selectables.ToArray(), SelectionMode.Replace );
-			} );
-		}
-
-		public void OnHide()
-		{
-
-		}
-
-		public bool CanChangePopulation()
-		{
-			return false;
-		}
-
-
-		//
-		//
-		//
-
-
-
-		public static void GetSlot( InteriorModule interior, SlotType slotType, int slotIndex, out Slot slot, out HUDInteriorSlot slotHud )
-		{
-			slot = null;
-			slotHud = null;
-
-			if( slotType == SlotType.Generic )
-			{
-				slot = interior.slots[slotIndex];
-				slotHud = interior.hudInterior.slots[slotIndex];
-				return;
-			}
-			if( slotType == SlotType.Worker )
-			{
-				slot = interior.workerSlots[slotIndex];
-				slotHud = interior.hudInterior.workerSlots[slotIndex];
-			}
-		}
-	}
+    [DisallowMultipleComponent]
+    [UseHud( typeof( HUDInterior ), "hudInterior" )]
+    public class InteriorModule : SSModule, ISelectDisplayHandler, IPopulationBlocker
+    {
+        public const string KFF_TYPEID = "interior";
+
+        public const string ACTIONPANEL_ID_EXITALL = "interior.ap.exitall";
+
+        public enum SlotType : byte
+        {
+            Generic, // any unit can enter (whitelist-based)
+            Worker // only the unit employed at this particular slot can enter.
+        }
+
+        public abstract class Slot
+        {
+            public Vector3 localPos { get; set; }
+            public Quaternion localRot { get; set; }
+
+            public IInteriorUser objInside;
+
+            public PopulationSize maxPopulation { get; set; } = PopulationSize.x1;
+
+            public float coverValue { get; set; }
+
+            public bool isHidden { get; set; }
+
+            public bool isEmpty
+            {
+                get
+                {
+                    return this.objInside == null;
+                }
+            }
+        }
+
+        public class SlotGeneric : Slot
+        {
+            public bool countsTowardsMaxPopulation { get; set; }
+
+            public string[] whitelistedUnits { get; set; } = new string[0];
+
+            /// <summary>
+            /// Returns the total amount of population from slots that count towards it.
+            /// </summary>
+            public static int GetMaxPopulationTotal( SlotGeneric[] slots )
+            {
+                int accumulator = 0;
+
+                foreach( var slot in slots )
+                {
+                    if( slot.countsTowardsMaxPopulation )
+                    {
+                        accumulator += (int)slot.maxPopulation;
+                    }
+                }
+
+                return accumulator;
+            }
+        }
+
+        public class SlotWorker : Slot
+        {
+            /// <summary>
+            /// The worker that's assigned to the slot (but can be elsewhere at the moment).
+            /// </summary>
+            public CivilianUnitExtension assignedWorker { get; set; }
+        }
+
+
+
+        /// <summary>
+        /// Specifies the local-space position of the entrance.
+        /// </summary>
+        public Vector3? entrancePosition { get; set; }
+
+        SlotGeneric[] slots = new SlotGeneric[0];
+        SlotWorker[] workerSlots = new SlotWorker[0];
+
+        public (Slot slot, HUDInteriorSlot slotHud) GetSlot( SlotType slotType, int slotIndex )
+        {
+            if( slotType == SlotType.Generic )
+            {
+                return (this.slots[slotIndex], this.hudInterior.slots[slotIndex]);
+            }
+            if( slotType == SlotType.Worker )
+            {
+                return (this.workerSlots[slotIndex], this.hudInterior.workerSlots[slotIndex]);
+            }
+
+            throw new ArgumentException( "Can't get slot - invalid slot type." );
+        }
+        public int SlotCount( SlotType type )
+        {
+            return type == SlotType.Generic ? this.slots.Length : this.workerSlots.Length;
+        }
+
+        public void SetSlots( SlotGeneric[] slots, SlotWorker[] workerSlots )
+        {
+            if( slots == null )
+            {
+                slots = new SlotGeneric[0];
+            }
+            if( workerSlots == null )
+            {
+                workerSlots = new SlotWorker[0];
+            }
+
+            // Update the faction population caches
+            if( this.ssObject is IFactionMember )
+            {
+                if( !(this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable) )
+                {
+                    IFactionMember factionMember = (IFactionMember)this.ssObject;
+
+                    if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
+                    {
+                        LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+                        LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( slots );
+                    }
+                    if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+                    {
+                        ResourcePanel.instance.UpdatePopulationDisplay(
+                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+                    }
+                }
+            }
+
+            this.slots = slots;
+            this.workerSlots = workerSlots;
+
+            this.hudInterior.SetSlotCount( this.slots.Length, this.workerSlots.Length );
+
+            ReDisplaySlots_UI();
+        }
+
+        /// <summary>
+        /// Returns the (world) position associated with a given slot.
+        /// </summary>
+        public Vector3 SlotWorldPosition( Slot slot )
+        {
+            return this.transform.TransformPoint( slot.localPos );
+        }
+
+        /// <summary>
+        /// Returns the (world) rotation associated with a given slot.
+        /// </summary>
+        public Quaternion SlotWorldRotation( Slot slot )
+        {
+            return this.transform.rotation * slot.localRot;
+        }
+
+        /// <summary>
+        /// Returns whatever is currently occupying a slot.
+        /// </summary>
+        public IInteriorUser GetUser( SlotType type, int index )
+        {
+            return type == SlotType.Generic ? this.slots[index].objInside : this.workerSlots[index].objInside;
+        }
+
+        /// <summary>
+        /// Sets something to be currently occupying a slot.
+        /// </summary>
+        public void SetUser( SlotType type, int index, IInteriorUser value )
+        {
+            if( type == SlotType.Generic )
+            {
+                this.slots[index].objInside = value;
+                return;
+            }
+
+            if( type == SlotType.Worker )
+            {
+                this.workerSlots[index].objInside = value;
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Returns a worker assigned to a given slot.
+        /// </summary>
+        public CivilianUnitExtension GetWorker( int i )
+        {
+            return this.workerSlots[i].assignedWorker;
+        }
+
+        /// <summary>
+        /// Assignes a worker to a given slot.
+        /// </summary>
+        public void SetWorker( int i, CivilianUnitExtension value )
+        {
+            this.workerSlots[i].assignedWorker = value;
+        }
+
+        /// <summary>
+        /// Returns the (world) position of the entrance to this interior.
+        /// </summary>
+        public Vector3 EntranceWorldPosition()
+        {
+            return this.entrancePosition == null ? this.transform.position : this.transform.TransformPoint( this.entrancePosition.Value );
+        }
+
+
+        public HUDInterior hudInterior { get; private set; } = null;
+
+
+
+        public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
+        {
+            List<CivilianUnitExtension> employed = new List<CivilianUnitExtension>();
+
+            foreach( var workerSlot in workerSlots )
+            {
+                if( workerSlot.assignedWorker == null )
+                {
+                    continue;
+                }
+
+                if( workplace != null && workerSlot.assignedWorker.workplace != workplace )
+                {
+                    continue;
+                }
+
+                employed.Add( workerSlot.assignedWorker );
+            }
+
+            return employed;
+        }
+
+
+        public void ExitAll()
+        {
+            List<Slot> allSlots = new List<Slot>();
+            allSlots.AddRange( this.slots );
+            allSlots.AddRange( this.workerSlots );
+
+            foreach( var slot in allSlots )
+            {
+                if( slot.objInside != null )
+                {
+                    slot.objInside.SetOutside();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the index of the first slot that's valid for a given thing to enter.
+        /// </summary>
+        public int? GetFirstValid( SlotType type, IInteriorUser interiorUser )
+        {
+            byte population = 1;
+            Unit unit = null;
+
+            if( interiorUser is Unit )
+            {
+                unit = (Unit)interiorUser;
+                population = (byte)unit.population;
+            }
+
+            if( type == SlotType.Worker )
+            {
+                if( unit == null )
+                {
+                    return null;
+                }
+
+                if( !unit.isCivilian )
+                {
+                    return null;
+                }
+
+                for( int i = 0; i < this.workerSlots.Length; i++ )
+                {
+                    if( population > (byte)this.workerSlots[i].maxPopulation )
+                    {
+                        continue;
+                    }
+
+                    if( this.workerSlots[i].assignedWorker != unit.civilian )
+                    {
+                        continue;
+                    }
+
+                    return i;
+                }
+            }
+            else if( type == SlotType.Generic )
+            {
+                for( int i = 0; i < this.slots.Length; i++ )
+                {
+                    if( population > (byte)this.slots[i].maxPopulation )
+                    {
+                        continue;
+                    }
+
+                    if( !this.slots[i].isEmpty )
+                    {
+                        continue;
+                    }
+
+                    if( unit == null )
+                    {
+                        return i;
+                    }
+                    else
+                    {
+                        for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
+                        {
+                            if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
+                            {
+                                return i;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            return null;
+        }
+
+
+
+        //
+        //
+        //
+
+
+
+        private Vector3 oldPosition;
+        private Quaternion oldRotation;
+
+        protected override void Awake()
+        {
+            // Cache the starting position & rotation.
+            // Do this in 'Awake' to avoid position being already modified, by level load, at the point it gets to 'Start'.
+            this.oldPosition = this.transform.position;
+            this.oldRotation = this.transform.rotation;
+
+            this.ssObject.isSelectable = true;
+
+            if( this.ssObject is IFactionMember )
+            {
+                IFactionMember factionMember = (IFactionMember)this.ssObject;
+
+                // Update the faction population caches when the object changes its faction.
+                factionMember.onFactionChange.AddListener( ( int before, int after ) =>
+                {
+                    if( this.ssObject is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)this.ssObject).isUsable )
+                    {
+                        return;
+                    }
+
+                    if( before != SSObjectDFC.FACTIONID_INVALID )
+                    {
+                        LevelDataManager.factionData[before].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+                    }
+
+                    LevelDataManager.factionData[after].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
+
+                    if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+                    {
+                        ResourcePanel.instance.UpdatePopulationDisplay(
+                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+                    }
+                } );
+
+                if( this.ssObject is ISSObjectUsableUnusable )
+                {
+                    ISSObjectUsableUnusable usableUnusable = (ISSObjectUsableUnusable)this.ssObject;
+
+                    usableUnusable.onUsableStateChanged.AddListener( () =>
+                    {
+                        if( factionMember.factionId != SSObjectDFC.FACTIONID_INVALID )
+                        {
+                            if( usableUnusable.isUsable )
+                            {
+                                LevelDataManager.factionData[factionMember.factionId].maxPopulationCache += SlotGeneric.GetMaxPopulationTotal( this.slots );
+                            }
+                            else
+                            {
+                                this.ExitAll();
+                                LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+                            }
+                        }
+                        if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+                        {
+                            ResourcePanel.instance.UpdatePopulationDisplay(
+                                LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+                                LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+                        }
+                    } );
+                }
+            }
+
+
+            base.Awake();
+        }
+
+        private void Update()
+        {
+            // If the position or rotation is changed, update the carried units, and cache the new, changed position & rotation.
+            if( this.transform.position != this.oldPosition || this.transform.rotation != this.oldRotation )
+            {
+                foreach( var slot in this.slots )
+                {
+                    if( slot.isEmpty )
+                    {
+                        continue;
+                    }
+
+                    IInteriorUser u = slot.objInside;
+                    u.transform.position = this.SlotWorldPosition( slot );
+                    u.transform.rotation = this.SlotWorldRotation( slot );
+                }
+
+                this.oldPosition = this.transform.position;
+                this.oldRotation = this.transform.rotation;
+            }
+        }
+
+        public override void OnObjDestroyed()
+        {
+            if( this.ssObject is IFactionMember )
+            {
+                IFactionMember factionMember = (IFactionMember)this.ssObject;
+
+                LevelDataManager.factionData[factionMember.factionId].maxPopulationCache -= SlotGeneric.GetMaxPopulationTotal( this.slots );
+
+                if( factionMember.factionId == LevelDataManager.PLAYER_FAC )
+                {
+                    ResourcePanel.instance.UpdatePopulationDisplay(
+                        LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].populationCache,
+                        LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].maxPopulationCache );
+                }
+            }
+
+            this.ExitAll();
+        }
+
+
+
+        //
+        //
+        //
+
+
+
+        public override SSModuleData GetData()
+        {
+            InteriorModuleData data = new InteriorModuleData()
+            {
+                slots = new Dictionary<int, Guid>(),
+                workerSlots = new Dictionary<int, Guid>()
+            };
+
+            for( int i = 0; i < this.slots.Length; i++ )
+            {
+                if( this.slots[i].objInside == null )
+                {
+                    continue;
+                }
+
+                data.slots.Add( i, ((SSObject)this.slots[i].objInside).guid );
+            }
+
+            for( int i = 0; i < this.workerSlots.Length; i++ )
+            {
+                if( this.workerSlots[i].objInside == null )
+                {
+                    continue;
+                }
+
+                data.workerSlots.Add( i, ((SSObject)this.workerSlots[i].objInside).guid );
+            }
+
+            return data;
+        }
+
+        public override void SetData( SSModuleData _data )
+        {
+            InteriorModuleData data = ValidateDataType<InteriorModuleData>( _data );
+
+            foreach( var kvp in data.slots )
+            {
+                ((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
+            }
+            foreach( var kvp in data.workerSlots )
+            {
+                ((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
+            }
+        }
+
+
+        //
+        //
+        //
+
+
+        private void ReDisplaySlots_UI()
+        {
+            if( !Selection.IsDisplayedModule( this ) )
+            {
+                return;
+            }
+
+            SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
+            SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
+            DisplaySlotsList_UI();
+            DisplayWorkerSlotsList_UI();
+        }
+
+
+        private void TrySelectInside( IInteriorUser insideObj )
+        {
+            if( insideObj != null )
+            {
+                if( insideObj is SSObjectDFC )
+                {
+                    Selection.DeselectAll();
+                    Selection.TrySelect( (SSObjectDFC)insideObj );
+                }
+            }
+        }
+
+        private void DisplaySlotsList_UI()
+        {
+            GameObject[] gridElements = new GameObject[this.slots.Length];
+            for( int i = 0; i < this.slots.Length; i++ )
+            {
+                IInteriorUser insideObj = this.slots[i].objInside;
+                gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
+                {
+                    TrySelectInside( insideObj );
+                } );
+            }
+            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
+            SelectionPanel.instance.obj.RegisterElement( "interior.slots", list.transform );
+        }
+
+        private void DisplayWorkerSlotsList_UI()
+        {
+            GameObject[] gridElements = new GameObject[this.workerSlots.Length];
+            for( int i = 0; i < this.workerSlots.Length; i++ )
+            {
+                IInteriorUser insideObj = this.workerSlots[i].objInside;
+                gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
+                {
+                    TrySelectInside( insideObj );
+                } );
+            }
+            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
+            SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
+        }
+
+
+        public void OnDisplay()
+        {
+            DisplaySlotsList_UI();
+            DisplayWorkerSlotsList_UI();
+
+            ActionPanel.instance.CreateButton( ACTIONPANEL_ID_EXITALL, AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/exit_all" ), "Exit all", "Press to exit and select all objects from this interior.", ActionButtonAlignment.UpperRight, ActionButtonType.Module, () =>
+            {
+                List<SSObjectDFC> selectables = new List<SSObjectDFC>();
+
+                for( int i = 0; i < this.slots.Length; i++ )
+                {
+                    if( this.slots[i].objInside != null )
+                    {
+                        if( this.slots[i].objInside is SSObjectDFC )
+                        {
+                            selectables.Add( (SSObjectDFC)this.slots[i].objInside );
+                        }
+                        this.slots[i].objInside.SetOutside();
+                    }
+                }
+
+                SelectionUtils.Select( selectables.ToArray(), SelectionMode.Replace );
+            } );
+        }
+
+        public void OnHide()
+        {
+
+        }
+
+        public bool CanChangePopulation()
+        {
+            return false;
+        }
+    }
 }

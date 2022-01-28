@@ -14,6 +14,9 @@ using UnityEngine.UI;
 
 namespace SS.Objects.Units
 {
+	/// <summary>
+	/// Represents civilian units. Every civilian has one.
+	/// </summary>
 	public class CivilianUnitExtension : SSObjectExtension<Unit>
 	{
 		public const int AVOIDANCE_PRORITY_GENERAL = 1;
@@ -156,24 +159,24 @@ namespace SS.Objects.Units
 
 		private InteriorModule GetClosestInteriorBuilding()
 		{
-			Building[] b = SSObject.GetAllBuildings();
+			Building[] allBuildings = SSObject.GetAllBuildings();
 
 			InteriorModule interior = null;
 			float dstSq = float.MaxValue;
-			for( int i = 0; i < b.Length; i++ )
+			foreach( var building in allBuildings )
 			{
-				if( b[i].factionId != this.obj.factionId )
+				if( building.factionId != this.obj.factionId )
 				{
 					continue;
 				}
 
-				if( !b[i].isUsable )
+				if( !building.isUsable )
 				{
 					continue;
 				}
 
-				InteriorModule[] interiors = b[i].GetModules<InteriorModule>();
-				if( interiors.Length == 0 )
+				InteriorModule[] interiors = building.GetModules<InteriorModule>();
+				if( !interiors.Any() )
 				{
 					continue;
 				}
@@ -183,7 +186,7 @@ namespace SS.Objects.Units
 					continue;
 				}
 
-				float newDstSq = (b[i].transform.position - this.transform.position).sqrMagnitude;
+				float newDstSq = (building.transform.position - this.transform.position).sqrMagnitude;
 				if( newDstSq >= dstSq )
 				{
 					continue;

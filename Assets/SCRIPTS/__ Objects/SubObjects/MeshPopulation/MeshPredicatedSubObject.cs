@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace SS.Objects.SubObjects
 {
+	/// <summary>
+	/// Mesh that changes depending on a state.
+	/// </summary>
 	[RequireComponent( typeof( MeshFilter ) )]
 	[RequireComponent( typeof( MeshRenderer ) )]
 	public class MeshPredicatedSubObject : SubObject

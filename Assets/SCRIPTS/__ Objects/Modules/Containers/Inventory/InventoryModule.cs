@@ -19,7 +19,7 @@ namespace SS.Objects.Modules
 	{
 		public const string KFF_TYPEID = "inventory";
 
-		public struct SlotGroup
+		public struct Slot
 		{
 			public readonly string slotId;
 			public string id;
@@ -30,7 +30,7 @@ namespace SS.Objects.Modules
 			public bool isConstrained { get { return this.slotId != ""; } }
 			public bool isEmpty { get { return this.amount == 0 || this.id == ""; } }
 
-			public SlotGroup( string slotId, int slotCapacity )
+			public Slot( string slotId, int slotCapacity )
 			{
 				this.slotId = slotId ?? "";
 				this.id = "";
@@ -40,7 +40,7 @@ namespace SS.Objects.Modules
 			}
 		}
 
-		SlotGroup[] slotGroups = null;
+		Slot[] slots = null;
 
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace SS.Objects.Modules
 		{
 			get
 			{
-				return this.slotGroups.Length;
+				return this.slots.Length;
 			}
 		}
 
@@ -111,12 +111,12 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Returns a copy of every slot in the inventory.
 		/// </summary>
-		public SlotGroup[] GetSlots()
+		public Slot[] GetSlots()
 		{
-			SlotGroup[] ret = new SlotGroup[this.slotCount];
+			Slot[] ret = new Slot[this.slotCount];
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				ret[i] = this.slotGroups[i];
+				ret[i] = this.slots[i];
 			}
 			return ret;
 		}
@@ -129,32 +129,32 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			int realCapacity = this.slotGroups[index].capacityOverride == null ? this.slotGroups[index].capacity : this.slotGroups[index].capacityOverride.Value;
+			int realCapacity = this.slots[index].capacityOverride == null ? this.slots[index].capacity : this.slots[index].capacityOverride.Value;
 
 			// if the slot is constrained - add/remove the slot's preferred resource from the cache.
-			if( this.slotGroups[index].isConstrained )
+			if( this.slots[index].isConstrained )
 			{
-				LevelDataManager.factionData[factionId].storageSpaceCache[this.slotGroups[index].slotId] += mode * realCapacity;
+				LevelDataManager.factionData[factionId].storageSpaceCache[this.slots[index].slotId] += mode * realCapacity;
 
 				if( factionId == LevelDataManager.PLAYER_FAC )
 				{
-					ResourcePanel.instance.UpdateResourceEntry( this.slotGroups[index].slotId,
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slotGroups[index].slotId],
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slotGroups[index].slotId],
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slotGroups[index].slotId] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slotGroups[index].slotId] );
+					ResourcePanel.instance.UpdateResourceEntry( this.slots[index].slotId,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slots[index].slotId],
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slots[index].slotId],
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slots[index].slotId] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slots[index].slotId] );
 				}
 			}
 			// if the slot is unconstrained, but has stuff inside - add/remove from the specific resource entry.
-			else if( !this.slotGroups[index].isEmpty )
+			else if( !this.slots[index].isEmpty )
 			{
-				LevelDataManager.factionData[factionId].storageSpaceCache[this.slotGroups[index].id] += mode * realCapacity;
+				LevelDataManager.factionData[factionId].storageSpaceCache[this.slots[index].id] += mode * realCapacity;
 
 				if( factionId == LevelDataManager.PLAYER_FAC )
 				{
-					ResourcePanel.instance.UpdateResourceEntry( this.slotGroups[index].id,
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slotGroups[index].id],
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slotGroups[index].id],
-						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slotGroups[index].id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slotGroups[index].id] );
+					ResourcePanel.instance.UpdateResourceEntry( this.slots[index].id,
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slots[index].id],
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slots[index].id],
+						LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[this.slots[index].id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[this.slots[index].id] );
 				}
 			}
 			else
@@ -178,11 +178,11 @@ namespace SS.Objects.Modules
 		/// <summary>
 		/// Sets the slots to the copy of the array.
 		/// </summary>
-		public void SetSlots( SlotGroup[] slotGroups )
+		public void SetSlots( Slot[] slotGroups )
 		{
 			// --  --  --
 			// remove previous slots (if any)
-			if( this.slotGroups != null )
+			if( this.slots != null )
 			{
 				if( this.isStorage )
 				{
@@ -199,10 +199,10 @@ namespace SS.Objects.Modules
 
 			// --  --  --
 
-			this.slotGroups = new SlotGroup[slotGroups.Length];
+			this.slots = new Slot[slotGroups.Length];
 			for( int i = 0; i < slotGroups.Length; i++ )
 			{
-				this.slotGroups[i] = slotGroups[i];
+				this.slots[i] = slotGroups[i];
 			}
 
 			// --  --  --
@@ -237,7 +237,7 @@ namespace SS.Objects.Modules
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 		// -=-  -  -=-  -  -=-  -  -=-  -  -=-  -  -=-
 
-
+#warning TODO - when taking from a warehouse, it adds however much was taken to the total amount of resource
 		private void UpdateHud()
 		{
 			if( this.isEmpty )
@@ -382,7 +382,7 @@ namespace SS.Objects.Modules
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
 				for( int i = 0; i < this.slotCount; i++ )
 				{
-					if( !this.slotGroups[i].isEmpty )
+					if( !this.slots[i].isEmpty )
 					{
 						return false;
 					}
@@ -398,12 +398,12 @@ namespace SS.Objects.Modules
 				// If any of the slots is not empty (i.e. contains something, i.e. slot's amount is >0), then the whole inventory is not empty.
 				for( int i = 0; i < this.slotCount; i++ )
 				{
-					if( this.slotGroups[i].isEmpty )
+					if( this.slots[i].isEmpty )
 					{
 						return false;
 					}
-					int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
-					if( this.slotGroups[i].amount < realCapacity )
+					int realCapacity = this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value;
+					if( this.slots[i].amount < realCapacity )
 					{
 						return false;
 					}
@@ -422,9 +422,9 @@ namespace SS.Objects.Modules
 			int total = 0;
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].id == id )
+				if( this.slots[i].id == id )
 				{
-					total += this.slotGroups[i].amount;
+					total += this.slots[i].amount;
 				}
 			}
 			return total;
@@ -439,17 +439,17 @@ namespace SS.Objects.Modules
 			Dictionary<string, int> ret = new Dictionary<string, int>();
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].isEmpty )
+				if( this.slots[i].isEmpty )
 				{
 					continue;
 				}
-				if( ret.ContainsKey( this.slotGroups[i].id ) )
+				if( ret.ContainsKey( this.slots[i].id ) )
 				{
-					ret[this.slotGroups[i].id] += this.slotGroups[i].amount;
+					ret[this.slots[i].id] += this.slots[i].amount;
 				}
 				else
 				{
-					ret.Add( this.slotGroups[i].id, this.slotGroups[i].amount );
+					ret.Add( this.slots[i].id, this.slots[i].amount );
 				}
 			}
 			return ret;
@@ -465,10 +465,10 @@ namespace SS.Objects.Modules
 			int total = 0;
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
-				if( this.slotGroups[i].isEmpty )
+				int realCapacity = this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value;
+				if( this.slots[i].isEmpty )
 				{
-					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
+					if( !this.slots[i].isConstrained || this.slots[i].slotId == id )
 					{
 						total += realCapacity;
 					}
@@ -476,9 +476,9 @@ namespace SS.Objects.Modules
 				else
 				{
 					// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
-					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
+					if( (!this.slots[i].isConstrained && this.slots[i].id == id) || this.slots[i].slotId == id )
 					{
-						total += realCapacity - this.slotGroups[i].amount;
+						total += realCapacity - this.slots[i].amount;
 					}
 				}
 			}
@@ -501,16 +501,16 @@ namespace SS.Objects.Modules
 			List<int> indicesFull = new List<int>();
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].isEmpty )
+				if( this.slots[i].isEmpty )
 				{
-					if( !this.slotGroups[i].isConstrained || this.slotGroups[i].slotId == id )
+					if( !this.slots[i].isConstrained || this.slots[i].slotId == id )
 					{
 						indicesEmpty.Add( i );
 					}
 				}
 				else
 				{// if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
-					if( (!this.slotGroups[i].isConstrained && this.slotGroups[i].id == id) || this.slotGroups[i].slotId == id )
+					if( (!this.slots[i].isConstrained && this.slots[i].id == id) || this.slots[i].slotId == id )
 					{
 						indicesFull.Add( i );
 					}
@@ -524,7 +524,7 @@ namespace SS.Objects.Modules
 			for( int i = 0; i < indices.Count; i++ )
 			{
 				int index = indices[i];
-				int spaceInSlot = (this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value) - this.slotGroups[index].amount;
+				int spaceInSlot = (this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value) - this.slots[index].amount;
 				int amountAdded = spaceInSlot > amountRemaining ? amountRemaining : spaceInSlot;
 
 				// --  --  --
@@ -537,11 +537,11 @@ namespace SS.Objects.Modules
 					if( this.isStorage )
 					{
 						LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] += amountAdded;
-						if( !this.slotGroups[index].isConstrained )
+						if( !this.slots[index].isConstrained )
 						{
-							if( this.slotGroups[index].isEmpty )
+							if( this.slots[index].isEmpty )
 							{
-								int realCapacity = this.slotGroups[index].capacityOverride == null ? this.slotGroups[index].capacity : this.slotGroups[index].capacityOverride.Value;
+								int realCapacity = this.slots[index].capacityOverride == null ? this.slots[index].capacity : this.slots[index].capacityOverride.Value;
 
 								List<string> keys = new List<string>( LevelDataManager.factionData[fac.factionId].storageSpaceCache.Keys );
 								foreach( var key in keys )
@@ -577,8 +577,8 @@ namespace SS.Objects.Modules
 
 				// --  --  --
 
-				this.slotGroups[index].amount += amountAdded;
-				this.slotGroups[index].id = id;
+				this.slots[index].amount += amountAdded;
+				this.slots[index].id = id;
 				amountRemaining -= amountAdded;
 
 				if( amountRemaining == 0 )
@@ -607,16 +607,17 @@ namespace SS.Objects.Modules
 			int amountLeftToRemove = amountMax;
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].isEmpty )
+				if( this.slots[i].isEmpty )
 				{
 					continue;
 				}
-				if( this.slotGroups[i].id == id )
+				if( this.slots[i].id == id )
 				{
-					int amountRemoved = this.slotGroups[i].amount > amountLeftToRemove ? amountLeftToRemove : this.slotGroups[i].amount;
+					int amountRemoved = this.slots[i].amount > amountLeftToRemove ? amountLeftToRemove : this.slots[i].amount;
 
-					this.slotGroups[i].amount -= amountRemoved;
-					if( this.slotGroups[i].amount == 0 )
+					this.slots[i].amount -= amountRemoved;
+					
+					if( this.slots[i].amount == 0 )
 					{
 
 						// --  --  --
@@ -629,19 +630,20 @@ namespace SS.Objects.Modules
 							if( this.isStorage )
 							{
 								LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] -= amountRemoved;
-								if( !this.slotGroups[i].isConstrained )
+								if( !this.slots[i].isConstrained )
 								{
-									if( this.slotGroups[i].isEmpty )
+									if( this.slots[i].isEmpty )
 									{
-										int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
+										int realCapacity = this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value;
 
 										List<string> keys = new List<string>( LevelDataManager.factionData[fac.factionId].storageSpaceCache.Keys );
 										foreach( var key in keys )
 										{
-											if( key == this.slotGroups[i].id )
+											if( key == this.slots[i].id )
 											{
 												continue;
 											}
+
 											LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] += realCapacity;
 											if( fac.factionId == LevelDataManager.PLAYER_FAC )
 											{
@@ -668,7 +670,7 @@ namespace SS.Objects.Modules
 						
 						// --  --  --
 
-						this.slotGroups[i].id = "";
+						this.slots[i].id = "";
 					}
 					amountLeftToRemove -= amountRemoved;
 
@@ -691,8 +693,8 @@ namespace SS.Objects.Modules
 
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				this.slotGroups[i].id = "";
-				this.slotGroups[i].amount = 0;
+				this.slots[i].id = "";
+				this.slots[i].amount = 0;
 			}
 
 			// Call the event after clearing, once per each type removed.
@@ -716,7 +718,7 @@ namespace SS.Objects.Modules
 			data.items = new InventoryModuleData.SlotData[this.slotCount];
 			for( int i = 0; i < data.items.Length; i++ )
 			{
-				data.items[i] = new InventoryModuleData.SlotData( this.slotGroups[i] );
+				data.items[i] = new InventoryModuleData.SlotData( this.slots[i] );
 			}
 
 			return data;
@@ -736,33 +738,33 @@ namespace SS.Objects.Modules
 				}
 				for( int i = 0; i < data.items.Length; i++ )
 				{
-					this.slotGroups[i].id = data.items[i].id;
-					this.slotGroups[i].amount = data.items[i].amount;
+					this.slots[i].id = data.items[i].id;
+					this.slots[i].amount = data.items[i].amount;
 
 					if( this.ssObject is IFactionMember )
 					{
 						IFactionMember fac = (IFactionMember)this.ssObject;
 
-						if( this.slotGroups[i].isEmpty )
+						if( this.slots[i].isEmpty )
 						{
 							continue;
 						}
-						LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[this.slotGroups[i].id] += this.slotGroups[i].amount;
+						LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[this.slots[i].id] += this.slots[i].amount;
 						if( this.isStorage )
 						{
-							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[this.slotGroups[i].id] += this.slotGroups[i].amount;
+							LevelDataManager.factionData[fac.factionId].resourcesStoredCache[this.slots[i].id] += this.slots[i].amount;
 							
 
 							// --  --  --
 
-							if( !this.slotGroups[i].isConstrained )
+							if( !this.slots[i].isConstrained )
 							{
-								int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
+								int realCapacity = this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value;
 
 								List<string> keys = new List<string>( LevelDataManager.factionData[fac.factionId].storageSpaceCache.Keys );
 								foreach( var key in keys )
 								{
-									if( key == this.slotGroups[i].id )
+									if( key == this.slots[i].id )
 									{
 										continue;
 									}
@@ -813,18 +815,18 @@ namespace SS.Objects.Modules
 			// Initialize the grid elements' GameObjects.
 			for( int i = 0; i < this.slotCount; i++ )
 			{
-				if( this.slotGroups[i].isEmpty )
+				if( this.slots[i].isEmpty )
 				{
 					gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/empty_resource" ) );
 
 					UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), " - " );
 					continue;
 				}
-				ResourceDefinition resDef = DefinitionManager.GetResource( this.slotGroups[i].id );
+				ResourceDefinition resDef = DefinitionManager.GetResource( this.slots[i].id );
 				gridElements[i] = UIUtils.InstantiateIcon( SelectionPanel.instance.obj.transform, new GenericUIData( Vector2.zero, new Vector2( 32.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), resDef.icon );
 
-				int realCapacity = this.slotGroups[i].capacityOverride == null ? this.slotGroups[i].capacity : this.slotGroups[i].capacityOverride.Value;
-				UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), this.slotGroups[i].amount + " / " + realCapacity );
+				int realCapacity = this.slots[i].capacityOverride == null ? this.slots[i].capacity : this.slots[i].capacityOverride.Value;
+				UIUtils.InstantiateText( gridElements[i].transform, new GenericUIData( new Vector2( 32.0f, 0.0f ), new Vector2( 320.0f, 32.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), this.slots[i].amount + " / " + realCapacity );
 			}
 
 			GameObject list = UIUtils.InstantiateScrollableList( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 300.0f, 5.0f ), new Vector2( -330.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), gridElements );

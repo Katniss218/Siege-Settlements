@@ -16,7 +16,7 @@ namespace SS.UI.HUDs
 		
 		void Awake()
 		{
-			HUDDFSC hudDFSC = this.GetComponent<HUDDFSC>();
+			HUDDFC hudDFSC = this.GetComponent<HUDDFC>();
 			GameObject hud = CreateHudObject( hudDFSC.hudContainer.toggleable.transform, hudDFSC );
 
 			this.background = hud.GetComponent<Image>();
@@ -25,7 +25,7 @@ namespace SS.UI.HUDs
 			hudDFSC.AddColored( this.background );
 		}
 
-		private static GameObject CreateHudObject( Transform parent, HUDDFSC hudDFSC )
+		private static GameObject CreateHudObject( Transform parent, HUDDFC hudDFSC )
 		{
 			if( hudDFSC is BuildingHUD )
 			{

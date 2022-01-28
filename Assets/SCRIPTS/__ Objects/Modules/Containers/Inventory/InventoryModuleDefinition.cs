@@ -58,10 +58,10 @@ namespace SS.Objects.Modules
 			module.displayName = this.displayName;
 			module.icon = this.icon;
 			
-			InventoryModule.SlotGroup[] slotGroups = new InventoryModule.SlotGroup[this.slots.Length];
+			InventoryModule.Slot[] slotGroups = new InventoryModule.Slot[this.slots.Length];
 			for( int i = 0; i < slotGroups.Length; i++ )
 			{
-				slotGroups[i] = new InventoryModule.SlotGroup( this.slots[i].slotId, this.slots[i].capacity );
+				slotGroups[i] = new InventoryModule.Slot( this.slots[i].slotId, this.slots[i].capacity );
 			}
 			module.SetSlots( slotGroups );
 			module.isStorage = this.isStorage;

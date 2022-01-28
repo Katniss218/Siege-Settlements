@@ -117,7 +117,7 @@ namespace SS.UI.HUDs
 
 		void Awake()
 		{
-			HUDDFSC hudDFSC = this.GetComponent<HUDDFSC>();
+			HUDDFC hudDFSC = this.GetComponent<HUDDFC>();
 			GameObject hud = CreateHudObject( hudDFSC.hudContainer.toggleable.transform );
 
 			this.upperContainer = hud.transform.Find( "Upper" ).transform;
@@ -132,7 +132,7 @@ namespace SS.UI.HUDs
 
 		public void SetSlotCount( int slots, int workerSlots )
 		{
-			HUDDFSC hudDFSC = this.GetComponent<HUDDFSC>();
+			HUDDFC hudDFSC = this.GetComponent<HUDDFC>();
 			if( hudDFSC != null )
 			{
 				for( int i = 0; i < this.workerSlots.Length; i++ )

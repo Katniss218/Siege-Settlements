@@ -45,32 +45,32 @@ namespace SS.UI
 
 
 		/// <summary>
-		/// Registers an element 'element' using an id 'id'.
+		/// Registers an element with an id.
 		/// </summary>
 		/// <param name="id">The id to register the object with.</param>
 		/// <param name="element">The object itself.</param>
 		public void RegisterElement( string id, Transform element )
 		{
-			// If element already registered.
+			// Fail if the element is already registered
 			if( this.elements.TryGetValue( id, out Transform obj ) )
 			{
 				if( obj.transform == element )
 				{
-					throw new System.Exception( "An element with id '" + id + "' is already registered as '" + element.gameObject.name + "'." );
+					throw new System.Exception( $"An element with id '{id}' is already registered as '{element.gameObject.name}'." );
 				}
 			}
 
+			// Register, if the element is a direct child of the selection panel
 			for( int i = 0; i < this.transform.childCount; i++ )
 			{
-				// if element is a child of SPObject.
 				if( this.transform.GetChild( i ) == element )
 				{
 					elements.Add( id, element );
 					return;
 				}
 			}
-			// if element is NOT a child of SPObject.
-			throw new System.Exception( "The element '" + element.gameObject.name + "' is not a child of SPObject." );
+
+			throw new System.Exception( $"The element '{element.gameObject.name}' is not a child of SPObject." );
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace SS.UI
 		{
 			if( !(module is ISelectDisplayHandler) )
 			{
-				throw new System.Exception( "Module must implement ISelectDisplayHandler" );
+				throw new System.ArgumentException( "Module must implement ISelectDisplayHandler" );
 			}
 			
 			GameObject moduleIconGameObject = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.moduleUITransform, new GenericUIData( Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero ), module.icon, () =>

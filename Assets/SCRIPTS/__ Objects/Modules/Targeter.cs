@@ -80,7 +80,7 @@ namespace SS.Objects.Modules
 		{
 			if( requireExactDistance )
 			{
-				SSObjectDFC[] dfs = SSObject.GetAllDFSC();
+				SSObjectDFC[] dfs = SSObject.GetAllDFC();
 
 				SSObjectDFC ret = null;
 				float needThisCloseSq = searchRange * searchRange;

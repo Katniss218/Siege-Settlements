@@ -63,21 +63,21 @@ namespace SS.Objects.SubObjects
 
 		public override SubObject AddTo( SSObject ssObject )
 		{
-			var sub = ssObject.AddSubObject<LightSubObject>( this.subObjectId );
+			var subTuple = ssObject.AddSubObject<LightSubObject>( this.subObjectId );
 
-			sub.Item1.transform.localPosition = this.localPosition;
-			sub.Item1.transform.localRotation = this.localRotation;
+			subTuple.go.transform.localPosition = this.localPosition;
+			subTuple.go.transform.localRotation = this.localRotation;
 
-			sub.Item2.minIntensity = this.minIntensity;
-			sub.Item2.maxIntensity = this.maxIntensity;
-			sub.Item2.flickerSpeed = 8.0f;
-			sub.Item2.color = this.color;
-			sub.Item2.range = this.range;
+			subTuple.sub.minIntensity = this.minIntensity;
+			subTuple.sub.maxIntensity = this.maxIntensity;
+			subTuple.sub.flickerSpeed = 8.0f;
+			subTuple.sub.color = this.color;
+			subTuple.sub.range = this.range;
 
-			Light light = sub.Item1.GetComponent<Light>();
+			Light light = subTuple.go.GetComponent<Light>();
 			light.type = LightType.Point;
 			
-			return sub.Item2;
+			return subTuple.sub;
 		}
 
 

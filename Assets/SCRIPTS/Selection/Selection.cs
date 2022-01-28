@@ -93,7 +93,7 @@ namespace SS
 				
 				if( groups[index][i] is SSObjectDFC )
 				{
-					((SSObjectDFC)groups[index][i]).hudDFSC.SetSelectionGroup( null );
+					((SSObjectDFC)groups[index][i]).hudDFC.SetSelectionGroup( null );
 				}
 			}
 			groups[index].Clear();
@@ -103,7 +103,7 @@ namespace SS
 			{
 				if( groups[index][i] is SSObjectDFC )
 				{
-					((SSObjectDFC)groups[index][i]).hudDFSC.SetSelectionGroup( index );
+					((SSObjectDFC)groups[index][i]).hudDFC.SetSelectionGroup( index );
 				}
 			}
 		}

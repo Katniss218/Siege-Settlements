@@ -6,6 +6,7 @@ using SS.Objects.SubObjects;
 using SS.ResourceSystem.Payment;
 using SS.UI;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,15 +20,17 @@ namespace SS.Objects.Buildings
 	[RequireComponent( typeof( Building ) )]
 	public class ConstructionSite : MonoBehaviour, IPaymentReceiver
 	{
+		// if a building costs 10 resource, the cost of 10 is to bring it from the starting health to max.
+
 		private class ResourceInfo
 		{
-			public int initialResource { get; set; }
+			public int initialAmount { get; set; }
 			public float remaining { get; set; }
 			public float healthToResource { get; set; }
 		}
 
 		// Contains info about resources remaining.
-		private Dictionary<string, ResourceInfo> resourceInfo = null;
+		private Dictionary<string, ResourceInfo> resourcesRemaining = null;
 
 		
 		private Building building;
@@ -39,49 +42,48 @@ namespace SS.Objects.Buildings
 		public UnityEvent onPaymentReceived { get; private set; }
 		
 		/// <summary>
-		/// Checks if the construction (payment) has finished. Construction is finished when there are no more resources wanted.
+		/// Checks if the construction (payment) has finished. Construction is finished when there are no more resources needed.
 		/// </summary>
 		private bool IsDone()
 		{
-			foreach( var kvp in resourceInfo )
+			foreach( var remaining in resourcesRemaining )
 			{
-				int ceiledAmount = Mathf.CeilToInt( kvp.Value.remaining );
+				int remainingCeiled = Mathf.CeilToInt( remaining.Value.remaining );
 
-				if( ceiledAmount != 0 )
+				if( remainingCeiled != 0 )
 				{
 					return false;
 				}
 			}
+
 			return true;
 		}
 
 		public void ReceivePayment( string id, int amount )
 		{
-			foreach( var kvp in this.resourceInfo )
+			foreach( var remaining in this.resourcesRemaining )
 			{
 				// Skip to the matching resource.
-				if( kvp.Key != id )
+				if( remaining.Key != id )
 				{
 					continue;
 				}
 
-				int ceiledRemaining = Mathf.CeilToInt( kvp.Value.remaining );
-				if( ceiledRemaining == 0 )
+				int remainingCeiled = Mathf.CeilToInt( remaining.Value.remaining );
+				if( remainingCeiled == 0 )
 				{
-					throw new Exception( "Received resource wasn't wanted." );
+					throw new InvalidOperationException( "Received resource wasn't wanted." );
 				}
+
 				// Received more than was needed (invalid behavior).
-				if( ceiledRemaining < amount )
+				if( remainingCeiled < amount )
 				{
-					throw new Exception( "Received amount of '" + id + "' (" + amount + ") was more than the required amount (" + ceiledRemaining + ")." );
+					throw new InvalidOperationException( $"ReceivePayment amount of '{id}' ({amount}) was more than the required amount ({remainingCeiled})." );
 				}
 
+				remaining.Value.remaining -= amount;
 
-				kvp.Value.remaining -= amount;
-				if( kvp.Value.remaining < 0 )
-				{
-					kvp.Value.remaining = 0;
-				}
+				// VFX, SFX
 
 				Main.particleSystem.transform.position = this.gameObject.transform.position + new Vector3( 0, 0.125f, 0 );
 				ParticleSystem.ShapeModule shape = Main.particleSystem.GetComponent<ParticleSystem>().shape;
@@ -93,16 +95,13 @@ namespace SS.Objects.Buildings
 
 				AudioManager.PlaySound( this.building.buildSoundEffect, this.transform.position );
 				
-
-				bool isDone = this.IsDone();
-				if( isDone )
+				if( this.IsDone() )
 				{
 					// Remove onHealthChange_whenConstructing, so the damageable doesn't call listener, that doesn't exist (cause the construction ended).
 					this.building.constructionSite = null;
 					this.building.isUsable = true;
 					this.building.onHealthChange.RemoveListener( this.OnHealthChange );
 					this.building.onFactionChange.RemoveListener( this.OnFactionChange );
-
 
 					UpdateYOffset( this.building, 0.0f );
 					
@@ -119,9 +118,13 @@ namespace SS.Objects.Buildings
 					}
 				}
 
-				float healAmt = ((this.building.healthMax * (1 - 0.1f)) / kvp.Value.initialResource) * kvp.Value.healthToResource * amount;
+				float healthFromStartToEnd = this.building.healthMax * (1 - Building.STARTING_HEALTH_PERCENT);
 
-				// If it would be healed above the max health (due to rounding up the actual resource amount received), heal it just to the max health.
+				float resourceStartToEnd = healthFromStartToEnd / remaining.Value.initialAmount;
+
+				float healAmt = resourceStartToEnd * remaining.Value.healthToResource * amount;
+
+				// Clamp overhealing (due to rounding up of the actual resource amount wanted/received).
 				// Otherwise, heal it normally.
 				if( this.building.health + healAmt > this.building.healthMax )
 				{
@@ -143,53 +146,60 @@ namespace SS.Objects.Buildings
 		private static void UpdateYOffset( SSObject ssObject, float value )
 		{
 			MeshSubObject[] meshes = ssObject.GetSubObjects<MeshSubObject>();
-			MeshPredicatedSubObject[] meshes2 = ssObject.GetSubObjects<MeshPredicatedSubObject>();
+			MeshPredicatedSubObject[] meshesPredicated = ssObject.GetSubObjects<MeshPredicatedSubObject>();
 
-			for( int i = 0; i < meshes.Length; i++ )
+			foreach( var mesh in meshes )
 			{
-				meshes[i].GetMaterial().SetFloat( "_YOffset", value );
+				mesh.GetMaterial().SetFloat( "_YOffset", value );
 			}
-			for( int i = 0; i < meshes2.Length; i++ )
+			foreach( var mesh in meshesPredicated )
 			{
-				meshes2[i].GetMaterial().SetFloat( "_YOffset", value );
+				mesh.GetMaterial().SetFloat( "_YOffset", value );
 			}
 		}
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			Dictionary<string, int> ret = new Dictionary<string, int>();
+			Dictionary<string, int> wanted = new Dictionary<string, int>();
 
-			foreach( var kvp in this.resourceInfo )
+			foreach( var remaining in this.resourcesRemaining )
 			{
-				int ceiledAmount = Mathf.CeilToInt( kvp.Value.remaining );
-				if( ceiledAmount != 0 )
+				int remainingCeiled = Mathf.CeilToInt( remaining.Value.remaining );
+				if( remainingCeiled != 0 )
 				{
-					ret.Add( kvp.Key, ceiledAmount );
+					wanted.Add( remaining.Key, remainingCeiled );
 				}
 			}
-			return ret;
+
+			return wanted;
 		}
 
 		/// <summary>
 		/// Assigns a cost (in resources) to fully construct the building. Resets any progression in resources.
 		/// </summary>
-		public void SetRequiredResources( Dictionary<string, int> requiredResources )
+		private void SetRequiredResources( Dictionary<string, int> requiredResources )
 		{
-			this.resourceInfo = new Dictionary<string, ResourceInfo>( requiredResources.Count );
+			this.resourcesRemaining = new Dictionary<string, ResourceInfo>( requiredResources.Count );
 
 			float totalResourceAmount = 0;
-			foreach( var kvp in requiredResources )
-			{
-				int amount = kvp.Value;
-				this.resourceInfo.Add( kvp.Key, new ResourceInfo() { initialResource = amount, remaining = amount } );
 
-				totalResourceAmount += amount;
+			foreach( var required in requiredResources )
+			{
+				ResourceInfo requiredResInfo = new ResourceInfo()
+				{
+					initialAmount = required.Value,
+					remaining = required.Value
+				};
+
+				this.resourcesRemaining.Add( required.Key, requiredResInfo );
+
+				totalResourceAmount += required.Value;
 			}
 
-			// Once we have our total, calculate how much each resource contributes to the total.
-			foreach( var kvp in this.resourceInfo )
+			// Calculate how much each resource contributes to the total.
+			foreach( var remaining in this.resourcesRemaining )
 			{
-				kvp.Value.healthToResource = kvp.Value.remaining / totalResourceAmount;
+				remaining.Value.healthToResource = remaining.Value.remaining / totalResourceAmount;
 			}
 		}
 
@@ -207,9 +217,9 @@ namespace SS.Objects.Buildings
 			ConstructionSiteData data = new ConstructionSiteData();
 
 			data.resourcesRemaining = new Dictionary<string, float>();
-			foreach( var kvp in this.resourceInfo )
+			foreach( var remaining in this.resourcesRemaining )
 			{
-				data.resourcesRemaining.Add( kvp.Key, kvp.Value.remaining );
+				data.resourcesRemaining.Add( remaining.Key, remaining.Value.remaining );
 			}
 
 			return data;
@@ -222,39 +232,45 @@ namespace SS.Objects.Buildings
 		{
 			if( !Building.CanStartRepair( building ) )
 			{
-				throw new Exception( building.displayName + " - Building is not repairable." );
+				throw new Exception($"{building.displayName} - Can't start repair." );
 			}
 
 			ConstructionSite constructionSite = building.gameObject.AddComponent<ConstructionSite>();
 			constructionSite.building = building;
 			constructionSite.SetRequiredResources( building.StartToEndConstructionCost );
 			
-			// If no data about remaining resources is present - calculate them from the current health.
 			if( data.resourcesRemaining == null )
 			{
-				float deltaHP = building.health - building.healthMax;
-				foreach( var kvp in constructionSite.resourceInfo )
-				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
-					kvp.Value.remaining = resAmt;
+				// Calculate remaining resources from the current health.
 
-					Debug.Log( kvp.Key + ", " + resAmt );
+				float deltaHP = building.health - building.healthMax;
+				foreach( var remaining in constructionSite.resourcesRemaining )
+				{
+					float healthFromStartToFinish = building.healthMax * (1 - Building.STARTING_HEALTH_PERCENT);
+
+					float resourceFromStartToFinish = remaining.Value.initialAmount / healthFromStartToFinish;
+
+					float newRemaining = resourceFromStartToFinish * -deltaHP;
+
+					remaining.Value.remaining = newRemaining;
+
+					Debug.Log( $"BeginConstructionOrRepair: {remaining.Key}, {newRemaining}" );
 				}
 			}
-			// Otherwise, assign the remaining resources.
 			else
 			{
-				foreach( var kvp in data.resourcesRemaining )
+				foreach( var remaining in data.resourcesRemaining )
 				{
-					constructionSite.resourceInfo[kvp.Key].remaining = kvp.Value;
+					constructionSite.resourcesRemaining[remaining.Key].remaining = remaining.Value;
 				}
 			}
 
-			InteriorModule[] interiors = building.GetModules<InteriorModule>();
-			for( int i = 0; i < interiors.Length; i++ )
+			// Can't be inside building that's under construction.
+			foreach( var interior in building.GetModules<InteriorModule>() )
 			{
-				interiors[i].ExitAll();
+				interior.ExitAll();
 			}
+
 			building.constructionSite = constructionSite;
 			building.isUsable = false;
 			building.onHealthChange.AddListener( constructionSite.OnHealthChange );
@@ -277,14 +293,19 @@ namespace SS.Objects.Buildings
 			this.UpdateStatus_UI();
 
 			UpdateYOffset( this.building, Mathf.Lerp( -this.building.size.y, 0.0f, building.healthPercent ) );
-						
+			
+			// if the building took damage - recalculate the new cost.
 			if( deltaHP < 0 )
 			{
-				foreach( var kvp in this.resourceInfo )
+				foreach( var resource in this.resourcesRemaining )
 				{
-					float resAmt = (kvp.Value.initialResource / (building.healthMax * (1 - 0.1f))) * -deltaHP;
+					float healthFromStartToEnd = building.healthMax * (1 - Building.STARTING_HEALTH_PERCENT);
 
-					kvp.Value.remaining += resAmt;
+					float resourcePerOneHealth = resource.Value.initialAmount / healthFromStartToEnd;
+
+					float resAmountAdded = resourcePerOneHealth * -deltaHP;
+
+					resource.Value.remaining += resAmountAdded;
 				}
 			}
 		}
@@ -369,6 +390,8 @@ namespace SS.Objects.Buildings
 			constructionSiteGfx.transform.localPosition = new Vector3( -collider.size.x / 2f, 0, -collider.size.z / 2f );
 			constructionSiteGfx.transform.localRotation = Quaternion.identity;
 
+			// Corner
+
 			GameObject corner00 = new GameObject( "c00" );
 			corner00.transform.SetParent( constructionSiteGfx.transform );
 			corner00.transform.localPosition = new Vector3( 0, 0, 0 );
@@ -379,6 +402,8 @@ namespace SS.Objects.Buildings
 
 			MeshRenderer meshRenderer = corner00.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
+
+			// Corner
 
 			GameObject corner01 = new GameObject( "c01" );
 			corner01.transform.SetParent( constructionSiteGfx.transform );
@@ -391,6 +416,8 @@ namespace SS.Objects.Buildings
 			meshRenderer = corner01.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
+			// Corner
+
 			GameObject corner10 = new GameObject( "c10" );
 			corner10.transform.SetParent( constructionSiteGfx.transform );
 			corner10.transform.localPosition = new Vector3( collider.size.x, 0, 0 );
@@ -401,6 +428,8 @@ namespace SS.Objects.Buildings
 
 			meshRenderer = corner10.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
+
+			// Corner
 
 			GameObject corner11 = new GameObject( "c11" );
 			corner11.transform.SetParent( constructionSiteGfx.transform );
@@ -413,12 +442,10 @@ namespace SS.Objects.Buildings
 			meshRenderer = corner11.AddComponent<MeshRenderer>();
 			meshRenderer.material = MaterialManager.CreateColored( color, albedoC, normalC, null, null, null );
 
+			// X -> 2 rows
 
 			for( int i = 0; i < numX; i++ )
 			{
-				// 2 rows
-
-
 				GameObject line1 = new GameObject( "X0-" + i );
 				line1.transform.SetParent( constructionSiteGfx.transform );
 				line1.transform.localPosition = new Vector3( (i * spacingX) + spacingX, 0, 0 );
@@ -442,11 +469,10 @@ namespace SS.Objects.Buildings
 				meshRenderer.material = MaterialManager.CreateColored( color, albedoS, normalS, null, null, null );
 			}
 
+			// Y -> 2 rows
+
 			for( int i = 0; i < numZ; i++ )
 			{
-				// 2 rows
-
-
 				GameObject line1 = new GameObject( "Z0-" + i );
 				line1.transform.SetParent( constructionSiteGfx.transform );
 				line1.transform.localPosition = new Vector3( 0, 0, (i * spacingZ) + spacingZ );

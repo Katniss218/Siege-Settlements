@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace SS.UI.HUDs
 {
-	public class UnitHUD : HUDDFSC
+	public class UnitHUD : HUDDFC
 	{
 		public void Awake()
 		{

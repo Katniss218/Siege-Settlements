@@ -6,11 +6,15 @@ using UnityEngine;
 
 namespace SS.Objects.SubObjects
 {
+	/// <summary>
+	/// Mesh that toggles depending on a condition.
+	/// </summary>
 	public class MeshPredicatedSubObjectDefinition : SubObjectDefinition
 	{
 		public const string KFF_TYPEID = "MESH_PREDICATED";
 
 		public Dictionary<int, AddressableAsset<Mesh>> meshes { get; set; }
+
 		public MaterialDefinition materialData { get; set; }
 
 
@@ -21,27 +25,29 @@ namespace SS.Objects.SubObjects
 				throw new Exception( "Mesh dictionary must have at least 1 element." );
 			}
 
-			var sub = ssObject.AddSubObject<MeshPredicatedSubObject>( this.subObjectId );
+			var subTuple = ssObject.AddSubObject<MeshPredicatedSubObject>( this.subObjectId );
 
-			sub.Item1.transform.localPosition = this.localPosition;
-			sub.Item1.transform.localRotation = this.localRotation;
+			subTuple.go.transform.localPosition = this.localPosition;
+			subTuple.go.transform.localRotation = this.localRotation;
 
-			sub.Item2.defaultPosition = this.localPosition;
-			sub.Item2.defaultRotation = this.localRotation;
-			sub.Item2.meshes = new Dictionary<int, Mesh>( this.meshes.Count );
+			subTuple.sub.defaultPosition = this.localPosition;
+			subTuple.sub.defaultRotation = this.localRotation;
+			subTuple.sub.meshes = new Dictionary<int, Mesh>( this.meshes.Count );
 			int? firstKey = null;
+
 			foreach( var kvp in this.meshes )
 			{
 				if( firstKey == null )
 				{
 					firstKey = kvp.Key;
 				}
-				sub.Item2.meshes.Add( kvp.Key, (Mesh)kvp.Value );
+				subTuple.sub.meshes.Add( kvp.Key, kvp.Value );
 			}
-			sub.Item2.lookupKey = firstKey.Value;
-			sub.Item2.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
 
-			return sub.Item2;
+			subTuple.sub.lookupKey = firstKey.Value;
+			subTuple.sub.SetMaterial( MaterialManager.CreateMaterial( this.materialData ) );
+
+			return subTuple.Item2;
 		}
 
 		public override void DeserializeKFF( KFFSerializer serializer )

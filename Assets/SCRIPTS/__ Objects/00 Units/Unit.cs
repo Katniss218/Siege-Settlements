@@ -140,7 +140,7 @@ namespace SS.Objects.Units
 		/// Returns the hud that's attached to this object.
 		/// </summary>
 		public UnitHUD hud { get; set; }
-		public override HUDDFSC hudDFSC { get { return this.hud; } }
+		public override HUDDFC hudDFC { get { return this.hud; } }
 
 
 
@@ -258,7 +258,7 @@ namespace SS.Objects.Units
 
 			// - Interior fields
 
-			InteriorModule.GetSlot( interior, slotType, slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+			(InteriorModule.Slot slot, HUDInteriorSlot slotHud) = interior.GetSlot( slotType, slotIndex );
 
 			slot.objInside = this;
 
@@ -309,7 +309,7 @@ namespace SS.Objects.Units
 
 			// - Interior fields.
 
-			InteriorModule.GetSlot( interior, this.slotType, this.slotIndex, out InteriorModule.Slot slot, out HUDInteriorSlot slotHud );
+			(InteriorModule.Slot slot, HUDInteriorSlot slotHud) = interior.GetSlot( this.slotType, this.slotIndex );
 
 			slot.objInside = null;
 
