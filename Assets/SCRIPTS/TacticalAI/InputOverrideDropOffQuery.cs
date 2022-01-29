@@ -40,7 +40,7 @@ namespace SS
 
 					if( ssObject != null )
 					{
-						if( ssObject.HasPaymentReceivers() )
+						if( ssObject.HasUsablePaymentReceivers() )
 						{
 							if( ssObject is SSObjectDFC )
 							{
@@ -199,7 +199,7 @@ namespace SS
 			Dictionary<SSObjectDFC, IPaymentReceiver> toBeAssignedGameObjects = new Dictionary<SSObjectDFC, IPaymentReceiver>();
 
 			// this makes sure that if building is under construction - only the construction site receiver is returned.
-			IPaymentReceiver[] paymentReceivers = paymentReceiverSSObject.GetAvailableReceivers();
+			IPaymentReceiver[] paymentReceivers = paymentReceiverSSObject.GetAvailablePaymentReceivers();
 
 			for( int i = 0; i < selected.Length; i++ )
 			{

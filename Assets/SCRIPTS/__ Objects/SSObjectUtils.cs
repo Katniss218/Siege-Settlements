@@ -140,7 +140,7 @@ namespace SS.Objects
 					continue;
 				}
 
-				if( !objects[i].HasPaymentReceivers() )
+				if( !objects[i].HasUsablePaymentReceivers() )
 				{
 					continue;
 				}
@@ -152,7 +152,7 @@ namespace SS.Objects
 				}
 
 
-				paymentReceivers = objects[i].GetAvailableReceivers();
+				paymentReceivers = objects[i].GetAvailablePaymentReceivers();
 
 
 				for( int j = 0; j < paymentReceivers.Length; j++ )

@@ -31,7 +31,7 @@ namespace SS.Objects.Modules
 		public UnityEvent onPaymentReceived { get; private set; } = new UnityEvent();
 
 		/// <summary>
-		/// Contains every unit that can be created in the barracks.
+		/// Contains every unit that can be trained in these barracks specifically.
 		/// </summary>
 		public UnitDefinition[] trainableUnits { get; set; }
 
@@ -79,13 +79,15 @@ namespace SS.Objects.Modules
 			{
 				return true;
 			}
-			foreach( var kvp in this.resourcesRemaining )
+
+			foreach( var remaining in this.resourcesRemaining )
 			{
-				if( kvp.Value > 0 )
+				if( remaining.Value > 0 )
 				{
 					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -93,7 +95,7 @@ namespace SS.Objects.Modules
 		{
 			if( this.resourcesRemaining == null )
 			{
-				throw new Exception( "Unwanted payment was received." );
+				throw new Exception( "Can't receive payment - No payment was wanted." );
 			}
 
 			if( this.resourcesRemaining.ContainsKey( id ) )
@@ -104,25 +106,29 @@ namespace SS.Objects.Modules
 					this.resourcesRemaining[id] = 0;
 				}
 			}
+
 			this.PaymentReceived_UI();
 			this.onPaymentReceived?.Invoke();
 		}
 
 		public Dictionary<string, int> GetWantedResources()
 		{
-			Dictionary<string, int> ret = new Dictionary<string, int>();
+			Dictionary<string, int> wanted = new Dictionary<string, int>();
+
 			if( this.resourcesRemaining == null )
 			{
-				return ret;
+				return wanted;
 			}
-			foreach( var kvp in this.resourcesRemaining )
+
+			foreach( var remaining in this.resourcesRemaining )
 			{
-				if( kvp.Value > 0 )
+				if( remaining.Value > 0 )
 				{
-					ret.Add( kvp.Key, kvp.Value );
+					wanted.Add( remaining.Key, remaining.Value );
 				}
 			}
-			return ret;
+
+			return wanted;
 		}
 
 		//
@@ -170,7 +176,7 @@ namespace SS.Objects.Modules
 			// remove the cancel button if there is no more things to cancel.
 			if( this.queuedUnits.Count == 0 )
 			{
-				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
+				ActionPanel.instance.Clear( ACTIONPANEL_ID_CANCEL, ActionButtonType.Module );
 			}
 		}
 		
@@ -214,10 +220,13 @@ namespace SS.Objects.Modules
 			{
 				return PopulationSize.x1;
 			}
+
+			// clamp to x4 max.
 			if( def.populationSizeLimit != null && def.populationSizeLimit < (byte)PopulationSize.x4 )
 			{
 				return (PopulationSize)def.populationSizeLimit;
 			}
+
 			return PopulationSize.x4;
 		}
 
@@ -227,12 +236,14 @@ namespace SS.Objects.Modules
 			Matrix4x4 toWorld = this.transform.localToWorldMatrix;
 			Vector3 spawnPos = toWorld.MultiplyVector( this.spawnPosition ) + this.transform.position;
 
-			UnitData data = new UnitData();
-			data.guid = Guid.NewGuid();
-			data.position = spawnPos;
-			data.rotation = Quaternion.identity;
-			data.factionId = ((IFactionMember)this.ssObject).factionId;
-			data.population = GetSpawnSize( def );
+			UnitData data = new UnitData()
+			{
+				guid = Guid.NewGuid(),
+				position = spawnPos,
+				rotation = Quaternion.identity,
+				factionId = ((IFactionMember)this.ssObject).factionId,
+				population = GetSpawnSize( def )
+			};
 
 			Unit unit = UnitCreator.Create( def, data.guid );
 			UnitCreator.SetData( unit, data );
@@ -334,13 +345,15 @@ namespace SS.Objects.Modules
 			// ------          DATA
 
 			this.resourcesRemaining = data.resourcesRemaining;
+
 			if( data.queuedUnits != null )
 			{
-				for( int i = 0; i < data.queuedUnits.Length; i++ )
+				foreach( var queuedUnit in data.queuedUnits )
 				{
-					this.queuedUnits.Add( DefinitionManager.GetUnit( data.queuedUnits[i] ) );
+					this.queuedUnits.Add( DefinitionManager.GetUnit( queuedUnit ) );
 				}
 			}
+
 			this.buildTimeRemaining = data.buildTimeRemaining;
 			this.rallyPoint = data.rallyPoint;
 		}
@@ -354,6 +367,13 @@ namespace SS.Objects.Modules
 
 		//		UI INTEGRATION
 
+
+		const string ACTIONPANEL_ID_CANCEL = "barracks.ap.cancel";
+		const string ACTIONPANEL_ID_SET_RALLY = "barracks.ap.set_rally";
+
+		const string SELECTIONPANEL_ID_LIST = "barracks.list";
+		const string SELECTIONPANEL_ID_QUEUE = "barracks.queue";
+		const string SELECTIONPANEL_ID_STATUS = "barracks.status";
 
 		private void ShowList()
 		{
@@ -391,7 +411,7 @@ namespace SS.Objects.Modules
 			}
 
 			GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 300.0f, 5.0f ), new Vector2( -330.0f, -55.0f ), Vector2.zero, Vector2.zero, Vector2.one ), 72, gridElements );
-			SelectionPanel.instance.obj.RegisterElement( "barracks.list", list.transform );
+			SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_LIST, list.transform );
 		}
 
 		private void CreateQueueUI()
@@ -421,7 +441,7 @@ namespace SS.Objects.Modules
 				i++;
 			}
 
-			SelectionPanel.instance.obj.RegisterElement( "barracks.queue", queue.transform );
+			SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_QUEUE, queue.transform );
 		}
 
 		public void RefreshQueue_UI()
@@ -431,7 +451,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			SelectionPanel.instance.obj.TryClearElement( "barracks.queue" );
+			SelectionPanel.instance.obj.TryClearElement( SELECTIONPANEL_ID_QUEUE );
 			this.CreateQueueUI();
 		}
 
@@ -443,7 +463,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			SelectionPanel.instance.obj.TryClearElement( "barracks.list" );
+			SelectionPanel.instance.obj.TryClearElement( SELECTIONPANEL_ID_LIST );
 			this.ShowList();
 		}
 
@@ -454,7 +474,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( SELECTIONPANEL_ID_STATUS );
 			if( statusUI != null )
 			{
 				UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
@@ -470,14 +490,14 @@ namespace SS.Objects.Modules
 
 			if( !this.IsPaymentDone() )
 			{
-				Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+				Transform statusUI = SelectionPanel.instance.obj.GetElement( SELECTIONPANEL_ID_STATUS );
 				if( statusUI != null )
 				{
 					UIUtils.EditText( statusUI.gameObject, "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
 				}
 
 				// clear if the begin was caused by decreasing queue.
-				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
+				ActionPanel.instance.Clear( ACTIONPANEL_ID_CANCEL, ActionButtonType.Module );
 				DisplayCancelButton();
 			}
 		}
@@ -489,7 +509,7 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( SELECTIONPANEL_ID_STATUS );
 			if( statusUI != null )
 			{
 				UIUtils.EditText( statusUI.gameObject, "Training... '" + this.queuedUnits[0].displayName + "' - " + (int)this.buildTimeRemaining + " s." );
@@ -503,18 +523,18 @@ namespace SS.Objects.Modules
 				return;
 			}
 
-			Transform statusUI = SelectionPanel.instance.obj.GetElement( "barracks.status" );
+			Transform statusUI = SelectionPanel.instance.obj.GetElement( SELECTIONPANEL_ID_STATUS );
 			if( statusUI != null )
 			{
 				UIUtils.EditText( statusUI.gameObject, "Select unit to make..." );
 			}
 			
-			SelectionPanel.instance.obj.TryClearElement( "barracks.queue" );
+			SelectionPanel.instance.obj.TryClearElement( SELECTIONPANEL_ID_QUEUE );
 			this.CreateQueueUI();
 			
 			if( this.queuedUnits.Count == 0 )
 			{
-				ActionPanel.instance.Clear( "barracks.ap.cancel", ActionButtonType.Module );
+				ActionPanel.instance.Clear( ACTIONPANEL_ID_CANCEL, ActionButtonType.Module );
 			}
 		}
 
@@ -525,7 +545,7 @@ namespace SS.Objects.Modules
 
 		private void DisplayCancelButton()
 		{
-			ActionPanel.instance.CreateButton( "barracks.ap.cancel", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...",
+			ActionPanel.instance.CreateButton( ACTIONPANEL_ID_CANCEL, AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/cancel" ), "Cancel", "Click to cancel production...",
 				 ActionButtonAlignment.LowerLeft, ActionButtonType.Module, () =>
 			{
 				this.Dequeue( false );
@@ -553,19 +573,19 @@ namespace SS.Objects.Modules
 				if( this.queuedUnits.Count == 0 )
 				{
 					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Select unit to make..." );
-					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+					SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_STATUS, status.transform );
 				}
 				else
 				{
 					GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Training... '" + this.queuedUnits[0].displayName + "' - " + (int)this.buildTimeRemaining + " s." );
-					SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+					SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_STATUS, status.transform );
 					DisplayCancelButton();
 				}
 			}
 			else
 			{
 				GameObject status = UIUtils.InstantiateText( SelectionPanel.instance.obj.transform, GetStatusPos(), "Waiting for resources... ('" + this.queuedUnits[0].displayName + "'): " + ResourceUtils.ToResourceString( this.resourcesRemaining ) );
-				SelectionPanel.instance.obj.RegisterElement( "barracks.status", status.transform );
+				SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_STATUS, status.transform );
 				DisplayCancelButton();
 			}
 
@@ -614,7 +634,7 @@ namespace SS.Objects.Modules
 
 		private void CreateRallyButton()
 		{
-			ActionPanel.instance.CreateButton( "barracks.ap.set_rally", AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/rally" ),
+			ActionPanel.instance.CreateButton( ACTIONPANEL_ID_SET_RALLY, AssetManager.GetSprite( AssetManager.BUILTIN_ASSET_ID + "Textures/rally" ),
 				"Set Rally Point", "Click to set the rally point (units move towards it when trained)...", ActionButtonAlignment.UpperLeft, ActionButtonType.Module, () =>
 			{
 				if( Main.mouseInput != null )
@@ -622,7 +642,7 @@ namespace SS.Objects.Modules
 					Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, -5, this.Inp_SetRally, true );
 					Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, -5, this.Inp_CancelRally, true );
 				}
-				ActionPanel.instance.Clear( "barracks.ap.set_rally", ActionButtonType.Module );
+				ActionPanel.instance.Clear( ACTIONPANEL_ID_SET_RALLY, ActionButtonType.Module );
 				// needs to set the left-mouse action to rally point.
 			} );
 		}

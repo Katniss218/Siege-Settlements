@@ -45,11 +45,11 @@ namespace SS.Objects.Modules
 		{
 			if( data == null )
 			{
-				throw new ArgumentNullException( "Provided data is null." );
+				throw new ArgumentNullException( "ValidateDataType - Provided data is null." );
 			}
 			if( !(data is T) )
 			{
-				throw new Exception( "Provided data is not of the correct type (needs to be '" + typeof( T ).Name + "')." );
+				throw new Exception( $"ValidateDataType - Provided data (type: '{data.GetType()}') is not of the correct type (correct type: '{typeof( T ).Name}')." );
 			}
 
 			return (T)data;

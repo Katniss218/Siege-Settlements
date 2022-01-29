@@ -16,12 +16,16 @@ namespace SS.Objects.Modules
     {
         public const string KFF_TYPEID = "interior";
 
-        public const string ACTIONPANEL_ID_EXITALL = "interior.ap.exitall";
-
         public enum SlotType : byte
         {
-            Generic, // any unit can enter (whitelist-based)
-            Worker // only the unit employed at this particular slot can enter.
+            /// <summary>
+            /// Any unit can enter (whitelist-based).
+            /// </summary>
+            Generic,
+            /// <summary>
+            /// Only the unit employed at this particular SLOT can enter.
+            /// </summary>
+            Worker
         }
 
         public abstract class Slot
@@ -89,6 +93,9 @@ namespace SS.Objects.Modules
         SlotGeneric[] slots = new SlotGeneric[0];
         SlotWorker[] workerSlots = new SlotWorker[0];
 
+        /// <summary>
+        /// Returns a given slot.
+        /// </summary>
         public (Slot slot, HUDInteriorSlot slotHud) GetSlot( SlotType slotType, int slotIndex )
         {
             if( slotType == SlotType.Generic )
@@ -102,11 +109,18 @@ namespace SS.Objects.Modules
 
             throw new ArgumentException( "Can't get slot - invalid slot type." );
         }
+
+        /// <summary>
+        /// Returns the number of slots of a given type.
+        /// </summary>
         public int SlotCount( SlotType type )
         {
             return type == SlotType.Generic ? this.slots.Length : this.workerSlots.Length;
         }
 
+        /// <summary>
+        /// Sets the slots of this interior.
+        /// </summary>
         public void SetSlots( SlotGeneric[] slots, SlotWorker[] workerSlots )
         {
             if( slots == null )
@@ -217,7 +231,9 @@ namespace SS.Objects.Modules
         public HUDInterior hudInterior { get; private set; } = null;
 
 
-
+        /// <summary>
+        /// Returns the list of all workers employed at a particular workplace that are currently assigned to one of the slots.
+        /// </summary>
         public List<CivilianUnitExtension> GetAllEmployed( WorkplaceModule workplace = null )
         {
             List<CivilianUnitExtension> employed = new List<CivilianUnitExtension>();
@@ -251,37 +267,38 @@ namespace SS.Objects.Modules
             {
                 if( slot.objInside != null )
                 {
-                    slot.objInside.SetOutside();
+                    slot.objInside.MakeOutside();
                 }
             }
         }
 
         /// <summary>
-        /// Returns the index of the first slot that's valid for a given thing to enter.
+        /// Returns the index of the first slot that's valid for a given thing to enter. Null if this particular thing can't enter this particular interior.
         /// </summary>
-        public int? GetFirstValid( SlotType type, IInteriorUser interiorUser )
+        public int? GetFirstValid( SlotType type, IInteriorUser enteringObj )
         {
             byte population = 1;
-            Unit unit = null;
+            Unit enteringUnit = null;
 
-            if( interiorUser is Unit )
+            if( enteringObj is Unit )
             {
-                unit = (Unit)interiorUser;
-                population = (byte)unit.population;
+                enteringUnit = (Unit)enteringObj;
+                population = (byte)enteringUnit.population;
             }
 
             if( type == SlotType.Worker )
             {
-                if( unit == null )
+                if( enteringUnit == null )
                 {
                     return null;
                 }
 
-                if( !unit.isCivilian )
+                if( !enteringUnit.isCivilian )
                 {
                     return null;
                 }
 
+                // first slot that can fit and isn't already assigned.
                 for( int i = 0; i < this.workerSlots.Length; i++ )
                 {
                     if( population > (byte)this.workerSlots[i].maxPopulation )
@@ -289,15 +306,18 @@ namespace SS.Objects.Modules
                         continue;
                     }
 
-                    if( this.workerSlots[i].assignedWorker != unit.civilian )
+                    if( this.workerSlots[i].assignedWorker != enteringUnit.civilian )
                     {
                         continue;
                     }
 
                     return i;
                 }
+
+                return null;
             }
-            else if( type == SlotType.Generic )
+
+            if( type == SlotType.Generic )
             {
                 for( int i = 0; i < this.slots.Length; i++ )
                 {
@@ -311,15 +331,15 @@ namespace SS.Objects.Modules
                         continue;
                     }
 
-                    if( unit == null )
+                    if( enteringUnit == null )
                     {
                         return i;
                     }
                     else
                     {
-                        for( int j = 0; j < this.slots[i].whitelistedUnits.Length; j++ )
+                        foreach( var slotWhitelistedUnit in this.slots[i].whitelistedUnits )
                         {
-                            if( this.slots[i].whitelistedUnits[j] == unit.definitionId )
+                            if( slotWhitelistedUnit == enteringUnit.definitionId )
                             {
                                 return i;
                             }
@@ -496,11 +516,11 @@ namespace SS.Objects.Modules
 
             foreach( var kvp in data.slots )
             {
-                ((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Generic, kvp.Key );
+                ((IInteriorUser)SSObject.Find( kvp.Value )).MakeInside( this, SlotType.Generic, kvp.Key );
             }
             foreach( var kvp in data.workerSlots )
             {
-                ((IInteriorUser)SSObject.Find( kvp.Value )).SetInside( this, SlotType.Worker, kvp.Key );
+                ((IInteriorUser)SSObject.Find( kvp.Value )).MakeInside( this, SlotType.Worker, kvp.Key );
             }
         }
 
@@ -509,6 +529,9 @@ namespace SS.Objects.Modules
         //
         //
 
+        const string ACTIONPANEL_ID_EXITALL = "interior.ap.exitall";
+        const string SELECTIONPANEL_ID_SLOTS = "interior.slots";
+        const string SELECTIONPANEL_ID_WORKER_SLOTS = "interior.worker_slots";
 
         private void ReDisplaySlots_UI()
         {
@@ -517,8 +540,8 @@ namespace SS.Objects.Modules
                 return;
             }
 
-            SelectionPanel.instance.obj.TryClearElement( "interior.slots" );
-            SelectionPanel.instance.obj.TryClearElement( "interior.worker_slots" );
+            SelectionPanel.instance.obj.TryClearElement( SELECTIONPANEL_ID_SLOTS );
+            SelectionPanel.instance.obj.TryClearElement( SELECTIONPANEL_ID_WORKER_SLOTS );
             DisplaySlotsList_UI();
             DisplayWorkerSlotsList_UI();
         }
@@ -538,32 +561,38 @@ namespace SS.Objects.Modules
 
         private void DisplaySlotsList_UI()
         {
-            GameObject[] gridElements = new GameObject[this.slots.Length];
-            for( int i = 0; i < this.slots.Length; i++ )
+            List<GameObject> gridElements = new List<GameObject>( this.slots.Length );
+
+            foreach( var slot in this.slots )
             {
-                IInteriorUser insideObj = this.slots[i].objInside;
-                gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
+                GameObject button = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), slot.objInside?.icon, () =>
                 {
-                    TrySelectInside( insideObj );
+                    TrySelectInside( slot.objInside );
                 } );
+
+                gridElements.Add( button );
             }
-            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
-            SelectionPanel.instance.obj.RegisterElement( "interior.slots", list.transform );
+
+            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, 0 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements.ToArray() );
+            SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_SLOTS, list.transform );
         }
 
         private void DisplayWorkerSlotsList_UI()
         {
-            GameObject[] gridElements = new GameObject[this.workerSlots.Length];
-            for( int i = 0; i < this.workerSlots.Length; i++ )
+            List<GameObject> gridElements = new List<GameObject>( this.slots.Length );
+
+            foreach( var slot in this.workerSlots )
             {
-                IInteriorUser insideObj = this.workerSlots[i].objInside;
-                gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), insideObj?.icon, () =>
+                GameObject button = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData(), slot.objInside?.icon, () =>
                 {
-                    TrySelectInside( insideObj );
+                    TrySelectInside( slot.objInside );
                 } );
+
+                gridElements.Add( button );
             }
-            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements );
-            SelectionPanel.instance.obj.RegisterElement( "interior.worker_slots", list.transform );
+
+            GameObject list = UIUtils.InstantiateScrollableGrid( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( 135, -77 ), new Vector2( -330.0f, 75 ), new Vector2( 0.5f, 1 ), Vector2.up, Vector2.one ), 72, gridElements.ToArray() );
+            SelectionPanel.instance.obj.RegisterElement( SELECTIONPANEL_ID_WORKER_SLOTS, list.transform );
         }
 
 
@@ -576,15 +605,16 @@ namespace SS.Objects.Modules
             {
                 List<SSObjectDFC> selectables = new List<SSObjectDFC>();
 
-                for( int i = 0; i < this.slots.Length; i++ )
+                // exit everyone.
+                foreach( var slot in this.slots )
                 {
-                    if( this.slots[i].objInside != null )
+                    if( slot.objInside != null )
                     {
-                        if( this.slots[i].objInside is SSObjectDFC )
+                        if( slot.objInside is SSObjectDFC )
                         {
-                            selectables.Add( (SSObjectDFC)this.slots[i].objInside );
+                            selectables.Add( (SSObjectDFC)slot.objInside );
                         }
-                        this.slots[i].objInside.SetOutside();
+                        slot.objInside.MakeOutside();
                     }
                 }
 

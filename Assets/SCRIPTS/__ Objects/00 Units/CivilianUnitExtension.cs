@@ -205,6 +205,7 @@ namespace SS.Objects.Units
 
 		void UpdateAutomaticDuty()
 		{
+#warning if paymentreceiver wants 2 resources, and the player doesn't have any of the 1st, it hangs on it - should go on to look for the 2nd.
 			if( this.inventory == null )
 			{
 				this.SetAutomaticDuty( false );

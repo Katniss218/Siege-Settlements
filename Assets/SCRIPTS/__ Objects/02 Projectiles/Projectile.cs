@@ -77,6 +77,7 @@ namespace SS.Objects.Projectiles
 			{
 				this.Destroy();
 			}
+
 			AudioManager.PlaySound( this.missSound, this.transform.position );
 		}
 		
@@ -133,6 +134,7 @@ namespace SS.Objects.Projectiles
 					{
 						SSObject targetObj = ((SSObject)hitDamageable);
 						float hitChance = Main.CalculateHitChance( targetObj, this.originY ?? this.transform.position.y );
+
 						if( Main.IsHit( hitChance ) )
 						{
 							hitDamageable.TakeDamage( this.damageType, DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ), this.armorPenetration );
@@ -173,6 +175,7 @@ namespace SS.Objects.Projectiles
 
 						SSObject targetObj = ((SSObject)hitDamageable);
 						float hitChance = Main.CalculateHitChance( targetObj, this.originY ?? this.transform.position.y );
+
 						if( Main.IsHit( hitChance ) )
 						{
 							(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );

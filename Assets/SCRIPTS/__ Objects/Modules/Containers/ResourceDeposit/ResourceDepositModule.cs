@@ -154,11 +154,14 @@ namespace SS.Objects.Modules
 		
 		public override void OnObjDestroyed()
 		{
-#warning this is called frame after? (doesn't hide when rapidly moving mouse over trees and pressing destroy button at the same time). Doesn't hide when the mouse manages to exit in the same frame as destroy.
+#warning Doesn't hide when the mouse manages to exit before Destroy gets called - fix, use 'owner' or 'id' or something to determine who the tooltip belongs to.
+			// it moves in, gets shown, then moves out and then gets destroyed.
+			// so when it gets destroyed, it no longer has the mouse over it.
 			if( MouseOverHandler.currentObjectMousedOver == this.gameObject )
 			{
 				this.HideTooltip();
 			}
+			// it'd also need to hide it if the object that created the tooltip was destroyed.
 
 			base.OnObjDestroyed();
 		}

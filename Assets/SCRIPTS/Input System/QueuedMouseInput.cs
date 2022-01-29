@@ -58,10 +58,6 @@ namespace SS.InputSystem
 			}
 		}
 
-
-//#warning Method for adding one-shot functions (auto-remove themselves from queue after execution, no matter if they succeeded or not).
-
-
 		public void RegisterOnPress( MouseCode button, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
 		{
 			InputQueue inputQueue;

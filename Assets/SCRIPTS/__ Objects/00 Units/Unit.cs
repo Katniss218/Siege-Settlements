@@ -249,7 +249,7 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being inside.
 		/// </summary>
-		public void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
+		public void MakeInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
 		{
 			if( this.isInside )
 			{
@@ -299,7 +299,7 @@ namespace SS.Objects.Units
 		/// <summary>
 		/// Marks the unit as being outside.
 		/// </summary>
-		public void SetOutside()
+		public void MakeOutside()
 		{
 			if( !this.isInside )
 			{

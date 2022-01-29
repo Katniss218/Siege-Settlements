@@ -59,7 +59,7 @@ namespace SS.AI
 
 				WorkplaceModule[] workplaces = hitObject.GetModules<WorkplaceModule>();
 
-				IPaymentReceiver[] paymentReceivers = hitObject.GetAvailableReceivers();
+				IPaymentReceiver[] paymentReceivers = hitObject.GetAvailablePaymentReceivers();
 
 				
 				if( dfc != null && dfc.factionId != LevelDataManager.PLAYER_FAC )

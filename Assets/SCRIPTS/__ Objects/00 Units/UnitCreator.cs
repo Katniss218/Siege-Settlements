@@ -266,7 +266,7 @@ namespace SS.Objects.Units
 
 				if( unit.isInside )
 				{
-					unit.SetOutside();
+					unit.MakeOutside();
 				}
 
 				if( unit.isCivilian )

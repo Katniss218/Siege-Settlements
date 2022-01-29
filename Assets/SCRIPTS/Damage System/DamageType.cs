@@ -27,6 +27,7 @@ namespace SS
 			{
 				numTypesCache = Enum.GetValues( typeof( DamageType ) ).Cast<DamageType>().Distinct().Count();
 			}
+
 			return numTypesCache.Value;
 		}
 	}

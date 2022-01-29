@@ -17,6 +17,7 @@ namespace SS
 		public class _UnityEvent_GameObject : UnityEvent<GameObject> { }
 
 		public static GameObject currentObjectMousedOver { get; private set; }
+
 		private static IMouseOverHandlerListener[] currentListenersCache; // list of mouse over handler listeners on the mouseovered object.
 
 
@@ -68,6 +69,7 @@ namespace SS
 					}
 
 					currentObjectMousedOver = newObjectMouseOver;
+
 					currentListenersCache = newListeners;
 
 					// Only call the onMouseEnter if the pointer enters object that is there (!= null).

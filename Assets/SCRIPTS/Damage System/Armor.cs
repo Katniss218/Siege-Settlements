@@ -50,17 +50,20 @@ namespace SS
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
 			float[] values = serializer.ReadFloatArray( "ArmorValues" );
+
 			if( values.Length != DamageTypeExtensions.GetNumTypes() )
 			{
 				throw new Exception( "The number of elements in damage array (" + values.Length + ") doesn't match the number of damage types (" + DamageTypeExtensions.GetNumTypes() + ")." );
 			}
-			for( int i = 0; i < values.Length; i++ )
+
+			foreach( var armorValue in values )
 			{
-				if( values[i] < 0.0f )
+				if( armorValue < 0.0f )
 				{
 					throw new Exception( "Missing or invalid value of 'ArmorValues' (" + serializer.file.fileName + ")." );
 				}
 			}
+
 			this.values = values;
 		}
 

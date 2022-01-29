@@ -106,7 +106,7 @@ namespace SS.Objects
             {
                 if( this.__guid == null )
                 {
-                    throw new Exception( "Guid hasn't been assigned yet." );
+                    throw new InvalidOperationException( "Guid hasn't been assigned yet." );
                 }
                 return this.__guid.Value;
             }
@@ -114,7 +114,7 @@ namespace SS.Objects
             {
                 if( this.__guid != null )
                 {
-                    throw new Exception( "Tried to re-assign guid to '" + gameObject.name + "'. A guid is already assigned." );
+                    throw new InvalidOperationException( $"Tried to re-assign guid to '{gameObject.name}'. A guid is already assigned." );
                 }
                 this.__guid = value;
             }
@@ -133,7 +133,7 @@ namespace SS.Objects
             {
                 if( this.__definitionId != null )
                 {
-                    throw new Exception( "Tried to re-assign definition to '" + gameObject.name + "'. A definition is already assigned." );
+                    throw new InvalidOperationException( $"Tried to re-assign definition to '{gameObject.name}'. A definition is already assigned." );
                 }
                 this.__definitionId = value;
             }
@@ -154,10 +154,10 @@ namespace SS.Objects
             }
         }
 
-        public bool hasInventoryModule { get; private set; } // true if the inventory was EVER added to this SSObject.
-
+        /// <summary>
+        /// The HUD assigned to this specific object.
+        /// </summary>
         internal HudContainer hudBase = null;
-
 
 
         private List<SSModule> modulesTemp = new List<SSModule>();
@@ -167,9 +167,6 @@ namespace SS.Objects
             get { return this.modules != null; }
         }
 
-        private bool hasPaymentReceiverModule;
-
-
 
         private List<SubObject> subObjectsTemp = new List<SubObject>();
         private SubObject[] subObjects = null;
@@ -178,6 +175,9 @@ namespace SS.Objects
             get { return this.subObjects != null; }
         }
 
+        // Module caches.
+        public bool hasInventoryModule { get; private set; }
+        public bool hasPaymentReceiverModule { get; private set; }
 
 
         //
@@ -186,7 +186,7 @@ namespace SS.Objects
 
 
 
-        public bool HasPaymentReceivers()
+        public bool HasUsablePaymentReceivers()
         {
             if( this.hasPaymentReceiverModule )
             {
@@ -202,7 +202,7 @@ namespace SS.Objects
         /// <summary>
         /// Returns every payment receiver that wants to receive payment.
         /// </summary>
-        public IPaymentReceiver[] GetAvailableReceivers()
+        public IPaymentReceiver[] GetAvailablePaymentReceivers()
         {
             if( this is ISSObjectUsableUnusable )
             {
@@ -233,7 +233,7 @@ namespace SS.Objects
         {
             if( !this.modulesSealed )
             {
-                throw new Exception( "Can't get Module - Modules haven't been sealed yet." );
+                throw new InvalidOperationException( "Can't get Module - Modules haven't been sealed yet." );
             }
 
             foreach( var module in this.modules )
@@ -288,6 +288,7 @@ namespace SS.Objects
         /// Gets all modules of specified type T, assigned to this SSobject.
         /// </summary>
         public T[] GetModules<T>() where T : SSModule
+#warning TODO - interfaces? (<T>)
         {
             if( !this.modulesSealed )
             {
@@ -321,7 +322,7 @@ namespace SS.Objects
             {
                 if( this.modulesTemp[i].moduleId == moduleId )
                 {
-                    throw new Exception( "Can't add another module with the same module ID." );
+                    throw new InvalidOperationException( "Can't add another module with the same module ID." );
                 }
             }
 
@@ -335,13 +336,14 @@ namespace SS.Objects
         /// <summary>
         /// Blocks the ability to add modules to this object. Calculates all of the caches for modules. Call this when you finish preparing the object.
         /// </summary>
-        public void SealModules()
+        internal void SealModules()
         {
             this.modules = new SSModule[this.modulesTemp.Count];
             for( int i = 0; i < this.modulesTemp.Count; i++ )
             {
                 this.modules[i] = this.modulesTemp[i];
 
+                // cache.
                 if( !this.hasPaymentReceiverModule && (this.modulesTemp[i] is IPaymentReceiver) )
                 {
                     this.hasPaymentReceiverModule = true;
@@ -352,7 +354,7 @@ namespace SS.Objects
                 }
             }
 
-            this.modulesTemp = null; // Garbage Collect unused data
+            this.modulesTemp = null;
         }
 
 
@@ -437,7 +439,7 @@ namespace SS.Objects
             {
                 if( subObj.subObjectId == subObjectId )
                 {
-                    throw new Exception( "Can't add another sub-object with the same sub-object ID." );
+                    throw new InvalidOperationException( "Can't add another sub-object with the same sub-object ID." );
                 }
             }
 
@@ -455,10 +457,10 @@ namespace SS.Objects
         /// <summary>
         /// Blocks the ability to add modules to this object. Calculates all of the caches for modules. Call this when you finish preparing the object.
         /// </summary>
-        public void SealSubObjects()
+        internal void SealSubObjects()
         {
             this.subObjects = this.subObjectsTemp.ToArray();
-            this.subObjectsTemp = null; // Garbage Collect unused data
+            this.subObjectsTemp = null;
         }
 
 

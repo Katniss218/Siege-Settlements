@@ -171,7 +171,7 @@ namespace SS.AI.Goals
 							controller.ExitCurrent( TacticalGoalExitCondition.FAILURE );
 							return;
 						}
-						interiorUser.SetInside( this.destinationInterior, slotType, slotIndex.Value );
+						interiorUser.MakeInside( this.destinationInterior, slotType, slotIndex.Value );
 						controller.ExitCurrent( TacticalGoalExitCondition.SUCCESS );
 						return;
 					}
@@ -195,7 +195,7 @@ namespace SS.AI.Goals
 
 				if( interiorUser.isInside )
 				{
-					interiorUser.SetOutside();
+					interiorUser.MakeOutside();
 				}
 			}
 

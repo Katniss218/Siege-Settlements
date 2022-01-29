@@ -41,7 +41,8 @@ namespace SS.Objects.Modules
 		public ProjectileDefinition projectile;
 		public int projectileCount;
 		public int? projectileCountOverride;
-		
+#warning TODO - Overridable<T> -> defaultVal, overrideVal, actual -get;
+
 		public float damage;
 		public float armorPenetration;
 		public DamageType damageType;

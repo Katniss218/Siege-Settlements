@@ -20,7 +20,7 @@ namespace SS.Objects.Modules
 		bool isInsideHidden { get; }
 
 
-		void SetInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex );
-		void SetOutside();
+		void MakeInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex );
+		void MakeOutside();
 	}
 }

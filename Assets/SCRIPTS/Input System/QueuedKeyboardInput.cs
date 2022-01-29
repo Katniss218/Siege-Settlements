@@ -9,7 +9,9 @@ namespace SS.InputSystem
 		private Dictionary<KeyCode, InputQueue> hold = new Dictionary<KeyCode, InputQueue>();
 		private Dictionary<KeyCode, InputQueue> release = new Dictionary<KeyCode, InputQueue>();
 
-
+		/// <summary>
+		/// Registers a function to run when a key is pressed.
+		/// </summary>
 		public void RegisterOnPress( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
 		{
 			InputQueue inputQueue;
@@ -23,6 +25,9 @@ namespace SS.InputSystem
 			this.press.Add( key, inputQueue );
 		}
 
+		/// <summary>
+		/// Registers a function to run when a key is held.
+		/// </summary>
 		public void RegisterOnHold( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
 		{
 			InputQueue inputQueue;
@@ -36,6 +41,9 @@ namespace SS.InputSystem
 			this.hold.Add( key, inputQueue );
 		}
 
+		/// <summary>
+		/// Registers a function to run when a key is released.
+		/// </summary>
 		public void RegisterOnRelease( KeyCode key, float priorityId, System.Action<InputQueue> method, bool isEnabled = true, bool isOneShot = false )
 		{
 			InputQueue inputQueue;
@@ -51,6 +59,9 @@ namespace SS.InputSystem
 
 
 
+		/// <summary>
+		/// Unregisters a function from running.
+		/// </summary>
 		public void ClearOnPress( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
@@ -61,6 +72,9 @@ namespace SS.InputSystem
 			}
 		}
 
+		/// <summary>
+		/// Unregisters a function from running.
+		/// </summary>
 		public void ClearOnHold( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
@@ -71,6 +85,9 @@ namespace SS.InputSystem
 			}
 		}
 
+		/// <summary>
+		/// Unregisters a function from running.
+		/// </summary>
 		public void ClearOnRelease( KeyCode key, System.Action<InputQueue> method )
 		{
 			InputQueue inputQueue;
@@ -81,7 +98,10 @@ namespace SS.InputSystem
 			}
 		}
 
-		public void ClearInputSources()
+		/// <summary>
+		/// Unregisters every input.
+		/// </summary>
+		public void ClearRegistries()
 		{
 			this.press.Clear();
 			this.hold.Clear();

@@ -6,15 +6,28 @@ namespace SS.DevConsole
 	[DisallowMultipleComponent]
 	public class Console : MonoBehaviour
 	{
+		const string LOG_COLOR_INFO = "#dddddd";
+		const string LOG_COLOR_WARN = "#dddd55";
+		const string LOG_COLOR_ERROR = "#dd5555";
+
+		const string LOG_COLOR_EXCEPTION = "#dd5555";
+		const string LOG_COLOR_EXCEPTION_STACK = "#c55555";
+
 		[SerializeField] private GameObject consoleGameObject = null;
 		
 		[SerializeField] private TMPro.TextMeshProUGUI output = null;
 
+		/// <summary>
+		/// Prints a string out to the console.
+		/// </summary>
 		public void Print( string message )
 		{
 			output.text += message;
 		}
 
+		/// <summary>
+		/// Prints a string terminated with a newline character.
+		/// </summary>
 		public void PrintLine( string message )
 		{
 			output.text += message;
@@ -26,21 +39,21 @@ namespace SS.DevConsole
 			switch( logType )
 			{
 				case LogType.Log:
-					PrintLine( "<color=#dddddd>[" + System.DateTime.Now.ToLongTimeString() + "] - " + message + "</color>" );
+					PrintLine( $"<color={LOG_COLOR_INFO}>[{System.DateTime.Now.ToLongTimeString()}](___) - {message}</color>" );
 					break;
 
 				case LogType.Warning:
-					PrintLine( "<color=#dddd11>[" + System.DateTime.Now.ToLongTimeString() + "] -(*) " + message + "</color>" );
+					PrintLine( $"<color={LOG_COLOR_WARN}>[{System.DateTime.Now.ToLongTimeString()}](WRN) - {message}</color>" );
 					break;
 
 				case LogType.Error:
-					PrintLine( "<color=#dd1111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>" );
-					consoleGameObject.SetActive( true ); // If an error is thrown - display the console.
+					PrintLine( $"<color={LOG_COLOR_ERROR}>[{System.DateTime.Now.ToLongTimeString()}](ERR) - {message}</color>" );
+					consoleGameObject.SetActive( true );
 					break;
 
 				case LogType.Exception:
-					PrintLine( "<color=#ff2111>[" + System.DateTime.Now.ToLongTimeString() + "] -(!) " + message + "</color>\n<color=#dd3333>" + stackTrace + "</color>" );
-					consoleGameObject.SetActive( true ); // If an exception is thrown - display the console.
+					PrintLine( $"<color={LOG_COLOR_EXCEPTION}>[{System.DateTime.Now.ToLongTimeString()}](EXC) - {message}</color>\n  at\n<color={LOG_COLOR_EXCEPTION_STACK}>" + stackTrace + "</color>" );
+					consoleGameObject.SetActive( true );
 					break;
 			}
 		}

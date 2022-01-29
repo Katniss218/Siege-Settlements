@@ -72,7 +72,6 @@ namespace SS.Objects.Units
 
 
 #warning attack speed instead of damage/arrow count? BUT I want it to not be perfectly rythmic - instead with randomization.
-			// maybe make the attack modules have a pool of available attacks (like bows that are reloaded currently). and the bigger pop, the more of them are.
 
 
 			MeshPredicatedSubObject[] meshPopulationSubObjects = unit.GetSubObjects<MeshPredicatedSubObject>();
@@ -88,14 +87,14 @@ namespace SS.Objects.Units
 		{
 			for( int i = 0; i < inventories.Length; i++ )
 			{
-				InventoryModule.Slot[] slotGroups = inventories[i].GetSlots();
+				InventoryModule.Slot[] slots = inventories[i].GetSlots();
 
-				for( int j = 0; j < slotGroups.Length; j++ )
+				for( int j = 0; j < slots.Length; j++ )
 				{
-					slotGroups[j].capacityOverride = (int)(slotGroups[j].capacity * after);
+					slots[j].capacityOverride = (int)(slots[j].capacity * after);
 				}
 
-				inventories[i].SetSlots( slotGroups );
+				inventories[i].SetSlots( slots );
 			}
 		}
 
