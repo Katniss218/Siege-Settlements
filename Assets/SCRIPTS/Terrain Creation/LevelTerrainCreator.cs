@@ -18,12 +18,12 @@ namespace SS.TerrainCreation
 
 		public static void SpawnMap( Texture2D heightMaps, Texture2D albedoMaps, float height )
 		{
-			meshCreator = new TerrainMeshCreator( height, 6, heightMaps );
+			meshCreator = new TerrainMeshCreator( height, LevelDataManager.mapSegments, heightMaps );
 			Mesh[,] meshes = meshCreator.CreateMeshes();
 			
-			for( int i = 0; i < 6; i++ )
+			for( int i = 0; i < LevelDataManager.mapSegments; i++ )
 			{
-				for( int j = 0; j < 6; j++ )
+				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
 					GameObject terrainSegment = new GameObject( "Mesh" );
 					terrainSegment.layer = ObjectLayer.TERRAIN;
@@ -61,7 +61,7 @@ namespace SS.TerrainCreation
 			meshBuildSettings.tileSize = 32;
 
 			Vector3 mapCenter = new Vector3( LevelDataManager.mapSize / 2.0f, LevelDataManager.mapHeight / 2.0f, LevelDataManager.mapSize / 2.0f );
-			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight, LevelDataManager.mapSize );
+			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight * 2, LevelDataManager.mapSize );
 
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
 				meshBuildSettings,

@@ -636,13 +636,13 @@ namespace SS
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha1, -60.0f, Inp_A1, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha2, -60.0f, Inp_A2, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha3, -60.0f, Inp_A3, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, 60.0f, Inp_A4, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, 60.0f, Inp_A5, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, 60.0f, Inp_A6, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, 60.0f, Inp_A7, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, 60.0f, Inp_A8, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, 60.0f, Inp_A9, true );
-				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, 60.0f, Inp_A0, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha4, -60.0f, Inp_A4, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha5, -60.0f, Inp_A5, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha6, -60.0f, Inp_A6, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha7, -60.0f, Inp_A7, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha8, -60.0f, Inp_A8, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha9, -60.0f, Inp_A9, true );
+				Main.keyboardInput.RegisterOnPress( KeyCode.Alpha0, -60.0f, Inp_A0, true );
 				Main.keyboardInput.RegisterOnPress( KeyCode.Pause, 60.0f, Inp_Pause, true );
 			}
 		}

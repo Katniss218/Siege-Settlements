@@ -851,9 +851,9 @@ namespace SS.Levels
 			GameObject environment = new GameObject( "Environment" );
 
 			LevelTerrainCreator.terrainParent = environment.transform;
-			Texture2D color = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Colormap/color.png", TextureType.Color );
+			Texture2D color = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Colormap/colormap.png", TextureType.Color );
 			
-			Texture2D height = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Heightmap/height.png", TextureType.Color );
+			Texture2D height = AssetManager.GetTexture2D( AssetManager.EXTERN_ASSET_ID + "Heightmap/heightmap.png", TextureType.Color );
 			
 			LevelTerrainCreator.SpawnMap( height, color, LevelDataManager.mapHeight );
 			LevelTerrainCreator.UpdateNavMesh();

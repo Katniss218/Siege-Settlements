@@ -1,8 +1,8 @@
 ﻿DisplayName = "Default Test Level";
 Map =
 {
-	Segments = 4;
-	Height = 6.0;
+	Segments = 32;
+	Height = 8.0;
 };
 DaylightCycle =
 {
