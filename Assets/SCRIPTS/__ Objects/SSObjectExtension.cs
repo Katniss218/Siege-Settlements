@@ -28,17 +28,5 @@ namespace SS.Objects
 				this.__obj = this.gameObject.AddComponent<T>();
 			}
 		}
-
-		/*
-		protected virtual void OnEnable()
-		{
-			
-		}
-
-		protected virtual void OnDisable()
-		{
-			
-		}
-		*/
 	}
 }

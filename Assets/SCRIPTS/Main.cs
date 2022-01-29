@@ -687,6 +687,11 @@ namespace SS
 
 		public static float CalculateHitChance( SSObject target, float attackerPosY )
 		{
+			if( target == null )
+            {
+				throw new ArgumentNullException( "Target can't be null." );
+            }
+
 			const float LINEAR_HIT_GROW_FACTOR = 0.5f; // how much the chance to hit increases per 1 meter offset.
 
 			float perc = 0;
@@ -711,6 +716,9 @@ namespace SS
 			return perc;
 		}
 
+		/// <summary>
+		/// Random-chance boolean
+		/// </summary>
 		public static bool IsHit( float hitChancePerc )
 		{
 			float p = UnityEngine.Random.Range( 0.0f, 1.0f );

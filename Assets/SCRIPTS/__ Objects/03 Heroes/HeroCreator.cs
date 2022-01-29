@@ -204,7 +204,6 @@ namespace SS.Objects.Heroes
 				if( healthUI != null )
 				{
 					UIUtils.EditValueBar( healthUI.gameObject, LevelDataManager.factions[hero.factionId].color, hero.healthPercent, SSObjectDFC.GetHealthString( hero.health, hero.healthMax ) );
-					//UIUtils.EditText( healthUI.gameObject, SSObjectDFC.GetHealthString( hero.health, hero.healthMax ) );
 				}
 			} );
 

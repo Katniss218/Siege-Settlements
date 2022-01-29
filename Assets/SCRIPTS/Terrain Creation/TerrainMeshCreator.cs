@@ -34,6 +34,10 @@ namespace SS.TerrainCreation
 			this.heightScale = heightScale;
 		}
 
+#warning Rewrite this to handle a continuous texture.
+		// single heightmap
+		// single colormap
+
 		/// <summary>
 		/// Creates all meshes associated with the given information.
 		/// </summary>
@@ -77,6 +81,7 @@ namespace SS.TerrainCreation
 					float uvX = (float)x / (float)resolution;
 					float uvY = (float)z / (float)resolution;
 
+					// getpixelbilinear
 					float heightPerc = heightMap.GetPixel( x, z, 0 ).r;
 
 					verts[vertIndex] = new Vector3( x * stepSize, heightPerc * heightScale, z * stepSize );

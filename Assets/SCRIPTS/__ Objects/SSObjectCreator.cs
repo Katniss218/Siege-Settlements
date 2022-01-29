@@ -6,110 +6,110 @@ using System;
 
 namespace SS.Objects
 {
-	public static class SSObjectCreator
-	{
-		public static void AnalyzeAttributes( SSObject ssObject, object obj )
-		{
-			Type type = obj.GetType();
+    public static class SSObjectCreator
+    {
+        public static void AnalyzeAttributes( SSObject ssObject, object obj )
+        {
+            Type type = obj.GetType();
 
-			object[] attributes = type.GetCustomAttributes( true );
+            object[] attributes = type.GetCustomAttributes( true );
 
-			for( int i = 0; i < attributes.Length; i++ )
-			{
-				if( attributes[i] is UseHudAttribute )
-				{
-					if( ssObject.hudBase == null )
-					{
-						ssObject.hudBase = HudContainer.CreateGameObject( ssObject );
-					}
+            foreach( var attribute in attributes )
+            {
+                if( attribute is UseHudAttribute )
+                {
+                    UseHudAttribute attrib = (UseHudAttribute)attribute;
 
-					UseHudAttribute attrib = (UseHudAttribute)attributes[i];
+                    if( ssObject.hudBase == null )
+                    {
+                        ssObject.hudBase = HudContainer.CreateGameObject( ssObject );
+                    }
 
-					object hudComponent = ssObject.hudBase.gameObject.AddComponent( attrib.hudType );
+                    object hudComponent = ssObject.hudBase.gameObject.AddComponent( attrib.hudType );
 
-					type.GetProperty( attrib.fieldName ).SetValue( obj, hudComponent );
-				}
-			}
-		}
+                    type.GetProperty( attrib.fieldName ).SetValue( obj, hudComponent );
+                }
+            }
+        }
 
-		//
-		//	Sub-Objects
-		//
-
-
-		public static void AssignSubObjects( SSObject ssObject, SSObjectDefinition def )
-		{
-			SubObjectDefinition[] subObjectDefinitions;
-
-			def.GetAllSubObjects( out subObjectDefinitions );
-
-			for( int i = 0; i < subObjectDefinitions.Length; i++ )
-			{
-				subObjectDefinitions[i].AddTo( ssObject );
-			}
-
-			ssObject.SealSubObjects();
-		}
-
-		
-		//
-		//	Modules
-		//
+        //
+        //	Sub-Objects
+        //
 
 
-		public static void AssignModules( SSObject ssObject, SSObjectDefinition def )
-		{
-			Guid[] moduleDefIds;
-			SSModuleDefinition[] moduleDefinitions;
+        public static void AssignSubObjects( SSObject ssObject, SSObjectDefinition def )
+        {
+            SubObjectDefinition[] subObjectDefinitions;
 
-			def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+            def.GetAllSubObjects( out subObjectDefinitions );
 
-			for( int i = 0; i < moduleDefIds.Length; i++ )
-			{
-				moduleDefinitions[i].AddModule( ssObject, moduleDefIds[i] );
-			}
+            foreach( var subObjectDefinition in subObjectDefinitions )
+            {
+                subObjectDefinition.AddTo( ssObject );
+            }
 
-			ssObject.SealModules();
-		}
-		
-		public static void AssignModuleData( SSObject ssObject, SSObjectData data )
-		{
-			// Assigns data for every module present on the SSObject, that has data corresponding to it in the SSObjectData.
+            ssObject.SealSubObjects();
+        }
 
-			SSModule[] modules = ssObject.GetModules();
 
-			Guid[] moduleDataIds;
-			SSModuleData[] moduleData;
-			data.GetAllModules( out moduleDataIds, out moduleData );
-			
-			// for each module, find the corresponding data (if present), and assign it.
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				if( moduleDataIds.Length == 0 )
-				{
-					continue;
-				}
+        //
+        //	Modules
+        //
 
-				// Look through module data and assign the one with corresponding moduleId (if present).
-				for( int j = 0; j < moduleDataIds.Length; j++ )
-				{
-					if( modules[i].moduleId == moduleDataIds[j] )
-					{
-						modules[i].SetData( moduleData[j] );
-						break;
-					}
-				}
-			}
-		}
 
-		public static void ExtractModulesToData( SSObject ssObject, SSObjectData data )
-		{
-			SSModule[] modules = ssObject.GetModules();
-			for( int i = 0; i < modules.Length; i++ )
-			{
-				SSModuleData moduleData = modules[i].GetData();
-				data.AddModuleData( modules[i].moduleId, moduleData );
-			}
-		}
-	}
+        public static void AssignModules( SSObject ssObject, SSObjectDefinition def )
+        {
+            Guid[] moduleDefIds;
+            SSModuleDefinition[] moduleDefinitions;
+
+            def.GetAllModules( out moduleDefIds, out moduleDefinitions );
+
+            for( int i = 0; i < moduleDefIds.Length; i++ )
+            {
+                moduleDefinitions[i].AddModule( ssObject, moduleDefIds[i] );
+            }
+
+            ssObject.SealModules();
+        }
+
+        public static void AssignModuleData( SSObject ssObject, SSObjectData data )
+        {
+            // Assigns data for every module present on the SSObject, that has data corresponding to it in the SSObjectData.
+
+            SSModule[] modules = ssObject.GetModules();
+
+            Guid[] moduleDataIds;
+            SSModuleData[] moduleData;
+            data.GetAllModules( out moduleDataIds, out moduleData );
+
+            // for each module, find the corresponding data (if present), and assign it.
+            for( int i = 0; i < modules.Length; i++ )
+            {
+                if( moduleDataIds.Length == 0 )
+                {
+                    continue;
+                }
+
+                // Look through module data and assign the one with corresponding moduleId (if present).
+                for( int j = 0; j < moduleDataIds.Length; j++ )
+                {
+                    if( modules[i].moduleId == moduleDataIds[j] )
+                    {
+                        modules[i].SetData( moduleData[j] );
+                        break;
+                    }
+                }
+            }
+        }
+
+        public static void ExtractModulesToData( SSObject ssObject, SSObjectData data )
+        {
+            SSModule[] modules = ssObject.GetModules();
+            for( int i = 0; i < modules.Length; i++ )
+            {
+                SSModuleData moduleData = modules[i].GetData();
+                data.AddModuleData( modules[i].moduleId, moduleData );
+            }
+        }
+    }
 }

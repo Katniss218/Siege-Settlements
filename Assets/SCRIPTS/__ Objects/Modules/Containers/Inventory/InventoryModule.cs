@@ -8,6 +8,7 @@ using SS.UI;
 using SS.UI.HUDs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,7 +45,10 @@ namespace SS.Objects.Modules
             /// </summary>
             public int? capacityOverride; // used by population scaling.
 
-            public int realCapacity
+            /// <summary>
+            /// Returns the actual capacity of the slot (capacity or override).
+            /// </summary>
+            public int actualCapacity
             {
                 get
                 {
@@ -52,9 +56,20 @@ namespace SS.Objects.Modules
                 }
             }
 
+            /// <summary>
+            /// Checks whether or not the slot is "constrained" (able to take only a specific resource).
+            /// </summary>
             public bool isConstrained { get { return this.slotId != ""; } }
 
+            /// <summary>
+            /// Checks whether the slot is 'truly' empty.
+            /// </summary>
             public bool isEmpty { get { return this.amount == 0 || this.id == ""; } }
+
+            /// <summary>
+            /// Checks if the slot is 'truly' full.
+            /// </summary>
+            public bool isFull { get { return this.amount == this.actualCapacity; } }
 
             public Slot( string slotId, int slotCapacity )
             {
@@ -161,7 +176,7 @@ namespace SS.Objects.Modules
             // if the slot is constrained - add/remove the slot's preferred resource from the cache.
             if( slotToProcess.isConstrained )
             {
-                LevelDataManager.factionData[factionId].storageSpaceCache[slotToProcess.slotId] += addOrRemove * slotToProcess.realCapacity;
+                LevelDataManager.factionData[factionId].storageSpaceCache[slotToProcess.slotId] += addOrRemove * slotToProcess.actualCapacity;
 
                 if( factionId == LevelDataManager.PLAYER_FAC )
                 {
@@ -174,7 +189,7 @@ namespace SS.Objects.Modules
             // if the slot is unconstrained, but has stuff inside - add/remove from the specific resource entry.
             else if( !slotToProcess.isEmpty )
             {
-                LevelDataManager.factionData[factionId].storageSpaceCache[slotToProcess.id] += addOrRemove * slotToProcess.realCapacity;
+                LevelDataManager.factionData[factionId].storageSpaceCache[slotToProcess.id] += addOrRemove * slotToProcess.actualCapacity;
 
                 if( factionId == LevelDataManager.PLAYER_FAC )
                 {
@@ -190,7 +205,7 @@ namespace SS.Objects.Modules
 
                 foreach( var key in storedResources )
                 {
-                    LevelDataManager.factionData[factionId].storageSpaceCache[key] += addOrRemove * slotToProcess.realCapacity;
+                    LevelDataManager.factionData[factionId].storageSpaceCache[key] += addOrRemove * slotToProcess.actualCapacity;
 
                     if( factionId == LevelDataManager.PLAYER_FAC )
                     {
@@ -425,7 +440,7 @@ namespace SS.Objects.Modules
                         return false;
                     }
 
-                    if( slot.amount < slot.realCapacity )
+                    if( slot.amount < slot.actualCapacity )
                     {
                         return false;
                     }
@@ -502,7 +517,7 @@ namespace SS.Objects.Modules
                     // If it can hold this resource
                     if( !slot.isConstrained || slot.slotId == id )
                     {
-                        total += slot.realCapacity;
+                        total += slot.actualCapacity;
                     }
                 }
                 else
@@ -510,7 +525,7 @@ namespace SS.Objects.Modules
                     // If it can hold this resource
                     if( (!slot.isConstrained && slot.id == id) || slot.slotId == id )
                     {
-                        total += slot.realCapacity - slot.amount;
+                        total += slot.actualCapacity - slot.amount;
                     }
                 }
             }
@@ -528,110 +543,86 @@ namespace SS.Objects.Modules
             {
                 throw new ArgumentNullException( "InventoryModule.Add - Id can't be null or empty." );
             }
+
             if( amountMax < 1 )
             {
                 throw new ArgumentOutOfRangeException( "InventoryModule.Add - Amount can't be less than 1." );
             }
 
-            // Indices to the slots. (necessary since we want to fill up non-empty slots before filling up empty ones).
-            List<int> indicesEmpty = new List<int>();
-            List<int> indicesNonEmpty = new List<int>();
-
-            for( int i = 0; i < this.slotCount; i++ )
-            {
-                if( this.slots[i].isEmpty )
-                {
-                    if( !this.slots[i].isConstrained || this.slots[i].slotId == id )
-                    {
-                        indicesEmpty.Add( i );
-                    }
-                }
-                else
-                {
-                    // if it can take any type, but only when there is no invalid type already there. OR if it only takes that valid type (can resource be placed in slot).
-                    if( (!this.slots[i].isConstrained && this.slots[i].id == id) || this.slots[i].slotId == id )
-                    {
-                        indicesNonEmpty.Add( i );
-                    }
-                }
-            }
-
-            List<int> allIndices = new List<int>();
-            allIndices.AddRange( indicesNonEmpty ); // non-empty go first to fill those up before any empty ones
-            allIndices.AddRange( indicesEmpty );
-#warning - ideally it'd add to the full-most slot first, i.e. sorted full-most to empty. - this is easy, just feed in the slots in a specific order.
+            List<Slot> slotsSorted = new List<Slot>( this.slots );
+            slotsSorted.Sort( ( s1, s2 ) => (s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) );
 
             int amountRemaining = amountMax;
 
-            for( int i = 0; i < allIndices.Count; i++ )
+            foreach( var slot in slotsSorted )
             {
-                Slot slot = this.slots[allIndices[i]];
-
-                // this is weird, I don't understand why 'i' in one, but 'index' in other. These hold different values. and it takes different slots due to it.
-                int spaceInSlot = slot.realCapacity - slot.amount; // was [i], not index
-
-                int amountAdded = (spaceInSlot > amountRemaining) ? amountRemaining : spaceInSlot;
-
-                // --  --  --
-
-                if( this.ssObject is IFactionMember )
+                if( slot.id == id || slot.slotId == id || slot.isEmpty )
                 {
-                    IFactionMember fac = (IFactionMember)this.ssObject;
+                    int spaceInSlot = slot.actualCapacity - slot.amount;
 
-                    LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] += amountAdded;
+                    int amountAdded = (spaceInSlot > amountRemaining) ? amountRemaining : spaceInSlot;
 
-                    if( this.isStorage )
+                    // --  --  --
+
+                    if( this.ssObject is IFactionMember )
                     {
-                        LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] += amountAdded;
+                        IFactionMember fac = (IFactionMember)this.ssObject;
 
-                        // if the slot WAS empty and is not constrained - remove the capacity from every resource's cache (except the one being added)
-                        if( !slot.isConstrained && slot.isEmpty )
+                        LevelDataManager.factionData[fac.factionId].resourcesAvailableCache[id] += amountAdded;
+
+                        if( this.isStorage )
                         {
-                            // resources stored by the player.
-                            List<string> storedResourceIds = new List<string>( LevelDataManager.factionData[fac.factionId].storageSpaceCache.Keys );
+                            LevelDataManager.factionData[fac.factionId].resourcesStoredCache[id] += amountAdded;
 
-                            foreach( var key in storedResourceIds )
+                            // if the slot WAS empty and is not constrained - remove the capacity from every resource's cache (except the one being added)
+                            if( !slot.isConstrained && slot.isEmpty )
                             {
-                                if( key == id )
-                                {
-                                    continue;
-                                }
+                                // resources stored by the player.
+                                List<string> storedResourceIds = new List<string>( LevelDataManager.factionData[fac.factionId].storageSpaceCache.Keys );
 
-                                LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] -= slot.realCapacity; // was [i], not index
-
-                                if( fac.factionId == LevelDataManager.PLAYER_FAC ) // only update if the inventory changed was player's (it would update with correct value, but unnecessary assignment)
+                                foreach( var key in storedResourceIds )
                                 {
-                                    ResourcePanel.instance.UpdateResourceEntry( key,
-                                        LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[key],
-                                        LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[key],
-                                        LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[key] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[key] );
+                                    if( key == id )
+                                    {
+                                        continue;
+                                    }
+
+                                    LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] -= slot.actualCapacity;
+
+                                    if( fac.factionId == LevelDataManager.PLAYER_FAC ) // only update if the inventory changed was player's (it would update with correct value, but unnecessary assignment)
+                                    {
+                                        ResourcePanel.instance.UpdateResourceEntry( key,
+                                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[key],
+                                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[key],
+                                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[key] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[key] );
+                                    }
                                 }
                             }
                         }
+
+                        if( fac.factionId == LevelDataManager.PLAYER_FAC ) // only update if the inventory changed was player's (it would update with correct value, but unnecessary assignment)
+                        {
+                            ResourcePanel.instance.UpdateResourceEntry( id,
+                                LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id],
+                                LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id],
+                                LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id] );
+                        }
                     }
 
-                    if( fac.factionId == LevelDataManager.PLAYER_FAC ) // only update if the inventory changed was player's (it would update with correct value, but unnecessary assignment)
+                    // --  --  --
+
+                    slot.amount += amountAdded;
+                    slot.id = id;
+
+                    amountRemaining -= amountAdded;
+
+                    if( amountRemaining == 0 )
                     {
-                        ResourcePanel.instance.UpdateResourceEntry( id,
-                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id],
-                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id],
-                            LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].resourcesAvailableCache[id] >= LevelDataManager.factionData[LevelDataManager.PLAYER_FAC].storageSpaceCache[id] );
+                        this.onAdd?.Invoke( id, amountMax );
+                        this.TryUpdateSlots_UI();
+
+                        return amountMax;
                     }
-                }
-
-                // --  --  --
-
-                slot.amount += amountAdded;
-                slot.id = id;
-
-                amountRemaining -= amountAdded;
-
-                if( amountRemaining == 0 )
-                {
-                    this.onAdd?.Invoke( id, amountMax );
-                    this.TryUpdateSlots_UI();
-
-                    return amountMax;
                 }
             }
 
@@ -651,14 +642,18 @@ namespace SS.Objects.Modules
             {
                 throw new ArgumentNullException( "InventoryModule.Remove - Id can't be null or empty." );
             }
+
             if( amountMax < 1 )
             {
                 throw new ArgumentOutOfRangeException( "InventoryModule.Remove - Amount can't be less than 1." );
             }
-#warning when taking items from a warehouse, the amount taken is added to the total amount held by the player, despite no change in the actual total.
+
+            List<Slot> slotsSorted = new List<Slot>( this.slots );
+            slotsSorted.Sort( ( s1, s2 ) => -(s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) );
+
             int amountLeftToRemove = amountMax;
 
-            foreach( var slot in slots )
+            foreach( var slot in slotsSorted )
             {
 #warning - ideally it'd remove from the empty-most slot first - this is easy to do, just feed it the slots in a specific order.
                 if( slot.isEmpty )
@@ -697,7 +692,7 @@ namespace SS.Objects.Modules
                                             continue;
                                         }
 
-                                        LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] += slot.realCapacity;
+                                        LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] += slot.actualCapacity;
 
                                         if( fac.factionId == LevelDataManager.PLAYER_FAC ) // only update if the inventory changed was player's (it would update with correct value, but unnecessary assignment)
                                         {
@@ -722,6 +717,7 @@ namespace SS.Objects.Modules
                     }
 
                     // --  --  --
+
                     if( slot.amount == 0 )
                     {
                         slot.id = "";
@@ -828,7 +824,7 @@ namespace SS.Objects.Modules
                                     }
 
 #warning extract this to a method.
-                                    LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] -= this.slots[i].realCapacity;
+                                    LevelDataManager.factionData[fac.factionId].storageSpaceCache[key] -= this.slots[i].actualCapacity;
 
                                     if( fac.factionId == LevelDataManager.PLAYER_FAC )
                                     {

@@ -154,31 +154,37 @@ namespace SS.Objects.Projectiles
 				// only masking the damageable ones.
 				Collider[] col = Physics.OverlapSphere( this.transform.position, this.blastRadius, ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK );
 
-				for( int i = 0; i < col.Length; i++ )
+				foreach( var hitCollider in col )
 				{
-					SSObject potentialDamagee = col[i].GetComponent<SSObject>();
+					SSObject potentialDamagee = hitCollider.GetComponent<SSObject>();
+
 					if( !SSObjectDFC.CanTarget( this.ownerFactionIdCache, (potentialDamagee as IFactionMember) ) )
 					{
 						continue;
 					}
 
-					if( DistanceUtils.IsInRange( this.transform, col[i].transform, this.blastRadius, out float distance ) )
+					if( potentialDamagee is IDamageable )
 					{
-						float damageScale = (distance / this.blastRadius);
+						IDamageable damageable = (IDamageable)potentialDamagee;
 
-						float damageScaledToDist = DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ) * damageScale;
-						if( damageScaledToDist <= 0 )
+						if( DistanceUtils.IsInRange( this.transform, hitCollider.transform, this.blastRadius, out float distance ) )
 						{
-							Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
-							continue;
-						}
+							float damageScale = (distance / this.blastRadius);
 
-						SSObject targetObj = ((SSObject)hitDamageable);
-						float hitChance = Main.CalculateHitChance( targetObj, this.originY ?? this.transform.position.y );
+							float damageScaledToDist = DamageUtils.GetRandomized( this.damage, DamageUtils.RANDOM_DEVIATION ) * damageScale;
+							if( damageScaledToDist <= 0 )
+							{
+								Debug.LogWarning( "Damage scaled to distance was less than or equal to 0 (" + damageScaledToDist + ")." );
+								continue;
+							}
 
-						if( Main.IsHit( hitChance ) )
-						{
-							(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
+							SSObject hitObj = ((SSObject)damageable);
+							float hitChance = Main.CalculateHitChance( hitObj, this.originY ?? this.transform.position.y );
+
+							if( Main.IsHit( hitChance ) )
+							{
+								(potentialDamagee as IDamageable).TakeDamage( this.damageType, damageScaledToDist, this.armorPenetration );
+							}
 						}
 					}
 				}
