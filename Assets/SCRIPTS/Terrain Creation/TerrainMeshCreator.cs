@@ -2,118 +2,130 @@
 
 namespace SS.TerrainCreation
 {
-	public class TerrainMeshCreator
-	{
-		private byte resolution; // the size of the texture.
+    public class TerrainMeshCreator
+    {
+        //private byte resolution; // the size of the texture.
 
-		/// How high the map is.
-		private float heightScale;
-		/// <summary>
-		/// How big each segment is.
-		/// </summary>
-		public const int SEGMENT_SIZE = 16;
+        /// How high the map is.
+        private float heightScale;
 
-		/// How many meshes per egde? (square it to get actual mesh count)
-		private int segments = 1;
+        /// <summary>
+        /// How big each segment is. (real size units)
+        /// </summary>
+        //public const int SEGMENT_SIZE = 16;
 
-		public float stepSize { get { return (float)SEGMENT_SIZE / (float)(resolution - 1); } }
+        private const float RESOLUTION = 0.125f; // vertex spacing in meters (world units) (must be a reciprocal of an integer)
+        public const int SEGMENT_SIZE = 4; // in meters
+        private const int SEGMENT_WIDTH = (int)(SEGMENT_SIZE / RESOLUTION);
+        private const int SEGMENT_VERT_COUNT = SEGMENT_WIDTH + 1; // SEGMENT_WIDTH - number of faces in each segment, += 1 vertices (edge) edge ones will overlap
 
-		private Texture2D[,] heightMaps;
-		
-		
-		public TerrainMeshCreator( byte resolution, int segments, Texture2D[,] heightMaps, float heightScale )
-		{
+        /// How many meshes per egde? (square it to get actual mesh count)
+        private int segments = 1;
 
-			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
-			{
-				throw new System.Exception( "The heightMaps array was of invalid dimensions. Expected size: [segments,segments]." );
-			}
-			this.resolution = resolution;
-			this.segments = segments;
-			this.heightMaps = heightMaps;
-			this.heightScale = heightScale;
-		}
+        public float vertexStepSize { get { return RESOLUTION; } }
+
+
+
+        private Texture2D heightmap;
+
+        // segments always of constant size.
+        public TerrainMeshCreator( float heightScale, int noSegments, Texture2D heightmap )
+        {
+            if( heightmap.width != heightmap.height )
+            {
+                throw new System.Exception( "non-square heightmap was provided" );
+            }
+
+            this.heightScale = heightScale;
+            this.segments = noSegments;
+            this.heightmap = heightmap;
+        }
+
+
+        // how many vertices per segment?
 
 #warning Rewrite this to handle a continuous texture.
-		// single heightmap
-		// single colormap
+        // single heightmap
+        // single colormap
+        // uv scaled in accordance with which segment it is.
 
-		/// <summary>
-		/// Creates all meshes associated with the given information.
-		/// </summary>
-		public Mesh[,] CreateMeshes()
-		{
-			Mesh[,] meshes = new Mesh[segments, segments];
-			for( int i = 0; i < segments; i++ )
-			{
-				for( int j = 0; j < segments; j++ )
-				{
-					meshes[i, j] = CreateMeshSegment( i, j );
-				}
-			}
-			return meshes;
-		}
+        /// <summary>
+        /// Creates all meshes associated with the given information.
+        /// </summary>
+        public Mesh[,] CreateMeshes()
+        {
+            Mesh[,] meshes = new Mesh[segments, segments];
 
-		private Mesh CreateMeshSegment( int i, int j )
-		{
-			// heightmap is this specific segment's heightmap.
+            for( int x = 0; x < segments; x++ )
+            {
+                for( int z = 0; z < segments; z++ )
+                {
+                    meshes[x, z] = CreateMeshSegment( x, z );
+                }
+            }
 
-			Vector3[] verts = new Vector3[resolution * resolution];
-			Vector2[] uvs = new Vector2[resolution * resolution];
-			int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
+            return meshes;
+        }
 
-			int vertIndex = 0;
-			int triangleIndex = 0;
+        private Mesh CreateMeshSegment( int segX, int segZ ) // 0-based indices, go from 0 to noSegments-1
+        {
+            Vector3[] verts = new Vector3[SEGMENT_VERT_COUNT * SEGMENT_VERT_COUNT];
+            Vector2[] uvs = new Vector2[SEGMENT_VERT_COUNT * SEGMENT_VERT_COUNT];
+            int[] triangles = new int[(SEGMENT_VERT_COUNT - 1) * (SEGMENT_VERT_COUNT - 1) * 6];
 
-			Texture2D heightMap = this.heightMaps[i, j];
+            int vertIndex = 0;
+            int triangleIndex = 0;
 
-			System.Action<int, int, int> AddTriangle = ( int a, int b, int c ) =>
-			{
-				triangles[triangleIndex++] = a;
-				triangles[triangleIndex++] = b;
-				triangles[triangleIndex++] = c;
-			};
+            System.Action<int, int, int> AddTriangle = ( int a, int b, int c ) =>
+            {
+                triangles[triangleIndex++] = a;
+                triangles[triangleIndex++] = b;
+                triangles[triangleIndex++] = c;
+            };
 
-			for( int x = 0; x < resolution; x++ )
-			{
-				for( int z = 0; z < resolution; z++ )
-				{
-					float uvX = (float)x / (float)resolution;
-					float uvY = (float)z / (float)resolution;
+            for( int x = 0; x < SEGMENT_VERT_COUNT; x++ )
+            {
+                for( int z = 0; z < SEGMENT_VERT_COUNT; z++ )
+                {
+                    float percInSegmentX = (float)x / (float)SEGMENT_WIDTH;
+                    float uvX = (percInSegmentX / (float)this.segments) + ((float)segX / (float)this.segments);
 
-					// getpixelbilinear
-					float heightPerc = heightMap.GetPixel( x, z, 0 ).r;
+                    float percInSegmentZ = (float)z / (float)SEGMENT_WIDTH;
+                    float uvY = (percInSegmentZ / (float)this.segments) + ((float)segZ / (float)this.segments);
 
-					verts[vertIndex] = new Vector3( x * stepSize, heightPerc * heightScale, z * stepSize );
-					uvs[vertIndex] = new Vector2( uvX, uvY );
+                    // getpixelbilinear
+                    float heightPerc = heightmap.GetPixelBilinear( uvX, uvY, 0 ).r;
 
-					if( x < resolution - 1 && z < resolution - 1 )
-					{
-						if( Random.Range( 0, 2 ) == 0 )
-						{
-							AddTriangle( vertIndex, vertIndex + resolution + 1, vertIndex + resolution );
-							AddTriangle( vertIndex + resolution + 1, vertIndex, vertIndex + 1 );
-						}
-						else
-						{
-							AddTriangle( vertIndex, vertIndex + 1, vertIndex + resolution );
-							AddTriangle( vertIndex + 1, vertIndex + resolution + 1, vertIndex + resolution );
-						}
-					}
+                    verts[vertIndex] = new Vector3( x * vertexStepSize, heightPerc * heightScale, z * vertexStepSize );
+                    uvs[vertIndex] = new Vector2( uvX, uvY );
+
+                    if( x < SEGMENT_VERT_COUNT - 1 && z < SEGMENT_VERT_COUNT - 1 )
+                    {
+                        if( Random.Range( 0, 2 ) == 0 )
+                        {
+                            AddTriangle( vertIndex, vertIndex + SEGMENT_VERT_COUNT + 1, vertIndex + SEGMENT_VERT_COUNT );
+                            AddTriangle( vertIndex + SEGMENT_VERT_COUNT + 1, vertIndex, vertIndex + 1 );
+                        }
+                        else
+                        {
+                            AddTriangle( vertIndex, vertIndex + 1, vertIndex + SEGMENT_VERT_COUNT );
+                            AddTriangle( vertIndex + 1, vertIndex + SEGMENT_VERT_COUNT + 1, vertIndex + SEGMENT_VERT_COUNT );
+                        }
+                    }
 
 
-					vertIndex++;
-				}
-			}
+                    vertIndex++;
+                }
+            }
 
-			Mesh mesh = new Mesh();
-			mesh.vertices = verts;
-			mesh.uv = uvs;
-			mesh.SetTriangles( triangles, 0 );
-			mesh.RecalculateNormals();
-			mesh.RecalculateTangents();
+            Mesh mesh = new Mesh();
+            mesh.vertices = verts;
+            mesh.uv = uvs;
+            mesh.SetTriangles( triangles, 0 );
+            mesh.RecalculateNormals();
+            mesh.RecalculateTangents();
 
-			return mesh;
-		}
-	}
+            return mesh;
+        }
+    }
 }
