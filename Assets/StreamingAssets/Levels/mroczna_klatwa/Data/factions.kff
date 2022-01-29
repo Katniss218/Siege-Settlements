@@ -1,0 +1,15 @@
+﻿List =
+[
+	{
+		DisplayName = "Player";
+		Color = { R = 0.0; G = 0.5; B = 1.0; A = 1.0; };
+	},
+	{
+		DisplayName = "Bandit";
+		Color = { R = 1.0; G = 0.0; B = 0.0; A = 1.0; };
+	},
+	{
+		DisplayName = "Barmecia";
+		Color = { R = 0.0; G = 0.8; B = 0.25; A = 1.0; };
+	}
+];

@@ -1,0 +1,1366 @@
+﻿List =
+[
+	{
+		Id = "building.town_center";
+		DisplayName = "Town Center";
+		ViewRange = 7.0;
+		MaxHealth = 400.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 1.29; Y = 0.58; Z = 1.46; }; // Hitbox size.
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 40; }
+		];		
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons when training menu is displayed.
+					"unit.civilian"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/town_center.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/town_center_color.png";
+					NormalMap = "extern:Textures/Buildings/town_center_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.4; Y = 0.55; Z = 0.57; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 2;
+				LifetimeMax = 4;
+				EmissionRateTime = 2;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.25; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/town_center_icon.png";
+	},
+	{
+		Id = "building.house_0";
+		DisplayName = "House";
+		ViewRange = 7.0;
+		MaxHealth = 80.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.43; Y = 0.51; Z = 0.55; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 25; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						CountsTowardsMaxPopulation = true;
+						CoverValue = 1.0;
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [ 
+							"unit.civilian"
+						]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = true;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [ 
+							"unit.civilian"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = true;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [ 
+							"unit.civilian"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = true;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [ 
+							"unit.civilian"
+						];
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/house_0.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/house_0_color.png";
+					NormalMap = "extern:Textures/Buildings/house_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = -0.2; Y = 0.48; Z = 0.06; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 2;
+				LifetimeMax = 4;
+				EmissionRateTime = 2;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.25; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/house_icon.png";
+	},
+	{
+		Id = "building.small_warehouse";
+		DisplayName = "Small Warehouse";
+		ViewRange = 7.0;
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.61; Y = 0.72; Z = 0.92; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; },
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "inventory";
+				ModuleId = "12345678-3373-7933-4658-396678574576";
+				DisplayName = "Storage";
+				IsStorage = true;
+				Slots =
+				[
+					{ SlotId = ""; Capacity = 30; },
+					{ SlotId = ""; Capacity = 30; },
+					{ SlotId = ""; Capacity = 30; }
+				];
+				Icon = "extern:Textures/Modules/inventory_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/small_warehouse.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/small_warehouse_color.png";
+					NormalMap = "extern:Textures/Buildings/small_warehouse_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/small_warehouse_icon.png";
+	},
+	{
+		Id = "building.college";
+		DisplayName = "College";
+		ViewRange = 7.0;
+		MaxHealth = 250.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 1.21; Y = 0.7; Z = 1.17; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 25; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "research";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Research Facility";
+				ResearchSpeed = 1.0;
+				ResearchableTechnologies =
+				[ // controls also the ordering of icons.
+					"technology.armed_martial_arts",
+					"technology.horse_riding",
+					"technology.archery",
+					"technology.fortifications"
+				];
+				Icon = "extern:Textures/Modules/research_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/college.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/college_color.png";
+					NormalMap = "extern:Textures/Buildings/college_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/research_icon.png";
+	},
+	{
+		Id = "building.barracks";
+		DisplayName = "Barracks";
+		ViewRange = 7.0;
+		MaxHealth = 180.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.86; Y = 0.6; Z = 0.88; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 40; }
+		];
+		TechsRequired =
+		[
+			"technology.armed_martial_arts"
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.light_infantry",
+					"unit.heavy_infantry",
+					"unit.bowmen",
+					"unit.crossbowmen"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/barracks.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/barracks_color.png";
+					NormalMap = "extern:Textures/Buildings/barracks_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/barracks_icon.png";
+	},
+	{
+		Id = "building.stables";
+		DisplayName = "Stables";
+		ViewRange = 7.0;
+		MaxHealth = 180.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.87; Y = 0.6; Z = 0.85; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 40; },
+			{ Id = "resource.stone"; Amount = 40; }
+		];
+		TechsRequired =
+		[
+			"technology.horse_riding"
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.light_cavalry",
+					"unit.heavy_cavalry",
+					"unit.mounted_archers"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon_stables.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stables.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stables_color.png";
+					NormalMap = "extern:Textures/Buildings/stables_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/stables_icon.png";
+	},
+	{
+		Id = "building.siege_workshop";
+		DisplayName = "Siege Workshop";
+		ViewRange = 7.0;
+		MaxHealth = 180.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 1.05; Y = 0.6; Z = 0.85; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 50; },
+			{ Id = "resource.stone"; Amount = 30; },
+			{ Id = "resource.iron"; Amount = 10; }
+		];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
+		Modules =
+		[
+			{
+				TypeId = "barracks";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Barracks";
+				TrainSpeed = 1.0;
+				TrainableUnits =
+				[ // controls also the ordering of icons.
+					"unit.movable_ballista"
+				];
+				Icon = "extern:Textures/Modules/barracks_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/siege_workshop.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/siege_workshop_color.png";
+					NormalMap = "extern:Textures/Buildings/siege_workshop_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/siege_workshop_icon.png";
+	},
+	{
+		Id = "building.wooden_wall";
+		DisplayName = "Palisade";
+		ViewRange = 7.0;
+		MaxHealth = 120.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.6, // Slash
+				0.8, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.65; Y = 0.37; Z = 0.085; };
+		PlacementNodes = // Controls snapping to other, existing buildings.
+		[
+			{ X = 0.375; Y = 0.125; Z = 0.0; },
+			{ X = -0.375; Y = 0.125; Z = 0.0; }
+		];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 15; }
+		];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
+		Modules = [ ];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_wall.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_wall_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_wall_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/palisade_icon.png";
+	},
+	{
+		Id = "building.wooden_tower";
+		DisplayName = "Wooden Tower";
+		ViewRange = 7.0;
+		MaxHealth = 120.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.6, // Slash
+				0.8, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.3; Y = 0.6; Z = 0.3; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
+		Modules =
+		[
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; };
+				Slots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 0.6;
+						IsHidden = false;
+						WhitelistedUnits =
+						[
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers",
+							"unit.movable_ballista"
+						];
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/wooden_tower.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/wooden_tower_icon.png";
+	},
+	{
+		Id = "building.stone_wall";
+		DisplayName = "Stone Wall";
+		ViewRange = 7.0;
+		MaxHealth = 300.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.6, // Slash
+				0.8, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.65; Y = 0.4; Z = 0.125; };
+		PlacementNodes = // Controls snapping to other, existing buildings.
+		[
+			{ X = 0.375; Y = 0.125; Z = 0.0; },
+			{ X = -0.375; Y = 0.125; Z = 0.0; }
+		];
+		Cost =
+		[
+			{ Id = "resource.stone"; Amount = 15; }
+		];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
+		Modules = [ ];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stone_wall.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stone_wall_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_wall_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/stone_wall_icon.png";
+	},
+	{
+		Id = "building.stone_tower";
+		DisplayName = "Stone Tower";
+		ViewRange = 8.0;
+		MaxHealth = 300.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.6, // Slash
+				0.8, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.5; Y = 0.6; Z = 0.5; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired =
+		[
+			"technology.fortifications"
+		];
+		Modules =
+		[
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; };
+				Slots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.5; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 0.8;
+						IsHidden = false;
+						WhitelistedUnits =
+						[
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers",
+							"unit.movable_ballista"
+						];
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stone_tower.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stone_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/stone_tower_icon.png";
+	},
+	{
+		Id = "building.campfire";
+		DisplayName = "Campfire";
+		ViewRange = 3;
+		MaxHealth = 25.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.2; Y = 0.2; Z = 0.2; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/campfire.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/wooden_tower_color.png";
+					NormalMap = "extern:Textures/Buildings/wooden_tower_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0002-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.01;
+					Angle = 0.01;
+				};
+				
+				LifetimeMin = 0.5;
+				LifetimeMax = 0.95;
+				EmissionRateTime = 16;
+				StartSizeMin = 0.2;
+				StartSizeMax = 0.3;
+				StartSpeedMin = 0.25;
+				StartSpeedMax = 0.6;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 1.0; },
+					{ Time = 0.5; Value = 0.7; },
+					{ Time = 1.0; Value = 0.4; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.2; Value = { R = 1.0; G = 0.95; B = 0.95; A = 0.8; }; },
+					{ Time = 0.8; Value = { R = 0.95; G = 0.8; B = 0.8; A = 0.6; }; },
+					{ Time = 1.0; Value = { R = 0.6; G = 0.5; B = 0.4; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/flame.png";
+				EmissionColor = { R = 1.8; G = 1.5; B = 0.7; A = 1.0; };
+			},
+			{
+				TypeId = "PARTICLES";
+				SubObjectId = "00000000-0000-0000-0003-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.4; Z = 0.0; };
+				LocalRotationEuler = { X = -90.0; Y = 0.0; Z = 0.0; };
+				
+				IsWorldSpace = true;
+				
+				Shape =
+				{
+					Type = "cone";
+					Radius = 0.03;
+					Angle = 10.0;
+				};
+				
+				LifetimeMin = 3;
+				LifetimeMax = 7;
+				EmissionRateTime = 5;
+				StartSizeMin = 0.3;
+				StartSizeMax = 0.4;
+				StartSpeedMin = 0.1;
+				StartSpeedMax = 0.2;
+				
+				SizeOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = 0.7; },
+					{ Time = 0.5; Value = 1.0; },
+					{ Time = 1.0; Value = 0.85; }
+				];
+				
+				ColorOverLifetimeKeys =
+				[
+					{ Time = 0.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; },
+					{ Time = 0.1; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.2; }; },
+					{ Time = 0.7; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.15; }; },
+					{ Time = 1.0; Value = { R = 1.0; G = 1.0; B = 1.0; A = 0.0; }; }
+				];
+				
+				ParticleTexture = "extern:Textures/Particles/smoke.png";
+			},
+			{
+				TypeId = "LIGHT";
+				SubObjectId = "00000000-0000-0000-0004-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.8; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Color = { R = 1.0; G = 0.95; B = 0.8; A = 0.0; };
+				MinIntensity = 0.4;
+				MaxIntensity = 0.8;
+				Range = 3.2;
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/campfire_icon.png";
+	},
+	{
+		Id = "building.tavern";
+		DisplayName = "Tavern";
+		ViewRange = 7.0;
+		MaxHealth = 100.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.88; Y = 0.8; Z = 0.99; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 30; }
+		];
+		TechsRequired = [];
+		Modules =
+		[
+			{
+				TypeId = "workplace_tavern";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Tavern";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678574576";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 1.0;
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						]; // Specifies which units can enter (only applies to 'Slots' array, but must be present in any type of interior slot)
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1;
+						CountsTowardsMaxPopulation = false;
+						CoverValue = 1.0;
+						IsHidden = true;
+						WhitelistedUnits = [
+							"unit.light_infantry",
+							"unit.heavy_infantry",
+							"unit.light_cavalry",
+							"unit.heavy_cavalry",
+							"unit.bowmen",
+							"unit.crossbowmen",
+							"unit.mounted_archers"
+						];
+					}
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						CoverValue = 1.0;
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/tavern.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/tavern_color.png";
+					NormalMap = "extern:Textures/Buildings/tavern_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/tavern_icon.png";
+	},
+	{
+		Id = "building.lumberjacks_hut";
+		DisplayName = "Lumberjack's Hut";
+		ViewRange = 7.0;
+		MaxHealth = 150.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.7; Y = 0.5; Z = 0.75; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.stone"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			{
+				TypeId = "workplace_resource_collector";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Mine";
+				
+				ResourceId = "resource.wood";
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678578328";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/lumberjacks_hut.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/lumberjacks_hut_color.png";
+					NormalMap = "extern:Textures/Buildings/lumberjacks_hut_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/lumberjacks_hut_icon.png";
+	},
+	{
+		Id = "building.stone_mine";
+		DisplayName = "Stone Mine";
+		ViewRange = 7.0;
+		MaxHealth = 150.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.7; Y = 0.77; Z = 0.7; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 20; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			{
+				TypeId = "workplace_resource_collector";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Mine";
+				
+				ResourceId = "resource.stone";
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678578328";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stone_mine.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stone_mine_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_mine_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/stone_mine_icon.png";
+	},
+	{
+		Id = "building.iron_mine";
+		DisplayName = "Iron Mine";
+		ViewRange = 7.0;
+		MaxHealth = 150.0;
+		Armor =
+		{
+			ArmorValues = [
+				0.3, // Slash
+				0.6, // Pierce
+				0.0  // Concussion
+			];
+		};
+		Size = { X = 0.7; Y = 0.77; Z = 0.7; };
+		PlacementNodes = [ ];
+		Cost =
+		[
+			{ Id = "resource.wood"; Amount = 10; },
+			{ Id = "resource.stone"; Amount = 10; }
+		];
+		TechsRequired = [ ];
+		Modules =
+		[
+			{
+				TypeId = "workplace_resource_collector";
+				ModuleId = "12335535-3373-7933-4658-396678574576";
+				DisplayName = "Mine";
+				
+				ResourceId = "resource.iron";
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			},
+			{
+				TypeId = "interior";
+				ModuleId = "12354537-3373-7933-4658-396678578328";
+				DisplayName = "Interior";
+				//EntrancePosition = { X = 0.0; Y = 0.0; Z = 0.5; }; // Specifies entrance position. If not present, units can enter from any direction.
+				Slots =
+				[
+					
+				];
+				WorkerSlots =
+				[
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					},
+					{
+						Position = { X = 0.0; Y = 0.1; Z = 0.0; };
+						Rotation = { X = 0.0; Y = 0.0; Z = 0.0; W = 1.0; };
+						MaxPopulation = 1; // Max size of unit that can fit inside.
+						IsHidden = true; // If true, the unit will dissappear after entering this slot.
+						CoverValue = 1.0;
+					}
+				];
+				Icon = "extern:Textures/Modules/interior_icon.png";
+			}
+		];
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/Buildings/stone_mine.ksm";
+				Material =
+				{
+					MaterialType = 6; // 6 -> 'Faction Colored (Constructible)'
+					ColorMap = "extern:Textures/Buildings/stone_mine_color.png";
+					NormalMap = "extern:Textures/Buildings/stone_mine_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "builtin:Textures/pixel_black";
+				};
+			}
+		];
+		BuildSound = "extern:Sounds/construction_site.wav";
+		HurtSound = "extern:Sounds/damage_generic.wav";
+		DeathSound = "extern:Sounds/building_dest_wood.wav";
+		Icon = "extern:Textures/Buildings/iron_mine_icon.png";
+	}
+];

@@ -512,15 +512,17 @@ namespace SS
 				{
 					if( hitInfo.collider.gameObject.layer == ObjectLayer.TERRAIN )
 					{
-						//ExtraDefinition def = DefinitionManager.GetExtra( "extra.grass" );
-						ExtraDefinition def = DefinitionManager.GetExtra( "extra.hideout" );
-						ExtraData data = new ExtraData();
+						UnitDefinition def = DefinitionManager.GetUnit( "unit.civilian" );
+						UnitData data = new UnitData();
 						data.guid = Guid.NewGuid();
 						data.position = hitInfo.point;
 						data.rotation = Quaternion.Euler( 0, UnityEngine.Random.Range( -180.0f, 180.0f ), 0 );
+						data.factionId = 0;
+						data.health = def.healthMax;
+						data.population = PopulationSize.x1;
 
-						Extra extra = ExtraCreator.Create( def, data.guid );
-						ExtraCreator.SetData( extra, data );
+						Unit unit = UnitCreator.Create( def, data.guid );
+						UnitCreator.SetData( unit, data );
 					}
 				}
 			}
