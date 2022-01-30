@@ -548,7 +548,7 @@ namespace SS
 			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				CreateDepositRaycast( "resource_deposit.sulphur_ore_0" );
+				CreateDepositRaycast( $"resource_deposit.bush{new System.Random().Next(1,4)}" );
 			}
 		}
 
@@ -560,7 +560,7 @@ namespace SS
 			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				CreateDepositRaycast( "resource_deposit.tree" );
+				CreateDepositRaycast( $"resource_deposit.tree{new System.Random().Next(1,4)}" );
 			}
 		}
 
@@ -572,7 +572,7 @@ namespace SS
 			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				CreateDepositRaycast( "resource_deposit.pine" );
+				CreateDepositRaycast( $"resource_deposit.pine{new System.Random().Next(1,4)}" );
 			}
 		}
 

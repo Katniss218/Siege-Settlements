@@ -121,6 +121,7 @@ namespace SS.TerrainCreation
             Mesh mesh = new Mesh();
             mesh.vertices = verts;
             mesh.uv = uvs;
+            //mesh.normals = 
             mesh.SetTriangles( triangles, 0 );
             mesh.RecalculateNormals();
             mesh.RecalculateTangents();
