@@ -111,21 +111,32 @@ namespace SS.InputSystem
 
 		void Update()
 		{
-			foreach( var kvp in this.press )
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<KeyCode, InputQueue> pressQueue = new Dictionary<KeyCode, InputQueue>( this.press );
+
+			foreach( var kvp in pressQueue )
 			{
 				if( Input.GetKeyDown( kvp.Key ) )
 				{
 					kvp.Value.Execute();
 				}
 			}
-			foreach( var kvp in this.hold )
+
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<KeyCode, InputQueue> holdQueue = new Dictionary<KeyCode, InputQueue>( this.hold );
+
+			foreach( var kvp in holdQueue )
 			{
 				if( Input.GetKey( kvp.Key ) )
 				{
 					kvp.Value.Execute();
 				}
 			}
-			foreach( var kvp in this.release )
+
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<KeyCode, InputQueue> releaseQueue = new Dictionary<KeyCode, InputQueue>( this.release );
+
+			foreach( var kvp in releaseQueue )
 			{
 				if( Input.GetKeyUp( kvp.Key ) )
 				{

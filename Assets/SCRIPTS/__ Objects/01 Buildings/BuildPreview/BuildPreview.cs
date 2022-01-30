@@ -3,6 +3,7 @@ using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
+using SS.Objects.Units;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -14,12 +15,9 @@ namespace SS.Objects.Buildings
         /// <summary>
         /// True if the build preview is active (enabled). Note, this will be true as long as the cursor is in 'place mode'.
         /// </summary>
-        public static bool isActive
+        public static bool IsActive()
         {
-            get
-            {
-                return buildPreviewInstanceGameObject != null;
-            }
+            return buildPreviewInstanceGameObject != null;
         }
 
         private static GameObject buildPreviewInstanceGameObject;
@@ -144,6 +142,10 @@ namespace SS.Objects.Buildings
 
         public Vector3 GetSize()
         {
+            if( this.definition is UnitDefinition )
+            {
+                return ((UnitDefinition)this.definition).size;
+            }
             if( this.definition is BuildingDefinition )
             {
                 return ((BuildingDefinition)this.definition).size;
@@ -175,6 +177,18 @@ namespace SS.Objects.Buildings
         {
             if( this.CanBePlacedHere() )
             {
+                if( this.definition is UnitDefinition )
+                {
+                    UnitDefinition unitDefinition = (UnitDefinition)this.definition;
+                    UnitData unitData = (UnitData)this.data;
+
+                    unitData.position = this.transform.position;
+                    unitData.rotation = this.transform.rotation;
+
+                    Unit unit = UnitCreator.Create( unitDefinition, unitData.guid );
+                    UnitCreator.SetData( unit, unitData );
+                }
+
                 if( this.definition is BuildingDefinition )
                 {
                     BuildingDefinition buildingDefinition = (BuildingDefinition)this.definition;
@@ -195,19 +209,24 @@ namespace SS.Objects.Buildings
         private void Inp_BlockSelectionOverride( InputQueue self )
         {
             // Used just to stop execution (is inserted before selection queue, so it blocks deselecting/selecting, when preview is active).
-            self.StopExecution();
+            if( !SelectionController.isDragging )
+            {
+#warning instead of this, when build preview is enabled, cancel the drag select action.
+                self.StopExecution();
+            }
         }
 
         private void OnEnable()
         {
+            Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // left
+            Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true );
+            Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 1000.0f, this.Inp_TryPlace, true ); // Doesn't break drag-selection when set to 1000
+
             // Need to override all 3 channels of mouse input, since selection uses all 3 of them (so all 3 need to be blocked to block selection).
-            Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // left
+            Main.mouseInput.RegisterOnPress( MouseCode.RightMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // right
             Main.mouseInput.RegisterOnHold( MouseCode.RightMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true );
             Main.mouseInput.RegisterOnRelease( MouseCode.RightMouseButton, 10.0f, this.Inp_CancelPlacement, true );
 
-            Main.mouseInput.RegisterOnPress( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true ); // right
-            Main.mouseInput.RegisterOnHold( MouseCode.LeftMouseButton, 10.0f, this.Inp_BlockSelectionOverride, true );
-            Main.mouseInput.RegisterOnRelease( MouseCode.LeftMouseButton, 10.0f, this.Inp_TryPlace, true );
         }
 
         private void OnDisable()
@@ -246,69 +265,47 @@ namespace SS.Objects.Buildings
             }
         }
 
-        public static GameObject Create( BuildingDefinition def, SSObjectData data )
+        public static void CreateOrSwitch( SSObjectDefinition def, SSObjectData data )
         {
-            GameObject gameObject = new GameObject();
-            BuildPreview buildPreview = gameObject.AddComponent<BuildPreview>();
-            BuildPreviewPositioner positioner = gameObject.AddComponent<BuildPreviewPositioner>();
-            positioner.attachmentNodes = def.placementNodes;
+            BuildPreview buildPreview;
+            BuildPreviewPositioner positioner;
 
-            float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
-            positioner.nodesSnapRange = new Vector3( max, max, max );
-
-            buildPreview.definition = def;
-            buildPreview.data = data;
-
-            buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
-
-            buildPreview.objectsMask = ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK;
-
-            SubObjectDefinition[] subObjectDefs;
-            def.GetAllSubObjects( out subObjectDefs );
-
-            foreach( var subObjectDef in subObjectDefs )
+            if( !IsActive() )
             {
-                if( subObjectDef is MeshSubObjectDefinition )
+                GameObject gameObject = new GameObject();
+                buildPreview = gameObject.AddComponent<BuildPreview>();
+                positioner = gameObject.AddComponent<BuildPreviewPositioner>();
+
+                buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
+                buildPreview.objectsMask = ObjectLayer.POTENTIALLY_INTERACTIBLE_MASK;
+
+                buildPreviewInstanceGameObject = gameObject;
+            }
+            else
+            {
+                buildPreview = buildPreviewInstanceGameObject.GetComponent<BuildPreview>();
+                positioner = buildPreviewInstanceGameObject.GetComponent<BuildPreviewPositioner>();
+
+                // remove previous object's preview
+                for( int i = 0; i < buildPreviewInstanceGameObject.transform.childCount; i++ )
                 {
-                    MeshSubObjectDefinition meshSubObjDef = (MeshSubObjectDefinition)subObjectDef;
-
-                    GameObject child = new GameObject( "Prev-sub" );
-
-                    child.transform.SetParent( gameObject.transform );
-                    child.transform.localPosition = meshSubObjDef.localPosition;
-                    child.transform.localRotation = meshSubObjDef.localRotation;
-
-                    MeshFilter meshFilter = child.AddComponent<MeshFilter>();
-                    meshFilter.mesh = meshSubObjDef.mesh;
-                    MeshRenderer meshRenderer = child.AddComponent<MeshRenderer>();
-                    meshRenderer.material = MaterialManager.CreatePlacementPreview( new Color( 1, 0, 1 ) );
+                    Object.Destroy( buildPreviewInstanceGameObject.transform.GetChild( i ).gameObject );
                 }
             }
 
-            buildPreviewInstanceGameObject = gameObject;
+            if( def is BuildingDefinition )
+            {
+                BuildingDefinition buildingDefinition = (BuildingDefinition)def;
+                positioner.attachmentNodes = buildingDefinition.placementNodes;
 
-            return gameObject;
-        }
-
-        public static void Switch( BuildingDefinition def, SSObjectData data )
-        {
-            BuildPreview buildPreview = buildPreviewInstanceGameObject.GetComponent<BuildPreview>();
-            BuildPreviewPositioner positioner = buildPreviewInstanceGameObject.GetComponent<BuildPreviewPositioner>();
-            positioner.attachmentNodes = def.placementNodes;
-
-            float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
-            positioner.nodesSnapRange = new Vector3( max, max, max );
+                float max = Mathf.Max( buildingDefinition.size.x, buildingDefinition.size.y, buildingDefinition.size.z );
+                positioner.nodesSnapRange = new Vector3( max, max, max );
+            }
 
             buildPreview.definition = def;
             buildPreview.data = data;
 
-            for( int i = 0; i < buildPreviewInstanceGameObject.transform.childCount; i++ )
-            {
-                Object.Destroy( buildPreviewInstanceGameObject.transform.GetChild( i ).gameObject );
-            }
-
-            SubObjectDefinition[] subObjectDefs;
-            def.GetAllSubObjects( out subObjectDefs );
+            def.GetAllSubObjects( out SubObjectDefinition[] subObjectDefs );
 
             foreach( var subObjectDef in subObjectDefs )
             {

@@ -60,7 +60,7 @@ namespace SS.Objects.Modules
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, () =>
 					{
-						BuildingData data = new BuildingData()
+						BuildingData buildingData = new BuildingData()
 						{
 							guid = Guid.NewGuid(),
 							//position = this.transform.position, // gonna be reset to the position of the preview upon placing anyway.
@@ -70,12 +70,7 @@ namespace SS.Objects.Modules
 							constructionSaveState = new ConstructionSiteData()
 						};
 
-						if( BuildPreview.isActive )
-						{
-							BuildPreview.Switch( buildingDef, data );
-							return;
-						}
-						BuildPreview.Create( buildingDef, data );
+						BuildPreview.CreateOrSwitch( buildingDef, buildingData );
 					} );
 				}
 				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();

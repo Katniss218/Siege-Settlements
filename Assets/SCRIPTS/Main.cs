@@ -5,6 +5,7 @@ using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects;
+using SS.Objects.Buildings;
 using SS.Objects.Extras;
 using SS.Objects.Heroes;
 using SS.Objects.Modules;
@@ -413,6 +414,7 @@ namespace SS
 			{
 				damageables[i].health = damageables[i].healthMax;
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A1( InputQueue self )
@@ -422,6 +424,7 @@ namespace SS
 				return;
 			}
 			SetFactionSelected( 0 );
+			self.StopExecution();
 		}
 
 		private void Inp_A2( InputQueue self )
@@ -431,6 +434,7 @@ namespace SS
 				return;
 			}
 			SetFactionSelected( 1 );
+			self.StopExecution();
 		}
 
 		private void Inp_A3( InputQueue self )
@@ -440,6 +444,7 @@ namespace SS
 				return;
 			}
 			SetFactionSelected( 2 );
+			self.StopExecution();
 		}
 
 		private static void CreateDepositRaycast( string id )
@@ -497,6 +502,7 @@ namespace SS
 					}
 				}
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A5( InputQueue self )
@@ -526,6 +532,7 @@ namespace SS
 					}
 				}
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A6( InputQueue self )
@@ -538,6 +545,7 @@ namespace SS
 			{
 				CreateDepositRaycast( "resource_deposit.iron_ore_0" );
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A7( InputQueue self )
@@ -550,6 +558,7 @@ namespace SS
 			{
 				CreateDepositRaycast( $"resource_deposit.bush{new System.Random().Next(1,4)}" );
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A8( InputQueue self )
@@ -562,6 +571,7 @@ namespace SS
 			{
 				CreateDepositRaycast( $"resource_deposit.tree{new System.Random().Next(1,4)}" );
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A9( InputQueue self )
@@ -574,6 +584,7 @@ namespace SS
 			{
 				CreateDepositRaycast( $"resource_deposit.pine{new System.Random().Next(1,4)}" );
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_A0( InputQueue self )
@@ -584,8 +595,21 @@ namespace SS
 			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				CreateDepositRaycast( "resource_deposit.rock_0" );
+				UnitDefinition def = DefinitionManager.GetUnit( "unit.movable_ballista" );
+
+				UnitData data = new UnitData()
+				{
+					guid = Guid.NewGuid(),
+					//position = this.transform.position, // gonna be reset to the position of the preview upon placing anyway.
+					//rotation = this.transform.rotation,
+					factionId = LevelDataManager.PLAYER_FAC,
+					health = def.healthMax, population = PopulationSize.x1
+				};
+
+				BuildPreview.CreateOrSwitch( def, data );
+				//CreateDepositRaycast( "resource_deposit.rock_0" );
 			}
+			self.StopExecution();
 		}
 
 		private void Inp_Pause( InputQueue self )
@@ -598,6 +622,7 @@ namespace SS
 			{
 				PauseManager.Pause();
 			}
+			self.StopExecution();
 		}
 
 

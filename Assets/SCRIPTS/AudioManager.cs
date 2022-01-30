@@ -23,7 +23,7 @@ namespace SS
 			}
 		}
 		
-		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch )
+		private static AudioSource CreateSourceAndPlay( AudioClip clip, float volume, float pitch, Vector3 position )
 		{
 			if( audioSourceContainer == null )
 			{
@@ -33,6 +33,7 @@ namespace SS
 			// Create a new source GameObject to hold the new AudioSource.
 			GameObject gameObject = new GameObject( "AudioSource" );
 			gameObject.transform.SetParent( audioSourceContainer );
+			gameObject.transform.position = position;
 
 			// Add the necessary components.
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
@@ -72,13 +73,14 @@ namespace SS
 				{
 					continue;
 				}
+
 				audioSource.transform.position = position;
 				SetClipAndPlay( audioSource, audioSource.GetComponent<TimerHandler>(), clip, volume, pitch );
 				return;
 			}
 
 			// If no source GameObject can be reused (every single one is playing at the moment):
-			AudioSource newAudioSource = CreateSourceAndPlay( clip, volume, pitch );
+			AudioSource newAudioSource = CreateSourceAndPlay( clip, volume, pitch, position );
 			
 			sources.Add( newAudioSource );
 		}
@@ -113,7 +115,6 @@ namespace SS
 
 			timerHandler.duration = clip.length;
 
-#warning this fails if spawned for the first time.
 			source.Play();
 		}
 	}

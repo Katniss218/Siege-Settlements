@@ -10,6 +10,9 @@ namespace SS.InputSystem
 			public System.Action<InputQueue> method { get; set; }
 			public bool isEnabled { get; set; }
 			public bool isOneShot { get; set; }
+			/// <summary>
+			/// Lower priority runs first.
+			/// </summary>
 			public float priority { get; set; }
 		}
 		

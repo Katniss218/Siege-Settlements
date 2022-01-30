@@ -133,10 +133,14 @@ namespace SS.InputSystem
 
 		void Update()
 		{
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<MouseCode, InputQueue> pressQueue = new Dictionary<MouseCode, InputQueue>( this.press );
+
 			foreach( var kvp in this.press )
 			{
 				if( Input.GetMouseButtonDown( (int)kvp.Key ) )
 				{
+					// count number of presses.
 					if( 
 						   (Time.time <= kvp.Value.pressTimestamp + MAX_DOUBLE_CLICK_DELAY)
 						&& (kvp.Value.pressCount < MAX_CLICK_COUNT)
@@ -158,7 +162,10 @@ namespace SS.InputSystem
 				}
 			}
 
-			foreach( var kvp in this.hold )
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<MouseCode, InputQueue> holdQueue = new Dictionary<MouseCode, InputQueue>( this.hold );
+
+			foreach( var kvp in holdQueue )
 			{
 				if( Input.GetMouseButton( (int)kvp.Key ) )
 				{
@@ -166,7 +173,10 @@ namespace SS.InputSystem
 				}
 			}
 
-			foreach( var kvp in this.release )
+			// Copy the queue so if the function running in the keypress wants to register another keypress it won't throw that the dictionary was modified.
+			Dictionary<MouseCode, InputQueue> releaseQueue = new Dictionary<MouseCode, InputQueue>( this.release );
+
+			foreach( var kvp in releaseQueue )
 			{
 				if( Input.GetMouseButtonUp( (int)kvp.Key ) )
 				{
