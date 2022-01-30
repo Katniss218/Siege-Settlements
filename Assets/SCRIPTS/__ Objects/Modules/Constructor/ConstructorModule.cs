@@ -6,6 +6,7 @@ using SS.Technologies;
 using SS.UI;
 using UnityEngine;
 using SS.ResourceSystem;
+using System;
 
 namespace SS.Objects.Modules
 {
@@ -59,12 +60,22 @@ namespace SS.Objects.Modules
 				{
 					gridElements[i] = UIUtils.InstantiateIconButton( SelectionPanel.instance.obj.transform, new GenericUIData( new Vector2( i * 72.0f, 72.0f ), new Vector2( 72.0f, 72.0f ), Vector2.zero, Vector2.zero, Vector2.zero ), buildingDef.icon, () =>
 					{
+						BuildingData data = new BuildingData()
+						{
+							guid = Guid.NewGuid(),
+							//position = this.transform.position, // gonna be reset to the position of the preview upon placing anyway.
+							//rotation = this.transform.rotation,
+							factionId = LevelDataManager.PLAYER_FAC,
+							health = buildingDef.healthMax * Building.STARTING_HEALTH_PERCENT,
+							constructionSaveState = new ConstructionSiteData()
+						};
+
 						if( BuildPreview.isActive )
 						{
-							BuildPreview.Switch( buildingDef );
+							BuildPreview.Switch( buildingDef, data );
 							return;
 						}
-						BuildPreview.Create( buildingDef );
+						BuildPreview.Create( buildingDef, data );
 					} );
 				}
 				ToolTipUIHandler toolTipUIhandler = gridElements[i].AddComponent<ToolTipUIHandler>();

@@ -4,50 +4,33 @@ namespace SS.TerrainCreation
 {
     public class TerrainMeshCreator
     {
-        //private byte resolution; // the size of the texture.
-
-        /// How high the map is.
-        private float heightScale;
-
-        /// <summary>
-        /// How big each segment is. (real size units)
-        /// </summary>
-        //public const int SEGMENT_SIZE = 16;
+        private float terrainHeight; // How high the map is.
 
         private const float RESOLUTION = 0.125f; // vertex spacing in meters (world units) (must be a reciprocal of an integer)
-        public const int SEGMENT_SIZE = 4; // in meters
-        private const int SEGMENT_WIDTH = (int)(SEGMENT_SIZE / RESOLUTION);
-        private const int SEGMENT_VERT_COUNT = SEGMENT_WIDTH + 1; // SEGMENT_WIDTH - number of faces in each segment, += 1 vertices (edge) edge ones will overlap
+        public const float vertexStepSize = RESOLUTION;
+        /// <summary>
+        /// How big each segment is (real size units) (in meters).
+        /// </summary>
+        public const int SEGMENT_SIZE = 4;
+        private const int SEGMENT_FACE_COUNT = (int)(SEGMENT_SIZE / RESOLUTION);
+        private const int SEGMENT_VERT_COUNT = SEGMENT_FACE_COUNT + 1; // SEGMENT_WIDTH - number of faces in each segment, += 1 vertices (edge) edge ones will overlap
 
-        /// How many meshes per egde? (square it to get actual mesh count)
-        private int segments = 1;
-
-        public float vertexStepSize { get { return RESOLUTION; } }
-
-
+        private int segments = 1; // no. mesh segments per terrain (on one axis)
 
         private Texture2D heightmap;
 
         // segments always of constant size.
-        public TerrainMeshCreator( float heightScale, int noSegments, Texture2D heightmap )
+        public TerrainMeshCreator( float terrainHeight, int noSegments, Texture2D heightmap )
         {
             if( heightmap.width != heightmap.height )
             {
                 throw new System.Exception( "non-square heightmap was provided" );
             }
 
-            this.heightScale = heightScale;
+            this.terrainHeight = terrainHeight;
             this.segments = noSegments;
             this.heightmap = heightmap;
         }
-
-
-        // how many vertices per segment?
-
-#warning Rewrite this to handle a continuous texture.
-        // single heightmap
-        // single colormap
-        // uv scaled in accordance with which segment it is.
 
         /// <summary>
         /// Creates all meshes associated with the given information.
@@ -87,16 +70,15 @@ namespace SS.TerrainCreation
             {
                 for( int z = 0; z < SEGMENT_VERT_COUNT; z++ )
                 {
-                    float percInSegmentX = (float)x / (float)SEGMENT_WIDTH;
+                    float percInSegmentX = (float)x / (float)SEGMENT_FACE_COUNT;
                     float uvX = (percInSegmentX / (float)this.segments) + ((float)segX / (float)this.segments);
 
-                    float percInSegmentZ = (float)z / (float)SEGMENT_WIDTH;
+                    float percInSegmentZ = (float)z / (float)SEGMENT_FACE_COUNT;
                     float uvY = (percInSegmentZ / (float)this.segments) + ((float)segZ / (float)this.segments);
 
-                    // getpixelbilinear
                     float heightPerc = heightmap.GetPixelBilinear( uvX, uvY, 0 ).r;
 
-                    verts[vertIndex] = new Vector3( x * vertexStepSize, heightPerc * heightScale, z * vertexStepSize );
+                    verts[vertIndex] = new Vector3( x * vertexStepSize, heightPerc * terrainHeight, z * vertexStepSize );
                     uvs[vertIndex] = new Vector2( uvX, uvY );
 
                     if( x < SEGMENT_VERT_COUNT - 1 && z < SEGMENT_VERT_COUNT - 1 )

@@ -76,6 +76,7 @@ namespace SS
 				SetClipAndPlay( audioSource, audioSource.GetComponent<TimerHandler>(), clip, volume, pitch );
 				return;
 			}
+
 			// If no source GameObject can be reused (every single one is playing at the moment):
 			AudioSource newAudioSource = CreateSourceAndPlay( clip, volume, pitch );
 			
@@ -112,6 +113,7 @@ namespace SS
 
 			timerHandler.duration = clip.length;
 
+#warning this fails if spawned for the first time.
 			source.Play();
 		}
 	}

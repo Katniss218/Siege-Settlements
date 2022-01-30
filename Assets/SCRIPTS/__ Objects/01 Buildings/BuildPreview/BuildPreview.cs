@@ -1,4 +1,5 @@
-﻿using SS.InputSystem;
+﻿using SS.Content;
+using SS.InputSystem;
 using SS.Levels;
 using SS.Levels.SaveStates;
 using SS.Objects.SubObjects;
@@ -26,11 +27,6 @@ namespace SS.Objects.Buildings
 
 
         /// <summary>
-        /// The building that's being built.
-        /// </summary>
-        public BuildingDefinition def;
-
-        /// <summary>
         /// The build preview will treat objects in this mask as ground terrain.
         /// </summary>
         public LayerMask terrainMask;
@@ -46,12 +42,17 @@ namespace SS.Objects.Buildings
         public float maxDeviationY = 0.2f;
 
 
+        private SSObjectDefinition definition;
+        private SSObjectData data;
+
         private Vector3 GetOverlapHitboxCenter( bool OffsetByDeviation )
         {
             const float epsilon = 0.01f;
-            Matrix4x4 localToWorldMatrix = this.transform.localToWorldMatrix;
 
-            Vector3 center = new Vector3( 0.0f, (this.def.size.y / 2.0f), 0.0f );
+            Vector3 size = this.GetSize();
+            Vector3 center = new Vector3( 0.0f, (size.y / 2.0f), 0.0f );
+
+            Matrix4x4 localToWorldMatrix = this.transform.localToWorldMatrix;
 
             if( OffsetByDeviation )
             {
@@ -70,26 +71,27 @@ namespace SS.Objects.Buildings
 
         private bool IsOverlapping()
         {
+            Vector3 size = this.GetSize();
             Vector3 center;
 
-            // ground overlap.
-            if( this.def.size.y > this.maxDeviationY )
+            // Overlap with the ground.
+            if( size.y > this.maxDeviationY )
             {
                 // Subtract the max deviation from the height of the box.
-                Vector3 size = this.def.size - new Vector3( 0.0f, this.maxDeviationY, 0.0f );
+                Vector3 newSize = size - new Vector3( 0.0f, this.maxDeviationY, 0.0f );
 
                 center = this.GetOverlapHitboxCenter( true );
 
-                if( Physics.OverlapBox( center, (size / 2.0f), this.transform.rotation, this.terrainMask ).Length > 0 )
+                if( Physics.OverlapBox( center, (newSize / 2.0f), this.transform.rotation, this.terrainMask ).Length > 0 )
                 {
                     return true;
                 }
             }
 
-            // Other objects overlap.
+            // Overlap with other objects.
             center = this.GetOverlapHitboxCenter( false );
 
-            if( Physics.OverlapBox( center, (this.def.size / 2.0f), this.transform.rotation, this.objectsMask, QueryTriggerInteraction.Ignore ).Length > 0 )
+            if( Physics.OverlapBox( center, (size / 2.0f), this.transform.rotation, this.objectsMask, QueryTriggerInteraction.Ignore ).Length > 0 )
             {
                 return true;
             }
@@ -99,7 +101,9 @@ namespace SS.Objects.Buildings
 
         private bool IsOnFlatGround()
         {
-            Vector3 halfSize = this.def.size * 0.5f;
+            Vector3 size = this.GetSize();
+
+            Vector3 halfSize = size * 0.5f;
 
             // Setup the 4 corners for raycast.
             Vector3[] pos = new Vector3[4]
@@ -138,6 +142,16 @@ namespace SS.Objects.Buildings
             return true;
         }
 
+        public Vector3 GetSize()
+        {
+            if( this.definition is BuildingDefinition )
+            {
+                return ((BuildingDefinition)this.definition).size;
+            }
+
+            throw new Exception( $"Unsupported definition type ({this.definition.GetType()}) was set to the build preview." );
+        }
+
         /// <summary>
         /// Checks if the building preview's current position is a valid placement spot.
         /// </summary>
@@ -161,16 +175,17 @@ namespace SS.Objects.Buildings
         {
             if( this.CanBePlacedHere() )
             {
-                BuildingData data = new BuildingData();
-                data.guid = Guid.NewGuid();
-                data.position = this.transform.position;
-                data.rotation = this.transform.rotation;
-                data.factionId = LevelDataManager.PLAYER_FAC;
-                data.health = this.def.healthMax * Building.STARTING_HEALTH_PERCENT;
-                data.constructionSaveState = new ConstructionSiteData();
+                if( this.definition is BuildingDefinition )
+                {
+                    BuildingDefinition buildingDefinition = (BuildingDefinition)this.definition;
+                    BuildingData buildingData = (BuildingData)this.data;
 
-                Building building = BuildingCreator.Create( this.def, data.guid );
-                BuildingCreator.SetData( building, data );
+                    buildingData.position = this.transform.position;
+                    buildingData.rotation = this.transform.rotation;
+
+                    Building building = BuildingCreator.Create( buildingDefinition, buildingData.guid );
+                    BuildingCreator.SetData( building, buildingData );
+                }
 
                 Object.Destroy( this.gameObject );
             }
@@ -231,7 +246,7 @@ namespace SS.Objects.Buildings
             }
         }
 
-        public static GameObject Create( BuildingDefinition def )
+        public static GameObject Create( BuildingDefinition def, SSObjectData data )
         {
             GameObject gameObject = new GameObject();
             BuildPreview buildPreview = gameObject.AddComponent<BuildPreview>();
@@ -241,7 +256,8 @@ namespace SS.Objects.Buildings
             float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
             positioner.nodesSnapRange = new Vector3( max, max, max );
 
-            buildPreview.def = def;
+            buildPreview.definition = def;
+            buildPreview.data = data;
 
             buildPreview.terrainMask = ObjectLayer.TERRAIN_MASK;
 
@@ -274,7 +290,7 @@ namespace SS.Objects.Buildings
             return gameObject;
         }
 
-        public static void Switch( BuildingDefinition def )
+        public static void Switch( BuildingDefinition def, SSObjectData data )
         {
             BuildPreview buildPreview = buildPreviewInstanceGameObject.GetComponent<BuildPreview>();
             BuildPreviewPositioner positioner = buildPreviewInstanceGameObject.GetComponent<BuildPreviewPositioner>();
@@ -283,7 +299,8 @@ namespace SS.Objects.Buildings
             float max = Mathf.Max( def.size.x, def.size.y, def.size.z );
             positioner.nodesSnapRange = new Vector3( max, max, max );
 
-            buildPreview.def = def;
+            buildPreview.definition = def;
+            buildPreview.data = data;
 
             for( int i = 0; i < buildPreviewInstanceGameObject.transform.childCount; i++ )
             {
