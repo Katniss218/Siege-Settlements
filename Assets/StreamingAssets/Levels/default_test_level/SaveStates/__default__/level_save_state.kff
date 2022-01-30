@@ -1,1 +1,3 @@
-﻿DisplayName="__default__";GameTimeElapsed=0.0;DaylightCycleData={Time=0.0;};CameraData={Position={X=9.4309625625610352;Y=0.0;Z=7.02825927734375;};Rotation={X=0.0;Y=0.38268345594406128;Z=0.0;W=0.92387950420379639;};ZoomSize=10;};
+﻿DisplayName="Empty";DaylightCycleData={Time=999;};CameraData={Position={X=34.256168365478516;Y=0.0;Z=36.716747283935547;};
+SelectionGroups={Group1=[];Group2=[];Group3=[];Group4=[];Group5=[];Group6=[];Group7=[];Group8=[];Group9=[];Group10=[];};
+Rotation={X=0.0;Y=0.38268345594406128;Z=0.0;W=0.92387950420379639;};ZoomSize=6;};GameTimeElapsed=0.0;

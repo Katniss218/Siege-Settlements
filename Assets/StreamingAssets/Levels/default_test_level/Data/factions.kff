@@ -9,7 +9,19 @@
 		Color = { R = 1.0; G = 0.0; B = 0.0; A = 1.0; };
 	},
 	{
-		DisplayName = "Barmecia";
-		Color = { R = 0.0; G = 0.8; B = 0.25; A = 1.0; };
+		DisplayName = "Kerberos";
+		Color = { R = 0.3; G = 0.3; B = 0.3; A = 1.0; };
+	},
+	{
+		DisplayName = "Drake";
+		Color = { R = 1.0; G = 0.3; B = 0.35; A = 1.0; };
+	},
+	{
+		DisplayName = "aa";
+		Color = { R = 0.25; G = 0.25; B = 0.0; A = 1.0; };
+	},
+	{
+		DisplayName = "bb";
+		Color = { R = 0.0; G = 0.0; B = 0.25; A = 1.0; };
 	}
 ];

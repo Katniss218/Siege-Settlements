@@ -16,24 +16,14 @@ namespace SS.TerrainCreation
 		private static NavMeshDataInstance navMeshDataInstance;
 
 
-		public static void SpawnMap( Texture2D[,] heightMaps, Texture2D[,] albedoMaps, float height )
+		public static void SpawnMap( Texture2D heightMaps, Texture2D albedoMaps, float height )
 		{
-			int segments = heightMaps.GetLength( 0 );
-			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
-			{
-				throw new System.Exception( "The heightMaps array was of invalid dimensions. Expected size: [segments,segments]." );
-			}
-			if( heightMaps.GetLength( 0 ) != segments || heightMaps.GetLength( 1 ) != segments )
-			{
-				throw new System.Exception( "The albedoMaps array was of invalid dimensions. Expected size: [segments,segments]." );
-			}
-
-			meshCreator = new TerrainMeshCreator( RESOLUTION, segments, heightMaps, height );
+			meshCreator = new TerrainMeshCreator( height, LevelDataManager.mapSegments, heightMaps );
 			Mesh[,] meshes = meshCreator.CreateMeshes();
 			
-			for( int i = 0; i < segments; i++ )
+			for( int i = 0; i < LevelDataManager.mapSegments; i++ )
 			{
-				for( int j = 0; j < segments; j++ )
+				for( int j = 0; j < LevelDataManager.mapSegments; j++ )
 				{
 					GameObject terrainSegment = new GameObject( "Mesh" );
 					terrainSegment.layer = ObjectLayer.TERRAIN;
@@ -45,7 +35,7 @@ namespace SS.TerrainCreation
 
 					MeshRenderer meshRenderer = terrainSegment.AddComponent<MeshRenderer>();
 					meshRenderer.material = new Material( AssetManager.GetMaterialPrototype( "builtin:Materials/__Terrain" ) );
-					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps[i, j] );
+					meshRenderer.material.SetTexture( "_BaseMap", albedoMaps );
 
 					terrainSegment.transform.position = new Vector3( i * TerrainMeshCreator.SEGMENT_SIZE, 0, j * TerrainMeshCreator.SEGMENT_SIZE );
 
@@ -71,7 +61,7 @@ namespace SS.TerrainCreation
 			meshBuildSettings.tileSize = 32;
 
 			Vector3 mapCenter = new Vector3( LevelDataManager.mapSize / 2.0f, LevelDataManager.mapHeight / 2.0f, LevelDataManager.mapSize / 2.0f );
-			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight, LevelDataManager.mapSize );
+			Vector3 mapExtents = new Vector3( LevelDataManager.mapSize, LevelDataManager.mapHeight * 2, LevelDataManager.mapSize );
 
 			NavMeshData navData = NavMeshBuilder.BuildNavMeshData(
 				meshBuildSettings,
