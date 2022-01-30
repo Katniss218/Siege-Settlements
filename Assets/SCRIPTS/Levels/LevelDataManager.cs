@@ -174,7 +174,7 @@ namespace SS.Levels
 			int count = serializer.Analyze( "List" ).childCount;
 			if( count != factionCount )
 			{
-				throw new Exception( "The number of faction data doesn't match the number of factions of the level." );
+				throw new Exception( $"The number of faction data ({count}) doesn't match the number of factions in the level ({factionCount})." );
 			}
 
 			factionData = new FactionData[factionCount];
@@ -194,7 +194,7 @@ namespace SS.Levels
 			int supposedMatrixLength = RelationMap<DiplomaticRelation>.GetMatrixLength( factionCount );
 			if( relMatrixLength != supposedMatrixLength )
 			{
-				throw new Exception( "The number of entries in the faction relation matrix doesn't match the number of factions of the level. Supposed to be " + supposedMatrixLength + "." );
+				throw new Exception( $"The no. entries in the faction relation matrix ({relMatrixLength}) doesn't match the number of factions in the level. Correct no. entries {supposedMatrixLength}." );
 			}
 
 			diplomaticRelations = new RelationMap<DiplomaticRelation>( factionCount, DiplomaticRelation.Neutral );

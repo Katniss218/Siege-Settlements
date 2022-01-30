@@ -12,7 +12,7 @@ namespace SS.Diplomacy
 
 		//   horizontal: n1
 		//   vertical:   n2
-		//   matrix:     indices for the '__values' array of relations ('-' means there's no relation).
+		//   matrix:     indices for the '__values' array of relations ('-' means there's no relation, cuz you can't have a relation with yourself).
 
 		//   | 0 1 2 3 4
 		// --------------

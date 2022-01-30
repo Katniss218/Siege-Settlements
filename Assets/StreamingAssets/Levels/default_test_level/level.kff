@@ -2,7 +2,7 @@
 Map =
 {
 	Segments = 32;
-	Height = 8.0;
+	Height = 10.0;
 };
 DaylightCycle =
 {

@@ -1,1 +1,1 @@
-﻿List=[{DefinitionId="unit.civilian";Data={Population=1;Guid="0f8fad5b-d9cb-469f-a165-70867728950e";Position={X=1.5545957088470459;Y=-0.0044462233781814575;Z=9.1384210586547852;};Rotation={X=0.0;Y=0.85637128353118896;Z=0.0;W=0.51636052131652832;};FactionId=0;Health=25.0;IsOnAutomaticDuty=false;TacticalGoalTag=0;TacticalGoals=[{IsHostile=true;TypeId="idle";}];Modules=[];};}];
+﻿List=[];
