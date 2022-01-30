@@ -132,6 +132,384 @@
 		];
 	},
 	{
+		Id = "resource_deposit.bush1";
+		DisplayName = "Bush";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 3; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.15; Y = 0.5; Z = 0.15; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/bush1.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.bush2";
+		DisplayName = "Bush";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 3; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.15; Y = 0.5; Z = 0.15; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/bush2.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.bush3";
+		DisplayName = "Bush";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 3; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.15; Y = 0.5; Z = 0.15; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/bush3.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.tree1";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/tree1.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.tree2";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/tree2.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.tree3";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/tree3.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.pine1";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/pine1.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.pine2";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/pine2.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
+		Id = "resource_deposit.pine3";
+		DisplayName = "Tree";
+		Modules =
+		[
+			{
+				TypeId = "resource_deposit";
+				ModuleId = "00000000-1000-1000-0001-123456789123";
+				DisplayName = "Resource Deposit";
+				
+				Resources =
+				[
+					{ ResourceId = "resource.wood"; Capacity = 7; }
+				];
+				MineSound = "extern:Sounds/ResourceDeposits/tree_chop.wav";
+				Icon = "extern:Textures/Modules/resource_deposit_icon.png";
+			}
+		];
+		IsObstacle = true;
+		Size = { X = 0.25; Y = 0.75; Z = 0.25; };
+		SubObjects =
+		[
+			{
+				TypeId = "MESH";
+				SubObjectId = "00000000-0000-0000-0001-000000000000";
+				LocalPosition = { X = 0.0; Y = 0.0; Z = 0.0; };
+				LocalRotationEuler = { X = 0.0; Y = 0.0; Z = 0.0; };
+				
+				Mesh = "extern:Models/ResourceDeposits/pine3.ksm";
+				Material =
+				{
+					MaterialType = 2; // 2 -> 'Plant Opaque'
+					ColorMap = "extern:Textures/ResourceDeposits/trees_0_color.png";
+					NormalMap = "extern:Textures/ResourceDeposits/trees_0_normal.png";
+					EmissionMap = "builtin:Textures/pixel_black";
+					MetallicMap = "builtin:Textures/pixel_black";
+					SmoothnessMap = "extern:Textures/ResourceDeposits/trees_0_smoothness.png";
+					WindDisplacementScale = 0.1;
+				};
+			}
+		];
+	},
+	{
 		Id = "resource_deposit.pine";
 		DisplayName = "Tree";
 		Modules =

@@ -21,14 +21,12 @@ namespace SS.Objects.Buildings
         public Vector3 nodesSnapRange { get; set; }
 
 
-        private void RotateClockwise()
+        private void Rotate( float speed, bool smoothed = true ) // clockwise
         {
-            this.transform.Rotate( 0, KBD_ROTATION_SPEED * Time.deltaTime, 0 );
-        }
-
-        private void RotateCounterClockwise()
-        {
-            this.transform.Rotate( 0, -KBD_ROTATION_SPEED * Time.deltaTime, 0 );
+            if( smoothed )
+                this.transform.Rotate( 0, speed * Time.deltaTime, 0 );
+            else
+                this.transform.Rotate( 0, speed, 0 );
         }
 
         private void ResetRotation()
@@ -62,13 +60,37 @@ namespace SS.Objects.Buildings
 
         private void Inp_RotateCCW( InputQueue self )
         {
-            this.RotateCounterClockwise();
+            if( Input.GetKey( KeyCode.LeftShift ) )
+            {
+                this.Rotate( -KBD_ROTATION_SPEED );
+            }
             self.StopExecution();
         }
 
         private void Inp_RotateCW( InputQueue self )
         {
-            this.RotateClockwise();
+            if( Input.GetKey( KeyCode.LeftShift ) )
+            {
+                this.Rotate( KBD_ROTATION_SPEED );
+            }
+            self.StopExecution();
+        }
+
+        private void Inp_RotateCCW90( InputQueue self )
+        {
+            if( !Input.GetKey( KeyCode.LeftShift ) )
+            {
+                this.Rotate( -45, false );
+            }
+            self.StopExecution();
+        }
+
+        private void Inp_RotateCW90( InputQueue self )
+        {
+            if( !Input.GetKey( KeyCode.LeftShift ) )
+            {
+                this.Rotate( 45, false );
+            }
             self.StopExecution();
         }
 
@@ -82,6 +104,8 @@ namespace SS.Objects.Buildings
         {
             Main.keyboardInput.RegisterOnHold( KeyCode.Q, 40.0f, this.Inp_RotateCCW, true );
             Main.keyboardInput.RegisterOnHold( KeyCode.E, 40.0f, this.Inp_RotateCW, true );
+            Main.keyboardInput.RegisterOnPress( KeyCode.Q, 40.0f, this.Inp_RotateCCW90, true );
+            Main.keyboardInput.RegisterOnPress( KeyCode.E, 40.0f, this.Inp_RotateCW90, true );
             Main.keyboardInput.RegisterOnPress( KeyCode.R, 40.0f, this.Inp_ResetRotation, true );
         }
 
@@ -91,6 +115,8 @@ namespace SS.Objects.Buildings
             {
                 Main.keyboardInput.ClearOnHold( KeyCode.Q, this.Inp_RotateCCW );
                 Main.keyboardInput.ClearOnHold( KeyCode.E, this.Inp_RotateCW );
+                Main.keyboardInput.ClearOnPress( KeyCode.Q, this.Inp_RotateCCW90 );
+                Main.keyboardInput.ClearOnPress( KeyCode.E, this.Inp_RotateCW90 );
                 Main.keyboardInput.ClearOnPress( KeyCode.R, this.Inp_ResetRotation );
             }
         }
