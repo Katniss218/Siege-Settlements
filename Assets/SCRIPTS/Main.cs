@@ -595,7 +595,7 @@ namespace SS
 			}
 			if( !EventSystem.current.IsPointerOverGameObject() )
 			{
-				UnitDefinition def = DefinitionManager.GetUnit( "unit.movable_ballista" );
+				/*UnitDefinition def = DefinitionManager.GetUnit( "unit.movable_ballista" );
 
 				UnitData data = new UnitData()
 				{
@@ -605,9 +605,9 @@ namespace SS
 					factionId = LevelDataManager.PLAYER_FAC,
 					health = def.healthMax, population = PopulationSize.x1
 				};
-
-				BuildPreview.CreateOrSwitch( def, data );
-				//CreateDepositRaycast( "resource_deposit.rock_0" );
+				
+				BuildPreview.CreateOrSwitch( def, data );*/
+				CreateDepositRaycast( "resource_deposit.rock_0" );
 			}
 			self.StopExecution();
 		}

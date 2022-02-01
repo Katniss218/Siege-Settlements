@@ -1,4 +1,5 @@
 ﻿using Katniss.Utils;
+using System.Linq;
 using UnityEngine;
 
 namespace SS.Objects.Modules
@@ -10,15 +11,17 @@ namespace SS.Objects.Modules
 			CLOSEST,
 			TARGET
 		}
-						
-		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFC target, SSObjectDFC factionMemberSelf )
+
+		const int LAYERS = ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK;
+
+		public static bool CanTarget( Vector3 positionSelf, float searchRange, SSObjectDFC target, SSObjectDFC self )
 		{
 			if( target == null )
 			{
 				return false;
 			}
 
-			if( !factionMemberSelf.CanTargetAnother( target ) )
+			if( !self.CanTargetAnother( target ) )
 			{
 				return false;
 			}
@@ -31,16 +34,17 @@ namespace SS.Objects.Modules
 			return true;
 		}
 
-		public const int LAYERS = ObjectLayer.UNITS_MASK | ObjectLayer.BUILDINGS_MASK | ObjectLayer.HEROES_MASK;
 
 
 		public static SSObjectDFC TrySetTarget( Vector3 positionSelf, float searchRange, SSObjectDFC self, SSObjectDFC target, bool requireExactDistance )
 		{
-			SSObjectDFC targetRet = null;
 			if( target == null )
 			{
 				return null;
 			}
+
+			SSObjectDFC targetRet = null;
+
 			// Check if the overlapped object can be targeted by this finder.
 			if( !self.CanTargetAnother( target ) )
 			{
@@ -57,14 +61,15 @@ namespace SS.Objects.Modules
 			}
 			else
 			{
-				Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
-				if( col.Length == 0 )
+				Collider[] colliders = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
+				if( !colliders.Any() )
 				{
 					return null;
 				}
-				for( int i = 0; i < col.Length; i++ )
+
+				foreach( var col in colliders )
 				{
-					SSObjectDFC facOther = col[i].GetComponent<SSObjectDFC>();
+					SSObjectDFC facOther = col.GetComponent<SSObjectDFC>();
 
 					if( facOther == target )
 					{
@@ -76,66 +81,66 @@ namespace SS.Objects.Modules
 			return targetRet;
 		}
 
-		public static SSObjectDFC FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFC factionMemberSelf, bool requireExactDistance )
+		public static SSObjectDFC FindTargetClosest( Vector3 positionSelf, float searchRange, SSObjectDFC self, bool needPivotInRange )
 		{
-			if( requireExactDistance )
+			if( needPivotInRange ) // the pivot of the object must be in range
 			{
-				SSObjectDFC[] dfs = SSObject.GetAllDFC();
+				SSObjectDFC[] dfcObjects = SSObject.GetAllDFC();
 
-				SSObjectDFC ret = null;
-				float needThisCloseSq = searchRange * searchRange;
+				SSObjectDFC closest = null;
+				float closestSqDistSoFar = searchRange * searchRange;
 
-
-				for( int i = 0; i < dfs.Length; i++ )
+				foreach( var dfc in dfcObjects )
 				{
 					// Check if the overlapped object can be targeted by this finder.
-					if( !factionMemberSelf.CanTargetAnother( dfs[i] ) )
+					if( !self.CanTargetAnother( dfc ) )
 					{
 						continue;
 					}
 
-					float distSq = (dfs[i].transform.position - positionSelf).sqrMagnitude;
-					if( distSq > needThisCloseSq )
+					float distSq = (dfc.transform.position - positionSelf).sqrMagnitude;
+					if( distSq > closestSqDistSoFar )
 					{
 						continue;
 					}
 
 
-					needThisCloseSq = distSq;
-					ret = dfs[i];
+					closestSqDistSoFar = distSq;
+					closest = dfc;
 				}
-				return ret;
+				return closest;
 			}
-			else
+			else // any part of the object needs to be in range.
 			{
-				Collider[] col = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
-				if( col.Length == 0 )
+				Collider[] colliders = Physics.OverlapSphere( positionSelf, searchRange, LAYERS );
+				if( !colliders.Any() )
 				{
 					return null;
 				}
-				SSObjectDFC ret = null;
-				float needThisCloseSq = float.MaxValue;
 
-				for( int i = 0; i < col.Length; i++ )
+				SSObjectDFC closest = null;
+				float closestSqDistSoFar = float.MaxValue;
+
+				foreach( var col in colliders )
 				{
-					SSObjectDFC facOther = col[i].GetComponent<SSObjectDFC>();
+					SSObjectDFC facOther = col.GetComponent<SSObjectDFC>();
 
 					// Check if the overlapped object can be targeted by this finder.
-					if( !factionMemberSelf.CanTargetAnother( facOther ) )
+					if( !self.CanTargetAnother( facOther ) )
 					{
 						continue;
 					}
 
-					float distSq = (col[i].transform.position - positionSelf).sqrMagnitude;
-					if( distSq > needThisCloseSq )
+					float distSq = (col.transform.position - positionSelf).sqrMagnitude;
+					if( distSq > closestSqDistSoFar )
 					{
 						continue;
 					}
 
-					needThisCloseSq = distSq;
-					ret = facOther;
+					closestSqDistSoFar = distSq;
+					closest = facOther;
 				}
-				return ret;
+				return closest;
 			}
 		}
 	}

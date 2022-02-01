@@ -398,7 +398,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathUnits + "'." );
+                throw new Exception( "Can't open file '" + pathUnits + "'.", e );
             }
 
             try
@@ -411,7 +411,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathBuildings + "'." );
+                throw new Exception( "Can't open file '" + pathBuildings + "'.", e );
             }
 
             try
@@ -424,7 +424,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathProjectiles + "'." );
+                throw new Exception( "Can't open file '" + pathProjectiles + "'.", e );
             }
 
             try
@@ -437,7 +437,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathHeroes + "'." );
+                throw new Exception( "Can't open file '" + pathHeroes + "'.", e );
             }
 
             try
@@ -450,7 +450,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathExtras + "'." );
+                throw new Exception( "Can't open file '" + pathExtras + "'.", e );
             }
 
 
@@ -464,7 +464,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathResources + "'." );
+                throw new Exception( "Can't open file '" + pathResources + "'.", e );
             }
 
             try
@@ -477,7 +477,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathTechnologies + "'." );
+                throw new Exception( "Can't open file '" + pathTechnologies + "'.", e );
             }
 
 
@@ -491,7 +491,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathFactions + "'." );
+                throw new Exception( "Can't open file '" + pathFactions + "'.", e );
             }
 
 
@@ -582,7 +582,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathFactionData + "'." );
+                throw new Exception( "Can't open file '" + pathFactionData + "'." , e);
             }
 
 
@@ -596,7 +596,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathSavedUnits + "'." );
+                throw new Exception( "Can't open file '" + pathSavedUnits + "'.", e );
             }
 
             try
@@ -609,7 +609,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathSavedBuildings + "'." );
+                throw new Exception( "Can't open file '" + pathSavedBuildings + "'." , e);
             }
 
             try
@@ -622,7 +622,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathSavedProjectiles + "'." );
+                throw new Exception( "Can't open file '" + pathSavedProjectiles + "'.", e );
             }
 
             try
@@ -635,7 +635,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathSavedHeroes + "'." );
+                throw new Exception( "Can't open file '" + pathSavedHeroes + "'.", e );
             }
 
             try
@@ -648,7 +648,7 @@ namespace SS.Levels
                 {
                     throw e;
                 }
-                throw new Exception( "Can't open file '" + pathSavedExtras + "'." );
+                throw new Exception( "Can't open file '" + pathSavedExtras + "'.", e );
             }
 
             sw.Stop();

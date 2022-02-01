@@ -82,21 +82,21 @@ namespace SS.Objects
                 pos = hit.position;
 
                 Extra[] extras = SSObject.GetAllExtras();
-                ResourceDepositModule ret = null;
+                ResourceDepositModule closestDeposit = null;
 
                 float dstSq = range * range;
 
-                for( int i = 0; i < extras.Length; i++ )
+                foreach( var extra in extras )
                 {
                     // If is in range.
-                    float newDstSq = (pos - extras[i].transform.position).sqrMagnitude;
+                    float newDstSq = (pos - extra.transform.position).sqrMagnitude;
                     if( newDstSq > dstSq )
                     {
                         continue;
                     }
 
                     // If has resource deposit.
-                    ResourceDepositModule[] resourceDeposits = extras[i].GetModules<ResourceDepositModule>();
+                    ResourceDepositModule[] resourceDeposits = extra.GetModules<ResourceDepositModule>();
 
                     if( resourceDeposits.Length == 0 )
                     {
@@ -104,17 +104,17 @@ namespace SS.Objects
                     }
 
                     // If deposit contains wanted resource.
-                    for( int j = 0; j < resourceDeposits.Length; j++ )
+                    foreach( var resourceDeposit in resourceDeposits )
                     {
-                        if( resourceDeposits[j].GetAll().ContainsKey( resourceId ) )
+                        if( resourceDeposit.GetAll().ContainsKey( resourceId ) )
                         {
                             dstSq = newDstSq;
-                            ret = resourceDeposits[j];
+                            closestDeposit = resourceDeposit;
                             break; // break inner loop
                         }
                     }
                 }
-                return ret;
+                return closestDeposit;
             }
             else
             {
@@ -154,11 +154,11 @@ namespace SS.Objects
                     continue;
                 }
 
-                IPaymentReceiver[]  paymentReceivers = obj.GetAvailablePaymentReceivers();
+                IPaymentReceiver[] paymentReceivers = obj.GetAvailablePaymentReceivers();
 
                 foreach( var paymentReceiver in paymentReceivers )
                 {
-                    Dictionary<string, int>  resourcesWanted = paymentReceiver.GetWantedResources();
+                    Dictionary<string, int> resourcesWanted = paymentReceiver.GetWantedResources();
                     if( resourcesWanted.Count == 0 )
                     {
                         break;
@@ -187,48 +187,51 @@ namespace SS.Objects
 
             InventoryModule ret = null;
             float dstSqToLastValid = float.MaxValue;
-            for( int i = 0; i < objects.Length; i++ )
+
+            foreach( var obj in objects )
             {
-                if( objects[i] == self )
+                if( obj == self )
                 {
                     continue;
                 }
 
-                if( !objects[i].hasInventoryModule )
+                if( !obj.hasInventoryModule )
                 {
                     continue;
                 }
 
                 // If is in range.
-                float newDstSq = (pos - objects[i].transform.position).sqrMagnitude;
+                float newDstSq = (pos - obj.transform.position).sqrMagnitude;
                 if( newDstSq > dstSqToLastValid )
                 {
                     continue;
                 }
 
-                if( objects[i].factionId != factionId )
+                if( obj.factionId != factionId )
                 {
                     continue;
                 }
 
                 // discard any objects that are unusable.
-                if( objects[i] is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)objects[i]).isUsable )
+                if( obj is ISSObjectUsableUnusable && !((ISSObjectUsableUnusable)obj).isUsable )
                 {
                     continue;
                 }
 
-                InventoryModule[] inventories = objects[i].GetModules<InventoryModule>();
+                InventoryModule[] inventories = obj.GetModules<InventoryModule>();
 
-                for( int j = 0; j < inventories.Length; j++ )
+                foreach( var inv in inventories )
                 {
-                    if( inventories[j].isStorage )
+                    if( !inv.isStorage )
                     {
-                        if( inventories[j].GetSpaceLeft( resourceId ) > 0 )
-                        {
-                            dstSqToLastValid = newDstSq; // only mark distance to an actual valid objects.
-                            ret = inventories[j];
-                            break; // break inner loop
-                        }
+                        continue;
+                    }
+
+                    if( inv.GetSpaceLeft( resourceId ) > 0 )
+                    {
+                        dstSqToLastValid = newDstSq; // only mark distance to an actual valid objects.
+                        ret = inv;
+                        break; // break inner loop
                     }
                 }
             }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SS.UI
 {
-	public class SaveButton : MonoBehaviour
+	public class LevelSaveButton : MonoBehaviour
 	{
 		[SerializeField] private SaveLoadMenu saveLoadMenu = null;
 

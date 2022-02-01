@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SS.UI
 {
-	public class LoadButton : MonoBehaviour
+	public class LevelLoadButton : MonoBehaviour
 	{
 		public TMP_InputField levelInput;
 		public TMP_InputField levelSaveStateInput;

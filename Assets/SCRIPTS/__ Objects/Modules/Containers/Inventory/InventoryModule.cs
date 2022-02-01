@@ -550,7 +550,7 @@ namespace SS.Objects.Modules
             }
 
             List<Slot> slotsSorted = new List<Slot>( this.slots );
-            slotsSorted.Sort( ( s1, s2 ) => (s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) );
+            slotsSorted.Sort( ( s1, s2 ) => (s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) ); // add to the full-most slot first.
 
             int amountRemaining = amountMax;
 
@@ -649,13 +649,12 @@ namespace SS.Objects.Modules
             }
 
             List<Slot> slotsSorted = new List<Slot>( this.slots );
-            slotsSorted.Sort( ( s1, s2 ) => -(s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) );
+            slotsSorted.Sort( ( s1, s2 ) => -(s1.actualCapacity - s1.amount).CompareTo( (s2.actualCapacity - s2.amount) ) ); // remove from the empty-most slot first
 
             int amountLeftToRemove = amountMax;
 
             foreach( var slot in slotsSorted )
             {
-#warning - ideally it'd remove from the empty-most slot first - this is easy to do, just feed it the slots in a specific order.
                 if( slot.isEmpty )
                 {
                     continue;

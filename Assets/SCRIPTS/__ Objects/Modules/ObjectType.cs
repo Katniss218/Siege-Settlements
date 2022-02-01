@@ -1,5 +1,8 @@
-﻿namespace SS.Objects.Modules
+﻿using System;
+
+namespace SS.Objects.Modules
 {
+	[Flags]
 	/// <summary>
 	/// Which objects can the module be added to.
 	/// </summary>

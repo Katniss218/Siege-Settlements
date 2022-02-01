@@ -161,9 +161,9 @@
      <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\BuildingHUD.cs" />
      <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\HeroHUD.cs" />
      <Compile Include="Assets\SCRIPTS\UI\HUDs\ObjectHuds\UnitHUD.cs" />
-     <Compile Include="Assets\SCRIPTS\UI\LoadButton.cs" />
+     <Compile Include="Assets\SCRIPTS\UI\LevelLoadButton.cs" />
+     <Compile Include="Assets\SCRIPTS\UI\LevelSaveButton.cs" />
      <Compile Include="Assets\SCRIPTS\UI\MainMenuButton.cs" />
-     <Compile Include="Assets\SCRIPTS\UI\SaveButton.cs" />
      <Compile Include="Assets\SCRIPTS\UI\SaveLoadMenu.cs" />
      <Compile Include="Assets\SCRIPTS\UI\SaveLoadMenuElement.cs" />
      <Compile Include="Assets\SCRIPTS\UI\ToggleGameObjectAndPause.cs" />

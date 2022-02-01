@@ -24,7 +24,7 @@ namespace SS
 		public void DeserializeKFF( KFFSerializer serializer )
 		{
 			this.center = serializer.ReadVector3( "Center" );
-#warning when parsing parhs, make sure to display in the error that it's a path, now it only tells KFFParser expected to blahblahblah.
+#warning when parsing paths, make sure to display in the error that it's a path, now it only tells KFFParser expected to blahblahblah.
 			this.radius = serializer.ReadFloat( "Radius" );
 		}
 
