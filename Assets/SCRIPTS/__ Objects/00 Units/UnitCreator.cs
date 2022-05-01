@@ -12,71 +12,13 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
+	/// <summary>
+	/// Provides a set of static methods related to creating units.
+	/// </summary>
 	public static class UnitCreator
 	{
 		private const string GAMEOBJECT_NAME = "Unit";
 		
-
-		public static void SetData( Unit unit, UnitData data )
-		{
-			//
-			//    CONTAINER GAMEOBJECT
-			//
-
-			// Set the position/movement information.
-			unit.transform.SetPositionAndRotation( data.position, data.rotation );
-
-			// Set the unit's movement parameters.
-			NavMeshAgent navMeshAgent = unit.navMeshAgent;
-			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
-
-			// Set the unit's native parameters.
-			if( unit.guid != data.guid )
-			{
-				throw new Exception( "Mismatched guid: '" + unit.guid + "'." );
-			}
-			unit.factionId = data.factionId;
-			if( data.health != null )
-			{
-				unit.health = data.health.Value;
-			}
-
-			if( unit.isCivilian )
-			{
-				// Set the workplace (if unit is a civilian & workplace is present).
-				if( data.workplace != null )
-				{
-					SSObject obj = SSObject.Find( data.workplace.Item1 );
-					WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
-
-					WorkplaceModule.SetWorking( workplace, unit.civilian, data.workplace.Item3 );
-					unit.civilian.isWorking = data.isWorking ?? false;
-				}
-
-				// Set the automatic duty (only for civilians).
-				if( data.isOnAutomaticDuty != null )
-				{
-					unit.civilian.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
-				}
-			}
-			
-			unit.SetPopulation( data.population, true, true );
-
-			//
-			//    MODULES
-			//
-
-			SSObjectCreator.AssignModuleData( unit, data );
-			
-			if( data.tacticalGoalData != null )
-			{
-				unit.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
-			}
-		}
-
-
-
-
 		private static Unit CreateUnit( UnitDefinition def, Guid guid )
 		{
 			GameObject gameObject = new GameObject( GAMEOBJECT_NAME + " - '" + def.id + "'" );
@@ -94,31 +36,34 @@ namespace SS.Objects.Units
 
 			// Add the NavMeshAgent to the unit, to make it movable.
 			NavMeshAgent navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
-			navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
-			navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
-			navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
-			navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
+			{
+				navMeshAgent.baseOffset = Main.DEFAULT_NAVMESH_BASE_OFFSET;
+				navMeshAgent.acceleration = Main.DEFAULT_NAVMESH_ACCELERATION;
+				navMeshAgent.stoppingDistance = Main.DEFAULT_NAVMESH_STOPPING_DIST;
+				navMeshAgent.enabled = false; // Disable the NavMeshAgent for as long as the position is not set (data.position).
+			}
 
 			Unit unit = gameObject.AddComponent<Unit>();
-			unit.guid = guid;
-			unit.definitionId = def.id;
-			unit.isSelectable = true;
-			unit.displayName = def.displayName;
-			unit.icon = def.icon;
-			unit.movementSpeed = def.movementSpeed;
-			unit.rotationSpeed = def.rotationSpeed;
-			unit.sizePerPopulation = def.size;
-			unit.hurtSound = def.hurtSoundEffect;
-			unit.deathSound = def.deathSoundEffect;
-			unit.isCivilian = def.isCivilian;
-			unit.isPopulationLocked = def.isPopulationLocked;
-			unit.populationSizeLimit = def.populationSizeLimit;
+			{
+				unit.guid = guid;
+				unit.definitionId = def.id;
+				unit.isSelectable = true;
+				unit.displayName = def.displayName;
+				unit.icon = def.icon;
+				unit.movementSpeed = def.movementSpeed;
+				unit.rotationSpeed = def.rotationSpeed;
+				unit.size = def.size;
+				unit.hurtSound = def.hurtSoundEffect;
+				unit.deathSound = def.deathSoundEffect;
+				unit.isCivilian = def.isCivilian;
+				unit.isPopulationLocked = def.isPopulationLocked;
+				unit.populationSizeLimit = def.populationSizeLimit;
 
-			unit.viewRange = def.viewRange;
-			unit.healthMax = def.healthMax;
-			unit.health = def.healthMax;
-			unit.armor = def.armor;
-
+				unit.viewRange = def.viewRange;
+				unit.healthMax = def.healthMax;
+				unit.health = def.healthMax;
+				unit.armor = def.armor;
+			}
 
 			unit.onFactionChange.AddListener( ( int fromFac, int toFac ) =>
 			{
@@ -306,6 +251,9 @@ namespace SS.Objects.Units
 		// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		
 		
+		/// <summary>
+		/// Gets the data to round trip a given unit.
+		/// </summary>
 		public static UnitData GetData( Unit unit )
 		{
 			if( unit.guid == null )
@@ -352,6 +300,66 @@ namespace SS.Objects.Units
 			data.tacticalGoalData = unit.controller.GetGoalData();
 
 			return data;
+		}
+
+		/// <summary>
+		/// Sets the data to round trip a given unit.
+		/// </summary>
+		public static void SetData( Unit unit, UnitData data )
+		{
+			//
+			//    CONTAINER GAMEOBJECT
+			//
+
+			// Set the position/movement information.
+			unit.transform.SetPositionAndRotation( data.position, data.rotation );
+
+			// Set the unit's movement parameters.
+			NavMeshAgent navMeshAgent = unit.navMeshAgent;
+			navMeshAgent.enabled = true; // Enable the NavMeshAgent since the position is set (data.position).
+
+			// Set the unit's native parameters.
+			if( unit.guid != data.guid )
+			{
+				throw new Exception( "Mismatched guid: '" + unit.guid + "'." );
+			}
+			unit.factionId = data.factionId;
+			if( data.health != null )
+			{
+				unit.health = data.health.Value;
+			}
+
+			if( unit.isCivilian )
+			{
+				// Set the workplace (if unit is a civilian & workplace is present).
+				if( data.workplace != null )
+				{
+					SSObject obj = SSObject.Find( data.workplace.Item1 );
+					WorkplaceModule workplace = obj.GetModule<WorkplaceModule>( data.workplace.Item2 );
+
+					WorkplaceModule.SetWorking( workplace, unit.civilian, data.workplace.Item3 );
+					unit.civilian.isWorking = data.isWorking ?? false;
+				}
+
+				// Set the automatic duty (only for civilians).
+				if( data.isOnAutomaticDuty != null )
+				{
+					unit.civilian.SetAutomaticDuty( data.isOnAutomaticDuty.Value );
+				}
+			}
+
+			unit.SetPopulation( data.population, true, true );
+
+			//
+			//    MODULES
+			//
+
+			SSObjectCreator.AssignModuleData( unit, data );
+
+			if( data.tacticalGoalData != null )
+			{
+				unit.controller.SetGoalData( data.tacticalGoalData, data.tacticalGoalTag );
+			}
 		}
 
 

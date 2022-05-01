@@ -9,6 +9,12 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects.Units
 {
+	/// <summary>
+	/// The base class for all units.
+	/// </summary>
+	/// <remarks>
+	/// All units can move and enter interiors.
+	/// </remarks>
 	[UseHud( typeof( UnitHUD ), "hud" )]
 	public class Unit : SSObjectDFC, IMovable, IMouseOverHandlerListener, IInteriorUser
 	{
@@ -146,9 +152,14 @@ namespace SS.Objects.Units
 
 
 
-
+		/// <remarks>
+		/// Should be set to null for non-civilian units.
+		/// </remarks>
 		public CivilianUnitExtension civilian { get; private set; }
 
+		/// <summary>
+		/// Marks or unmarks the unit as being a civilian.
+		/// </summary>
 		public bool isCivilian
 		{
 			get
@@ -209,13 +220,16 @@ namespace SS.Objects.Units
 			}
 		}
 
-		private Vector3 __sizePerPopulation;
-		public Vector3 sizePerPopulation
+		private Vector3 __size;
+		/// <summary>
+		/// Gets or sets the xyz physical dimensions of this unit (for the default population size).
+		/// </summary>
+		public Vector3 size
 		{
-			get => this.__sizePerPopulation;
+			get => this.__size;
 			set
 			{
-				this.__sizePerPopulation = value;
+				this.__size = value;
 				PopulationUnitUtils.ScaleSize( this, this.population );
 			}
 		}
@@ -230,24 +244,33 @@ namespace SS.Objects.Units
 		/// The interior module the unit is currently in. Null if not is any interior (Read Only).
 		/// </summary>
 		public InteriorModule interior { get; private set; }
+
 		/// <summary>
 		/// The slot type that the unit is currently inside (Read Only).
 		/// </summary>
 		public InteriorModule.SlotType slotType { get; private set; }
+
 		/// <summary>
 		/// The slot of the interior module the unit is currently in (Read Only).
 		/// </summary>
 		public int slotIndex { get; private set; }
 
+		/// <summary>
+		/// Checks if the unit is inside an interior (Read Only).
+		/// </summary>
 		public bool isInside
 		{
-			get { return this.interior != null; }
+			get => this.interior != null;
 		}
-		public bool isInsideHidden { get; private set; } // if true, the unit is not visible - graphics (sub-objects) are disabled.
+
+		/// <summary>
+		/// Checks if the unit should be hidden (for interior slots that are supposed to be 'inside' of an object) (Read Only).
+		/// </summary>
+		public bool isInsideHidden { get; private set; } 
 
 
 		/// <summary>
-		/// Marks the unit as being inside.
+		/// Makes the unit enter an interior.
 		/// </summary>
 		public void MakeInside( InteriorModule interior, InteriorModule.SlotType slotType, int slotIndex )
 		{
@@ -297,7 +320,7 @@ namespace SS.Objects.Units
 		}
 
 		/// <summary>
-		/// Marks the unit as being outside.
+		/// Makes the unit exit an interior.
 		/// </summary>
 		public void MakeOutside()
 		{

@@ -15,6 +15,12 @@ using Object = UnityEngine.Object;
 
 namespace SS.Objects
 {
+    /// <summary>
+    /// The most basal class for ALL the types of objects that exist in the game world.
+    /// </summary>
+    /// <remarks>
+    /// If it exists on the map, it's an SSObject.
+    /// </remarks>
     [DisallowMultipleComponent]
     public class SSObject : MonoBehaviour
     {
@@ -541,17 +547,19 @@ namespace SS.Objects
             }
         }
 
+        /// <summary>
+        /// Finds and returns an object with the specified guid. Returns null if nothing was found.
+        /// </summary>
         public static SSObject Find( Guid guid )
         {
-            SSObject[] ssObjectArray = GetAll();
-
-            for( int i = 0; i < ssObjectArray.Length; i++ )
+            foreach( var obj in GetAll() )
             {
-                if( ssObjectArray[i].guid == guid )
+                if( obj.guid == guid )
                 {
-                    return ssObjectArray[i];
+                    return obj;
                 }
             }
+
             return null;
         }
 
@@ -562,9 +570,14 @@ namespace SS.Objects
         //
 
 
-
+        /// <summary>
+        /// Runs once when the object is created.
+        /// </summary>
         protected virtual void OnObjSpawn() { }
 
+        /// <summary>
+        /// Runs once when the object is destroyed.
+        /// </summary>
         protected virtual void OnObjDestroyed() { }
 
         protected virtual void Awake()

@@ -11,48 +11,40 @@ namespace SS.Objects.Units
 	public static class PopulationUnitUtils
 	{
 		/// <summary>
-		/// Scales the size of the unit to match what it would be for a specified population size.
+		/// Changes the physical size of the unit to match what it would be for a specified population size.
 		/// </summary>
 		public static void ScaleSize( Unit unit, PopulationSize population )
 		{
-			float x = unit.sizePerPopulation.x;
-			float z = unit.sizePerPopulation.z;
+			float x = unit.size.x;
+			float z = unit.size.z;
 
-			if( population == PopulationSize.x1 )
-			{
-				x *= 1;
-				z *= 1;
-			}
-			else if( population == PopulationSize.x2 )
-			{
-				x *= 2;
-				z *= 1;
-			}
-			else if( population == PopulationSize.x4 )
-			{
-				x *= 2;
-				z *= 2;
-			}
-			else if( population == PopulationSize.x8 )
-			{
-				x *= 4;
-				z *= 2;
-			}
-			unit.navMeshAgent.radius = ((x + z) / 2f) / 2;
-			unit.navMeshAgent.height = unit.sizePerPopulation.y;
-			unit.collider.size = new Vector3( x, unit.sizePerPopulation.y, z );
-			unit.collider.center = new Vector3( 0.0f, unit.sizePerPopulation.y * 0.5f, 0.0f );
+			switch( population )
+            {
+				case PopulationSize.x1:
+					x *= 1; z *= 1; break;
+				case PopulationSize.x2:
+					x *= 2; z *= 1; break;
+				case PopulationSize.x4:
+					x *= 2; z *= 2; break;
+				case PopulationSize.x8:
+					x *= 4; z *= 2; break;
+            }
+
+			unit.navMeshAgent.radius = ((x + z) / 2.0f) / 2.0f;
+			unit.navMeshAgent.height = unit.size.y;
+			unit.collider.size = new Vector3( x, unit.size.y, z );
+			unit.collider.center = new Vector3( 0.0f, unit.size.y * 0.5f, 0.0f );
 		}
 
 		/// <summary>
 		/// Scales the stats of any unit to match what would they become for a unit with the specified population size.
 		/// </summary>
-		public static void ScaleStats( Unit unit, PopulationSize before, PopulationSize after )
+		public static void ScaleStats( Unit unit, PopulationSize sizeBefore, PopulationSize sizeAfter )
 		{
-			float populationRatio = (float)after / (float)before;
+			float populationRatio = (float)sizeAfter / (float)sizeBefore;
 
-			float beforeFloat = (float)before;
-			float afterFloat = (float)after;
+			float beforeFloat = (float)sizeBefore;
+			float afterFloat = (float)sizeAfter;
 
 			// override.
 			// Calculate health first, assign later. Prevents weird behaviour due to clamping, which prevents invalid values from being assigned.
@@ -62,7 +54,7 @@ namespace SS.Objects.Units
 			unit.healthMax = newHealthMax;
 			unit.health = newHealth;
 
-			ScaleSize( unit, after );
+			ScaleSize( unit, sizeAfter );
 
 			ScaleStats( unit.GetModules<InventoryModule>(), beforeFloat, afterFloat );
 
@@ -77,13 +69,13 @@ namespace SS.Objects.Units
 			MeshPredicatedSubObject[] meshPopulationSubObjects = unit.GetSubObjects<MeshPredicatedSubObject>();
 			for( int i = 0; i < meshPopulationSubObjects.Length; i++ )
 			{
-				meshPopulationSubObjects[i].lookupKey = (int)after;
+				meshPopulationSubObjects[i].lookupKey = (int)sizeAfter;
 			}
 		}
 
 
 
-		private static void ScaleStats( InventoryModule[] inventories, float before, float after )
+		private static void ScaleStats( InventoryModule[] inventories, float beforePopulation, float afterPopulation )
 		{
 			for( int i = 0; i < inventories.Length; i++ )
 			{
@@ -91,26 +83,26 @@ namespace SS.Objects.Units
 
 				for( int j = 0; j < slots.Length; j++ )
 				{
-					slots[j].capacityOverride = (int)(slots[j].capacity * after);
+					slots[j].capacityOverride = (int)(slots[j].capacity * afterPopulation);
 				}
 
 				inventories[i].SetSlots( slots );
 			}
 		}
 
-		private static void ScaleStats( MeleeModule[] melee, float before, float after )
+		private static void ScaleStats( MeleeModule[] melee, float beforePopulation, float afterPopulation )
 		{
 			for( int i = 0; i < melee.Length; i++ )
 			{
-				melee[i].damageOverride = melee[i].damage * after;
+				melee[i].damageOverride = melee[i].damage * afterPopulation;
 			}
 		}
 
-		private static void ScaleStats( RangedModule[] ranged, float before, float after )
+		private static void ScaleStats( RangedModule[] ranged, float beforePopulation, float afterPopulation )
 		{
 			for( int i = 0; i < ranged.Length; i++ )
 			{
-				ranged[i].projectileCountOverride = (int)(ranged[i].projectileCount * after);
+				ranged[i].projectileCountOverride = (int)(ranged[i].projectileCount * afterPopulation);
 			}
 		}
 
@@ -196,13 +188,14 @@ namespace SS.Objects.Units
 		}
 
 		/// <summary>
-		/// Splits the unit so that one of the results has population size of specified value.
+		/// Splits the unit so that one of the results has the population size equal to the specified value.
 		/// </summary>
 		/// <param name="beacon">The unit to split.</param>
-		/// <param name="desiredPopulation">Beacon unit after splitting will be this size.</param>
+		/// <param name="desiredPopulation">The 'beacon' unit, after splitting, will have this population. Set to null to split in half.</param>
 		public static List<Unit> Split( Unit beacon, PopulationSize? desiredPopulation = null )
 		{
-			// splits in half if desiredPopulation == null.
+			UnitDefinition beaconDef = DefinitionManager.GetUnit( beacon.definitionId );
+			bool isSelected = Selection.IsSelected( beacon );
 
 			byte populationPool = (byte)beacon.population;
 
@@ -229,11 +222,9 @@ namespace SS.Objects.Units
 
 			float healthPercentSrc = beacon.healthPercent;
 
-			List<Unit> ret = new List<Unit>();
-			ret.Add( beacon );
-			UnitDefinition beaconDef = DefinitionManager.GetUnit( beacon.definitionId );
+			List<Unit> newUnits = new List<Unit>();
 
-			bool isSelected = Selection.IsSelected( beacon );
+			newUnits.Add( beacon );
 
 			// Split into new units (largest-possible) as long as there is enough population in the pool.
 			while( populationPool > 0 )
@@ -261,7 +252,6 @@ namespace SS.Objects.Units
 					newSize = PopulationSize.x1;
 				}
 
-
 				Vector3 position = beacon.transform.position + new Vector3( Random.Range( -0.01f, 0.01f ), Random.Range( -0.01f, 0.01f ), Random.Range( -0.01f, 0.01f ) );
 				Quaternion rotation = beacon.transform.rotation;
 
@@ -269,14 +259,15 @@ namespace SS.Objects.Units
 				unit.SetPopulation( newSize, true, true );
 				unit.healthPercent = healthPercentSrc;
 
-				ret.Add( unit );
+				newUnits.Add( unit );
 
 				if( isSelected )
 				{
 					Selection.TrySelect( unit );
 				}
 			}
-			return ret;
+
+			return newUnits;
 		}
 	}
 }
